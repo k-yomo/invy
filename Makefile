@@ -7,9 +7,13 @@ generate: ## Generate graphql code / ent code from schema
 	wait
 	make fmt
 
-.PHONY: run
-run: run-dbs ## Run servers
-	goreman -set-ports=false start
+.PHONY: run-dbs
+run-api: run-dbs ## Run API server
+	cd bump_api/cmd/server && air
+
+.PHONY: run-app
+run-app: ## Run app
+	cd app && flutter run
 
 .PHONY: run-dbs
 run-dbs:
