@@ -1,0 +1,16 @@
+type Query
+
+interface Node {
+    id: ID!
+}
+
+directive @authRequired on FIELD_DEFINITION
+
+directive @goField(forceResolver: Boolean, name: String) on INPUT_FIELD_DEFINITION
+    | FIELD_DEFINITION
+
+directive @constraint(
+    min: Int
+    max: Int
+    pattern: String
+) on INPUT_FIELD_DEFINITION | ARGUMENT_DEFINITION

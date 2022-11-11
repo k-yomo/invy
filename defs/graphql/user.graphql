@@ -1,0 +1,9 @@
+type User implements Node {
+    id: ID!
+    email: String
+    nickname: String!
+}
+
+extend type Query {
+    viewer: User! @authRequired
+}

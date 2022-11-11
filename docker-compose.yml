@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:13
+    ports:
+      - 15432:5432
+    volumes:
+      - db_data:/var/lib/mysql
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: bump_db
+
+  redis:
+    image: redis:5.0
+    ports:
+      - 6379:6379
+
+volumes:
+  db_data:
