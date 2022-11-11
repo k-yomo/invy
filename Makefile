@@ -1,9 +1,13 @@
 .DEFAULT_GOAL := help
 
 .PHONY: generate
+setup: ## Setup project
+	npm install -g graphql-cli
+
+.PHONY: generate
 generate: ## Generate graphql code / ent code from schema
 	cd bump_api && go generate ./... & \
-#	cd frontend && npm run codegen & \
+	cd app && flutter pub run build_runner build & \
 	wait
 	make fmt
 
@@ -22,7 +26,7 @@ run-dbs:
 .PHONY: fmt
 fmt: ## Format code
 	cd bump_api &&  goimports -w . & \
-#	cd app && fmt & \
+	cd app && flutter format . & \
 	wait
 
 .PHONY: help

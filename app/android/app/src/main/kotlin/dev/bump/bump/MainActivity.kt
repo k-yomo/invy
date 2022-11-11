@@ -1,4 +1,4 @@
-package com.example.bump
+package dev.bump.bump
 
 import io.flutter.embedding.android.FlutterActivity
 

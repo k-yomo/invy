@@ -1,0 +1,8 @@
+
+query viewer {
+    viewer {
+        id
+        nickname
+        avatarUrl
+    }
+}

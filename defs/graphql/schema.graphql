@@ -1,4 +1,6 @@
-type Query
+type Query {
+    viewer: User! @authRequired
+}
 
 interface Node {
     id: ID!
@@ -14,3 +16,10 @@ directive @constraint(
     max: Int
     pattern: String
 ) on INPUT_FIELD_DEFINITION | ARGUMENT_DEFINITION
+
+type User implements Node {
+    id: ID!
+    email: String
+    nickname: String!
+    avatarUrl: String!
+}

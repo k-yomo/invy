@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.bump">
+    package="dev.bump.bump">
    <application
         android:label="bump"
         android:name="${applicationName}"
