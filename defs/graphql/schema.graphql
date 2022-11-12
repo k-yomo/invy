@@ -31,7 +31,13 @@ directive @constraint(
     min: Int
     max: Int
     pattern: String
+    format: ConstraintFormat
 ) on INPUT_FIELD_DEFINITION | ARGUMENT_DEFINITION
+
+enum ConstraintFormat {
+    EMAIL
+    URL
+}
 
 directive @goField(forceResolver: Boolean, name: String) on INPUT_FIELD_DEFINITION
     | FIELD_DEFINITION
@@ -80,7 +86,7 @@ type FriendshipRequest implements Node {
 }
 
 input SignUpInput {
-    email: String!
-    nickname: String!
-    avatarUrl: String
+    email: String! @constraint(format: EMAIL)
+    nickname: String! @constraint(min: 3)
+    avatarUrl: String @constraint(format: URL)
 }

@@ -148,6 +148,30 @@ class _CopyWithStubImpl$Input$SignUpInput<TRes>
       _res;
 }
 
+enum Enum$ConstraintFormat { EMAIL, URL, $unknown }
+
+String toJson$Enum$ConstraintFormat(Enum$ConstraintFormat e) {
+  switch (e) {
+    case Enum$ConstraintFormat.EMAIL:
+      return r'EMAIL';
+    case Enum$ConstraintFormat.URL:
+      return r'URL';
+    case Enum$ConstraintFormat.$unknown:
+      return r'$unknown';
+  }
+}
+
+Enum$ConstraintFormat fromJson$Enum$ConstraintFormat(String value) {
+  switch (value) {
+    case r'EMAIL':
+      return Enum$ConstraintFormat.EMAIL;
+    case r'URL':
+      return Enum$ConstraintFormat.URL;
+    default:
+      return Enum$ConstraintFormat.$unknown;
+  }
+}
+
 const possibleTypesMap = {
   'Node': {
     'User',

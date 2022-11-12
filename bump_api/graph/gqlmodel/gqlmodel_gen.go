@@ -3,6 +3,9 @@
 package gqlmodel
 
 import (
+	"fmt"
+	"io"
+	"strconv"
 	"time"
 
 	"github.com/google/uuid"
@@ -57,4 +60,45 @@ type UserConnection struct {
 type UserEdge struct {
 	Node   *User      `json:"node"`
 	Cursor ent.Cursor `json:"cursor"`
+}
+
+type ConstraintFormat string
+
+const (
+	ConstraintFormatEmail ConstraintFormat = "EMAIL"
+	ConstraintFormatURL   ConstraintFormat = "URL"
+)
+
+var AllConstraintFormat = []ConstraintFormat{
+	ConstraintFormatEmail,
+	ConstraintFormatURL,
+}
+
+func (e ConstraintFormat) IsValid() bool {
+	switch e {
+	case ConstraintFormatEmail, ConstraintFormatURL:
+		return true
+	}
+	return false
+}
+
+func (e ConstraintFormat) String() string {
+	return string(e)
+}
+
+func (e *ConstraintFormat) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = ConstraintFormat(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid ConstraintFormat", str)
+	}
+	return nil
+}
+
+func (e ConstraintFormat) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
 }

@@ -46,7 +46,7 @@ type ResolverRoot interface {
 
 type DirectiveRoot struct {
 	AuthRequired func(ctx context.Context, obj interface{}, next graphql.Resolver) (res interface{}, err error)
-	Constraint   func(ctx context.Context, obj interface{}, next graphql.Resolver, min *int, max *int, pattern *string) (res interface{}, err error)
+	Constraint   func(ctx context.Context, obj interface{}, next graphql.Resolver, min *int, max *int, pattern *string, format *gqlmodel.ConstraintFormat) (res interface{}, err error)
 }
 
 type ComplexityRoot struct {
@@ -463,7 +463,13 @@ directive @constraint(
     min: Int
     max: Int
     pattern: String
+    format: ConstraintFormat
 ) on INPUT_FIELD_DEFINITION | ARGUMENT_DEFINITION
+
+enum ConstraintFormat {
+    EMAIL
+    URL
+}
 
 directive @goField(forceResolver: Boolean, name: String) on INPUT_FIELD_DEFINITION
     | FIELD_DEFINITION
@@ -512,9 +518,9 @@ type FriendshipRequest implements Node {
 }
 
 input SignUpInput {
-    email: String!
-    nickname: String!
-    avatarUrl: String
+    email: String! @constraint(format: EMAIL)
+    nickname: String! @constraint(min: 3)
+    avatarUrl: String @constraint(format: URL)
 }
 `, BuiltIn: false},
 }
@@ -554,6 +560,15 @@ func (ec *executionContext) dir_constraint_args(ctx context.Context, rawArgs map
 		}
 	}
 	args["pattern"] = arg2
+	var arg3 *gqlmodel.ConstraintFormat
+	if tmp, ok := rawArgs["format"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("format"))
+		arg3, err = ec.unmarshalOConstraintFormat2ᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋbump_apiᚋgraphᚋgqlmodelᚐConstraintFormat(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["format"] = arg3
 	return args, nil
 }
 
@@ -4234,25 +4249,81 @@ func (ec *executionContext) unmarshalInputSignUpInput(ctx context.Context, obj i
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("email"))
-			it.Email, err = ec.unmarshalNString2string(ctx, v)
+			directive0 := func(ctx context.Context) (interface{}, error) { return ec.unmarshalNString2string(ctx, v) }
+			directive1 := func(ctx context.Context) (interface{}, error) {
+				format, err := ec.unmarshalOConstraintFormat2ᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋbump_apiᚋgraphᚋgqlmodelᚐConstraintFormat(ctx, "EMAIL")
+				if err != nil {
+					return nil, err
+				}
+				if ec.directives.Constraint == nil {
+					return nil, errors.New("directive constraint is not implemented")
+				}
+				return ec.directives.Constraint(ctx, obj, directive0, nil, nil, nil, format)
+			}
+
+			tmp, err := directive1(ctx)
 			if err != nil {
-				return it, err
+				return it, graphql.ErrorOnPath(ctx, err)
+			}
+			if data, ok := tmp.(string); ok {
+				it.Email = data
+			} else {
+				err := fmt.Errorf(`unexpected type %T from directive, should be string`, tmp)
+				return it, graphql.ErrorOnPath(ctx, err)
 			}
 		case "nickname":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nickname"))
-			it.Nickname, err = ec.unmarshalNString2string(ctx, v)
+			directive0 := func(ctx context.Context) (interface{}, error) { return ec.unmarshalNString2string(ctx, v) }
+			directive1 := func(ctx context.Context) (interface{}, error) {
+				min, err := ec.unmarshalOInt2ᚖint(ctx, 3)
+				if err != nil {
+					return nil, err
+				}
+				if ec.directives.Constraint == nil {
+					return nil, errors.New("directive constraint is not implemented")
+				}
+				return ec.directives.Constraint(ctx, obj, directive0, min, nil, nil, nil)
+			}
+
+			tmp, err := directive1(ctx)
 			if err != nil {
-				return it, err
+				return it, graphql.ErrorOnPath(ctx, err)
+			}
+			if data, ok := tmp.(string); ok {
+				it.Nickname = data
+			} else {
+				err := fmt.Errorf(`unexpected type %T from directive, should be string`, tmp)
+				return it, graphql.ErrorOnPath(ctx, err)
 			}
 		case "avatarUrl":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("avatarUrl"))
-			it.AvatarURL, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			directive0 := func(ctx context.Context) (interface{}, error) { return ec.unmarshalOString2ᚖstring(ctx, v) }
+			directive1 := func(ctx context.Context) (interface{}, error) {
+				format, err := ec.unmarshalOConstraintFormat2ᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋbump_apiᚋgraphᚋgqlmodelᚐConstraintFormat(ctx, "URL")
+				if err != nil {
+					return nil, err
+				}
+				if ec.directives.Constraint == nil {
+					return nil, errors.New("directive constraint is not implemented")
+				}
+				return ec.directives.Constraint(ctx, obj, directive0, nil, nil, nil, format)
+			}
+
+			tmp, err := directive1(ctx)
 			if err != nil {
-				return it, err
+				return it, graphql.ErrorOnPath(ctx, err)
+			}
+			if data, ok := tmp.(*string); ok {
+				it.AvatarURL = data
+			} else if tmp == nil {
+				it.AvatarURL = nil
+			} else {
+				err := fmt.Errorf(`unexpected type %T from directive, should be *string`, tmp)
+				return it, graphql.ErrorOnPath(ctx, err)
 			}
 		}
 	}
@@ -5571,6 +5642,22 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	}
 	res := graphql.MarshalBoolean(*v)
 	return res
+}
+
+func (ec *executionContext) unmarshalOConstraintFormat2ᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋbump_apiᚋgraphᚋgqlmodelᚐConstraintFormat(ctx context.Context, v interface{}) (*gqlmodel.ConstraintFormat, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var res = new(gqlmodel.ConstraintFormat)
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOConstraintFormat2ᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋbump_apiᚋgraphᚋgqlmodelᚐConstraintFormat(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.ConstraintFormat) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return v
 }
 
 func (ec *executionContext) unmarshalOCursor2ᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋbump_apiᚋentᚐCursor(ctx context.Context, v interface{}) (*ent.Cursor, error) {
