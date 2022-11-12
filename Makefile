@@ -19,9 +19,9 @@ run-api: run-dbs ## Run API server
 run-app: ## Run app
 	cd app && flutter run
 
-.PHONY: run-dbs
-run-dbs:
-	docker-compose up -d db redis
+.PHONY: run-db
+run-db:
+	docker-compose up -d db
 
 .PHONY: fmt
 fmt: ## Format code

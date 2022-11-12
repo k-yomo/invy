@@ -1,15 +1,31 @@
+scalar Time
+scalar UUID
+scalar Cursor
+
 type Query {
     viewer: User! @authRequired
+    user(userId: UUID!): User! @authRequired
+    # fetch friends of the logged in user
+    friends(after: Cursor, first: Int, before: Cursor, last: Int): UserConnection! @authRequired
+    # fetch friend ship requests need to be approved by the logged in user
+    pendingFriendShipRequests: [FriendshipRequest!]! @authRequired
+    # fetch friend ship requests sent by the logged in user
+    requestingFriendShipRequests: [FriendshipRequest!]! @authRequired
 }
 
-interface Node {
-    id: ID!
+type Mutation {
+    signUp(input: SignUpInput): Boolean!
+
+    requestFriendShip(userId: UUID!): Boolean! @authRequired
+    cancelFriendShipRequest(friendshipRequestId: UUID!): Boolean! @authRequired
+    denyFriendShipRequest(friendshipRequestId: UUID!): Boolean! @authRequired
+    approveFriendShipRequest(friendshipRequestId: UUID!): Boolean! @authRequired
 }
 
+##############################
+# Directives
+##############################
 directive @authRequired on FIELD_DEFINITION
-
-directive @goField(forceResolver: Boolean, name: String) on INPUT_FIELD_DEFINITION
-    | FIELD_DEFINITION
 
 directive @constraint(
     min: Int
@@ -17,9 +33,54 @@ directive @constraint(
     pattern: String
 ) on INPUT_FIELD_DEFINITION | ARGUMENT_DEFINITION
 
+directive @goField(forceResolver: Boolean, name: String) on INPUT_FIELD_DEFINITION
+    | FIELD_DEFINITION
+
+##############################
+# Interfaces
+##############################
+interface Node {
+    id: UUID!
+}
+
+type PageInfo {
+    startCursor: Cursor
+    endCursor: Cursor
+    hasNextPage: Boolean!
+    hasPreviousPage: Boolean!
+}
+
+##############################
+# Types
+##############################
 type User implements Node {
-    id: ID!
-    email: String
+    id: UUID!
     nickname: String!
-    avatarUrl: String!
+    avatarUrl: String
+}
+
+type UserEdge {
+    node: User!
+    cursor: Cursor!
+}
+
+type UserConnection {
+    edges: [UserEdge!]!
+    pageInfo: PageInfo!
+    totalCount: Int!
+}
+
+type FriendshipRequest implements Node {
+    id: UUID!
+    fromUserId: UUID!
+    fromUser: User!
+    toUserId: UUID!
+    toUser: User!
+    createdAt: Time!
+}
+
+input SignUpInput {
+    email: String!
+    nickname: String!
+    avatarUrl: String
 }

@@ -295,7 +295,7 @@ class Query$viewer$viewer {
   Query$viewer$viewer({
     required this.id,
     required this.nickname,
-    required this.avatarUrl,
+    this.avatarUrl,
     required this.$__typename,
   });
 
@@ -307,7 +307,7 @@ class Query$viewer$viewer {
     return Query$viewer$viewer(
       id: (l$id as String),
       nickname: (l$nickname as String),
-      avatarUrl: (l$avatarUrl as String),
+      avatarUrl: (l$avatarUrl as String?),
       $__typename: (l$$__typename as String),
     );
   }
@@ -316,7 +316,7 @@ class Query$viewer$viewer {
 
   final String nickname;
 
-  final String avatarUrl;
+  final String? avatarUrl;
 
   final String $__typename;
 
@@ -428,9 +428,9 @@ class _CopyWithImpl$Query$viewer$viewer<TRes>
         nickname: nickname == _undefined || nickname == null
             ? _instance.nickname
             : (nickname as String),
-        avatarUrl: avatarUrl == _undefined || avatarUrl == null
+        avatarUrl: avatarUrl == _undefined
             ? _instance.avatarUrl
-            : (avatarUrl as String),
+            : (avatarUrl as String?),
         $__typename: $__typename == _undefined || $__typename == null
             ? _instance.$__typename
             : ($__typename as String),

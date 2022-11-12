@@ -1,11 +1,16 @@
 package graph
 
-import "github.com/k-yomo/bump/bump_api/ent"
+import (
+	firebaseAuth "firebase.google.com/go/v4/auth"
+	"github.com/k-yomo/bump/bump_api/ent"
+)
 
 // This file will not be regenerated automatically.
 //
 // It serves as dependency injection for your app, add any dependencies you require here.
 
+//go:generate go run github.com/99designs/gqlgen
 type Resolver struct {
-	DBClient *ent.Client
+	DBClient           *ent.Client
+	firebaseAuthClient *firebaseAuth.Client
 }

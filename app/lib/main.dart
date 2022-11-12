@@ -12,6 +12,7 @@ Future main() async {
   await initHiveForFlutter();
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
   /// 縦固定
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,

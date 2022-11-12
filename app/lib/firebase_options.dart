@@ -67,7 +67,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '502402000923',
     projectId: 'bump-platform-prod',
     storageBucket: 'bump-platform-prod.appspot.com',
-    iosClientId: '502402000923-nmipc52gnp6sncta172l218tpetssa19.apps.googleusercontent.com',
+    iosClientId:
+        '502402000923-nmipc52gnp6sncta172l218tpetssa19.apps.googleusercontent.com',
     iosBundleId: 'dev.bump.bump',
   );
 
@@ -77,7 +78,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '502402000923',
     projectId: 'bump-platform-prod',
     storageBucket: 'bump-platform-prod.appspot.com',
-    iosClientId: '502402000923-nmipc52gnp6sncta172l218tpetssa19.apps.googleusercontent.com',
+    iosClientId:
+        '502402000923-nmipc52gnp6sncta172l218tpetssa19.apps.googleusercontent.com',
     iosBundleId: 'dev.bump.bump',
   );
 }

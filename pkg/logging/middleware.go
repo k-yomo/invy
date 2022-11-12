@@ -8,7 +8,7 @@ import (
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/blendle/zapdriver"
 	"github.com/grpc-ecosystem/go-grpc-middleware/logging/zap/ctxzap"
-	"github.com/k-yomo/bump/pkg/requestid"
+	"github.com/k-yomo/bump/pkg/requestutil"
 	"go.uber.org/zap"
 )
 
@@ -20,7 +20,7 @@ func NewMiddleware(gcpProjectID string, logger *zap.Logger) func(next http.Handl
 			zapFields := append(
 				zapdriver.TraceContext(t.TraceID, t.SpanID, true, t.ProjectID),
 				zap.String("ip", r.RemoteAddr),
-				zap.String("requestId", requestid.GetRequestID(r.Context())),
+				zap.String("requestId", requestutil.GetRequestID(r.Context())),
 			)
 			ctx := ctxzap.ToContext(r.Context(), logger.With(zapFields...))
 			next.ServeHTTP(w, r.WithContext(ctx))

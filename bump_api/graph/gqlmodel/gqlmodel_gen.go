@@ -2,16 +2,59 @@
 
 package gqlmodel
 
+import (
+	"time"
+
+	"github.com/google/uuid"
+	"github.com/k-yomo/bump/bump_api/ent"
+)
+
 type Node interface {
 	IsNode()
-	GetID() string
+	GetID() uuid.UUID
+}
+
+type FriendshipRequest struct {
+	ID         uuid.UUID `json:"id"`
+	FromUserID uuid.UUID `json:"fromUserId"`
+	FromUser   *User     `json:"fromUser"`
+	ToUserID   uuid.UUID `json:"toUserId"`
+	ToUser     *User     `json:"toUser"`
+	CreatedAt  time.Time `json:"createdAt"`
+}
+
+func (FriendshipRequest) IsNode()               {}
+func (this FriendshipRequest) GetID() uuid.UUID { return this.ID }
+
+type PageInfo struct {
+	StartCursor     *ent.Cursor `json:"startCursor"`
+	EndCursor       *ent.Cursor `json:"endCursor"`
+	HasNextPage     bool        `json:"hasNextPage"`
+	HasPreviousPage bool        `json:"hasPreviousPage"`
+}
+
+type SignUpInput struct {
+	Email     string  `json:"email"`
+	Nickname  string  `json:"nickname"`
+	AvatarURL *string `json:"avatarUrl"`
 }
 
 type User struct {
-	ID       string  `json:"id"`
-	Email    *string `json:"email"`
-	Nickname string  `json:"nickname"`
+	ID        uuid.UUID `json:"id"`
+	Nickname  string    `json:"nickname"`
+	AvatarURL *string   `json:"avatarUrl"`
 }
 
-func (User) IsNode()            {}
-func (this User) GetID() string { return this.ID }
+func (User) IsNode()               {}
+func (this User) GetID() uuid.UUID { return this.ID }
+
+type UserConnection struct {
+	Edges      []*UserEdge `json:"edges"`
+	PageInfo   *PageInfo   `json:"pageInfo"`
+	TotalCount int         `json:"totalCount"`
+}
+
+type UserEdge struct {
+	Node   *User      `json:"node"`
+	Cursor ent.Cursor `json:"cursor"`
+}

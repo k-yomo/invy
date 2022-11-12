@@ -10,22 +10,22 @@ import (
 	"time"
 
 	"cloud.google.com/go/profiler"
+	firebase "firebase.google.com/go/v4"
+	firebaseAuth "firebase.google.com/go/v4/auth"
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
+	"github.com/k-yomo/bump/bump_api/auth"
 	"github.com/k-yomo/bump/bump_api/config"
 	"github.com/k-yomo/bump/bump_api/ent"
 	"github.com/k-yomo/bump/bump_api/graph"
+	"github.com/k-yomo/bump/bump_api/graph/directive"
 	"github.com/k-yomo/bump/bump_api/graph/gqlgen"
-	"github.com/k-yomo/bump/bump_api/resthandler"
-	"github.com/k-yomo/bump/bump_api/session"
 	"github.com/k-yomo/bump/pkg/logging"
-	"github.com/k-yomo/bump/pkg/requestid"
+	"github.com/k-yomo/bump/pkg/requestutil"
 	"github.com/k-yomo/bump/pkg/tracing"
 	_ "github.com/lib/pq"
-	"github.com/markbates/goth"
-	"github.com/markbates/goth/providers/line"
 	"github.com/rs/cors"
 	"go.uber.org/zap"
 )
@@ -64,11 +64,23 @@ func main() {
 		logger.Fatal("creating schema resources failed", zap.Error(err))
 	}
 
-	initOauthProviders(appConfig)
-	sessionManager := session.NewManager(appConfig.RedisURL, appConfig.SessionCookieDomain, appConfig.Env.IsDeployed())
+	firebaseApp, err := firebase.NewApp(ctx, nil)
+	if err != nil {
+		logger.Fatal("initializing firebase app failed", zap.Error(err))
+	}
+
+	firebaseAuthClient, err := firebaseApp.Auth(context.Background())
+	if err != nil {
+		logger.Fatal("initializing firebase auth client failed", zap.Error(err))
+	}
+
 	gqlConfig := gqlgen.Config{
 		Resolvers: &graph.Resolver{
 			DBClient: dbClient,
+		},
+		Directives: gqlgen.DirectiveRoot{
+			AuthRequired: directive.AuthRequired,
+			Constraint:   directive.Constraint,
 		},
 	}
 	gqlServer := handler.NewDefaultServer(gqlgen.NewExecutableSchema(gqlConfig))
@@ -76,17 +88,8 @@ func main() {
 	gqlServer.Use(tracing.GraphqlExtension{})
 	gqlServer.Use(logging.GraphQLResponseInterceptor{})
 
-	r := newBaseRouter(appConfig, logger, sessionManager)
+	r := newBaseRouter(appConfig, logger, firebaseAuthClient)
 	r.Handle("/query", gqlServer)
-	r.Route("/auth", func(r chi.Router) {
-		authHandler := resthandler.NewAuthHandler(
-			sessionManager,
-			dbClient,
-		)
-		r.Get("/logout", authHandler.Logout)
-		r.Get("/oauth/callback", authHandler.HandleOAuthCallback)
-		r.Get("/oauth", authHandler.HandleOAuth)
-	})
 
 	if appConfig.Env == config.EnvLocal {
 		r.Get("/", playground.Handler("GraphQL playground", "/query"))
@@ -109,7 +112,7 @@ func main() {
 	}
 }
 
-func newBaseRouter(appConfig *config.AppConfig, logger *zap.Logger, sessionManager session.Manager) *chi.Mux {
+func newBaseRouter(appConfig *config.AppConfig, logger *zap.Logger, firebaseAuthClient *firebaseAuth.Client) *chi.Mux {
 	r := chi.NewRouter()
 	c := cors.New(cors.Options{
 		AllowedOrigins:   appConfig.AllowedOrigins,
@@ -120,19 +123,11 @@ func newBaseRouter(appConfig *config.AppConfig, logger *zap.Logger, sessionManag
 
 	r.Use(c.Handler)
 	r.Use(
-		requestid.Middleware,
+		requestutil.Middleware,
 		middleware.RealIP,
 		middleware.Recoverer,
 		logging.NewMiddleware(appConfig.GCPProjectID, logger),
-		sessionManager.Middleware(),
+		auth.Middleware(firebaseAuthClient),
 	)
 	return r
-}
-
-func initOauthProviders(appConfig *config.AppConfig) {
-	lineProvider := line.New(appConfig.LineConfig.LineAuthClientKey, appConfig.LineConfig.LineAuthSecret, fmt.Sprintf("%s/auth/oauth/callback", appConfig.RootURL), "profile", "openid", "email")
-	// To display the option to add your LINE Official Account as a friend
-	// https://developers.line.biz/en/docs/line-login/link-a-bot/#redirect-users
-	lineProvider.SetBotPrompt("aggressive")
-	goth.UseProviders(lineProvider)
 }

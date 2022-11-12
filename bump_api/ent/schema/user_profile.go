@@ -17,8 +17,8 @@ type UserProfile struct {
 // Fields of the UserProfile.
 func (UserProfile) Fields() []ent.Field {
 	return []ent.Field{
-		field.UUID("id", uuid.UUID{}).
-			Default(uuid.New),
+		field.UUID("id", uuid.UUID{}).Immutable(),
+		field.UUID("user_id", uuid.UUID{}).Immutable(),
 		field.String("nickname"),
 		field.String("email").Unique().Optional(),
 		field.String("avatar_url").Nillable().Optional(),
@@ -34,9 +34,10 @@ func (UserProfile) Fields() []ent.Field {
 // Edges of the UserProfile.
 func (UserProfile) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.From("user", User.Type).
-			Ref("user_profile").
+		edge.To("user", User.Type).
+			Field("user_id").
 			Unique().
-			Required(),
+			Required().
+			Immutable(),
 	}
 }

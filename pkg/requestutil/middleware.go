@@ -1,4 +1,4 @@
-package requestid
+package requestutil
 
 import (
 	"context"
@@ -7,7 +7,10 @@ import (
 	"github.com/k-yomo/bump/pkg/xuuid"
 )
 
-type ctxKeyRequestID struct{}
+type (
+	ctxKeyRequestID     struct{}
+	ctxKeyRequestHeader struct{}
+)
 
 const RequestIDHeader = "X-Request-Id"
 
@@ -19,6 +22,7 @@ func Middleware(next http.Handler) http.Handler {
 			requestID = xuuid.New().String()
 		}
 		ctx = context.WithValue(ctx, ctxKeyRequestID{}, requestID)
+		ctx = context.WithValue(ctx, ctxKeyRequestHeader{}, r.Header)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	}
 	return http.HandlerFunc(fn)
@@ -29,4 +33,11 @@ func GetRequestID(ctx context.Context) string {
 		return reqID
 	}
 	return ""
+}
+
+func GetRequestHeader(ctx context.Context) http.Header {
+	if header, ok := ctx.Value(ctxKeyRequestHeader{}).(http.Header); ok {
+		return header
+	}
+	return map[string][]string{}
 }

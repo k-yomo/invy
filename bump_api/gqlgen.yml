@@ -1,6 +1,6 @@
 # Where are all the schema files located? globs are supported eg  src/**/*.graphqls
 schema:
-  - ../defs/graphql/*.graphql
+  - ../defs/graphql/schema.graphql
 
 # Where should the generated server code go?
 exec:
@@ -42,7 +42,7 @@ resolver:
 # gqlgen will search for any type names in the schema in these go packages
 # if they match it will use them, otherwise it will generate them.
 autobind:
-#  - "github.com/shing-dev/shing/shing_api/graph/model"
+#  - "github.com/shing-dev/bump/bump_api/graph/model"
 
 # This section declares type mapping between the GraphQL and go type systems
 #
@@ -61,3 +61,9 @@ models:
       - github.com/99designs/gqlgen/graphql.Int
       - github.com/99designs/gqlgen/graphql.Int64
       - github.com/99designs/gqlgen/graphql.Int32
+  UUID:
+    model:
+      - github.com/k-yomo/bump/bump_api/graph/scalar.UUID
+  Cursor:
+    model:
+      - github.com/k-yomo/bump/bump_api/ent.Cursor

@@ -5,13 +5,13 @@ import 'package:logger/logger.dart';
 import '../util/logger_provider.dart';
 
 final authRepositoryProvider = Provider<BaseAuthRepository>(
-      (ref) => AuthRepository(
+  (ref) => AuthRepository(
     logger: ref.read(loggerProvider),
   ),
 );
 
 final authStateProvider =
-StreamProvider((ref) => ref.watch(authRepositoryProvider).authStateChange);
+    StreamProvider((ref) => ref.watch(authRepositoryProvider).authStateChange);
 
 abstract class BaseAuthRepository {
   Future<void> logIn({required String email, required String password});

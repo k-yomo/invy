@@ -21,7 +21,7 @@ class LoginScreen extends HookConsumerWidget {
                 child: ElevatedButton(
                     onPressed: () async {
                       try {
-                        final userCredential = await signInWithGoogle();
+                        await signInWithGoogle();
                       } on FirebaseAuthException catch (e) {
                         print('FirebaseAuthException');
                         print('${e.code}');
@@ -31,7 +31,6 @@ class LoginScreen extends HookConsumerWidget {
                       }
                     },
                     style: ElevatedButton.styleFrom(
-
                         backgroundColor: Colors.grey,
                         foregroundColor: textColor),
                     child: const Text('Google ログイン'))),
@@ -53,7 +52,12 @@ class LoginScreen extends HookConsumerWidget {
       accessToken: googleAuth.accessToken,
       idToken: googleAuth.idToken,
     );
-    // サインインしたら、UserCredentialを返す
-    return FirebaseAuth.instance.signInWithCredential(credential);
+    UserCredential userCredential =
+        await FirebaseAuth.instance.signInWithCredential(credential);
+    if (userCredential.additionalUserInfo != null &&
+        userCredential.additionalUserInfo!.isNewUser) {
+      // New user
+    }
+    return userCredential;
   }
 }

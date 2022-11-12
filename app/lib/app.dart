@@ -46,9 +46,9 @@ class App extends HookConsumerWidget {
     return MaterialApp(
       title: 'Bump',
       theme: ThemeData(
-      primarySwatch: materialWhite,
-    ),
-    darkTheme: ThemeData.dark(),
+        primarySwatch: materialWhite,
+      ),
+      darkTheme: ThemeData.dark(),
       home: authState.when(
         data: (data) {
           if (data != null) {
