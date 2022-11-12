@@ -8,6 +8,8 @@ import (
 	"fmt"
 	"time"
 
+	"entgo.io/ent/dialect"
+	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
@@ -20,6 +22,7 @@ type UserProfileCreate struct {
 	config
 	mutation *UserProfileMutation
 	hooks    []Hook
+	conflict []sql.ConflictOption
 }
 
 // SetUserID sets the "user_id" field.
@@ -93,6 +96,14 @@ func (upc *UserProfileCreate) SetNillableUpdatedAt(t *time.Time) *UserProfileCre
 // SetID sets the "id" field.
 func (upc *UserProfileCreate) SetID(u uuid.UUID) *UserProfileCreate {
 	upc.mutation.SetID(u)
+	return upc
+}
+
+// SetNillableID sets the "id" field if the given value is not nil.
+func (upc *UserProfileCreate) SetNillableID(u *uuid.UUID) *UserProfileCreate {
+	if u != nil {
+		upc.SetID(*u)
+	}
 	return upc
 }
 
@@ -186,6 +197,10 @@ func (upc *UserProfileCreate) defaults() {
 		v := userprofile.DefaultUpdatedAt()
 		upc.mutation.SetUpdatedAt(v)
 	}
+	if _, ok := upc.mutation.ID(); !ok {
+		v := userprofile.DefaultID()
+		upc.mutation.SetID(v)
+	}
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -237,48 +252,29 @@ func (upc *UserProfileCreate) createSpec() (*UserProfile, *sqlgraph.CreateSpec) 
 			},
 		}
 	)
+	_spec.OnConflict = upc.conflict
 	if id, ok := upc.mutation.ID(); ok {
 		_node.ID = id
 		_spec.ID.Value = &id
 	}
 	if value, ok := upc.mutation.Nickname(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: userprofile.FieldNickname,
-		})
+		_spec.SetField(userprofile.FieldNickname, field.TypeString, value)
 		_node.Nickname = value
 	}
 	if value, ok := upc.mutation.Email(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: userprofile.FieldEmail,
-		})
+		_spec.SetField(userprofile.FieldEmail, field.TypeString, value)
 		_node.Email = value
 	}
 	if value, ok := upc.mutation.AvatarURL(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: userprofile.FieldAvatarURL,
-		})
+		_spec.SetField(userprofile.FieldAvatarURL, field.TypeString, value)
 		_node.AvatarURL = &value
 	}
 	if value, ok := upc.mutation.CreatedAt(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeTime,
-			Value:  value,
-			Column: userprofile.FieldCreatedAt,
-		})
+		_spec.SetField(userprofile.FieldCreatedAt, field.TypeTime, value)
 		_node.CreatedAt = value
 	}
 	if value, ok := upc.mutation.UpdatedAt(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeTime,
-			Value:  value,
-			Column: userprofile.FieldUpdatedAt,
-		})
+		_spec.SetField(userprofile.FieldUpdatedAt, field.TypeTime, value)
 		_node.UpdatedAt = value
 	}
 	if nodes := upc.mutation.UserIDs(); len(nodes) > 0 {
@@ -304,10 +300,282 @@ func (upc *UserProfileCreate) createSpec() (*UserProfile, *sqlgraph.CreateSpec) 
 	return _node, _spec
 }
 
+// OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
+// of the `INSERT` statement. For example:
+//
+//	client.UserProfile.Create().
+//		SetUserID(v).
+//		OnConflict(
+//			// Update the row with the new values
+//			// the was proposed for insertion.
+//			sql.ResolveWithNewValues(),
+//		).
+//		// Override some of the fields with custom
+//		// update values.
+//		Update(func(u *ent.UserProfileUpsert) {
+//			SetUserID(v+v).
+//		}).
+//		Exec(ctx)
+func (upc *UserProfileCreate) OnConflict(opts ...sql.ConflictOption) *UserProfileUpsertOne {
+	upc.conflict = opts
+	return &UserProfileUpsertOne{
+		create: upc,
+	}
+}
+
+// OnConflictColumns calls `OnConflict` and configures the columns
+// as conflict target. Using this option is equivalent to using:
+//
+//	client.UserProfile.Create().
+//		OnConflict(sql.ConflictColumns(columns...)).
+//		Exec(ctx)
+func (upc *UserProfileCreate) OnConflictColumns(columns ...string) *UserProfileUpsertOne {
+	upc.conflict = append(upc.conflict, sql.ConflictColumns(columns...))
+	return &UserProfileUpsertOne{
+		create: upc,
+	}
+}
+
+type (
+	// UserProfileUpsertOne is the builder for "upsert"-ing
+	//  one UserProfile node.
+	UserProfileUpsertOne struct {
+		create *UserProfileCreate
+	}
+
+	// UserProfileUpsert is the "OnConflict" setter.
+	UserProfileUpsert struct {
+		*sql.UpdateSet
+	}
+)
+
+// SetNickname sets the "nickname" field.
+func (u *UserProfileUpsert) SetNickname(v string) *UserProfileUpsert {
+	u.Set(userprofile.FieldNickname, v)
+	return u
+}
+
+// UpdateNickname sets the "nickname" field to the value that was provided on create.
+func (u *UserProfileUpsert) UpdateNickname() *UserProfileUpsert {
+	u.SetExcluded(userprofile.FieldNickname)
+	return u
+}
+
+// SetEmail sets the "email" field.
+func (u *UserProfileUpsert) SetEmail(v string) *UserProfileUpsert {
+	u.Set(userprofile.FieldEmail, v)
+	return u
+}
+
+// UpdateEmail sets the "email" field to the value that was provided on create.
+func (u *UserProfileUpsert) UpdateEmail() *UserProfileUpsert {
+	u.SetExcluded(userprofile.FieldEmail)
+	return u
+}
+
+// ClearEmail clears the value of the "email" field.
+func (u *UserProfileUpsert) ClearEmail() *UserProfileUpsert {
+	u.SetNull(userprofile.FieldEmail)
+	return u
+}
+
+// SetAvatarURL sets the "avatar_url" field.
+func (u *UserProfileUpsert) SetAvatarURL(v string) *UserProfileUpsert {
+	u.Set(userprofile.FieldAvatarURL, v)
+	return u
+}
+
+// UpdateAvatarURL sets the "avatar_url" field to the value that was provided on create.
+func (u *UserProfileUpsert) UpdateAvatarURL() *UserProfileUpsert {
+	u.SetExcluded(userprofile.FieldAvatarURL)
+	return u
+}
+
+// ClearAvatarURL clears the value of the "avatar_url" field.
+func (u *UserProfileUpsert) ClearAvatarURL() *UserProfileUpsert {
+	u.SetNull(userprofile.FieldAvatarURL)
+	return u
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (u *UserProfileUpsert) SetUpdatedAt(v time.Time) *UserProfileUpsert {
+	u.Set(userprofile.FieldUpdatedAt, v)
+	return u
+}
+
+// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
+func (u *UserProfileUpsert) UpdateUpdatedAt() *UserProfileUpsert {
+	u.SetExcluded(userprofile.FieldUpdatedAt)
+	return u
+}
+
+// UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
+// Using this option is equivalent to using:
+//
+//	client.UserProfile.Create().
+//		OnConflict(
+//			sql.ResolveWithNewValues(),
+//			sql.ResolveWith(func(u *sql.UpdateSet) {
+//				u.SetIgnore(userprofile.FieldID)
+//			}),
+//		).
+//		Exec(ctx)
+func (u *UserProfileUpsertOne) UpdateNewValues() *UserProfileUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
+		if _, exists := u.create.mutation.ID(); exists {
+			s.SetIgnore(userprofile.FieldID)
+		}
+		if _, exists := u.create.mutation.UserID(); exists {
+			s.SetIgnore(userprofile.FieldUserID)
+		}
+		if _, exists := u.create.mutation.CreatedAt(); exists {
+			s.SetIgnore(userprofile.FieldCreatedAt)
+		}
+	}))
+	return u
+}
+
+// Ignore sets each column to itself in case of conflict.
+// Using this option is equivalent to using:
+//
+//	client.UserProfile.Create().
+//	    OnConflict(sql.ResolveWithIgnore()).
+//	    Exec(ctx)
+func (u *UserProfileUpsertOne) Ignore() *UserProfileUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
+	return u
+}
+
+// DoNothing configures the conflict_action to `DO NOTHING`.
+// Supported only by SQLite and PostgreSQL.
+func (u *UserProfileUpsertOne) DoNothing() *UserProfileUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.DoNothing())
+	return u
+}
+
+// Update allows overriding fields `UPDATE` values. See the UserProfileCreate.OnConflict
+// documentation for more info.
+func (u *UserProfileUpsertOne) Update(set func(*UserProfileUpsert)) *UserProfileUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(update *sql.UpdateSet) {
+		set(&UserProfileUpsert{UpdateSet: update})
+	}))
+	return u
+}
+
+// SetNickname sets the "nickname" field.
+func (u *UserProfileUpsertOne) SetNickname(v string) *UserProfileUpsertOne {
+	return u.Update(func(s *UserProfileUpsert) {
+		s.SetNickname(v)
+	})
+}
+
+// UpdateNickname sets the "nickname" field to the value that was provided on create.
+func (u *UserProfileUpsertOne) UpdateNickname() *UserProfileUpsertOne {
+	return u.Update(func(s *UserProfileUpsert) {
+		s.UpdateNickname()
+	})
+}
+
+// SetEmail sets the "email" field.
+func (u *UserProfileUpsertOne) SetEmail(v string) *UserProfileUpsertOne {
+	return u.Update(func(s *UserProfileUpsert) {
+		s.SetEmail(v)
+	})
+}
+
+// UpdateEmail sets the "email" field to the value that was provided on create.
+func (u *UserProfileUpsertOne) UpdateEmail() *UserProfileUpsertOne {
+	return u.Update(func(s *UserProfileUpsert) {
+		s.UpdateEmail()
+	})
+}
+
+// ClearEmail clears the value of the "email" field.
+func (u *UserProfileUpsertOne) ClearEmail() *UserProfileUpsertOne {
+	return u.Update(func(s *UserProfileUpsert) {
+		s.ClearEmail()
+	})
+}
+
+// SetAvatarURL sets the "avatar_url" field.
+func (u *UserProfileUpsertOne) SetAvatarURL(v string) *UserProfileUpsertOne {
+	return u.Update(func(s *UserProfileUpsert) {
+		s.SetAvatarURL(v)
+	})
+}
+
+// UpdateAvatarURL sets the "avatar_url" field to the value that was provided on create.
+func (u *UserProfileUpsertOne) UpdateAvatarURL() *UserProfileUpsertOne {
+	return u.Update(func(s *UserProfileUpsert) {
+		s.UpdateAvatarURL()
+	})
+}
+
+// ClearAvatarURL clears the value of the "avatar_url" field.
+func (u *UserProfileUpsertOne) ClearAvatarURL() *UserProfileUpsertOne {
+	return u.Update(func(s *UserProfileUpsert) {
+		s.ClearAvatarURL()
+	})
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (u *UserProfileUpsertOne) SetUpdatedAt(v time.Time) *UserProfileUpsertOne {
+	return u.Update(func(s *UserProfileUpsert) {
+		s.SetUpdatedAt(v)
+	})
+}
+
+// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
+func (u *UserProfileUpsertOne) UpdateUpdatedAt() *UserProfileUpsertOne {
+	return u.Update(func(s *UserProfileUpsert) {
+		s.UpdateUpdatedAt()
+	})
+}
+
+// Exec executes the query.
+func (u *UserProfileUpsertOne) Exec(ctx context.Context) error {
+	if len(u.create.conflict) == 0 {
+		return errors.New("ent: missing options for UserProfileCreate.OnConflict")
+	}
+	return u.create.Exec(ctx)
+}
+
+// ExecX is like Exec, but panics if an error occurs.
+func (u *UserProfileUpsertOne) ExecX(ctx context.Context) {
+	if err := u.create.Exec(ctx); err != nil {
+		panic(err)
+	}
+}
+
+// Exec executes the UPSERT query and returns the inserted/updated ID.
+func (u *UserProfileUpsertOne) ID(ctx context.Context) (id uuid.UUID, err error) {
+	if u.create.driver.Dialect() == dialect.MySQL {
+		// In case of "ON CONFLICT", there is no way to get back non-numeric ID
+		// fields from the database since MySQL does not support the RETURNING clause.
+		return id, errors.New("ent: UserProfileUpsertOne.ID is not supported by MySQL driver. Use UserProfileUpsertOne.Exec instead")
+	}
+	node, err := u.create.Save(ctx)
+	if err != nil {
+		return id, err
+	}
+	return node.ID, nil
+}
+
+// IDX is like ID, but panics if an error occurs.
+func (u *UserProfileUpsertOne) IDX(ctx context.Context) uuid.UUID {
+	id, err := u.ID(ctx)
+	if err != nil {
+		panic(err)
+	}
+	return id
+}
+
 // UserProfileCreateBulk is the builder for creating many UserProfile entities in bulk.
 type UserProfileCreateBulk struct {
 	config
 	builders []*UserProfileCreate
+	conflict []sql.ConflictOption
 }
 
 // Save creates the UserProfile entities in the database.
@@ -334,6 +602,7 @@ func (upcb *UserProfileCreateBulk) Save(ctx context.Context) ([]*UserProfile, er
 					_, err = mutators[i+1].Mutate(root, upcb.builders[i+1].mutation)
 				} else {
 					spec := &sqlgraph.BatchCreateSpec{Nodes: specs}
+					spec.OnConflict = upcb.conflict
 					// Invoke the actual operation on the latest mutation in the chain.
 					if err = sqlgraph.BatchCreate(ctx, upcb.driver, spec); err != nil {
 						if sqlgraph.IsConstraintError(err) {
@@ -380,6 +649,193 @@ func (upcb *UserProfileCreateBulk) Exec(ctx context.Context) error {
 // ExecX is like Exec, but panics if an error occurs.
 func (upcb *UserProfileCreateBulk) ExecX(ctx context.Context) {
 	if err := upcb.Exec(ctx); err != nil {
+		panic(err)
+	}
+}
+
+// OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
+// of the `INSERT` statement. For example:
+//
+//	client.UserProfile.CreateBulk(builders...).
+//		OnConflict(
+//			// Update the row with the new values
+//			// the was proposed for insertion.
+//			sql.ResolveWithNewValues(),
+//		).
+//		// Override some of the fields with custom
+//		// update values.
+//		Update(func(u *ent.UserProfileUpsert) {
+//			SetUserID(v+v).
+//		}).
+//		Exec(ctx)
+func (upcb *UserProfileCreateBulk) OnConflict(opts ...sql.ConflictOption) *UserProfileUpsertBulk {
+	upcb.conflict = opts
+	return &UserProfileUpsertBulk{
+		create: upcb,
+	}
+}
+
+// OnConflictColumns calls `OnConflict` and configures the columns
+// as conflict target. Using this option is equivalent to using:
+//
+//	client.UserProfile.Create().
+//		OnConflict(sql.ConflictColumns(columns...)).
+//		Exec(ctx)
+func (upcb *UserProfileCreateBulk) OnConflictColumns(columns ...string) *UserProfileUpsertBulk {
+	upcb.conflict = append(upcb.conflict, sql.ConflictColumns(columns...))
+	return &UserProfileUpsertBulk{
+		create: upcb,
+	}
+}
+
+// UserProfileUpsertBulk is the builder for "upsert"-ing
+// a bulk of UserProfile nodes.
+type UserProfileUpsertBulk struct {
+	create *UserProfileCreateBulk
+}
+
+// UpdateNewValues updates the mutable fields using the new values that
+// were set on create. Using this option is equivalent to using:
+//
+//	client.UserProfile.Create().
+//		OnConflict(
+//			sql.ResolveWithNewValues(),
+//			sql.ResolveWith(func(u *sql.UpdateSet) {
+//				u.SetIgnore(userprofile.FieldID)
+//			}),
+//		).
+//		Exec(ctx)
+func (u *UserProfileUpsertBulk) UpdateNewValues() *UserProfileUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
+		for _, b := range u.create.builders {
+			if _, exists := b.mutation.ID(); exists {
+				s.SetIgnore(userprofile.FieldID)
+			}
+			if _, exists := b.mutation.UserID(); exists {
+				s.SetIgnore(userprofile.FieldUserID)
+			}
+			if _, exists := b.mutation.CreatedAt(); exists {
+				s.SetIgnore(userprofile.FieldCreatedAt)
+			}
+		}
+	}))
+	return u
+}
+
+// Ignore sets each column to itself in case of conflict.
+// Using this option is equivalent to using:
+//
+//	client.UserProfile.Create().
+//		OnConflict(sql.ResolveWithIgnore()).
+//		Exec(ctx)
+func (u *UserProfileUpsertBulk) Ignore() *UserProfileUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
+	return u
+}
+
+// DoNothing configures the conflict_action to `DO NOTHING`.
+// Supported only by SQLite and PostgreSQL.
+func (u *UserProfileUpsertBulk) DoNothing() *UserProfileUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.DoNothing())
+	return u
+}
+
+// Update allows overriding fields `UPDATE` values. See the UserProfileCreateBulk.OnConflict
+// documentation for more info.
+func (u *UserProfileUpsertBulk) Update(set func(*UserProfileUpsert)) *UserProfileUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(update *sql.UpdateSet) {
+		set(&UserProfileUpsert{UpdateSet: update})
+	}))
+	return u
+}
+
+// SetNickname sets the "nickname" field.
+func (u *UserProfileUpsertBulk) SetNickname(v string) *UserProfileUpsertBulk {
+	return u.Update(func(s *UserProfileUpsert) {
+		s.SetNickname(v)
+	})
+}
+
+// UpdateNickname sets the "nickname" field to the value that was provided on create.
+func (u *UserProfileUpsertBulk) UpdateNickname() *UserProfileUpsertBulk {
+	return u.Update(func(s *UserProfileUpsert) {
+		s.UpdateNickname()
+	})
+}
+
+// SetEmail sets the "email" field.
+func (u *UserProfileUpsertBulk) SetEmail(v string) *UserProfileUpsertBulk {
+	return u.Update(func(s *UserProfileUpsert) {
+		s.SetEmail(v)
+	})
+}
+
+// UpdateEmail sets the "email" field to the value that was provided on create.
+func (u *UserProfileUpsertBulk) UpdateEmail() *UserProfileUpsertBulk {
+	return u.Update(func(s *UserProfileUpsert) {
+		s.UpdateEmail()
+	})
+}
+
+// ClearEmail clears the value of the "email" field.
+func (u *UserProfileUpsertBulk) ClearEmail() *UserProfileUpsertBulk {
+	return u.Update(func(s *UserProfileUpsert) {
+		s.ClearEmail()
+	})
+}
+
+// SetAvatarURL sets the "avatar_url" field.
+func (u *UserProfileUpsertBulk) SetAvatarURL(v string) *UserProfileUpsertBulk {
+	return u.Update(func(s *UserProfileUpsert) {
+		s.SetAvatarURL(v)
+	})
+}
+
+// UpdateAvatarURL sets the "avatar_url" field to the value that was provided on create.
+func (u *UserProfileUpsertBulk) UpdateAvatarURL() *UserProfileUpsertBulk {
+	return u.Update(func(s *UserProfileUpsert) {
+		s.UpdateAvatarURL()
+	})
+}
+
+// ClearAvatarURL clears the value of the "avatar_url" field.
+func (u *UserProfileUpsertBulk) ClearAvatarURL() *UserProfileUpsertBulk {
+	return u.Update(func(s *UserProfileUpsert) {
+		s.ClearAvatarURL()
+	})
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (u *UserProfileUpsertBulk) SetUpdatedAt(v time.Time) *UserProfileUpsertBulk {
+	return u.Update(func(s *UserProfileUpsert) {
+		s.SetUpdatedAt(v)
+	})
+}
+
+// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
+func (u *UserProfileUpsertBulk) UpdateUpdatedAt() *UserProfileUpsertBulk {
+	return u.Update(func(s *UserProfileUpsert) {
+		s.UpdateUpdatedAt()
+	})
+}
+
+// Exec executes the query.
+func (u *UserProfileUpsertBulk) Exec(ctx context.Context) error {
+	for i, b := range u.create.builders {
+		if len(b.conflict) != 0 {
+			return fmt.Errorf("ent: OnConflict was set for builder %d. Set it on the UserProfileCreateBulk instead", i)
+		}
+	}
+	if len(u.create.conflict) == 0 {
+		return errors.New("ent: missing options for UserProfileCreateBulk.OnConflict")
+	}
+	return u.create.Exec(ctx)
+}
+
+// ExecX is like Exec, but panics if an error occurs.
+func (u *UserProfileUpsertBulk) ExecX(ctx context.Context) {
+	if err := u.create.Exec(ctx); err != nil {
 		panic(err)
 	}
 }

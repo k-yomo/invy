@@ -13,6 +13,8 @@ import (
 	"github.com/k-yomo/bump/bump_api/ent"
 	"github.com/k-yomo/bump/bump_api/ent/friendship"
 	"github.com/k-yomo/bump/bump_api/ent/friendshiprequest"
+	user2 "github.com/k-yomo/bump/bump_api/ent/user"
+	"github.com/k-yomo/bump/bump_api/ent/userprofile"
 	"github.com/k-yomo/bump/bump_api/graph/conv"
 	"github.com/k-yomo/bump/bump_api/graph/gqlgen"
 	"github.com/k-yomo/bump/bump_api/graph/gqlmodel"
@@ -29,17 +31,24 @@ func (r *mutationResolver) SignUp(ctx context.Context, input *gqlmodel.SignUpInp
 	}
 
 	idToken := strings.Replace(authHeader, "Bearer ", "", 1)
-	token, err := r.firebaseAuthClient.VerifyIDToken(ctx, idToken)
+	token, err := r.FirebaseAuthClient.VerifyIDToken(ctx, idToken)
 	if err != nil {
 		return false, errors.New("unauthenticated")
 	}
 
-	firebaseUser, err := r.firebaseAuthClient.GetUser(ctx, token.UID)
+	firebaseUser, err := r.FirebaseAuthClient.GetUser(ctx, token.UID)
 	if err != nil {
 		return false, errors.New("unauthenticated")
 	}
 
 	err = ent.RunInTx(ctx, r.DBClient, func(tx *ent.Tx) error {
+		foundUser, err := tx.User.Query().Where(user2.AuthID(token.UID)).First(ctx)
+		if err != nil && !ent.IsNotFound(err) {
+			return err
+		}
+		if foundUser != nil {
+			return nil
+		}
 		user, err := tx.User.Create().SetAuthID(token.UID).Save(ctx)
 		if err != nil {
 			return err
@@ -57,7 +66,7 @@ func (r *mutationResolver) SignUp(ctx context.Context, input *gqlmodel.SignUpInp
 		claims := map[string]interface{}{
 			auth.UserIDClaimKey: user.ID,
 		}
-		if err := r.firebaseAuthClient.SetCustomUserClaims(ctx, token.UID, claims); err != nil {
+		if err := r.FirebaseAuthClient.SetCustomUserClaims(ctx, token.UID, claims); err != nil {
 			return err
 		}
 
@@ -154,7 +163,9 @@ func (r *mutationResolver) ApproveFriendShipRequest(ctx context.Context, friends
 
 // Viewer is the resolver for the viewer field.
 func (r *queryResolver) Viewer(ctx context.Context) (*gqlmodel.User, error) {
-	userProfile, err := r.DBClient.UserProfile.Get(ctx, auth.GetUserID(ctx))
+	userProfile, err := r.DBClient.UserProfile.Query().
+		Where(userprofile.UserID(auth.GetUserID(ctx))).
+		First(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -163,7 +174,9 @@ func (r *queryResolver) Viewer(ctx context.Context) (*gqlmodel.User, error) {
 
 // User is the resolver for the user field.
 func (r *queryResolver) User(ctx context.Context, userID uuid.UUID) (*gqlmodel.User, error) {
-	userProfile, err := r.DBClient.UserProfile.Get(ctx, userID)
+	userProfile, err := r.DBClient.UserProfile.Query().
+		Where(userprofile.UserID(userID)).
+		First(ctx)
 	if err != nil {
 		return nil, err
 	}

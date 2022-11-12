@@ -28,6 +28,7 @@ import (
 	_ "github.com/lib/pq"
 	"github.com/rs/cors"
 	"go.uber.org/zap"
+	"google.golang.org/api/option"
 )
 
 func main() {
@@ -64,7 +65,11 @@ func main() {
 		logger.Fatal("creating schema resources failed", zap.Error(err))
 	}
 
-	firebaseApp, err := firebase.NewApp(ctx, nil)
+	firebaseApp, err := firebase.NewApp(
+		ctx,
+		&firebase.Config{ProjectID: appConfig.GCPProjectID},
+		option.WithCredentialsFile(appConfig.FirebaseSecretKeyPath),
+	)
 	if err != nil {
 		logger.Fatal("initializing firebase app failed", zap.Error(err))
 	}
@@ -76,7 +81,8 @@ func main() {
 
 	gqlConfig := gqlgen.Config{
 		Resolvers: &graph.Resolver{
-			DBClient: dbClient,
+			DBClient:           dbClient,
+			FirebaseAuthClient: firebaseAuthClient,
 		},
 		Directives: gqlgen.DirectiveRoot{
 			AuthRequired: directive.AuthRequired,

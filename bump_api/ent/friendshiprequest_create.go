@@ -8,6 +8,8 @@ import (
 	"fmt"
 	"time"
 
+	"entgo.io/ent/dialect"
+	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
@@ -20,6 +22,7 @@ type FriendshipRequestCreate struct {
 	config
 	mutation *FriendshipRequestMutation
 	hooks    []Hook
+	conflict []sql.ConflictOption
 }
 
 // SetFromUserID sets the "from_user_id" field.
@@ -241,24 +244,17 @@ func (frc *FriendshipRequestCreate) createSpec() (*FriendshipRequest, *sqlgraph.
 			},
 		}
 	)
+	_spec.OnConflict = frc.conflict
 	if id, ok := frc.mutation.ID(); ok {
 		_node.ID = id
 		_spec.ID.Value = &id
 	}
 	if value, ok := frc.mutation.CreatedAt(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeTime,
-			Value:  value,
-			Column: friendshiprequest.FieldCreatedAt,
-		})
+		_spec.SetField(friendshiprequest.FieldCreatedAt, field.TypeTime, value)
 		_node.CreatedAt = value
 	}
 	if value, ok := frc.mutation.UpdatedAt(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeTime,
-			Value:  value,
-			Column: friendshiprequest.FieldUpdatedAt,
-		})
+		_spec.SetField(friendshiprequest.FieldUpdatedAt, field.TypeTime, value)
 		_node.UpdatedAt = value
 	}
 	if nodes := frc.mutation.FromUsersIDs(); len(nodes) > 0 {
@@ -304,10 +300,181 @@ func (frc *FriendshipRequestCreate) createSpec() (*FriendshipRequest, *sqlgraph.
 	return _node, _spec
 }
 
+// OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
+// of the `INSERT` statement. For example:
+//
+//	client.FriendshipRequest.Create().
+//		SetFromUserID(v).
+//		OnConflict(
+//			// Update the row with the new values
+//			// the was proposed for insertion.
+//			sql.ResolveWithNewValues(),
+//		).
+//		// Override some of the fields with custom
+//		// update values.
+//		Update(func(u *ent.FriendshipRequestUpsert) {
+//			SetFromUserID(v+v).
+//		}).
+//		Exec(ctx)
+func (frc *FriendshipRequestCreate) OnConflict(opts ...sql.ConflictOption) *FriendshipRequestUpsertOne {
+	frc.conflict = opts
+	return &FriendshipRequestUpsertOne{
+		create: frc,
+	}
+}
+
+// OnConflictColumns calls `OnConflict` and configures the columns
+// as conflict target. Using this option is equivalent to using:
+//
+//	client.FriendshipRequest.Create().
+//		OnConflict(sql.ConflictColumns(columns...)).
+//		Exec(ctx)
+func (frc *FriendshipRequestCreate) OnConflictColumns(columns ...string) *FriendshipRequestUpsertOne {
+	frc.conflict = append(frc.conflict, sql.ConflictColumns(columns...))
+	return &FriendshipRequestUpsertOne{
+		create: frc,
+	}
+}
+
+type (
+	// FriendshipRequestUpsertOne is the builder for "upsert"-ing
+	//  one FriendshipRequest node.
+	FriendshipRequestUpsertOne struct {
+		create *FriendshipRequestCreate
+	}
+
+	// FriendshipRequestUpsert is the "OnConflict" setter.
+	FriendshipRequestUpsert struct {
+		*sql.UpdateSet
+	}
+)
+
+// SetUpdatedAt sets the "updated_at" field.
+func (u *FriendshipRequestUpsert) SetUpdatedAt(v time.Time) *FriendshipRequestUpsert {
+	u.Set(friendshiprequest.FieldUpdatedAt, v)
+	return u
+}
+
+// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
+func (u *FriendshipRequestUpsert) UpdateUpdatedAt() *FriendshipRequestUpsert {
+	u.SetExcluded(friendshiprequest.FieldUpdatedAt)
+	return u
+}
+
+// UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
+// Using this option is equivalent to using:
+//
+//	client.FriendshipRequest.Create().
+//		OnConflict(
+//			sql.ResolveWithNewValues(),
+//			sql.ResolveWith(func(u *sql.UpdateSet) {
+//				u.SetIgnore(friendshiprequest.FieldID)
+//			}),
+//		).
+//		Exec(ctx)
+func (u *FriendshipRequestUpsertOne) UpdateNewValues() *FriendshipRequestUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
+		if _, exists := u.create.mutation.ID(); exists {
+			s.SetIgnore(friendshiprequest.FieldID)
+		}
+		if _, exists := u.create.mutation.FromUserID(); exists {
+			s.SetIgnore(friendshiprequest.FieldFromUserID)
+		}
+		if _, exists := u.create.mutation.ToUserID(); exists {
+			s.SetIgnore(friendshiprequest.FieldToUserID)
+		}
+		if _, exists := u.create.mutation.CreatedAt(); exists {
+			s.SetIgnore(friendshiprequest.FieldCreatedAt)
+		}
+	}))
+	return u
+}
+
+// Ignore sets each column to itself in case of conflict.
+// Using this option is equivalent to using:
+//
+//	client.FriendshipRequest.Create().
+//	    OnConflict(sql.ResolveWithIgnore()).
+//	    Exec(ctx)
+func (u *FriendshipRequestUpsertOne) Ignore() *FriendshipRequestUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
+	return u
+}
+
+// DoNothing configures the conflict_action to `DO NOTHING`.
+// Supported only by SQLite and PostgreSQL.
+func (u *FriendshipRequestUpsertOne) DoNothing() *FriendshipRequestUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.DoNothing())
+	return u
+}
+
+// Update allows overriding fields `UPDATE` values. See the FriendshipRequestCreate.OnConflict
+// documentation for more info.
+func (u *FriendshipRequestUpsertOne) Update(set func(*FriendshipRequestUpsert)) *FriendshipRequestUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(update *sql.UpdateSet) {
+		set(&FriendshipRequestUpsert{UpdateSet: update})
+	}))
+	return u
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (u *FriendshipRequestUpsertOne) SetUpdatedAt(v time.Time) *FriendshipRequestUpsertOne {
+	return u.Update(func(s *FriendshipRequestUpsert) {
+		s.SetUpdatedAt(v)
+	})
+}
+
+// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
+func (u *FriendshipRequestUpsertOne) UpdateUpdatedAt() *FriendshipRequestUpsertOne {
+	return u.Update(func(s *FriendshipRequestUpsert) {
+		s.UpdateUpdatedAt()
+	})
+}
+
+// Exec executes the query.
+func (u *FriendshipRequestUpsertOne) Exec(ctx context.Context) error {
+	if len(u.create.conflict) == 0 {
+		return errors.New("ent: missing options for FriendshipRequestCreate.OnConflict")
+	}
+	return u.create.Exec(ctx)
+}
+
+// ExecX is like Exec, but panics if an error occurs.
+func (u *FriendshipRequestUpsertOne) ExecX(ctx context.Context) {
+	if err := u.create.Exec(ctx); err != nil {
+		panic(err)
+	}
+}
+
+// Exec executes the UPSERT query and returns the inserted/updated ID.
+func (u *FriendshipRequestUpsertOne) ID(ctx context.Context) (id uuid.UUID, err error) {
+	if u.create.driver.Dialect() == dialect.MySQL {
+		// In case of "ON CONFLICT", there is no way to get back non-numeric ID
+		// fields from the database since MySQL does not support the RETURNING clause.
+		return id, errors.New("ent: FriendshipRequestUpsertOne.ID is not supported by MySQL driver. Use FriendshipRequestUpsertOne.Exec instead")
+	}
+	node, err := u.create.Save(ctx)
+	if err != nil {
+		return id, err
+	}
+	return node.ID, nil
+}
+
+// IDX is like ID, but panics if an error occurs.
+func (u *FriendshipRequestUpsertOne) IDX(ctx context.Context) uuid.UUID {
+	id, err := u.ID(ctx)
+	if err != nil {
+		panic(err)
+	}
+	return id
+}
+
 // FriendshipRequestCreateBulk is the builder for creating many FriendshipRequest entities in bulk.
 type FriendshipRequestCreateBulk struct {
 	config
 	builders []*FriendshipRequestCreate
+	conflict []sql.ConflictOption
 }
 
 // Save creates the FriendshipRequest entities in the database.
@@ -334,6 +501,7 @@ func (frcb *FriendshipRequestCreateBulk) Save(ctx context.Context) ([]*Friendshi
 					_, err = mutators[i+1].Mutate(root, frcb.builders[i+1].mutation)
 				} else {
 					spec := &sqlgraph.BatchCreateSpec{Nodes: specs}
+					spec.OnConflict = frcb.conflict
 					// Invoke the actual operation on the latest mutation in the chain.
 					if err = sqlgraph.BatchCreate(ctx, frcb.driver, spec); err != nil {
 						if sqlgraph.IsConstraintError(err) {
@@ -380,6 +548,140 @@ func (frcb *FriendshipRequestCreateBulk) Exec(ctx context.Context) error {
 // ExecX is like Exec, but panics if an error occurs.
 func (frcb *FriendshipRequestCreateBulk) ExecX(ctx context.Context) {
 	if err := frcb.Exec(ctx); err != nil {
+		panic(err)
+	}
+}
+
+// OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
+// of the `INSERT` statement. For example:
+//
+//	client.FriendshipRequest.CreateBulk(builders...).
+//		OnConflict(
+//			// Update the row with the new values
+//			// the was proposed for insertion.
+//			sql.ResolveWithNewValues(),
+//		).
+//		// Override some of the fields with custom
+//		// update values.
+//		Update(func(u *ent.FriendshipRequestUpsert) {
+//			SetFromUserID(v+v).
+//		}).
+//		Exec(ctx)
+func (frcb *FriendshipRequestCreateBulk) OnConflict(opts ...sql.ConflictOption) *FriendshipRequestUpsertBulk {
+	frcb.conflict = opts
+	return &FriendshipRequestUpsertBulk{
+		create: frcb,
+	}
+}
+
+// OnConflictColumns calls `OnConflict` and configures the columns
+// as conflict target. Using this option is equivalent to using:
+//
+//	client.FriendshipRequest.Create().
+//		OnConflict(sql.ConflictColumns(columns...)).
+//		Exec(ctx)
+func (frcb *FriendshipRequestCreateBulk) OnConflictColumns(columns ...string) *FriendshipRequestUpsertBulk {
+	frcb.conflict = append(frcb.conflict, sql.ConflictColumns(columns...))
+	return &FriendshipRequestUpsertBulk{
+		create: frcb,
+	}
+}
+
+// FriendshipRequestUpsertBulk is the builder for "upsert"-ing
+// a bulk of FriendshipRequest nodes.
+type FriendshipRequestUpsertBulk struct {
+	create *FriendshipRequestCreateBulk
+}
+
+// UpdateNewValues updates the mutable fields using the new values that
+// were set on create. Using this option is equivalent to using:
+//
+//	client.FriendshipRequest.Create().
+//		OnConflict(
+//			sql.ResolveWithNewValues(),
+//			sql.ResolveWith(func(u *sql.UpdateSet) {
+//				u.SetIgnore(friendshiprequest.FieldID)
+//			}),
+//		).
+//		Exec(ctx)
+func (u *FriendshipRequestUpsertBulk) UpdateNewValues() *FriendshipRequestUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
+		for _, b := range u.create.builders {
+			if _, exists := b.mutation.ID(); exists {
+				s.SetIgnore(friendshiprequest.FieldID)
+			}
+			if _, exists := b.mutation.FromUserID(); exists {
+				s.SetIgnore(friendshiprequest.FieldFromUserID)
+			}
+			if _, exists := b.mutation.ToUserID(); exists {
+				s.SetIgnore(friendshiprequest.FieldToUserID)
+			}
+			if _, exists := b.mutation.CreatedAt(); exists {
+				s.SetIgnore(friendshiprequest.FieldCreatedAt)
+			}
+		}
+	}))
+	return u
+}
+
+// Ignore sets each column to itself in case of conflict.
+// Using this option is equivalent to using:
+//
+//	client.FriendshipRequest.Create().
+//		OnConflict(sql.ResolveWithIgnore()).
+//		Exec(ctx)
+func (u *FriendshipRequestUpsertBulk) Ignore() *FriendshipRequestUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
+	return u
+}
+
+// DoNothing configures the conflict_action to `DO NOTHING`.
+// Supported only by SQLite and PostgreSQL.
+func (u *FriendshipRequestUpsertBulk) DoNothing() *FriendshipRequestUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.DoNothing())
+	return u
+}
+
+// Update allows overriding fields `UPDATE` values. See the FriendshipRequestCreateBulk.OnConflict
+// documentation for more info.
+func (u *FriendshipRequestUpsertBulk) Update(set func(*FriendshipRequestUpsert)) *FriendshipRequestUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(update *sql.UpdateSet) {
+		set(&FriendshipRequestUpsert{UpdateSet: update})
+	}))
+	return u
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (u *FriendshipRequestUpsertBulk) SetUpdatedAt(v time.Time) *FriendshipRequestUpsertBulk {
+	return u.Update(func(s *FriendshipRequestUpsert) {
+		s.SetUpdatedAt(v)
+	})
+}
+
+// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
+func (u *FriendshipRequestUpsertBulk) UpdateUpdatedAt() *FriendshipRequestUpsertBulk {
+	return u.Update(func(s *FriendshipRequestUpsert) {
+		s.UpdateUpdatedAt()
+	})
+}
+
+// Exec executes the query.
+func (u *FriendshipRequestUpsertBulk) Exec(ctx context.Context) error {
+	for i, b := range u.create.builders {
+		if len(b.conflict) != 0 {
+			return fmt.Errorf("ent: OnConflict was set for builder %d. Set it on the FriendshipRequestCreateBulk instead", i)
+		}
+	}
+	if len(u.create.conflict) == 0 {
+		return errors.New("ent: missing options for FriendshipRequestCreateBulk.OnConflict")
+	}
+	return u.create.Exec(ctx)
+}
+
+// ExecX is like Exec, but panics if an error occurs.
+func (u *FriendshipRequestUpsertBulk) ExecX(ctx context.Context) {
+	if err := u.create.Exec(ctx); err != nil {
 		panic(err)
 	}
 }

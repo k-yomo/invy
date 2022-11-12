@@ -181,44 +181,22 @@ func (upu *UserProfileUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 	}
 	if value, ok := upu.mutation.Nickname(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: userprofile.FieldNickname,
-		})
+		_spec.SetField(userprofile.FieldNickname, field.TypeString, value)
 	}
 	if value, ok := upu.mutation.Email(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: userprofile.FieldEmail,
-		})
+		_spec.SetField(userprofile.FieldEmail, field.TypeString, value)
 	}
 	if upu.mutation.EmailCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Column: userprofile.FieldEmail,
-		})
+		_spec.ClearField(userprofile.FieldEmail, field.TypeString)
 	}
 	if value, ok := upu.mutation.AvatarURL(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: userprofile.FieldAvatarURL,
-		})
+		_spec.SetField(userprofile.FieldAvatarURL, field.TypeString, value)
 	}
 	if upu.mutation.AvatarURLCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Column: userprofile.FieldAvatarURL,
-		})
+		_spec.ClearField(userprofile.FieldAvatarURL, field.TypeString)
 	}
 	if value, ok := upu.mutation.UpdatedAt(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeTime,
-			Value:  value,
-			Column: userprofile.FieldUpdatedAt,
-		})
+		_spec.SetField(userprofile.FieldUpdatedAt, field.TypeTime, value)
 	}
 	if n, err = sqlgraph.UpdateNodes(ctx, upu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -422,44 +400,22 @@ func (upuo *UserProfileUpdateOne) sqlSave(ctx context.Context) (_node *UserProfi
 		}
 	}
 	if value, ok := upuo.mutation.Nickname(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: userprofile.FieldNickname,
-		})
+		_spec.SetField(userprofile.FieldNickname, field.TypeString, value)
 	}
 	if value, ok := upuo.mutation.Email(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: userprofile.FieldEmail,
-		})
+		_spec.SetField(userprofile.FieldEmail, field.TypeString, value)
 	}
 	if upuo.mutation.EmailCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Column: userprofile.FieldEmail,
-		})
+		_spec.ClearField(userprofile.FieldEmail, field.TypeString)
 	}
 	if value, ok := upuo.mutation.AvatarURL(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: userprofile.FieldAvatarURL,
-		})
+		_spec.SetField(userprofile.FieldAvatarURL, field.TypeString, value)
 	}
 	if upuo.mutation.AvatarURLCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Column: userprofile.FieldAvatarURL,
-		})
+		_spec.ClearField(userprofile.FieldAvatarURL, field.TypeString)
 	}
 	if value, ok := upuo.mutation.UpdatedAt(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeTime,
-			Value:  value,
-			Column: userprofile.FieldUpdatedAt,
-		})
+		_spec.SetField(userprofile.FieldUpdatedAt, field.TypeTime, value)
 	}
 	_node = &UserProfile{config: upuo.config}
 	_spec.Assign = _node.assignValues

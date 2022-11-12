@@ -24,12 +24,13 @@ func (e Env) IsDeployed() bool {
 }
 
 type AppConfig struct {
-	Env                 Env      `default:"local" envconfig:"APP_ENV"`
-	Port                int      `default:"8000" envconfig:"PORT"`
-	GCPProjectID        string   `default:"local" envconfig:"GCP_PROJECT_ID"`
-	AllowedOrigins      []string `default:"http://localhost:3000,http://localhost:4000" envconfig:"ALLOWED_ORIGINS"`
-	SessionCookieDomain string   `default:"localhost" envconfig:"SESSION_COOKIE_DOMAIN"`
-	RootURL             string   `default:"http://localhost:8000" envconfig:"ROOT_URL"`
+	Env                   Env      `default:"local" envconfig:"APP_ENV"`
+	Port                  int      `default:"8000" envconfig:"PORT"`
+	GCPProjectID          string   `default:"bump-platform-prod" envconfig:"GCP_PROJECT_ID"`
+	FirebaseSecretKeyPath string   `envconfig:"FIREBASE_SECRET_KEY_PATH"`
+	AllowedOrigins        []string `default:"http://localhost:3000,http://localhost:4000" envconfig:"ALLOWED_ORIGINS"`
+	SessionCookieDomain   string   `default:"localhost" envconfig:"SESSION_COOKIE_DOMAIN"`
+	RootURL               string   `default:"http://localhost:8000" envconfig:"ROOT_URL"`
 
 	DBConfig   *DBConfig
 	LineConfig *LineConfig

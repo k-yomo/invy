@@ -138,11 +138,7 @@ func (fru *FriendshipRequestUpdate) sqlSave(ctx context.Context) (n int, err err
 		}
 	}
 	if value, ok := fru.mutation.UpdatedAt(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeTime,
-			Value:  value,
-			Column: friendshiprequest.FieldUpdatedAt,
-		})
+		_spec.SetField(friendshiprequest.FieldUpdatedAt, field.TypeTime, value)
 	}
 	if n, err = sqlgraph.UpdateNodes(ctx, fru.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -303,11 +299,7 @@ func (fruo *FriendshipRequestUpdateOne) sqlSave(ctx context.Context) (_node *Fri
 		}
 	}
 	if value, ok := fruo.mutation.UpdatedAt(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeTime,
-			Value:  value,
-			Column: friendshiprequest.FieldUpdatedAt,
-		})
+		_spec.SetField(friendshiprequest.FieldUpdatedAt, field.TypeTime, value)
 	}
 	_node = &FriendshipRequest{config: fruo.config}
 	_spec.Assign = _node.assignValues

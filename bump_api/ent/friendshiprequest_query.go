@@ -369,6 +369,11 @@ func (frq *FriendshipRequestQuery) Select(fields ...string) *FriendshipRequestSe
 	return selbuild
 }
 
+// Aggregate returns a FriendshipRequestSelect configured with the given aggregations.
+func (frq *FriendshipRequestQuery) Aggregate(fns ...AggregateFunc) *FriendshipRequestSelect {
+	return frq.Select().Aggregate(fns...)
+}
+
 func (frq *FriendshipRequestQuery) prepareQuery(ctx context.Context) error {
 	for _, f := range frq.fields {
 		if !friendshiprequest.ValidColumn(f) {
@@ -643,8 +648,6 @@ func (frgb *FriendshipRequestGroupBy) sqlQuery() *sql.Selector {
 	for _, fn := range frgb.fns {
 		aggregation = append(aggregation, fn(selector))
 	}
-	// If no columns were selected in a custom aggregation function, the default
-	// selection is the fields used for "group-by", and the aggregation functions.
 	if len(selector.SelectedColumns()) == 0 {
 		columns := make([]string, 0, len(frgb.fields)+len(frgb.fns))
 		for _, f := range frgb.fields {
@@ -664,6 +667,12 @@ type FriendshipRequestSelect struct {
 	sql *sql.Selector
 }
 
+// Aggregate adds the given aggregation functions to the selector query.
+func (frs *FriendshipRequestSelect) Aggregate(fns ...AggregateFunc) *FriendshipRequestSelect {
+	frs.fns = append(frs.fns, fns...)
+	return frs
+}
+
 // Scan applies the selector query and scans the result into the given value.
 func (frs *FriendshipRequestSelect) Scan(ctx context.Context, v any) error {
 	if err := frs.prepareQuery(ctx); err != nil {
@@ -674,6 +683,16 @@ func (frs *FriendshipRequestSelect) Scan(ctx context.Context, v any) error {
 }
 
 func (frs *FriendshipRequestSelect) sqlScan(ctx context.Context, v any) error {
+	aggregation := make([]string, 0, len(frs.fns))
+	for _, fn := range frs.fns {
+		aggregation = append(aggregation, fn(frs.sql))
+	}
+	switch n := len(*frs.selector.flds); {
+	case n == 0 && len(aggregation) > 0:
+		frs.sql.Select(aggregation...)
+	case n != 0 && len(aggregation) > 0:
+		frs.sql.AppendSelect(aggregation...)
+	}
 	rows := &sql.Rows{}
 	query, args := frs.sql.Query()
 	if err := frs.driver.Query(ctx, query, args, rows); err != nil {

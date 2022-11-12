@@ -12,5 +12,5 @@ import (
 //go:generate go run github.com/99designs/gqlgen
 type Resolver struct {
 	DBClient           *ent.Client
-	firebaseAuthClient *firebaseAuth.Client
+	FirebaseAuthClient *firebaseAuth.Client
 }

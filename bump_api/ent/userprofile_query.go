@@ -334,6 +334,11 @@ func (upq *UserProfileQuery) Select(fields ...string) *UserProfileSelect {
 	return selbuild
 }
 
+// Aggregate returns a UserProfileSelect configured with the given aggregations.
+func (upq *UserProfileQuery) Aggregate(fns ...AggregateFunc) *UserProfileSelect {
+	return upq.Select().Aggregate(fns...)
+}
+
 func (upq *UserProfileQuery) prepareQuery(ctx context.Context) error {
 	for _, f := range upq.fields {
 		if !userprofile.ValidColumn(f) {
@@ -575,8 +580,6 @@ func (upgb *UserProfileGroupBy) sqlQuery() *sql.Selector {
 	for _, fn := range upgb.fns {
 		aggregation = append(aggregation, fn(selector))
 	}
-	// If no columns were selected in a custom aggregation function, the default
-	// selection is the fields used for "group-by", and the aggregation functions.
 	if len(selector.SelectedColumns()) == 0 {
 		columns := make([]string, 0, len(upgb.fields)+len(upgb.fns))
 		for _, f := range upgb.fields {
@@ -596,6 +599,12 @@ type UserProfileSelect struct {
 	sql *sql.Selector
 }
 
+// Aggregate adds the given aggregation functions to the selector query.
+func (ups *UserProfileSelect) Aggregate(fns ...AggregateFunc) *UserProfileSelect {
+	ups.fns = append(ups.fns, fns...)
+	return ups
+}
+
 // Scan applies the selector query and scans the result into the given value.
 func (ups *UserProfileSelect) Scan(ctx context.Context, v any) error {
 	if err := ups.prepareQuery(ctx); err != nil {
@@ -606,6 +615,16 @@ func (ups *UserProfileSelect) Scan(ctx context.Context, v any) error {
 }
 
 func (ups *UserProfileSelect) sqlScan(ctx context.Context, v any) error {
+	aggregation := make([]string, 0, len(ups.fns))
+	for _, fn := range ups.fns {
+		aggregation = append(aggregation, fn(ups.sql))
+	}
+	switch n := len(*ups.selector.flds); {
+	case n == 0 && len(aggregation) > 0:
+		ups.sql.Select(aggregation...)
+	case n != 0 && len(aggregation) > 0:
+		ups.sql.AppendSelect(aggregation...)
+	}
 	rows := &sql.Rows{}
 	query, args := ups.sql.Query()
 	if err := ups.driver.Query(ctx, query, args, rows); err != nil {

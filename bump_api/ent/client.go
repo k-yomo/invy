@@ -201,7 +201,7 @@ func (c *FriendshipClient) DeleteOne(f *Friendship) *FriendshipDeleteOne {
 	return c.DeleteOneID(f.ID)
 }
 
-// DeleteOne returns a builder for deleting the given entity by its id.
+// DeleteOneID returns a builder for deleting the given entity by its id.
 func (c *FriendshipClient) DeleteOneID(id uuid.UUID) *FriendshipDeleteOne {
 	builder := c.Delete().Where(friendship.ID(id))
 	builder.mutation.id = &id
@@ -233,7 +233,7 @@ func (c *FriendshipClient) GetX(ctx context.Context, id uuid.UUID) *Friendship {
 // QueryUser queries the user edge of a Friendship.
 func (c *FriendshipClient) QueryUser(f *Friendship) *UserQuery {
 	query := &UserQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := f.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(friendship.Table, friendship.FieldID, id),
@@ -249,7 +249,7 @@ func (c *FriendshipClient) QueryUser(f *Friendship) *UserQuery {
 // QueryFriend queries the friend edge of a Friendship.
 func (c *FriendshipClient) QueryFriend(f *Friendship) *UserQuery {
 	query := &UserQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := f.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(friendship.Table, friendship.FieldID, id),
@@ -323,7 +323,7 @@ func (c *FriendshipRequestClient) DeleteOne(fr *FriendshipRequest) *FriendshipRe
 	return c.DeleteOneID(fr.ID)
 }
 
-// DeleteOne returns a builder for deleting the given entity by its id.
+// DeleteOneID returns a builder for deleting the given entity by its id.
 func (c *FriendshipRequestClient) DeleteOneID(id uuid.UUID) *FriendshipRequestDeleteOne {
 	builder := c.Delete().Where(friendshiprequest.ID(id))
 	builder.mutation.id = &id
@@ -355,7 +355,7 @@ func (c *FriendshipRequestClient) GetX(ctx context.Context, id uuid.UUID) *Frien
 // QueryFromUsers queries the from_users edge of a FriendshipRequest.
 func (c *FriendshipRequestClient) QueryFromUsers(fr *FriendshipRequest) *UserQuery {
 	query := &UserQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := fr.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(friendshiprequest.Table, friendshiprequest.FieldID, id),
@@ -371,7 +371,7 @@ func (c *FriendshipRequestClient) QueryFromUsers(fr *FriendshipRequest) *UserQue
 // QueryToUsers queries the to_users edge of a FriendshipRequest.
 func (c *FriendshipRequestClient) QueryToUsers(fr *FriendshipRequest) *UserQuery {
 	query := &UserQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := fr.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(friendshiprequest.Table, friendshiprequest.FieldID, id),
@@ -445,7 +445,7 @@ func (c *UserClient) DeleteOne(u *User) *UserDeleteOne {
 	return c.DeleteOneID(u.ID)
 }
 
-// DeleteOne returns a builder for deleting the given entity by its id.
+// DeleteOneID returns a builder for deleting the given entity by its id.
 func (c *UserClient) DeleteOneID(id uuid.UUID) *UserDeleteOne {
 	builder := c.Delete().Where(user.ID(id))
 	builder.mutation.id = &id
@@ -477,7 +477,7 @@ func (c *UserClient) GetX(ctx context.Context, id uuid.UUID) *User {
 // QueryUserProfile queries the user_profile edge of a User.
 func (c *UserClient) QueryUserProfile(u *User) *UserProfileQuery {
 	query := &UserProfileQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := u.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(user.Table, user.FieldID, id),
@@ -493,7 +493,7 @@ func (c *UserClient) QueryUserProfile(u *User) *UserProfileQuery {
 // QueryFriends queries the friends edge of a User.
 func (c *UserClient) QueryFriends(u *User) *UserQuery {
 	query := &UserQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := u.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(user.Table, user.FieldID, id),
@@ -509,7 +509,7 @@ func (c *UserClient) QueryFriends(u *User) *UserQuery {
 // QueryFriendships queries the friendships edge of a User.
 func (c *UserClient) QueryFriendships(u *User) *FriendshipQuery {
 	query := &FriendshipQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := u.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(user.Table, user.FieldID, id),
@@ -583,7 +583,7 @@ func (c *UserProfileClient) DeleteOne(up *UserProfile) *UserProfileDeleteOne {
 	return c.DeleteOneID(up.ID)
 }
 
-// DeleteOne returns a builder for deleting the given entity by its id.
+// DeleteOneID returns a builder for deleting the given entity by its id.
 func (c *UserProfileClient) DeleteOneID(id uuid.UUID) *UserProfileDeleteOne {
 	builder := c.Delete().Where(userprofile.ID(id))
 	builder.mutation.id = &id
@@ -615,7 +615,7 @@ func (c *UserProfileClient) GetX(ctx context.Context, id uuid.UUID) *UserProfile
 // QueryUser queries the user edge of a UserProfile.
 func (c *UserProfileClient) QueryUser(up *UserProfile) *UserQuery {
 	query := &UserQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := up.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(userprofile.Table, userprofile.FieldID, id),

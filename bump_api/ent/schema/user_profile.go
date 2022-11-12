@@ -17,7 +17,9 @@ type UserProfile struct {
 // Fields of the UserProfile.
 func (UserProfile) Fields() []ent.Field {
 	return []ent.Field{
-		field.UUID("id", uuid.UUID{}).Immutable(),
+		field.UUID("id", uuid.UUID{}).
+			Default(uuid.New).
+			Immutable(),
 		field.UUID("user_id", uuid.UUID{}).Immutable(),
 		field.String("nickname"),
 		field.String("email").Unique().Optional(),
