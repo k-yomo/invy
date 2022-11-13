@@ -24,9 +24,11 @@ type config struct {
 
 // hooks per client, for fast access.
 type hooks struct {
+	FriendGroup       []ent.Hook
 	Friendship        []ent.Hook
 	FriendshipRequest []ent.Hook
 	User              []ent.Hook
+	UserFriendGroup   []ent.Hook
 	UserProfile       []ent.Hook
 }
 

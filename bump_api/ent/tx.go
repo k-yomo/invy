@@ -12,12 +12,16 @@ import (
 // Tx is a transactional client that is created by calling Client.Tx().
 type Tx struct {
 	config
+	// FriendGroup is the client for interacting with the FriendGroup builders.
+	FriendGroup *FriendGroupClient
 	// Friendship is the client for interacting with the Friendship builders.
 	Friendship *FriendshipClient
 	// FriendshipRequest is the client for interacting with the FriendshipRequest builders.
 	FriendshipRequest *FriendshipRequestClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
+	// UserFriendGroup is the client for interacting with the UserFriendGroup builders.
+	UserFriendGroup *UserFriendGroupClient
 	// UserProfile is the client for interacting with the UserProfile builders.
 	UserProfile *UserProfileClient
 
@@ -151,9 +155,11 @@ func (tx *Tx) Client() *Client {
 }
 
 func (tx *Tx) init() {
+	tx.FriendGroup = NewFriendGroupClient(tx.config)
 	tx.Friendship = NewFriendshipClient(tx.config)
 	tx.FriendshipRequest = NewFriendshipRequestClient(tx.config)
 	tx.User = NewUserClient(tx.config)
+	tx.UserFriendGroup = NewUserFriendGroupClient(tx.config)
 	tx.UserProfile = NewUserProfileClient(tx.config)
 }
 
@@ -164,7 +170,7 @@ func (tx *Tx) init() {
 // of them in order to commit or rollback the transaction.
 //
 // If a closed transaction is embedded in one of the generated entities, and the entity
-// applies a query, for example: Friendship.QueryXXX(), the query will be executed
+// applies a query, for example: FriendGroup.QueryXXX(), the query will be executed
 // through the driver which created this transaction.
 //
 // Note that txDriver is not goroutine safe.

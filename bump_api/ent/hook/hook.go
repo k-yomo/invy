@@ -9,6 +9,19 @@ import (
 	"github.com/k-yomo/bump/bump_api/ent"
 )
 
+// The FriendGroupFunc type is an adapter to allow the use of ordinary
+// function as FriendGroup mutator.
+type FriendGroupFunc func(context.Context, *ent.FriendGroupMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f FriendGroupFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.FriendGroupMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.FriendGroupMutation", m)
+	}
+	return f(ctx, mv)
+}
+
 // The FriendshipFunc type is an adapter to allow the use of ordinary
 // function as Friendship mutator.
 type FriendshipFunc func(context.Context, *ent.FriendshipMutation) (ent.Value, error)
@@ -44,6 +57,19 @@ func (f UserFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error)
 	mv, ok := m.(*ent.UserMutation)
 	if !ok {
 		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.UserMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The UserFriendGroupFunc type is an adapter to allow the use of ordinary
+// function as UserFriendGroup mutator.
+type UserFriendGroupFunc func(context.Context, *ent.UserFriendGroupMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f UserFriendGroupFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.UserFriendGroupMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.UserFriendGroupMutation", m)
 	}
 	return f(ctx, mv)
 }

@@ -21,8 +21,14 @@ const (
 	EdgeUserProfile = "user_profile"
 	// EdgeFriendUsers holds the string denoting the friend_users edge name in mutations.
 	EdgeFriendUsers = "friend_users"
+	// EdgeFriendGroups holds the string denoting the friend_groups edge name in mutations.
+	EdgeFriendGroups = "friend_groups"
+	// EdgeBelongingFriendGroups holds the string denoting the belonging_friend_groups edge name in mutations.
+	EdgeBelongingFriendGroups = "belonging_friend_groups"
 	// EdgeFriendships holds the string denoting the friendships edge name in mutations.
 	EdgeFriendships = "friendships"
+	// EdgeUserFriendGroups holds the string denoting the user_friend_groups edge name in mutations.
+	EdgeUserFriendGroups = "user_friend_groups"
 	// Table holds the table name of the user in the database.
 	Table = "users"
 	// UserProfileTable is the table that holds the user_profile relation/edge.
@@ -34,6 +40,18 @@ const (
 	UserProfileColumn = "user_id"
 	// FriendUsersTable is the table that holds the friend_users relation/edge. The primary key declared below.
 	FriendUsersTable = "friendships"
+	// FriendGroupsTable is the table that holds the friend_groups relation/edge.
+	FriendGroupsTable = "friend_groups"
+	// FriendGroupsInverseTable is the table name for the FriendGroup entity.
+	// It exists in this package in order to avoid circular dependency with the "friendgroup" package.
+	FriendGroupsInverseTable = "friend_groups"
+	// FriendGroupsColumn is the table column denoting the friend_groups relation/edge.
+	FriendGroupsColumn = "user_id"
+	// BelongingFriendGroupsTable is the table that holds the belonging_friend_groups relation/edge. The primary key declared below.
+	BelongingFriendGroupsTable = "user_friend_groups"
+	// BelongingFriendGroupsInverseTable is the table name for the FriendGroup entity.
+	// It exists in this package in order to avoid circular dependency with the "friendgroup" package.
+	BelongingFriendGroupsInverseTable = "friend_groups"
 	// FriendshipsTable is the table that holds the friendships relation/edge.
 	FriendshipsTable = "friendships"
 	// FriendshipsInverseTable is the table name for the Friendship entity.
@@ -41,6 +59,13 @@ const (
 	FriendshipsInverseTable = "friendships"
 	// FriendshipsColumn is the table column denoting the friendships relation/edge.
 	FriendshipsColumn = "user_id"
+	// UserFriendGroupsTable is the table that holds the user_friend_groups relation/edge.
+	UserFriendGroupsTable = "user_friend_groups"
+	// UserFriendGroupsInverseTable is the table name for the UserFriendGroup entity.
+	// It exists in this package in order to avoid circular dependency with the "userfriendgroup" package.
+	UserFriendGroupsInverseTable = "user_friend_groups"
+	// UserFriendGroupsColumn is the table column denoting the user_friend_groups relation/edge.
+	UserFriendGroupsColumn = "user_id"
 )
 
 // Columns holds all SQL columns for user fields.
@@ -54,6 +79,9 @@ var (
 	// FriendUsersPrimaryKey and FriendUsersColumn2 are the table columns denoting the
 	// primary key for the friend_users relation (M2M).
 	FriendUsersPrimaryKey = []string{"user_id", "friend_user_id"}
+	// BelongingFriendGroupsPrimaryKey and BelongingFriendGroupsColumn2 are the table columns denoting the
+	// primary key for the belonging_friend_groups relation (M2M).
+	BelongingFriendGroupsPrimaryKey = []string{"friend_group_id", "user_id"}
 )
 
 // ValidColumn reports if the column name is valid (part of the table columns).

@@ -11,9 +11,11 @@ import (
 	"github.com/google/uuid"
 	"github.com/k-yomo/bump/bump_api/ent/migrate"
 
+	"github.com/k-yomo/bump/bump_api/ent/friendgroup"
 	"github.com/k-yomo/bump/bump_api/ent/friendship"
 	"github.com/k-yomo/bump/bump_api/ent/friendshiprequest"
 	"github.com/k-yomo/bump/bump_api/ent/user"
+	"github.com/k-yomo/bump/bump_api/ent/userfriendgroup"
 	"github.com/k-yomo/bump/bump_api/ent/userprofile"
 
 	"entgo.io/ent/dialect"
@@ -26,12 +28,16 @@ type Client struct {
 	config
 	// Schema is the client for creating, migrating and dropping schema.
 	Schema *migrate.Schema
+	// FriendGroup is the client for interacting with the FriendGroup builders.
+	FriendGroup *FriendGroupClient
 	// Friendship is the client for interacting with the Friendship builders.
 	Friendship *FriendshipClient
 	// FriendshipRequest is the client for interacting with the FriendshipRequest builders.
 	FriendshipRequest *FriendshipRequestClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
+	// UserFriendGroup is the client for interacting with the UserFriendGroup builders.
+	UserFriendGroup *UserFriendGroupClient
 	// UserProfile is the client for interacting with the UserProfile builders.
 	UserProfile *UserProfileClient
 }
@@ -47,9 +53,11 @@ func NewClient(opts ...Option) *Client {
 
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
+	c.FriendGroup = NewFriendGroupClient(c.config)
 	c.Friendship = NewFriendshipClient(c.config)
 	c.FriendshipRequest = NewFriendshipRequestClient(c.config)
 	c.User = NewUserClient(c.config)
+	c.UserFriendGroup = NewUserFriendGroupClient(c.config)
 	c.UserProfile = NewUserProfileClient(c.config)
 }
 
@@ -84,9 +92,11 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	return &Tx{
 		ctx:               ctx,
 		config:            cfg,
+		FriendGroup:       NewFriendGroupClient(cfg),
 		Friendship:        NewFriendshipClient(cfg),
 		FriendshipRequest: NewFriendshipRequestClient(cfg),
 		User:              NewUserClient(cfg),
+		UserFriendGroup:   NewUserFriendGroupClient(cfg),
 		UserProfile:       NewUserProfileClient(cfg),
 	}, nil
 }
@@ -107,9 +117,11 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	return &Tx{
 		ctx:               ctx,
 		config:            cfg,
+		FriendGroup:       NewFriendGroupClient(cfg),
 		Friendship:        NewFriendshipClient(cfg),
 		FriendshipRequest: NewFriendshipRequestClient(cfg),
 		User:              NewUserClient(cfg),
+		UserFriendGroup:   NewUserFriendGroupClient(cfg),
 		UserProfile:       NewUserProfileClient(cfg),
 	}, nil
 }
@@ -117,7 +129,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 // Debug returns a new debug-client. It's used to get verbose logging on specific operations.
 //
 //	client.Debug().
-//		Friendship.
+//		FriendGroup.
 //		Query().
 //		Count(ctx)
 func (c *Client) Debug() *Client {
@@ -139,10 +151,150 @@ func (c *Client) Close() error {
 // Use adds the mutation hooks to all the entity clients.
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
+	c.FriendGroup.Use(hooks...)
 	c.Friendship.Use(hooks...)
 	c.FriendshipRequest.Use(hooks...)
 	c.User.Use(hooks...)
+	c.UserFriendGroup.Use(hooks...)
 	c.UserProfile.Use(hooks...)
+}
+
+// FriendGroupClient is a client for the FriendGroup schema.
+type FriendGroupClient struct {
+	config
+}
+
+// NewFriendGroupClient returns a client for the FriendGroup from the given config.
+func NewFriendGroupClient(c config) *FriendGroupClient {
+	return &FriendGroupClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `friendgroup.Hooks(f(g(h())))`.
+func (c *FriendGroupClient) Use(hooks ...Hook) {
+	c.hooks.FriendGroup = append(c.hooks.FriendGroup, hooks...)
+}
+
+// Create returns a builder for creating a FriendGroup entity.
+func (c *FriendGroupClient) Create() *FriendGroupCreate {
+	mutation := newFriendGroupMutation(c.config, OpCreate)
+	return &FriendGroupCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of FriendGroup entities.
+func (c *FriendGroupClient) CreateBulk(builders ...*FriendGroupCreate) *FriendGroupCreateBulk {
+	return &FriendGroupCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for FriendGroup.
+func (c *FriendGroupClient) Update() *FriendGroupUpdate {
+	mutation := newFriendGroupMutation(c.config, OpUpdate)
+	return &FriendGroupUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *FriendGroupClient) UpdateOne(fg *FriendGroup) *FriendGroupUpdateOne {
+	mutation := newFriendGroupMutation(c.config, OpUpdateOne, withFriendGroup(fg))
+	return &FriendGroupUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *FriendGroupClient) UpdateOneID(id uuid.UUID) *FriendGroupUpdateOne {
+	mutation := newFriendGroupMutation(c.config, OpUpdateOne, withFriendGroupID(id))
+	return &FriendGroupUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for FriendGroup.
+func (c *FriendGroupClient) Delete() *FriendGroupDelete {
+	mutation := newFriendGroupMutation(c.config, OpDelete)
+	return &FriendGroupDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *FriendGroupClient) DeleteOne(fg *FriendGroup) *FriendGroupDeleteOne {
+	return c.DeleteOneID(fg.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *FriendGroupClient) DeleteOneID(id uuid.UUID) *FriendGroupDeleteOne {
+	builder := c.Delete().Where(friendgroup.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &FriendGroupDeleteOne{builder}
+}
+
+// Query returns a query builder for FriendGroup.
+func (c *FriendGroupClient) Query() *FriendGroupQuery {
+	return &FriendGroupQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a FriendGroup entity by its id.
+func (c *FriendGroupClient) Get(ctx context.Context, id uuid.UUID) (*FriendGroup, error) {
+	return c.Query().Where(friendgroup.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *FriendGroupClient) GetX(ctx context.Context, id uuid.UUID) *FriendGroup {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryUser queries the user edge of a FriendGroup.
+func (c *FriendGroupClient) QueryUser(fg *FriendGroup) *UserQuery {
+	query := &UserQuery{config: c.config}
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := fg.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(friendgroup.Table, friendgroup.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, friendgroup.UserTable, friendgroup.UserColumn),
+		)
+		fromV = sqlgraph.Neighbors(fg.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryFriendUsers queries the friend_users edge of a FriendGroup.
+func (c *FriendGroupClient) QueryFriendUsers(fg *FriendGroup) *UserQuery {
+	query := &UserQuery{config: c.config}
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := fg.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(friendgroup.Table, friendgroup.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, friendgroup.FriendUsersTable, friendgroup.FriendUsersPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(fg.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryUserFriendGroups queries the user_friend_groups edge of a FriendGroup.
+func (c *FriendGroupClient) QueryUserFriendGroups(fg *FriendGroup) *UserFriendGroupQuery {
+	query := &UserFriendGroupQuery{config: c.config}
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := fg.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(friendgroup.Table, friendgroup.FieldID, id),
+			sqlgraph.To(userfriendgroup.Table, userfriendgroup.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, true, friendgroup.UserFriendGroupsTable, friendgroup.UserFriendGroupsColumn),
+		)
+		fromV = sqlgraph.Neighbors(fg.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *FriendGroupClient) Hooks() []Hook {
+	return c.hooks.FriendGroup
 }
 
 // FriendshipClient is a client for the Friendship schema.
@@ -506,6 +658,38 @@ func (c *UserClient) QueryFriendUsers(u *User) *UserQuery {
 	return query
 }
 
+// QueryFriendGroups queries the friend_groups edge of a User.
+func (c *UserClient) QueryFriendGroups(u *User) *FriendGroupQuery {
+	query := &FriendGroupQuery{config: c.config}
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := u.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(friendgroup.Table, friendgroup.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, true, user.FriendGroupsTable, user.FriendGroupsColumn),
+		)
+		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryBelongingFriendGroups queries the belonging_friend_groups edge of a User.
+func (c *UserClient) QueryBelongingFriendGroups(u *User) *FriendGroupQuery {
+	query := &FriendGroupQuery{config: c.config}
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := u.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(friendgroup.Table, friendgroup.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, user.BelongingFriendGroupsTable, user.BelongingFriendGroupsPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // QueryFriendships queries the friendships edge of a User.
 func (c *UserClient) QueryFriendships(u *User) *FriendshipQuery {
 	query := &FriendshipQuery{config: c.config}
@@ -522,9 +706,147 @@ func (c *UserClient) QueryFriendships(u *User) *FriendshipQuery {
 	return query
 }
 
+// QueryUserFriendGroups queries the user_friend_groups edge of a User.
+func (c *UserClient) QueryUserFriendGroups(u *User) *UserFriendGroupQuery {
+	query := &UserFriendGroupQuery{config: c.config}
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := u.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(userfriendgroup.Table, userfriendgroup.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, true, user.UserFriendGroupsTable, user.UserFriendGroupsColumn),
+		)
+		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *UserClient) Hooks() []Hook {
 	return c.hooks.User
+}
+
+// UserFriendGroupClient is a client for the UserFriendGroup schema.
+type UserFriendGroupClient struct {
+	config
+}
+
+// NewUserFriendGroupClient returns a client for the UserFriendGroup from the given config.
+func NewUserFriendGroupClient(c config) *UserFriendGroupClient {
+	return &UserFriendGroupClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `userfriendgroup.Hooks(f(g(h())))`.
+func (c *UserFriendGroupClient) Use(hooks ...Hook) {
+	c.hooks.UserFriendGroup = append(c.hooks.UserFriendGroup, hooks...)
+}
+
+// Create returns a builder for creating a UserFriendGroup entity.
+func (c *UserFriendGroupClient) Create() *UserFriendGroupCreate {
+	mutation := newUserFriendGroupMutation(c.config, OpCreate)
+	return &UserFriendGroupCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of UserFriendGroup entities.
+func (c *UserFriendGroupClient) CreateBulk(builders ...*UserFriendGroupCreate) *UserFriendGroupCreateBulk {
+	return &UserFriendGroupCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for UserFriendGroup.
+func (c *UserFriendGroupClient) Update() *UserFriendGroupUpdate {
+	mutation := newUserFriendGroupMutation(c.config, OpUpdate)
+	return &UserFriendGroupUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *UserFriendGroupClient) UpdateOne(ufg *UserFriendGroup) *UserFriendGroupUpdateOne {
+	mutation := newUserFriendGroupMutation(c.config, OpUpdateOne, withUserFriendGroup(ufg))
+	return &UserFriendGroupUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *UserFriendGroupClient) UpdateOneID(id uuid.UUID) *UserFriendGroupUpdateOne {
+	mutation := newUserFriendGroupMutation(c.config, OpUpdateOne, withUserFriendGroupID(id))
+	return &UserFriendGroupUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for UserFriendGroup.
+func (c *UserFriendGroupClient) Delete() *UserFriendGroupDelete {
+	mutation := newUserFriendGroupMutation(c.config, OpDelete)
+	return &UserFriendGroupDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *UserFriendGroupClient) DeleteOne(ufg *UserFriendGroup) *UserFriendGroupDeleteOne {
+	return c.DeleteOneID(ufg.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *UserFriendGroupClient) DeleteOneID(id uuid.UUID) *UserFriendGroupDeleteOne {
+	builder := c.Delete().Where(userfriendgroup.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &UserFriendGroupDeleteOne{builder}
+}
+
+// Query returns a query builder for UserFriendGroup.
+func (c *UserFriendGroupClient) Query() *UserFriendGroupQuery {
+	return &UserFriendGroupQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a UserFriendGroup entity by its id.
+func (c *UserFriendGroupClient) Get(ctx context.Context, id uuid.UUID) (*UserFriendGroup, error) {
+	return c.Query().Where(userfriendgroup.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *UserFriendGroupClient) GetX(ctx context.Context, id uuid.UUID) *UserFriendGroup {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryFriendGroup queries the friend_group edge of a UserFriendGroup.
+func (c *UserFriendGroupClient) QueryFriendGroup(ufg *UserFriendGroup) *FriendGroupQuery {
+	query := &FriendGroupQuery{config: c.config}
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := ufg.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(userfriendgroup.Table, userfriendgroup.FieldID, id),
+			sqlgraph.To(friendgroup.Table, friendgroup.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, userfriendgroup.FriendGroupTable, userfriendgroup.FriendGroupColumn),
+		)
+		fromV = sqlgraph.Neighbors(ufg.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryUser queries the user edge of a UserFriendGroup.
+func (c *UserFriendGroupClient) QueryUser(ufg *UserFriendGroup) *UserQuery {
+	query := &UserQuery{config: c.config}
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := ufg.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(userfriendgroup.Table, userfriendgroup.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, userfriendgroup.UserTable, userfriendgroup.UserColumn),
+		)
+		fromV = sqlgraph.Neighbors(ufg.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *UserFriendGroupClient) Hooks() []Hook {
+	return c.hooks.UserFriendGroup
 }
 
 // UserProfileClient is a client for the UserProfile schema.

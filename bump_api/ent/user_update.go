@@ -11,9 +11,11 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
+	"github.com/k-yomo/bump/bump_api/ent/friendgroup"
 	"github.com/k-yomo/bump/bump_api/ent/friendship"
 	"github.com/k-yomo/bump/bump_api/ent/predicate"
 	"github.com/k-yomo/bump/bump_api/ent/user"
+	"github.com/k-yomo/bump/bump_api/ent/userfriendgroup"
 	"github.com/k-yomo/bump/bump_api/ent/userprofile"
 )
 
@@ -64,6 +66,36 @@ func (uu *UserUpdate) AddFriendUsers(u ...*User) *UserUpdate {
 	return uu.AddFriendUserIDs(ids...)
 }
 
+// AddFriendGroupIDs adds the "friend_groups" edge to the FriendGroup entity by IDs.
+func (uu *UserUpdate) AddFriendGroupIDs(ids ...uuid.UUID) *UserUpdate {
+	uu.mutation.AddFriendGroupIDs(ids...)
+	return uu
+}
+
+// AddFriendGroups adds the "friend_groups" edges to the FriendGroup entity.
+func (uu *UserUpdate) AddFriendGroups(f ...*FriendGroup) *UserUpdate {
+	ids := make([]uuid.UUID, len(f))
+	for i := range f {
+		ids[i] = f[i].ID
+	}
+	return uu.AddFriendGroupIDs(ids...)
+}
+
+// AddBelongingFriendGroupIDs adds the "belonging_friend_groups" edge to the FriendGroup entity by IDs.
+func (uu *UserUpdate) AddBelongingFriendGroupIDs(ids ...uuid.UUID) *UserUpdate {
+	uu.mutation.AddBelongingFriendGroupIDs(ids...)
+	return uu
+}
+
+// AddBelongingFriendGroups adds the "belonging_friend_groups" edges to the FriendGroup entity.
+func (uu *UserUpdate) AddBelongingFriendGroups(f ...*FriendGroup) *UserUpdate {
+	ids := make([]uuid.UUID, len(f))
+	for i := range f {
+		ids[i] = f[i].ID
+	}
+	return uu.AddBelongingFriendGroupIDs(ids...)
+}
+
 // AddFriendshipIDs adds the "friendships" edge to the Friendship entity by IDs.
 func (uu *UserUpdate) AddFriendshipIDs(ids ...uuid.UUID) *UserUpdate {
 	uu.mutation.AddFriendshipIDs(ids...)
@@ -77,6 +109,21 @@ func (uu *UserUpdate) AddFriendships(f ...*Friendship) *UserUpdate {
 		ids[i] = f[i].ID
 	}
 	return uu.AddFriendshipIDs(ids...)
+}
+
+// AddUserFriendGroupIDs adds the "user_friend_groups" edge to the UserFriendGroup entity by IDs.
+func (uu *UserUpdate) AddUserFriendGroupIDs(ids ...uuid.UUID) *UserUpdate {
+	uu.mutation.AddUserFriendGroupIDs(ids...)
+	return uu
+}
+
+// AddUserFriendGroups adds the "user_friend_groups" edges to the UserFriendGroup entity.
+func (uu *UserUpdate) AddUserFriendGroups(u ...*UserFriendGroup) *UserUpdate {
+	ids := make([]uuid.UUID, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
+	}
+	return uu.AddUserFriendGroupIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -111,6 +158,48 @@ func (uu *UserUpdate) RemoveFriendUsers(u ...*User) *UserUpdate {
 	return uu.RemoveFriendUserIDs(ids...)
 }
 
+// ClearFriendGroups clears all "friend_groups" edges to the FriendGroup entity.
+func (uu *UserUpdate) ClearFriendGroups() *UserUpdate {
+	uu.mutation.ClearFriendGroups()
+	return uu
+}
+
+// RemoveFriendGroupIDs removes the "friend_groups" edge to FriendGroup entities by IDs.
+func (uu *UserUpdate) RemoveFriendGroupIDs(ids ...uuid.UUID) *UserUpdate {
+	uu.mutation.RemoveFriendGroupIDs(ids...)
+	return uu
+}
+
+// RemoveFriendGroups removes "friend_groups" edges to FriendGroup entities.
+func (uu *UserUpdate) RemoveFriendGroups(f ...*FriendGroup) *UserUpdate {
+	ids := make([]uuid.UUID, len(f))
+	for i := range f {
+		ids[i] = f[i].ID
+	}
+	return uu.RemoveFriendGroupIDs(ids...)
+}
+
+// ClearBelongingFriendGroups clears all "belonging_friend_groups" edges to the FriendGroup entity.
+func (uu *UserUpdate) ClearBelongingFriendGroups() *UserUpdate {
+	uu.mutation.ClearBelongingFriendGroups()
+	return uu
+}
+
+// RemoveBelongingFriendGroupIDs removes the "belonging_friend_groups" edge to FriendGroup entities by IDs.
+func (uu *UserUpdate) RemoveBelongingFriendGroupIDs(ids ...uuid.UUID) *UserUpdate {
+	uu.mutation.RemoveBelongingFriendGroupIDs(ids...)
+	return uu
+}
+
+// RemoveBelongingFriendGroups removes "belonging_friend_groups" edges to FriendGroup entities.
+func (uu *UserUpdate) RemoveBelongingFriendGroups(f ...*FriendGroup) *UserUpdate {
+	ids := make([]uuid.UUID, len(f))
+	for i := range f {
+		ids[i] = f[i].ID
+	}
+	return uu.RemoveBelongingFriendGroupIDs(ids...)
+}
+
 // ClearFriendships clears all "friendships" edges to the Friendship entity.
 func (uu *UserUpdate) ClearFriendships() *UserUpdate {
 	uu.mutation.ClearFriendships()
@@ -130,6 +219,27 @@ func (uu *UserUpdate) RemoveFriendships(f ...*Friendship) *UserUpdate {
 		ids[i] = f[i].ID
 	}
 	return uu.RemoveFriendshipIDs(ids...)
+}
+
+// ClearUserFriendGroups clears all "user_friend_groups" edges to the UserFriendGroup entity.
+func (uu *UserUpdate) ClearUserFriendGroups() *UserUpdate {
+	uu.mutation.ClearUserFriendGroups()
+	return uu
+}
+
+// RemoveUserFriendGroupIDs removes the "user_friend_groups" edge to UserFriendGroup entities by IDs.
+func (uu *UserUpdate) RemoveUserFriendGroupIDs(ids ...uuid.UUID) *UserUpdate {
+	uu.mutation.RemoveUserFriendGroupIDs(ids...)
+	return uu
+}
+
+// RemoveUserFriendGroups removes "user_friend_groups" edges to UserFriendGroup entities.
+func (uu *UserUpdate) RemoveUserFriendGroups(u ...*UserFriendGroup) *UserUpdate {
+	ids := make([]uuid.UUID, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
+	}
+	return uu.RemoveUserFriendGroupIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -314,6 +424,135 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if uu.mutation.FriendGroupsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.FriendGroupsTable,
+			Columns: []string{user.FriendGroupsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeUUID,
+					Column: friendgroup.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RemovedFriendGroupsIDs(); len(nodes) > 0 && !uu.mutation.FriendGroupsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.FriendGroupsTable,
+			Columns: []string{user.FriendGroupsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeUUID,
+					Column: friendgroup.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.FriendGroupsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.FriendGroupsTable,
+			Columns: []string{user.FriendGroupsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeUUID,
+					Column: friendgroup.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uu.mutation.BelongingFriendGroupsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   user.BelongingFriendGroupsTable,
+			Columns: user.BelongingFriendGroupsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeUUID,
+					Column: friendgroup.FieldID,
+				},
+			},
+		}
+		createE := &UserFriendGroupCreate{config: uu.config, mutation: newUserFriendGroupMutation(uu.config, OpCreate)}
+		createE.defaults()
+		_, specE := createE.createSpec()
+		edge.Target.Fields = specE.Fields
+		if specE.ID.Value != nil {
+			edge.Target.Fields = append(edge.Target.Fields, specE.ID)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RemovedBelongingFriendGroupsIDs(); len(nodes) > 0 && !uu.mutation.BelongingFriendGroupsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   user.BelongingFriendGroupsTable,
+			Columns: user.BelongingFriendGroupsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeUUID,
+					Column: friendgroup.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		createE := &UserFriendGroupCreate{config: uu.config, mutation: newUserFriendGroupMutation(uu.config, OpCreate)}
+		createE.defaults()
+		_, specE := createE.createSpec()
+		edge.Target.Fields = specE.Fields
+		if specE.ID.Value != nil {
+			edge.Target.Fields = append(edge.Target.Fields, specE.ID)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.BelongingFriendGroupsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   user.BelongingFriendGroupsTable,
+			Columns: user.BelongingFriendGroupsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeUUID,
+					Column: friendgroup.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		createE := &UserFriendGroupCreate{config: uu.config, mutation: newUserFriendGroupMutation(uu.config, OpCreate)}
+		createE.defaults()
+		_, specE := createE.createSpec()
+		edge.Target.Fields = specE.Fields
+		if specE.ID.Value != nil {
+			edge.Target.Fields = append(edge.Target.Fields, specE.ID)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if uu.mutation.FriendshipsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
@@ -360,6 +599,60 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeUUID,
 					Column: friendship.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uu.mutation.UserFriendGroupsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.UserFriendGroupsTable,
+			Columns: []string{user.UserFriendGroupsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeUUID,
+					Column: userfriendgroup.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RemovedUserFriendGroupsIDs(); len(nodes) > 0 && !uu.mutation.UserFriendGroupsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.UserFriendGroupsTable,
+			Columns: []string{user.UserFriendGroupsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeUUID,
+					Column: userfriendgroup.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.UserFriendGroupsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.UserFriendGroupsTable,
+			Columns: []string{user.UserFriendGroupsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeUUID,
+					Column: userfriendgroup.FieldID,
 				},
 			},
 		}
@@ -421,6 +714,36 @@ func (uuo *UserUpdateOne) AddFriendUsers(u ...*User) *UserUpdateOne {
 	return uuo.AddFriendUserIDs(ids...)
 }
 
+// AddFriendGroupIDs adds the "friend_groups" edge to the FriendGroup entity by IDs.
+func (uuo *UserUpdateOne) AddFriendGroupIDs(ids ...uuid.UUID) *UserUpdateOne {
+	uuo.mutation.AddFriendGroupIDs(ids...)
+	return uuo
+}
+
+// AddFriendGroups adds the "friend_groups" edges to the FriendGroup entity.
+func (uuo *UserUpdateOne) AddFriendGroups(f ...*FriendGroup) *UserUpdateOne {
+	ids := make([]uuid.UUID, len(f))
+	for i := range f {
+		ids[i] = f[i].ID
+	}
+	return uuo.AddFriendGroupIDs(ids...)
+}
+
+// AddBelongingFriendGroupIDs adds the "belonging_friend_groups" edge to the FriendGroup entity by IDs.
+func (uuo *UserUpdateOne) AddBelongingFriendGroupIDs(ids ...uuid.UUID) *UserUpdateOne {
+	uuo.mutation.AddBelongingFriendGroupIDs(ids...)
+	return uuo
+}
+
+// AddBelongingFriendGroups adds the "belonging_friend_groups" edges to the FriendGroup entity.
+func (uuo *UserUpdateOne) AddBelongingFriendGroups(f ...*FriendGroup) *UserUpdateOne {
+	ids := make([]uuid.UUID, len(f))
+	for i := range f {
+		ids[i] = f[i].ID
+	}
+	return uuo.AddBelongingFriendGroupIDs(ids...)
+}
+
 // AddFriendshipIDs adds the "friendships" edge to the Friendship entity by IDs.
 func (uuo *UserUpdateOne) AddFriendshipIDs(ids ...uuid.UUID) *UserUpdateOne {
 	uuo.mutation.AddFriendshipIDs(ids...)
@@ -434,6 +757,21 @@ func (uuo *UserUpdateOne) AddFriendships(f ...*Friendship) *UserUpdateOne {
 		ids[i] = f[i].ID
 	}
 	return uuo.AddFriendshipIDs(ids...)
+}
+
+// AddUserFriendGroupIDs adds the "user_friend_groups" edge to the UserFriendGroup entity by IDs.
+func (uuo *UserUpdateOne) AddUserFriendGroupIDs(ids ...uuid.UUID) *UserUpdateOne {
+	uuo.mutation.AddUserFriendGroupIDs(ids...)
+	return uuo
+}
+
+// AddUserFriendGroups adds the "user_friend_groups" edges to the UserFriendGroup entity.
+func (uuo *UserUpdateOne) AddUserFriendGroups(u ...*UserFriendGroup) *UserUpdateOne {
+	ids := make([]uuid.UUID, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
+	}
+	return uuo.AddUserFriendGroupIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -468,6 +806,48 @@ func (uuo *UserUpdateOne) RemoveFriendUsers(u ...*User) *UserUpdateOne {
 	return uuo.RemoveFriendUserIDs(ids...)
 }
 
+// ClearFriendGroups clears all "friend_groups" edges to the FriendGroup entity.
+func (uuo *UserUpdateOne) ClearFriendGroups() *UserUpdateOne {
+	uuo.mutation.ClearFriendGroups()
+	return uuo
+}
+
+// RemoveFriendGroupIDs removes the "friend_groups" edge to FriendGroup entities by IDs.
+func (uuo *UserUpdateOne) RemoveFriendGroupIDs(ids ...uuid.UUID) *UserUpdateOne {
+	uuo.mutation.RemoveFriendGroupIDs(ids...)
+	return uuo
+}
+
+// RemoveFriendGroups removes "friend_groups" edges to FriendGroup entities.
+func (uuo *UserUpdateOne) RemoveFriendGroups(f ...*FriendGroup) *UserUpdateOne {
+	ids := make([]uuid.UUID, len(f))
+	for i := range f {
+		ids[i] = f[i].ID
+	}
+	return uuo.RemoveFriendGroupIDs(ids...)
+}
+
+// ClearBelongingFriendGroups clears all "belonging_friend_groups" edges to the FriendGroup entity.
+func (uuo *UserUpdateOne) ClearBelongingFriendGroups() *UserUpdateOne {
+	uuo.mutation.ClearBelongingFriendGroups()
+	return uuo
+}
+
+// RemoveBelongingFriendGroupIDs removes the "belonging_friend_groups" edge to FriendGroup entities by IDs.
+func (uuo *UserUpdateOne) RemoveBelongingFriendGroupIDs(ids ...uuid.UUID) *UserUpdateOne {
+	uuo.mutation.RemoveBelongingFriendGroupIDs(ids...)
+	return uuo
+}
+
+// RemoveBelongingFriendGroups removes "belonging_friend_groups" edges to FriendGroup entities.
+func (uuo *UserUpdateOne) RemoveBelongingFriendGroups(f ...*FriendGroup) *UserUpdateOne {
+	ids := make([]uuid.UUID, len(f))
+	for i := range f {
+		ids[i] = f[i].ID
+	}
+	return uuo.RemoveBelongingFriendGroupIDs(ids...)
+}
+
 // ClearFriendships clears all "friendships" edges to the Friendship entity.
 func (uuo *UserUpdateOne) ClearFriendships() *UserUpdateOne {
 	uuo.mutation.ClearFriendships()
@@ -487,6 +867,27 @@ func (uuo *UserUpdateOne) RemoveFriendships(f ...*Friendship) *UserUpdateOne {
 		ids[i] = f[i].ID
 	}
 	return uuo.RemoveFriendshipIDs(ids...)
+}
+
+// ClearUserFriendGroups clears all "user_friend_groups" edges to the UserFriendGroup entity.
+func (uuo *UserUpdateOne) ClearUserFriendGroups() *UserUpdateOne {
+	uuo.mutation.ClearUserFriendGroups()
+	return uuo
+}
+
+// RemoveUserFriendGroupIDs removes the "user_friend_groups" edge to UserFriendGroup entities by IDs.
+func (uuo *UserUpdateOne) RemoveUserFriendGroupIDs(ids ...uuid.UUID) *UserUpdateOne {
+	uuo.mutation.RemoveUserFriendGroupIDs(ids...)
+	return uuo
+}
+
+// RemoveUserFriendGroups removes "user_friend_groups" edges to UserFriendGroup entities.
+func (uuo *UserUpdateOne) RemoveUserFriendGroups(u ...*UserFriendGroup) *UserUpdateOne {
+	ids := make([]uuid.UUID, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
+	}
+	return uuo.RemoveUserFriendGroupIDs(ids...)
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
@@ -701,6 +1102,135 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if uuo.mutation.FriendGroupsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.FriendGroupsTable,
+			Columns: []string{user.FriendGroupsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeUUID,
+					Column: friendgroup.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RemovedFriendGroupsIDs(); len(nodes) > 0 && !uuo.mutation.FriendGroupsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.FriendGroupsTable,
+			Columns: []string{user.FriendGroupsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeUUID,
+					Column: friendgroup.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.FriendGroupsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.FriendGroupsTable,
+			Columns: []string{user.FriendGroupsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeUUID,
+					Column: friendgroup.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uuo.mutation.BelongingFriendGroupsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   user.BelongingFriendGroupsTable,
+			Columns: user.BelongingFriendGroupsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeUUID,
+					Column: friendgroup.FieldID,
+				},
+			},
+		}
+		createE := &UserFriendGroupCreate{config: uuo.config, mutation: newUserFriendGroupMutation(uuo.config, OpCreate)}
+		createE.defaults()
+		_, specE := createE.createSpec()
+		edge.Target.Fields = specE.Fields
+		if specE.ID.Value != nil {
+			edge.Target.Fields = append(edge.Target.Fields, specE.ID)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RemovedBelongingFriendGroupsIDs(); len(nodes) > 0 && !uuo.mutation.BelongingFriendGroupsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   user.BelongingFriendGroupsTable,
+			Columns: user.BelongingFriendGroupsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeUUID,
+					Column: friendgroup.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		createE := &UserFriendGroupCreate{config: uuo.config, mutation: newUserFriendGroupMutation(uuo.config, OpCreate)}
+		createE.defaults()
+		_, specE := createE.createSpec()
+		edge.Target.Fields = specE.Fields
+		if specE.ID.Value != nil {
+			edge.Target.Fields = append(edge.Target.Fields, specE.ID)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.BelongingFriendGroupsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   user.BelongingFriendGroupsTable,
+			Columns: user.BelongingFriendGroupsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeUUID,
+					Column: friendgroup.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		createE := &UserFriendGroupCreate{config: uuo.config, mutation: newUserFriendGroupMutation(uuo.config, OpCreate)}
+		createE.defaults()
+		_, specE := createE.createSpec()
+		edge.Target.Fields = specE.Fields
+		if specE.ID.Value != nil {
+			edge.Target.Fields = append(edge.Target.Fields, specE.ID)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if uuo.mutation.FriendshipsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
@@ -747,6 +1277,60 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeUUID,
 					Column: friendship.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uuo.mutation.UserFriendGroupsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.UserFriendGroupsTable,
+			Columns: []string{user.UserFriendGroupsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeUUID,
+					Column: userfriendgroup.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RemovedUserFriendGroupsIDs(); len(nodes) > 0 && !uuo.mutation.UserFriendGroupsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.UserFriendGroupsTable,
+			Columns: []string{user.UserFriendGroupsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeUUID,
+					Column: userfriendgroup.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.UserFriendGroupsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.UserFriendGroupsTable,
+			Columns: []string{user.UserFriendGroupsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeUUID,
+					Column: userfriendgroup.FieldID,
 				},
 			},
 		}

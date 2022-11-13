@@ -33,16 +33,25 @@ type UserEdges struct {
 	UserProfile *UserProfile `json:"user_profile,omitempty"`
 	// FriendUsers holds the value of the friend_users edge.
 	FriendUsers []*User `json:"friend_users,omitempty"`
+	// FriendGroups holds the value of the friend_groups edge.
+	FriendGroups []*FriendGroup `json:"friend_groups,omitempty"`
+	// BelongingFriendGroups holds the value of the belonging_friend_groups edge.
+	BelongingFriendGroups []*FriendGroup `json:"belonging_friend_groups,omitempty"`
 	// Friendships holds the value of the friendships edge.
 	Friendships []*Friendship `json:"friendships,omitempty"`
+	// UserFriendGroups holds the value of the user_friend_groups edge.
+	UserFriendGroups []*UserFriendGroup `json:"user_friend_groups,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [3]bool
+	loadedTypes [6]bool
 	// totalCount holds the count of the edges above.
-	totalCount [3]map[string]int
+	totalCount [6]map[string]int
 
-	namedFriendUsers map[string][]*User
-	namedFriendships map[string][]*Friendship
+	namedFriendUsers           map[string][]*User
+	namedFriendGroups          map[string][]*FriendGroup
+	namedBelongingFriendGroups map[string][]*FriendGroup
+	namedFriendships           map[string][]*Friendship
+	namedUserFriendGroups      map[string][]*UserFriendGroup
 }
 
 // UserProfileOrErr returns the UserProfile value or an error if the edge
@@ -67,13 +76,40 @@ func (e UserEdges) FriendUsersOrErr() ([]*User, error) {
 	return nil, &NotLoadedError{edge: "friend_users"}
 }
 
+// FriendGroupsOrErr returns the FriendGroups value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) FriendGroupsOrErr() ([]*FriendGroup, error) {
+	if e.loadedTypes[2] {
+		return e.FriendGroups, nil
+	}
+	return nil, &NotLoadedError{edge: "friend_groups"}
+}
+
+// BelongingFriendGroupsOrErr returns the BelongingFriendGroups value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) BelongingFriendGroupsOrErr() ([]*FriendGroup, error) {
+	if e.loadedTypes[3] {
+		return e.BelongingFriendGroups, nil
+	}
+	return nil, &NotLoadedError{edge: "belonging_friend_groups"}
+}
+
 // FriendshipsOrErr returns the Friendships value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) FriendshipsOrErr() ([]*Friendship, error) {
-	if e.loadedTypes[2] {
+	if e.loadedTypes[4] {
 		return e.Friendships, nil
 	}
 	return nil, &NotLoadedError{edge: "friendships"}
+}
+
+// UserFriendGroupsOrErr returns the UserFriendGroups value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) UserFriendGroupsOrErr() ([]*UserFriendGroup, error) {
+	if e.loadedTypes[5] {
+		return e.UserFriendGroups, nil
+	}
+	return nil, &NotLoadedError{edge: "user_friend_groups"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -135,9 +171,24 @@ func (u *User) QueryFriendUsers() *UserQuery {
 	return (&UserClient{config: u.config}).QueryFriendUsers(u)
 }
 
+// QueryFriendGroups queries the "friend_groups" edge of the User entity.
+func (u *User) QueryFriendGroups() *FriendGroupQuery {
+	return (&UserClient{config: u.config}).QueryFriendGroups(u)
+}
+
+// QueryBelongingFriendGroups queries the "belonging_friend_groups" edge of the User entity.
+func (u *User) QueryBelongingFriendGroups() *FriendGroupQuery {
+	return (&UserClient{config: u.config}).QueryBelongingFriendGroups(u)
+}
+
 // QueryFriendships queries the "friendships" edge of the User entity.
 func (u *User) QueryFriendships() *FriendshipQuery {
 	return (&UserClient{config: u.config}).QueryFriendships(u)
+}
+
+// QueryUserFriendGroups queries the "user_friend_groups" edge of the User entity.
+func (u *User) QueryUserFriendGroups() *UserFriendGroupQuery {
+	return (&UserClient{config: u.config}).QueryUserFriendGroups(u)
 }
 
 // Update returns a builder for updating this User.
@@ -196,6 +247,54 @@ func (u *User) appendNamedFriendUsers(name string, edges ...*User) {
 	}
 }
 
+// NamedFriendGroups returns the FriendGroups named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (u *User) NamedFriendGroups(name string) ([]*FriendGroup, error) {
+	if u.Edges.namedFriendGroups == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := u.Edges.namedFriendGroups[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (u *User) appendNamedFriendGroups(name string, edges ...*FriendGroup) {
+	if u.Edges.namedFriendGroups == nil {
+		u.Edges.namedFriendGroups = make(map[string][]*FriendGroup)
+	}
+	if len(edges) == 0 {
+		u.Edges.namedFriendGroups[name] = []*FriendGroup{}
+	} else {
+		u.Edges.namedFriendGroups[name] = append(u.Edges.namedFriendGroups[name], edges...)
+	}
+}
+
+// NamedBelongingFriendGroups returns the BelongingFriendGroups named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (u *User) NamedBelongingFriendGroups(name string) ([]*FriendGroup, error) {
+	if u.Edges.namedBelongingFriendGroups == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := u.Edges.namedBelongingFriendGroups[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (u *User) appendNamedBelongingFriendGroups(name string, edges ...*FriendGroup) {
+	if u.Edges.namedBelongingFriendGroups == nil {
+		u.Edges.namedBelongingFriendGroups = make(map[string][]*FriendGroup)
+	}
+	if len(edges) == 0 {
+		u.Edges.namedBelongingFriendGroups[name] = []*FriendGroup{}
+	} else {
+		u.Edges.namedBelongingFriendGroups[name] = append(u.Edges.namedBelongingFriendGroups[name], edges...)
+	}
+}
+
 // NamedFriendships returns the Friendships named value or an error if the edge was not
 // loaded in eager-loading with this name.
 func (u *User) NamedFriendships(name string) ([]*Friendship, error) {
@@ -217,6 +316,30 @@ func (u *User) appendNamedFriendships(name string, edges ...*Friendship) {
 		u.Edges.namedFriendships[name] = []*Friendship{}
 	} else {
 		u.Edges.namedFriendships[name] = append(u.Edges.namedFriendships[name], edges...)
+	}
+}
+
+// NamedUserFriendGroups returns the UserFriendGroups named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (u *User) NamedUserFriendGroups(name string) ([]*UserFriendGroup, error) {
+	if u.Edges.namedUserFriendGroups == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := u.Edges.namedUserFriendGroups[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (u *User) appendNamedUserFriendGroups(name string, edges ...*UserFriendGroup) {
+	if u.Edges.namedUserFriendGroups == nil {
+		u.Edges.namedUserFriendGroups = make(map[string][]*UserFriendGroup)
+	}
+	if len(edges) == 0 {
+		u.Edges.namedUserFriendGroups[name] = []*UserFriendGroup{}
+	} else {
+		u.Edges.namedUserFriendGroups[name] = append(u.Edges.namedUserFriendGroups[name], edges...)
 	}
 }
 

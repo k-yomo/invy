@@ -10,6 +10,87 @@ import (
 )
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (fg *FriendGroupQuery) CollectFields(ctx context.Context, satisfies ...string) (*FriendGroupQuery, error) {
+	fc := graphql.GetFieldContext(ctx)
+	if fc == nil {
+		return fg, nil
+	}
+	if err := fg.collectField(ctx, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+		return nil, err
+	}
+	return fg, nil
+}
+
+func (fg *FriendGroupQuery) collectField(ctx context.Context, op *graphql.OperationContext, field graphql.CollectedField, path []string, satisfies ...string) error {
+	path = append([]string(nil), path...)
+	for _, field := range graphql.CollectFields(op, field.Selections, satisfies) {
+		switch field.Name {
+		case "user":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = &UserQuery{config: fg.config}
+			)
+			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
+				return err
+			}
+			fg.withUser = query
+		case "friendUsers":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = &UserQuery{config: fg.config}
+			)
+			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
+				return err
+			}
+			fg.WithNamedFriendUsers(alias, func(wq *UserQuery) {
+				*wq = *query
+			})
+		case "userFriendGroups":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = &UserFriendGroupQuery{config: fg.config}
+			)
+			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
+				return err
+			}
+			fg.WithNamedUserFriendGroups(alias, func(wq *UserFriendGroupQuery) {
+				*wq = *query
+			})
+		}
+	}
+	return nil
+}
+
+type friendgroupPaginateArgs struct {
+	first, last   *int
+	after, before *Cursor
+	opts          []FriendGroupPaginateOption
+}
+
+func newFriendGroupPaginateArgs(rv map[string]interface{}) *friendgroupPaginateArgs {
+	args := &friendgroupPaginateArgs{}
+	if rv == nil {
+		return args
+	}
+	if v := rv[firstField]; v != nil {
+		args.first = v.(*int)
+	}
+	if v := rv[lastField]; v != nil {
+		args.last = v.(*int)
+	}
+	if v := rv[afterField]; v != nil {
+		args.after = v.(*Cursor)
+	}
+	if v := rv[beforeField]; v != nil {
+		args.before = v.(*Cursor)
+	}
+	return args
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
 func (f *FriendshipQuery) CollectFields(ctx context.Context, satisfies ...string) (*FriendshipQuery, error) {
 	fc := graphql.GetFieldContext(ctx)
 	if fc == nil {
@@ -203,6 +284,30 @@ func (u *UserQuery) collectField(ctx context.Context, op *graphql.OperationConte
 			u.WithNamedFriendUsers(alias, func(wq *UserQuery) {
 				*wq = *query
 			})
+		case "friendGroups":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = &FriendGroupQuery{config: u.config}
+			)
+			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
+				return err
+			}
+			u.WithNamedFriendGroups(alias, func(wq *FriendGroupQuery) {
+				*wq = *query
+			})
+		case "belongingFriendGroups":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = &FriendGroupQuery{config: u.config}
+			)
+			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
+				return err
+			}
+			u.WithNamedBelongingFriendGroups(alias, func(wq *FriendGroupQuery) {
+				*wq = *query
+			})
 		case "friendships":
 			var (
 				alias = field.Alias
@@ -213,6 +318,18 @@ func (u *UserQuery) collectField(ctx context.Context, op *graphql.OperationConte
 				return err
 			}
 			u.WithNamedFriendships(alias, func(wq *FriendshipQuery) {
+				*wq = *query
+			})
+		case "userFriendGroups":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = &UserFriendGroupQuery{config: u.config}
+			)
+			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
+				return err
+			}
+			u.WithNamedUserFriendGroups(alias, func(wq *UserFriendGroupQuery) {
 				*wq = *query
 			})
 		}
@@ -228,6 +345,73 @@ type userPaginateArgs struct {
 
 func newUserPaginateArgs(rv map[string]interface{}) *userPaginateArgs {
 	args := &userPaginateArgs{}
+	if rv == nil {
+		return args
+	}
+	if v := rv[firstField]; v != nil {
+		args.first = v.(*int)
+	}
+	if v := rv[lastField]; v != nil {
+		args.last = v.(*int)
+	}
+	if v := rv[afterField]; v != nil {
+		args.after = v.(*Cursor)
+	}
+	if v := rv[beforeField]; v != nil {
+		args.before = v.(*Cursor)
+	}
+	return args
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (ufg *UserFriendGroupQuery) CollectFields(ctx context.Context, satisfies ...string) (*UserFriendGroupQuery, error) {
+	fc := graphql.GetFieldContext(ctx)
+	if fc == nil {
+		return ufg, nil
+	}
+	if err := ufg.collectField(ctx, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+		return nil, err
+	}
+	return ufg, nil
+}
+
+func (ufg *UserFriendGroupQuery) collectField(ctx context.Context, op *graphql.OperationContext, field graphql.CollectedField, path []string, satisfies ...string) error {
+	path = append([]string(nil), path...)
+	for _, field := range graphql.CollectFields(op, field.Selections, satisfies) {
+		switch field.Name {
+		case "friendGroup":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = &FriendGroupQuery{config: ufg.config}
+			)
+			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
+				return err
+			}
+			ufg.withFriendGroup = query
+		case "user":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = &UserQuery{config: ufg.config}
+			)
+			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
+				return err
+			}
+			ufg.withUser = query
+		}
+	}
+	return nil
+}
+
+type userfriendgroupPaginateArgs struct {
+	first, last   *int
+	after, before *Cursor
+	opts          []UserFriendGroupPaginateOption
+}
+
+func newUserFriendGroupPaginateArgs(rv map[string]interface{}) *userfriendgroupPaginateArgs {
+	args := &userfriendgroupPaginateArgs{}
 	if rv == nil {
 		return args
 	}

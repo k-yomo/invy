@@ -6,10 +6,12 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/k-yomo/bump/bump_api/ent/friendgroup"
 	"github.com/k-yomo/bump/bump_api/ent/friendship"
 	"github.com/k-yomo/bump/bump_api/ent/friendshiprequest"
 	"github.com/k-yomo/bump/bump_api/ent/schema"
 	"github.com/k-yomo/bump/bump_api/ent/user"
+	"github.com/k-yomo/bump/bump_api/ent/userfriendgroup"
 	"github.com/k-yomo/bump/bump_api/ent/userprofile"
 )
 
@@ -17,6 +19,22 @@ import (
 // (default values, validators, hooks and policies) and stitches it
 // to their package variables.
 func init() {
+	friendgroupFields := schema.FriendGroup{}.Fields()
+	_ = friendgroupFields
+	// friendgroupDescCreatedAt is the schema descriptor for created_at field.
+	friendgroupDescCreatedAt := friendgroupFields[3].Descriptor()
+	// friendgroup.DefaultCreatedAt holds the default value on creation for the created_at field.
+	friendgroup.DefaultCreatedAt = friendgroupDescCreatedAt.Default.(func() time.Time)
+	// friendgroupDescUpdatedAt is the schema descriptor for updated_at field.
+	friendgroupDescUpdatedAt := friendgroupFields[4].Descriptor()
+	// friendgroup.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	friendgroup.DefaultUpdatedAt = friendgroupDescUpdatedAt.Default.(func() time.Time)
+	// friendgroup.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	friendgroup.UpdateDefaultUpdatedAt = friendgroupDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// friendgroupDescID is the schema descriptor for id field.
+	friendgroupDescID := friendgroupFields[0].Descriptor()
+	// friendgroup.DefaultID holds the default value on creation for the id field.
+	friendgroup.DefaultID = friendgroupDescID.Default.(func() uuid.UUID)
 	friendshipFields := schema.Friendship{}.Fields()
 	_ = friendshipFields
 	// friendshipDescCreatedAt is the schema descriptor for created_at field.
@@ -47,6 +65,16 @@ func init() {
 	userDescID := userFields[0].Descriptor()
 	// user.DefaultID holds the default value on creation for the id field.
 	user.DefaultID = userDescID.Default.(func() uuid.UUID)
+	userfriendgroupFields := schema.UserFriendGroup{}.Fields()
+	_ = userfriendgroupFields
+	// userfriendgroupDescCreatedAt is the schema descriptor for created_at field.
+	userfriendgroupDescCreatedAt := userfriendgroupFields[3].Descriptor()
+	// userfriendgroup.DefaultCreatedAt holds the default value on creation for the created_at field.
+	userfriendgroup.DefaultCreatedAt = userfriendgroupDescCreatedAt.Default.(func() time.Time)
+	// userfriendgroupDescID is the schema descriptor for id field.
+	userfriendgroupDescID := userfriendgroupFields[0].Descriptor()
+	// userfriendgroup.DefaultID holds the default value on creation for the id field.
+	userfriendgroup.DefaultID = userfriendgroupDescID.Default.(func() uuid.UUID)
 	userprofileFields := schema.UserProfile{}.Fields()
 	_ = userprofileFields
 	// userprofileDescCreatedAt is the schema descriptor for created_at field.

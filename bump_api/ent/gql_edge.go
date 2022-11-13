@@ -8,6 +8,38 @@ import (
 	"github.com/99designs/gqlgen/graphql"
 )
 
+func (fg *FriendGroup) User(ctx context.Context) (*User, error) {
+	result, err := fg.Edges.UserOrErr()
+	if IsNotLoaded(err) {
+		result, err = fg.QueryUser().Only(ctx)
+	}
+	return result, err
+}
+
+func (fg *FriendGroup) FriendUsers(ctx context.Context) (result []*User, err error) {
+	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
+		result, err = fg.NamedFriendUsers(graphql.GetFieldContext(ctx).Field.Alias)
+	} else {
+		result, err = fg.Edges.FriendUsersOrErr()
+	}
+	if IsNotLoaded(err) {
+		result, err = fg.QueryFriendUsers().All(ctx)
+	}
+	return result, err
+}
+
+func (fg *FriendGroup) UserFriendGroups(ctx context.Context) (result []*UserFriendGroup, err error) {
+	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
+		result, err = fg.NamedUserFriendGroups(graphql.GetFieldContext(ctx).Field.Alias)
+	} else {
+		result, err = fg.Edges.UserFriendGroupsOrErr()
+	}
+	if IsNotLoaded(err) {
+		result, err = fg.QueryUserFriendGroups().All(ctx)
+	}
+	return result, err
+}
+
 func (f *Friendship) User(ctx context.Context) (*User, error) {
 	result, err := f.Edges.UserOrErr()
 	if IsNotLoaded(err) {
@@ -60,6 +92,30 @@ func (u *User) FriendUsers(ctx context.Context) (result []*User, err error) {
 	return result, err
 }
 
+func (u *User) FriendGroups(ctx context.Context) (result []*FriendGroup, err error) {
+	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
+		result, err = u.NamedFriendGroups(graphql.GetFieldContext(ctx).Field.Alias)
+	} else {
+		result, err = u.Edges.FriendGroupsOrErr()
+	}
+	if IsNotLoaded(err) {
+		result, err = u.QueryFriendGroups().All(ctx)
+	}
+	return result, err
+}
+
+func (u *User) BelongingFriendGroups(ctx context.Context) (result []*FriendGroup, err error) {
+	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
+		result, err = u.NamedBelongingFriendGroups(graphql.GetFieldContext(ctx).Field.Alias)
+	} else {
+		result, err = u.Edges.BelongingFriendGroupsOrErr()
+	}
+	if IsNotLoaded(err) {
+		result, err = u.QueryBelongingFriendGroups().All(ctx)
+	}
+	return result, err
+}
+
 func (u *User) Friendships(ctx context.Context) (result []*Friendship, err error) {
 	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
 		result, err = u.NamedFriendships(graphql.GetFieldContext(ctx).Field.Alias)
@@ -68,6 +124,34 @@ func (u *User) Friendships(ctx context.Context) (result []*Friendship, err error
 	}
 	if IsNotLoaded(err) {
 		result, err = u.QueryFriendships().All(ctx)
+	}
+	return result, err
+}
+
+func (u *User) UserFriendGroups(ctx context.Context) (result []*UserFriendGroup, err error) {
+	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
+		result, err = u.NamedUserFriendGroups(graphql.GetFieldContext(ctx).Field.Alias)
+	} else {
+		result, err = u.Edges.UserFriendGroupsOrErr()
+	}
+	if IsNotLoaded(err) {
+		result, err = u.QueryUserFriendGroups().All(ctx)
+	}
+	return result, err
+}
+
+func (ufg *UserFriendGroup) FriendGroup(ctx context.Context) (*FriendGroup, error) {
+	result, err := ufg.Edges.FriendGroupOrErr()
+	if IsNotLoaded(err) {
+		result, err = ufg.QueryFriendGroup().Only(ctx)
+	}
+	return result, err
+}
+
+func (ufg *UserFriendGroup) User(ctx context.Context) (*User, error) {
+	result, err := ufg.Edges.UserOrErr()
+	if IsNotLoaded(err) {
+		result, err = ufg.QueryUser().Only(ctx)
 	}
 	return result, err
 }

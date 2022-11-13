@@ -13,8 +13,10 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
+	"github.com/k-yomo/bump/bump_api/ent/friendgroup"
 	"github.com/k-yomo/bump/bump_api/ent/friendship"
 	"github.com/k-yomo/bump/bump_api/ent/user"
+	"github.com/k-yomo/bump/bump_api/ent/userfriendgroup"
 	"github.com/k-yomo/bump/bump_api/ent/userprofile"
 )
 
@@ -94,6 +96,36 @@ func (uc *UserCreate) AddFriendUsers(u ...*User) *UserCreate {
 	return uc.AddFriendUserIDs(ids...)
 }
 
+// AddFriendGroupIDs adds the "friend_groups" edge to the FriendGroup entity by IDs.
+func (uc *UserCreate) AddFriendGroupIDs(ids ...uuid.UUID) *UserCreate {
+	uc.mutation.AddFriendGroupIDs(ids...)
+	return uc
+}
+
+// AddFriendGroups adds the "friend_groups" edges to the FriendGroup entity.
+func (uc *UserCreate) AddFriendGroups(f ...*FriendGroup) *UserCreate {
+	ids := make([]uuid.UUID, len(f))
+	for i := range f {
+		ids[i] = f[i].ID
+	}
+	return uc.AddFriendGroupIDs(ids...)
+}
+
+// AddBelongingFriendGroupIDs adds the "belonging_friend_groups" edge to the FriendGroup entity by IDs.
+func (uc *UserCreate) AddBelongingFriendGroupIDs(ids ...uuid.UUID) *UserCreate {
+	uc.mutation.AddBelongingFriendGroupIDs(ids...)
+	return uc
+}
+
+// AddBelongingFriendGroups adds the "belonging_friend_groups" edges to the FriendGroup entity.
+func (uc *UserCreate) AddBelongingFriendGroups(f ...*FriendGroup) *UserCreate {
+	ids := make([]uuid.UUID, len(f))
+	for i := range f {
+		ids[i] = f[i].ID
+	}
+	return uc.AddBelongingFriendGroupIDs(ids...)
+}
+
 // AddFriendshipIDs adds the "friendships" edge to the Friendship entity by IDs.
 func (uc *UserCreate) AddFriendshipIDs(ids ...uuid.UUID) *UserCreate {
 	uc.mutation.AddFriendshipIDs(ids...)
@@ -107,6 +139,21 @@ func (uc *UserCreate) AddFriendships(f ...*Friendship) *UserCreate {
 		ids[i] = f[i].ID
 	}
 	return uc.AddFriendshipIDs(ids...)
+}
+
+// AddUserFriendGroupIDs adds the "user_friend_groups" edge to the UserFriendGroup entity by IDs.
+func (uc *UserCreate) AddUserFriendGroupIDs(ids ...uuid.UUID) *UserCreate {
+	uc.mutation.AddUserFriendGroupIDs(ids...)
+	return uc
+}
+
+// AddUserFriendGroups adds the "user_friend_groups" edges to the UserFriendGroup entity.
+func (uc *UserCreate) AddUserFriendGroups(u ...*UserFriendGroup) *UserCreate {
+	ids := make([]uuid.UUID, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
+	}
+	return uc.AddUserFriendGroupIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -294,6 +341,51 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
+	if nodes := uc.mutation.FriendGroupsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.FriendGroupsTable,
+			Columns: []string{user.FriendGroupsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeUUID,
+					Column: friendgroup.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.BelongingFriendGroupsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   user.BelongingFriendGroupsTable,
+			Columns: user.BelongingFriendGroupsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeUUID,
+					Column: friendgroup.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		createE := &UserFriendGroupCreate{config: uc.config, mutation: newUserFriendGroupMutation(uc.config, OpCreate)}
+		createE.defaults()
+		_, specE := createE.createSpec()
+		edge.Target.Fields = specE.Fields
+		if specE.ID.Value != nil {
+			edge.Target.Fields = append(edge.Target.Fields, specE.ID)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
 	if nodes := uc.mutation.FriendshipsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
@@ -305,6 +397,25 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeUUID,
 					Column: friendship.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.UserFriendGroupsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.UserFriendGroupsTable,
+			Columns: []string{user.UserFriendGroupsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeUUID,
+					Column: userfriendgroup.FieldID,
 				},
 			},
 		}

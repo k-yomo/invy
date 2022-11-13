@@ -40,6 +40,7 @@ type Config struct {
 }
 
 type ResolverRoot interface {
+	FriendGroup() FriendGroupResolver
 	FriendshipRequest() FriendshipRequestResolver
 	Mutation() MutationResolver
 	Query() QueryResolver
@@ -51,6 +52,13 @@ type DirectiveRoot struct {
 }
 
 type ComplexityRoot struct {
+	FriendGroup struct {
+		FriendUsers func(childComplexity int) int
+		ID          func(childComplexity int) int
+		Name        func(childComplexity int) int
+		UserID      func(childComplexity int) int
+	}
+
 	FriendshipRequest struct {
 		CreatedAt  func(childComplexity int) int
 		FromUser   func(childComplexity int) int
@@ -63,9 +71,12 @@ type ComplexityRoot struct {
 	Mutation struct {
 		ApproveFriendShipRequest func(childComplexity int, friendshipRequestID uuid.UUID) int
 		CancelFriendShipRequest  func(childComplexity int, friendshipRequestID uuid.UUID) int
+		CreateFriendGroup        func(childComplexity int, input gqlmodel.CreateFriendGroupInput) int
+		DeleteFriendGroup        func(childComplexity int, friendGroupID uuid.UUID) int
 		DenyFriendShipRequest    func(childComplexity int, friendshipRequestID uuid.UUID) int
 		RequestFriendShip        func(childComplexity int, userID uuid.UUID) int
 		SignUp                   func(childComplexity int, input *gqlmodel.SignUpInput) int
+		UpdateFriendGroup        func(childComplexity int, input gqlmodel.UpdateFriendGroupInput) int
 	}
 
 	PageInfo struct {
@@ -76,6 +87,8 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
+		FriendGroup                  func(childComplexity int, friendGroupID uuid.UUID) int
+		FriendGroups                 func(childComplexity int) int
 		Friends                      func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
 		PendingFriendShipRequests    func(childComplexity int) int
 		RequestingFriendShipRequests func(childComplexity int) int
@@ -101,6 +114,9 @@ type ComplexityRoot struct {
 	}
 }
 
+type FriendGroupResolver interface {
+	FriendUsers(ctx context.Context, obj *gqlmodel.FriendGroup) ([]*gqlmodel.User, error)
+}
 type FriendshipRequestResolver interface {
 	FromUser(ctx context.Context, obj *gqlmodel.FriendshipRequest) (*gqlmodel.User, error)
 
@@ -108,10 +124,13 @@ type FriendshipRequestResolver interface {
 }
 type MutationResolver interface {
 	SignUp(ctx context.Context, input *gqlmodel.SignUpInput) (bool, error)
-	RequestFriendShip(ctx context.Context, userID uuid.UUID) (bool, error)
+	RequestFriendShip(ctx context.Context, userID uuid.UUID) (*gqlmodel.FriendshipRequest, error)
 	CancelFriendShipRequest(ctx context.Context, friendshipRequestID uuid.UUID) (bool, error)
 	DenyFriendShipRequest(ctx context.Context, friendshipRequestID uuid.UUID) (bool, error)
 	ApproveFriendShipRequest(ctx context.Context, friendshipRequestID uuid.UUID) (bool, error)
+	CreateFriendGroup(ctx context.Context, input gqlmodel.CreateFriendGroupInput) (*gqlmodel.FriendGroup, error)
+	UpdateFriendGroup(ctx context.Context, input gqlmodel.UpdateFriendGroupInput) (*gqlmodel.FriendGroup, error)
+	DeleteFriendGroup(ctx context.Context, friendGroupID uuid.UUID) (bool, error)
 }
 type QueryResolver interface {
 	Viewer(ctx context.Context) (*gqlmodel.User, error)
@@ -119,6 +138,8 @@ type QueryResolver interface {
 	Friends(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*gqlmodel.UserConnection, error)
 	PendingFriendShipRequests(ctx context.Context) ([]*gqlmodel.FriendshipRequest, error)
 	RequestingFriendShipRequests(ctx context.Context) ([]*gqlmodel.FriendshipRequest, error)
+	FriendGroup(ctx context.Context, friendGroupID uuid.UUID) (*gqlmodel.FriendGroup, error)
+	FriendGroups(ctx context.Context) ([]*gqlmodel.FriendGroup, error)
 }
 
 type executableSchema struct {
@@ -135,6 +156,34 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 	ec := executionContext{nil, e}
 	_ = ec
 	switch typeName + "." + field {
+
+	case "FriendGroup.friendUsers":
+		if e.complexity.FriendGroup.FriendUsers == nil {
+			break
+		}
+
+		return e.complexity.FriendGroup.FriendUsers(childComplexity), true
+
+	case "FriendGroup.id":
+		if e.complexity.FriendGroup.ID == nil {
+			break
+		}
+
+		return e.complexity.FriendGroup.ID(childComplexity), true
+
+	case "FriendGroup.name":
+		if e.complexity.FriendGroup.Name == nil {
+			break
+		}
+
+		return e.complexity.FriendGroup.Name(childComplexity), true
+
+	case "FriendGroup.userId":
+		if e.complexity.FriendGroup.UserID == nil {
+			break
+		}
+
+		return e.complexity.FriendGroup.UserID(childComplexity), true
 
 	case "FriendshipRequest.createdAt":
 		if e.complexity.FriendshipRequest.CreatedAt == nil {
@@ -202,6 +251,30 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.CancelFriendShipRequest(childComplexity, args["friendshipRequestId"].(uuid.UUID)), true
 
+	case "Mutation.createFriendGroup":
+		if e.complexity.Mutation.CreateFriendGroup == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_createFriendGroup_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CreateFriendGroup(childComplexity, args["input"].(gqlmodel.CreateFriendGroupInput)), true
+
+	case "Mutation.deleteFriendGroup":
+		if e.complexity.Mutation.DeleteFriendGroup == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_deleteFriendGroup_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.DeleteFriendGroup(childComplexity, args["friendGroupId"].(uuid.UUID)), true
+
 	case "Mutation.denyFriendShipRequest":
 		if e.complexity.Mutation.DenyFriendShipRequest == nil {
 			break
@@ -238,6 +311,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.SignUp(childComplexity, args["input"].(*gqlmodel.SignUpInput)), true
 
+	case "Mutation.updateFriendGroup":
+		if e.complexity.Mutation.UpdateFriendGroup == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updateFriendGroup_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdateFriendGroup(childComplexity, args["input"].(gqlmodel.UpdateFriendGroupInput)), true
+
 	case "PageInfo.endCursor":
 		if e.complexity.PageInfo.EndCursor == nil {
 			break
@@ -265,6 +350,25 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.PageInfo.StartCursor(childComplexity), true
+
+	case "Query.friendGroup":
+		if e.complexity.Query.FriendGroup == nil {
+			break
+		}
+
+		args, err := ec.field_Query_friendGroup_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.FriendGroup(childComplexity, args["friendGroupId"].(uuid.UUID)), true
+
+	case "Query.friendGroups":
+		if e.complexity.Query.FriendGroups == nil {
+			break
+		}
+
+		return e.complexity.Query.FriendGroups(childComplexity), true
 
 	case "Query.friends":
 		if e.complexity.Query.Friends == nil {
@@ -375,7 +479,9 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	rc := graphql.GetOperationContext(ctx)
 	ec := executionContext{rc, e}
 	inputUnmarshalMap := graphql.BuildUnmarshalerMap(
+		ec.unmarshalInputCreateFriendGroupInput,
 		ec.unmarshalInputSignUpInput,
+		ec.unmarshalInputUpdateFriendGroupInput,
 	)
 	first := true
 
@@ -449,15 +555,25 @@ type Query {
     pendingFriendShipRequests: [FriendshipRequest!]! @authRequired
     # fetch friend ship requests sent by the logged in user
     requestingFriendShipRequests: [FriendshipRequest!]! @authRequired
+
+    # fetch friend group
+    # Other user's group can't be fetched
+    friendGroup(friendGroupId: UUID!): FriendGroup! @authRequired
+    # fetch friend groups of the logged in user
+    friendGroups: [FriendGroup!]! @authRequired
 }
 
 type Mutation {
     signUp(input: SignUpInput): Boolean!
 
-    requestFriendShip(userId: UUID!): Boolean! @authRequired
+    requestFriendShip(userId: UUID!): FriendshipRequest! @authRequired
     cancelFriendShipRequest(friendshipRequestId: UUID!): Boolean! @authRequired
     denyFriendShipRequest(friendshipRequestId: UUID!): Boolean! @authRequired
     approveFriendShipRequest(friendshipRequestId: UUID!): Boolean! @authRequired
+
+    createFriendGroup(input: CreateFriendGroupInput!): FriendGroup! @authRequired
+    updateFriendGroup(input: UpdateFriendGroupInput!): FriendGroup! @authRequired
+    deleteFriendGroup(friendGroupId: UUID!): Boolean! @authRequired
 }
 
 ##############################
@@ -523,10 +639,28 @@ type FriendshipRequest implements Node {
     createdAt: Time!
 }
 
+type FriendGroup implements Node {
+    id: UUID!
+    name: String!
+    userId: UUID!
+    friendUsers: [User!]! @goField(forceResolver: true)
+}
+
 input SignUpInput {
     email: String! @constraint(format: EMAIL)
     nickname: String! @constraint(min: 3)
     avatarUrl: String @constraint(format: URL)
+}
+
+input CreateFriendGroupInput {
+    name: String! @constraint(max: 100)
+    friendUserIds: [UUID!]!
+}
+
+input UpdateFriendGroupInput {
+    id: UUID!
+    name: String! @constraint(max: 100)
+    friendUserIds: [UUID!]!
 }
 `, BuiltIn: false},
 }
@@ -608,6 +742,36 @@ func (ec *executionContext) field_Mutation_cancelFriendShipRequest_args(ctx cont
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_createFriendGroup_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 gqlmodel.CreateFriendGroupInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNCreateFriendGroupInput2githubᚗcomᚋkᚑyomoᚋbumpᚋbump_apiᚋgraphᚋgqlmodelᚐCreateFriendGroupInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_deleteFriendGroup_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 uuid.UUID
+	if tmp, ok := rawArgs["friendGroupId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("friendGroupId"))
+		arg0, err = ec.unmarshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["friendGroupId"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_denyFriendShipRequest_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -653,6 +817,21 @@ func (ec *executionContext) field_Mutation_signUp_args(ctx context.Context, rawA
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_updateFriendGroup_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 gqlmodel.UpdateFriendGroupInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNUpdateFriendGroupInput2githubᚗcomᚋkᚑyomoᚋbumpᚋbump_apiᚋgraphᚋgqlmodelᚐUpdateFriendGroupInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -665,6 +844,21 @@ func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs
 		}
 	}
 	args["name"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_friendGroup_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 uuid.UUID
+	if tmp, ok := rawArgs["friendGroupId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("friendGroupId"))
+		arg0, err = ec.unmarshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["friendGroupId"] = arg0
 	return args, nil
 }
 
@@ -762,6 +956,190 @@ func (ec *executionContext) field___Type_fields_args(ctx context.Context, rawArg
 // endregion ************************** directives.gotpl **************************
 
 // region    **************************** field.gotpl *****************************
+
+func (ec *executionContext) _FriendGroup_id(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.FriendGroup) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_FriendGroup_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(uuid.UUID)
+	fc.Result = res
+	return ec.marshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_FriendGroup_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "FriendGroup",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type UUID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _FriendGroup_name(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.FriendGroup) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_FriendGroup_name(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Name, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_FriendGroup_name(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "FriendGroup",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _FriendGroup_userId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.FriendGroup) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_FriendGroup_userId(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UserID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(uuid.UUID)
+	fc.Result = res
+	return ec.marshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_FriendGroup_userId(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "FriendGroup",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type UUID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _FriendGroup_friendUsers(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.FriendGroup) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_FriendGroup_friendUsers(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.FriendGroup().FriendUsers(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*gqlmodel.User)
+	fc.Result = res
+	return ec.marshalNUser2ᚕᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋbump_apiᚋgraphᚋgqlmodelᚐUserᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_FriendGroup_friendUsers(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "FriendGroup",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_User_id(ctx, field)
+			case "nickname":
+				return ec.fieldContext_User_nickname(ctx, field)
+			case "avatarUrl":
+				return ec.fieldContext_User_avatarUrl(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
+		},
+	}
+	return fc, nil
+}
 
 func (ec *executionContext) _FriendshipRequest_id(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.FriendshipRequest) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_FriendshipRequest_id(ctx, field)
@@ -1129,10 +1507,10 @@ func (ec *executionContext) _Mutation_requestFriendShip(ctx context.Context, fie
 		if tmp == nil {
 			return nil, nil
 		}
-		if data, ok := tmp.(bool); ok {
+		if data, ok := tmp.(*gqlmodel.FriendshipRequest); ok {
 			return data, nil
 		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be bool`, tmp)
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/k-yomo/bump/bump_api/graph/gqlmodel.FriendshipRequest`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1144,9 +1522,9 @@ func (ec *executionContext) _Mutation_requestFriendShip(ctx context.Context, fie
 		}
 		return graphql.Null
 	}
-	res := resTmp.(bool)
+	res := resTmp.(*gqlmodel.FriendshipRequest)
 	fc.Result = res
-	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+	return ec.marshalNFriendshipRequest2ᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋbump_apiᚋgraphᚋgqlmodelᚐFriendshipRequest(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_requestFriendShip(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1156,7 +1534,21 @@ func (ec *executionContext) fieldContext_Mutation_requestFriendShip(ctx context.
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Boolean does not have child fields")
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_FriendshipRequest_id(ctx, field)
+			case "fromUserId":
+				return ec.fieldContext_FriendshipRequest_fromUserId(ctx, field)
+			case "fromUser":
+				return ec.fieldContext_FriendshipRequest_fromUser(ctx, field)
+			case "toUserId":
+				return ec.fieldContext_FriendshipRequest_toUserId(ctx, field)
+			case "toUser":
+				return ec.fieldContext_FriendshipRequest_toUser(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_FriendshipRequest_createdAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type FriendshipRequest", field.Name)
 		},
 	}
 	defer func() {
@@ -1392,6 +1784,251 @@ func (ec *executionContext) fieldContext_Mutation_approveFriendShipRequest(ctx c
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_approveFriendShipRequest_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_createFriendGroup(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_createFriendGroup(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().CreateFriendGroup(rctx, fc.Args["input"].(gqlmodel.CreateFriendGroupInput))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.AuthRequired == nil {
+				return nil, errors.New("directive authRequired is not implemented")
+			}
+			return ec.directives.AuthRequired(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*gqlmodel.FriendGroup); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/k-yomo/bump/bump_api/graph/gqlmodel.FriendGroup`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.FriendGroup)
+	fc.Result = res
+	return ec.marshalNFriendGroup2ᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋbump_apiᚋgraphᚋgqlmodelᚐFriendGroup(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_createFriendGroup(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_FriendGroup_id(ctx, field)
+			case "name":
+				return ec.fieldContext_FriendGroup_name(ctx, field)
+			case "userId":
+				return ec.fieldContext_FriendGroup_userId(ctx, field)
+			case "friendUsers":
+				return ec.fieldContext_FriendGroup_friendUsers(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type FriendGroup", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_createFriendGroup_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_updateFriendGroup(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_updateFriendGroup(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().UpdateFriendGroup(rctx, fc.Args["input"].(gqlmodel.UpdateFriendGroupInput))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.AuthRequired == nil {
+				return nil, errors.New("directive authRequired is not implemented")
+			}
+			return ec.directives.AuthRequired(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*gqlmodel.FriendGroup); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/k-yomo/bump/bump_api/graph/gqlmodel.FriendGroup`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.FriendGroup)
+	fc.Result = res
+	return ec.marshalNFriendGroup2ᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋbump_apiᚋgraphᚋgqlmodelᚐFriendGroup(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_updateFriendGroup(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_FriendGroup_id(ctx, field)
+			case "name":
+				return ec.fieldContext_FriendGroup_name(ctx, field)
+			case "userId":
+				return ec.fieldContext_FriendGroup_userId(ctx, field)
+			case "friendUsers":
+				return ec.fieldContext_FriendGroup_friendUsers(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type FriendGroup", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_updateFriendGroup_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_deleteFriendGroup(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_deleteFriendGroup(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().DeleteFriendGroup(rctx, fc.Args["friendGroupId"].(uuid.UUID))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.AuthRequired == nil {
+				return nil, errors.New("directive authRequired is not implemented")
+			}
+			return ec.directives.AuthRequired(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(bool); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be bool`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_deleteFriendGroup(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_deleteFriendGroup_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return
 	}
@@ -1957,6 +2594,165 @@ func (ec *executionContext) fieldContext_Query_requestingFriendShipRequests(ctx 
 				return ec.fieldContext_FriendshipRequest_createdAt(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type FriendshipRequest", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_friendGroup(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_friendGroup(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().FriendGroup(rctx, fc.Args["friendGroupId"].(uuid.UUID))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.AuthRequired == nil {
+				return nil, errors.New("directive authRequired is not implemented")
+			}
+			return ec.directives.AuthRequired(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*gqlmodel.FriendGroup); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/k-yomo/bump/bump_api/graph/gqlmodel.FriendGroup`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.FriendGroup)
+	fc.Result = res
+	return ec.marshalNFriendGroup2ᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋbump_apiᚋgraphᚋgqlmodelᚐFriendGroup(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_friendGroup(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_FriendGroup_id(ctx, field)
+			case "name":
+				return ec.fieldContext_FriendGroup_name(ctx, field)
+			case "userId":
+				return ec.fieldContext_FriendGroup_userId(ctx, field)
+			case "friendUsers":
+				return ec.fieldContext_FriendGroup_friendUsers(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type FriendGroup", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_friendGroup_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_friendGroups(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_friendGroups(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().FriendGroups(rctx)
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.AuthRequired == nil {
+				return nil, errors.New("directive authRequired is not implemented")
+			}
+			return ec.directives.AuthRequired(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.([]*gqlmodel.FriendGroup); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/k-yomo/bump/bump_api/graph/gqlmodel.FriendGroup`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*gqlmodel.FriendGroup)
+	fc.Result = res
+	return ec.marshalNFriendGroup2ᚕᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋbump_apiᚋgraphᚋgqlmodelᚐFriendGroupᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_friendGroups(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_FriendGroup_id(ctx, field)
+			case "name":
+				return ec.fieldContext_FriendGroup_name(ctx, field)
+			case "userId":
+				return ec.fieldContext_FriendGroup_userId(ctx, field)
+			case "friendUsers":
+				return ec.fieldContext_FriendGroup_friendUsers(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type FriendGroup", field.Name)
 		},
 	}
 	return fc, nil
@@ -4237,6 +5033,60 @@ func (ec *executionContext) fieldContext___Type_specifiedByURL(ctx context.Conte
 
 // region    **************************** input.gotpl *****************************
 
+func (ec *executionContext) unmarshalInputCreateFriendGroupInput(ctx context.Context, obj interface{}) (gqlmodel.CreateFriendGroupInput, error) {
+	var it gqlmodel.CreateFriendGroupInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"name", "friendUserIds"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "name":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+			directive0 := func(ctx context.Context) (interface{}, error) { return ec.unmarshalNString2string(ctx, v) }
+			directive1 := func(ctx context.Context) (interface{}, error) {
+				max, err := ec.unmarshalOInt2ᚖint(ctx, 100)
+				if err != nil {
+					return nil, err
+				}
+				if ec.directives.Constraint == nil {
+					return nil, errors.New("directive constraint is not implemented")
+				}
+				return ec.directives.Constraint(ctx, obj, directive0, nil, max, nil, nil)
+			}
+
+			tmp, err := directive1(ctx)
+			if err != nil {
+				return it, graphql.ErrorOnPath(ctx, err)
+			}
+			if data, ok := tmp.(string); ok {
+				it.Name = data
+			} else {
+				err := fmt.Errorf(`unexpected type %T from directive, should be string`, tmp)
+				return it, graphql.ErrorOnPath(ctx, err)
+			}
+		case "friendUserIds":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("friendUserIds"))
+			it.FriendUserIds, err = ec.unmarshalNUUID2ᚕgithubᚗcomᚋgoogleᚋuuidᚐUUIDᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputSignUpInput(ctx context.Context, obj interface{}) (gqlmodel.SignUpInput, error) {
 	var it gqlmodel.SignUpInput
 	asMap := map[string]interface{}{}
@@ -4337,6 +5187,68 @@ func (ec *executionContext) unmarshalInputSignUpInput(ctx context.Context, obj i
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputUpdateFriendGroupInput(ctx context.Context, obj interface{}) (gqlmodel.UpdateFriendGroupInput, error) {
+	var it gqlmodel.UpdateFriendGroupInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"id", "name", "friendUserIds"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "id":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			it.ID, err = ec.unmarshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "name":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+			directive0 := func(ctx context.Context) (interface{}, error) { return ec.unmarshalNString2string(ctx, v) }
+			directive1 := func(ctx context.Context) (interface{}, error) {
+				max, err := ec.unmarshalOInt2ᚖint(ctx, 100)
+				if err != nil {
+					return nil, err
+				}
+				if ec.directives.Constraint == nil {
+					return nil, errors.New("directive constraint is not implemented")
+				}
+				return ec.directives.Constraint(ctx, obj, directive0, nil, max, nil, nil)
+			}
+
+			tmp, err := directive1(ctx)
+			if err != nil {
+				return it, graphql.ErrorOnPath(ctx, err)
+			}
+			if data, ok := tmp.(string); ok {
+				it.Name = data
+			} else {
+				err := fmt.Errorf(`unexpected type %T from directive, should be string`, tmp)
+				return it, graphql.ErrorOnPath(ctx, err)
+			}
+		case "friendUserIds":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("friendUserIds"))
+			it.FriendUserIds, err = ec.unmarshalNUUID2ᚕgithubᚗcomᚋgoogleᚋuuidᚐUUIDᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 // endregion **************************** input.gotpl *****************************
 
 // region    ************************** interface.gotpl ***************************
@@ -4359,6 +5271,13 @@ func (ec *executionContext) _Node(ctx context.Context, sel ast.SelectionSet, obj
 			return graphql.Null
 		}
 		return ec._FriendshipRequest(ctx, sel, obj)
+	case gqlmodel.FriendGroup:
+		return ec._FriendGroup(ctx, sel, &obj)
+	case *gqlmodel.FriendGroup:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._FriendGroup(ctx, sel, obj)
 	default:
 		panic(fmt.Errorf("unexpected type %T", obj))
 	}
@@ -4367,6 +5286,68 @@ func (ec *executionContext) _Node(ctx context.Context, sel ast.SelectionSet, obj
 // endregion ************************** interface.gotpl ***************************
 
 // region    **************************** object.gotpl ****************************
+
+var friendGroupImplementors = []string{"FriendGroup", "Node"}
+
+func (ec *executionContext) _FriendGroup(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.FriendGroup) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, friendGroupImplementors)
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("FriendGroup")
+		case "id":
+
+			out.Values[i] = ec._FriendGroup_id(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "name":
+
+			out.Values[i] = ec._FriendGroup_name(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "userId":
+
+			out.Values[i] = ec._FriendGroup_userId(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "friendUsers":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._FriendGroup_friendUsers(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return innerFunc(ctx)
+
+			})
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
 
 var friendshipRequestImplementors = []string{"FriendshipRequest", "Node"}
 
@@ -4516,6 +5497,33 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_approveFriendShipRequest(ctx, field)
+			})
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "createFriendGroup":
+
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_createFriendGroup(ctx, field)
+			})
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "updateFriendGroup":
+
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_updateFriendGroup(ctx, field)
+			})
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "deleteFriendGroup":
+
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_deleteFriendGroup(ctx, field)
 			})
 
 			if out.Values[i] == graphql.Null {
@@ -4696,6 +5704,52 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_requestingFriendShipRequests(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return rrm(innerCtx)
+			})
+		case "friendGroup":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_friendGroup(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return rrm(innerCtx)
+			})
+		case "friendGroups":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_friendGroups(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
@@ -5181,6 +6235,11 @@ func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.Se
 	return res
 }
 
+func (ec *executionContext) unmarshalNCreateFriendGroupInput2githubᚗcomᚋkᚑyomoᚋbumpᚋbump_apiᚋgraphᚋgqlmodelᚐCreateFriendGroupInput(ctx context.Context, v interface{}) (gqlmodel.CreateFriendGroupInput, error) {
+	res, err := ec.unmarshalInputCreateFriendGroupInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalNCursor2githubᚗcomᚋkᚑyomoᚋbumpᚋbump_apiᚋentᚐCursor(ctx context.Context, v interface{}) (ent.Cursor, error) {
 	var res ent.Cursor
 	err := res.UnmarshalGQL(v)
@@ -5189,6 +6248,68 @@ func (ec *executionContext) unmarshalNCursor2githubᚗcomᚋkᚑyomoᚋbumpᚋbu
 
 func (ec *executionContext) marshalNCursor2githubᚗcomᚋkᚑyomoᚋbumpᚋbump_apiᚋentᚐCursor(ctx context.Context, sel ast.SelectionSet, v ent.Cursor) graphql.Marshaler {
 	return v
+}
+
+func (ec *executionContext) marshalNFriendGroup2githubᚗcomᚋkᚑyomoᚋbumpᚋbump_apiᚋgraphᚋgqlmodelᚐFriendGroup(ctx context.Context, sel ast.SelectionSet, v gqlmodel.FriendGroup) graphql.Marshaler {
+	return ec._FriendGroup(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNFriendGroup2ᚕᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋbump_apiᚋgraphᚋgqlmodelᚐFriendGroupᚄ(ctx context.Context, sel ast.SelectionSet, v []*gqlmodel.FriendGroup) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNFriendGroup2ᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋbump_apiᚋgraphᚋgqlmodelᚐFriendGroup(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNFriendGroup2ᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋbump_apiᚋgraphᚋgqlmodelᚐFriendGroup(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.FriendGroup) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._FriendGroup(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNFriendshipRequest2githubᚗcomᚋkᚑyomoᚋbumpᚋbump_apiᚋgraphᚋgqlmodelᚐFriendshipRequest(ctx context.Context, sel ast.SelectionSet, v gqlmodel.FriendshipRequest) graphql.Marshaler {
+	return ec._FriendshipRequest(ctx, sel, &v)
 }
 
 func (ec *executionContext) marshalNFriendshipRequest2ᚕᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋbump_apiᚋgraphᚋgqlmodelᚐFriendshipRequestᚄ(ctx context.Context, sel ast.SelectionSet, v []*gqlmodel.FriendshipRequest) graphql.Marshaler {
@@ -5315,8 +6436,89 @@ func (ec *executionContext) marshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx
 	return res
 }
 
+func (ec *executionContext) unmarshalNUUID2ᚕgithubᚗcomᚋgoogleᚋuuidᚐUUIDᚄ(ctx context.Context, v interface{}) ([]uuid.UUID, error) {
+	var vSlice []interface{}
+	if v != nil {
+		vSlice = graphql.CoerceList(v)
+	}
+	var err error
+	res := make([]uuid.UUID, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) marshalNUUID2ᚕgithubᚗcomᚋgoogleᚋuuidᚐUUIDᚄ(ctx context.Context, sel ast.SelectionSet, v []uuid.UUID) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	for i := range v {
+		ret[i] = ec.marshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, sel, v[i])
+	}
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) unmarshalNUpdateFriendGroupInput2githubᚗcomᚋkᚑyomoᚋbumpᚋbump_apiᚋgraphᚋgqlmodelᚐUpdateFriendGroupInput(ctx context.Context, v interface{}) (gqlmodel.UpdateFriendGroupInput, error) {
+	res, err := ec.unmarshalInputUpdateFriendGroupInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) marshalNUser2githubᚗcomᚋkᚑyomoᚋbumpᚋbump_apiᚋgraphᚋgqlmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v gqlmodel.User) graphql.Marshaler {
 	return ec._User(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNUser2ᚕᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋbump_apiᚋgraphᚋgqlmodelᚐUserᚄ(ctx context.Context, sel ast.SelectionSet, v []*gqlmodel.User) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNUser2ᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋbump_apiᚋgraphᚋgqlmodelᚐUser(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
 }
 
 func (ec *executionContext) marshalNUser2ᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋbump_apiᚋgraphᚋgqlmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.User) graphql.Marshaler {

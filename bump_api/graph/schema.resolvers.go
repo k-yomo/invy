@@ -11,6 +11,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/k-yomo/bump/bump_api/auth"
 	"github.com/k-yomo/bump/bump_api/ent"
+	entfriendgroup "github.com/k-yomo/bump/bump_api/ent/friendgroup"
 	entfriendship "github.com/k-yomo/bump/bump_api/ent/friendship"
 	entfriendshiprequest "github.com/k-yomo/bump/bump_api/ent/friendshiprequest"
 	entuser "github.com/k-yomo/bump/bump_api/ent/user"
@@ -22,11 +23,24 @@ import (
 	"github.com/k-yomo/bump/pkg/requestutil"
 )
 
+// FriendUsers is the resolver for the friendUsers field.
+func (r *friendGroupResolver) FriendUsers(ctx context.Context, obj *gqlmodel.FriendGroup) ([]*gqlmodel.User, error) {
+	friendUsersInGroup, err := r.DBClient.FriendGroup.Query().
+		Where(entfriendgroup.ID(obj.ID)).
+		QueryFriendUsers().
+		QueryUserProfile().
+		All(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return convutil.ConvertToList(friendUsersInGroup, conv.ConvertFromDBUserProfile), nil
+}
+
 // FromUser is the resolver for the fromUser field.
 func (r *friendshipRequestResolver) FromUser(ctx context.Context, obj *gqlmodel.FriendshipRequest) (*gqlmodel.User, error) {
 	userProfile, err := r.DBClient.UserProfile.Query().
 		Where(userprofile.UserID(obj.FromUserID)).
-		First(ctx)
+		Only(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -37,7 +51,7 @@ func (r *friendshipRequestResolver) FromUser(ctx context.Context, obj *gqlmodel.
 func (r *friendshipRequestResolver) ToUser(ctx context.Context, obj *gqlmodel.FriendshipRequest) (*gqlmodel.User, error) {
 	userProfile, err := r.DBClient.UserProfile.Query().
 		Where(userprofile.UserID(obj.ToUserID)).
-		First(ctx)
+		Only(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -64,7 +78,9 @@ func (r *mutationResolver) SignUp(ctx context.Context, input *gqlmodel.SignUpInp
 	}
 
 	err = ent.RunInTx(ctx, r.DBClient, func(tx *ent.Tx) error {
-		foundUser, err := tx.User.Query().Where(entuser.AuthID(token.UID)).First(ctx)
+		foundUser, err := tx.User.Query().
+			Where(entuser.AuthID(token.UID)).
+			Only(ctx)
 		if err != nil && !ent.IsNotFound(err) {
 			return err
 		}
@@ -102,17 +118,17 @@ func (r *mutationResolver) SignUp(ctx context.Context, input *gqlmodel.SignUpInp
 }
 
 // RequestFriendShip is the resolver for the requestFriendShip field.
-func (r *mutationResolver) RequestFriendShip(ctx context.Context, userID uuid.UUID) (bool, error) {
+func (r *mutationResolver) RequestFriendShip(ctx context.Context, userID uuid.UUID) (*gqlmodel.FriendshipRequest, error) {
 	loggedInUserID := auth.GetUserID(ctx)
-	err := r.DBClient.FriendshipRequest.Create().
+	friendshipRequest, err := r.DBClient.FriendshipRequest.Create().
 		SetFromUserID(loggedInUserID).
 		SetToUserID(userID).
-		Exec(ctx)
+		Save(ctx)
 	if err != nil {
-		return false, err
+		return nil, err
 	}
 	// TODO: notification
-	return true, nil
+	return conv.ConvertFromDBFriendshipRequest(friendshipRequest), nil
 }
 
 // CancelFriendShipRequest is the resolver for the cancelFriendShipRequest field.
@@ -153,7 +169,7 @@ func (r *mutationResolver) ApproveFriendShipRequest(ctx context.Context, friends
 			Where(
 				entfriendshiprequest.ID(friendshipRequestID),
 				entfriendshiprequest.ToUserID(userID),
-			).First(ctx)
+			).Only(ctx)
 		if err != nil {
 			return err
 		}
@@ -183,11 +199,76 @@ func (r *mutationResolver) ApproveFriendShipRequest(ctx context.Context, friends
 	return true, nil
 }
 
+// CreateFriendGroup is the resolver for the createFriendGroup field.
+func (r *mutationResolver) CreateFriendGroup(ctx context.Context, input gqlmodel.CreateFriendGroupInput) (*gqlmodel.FriendGroup, error) {
+	userID := auth.GetUserID(ctx)
+	var friendGroup *ent.FriendGroup
+	err := ent.RunInTx(ctx, r.DBClient, func(tx *ent.Tx) error {
+		var err error
+		friendGroup, err = r.DBClient.FriendGroup.Create().
+			SetName(input.Name).
+			SetUserID(userID).
+			AddFriendUserIDs(input.FriendUserIds...).
+			Save(ctx)
+		return err
+	})
+	if err != nil {
+		return nil, err
+	}
+	return conv.ConvertFromDBFriendGroup(friendGroup), nil
+}
+
+// UpdateFriendGroup is the resolver for the updateFriendGroup field.
+func (r *mutationResolver) UpdateFriendGroup(ctx context.Context, input gqlmodel.UpdateFriendGroupInput) (*gqlmodel.FriendGroup, error) {
+	userID := auth.GetUserID(ctx)
+	err := ent.RunInTx(ctx, r.DBClient, func(tx *ent.Tx) error {
+		// FIXME: remove -diff & add +diff might be better than clear then add
+		err := r.DBClient.FriendGroup.Update().
+			Where(entfriendgroup.ID(input.ID), entfriendgroup.UserID(userID)).
+			ClearFriendUsers().
+			Exec(ctx)
+		if err != nil {
+			return err
+		}
+		err = r.DBClient.FriendGroup.Update().
+			Where(entfriendgroup.ID(input.ID), entfriendgroup.UserID(userID)).
+			SetName(input.Name).
+			AddFriendUserIDs(input.FriendUserIds...).Exec(ctx)
+		if err != nil {
+			return err
+		}
+		return nil
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	friendGroup, err := r.DBClient.FriendGroup.Query().
+		Where(entfriendgroup.ID(input.ID), entfriendgroup.UserID(userID)).
+		Only(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return conv.ConvertFromDBFriendGroup(friendGroup), nil
+}
+
+// DeleteFriendGroup is the resolver for the deleteFriendGroup field.
+func (r *mutationResolver) DeleteFriendGroup(ctx context.Context, friendGroupID uuid.UUID) (bool, error) {
+	userID := auth.GetUserID(ctx)
+	_, err := r.DBClient.FriendGroup.Delete().
+		Where(entfriendgroup.ID(friendGroupID), entfriendgroup.UserID(userID)).
+		Exec(ctx)
+	if err != nil {
+		return false, err
+	}
+	return true, nil
+}
+
 // Viewer is the resolver for the viewer field.
 func (r *queryResolver) Viewer(ctx context.Context) (*gqlmodel.User, error) {
 	userProfile, err := r.DBClient.UserProfile.Query().
 		Where(userprofile.UserID(auth.GetUserID(ctx))).
-		First(ctx)
+		Only(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -198,7 +279,7 @@ func (r *queryResolver) Viewer(ctx context.Context) (*gqlmodel.User, error) {
 func (r *queryResolver) User(ctx context.Context, userID uuid.UUID) (*gqlmodel.User, error) {
 	userProfile, err := r.DBClient.UserProfile.Query().
 		Where(userprofile.UserID(userID)).
-		First(ctx)
+		Only(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -258,6 +339,33 @@ func (r *queryResolver) RequestingFriendShipRequests(ctx context.Context) ([]*gq
 	return convutil.ConvertToList(pendingRequests, conv.ConvertFromDBFriendshipRequest), nil
 }
 
+// FriendGroup is the resolver for the friendGroup field.
+func (r *queryResolver) FriendGroup(ctx context.Context, friendGroupID uuid.UUID) (*gqlmodel.FriendGroup, error) {
+	userID := auth.GetUserID(ctx)
+	friendGroup, err := r.DBClient.FriendGroup.Query().
+		Where(entfriendgroup.ID(friendGroupID), entfriendgroup.UserID(userID)).
+		Only(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return conv.ConvertFromDBFriendGroup(friendGroup), nil
+}
+
+// FriendGroups is the resolver for the friendGroups field.
+func (r *queryResolver) FriendGroups(ctx context.Context) ([]*gqlmodel.FriendGroup, error) {
+	userID := auth.GetUserID(ctx)
+	friendGroups, err := r.DBClient.FriendGroup.Query().
+		Where(entfriendgroup.UserID(userID)).
+		All(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return convutil.ConvertToList(friendGroups, conv.ConvertFromDBFriendGroup), nil
+}
+
+// FriendGroup returns gqlgen.FriendGroupResolver implementation.
+func (r *Resolver) FriendGroup() gqlgen.FriendGroupResolver { return &friendGroupResolver{r} }
+
 // FriendshipRequest returns gqlgen.FriendshipRequestResolver implementation.
 func (r *Resolver) FriendshipRequest() gqlgen.FriendshipRequestResolver {
 	return &friendshipRequestResolver{r}
@@ -269,6 +377,7 @@ func (r *Resolver) Mutation() gqlgen.MutationResolver { return &mutationResolver
 // Query returns gqlgen.QueryResolver implementation.
 func (r *Resolver) Query() gqlgen.QueryResolver { return &queryResolver{r} }
 
+type friendGroupResolver struct{ *Resolver }
 type friendshipRequestResolver struct{ *Resolver }
 type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }

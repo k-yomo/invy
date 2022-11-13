@@ -11,15 +11,25 @@ type Query {
     pendingFriendShipRequests: [FriendshipRequest!]! @authRequired
     # fetch friend ship requests sent by the logged in user
     requestingFriendShipRequests: [FriendshipRequest!]! @authRequired
+
+    # fetch friend group
+    # Other user's group can't be fetched
+    friendGroup(friendGroupId: UUID!): FriendGroup! @authRequired
+    # fetch friend groups of the logged in user
+    friendGroups: [FriendGroup!]! @authRequired
 }
 
 type Mutation {
     signUp(input: SignUpInput): Boolean!
 
-    requestFriendShip(userId: UUID!): Boolean! @authRequired
+    requestFriendShip(userId: UUID!): FriendshipRequest! @authRequired
     cancelFriendShipRequest(friendshipRequestId: UUID!): Boolean! @authRequired
     denyFriendShipRequest(friendshipRequestId: UUID!): Boolean! @authRequired
     approveFriendShipRequest(friendshipRequestId: UUID!): Boolean! @authRequired
+
+    createFriendGroup(input: CreateFriendGroupInput!): FriendGroup! @authRequired
+    updateFriendGroup(input: UpdateFriendGroupInput!): FriendGroup! @authRequired
+    deleteFriendGroup(friendGroupId: UUID!): Boolean! @authRequired
 }
 
 ##############################
@@ -85,8 +95,26 @@ type FriendshipRequest implements Node {
     createdAt: Time!
 }
 
+type FriendGroup implements Node {
+    id: UUID!
+    userId: UUID!
+    name: String!
+    friendUsers: [User!]! @goField(forceResolver: true)
+}
+
 input SignUpInput {
     email: String! @constraint(format: EMAIL)
     nickname: String! @constraint(min: 3)
     avatarUrl: String @constraint(format: URL)
+}
+
+input CreateFriendGroupInput {
+    name: String! @constraint(max: 100)
+    friendUserIds: [UUID!]!
+}
+
+input UpdateFriendGroupInput {
+    id: UUID!
+    name: String! @constraint(max: 100)
+    friendUserIds: [UUID!]!
 }

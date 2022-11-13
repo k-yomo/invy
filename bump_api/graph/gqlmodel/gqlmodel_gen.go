@@ -17,6 +17,21 @@ type Node interface {
 	GetID() uuid.UUID
 }
 
+type CreateFriendGroupInput struct {
+	Name          string      `json:"name"`
+	FriendUserIds []uuid.UUID `json:"friendUserIds"`
+}
+
+type FriendGroup struct {
+	ID          uuid.UUID `json:"id"`
+	Name        string    `json:"name"`
+	UserID      uuid.UUID `json:"userId"`
+	FriendUsers []*User   `json:"friendUsers"`
+}
+
+func (FriendGroup) IsNode()               {}
+func (this FriendGroup) GetID() uuid.UUID { return this.ID }
+
 type FriendshipRequest struct {
 	ID         uuid.UUID `json:"id"`
 	FromUserID uuid.UUID `json:"fromUserId"`
@@ -40,6 +55,12 @@ type SignUpInput struct {
 	Email     string  `json:"email"`
 	Nickname  string  `json:"nickname"`
 	AvatarURL *string `json:"avatarUrl"`
+}
+
+type UpdateFriendGroupInput struct {
+	ID            uuid.UUID   `json:"id"`
+	Name          string      `json:"name"`
+	FriendUserIds []uuid.UUID `json:"friendUserIds"`
 }
 
 type User struct {

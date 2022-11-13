@@ -15,9 +15,11 @@ import (
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/errcode"
 	"github.com/google/uuid"
+	"github.com/k-yomo/bump/bump_api/ent/friendgroup"
 	"github.com/k-yomo/bump/bump_api/ent/friendship"
 	"github.com/k-yomo/bump/bump_api/ent/friendshiprequest"
 	"github.com/k-yomo/bump/bump_api/ent/user"
+	"github.com/k-yomo/bump/bump_api/ent/userfriendgroup"
 	"github.com/k-yomo/bump/bump_api/ent/userprofile"
 	"github.com/vektah/gqlparser/v2/gqlerror"
 	"github.com/vmihailenco/msgpack/v5"
@@ -243,6 +245,237 @@ func paginateLimit(first, last *int) int {
 		limit = *last + 1
 	}
 	return limit
+}
+
+// FriendGroupEdge is the edge representation of FriendGroup.
+type FriendGroupEdge struct {
+	Node   *FriendGroup `json:"node"`
+	Cursor Cursor       `json:"cursor"`
+}
+
+// FriendGroupConnection is the connection containing edges to FriendGroup.
+type FriendGroupConnection struct {
+	Edges      []*FriendGroupEdge `json:"edges"`
+	PageInfo   PageInfo           `json:"pageInfo"`
+	TotalCount int                `json:"totalCount"`
+}
+
+func (c *FriendGroupConnection) build(nodes []*FriendGroup, pager *friendgroupPager, after *Cursor, first *int, before *Cursor, last *int) {
+	c.PageInfo.HasNextPage = before != nil
+	c.PageInfo.HasPreviousPage = after != nil
+	if first != nil && *first+1 == len(nodes) {
+		c.PageInfo.HasNextPage = true
+		nodes = nodes[:len(nodes)-1]
+	} else if last != nil && *last+1 == len(nodes) {
+		c.PageInfo.HasPreviousPage = true
+		nodes = nodes[:len(nodes)-1]
+	}
+	var nodeAt func(int) *FriendGroup
+	if last != nil {
+		n := len(nodes) - 1
+		nodeAt = func(i int) *FriendGroup {
+			return nodes[n-i]
+		}
+	} else {
+		nodeAt = func(i int) *FriendGroup {
+			return nodes[i]
+		}
+	}
+	c.Edges = make([]*FriendGroupEdge, len(nodes))
+	for i := range nodes {
+		node := nodeAt(i)
+		c.Edges[i] = &FriendGroupEdge{
+			Node:   node,
+			Cursor: pager.toCursor(node),
+		}
+	}
+	if l := len(c.Edges); l > 0 {
+		c.PageInfo.StartCursor = &c.Edges[0].Cursor
+		c.PageInfo.EndCursor = &c.Edges[l-1].Cursor
+	}
+	if c.TotalCount == 0 {
+		c.TotalCount = len(nodes)
+	}
+}
+
+// FriendGroupPaginateOption enables pagination customization.
+type FriendGroupPaginateOption func(*friendgroupPager) error
+
+// WithFriendGroupOrder configures pagination ordering.
+func WithFriendGroupOrder(order *FriendGroupOrder) FriendGroupPaginateOption {
+	if order == nil {
+		order = DefaultFriendGroupOrder
+	}
+	o := *order
+	return func(pager *friendgroupPager) error {
+		if err := o.Direction.Validate(); err != nil {
+			return err
+		}
+		if o.Field == nil {
+			o.Field = DefaultFriendGroupOrder.Field
+		}
+		pager.order = &o
+		return nil
+	}
+}
+
+// WithFriendGroupFilter configures pagination filter.
+func WithFriendGroupFilter(filter func(*FriendGroupQuery) (*FriendGroupQuery, error)) FriendGroupPaginateOption {
+	return func(pager *friendgroupPager) error {
+		if filter == nil {
+			return errors.New("FriendGroupQuery filter cannot be nil")
+		}
+		pager.filter = filter
+		return nil
+	}
+}
+
+type friendgroupPager struct {
+	order  *FriendGroupOrder
+	filter func(*FriendGroupQuery) (*FriendGroupQuery, error)
+}
+
+func newFriendGroupPager(opts []FriendGroupPaginateOption) (*friendgroupPager, error) {
+	pager := &friendgroupPager{}
+	for _, opt := range opts {
+		if err := opt(pager); err != nil {
+			return nil, err
+		}
+	}
+	if pager.order == nil {
+		pager.order = DefaultFriendGroupOrder
+	}
+	return pager, nil
+}
+
+func (p *friendgroupPager) applyFilter(query *FriendGroupQuery) (*FriendGroupQuery, error) {
+	if p.filter != nil {
+		return p.filter(query)
+	}
+	return query, nil
+}
+
+func (p *friendgroupPager) toCursor(fg *FriendGroup) Cursor {
+	return p.order.Field.toCursor(fg)
+}
+
+func (p *friendgroupPager) applyCursors(query *FriendGroupQuery, after, before *Cursor) *FriendGroupQuery {
+	for _, predicate := range cursorsToPredicates(
+		p.order.Direction, after, before,
+		p.order.Field.field, DefaultFriendGroupOrder.Field.field,
+	) {
+		query = query.Where(predicate)
+	}
+	return query
+}
+
+func (p *friendgroupPager) applyOrder(query *FriendGroupQuery, reverse bool) *FriendGroupQuery {
+	direction := p.order.Direction
+	if reverse {
+		direction = direction.reverse()
+	}
+	query = query.Order(direction.orderFunc(p.order.Field.field))
+	if p.order.Field != DefaultFriendGroupOrder.Field {
+		query = query.Order(direction.orderFunc(DefaultFriendGroupOrder.Field.field))
+	}
+	return query
+}
+
+func (p *friendgroupPager) orderExpr(reverse bool) sql.Querier {
+	direction := p.order.Direction
+	if reverse {
+		direction = direction.reverse()
+	}
+	return sql.ExprFunc(func(b *sql.Builder) {
+		b.Ident(p.order.Field.field).Pad().WriteString(string(direction))
+		if p.order.Field != DefaultFriendGroupOrder.Field {
+			b.Comma().Ident(DefaultFriendGroupOrder.Field.field).Pad().WriteString(string(direction))
+		}
+	})
+}
+
+// Paginate executes the query and returns a relay based cursor connection to FriendGroup.
+func (fg *FriendGroupQuery) Paginate(
+	ctx context.Context, after *Cursor, first *int,
+	before *Cursor, last *int, opts ...FriendGroupPaginateOption,
+) (*FriendGroupConnection, error) {
+	if err := validateFirstLast(first, last); err != nil {
+		return nil, err
+	}
+	pager, err := newFriendGroupPager(opts)
+	if err != nil {
+		return nil, err
+	}
+	if fg, err = pager.applyFilter(fg); err != nil {
+		return nil, err
+	}
+	conn := &FriendGroupConnection{Edges: []*FriendGroupEdge{}}
+	ignoredEdges := !hasCollectedField(ctx, edgesField)
+	if hasCollectedField(ctx, totalCountField) || hasCollectedField(ctx, pageInfoField) {
+		hasPagination := after != nil || first != nil || before != nil || last != nil
+		if hasPagination || ignoredEdges {
+			if conn.TotalCount, err = fg.Count(ctx); err != nil {
+				return nil, err
+			}
+			conn.PageInfo.HasNextPage = first != nil && conn.TotalCount > 0
+			conn.PageInfo.HasPreviousPage = last != nil && conn.TotalCount > 0
+		}
+	}
+	if ignoredEdges || (first != nil && *first == 0) || (last != nil && *last == 0) {
+		return conn, nil
+	}
+
+	fg = pager.applyCursors(fg, after, before)
+	fg = pager.applyOrder(fg, last != nil)
+	if limit := paginateLimit(first, last); limit != 0 {
+		fg.Limit(limit)
+	}
+	if field := collectedField(ctx, edgesField, nodeField); field != nil {
+		if err := fg.collectField(ctx, graphql.GetOperationContext(ctx), *field, []string{edgesField, nodeField}); err != nil {
+			return nil, err
+		}
+	}
+
+	nodes, err := fg.All(ctx)
+	if err != nil {
+		return nil, err
+	}
+	conn.build(nodes, pager, after, first, before, last)
+	return conn, nil
+}
+
+// FriendGroupOrderField defines the ordering field of FriendGroup.
+type FriendGroupOrderField struct {
+	field    string
+	toCursor func(*FriendGroup) Cursor
+}
+
+// FriendGroupOrder defines the ordering of FriendGroup.
+type FriendGroupOrder struct {
+	Direction OrderDirection         `json:"direction"`
+	Field     *FriendGroupOrderField `json:"field"`
+}
+
+// DefaultFriendGroupOrder is the default ordering of FriendGroup.
+var DefaultFriendGroupOrder = &FriendGroupOrder{
+	Direction: OrderDirectionAsc,
+	Field: &FriendGroupOrderField{
+		field: friendgroup.FieldID,
+		toCursor: func(fg *FriendGroup) Cursor {
+			return Cursor{ID: fg.ID}
+		},
+	},
+}
+
+// ToEdge converts FriendGroup into FriendGroupEdge.
+func (fg *FriendGroup) ToEdge(order *FriendGroupOrder) *FriendGroupEdge {
+	if order == nil {
+		order = DefaultFriendGroupOrder
+	}
+	return &FriendGroupEdge{
+		Node:   fg,
+		Cursor: order.Field.toCursor(fg),
+	}
 }
 
 // FriendshipEdge is the edge representation of Friendship.
@@ -978,6 +1211,237 @@ func (u *User) ToEdge(order *UserOrder) *UserEdge {
 	return &UserEdge{
 		Node:   u,
 		Cursor: order.Field.toCursor(u),
+	}
+}
+
+// UserFriendGroupEdge is the edge representation of UserFriendGroup.
+type UserFriendGroupEdge struct {
+	Node   *UserFriendGroup `json:"node"`
+	Cursor Cursor           `json:"cursor"`
+}
+
+// UserFriendGroupConnection is the connection containing edges to UserFriendGroup.
+type UserFriendGroupConnection struct {
+	Edges      []*UserFriendGroupEdge `json:"edges"`
+	PageInfo   PageInfo               `json:"pageInfo"`
+	TotalCount int                    `json:"totalCount"`
+}
+
+func (c *UserFriendGroupConnection) build(nodes []*UserFriendGroup, pager *userfriendgroupPager, after *Cursor, first *int, before *Cursor, last *int) {
+	c.PageInfo.HasNextPage = before != nil
+	c.PageInfo.HasPreviousPage = after != nil
+	if first != nil && *first+1 == len(nodes) {
+		c.PageInfo.HasNextPage = true
+		nodes = nodes[:len(nodes)-1]
+	} else if last != nil && *last+1 == len(nodes) {
+		c.PageInfo.HasPreviousPage = true
+		nodes = nodes[:len(nodes)-1]
+	}
+	var nodeAt func(int) *UserFriendGroup
+	if last != nil {
+		n := len(nodes) - 1
+		nodeAt = func(i int) *UserFriendGroup {
+			return nodes[n-i]
+		}
+	} else {
+		nodeAt = func(i int) *UserFriendGroup {
+			return nodes[i]
+		}
+	}
+	c.Edges = make([]*UserFriendGroupEdge, len(nodes))
+	for i := range nodes {
+		node := nodeAt(i)
+		c.Edges[i] = &UserFriendGroupEdge{
+			Node:   node,
+			Cursor: pager.toCursor(node),
+		}
+	}
+	if l := len(c.Edges); l > 0 {
+		c.PageInfo.StartCursor = &c.Edges[0].Cursor
+		c.PageInfo.EndCursor = &c.Edges[l-1].Cursor
+	}
+	if c.TotalCount == 0 {
+		c.TotalCount = len(nodes)
+	}
+}
+
+// UserFriendGroupPaginateOption enables pagination customization.
+type UserFriendGroupPaginateOption func(*userfriendgroupPager) error
+
+// WithUserFriendGroupOrder configures pagination ordering.
+func WithUserFriendGroupOrder(order *UserFriendGroupOrder) UserFriendGroupPaginateOption {
+	if order == nil {
+		order = DefaultUserFriendGroupOrder
+	}
+	o := *order
+	return func(pager *userfriendgroupPager) error {
+		if err := o.Direction.Validate(); err != nil {
+			return err
+		}
+		if o.Field == nil {
+			o.Field = DefaultUserFriendGroupOrder.Field
+		}
+		pager.order = &o
+		return nil
+	}
+}
+
+// WithUserFriendGroupFilter configures pagination filter.
+func WithUserFriendGroupFilter(filter func(*UserFriendGroupQuery) (*UserFriendGroupQuery, error)) UserFriendGroupPaginateOption {
+	return func(pager *userfriendgroupPager) error {
+		if filter == nil {
+			return errors.New("UserFriendGroupQuery filter cannot be nil")
+		}
+		pager.filter = filter
+		return nil
+	}
+}
+
+type userfriendgroupPager struct {
+	order  *UserFriendGroupOrder
+	filter func(*UserFriendGroupQuery) (*UserFriendGroupQuery, error)
+}
+
+func newUserFriendGroupPager(opts []UserFriendGroupPaginateOption) (*userfriendgroupPager, error) {
+	pager := &userfriendgroupPager{}
+	for _, opt := range opts {
+		if err := opt(pager); err != nil {
+			return nil, err
+		}
+	}
+	if pager.order == nil {
+		pager.order = DefaultUserFriendGroupOrder
+	}
+	return pager, nil
+}
+
+func (p *userfriendgroupPager) applyFilter(query *UserFriendGroupQuery) (*UserFriendGroupQuery, error) {
+	if p.filter != nil {
+		return p.filter(query)
+	}
+	return query, nil
+}
+
+func (p *userfriendgroupPager) toCursor(ufg *UserFriendGroup) Cursor {
+	return p.order.Field.toCursor(ufg)
+}
+
+func (p *userfriendgroupPager) applyCursors(query *UserFriendGroupQuery, after, before *Cursor) *UserFriendGroupQuery {
+	for _, predicate := range cursorsToPredicates(
+		p.order.Direction, after, before,
+		p.order.Field.field, DefaultUserFriendGroupOrder.Field.field,
+	) {
+		query = query.Where(predicate)
+	}
+	return query
+}
+
+func (p *userfriendgroupPager) applyOrder(query *UserFriendGroupQuery, reverse bool) *UserFriendGroupQuery {
+	direction := p.order.Direction
+	if reverse {
+		direction = direction.reverse()
+	}
+	query = query.Order(direction.orderFunc(p.order.Field.field))
+	if p.order.Field != DefaultUserFriendGroupOrder.Field {
+		query = query.Order(direction.orderFunc(DefaultUserFriendGroupOrder.Field.field))
+	}
+	return query
+}
+
+func (p *userfriendgroupPager) orderExpr(reverse bool) sql.Querier {
+	direction := p.order.Direction
+	if reverse {
+		direction = direction.reverse()
+	}
+	return sql.ExprFunc(func(b *sql.Builder) {
+		b.Ident(p.order.Field.field).Pad().WriteString(string(direction))
+		if p.order.Field != DefaultUserFriendGroupOrder.Field {
+			b.Comma().Ident(DefaultUserFriendGroupOrder.Field.field).Pad().WriteString(string(direction))
+		}
+	})
+}
+
+// Paginate executes the query and returns a relay based cursor connection to UserFriendGroup.
+func (ufg *UserFriendGroupQuery) Paginate(
+	ctx context.Context, after *Cursor, first *int,
+	before *Cursor, last *int, opts ...UserFriendGroupPaginateOption,
+) (*UserFriendGroupConnection, error) {
+	if err := validateFirstLast(first, last); err != nil {
+		return nil, err
+	}
+	pager, err := newUserFriendGroupPager(opts)
+	if err != nil {
+		return nil, err
+	}
+	if ufg, err = pager.applyFilter(ufg); err != nil {
+		return nil, err
+	}
+	conn := &UserFriendGroupConnection{Edges: []*UserFriendGroupEdge{}}
+	ignoredEdges := !hasCollectedField(ctx, edgesField)
+	if hasCollectedField(ctx, totalCountField) || hasCollectedField(ctx, pageInfoField) {
+		hasPagination := after != nil || first != nil || before != nil || last != nil
+		if hasPagination || ignoredEdges {
+			if conn.TotalCount, err = ufg.Count(ctx); err != nil {
+				return nil, err
+			}
+			conn.PageInfo.HasNextPage = first != nil && conn.TotalCount > 0
+			conn.PageInfo.HasPreviousPage = last != nil && conn.TotalCount > 0
+		}
+	}
+	if ignoredEdges || (first != nil && *first == 0) || (last != nil && *last == 0) {
+		return conn, nil
+	}
+
+	ufg = pager.applyCursors(ufg, after, before)
+	ufg = pager.applyOrder(ufg, last != nil)
+	if limit := paginateLimit(first, last); limit != 0 {
+		ufg.Limit(limit)
+	}
+	if field := collectedField(ctx, edgesField, nodeField); field != nil {
+		if err := ufg.collectField(ctx, graphql.GetOperationContext(ctx), *field, []string{edgesField, nodeField}); err != nil {
+			return nil, err
+		}
+	}
+
+	nodes, err := ufg.All(ctx)
+	if err != nil {
+		return nil, err
+	}
+	conn.build(nodes, pager, after, first, before, last)
+	return conn, nil
+}
+
+// UserFriendGroupOrderField defines the ordering field of UserFriendGroup.
+type UserFriendGroupOrderField struct {
+	field    string
+	toCursor func(*UserFriendGroup) Cursor
+}
+
+// UserFriendGroupOrder defines the ordering of UserFriendGroup.
+type UserFriendGroupOrder struct {
+	Direction OrderDirection             `json:"direction"`
+	Field     *UserFriendGroupOrderField `json:"field"`
+}
+
+// DefaultUserFriendGroupOrder is the default ordering of UserFriendGroup.
+var DefaultUserFriendGroupOrder = &UserFriendGroupOrder{
+	Direction: OrderDirectionAsc,
+	Field: &UserFriendGroupOrderField{
+		field: userfriendgroup.FieldID,
+		toCursor: func(ufg *UserFriendGroup) Cursor {
+			return Cursor{ID: ufg.ID}
+		},
+	},
+}
+
+// ToEdge converts UserFriendGroup into UserFriendGroupEdge.
+func (ufg *UserFriendGroup) ToEdge(order *UserFriendGroupOrder) *UserFriendGroupEdge {
+	if order == nil {
+		order = DefaultUserFriendGroupOrder
+	}
+	return &UserFriendGroupEdge{
+		Node:   ufg,
+		Cursor: order.Field.toCursor(ufg),
 	}
 }
 
