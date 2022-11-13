@@ -11,9 +11,9 @@ import (
 	"github.com/google/uuid"
 	"github.com/k-yomo/bump/bump_api/auth"
 	"github.com/k-yomo/bump/bump_api/ent"
-	"github.com/k-yomo/bump/bump_api/ent/friendship"
-	"github.com/k-yomo/bump/bump_api/ent/friendshiprequest"
-	user2 "github.com/k-yomo/bump/bump_api/ent/user"
+	entfriendship "github.com/k-yomo/bump/bump_api/ent/friendship"
+	entfriendshiprequest "github.com/k-yomo/bump/bump_api/ent/friendshiprequest"
+	entuser "github.com/k-yomo/bump/bump_api/ent/user"
 	"github.com/k-yomo/bump/bump_api/ent/userprofile"
 	"github.com/k-yomo/bump/bump_api/graph/conv"
 	"github.com/k-yomo/bump/bump_api/graph/gqlgen"
@@ -64,7 +64,7 @@ func (r *mutationResolver) SignUp(ctx context.Context, input *gqlmodel.SignUpInp
 	}
 
 	err = ent.RunInTx(ctx, r.DBClient, func(tx *ent.Tx) error {
-		foundUser, err := tx.User.Query().Where(user2.AuthID(token.UID)).First(ctx)
+		foundUser, err := tx.User.Query().Where(entuser.AuthID(token.UID)).First(ctx)
 		if err != nil && !ent.IsNotFound(err) {
 			return err
 		}
@@ -120,8 +120,8 @@ func (r *mutationResolver) CancelFriendShipRequest(ctx context.Context, friendsh
 	userID := auth.GetUserID(ctx)
 	_, err := r.DBClient.FriendshipRequest.Delete().
 		Where(
-			friendshiprequest.ID(friendshipRequestID),
-			friendshiprequest.FromUserID(userID),
+			entfriendshiprequest.ID(friendshipRequestID),
+			entfriendshiprequest.FromUserID(userID),
 		).
 		Exec(ctx)
 	if err != nil {
@@ -135,8 +135,8 @@ func (r *mutationResolver) DenyFriendShipRequest(ctx context.Context, friendship
 	userID := auth.GetUserID(ctx)
 	_, err := r.DBClient.FriendshipRequest.Delete().
 		Where(
-			friendshiprequest.ID(friendshipRequestID),
-			friendshiprequest.ToUserID(userID),
+			entfriendshiprequest.ID(friendshipRequestID),
+			entfriendshiprequest.ToUserID(userID),
 		).
 		Exec(ctx)
 	if err != nil {
@@ -151,8 +151,8 @@ func (r *mutationResolver) ApproveFriendShipRequest(ctx context.Context, friends
 	err := ent.RunInTx(ctx, r.DBClient, func(tx *ent.Tx) error {
 		friendshipRequest, err := r.DBClient.FriendshipRequest.Query().
 			Where(
-				friendshiprequest.ID(friendshipRequestID),
-				friendshiprequest.ToUserID(userID),
+				entfriendshiprequest.ID(friendshipRequestID),
+				entfriendshiprequest.ToUserID(userID),
 			).First(ctx)
 		if err != nil {
 			return err
@@ -216,7 +216,7 @@ func (r *queryResolver) Friends(ctx context.Context, after *ent.Cursor, first *i
 		WithFriend(func(q *ent.UserQuery) {
 			q.WithUserProfile()
 		}).
-		Where(friendship.UserID(userID)).
+		Where(entfriendship.UserID(userID)).
 		Paginate(ctx, after, first, before, last, ent.WithFriendshipOrder(order))
 	if err != nil {
 		return nil, err
@@ -238,7 +238,7 @@ func (r *queryResolver) Friends(ctx context.Context, after *ent.Cursor, first *i
 func (r *queryResolver) PendingFriendShipRequests(ctx context.Context) ([]*gqlmodel.FriendshipRequest, error) {
 	userID := auth.GetUserID(ctx)
 	pendingRequests, err := r.DBClient.FriendshipRequest.Query().
-		Where(friendshiprequest.ToUserID(userID)).
+		Where(entfriendshiprequest.ToUserID(userID)).
 		All(ctx)
 	if err != nil {
 		return nil, err
@@ -250,7 +250,7 @@ func (r *queryResolver) PendingFriendShipRequests(ctx context.Context) ([]*gqlmo
 func (r *queryResolver) RequestingFriendShipRequests(ctx context.Context) ([]*gqlmodel.FriendshipRequest, error) {
 	userID := auth.GetUserID(ctx)
 	pendingRequests, err := r.DBClient.FriendshipRequest.Query().
-		Where(friendshiprequest.FromUserID(userID)).
+		Where(entfriendshiprequest.FromUserID(userID)).
 		All(ctx)
 	if err != nil {
 		return nil, err
