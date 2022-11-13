@@ -13,7 +13,7 @@ var (
 		{Name: "id", Type: field.TypeUUID},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "user_id", Type: field.TypeUUID},
-		{Name: "friend_id", Type: field.TypeUUID},
+		{Name: "friend_user_id", Type: field.TypeUUID},
 	}
 	// FriendshipsTable holds the schema information for the "friendships" table.
 	FriendshipsTable = &schema.Table{
@@ -28,7 +28,7 @@ var (
 				OnDelete:   schema.NoAction,
 			},
 			{
-				Symbol:     "friendships_users_friend",
+				Symbol:     "friendships_users_friend_user",
 				Columns:    []*schema.Column{FriendshipsColumns[3]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
@@ -36,7 +36,7 @@ var (
 		},
 		Indexes: []*schema.Index{
 			{
-				Name:    "friendship_user_id_friend_id",
+				Name:    "friendship_user_id_friend_user_id",
 				Unique:  true,
 				Columns: []*schema.Column{FriendshipsColumns[2], FriendshipsColumns[3]},
 			},

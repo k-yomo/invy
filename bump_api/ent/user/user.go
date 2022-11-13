@@ -19,8 +19,8 @@ const (
 	FieldCreatedAt = "created_at"
 	// EdgeUserProfile holds the string denoting the user_profile edge name in mutations.
 	EdgeUserProfile = "user_profile"
-	// EdgeFriends holds the string denoting the friends edge name in mutations.
-	EdgeFriends = "friends"
+	// EdgeFriendUsers holds the string denoting the friend_users edge name in mutations.
+	EdgeFriendUsers = "friend_users"
 	// EdgeFriendships holds the string denoting the friendships edge name in mutations.
 	EdgeFriendships = "friendships"
 	// Table holds the table name of the user in the database.
@@ -32,8 +32,8 @@ const (
 	UserProfileInverseTable = "user_profiles"
 	// UserProfileColumn is the table column denoting the user_profile relation/edge.
 	UserProfileColumn = "user_id"
-	// FriendsTable is the table that holds the friends relation/edge. The primary key declared below.
-	FriendsTable = "friendships"
+	// FriendUsersTable is the table that holds the friend_users relation/edge. The primary key declared below.
+	FriendUsersTable = "friendships"
 	// FriendshipsTable is the table that holds the friendships relation/edge.
 	FriendshipsTable = "friendships"
 	// FriendshipsInverseTable is the table name for the Friendship entity.
@@ -51,9 +51,9 @@ var Columns = []string{
 }
 
 var (
-	// FriendsPrimaryKey and FriendsColumn2 are the table columns denoting the
-	// primary key for the friends relation (M2M).
-	FriendsPrimaryKey = []string{"user_id", "friend_id"}
+	// FriendUsersPrimaryKey and FriendUsersColumn2 are the table columns denoting the
+	// primary key for the friend_users relation (M2M).
+	FriendUsersPrimaryKey = []string{"user_id", "friend_user_id"}
 )
 
 // ValidColumn reports if the column name is valid (part of the table columns).

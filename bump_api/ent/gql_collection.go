@@ -35,7 +35,7 @@ func (f *FriendshipQuery) collectField(ctx context.Context, op *graphql.Operatio
 				return err
 			}
 			f.withUser = query
-		case "friend":
+		case "friendUser":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
@@ -44,7 +44,7 @@ func (f *FriendshipQuery) collectField(ctx context.Context, op *graphql.Operatio
 			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
 				return err
 			}
-			f.withFriend = query
+			f.withFriendUser = query
 		}
 	}
 	return nil
@@ -191,7 +191,7 @@ func (u *UserQuery) collectField(ctx context.Context, op *graphql.OperationConte
 				return err
 			}
 			u.withUserProfile = query
-		case "friends":
+		case "friendUsers":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
@@ -200,7 +200,7 @@ func (u *UserQuery) collectField(ctx context.Context, op *graphql.OperationConte
 			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
 				return err
 			}
-			u.WithNamedFriends(alias, func(wq *UserQuery) {
+			u.WithNamedFriendUsers(alias, func(wq *UserQuery) {
 				*wq = *query
 			})
 		case "friendships":

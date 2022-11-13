@@ -89,10 +89,10 @@ func UserID(v uuid.UUID) predicate.Friendship {
 	})
 }
 
-// FriendID applies equality check predicate on the "friend_id" field. It's identical to FriendIDEQ.
-func FriendID(v uuid.UUID) predicate.Friendship {
+// FriendUserID applies equality check predicate on the "friend_user_id" field. It's identical to FriendUserIDEQ.
+func FriendUserID(v uuid.UUID) predicate.Friendship {
 	return predicate.Friendship(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldFriendID), v))
+		s.Where(sql.EQ(s.C(FieldFriendUserID), v))
 	})
 }
 
@@ -139,39 +139,39 @@ func UserIDNotIn(vs ...uuid.UUID) predicate.Friendship {
 	})
 }
 
-// FriendIDEQ applies the EQ predicate on the "friend_id" field.
-func FriendIDEQ(v uuid.UUID) predicate.Friendship {
+// FriendUserIDEQ applies the EQ predicate on the "friend_user_id" field.
+func FriendUserIDEQ(v uuid.UUID) predicate.Friendship {
 	return predicate.Friendship(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldFriendID), v))
+		s.Where(sql.EQ(s.C(FieldFriendUserID), v))
 	})
 }
 
-// FriendIDNEQ applies the NEQ predicate on the "friend_id" field.
-func FriendIDNEQ(v uuid.UUID) predicate.Friendship {
+// FriendUserIDNEQ applies the NEQ predicate on the "friend_user_id" field.
+func FriendUserIDNEQ(v uuid.UUID) predicate.Friendship {
 	return predicate.Friendship(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldFriendID), v))
+		s.Where(sql.NEQ(s.C(FieldFriendUserID), v))
 	})
 }
 
-// FriendIDIn applies the In predicate on the "friend_id" field.
-func FriendIDIn(vs ...uuid.UUID) predicate.Friendship {
+// FriendUserIDIn applies the In predicate on the "friend_user_id" field.
+func FriendUserIDIn(vs ...uuid.UUID) predicate.Friendship {
 	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
 	return predicate.Friendship(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldFriendID), v...))
+		s.Where(sql.In(s.C(FieldFriendUserID), v...))
 	})
 }
 
-// FriendIDNotIn applies the NotIn predicate on the "friend_id" field.
-func FriendIDNotIn(vs ...uuid.UUID) predicate.Friendship {
+// FriendUserIDNotIn applies the NotIn predicate on the "friend_user_id" field.
+func FriendUserIDNotIn(vs ...uuid.UUID) predicate.Friendship {
 	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
 	return predicate.Friendship(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldFriendID), v...))
+		s.Where(sql.NotIn(s.C(FieldFriendUserID), v...))
 	})
 }
 
@@ -267,25 +267,25 @@ func HasUserWith(preds ...predicate.User) predicate.Friendship {
 	})
 }
 
-// HasFriend applies the HasEdge predicate on the "friend" edge.
-func HasFriend() predicate.Friendship {
+// HasFriendUser applies the HasEdge predicate on the "friend_user" edge.
+func HasFriendUser() predicate.Friendship {
 	return predicate.Friendship(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(FriendTable, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, false, FriendTable, FriendColumn),
+			sqlgraph.To(FriendUserTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, FriendUserTable, FriendUserColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// HasFriendWith applies the HasEdge predicate on the "friend" edge with a given conditions (other predicates).
-func HasFriendWith(preds ...predicate.User) predicate.Friendship {
+// HasFriendUserWith applies the HasEdge predicate on the "friend_user" edge with a given conditions (other predicates).
+func HasFriendUserWith(preds ...predicate.User) predicate.Friendship {
 	return predicate.Friendship(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(FriendInverseTable, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, false, FriendTable, FriendColumn),
+			sqlgraph.To(FriendUserInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, FriendUserTable, FriendUserColumn),
 		)
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {

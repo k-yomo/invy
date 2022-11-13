@@ -16,10 +16,10 @@ func (f *Friendship) User(ctx context.Context) (*User, error) {
 	return result, err
 }
 
-func (f *Friendship) Friend(ctx context.Context) (*User, error) {
-	result, err := f.Edges.FriendOrErr()
+func (f *Friendship) FriendUser(ctx context.Context) (*User, error) {
+	result, err := f.Edges.FriendUserOrErr()
 	if IsNotLoaded(err) {
-		result, err = f.QueryFriend().Only(ctx)
+		result, err = f.QueryFriendUser().Only(ctx)
 	}
 	return result, err
 }
@@ -48,14 +48,14 @@ func (u *User) UserProfile(ctx context.Context) (*UserProfile, error) {
 	return result, MaskNotFound(err)
 }
 
-func (u *User) Friends(ctx context.Context) (result []*User, err error) {
+func (u *User) FriendUsers(ctx context.Context) (result []*User, err error) {
 	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
-		result, err = u.NamedFriends(graphql.GetFieldContext(ctx).Field.Alias)
+		result, err = u.NamedFriendUsers(graphql.GetFieldContext(ctx).Field.Alias)
 	} else {
-		result, err = u.Edges.FriendsOrErr()
+		result, err = u.Edges.FriendUsersOrErr()
 	}
 	if IsNotLoaded(err) {
-		result, err = u.QueryFriends().All(ctx)
+		result, err = u.QueryFriendUsers().All(ctx)
 	}
 	return result, err
 }

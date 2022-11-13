@@ -37,18 +37,18 @@ const (
 // FriendshipMutation represents an operation that mutates the Friendship nodes in the graph.
 type FriendshipMutation struct {
 	config
-	op            Op
-	typ           string
-	id            *uuid.UUID
-	created_at    *time.Time
-	clearedFields map[string]struct{}
-	user          *uuid.UUID
-	cleareduser   bool
-	friend        *uuid.UUID
-	clearedfriend bool
-	done          bool
-	oldValue      func(context.Context) (*Friendship, error)
-	predicates    []predicate.Friendship
+	op                 Op
+	typ                string
+	id                 *uuid.UUID
+	created_at         *time.Time
+	clearedFields      map[string]struct{}
+	user               *uuid.UUID
+	cleareduser        bool
+	friend_user        *uuid.UUID
+	clearedfriend_user bool
+	done               bool
+	oldValue           func(context.Context) (*Friendship, error)
+	predicates         []predicate.Friendship
 }
 
 var _ ent.Mutation = (*FriendshipMutation)(nil)
@@ -191,40 +191,40 @@ func (m *FriendshipMutation) ResetUserID() {
 	m.user = nil
 }
 
-// SetFriendID sets the "friend_id" field.
-func (m *FriendshipMutation) SetFriendID(u uuid.UUID) {
-	m.friend = &u
+// SetFriendUserID sets the "friend_user_id" field.
+func (m *FriendshipMutation) SetFriendUserID(u uuid.UUID) {
+	m.friend_user = &u
 }
 
-// FriendID returns the value of the "friend_id" field in the mutation.
-func (m *FriendshipMutation) FriendID() (r uuid.UUID, exists bool) {
-	v := m.friend
+// FriendUserID returns the value of the "friend_user_id" field in the mutation.
+func (m *FriendshipMutation) FriendUserID() (r uuid.UUID, exists bool) {
+	v := m.friend_user
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldFriendID returns the old "friend_id" field's value of the Friendship entity.
+// OldFriendUserID returns the old "friend_user_id" field's value of the Friendship entity.
 // If the Friendship object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *FriendshipMutation) OldFriendID(ctx context.Context) (v uuid.UUID, err error) {
+func (m *FriendshipMutation) OldFriendUserID(ctx context.Context) (v uuid.UUID, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldFriendID is only allowed on UpdateOne operations")
+		return v, errors.New("OldFriendUserID is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldFriendID requires an ID field in the mutation")
+		return v, errors.New("OldFriendUserID requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldFriendID: %w", err)
+		return v, fmt.Errorf("querying old value for OldFriendUserID: %w", err)
 	}
-	return oldValue.FriendID, nil
+	return oldValue.FriendUserID, nil
 }
 
-// ResetFriendID resets all changes to the "friend_id" field.
-func (m *FriendshipMutation) ResetFriendID() {
-	m.friend = nil
+// ResetFriendUserID resets all changes to the "friend_user_id" field.
+func (m *FriendshipMutation) ResetFriendUserID() {
+	m.friend_user = nil
 }
 
 // SetCreatedAt sets the "created_at" field.
@@ -289,30 +289,30 @@ func (m *FriendshipMutation) ResetUser() {
 	m.cleareduser = false
 }
 
-// ClearFriend clears the "friend" edge to the User entity.
-func (m *FriendshipMutation) ClearFriend() {
-	m.clearedfriend = true
+// ClearFriendUser clears the "friend_user" edge to the User entity.
+func (m *FriendshipMutation) ClearFriendUser() {
+	m.clearedfriend_user = true
 }
 
-// FriendCleared reports if the "friend" edge to the User entity was cleared.
-func (m *FriendshipMutation) FriendCleared() bool {
-	return m.clearedfriend
+// FriendUserCleared reports if the "friend_user" edge to the User entity was cleared.
+func (m *FriendshipMutation) FriendUserCleared() bool {
+	return m.clearedfriend_user
 }
 
-// FriendIDs returns the "friend" edge IDs in the mutation.
+// FriendUserIDs returns the "friend_user" edge IDs in the mutation.
 // Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
-// FriendID instead. It exists only for internal usage by the builders.
-func (m *FriendshipMutation) FriendIDs() (ids []uuid.UUID) {
-	if id := m.friend; id != nil {
+// FriendUserID instead. It exists only for internal usage by the builders.
+func (m *FriendshipMutation) FriendUserIDs() (ids []uuid.UUID) {
+	if id := m.friend_user; id != nil {
 		ids = append(ids, *id)
 	}
 	return
 }
 
-// ResetFriend resets all changes to the "friend" edge.
-func (m *FriendshipMutation) ResetFriend() {
-	m.friend = nil
-	m.clearedfriend = false
+// ResetFriendUser resets all changes to the "friend_user" edge.
+func (m *FriendshipMutation) ResetFriendUser() {
+	m.friend_user = nil
+	m.clearedfriend_user = false
 }
 
 // Where appends a list predicates to the FriendshipMutation builder.
@@ -338,8 +338,8 @@ func (m *FriendshipMutation) Fields() []string {
 	if m.user != nil {
 		fields = append(fields, friendship.FieldUserID)
 	}
-	if m.friend != nil {
-		fields = append(fields, friendship.FieldFriendID)
+	if m.friend_user != nil {
+		fields = append(fields, friendship.FieldFriendUserID)
 	}
 	if m.created_at != nil {
 		fields = append(fields, friendship.FieldCreatedAt)
@@ -354,8 +354,8 @@ func (m *FriendshipMutation) Field(name string) (ent.Value, bool) {
 	switch name {
 	case friendship.FieldUserID:
 		return m.UserID()
-	case friendship.FieldFriendID:
-		return m.FriendID()
+	case friendship.FieldFriendUserID:
+		return m.FriendUserID()
 	case friendship.FieldCreatedAt:
 		return m.CreatedAt()
 	}
@@ -369,8 +369,8 @@ func (m *FriendshipMutation) OldField(ctx context.Context, name string) (ent.Val
 	switch name {
 	case friendship.FieldUserID:
 		return m.OldUserID(ctx)
-	case friendship.FieldFriendID:
-		return m.OldFriendID(ctx)
+	case friendship.FieldFriendUserID:
+		return m.OldFriendUserID(ctx)
 	case friendship.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
 	}
@@ -389,12 +389,12 @@ func (m *FriendshipMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetUserID(v)
 		return nil
-	case friendship.FieldFriendID:
+	case friendship.FieldFriendUserID:
 		v, ok := value.(uuid.UUID)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetFriendID(v)
+		m.SetFriendUserID(v)
 		return nil
 	case friendship.FieldCreatedAt:
 		v, ok := value.(time.Time)
@@ -455,8 +455,8 @@ func (m *FriendshipMutation) ResetField(name string) error {
 	case friendship.FieldUserID:
 		m.ResetUserID()
 		return nil
-	case friendship.FieldFriendID:
-		m.ResetFriendID()
+	case friendship.FieldFriendUserID:
+		m.ResetFriendUserID()
 		return nil
 	case friendship.FieldCreatedAt:
 		m.ResetCreatedAt()
@@ -471,8 +471,8 @@ func (m *FriendshipMutation) AddedEdges() []string {
 	if m.user != nil {
 		edges = append(edges, friendship.EdgeUser)
 	}
-	if m.friend != nil {
-		edges = append(edges, friendship.EdgeFriend)
+	if m.friend_user != nil {
+		edges = append(edges, friendship.EdgeFriendUser)
 	}
 	return edges
 }
@@ -485,8 +485,8 @@ func (m *FriendshipMutation) AddedIDs(name string) []ent.Value {
 		if id := m.user; id != nil {
 			return []ent.Value{*id}
 		}
-	case friendship.EdgeFriend:
-		if id := m.friend; id != nil {
+	case friendship.EdgeFriendUser:
+		if id := m.friend_user; id != nil {
 			return []ent.Value{*id}
 		}
 	}
@@ -511,8 +511,8 @@ func (m *FriendshipMutation) ClearedEdges() []string {
 	if m.cleareduser {
 		edges = append(edges, friendship.EdgeUser)
 	}
-	if m.clearedfriend {
-		edges = append(edges, friendship.EdgeFriend)
+	if m.clearedfriend_user {
+		edges = append(edges, friendship.EdgeFriendUser)
 	}
 	return edges
 }
@@ -523,8 +523,8 @@ func (m *FriendshipMutation) EdgeCleared(name string) bool {
 	switch name {
 	case friendship.EdgeUser:
 		return m.cleareduser
-	case friendship.EdgeFriend:
-		return m.clearedfriend
+	case friendship.EdgeFriendUser:
+		return m.clearedfriend_user
 	}
 	return false
 }
@@ -536,8 +536,8 @@ func (m *FriendshipMutation) ClearEdge(name string) error {
 	case friendship.EdgeUser:
 		m.ClearUser()
 		return nil
-	case friendship.EdgeFriend:
-		m.ClearFriend()
+	case friendship.EdgeFriendUser:
+		m.ClearFriendUser()
 		return nil
 	}
 	return fmt.Errorf("unknown Friendship unique edge %s", name)
@@ -550,8 +550,8 @@ func (m *FriendshipMutation) ResetEdge(name string) error {
 	case friendship.EdgeUser:
 		m.ResetUser()
 		return nil
-	case friendship.EdgeFriend:
-		m.ResetFriend()
+	case friendship.EdgeFriendUser:
+		m.ResetFriendUser()
 		return nil
 	}
 	return fmt.Errorf("unknown Friendship edge %s", name)
@@ -1117,9 +1117,9 @@ type UserMutation struct {
 	clearedFields       map[string]struct{}
 	user_profile        *uuid.UUID
 	cleareduser_profile bool
-	friends             map[uuid.UUID]struct{}
-	removedfriends      map[uuid.UUID]struct{}
-	clearedfriends      bool
+	friend_users        map[uuid.UUID]struct{}
+	removedfriend_users map[uuid.UUID]struct{}
+	clearedfriend_users bool
 	friendships         map[uuid.UUID]struct{}
 	removedfriendships  map[uuid.UUID]struct{}
 	clearedfriendships  bool
@@ -1343,58 +1343,58 @@ func (m *UserMutation) ResetUserProfile() {
 	m.cleareduser_profile = false
 }
 
-// AddFriendIDs adds the "friends" edge to the User entity by ids.
-func (m *UserMutation) AddFriendIDs(ids ...uuid.UUID) {
-	if m.friends == nil {
-		m.friends = make(map[uuid.UUID]struct{})
+// AddFriendUserIDs adds the "friend_users" edge to the User entity by ids.
+func (m *UserMutation) AddFriendUserIDs(ids ...uuid.UUID) {
+	if m.friend_users == nil {
+		m.friend_users = make(map[uuid.UUID]struct{})
 	}
 	for i := range ids {
-		m.friends[ids[i]] = struct{}{}
+		m.friend_users[ids[i]] = struct{}{}
 	}
 }
 
-// ClearFriends clears the "friends" edge to the User entity.
-func (m *UserMutation) ClearFriends() {
-	m.clearedfriends = true
+// ClearFriendUsers clears the "friend_users" edge to the User entity.
+func (m *UserMutation) ClearFriendUsers() {
+	m.clearedfriend_users = true
 }
 
-// FriendsCleared reports if the "friends" edge to the User entity was cleared.
-func (m *UserMutation) FriendsCleared() bool {
-	return m.clearedfriends
+// FriendUsersCleared reports if the "friend_users" edge to the User entity was cleared.
+func (m *UserMutation) FriendUsersCleared() bool {
+	return m.clearedfriend_users
 }
 
-// RemoveFriendIDs removes the "friends" edge to the User entity by IDs.
-func (m *UserMutation) RemoveFriendIDs(ids ...uuid.UUID) {
-	if m.removedfriends == nil {
-		m.removedfriends = make(map[uuid.UUID]struct{})
+// RemoveFriendUserIDs removes the "friend_users" edge to the User entity by IDs.
+func (m *UserMutation) RemoveFriendUserIDs(ids ...uuid.UUID) {
+	if m.removedfriend_users == nil {
+		m.removedfriend_users = make(map[uuid.UUID]struct{})
 	}
 	for i := range ids {
-		delete(m.friends, ids[i])
-		m.removedfriends[ids[i]] = struct{}{}
+		delete(m.friend_users, ids[i])
+		m.removedfriend_users[ids[i]] = struct{}{}
 	}
 }
 
-// RemovedFriends returns the removed IDs of the "friends" edge to the User entity.
-func (m *UserMutation) RemovedFriendsIDs() (ids []uuid.UUID) {
-	for id := range m.removedfriends {
+// RemovedFriendUsers returns the removed IDs of the "friend_users" edge to the User entity.
+func (m *UserMutation) RemovedFriendUsersIDs() (ids []uuid.UUID) {
+	for id := range m.removedfriend_users {
 		ids = append(ids, id)
 	}
 	return
 }
 
-// FriendsIDs returns the "friends" edge IDs in the mutation.
-func (m *UserMutation) FriendsIDs() (ids []uuid.UUID) {
-	for id := range m.friends {
+// FriendUsersIDs returns the "friend_users" edge IDs in the mutation.
+func (m *UserMutation) FriendUsersIDs() (ids []uuid.UUID) {
+	for id := range m.friend_users {
 		ids = append(ids, id)
 	}
 	return
 }
 
-// ResetFriends resets all changes to the "friends" edge.
-func (m *UserMutation) ResetFriends() {
-	m.friends = nil
-	m.clearedfriends = false
-	m.removedfriends = nil
+// ResetFriendUsers resets all changes to the "friend_users" edge.
+func (m *UserMutation) ResetFriendUsers() {
+	m.friend_users = nil
+	m.clearedfriend_users = false
+	m.removedfriend_users = nil
 }
 
 // AddFriendshipIDs adds the "friendships" edge to the Friendship entity by ids.
@@ -1590,8 +1590,8 @@ func (m *UserMutation) AddedEdges() []string {
 	if m.user_profile != nil {
 		edges = append(edges, user.EdgeUserProfile)
 	}
-	if m.friends != nil {
-		edges = append(edges, user.EdgeFriends)
+	if m.friend_users != nil {
+		edges = append(edges, user.EdgeFriendUsers)
 	}
 	if m.friendships != nil {
 		edges = append(edges, user.EdgeFriendships)
@@ -1607,9 +1607,9 @@ func (m *UserMutation) AddedIDs(name string) []ent.Value {
 		if id := m.user_profile; id != nil {
 			return []ent.Value{*id}
 		}
-	case user.EdgeFriends:
-		ids := make([]ent.Value, 0, len(m.friends))
-		for id := range m.friends {
+	case user.EdgeFriendUsers:
+		ids := make([]ent.Value, 0, len(m.friend_users))
+		for id := range m.friend_users {
 			ids = append(ids, id)
 		}
 		return ids
@@ -1626,8 +1626,8 @@ func (m *UserMutation) AddedIDs(name string) []ent.Value {
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *UserMutation) RemovedEdges() []string {
 	edges := make([]string, 0, 3)
-	if m.removedfriends != nil {
-		edges = append(edges, user.EdgeFriends)
+	if m.removedfriend_users != nil {
+		edges = append(edges, user.EdgeFriendUsers)
 	}
 	if m.removedfriendships != nil {
 		edges = append(edges, user.EdgeFriendships)
@@ -1639,9 +1639,9 @@ func (m *UserMutation) RemovedEdges() []string {
 // the given name in this mutation.
 func (m *UserMutation) RemovedIDs(name string) []ent.Value {
 	switch name {
-	case user.EdgeFriends:
-		ids := make([]ent.Value, 0, len(m.removedfriends))
-		for id := range m.removedfriends {
+	case user.EdgeFriendUsers:
+		ids := make([]ent.Value, 0, len(m.removedfriend_users))
+		for id := range m.removedfriend_users {
 			ids = append(ids, id)
 		}
 		return ids
@@ -1661,8 +1661,8 @@ func (m *UserMutation) ClearedEdges() []string {
 	if m.cleareduser_profile {
 		edges = append(edges, user.EdgeUserProfile)
 	}
-	if m.clearedfriends {
-		edges = append(edges, user.EdgeFriends)
+	if m.clearedfriend_users {
+		edges = append(edges, user.EdgeFriendUsers)
 	}
 	if m.clearedfriendships {
 		edges = append(edges, user.EdgeFriendships)
@@ -1676,8 +1676,8 @@ func (m *UserMutation) EdgeCleared(name string) bool {
 	switch name {
 	case user.EdgeUserProfile:
 		return m.cleareduser_profile
-	case user.EdgeFriends:
-		return m.clearedfriends
+	case user.EdgeFriendUsers:
+		return m.clearedfriend_users
 	case user.EdgeFriendships:
 		return m.clearedfriendships
 	}
@@ -1702,8 +1702,8 @@ func (m *UserMutation) ResetEdge(name string) error {
 	case user.EdgeUserProfile:
 		m.ResetUserProfile()
 		return nil
-	case user.EdgeFriends:
-		m.ResetFriends()
+	case user.EdgeFriendUsers:
+		m.ResetFriendUsers()
 		return nil
 	case user.EdgeFriendships:
 		m.ResetFriendships()

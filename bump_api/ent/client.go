@@ -246,15 +246,15 @@ func (c *FriendshipClient) QueryUser(f *Friendship) *UserQuery {
 	return query
 }
 
-// QueryFriend queries the friend edge of a Friendship.
-func (c *FriendshipClient) QueryFriend(f *Friendship) *UserQuery {
+// QueryFriendUser queries the friend_user edge of a Friendship.
+func (c *FriendshipClient) QueryFriendUser(f *Friendship) *UserQuery {
 	query := &UserQuery{config: c.config}
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := f.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(friendship.Table, friendship.FieldID, id),
 			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, false, friendship.FriendTable, friendship.FriendColumn),
+			sqlgraph.Edge(sqlgraph.M2O, false, friendship.FriendUserTable, friendship.FriendUserColumn),
 		)
 		fromV = sqlgraph.Neighbors(f.driver.Dialect(), step)
 		return fromV, nil
@@ -490,15 +490,15 @@ func (c *UserClient) QueryUserProfile(u *User) *UserProfileQuery {
 	return query
 }
 
-// QueryFriends queries the friends edge of a User.
-func (c *UserClient) QueryFriends(u *User) *UserQuery {
+// QueryFriendUsers queries the friend_users edge of a User.
+func (c *UserClient) QueryFriendUsers(u *User) *UserQuery {
 	query := &UserQuery{config: c.config}
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := u.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(user.Table, user.FieldID, id),
 			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, false, user.FriendsTable, user.FriendsPrimaryKey...),
+			sqlgraph.Edge(sqlgraph.M2M, false, user.FriendUsersTable, user.FriendUsersPrimaryKey...),
 		)
 		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
 		return fromV, nil

@@ -162,14 +162,14 @@ func (r *mutationResolver) ApproveFriendShipRequest(ctx context.Context, friends
 		}
 		err = r.DBClient.Friendship.Create().
 			SetUserID(friendshipRequest.FromUserID).
-			SetFriendID(friendshipRequest.ToUserID).
+			SetFriendUserID(friendshipRequest.ToUserID).
 			Exec(ctx)
 		if err != nil {
 			return err
 		}
 		err = r.DBClient.Friendship.Create().
 			SetUserID(friendshipRequest.ToUserID).
-			SetFriendID(friendshipRequest.FromUserID).
+			SetFriendUserID(friendshipRequest.FromUserID).
 			Exec(ctx)
 		if err != nil {
 			return err
@@ -213,7 +213,7 @@ func (r *queryResolver) Friends(ctx context.Context, after *ent.Cursor, first *i
 		Field:     ent.FriendshipOrderFieldCreatedAt,
 	}
 	friendshipConnection, err := r.DBClient.Debug().Friendship.Query().
-		WithFriend(func(q *ent.UserQuery) {
+		WithFriendUser(func(q *ent.UserQuery) {
 			q.WithUserProfile()
 		}).
 		Where(entfriendship.UserID(userID)).
@@ -227,7 +227,7 @@ func (r *queryResolver) Friends(ctx context.Context, after *ent.Cursor, first *i
 	}
 	for _, edge := range friendshipConnection.Edges {
 		userConnection.Edges = append(userConnection.Edges, &gqlmodel.UserEdge{
-			Node:   conv.ConvertFromDBUserProfile(edge.Node.Edges.Friend.Edges.UserProfile),
+			Node:   conv.ConvertFromDBUserProfile(edge.Node.Edges.FriendUser.Edges.UserProfile),
 			Cursor: edge.Cursor,
 		})
 	}

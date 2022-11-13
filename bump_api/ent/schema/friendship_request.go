@@ -30,12 +30,6 @@ func (FriendshipRequest) Fields() []ent.Field {
 	}
 }
 
-func (FriendshipRequest) Indexes() []ent.Index {
-	return []ent.Index{
-		index.Fields("from_user_id", "to_user_id").Unique(),
-	}
-}
-
 // Edges of the FriendshipRequest.
 func (FriendshipRequest) Edges() []ent.Edge {
 	return []ent.Edge{
@@ -49,5 +43,11 @@ func (FriendshipRequest) Edges() []ent.Edge {
 			Required().
 			Unique().
 			Immutable(),
+	}
+}
+
+func (FriendshipRequest) Indexes() []ent.Index {
+	return []ent.Index{
+		index.Fields("from_user_id", "to_user_id").Unique(),
 	}
 }

@@ -31,6 +31,7 @@ func (User) Fields() []ent.Field {
 func (User) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.To("user_profile", UserProfile.Type).Unique(),
-		edge.To("friends", User.Type).Through("friendships", Friendship.Type),
+		edge.To("friend_users", User.Type).
+			Through("friendships", Friendship.Type),
 	}
 }

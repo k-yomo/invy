@@ -15,14 +15,14 @@ const (
 	FieldID = "id"
 	// FieldUserID holds the string denoting the user_id field in the database.
 	FieldUserID = "user_id"
-	// FieldFriendID holds the string denoting the friend_id field in the database.
-	FieldFriendID = "friend_id"
+	// FieldFriendUserID holds the string denoting the friend_user_id field in the database.
+	FieldFriendUserID = "friend_user_id"
 	// FieldCreatedAt holds the string denoting the created_at field in the database.
 	FieldCreatedAt = "created_at"
 	// EdgeUser holds the string denoting the user edge name in mutations.
 	EdgeUser = "user"
-	// EdgeFriend holds the string denoting the friend edge name in mutations.
-	EdgeFriend = "friend"
+	// EdgeFriendUser holds the string denoting the friend_user edge name in mutations.
+	EdgeFriendUser = "friend_user"
 	// Table holds the table name of the friendship in the database.
 	Table = "friendships"
 	// UserTable is the table that holds the user relation/edge.
@@ -32,20 +32,20 @@ const (
 	UserInverseTable = "users"
 	// UserColumn is the table column denoting the user relation/edge.
 	UserColumn = "user_id"
-	// FriendTable is the table that holds the friend relation/edge.
-	FriendTable = "friendships"
-	// FriendInverseTable is the table name for the User entity.
+	// FriendUserTable is the table that holds the friend_user relation/edge.
+	FriendUserTable = "friendships"
+	// FriendUserInverseTable is the table name for the User entity.
 	// It exists in this package in order to avoid circular dependency with the "user" package.
-	FriendInverseTable = "users"
-	// FriendColumn is the table column denoting the friend relation/edge.
-	FriendColumn = "friend_id"
+	FriendUserInverseTable = "users"
+	// FriendUserColumn is the table column denoting the friend_user relation/edge.
+	FriendUserColumn = "friend_user_id"
 )
 
 // Columns holds all SQL columns for friendship fields.
 var Columns = []string{
 	FieldID,
 	FieldUserID,
-	FieldFriendID,
+	FieldFriendUserID,
 	FieldCreatedAt,
 }
 

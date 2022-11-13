@@ -60,12 +60,12 @@ func (f *Friendship) Node(ctx context.Context) (node *Node, err error) {
 		Name:  "user_id",
 		Value: string(buf),
 	}
-	if buf, err = json.Marshal(f.FriendID); err != nil {
+	if buf, err = json.Marshal(f.FriendUserID); err != nil {
 		return nil, err
 	}
 	node.Fields[1] = &Field{
 		Type:  "uuid.UUID",
-		Name:  "friend_id",
+		Name:  "friend_user_id",
 		Value: string(buf),
 	}
 	if buf, err = json.Marshal(f.CreatedAt); err != nil {
@@ -88,9 +88,9 @@ func (f *Friendship) Node(ctx context.Context) (node *Node, err error) {
 	}
 	node.Edges[1] = &Edge{
 		Type: "User",
-		Name: "friend",
+		Name: "friend_user",
 	}
-	err = f.QueryFriend().
+	err = f.QueryFriendUser().
 		Select(user.FieldID).
 		Scan(ctx, &node.Edges[1].IDs)
 	if err != nil {
@@ -190,9 +190,9 @@ func (u *User) Node(ctx context.Context) (node *Node, err error) {
 	}
 	node.Edges[1] = &Edge{
 		Type: "User",
-		Name: "friends",
+		Name: "friend_users",
 	}
-	err = u.QueryFriends().
+	err = u.QueryFriendUsers().
 		Select(user.FieldID).
 		Scan(ctx, &node.Edges[1].IDs)
 	if err != nil {

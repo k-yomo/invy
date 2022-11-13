@@ -31,9 +31,9 @@ func (fc *FriendshipCreate) SetUserID(u uuid.UUID) *FriendshipCreate {
 	return fc
 }
 
-// SetFriendID sets the "friend_id" field.
-func (fc *FriendshipCreate) SetFriendID(u uuid.UUID) *FriendshipCreate {
-	fc.mutation.SetFriendID(u)
+// SetFriendUserID sets the "friend_user_id" field.
+func (fc *FriendshipCreate) SetFriendUserID(u uuid.UUID) *FriendshipCreate {
+	fc.mutation.SetFriendUserID(u)
 	return fc
 }
 
@@ -70,9 +70,9 @@ func (fc *FriendshipCreate) SetUser(u *User) *FriendshipCreate {
 	return fc.SetUserID(u.ID)
 }
 
-// SetFriend sets the "friend" edge to the User entity.
-func (fc *FriendshipCreate) SetFriend(u *User) *FriendshipCreate {
-	return fc.SetFriendID(u.ID)
+// SetFriendUser sets the "friend_user" edge to the User entity.
+func (fc *FriendshipCreate) SetFriendUser(u *User) *FriendshipCreate {
+	return fc.SetFriendUserID(u.ID)
 }
 
 // Mutation returns the FriendshipMutation object of the builder.
@@ -167,8 +167,8 @@ func (fc *FriendshipCreate) check() error {
 	if _, ok := fc.mutation.UserID(); !ok {
 		return &ValidationError{Name: "user_id", err: errors.New(`ent: missing required field "Friendship.user_id"`)}
 	}
-	if _, ok := fc.mutation.FriendID(); !ok {
-		return &ValidationError{Name: "friend_id", err: errors.New(`ent: missing required field "Friendship.friend_id"`)}
+	if _, ok := fc.mutation.FriendUserID(); !ok {
+		return &ValidationError{Name: "friend_user_id", err: errors.New(`ent: missing required field "Friendship.friend_user_id"`)}
 	}
 	if _, ok := fc.mutation.CreatedAt(); !ok {
 		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Friendship.created_at"`)}
@@ -176,8 +176,8 @@ func (fc *FriendshipCreate) check() error {
 	if _, ok := fc.mutation.UserID(); !ok {
 		return &ValidationError{Name: "user", err: errors.New(`ent: missing required edge "Friendship.user"`)}
 	}
-	if _, ok := fc.mutation.FriendID(); !ok {
-		return &ValidationError{Name: "friend", err: errors.New(`ent: missing required edge "Friendship.friend"`)}
+	if _, ok := fc.mutation.FriendUserID(); !ok {
+		return &ValidationError{Name: "friend_user", err: errors.New(`ent: missing required edge "Friendship.friend_user"`)}
 	}
 	return nil
 }
@@ -240,12 +240,12 @@ func (fc *FriendshipCreate) createSpec() (*Friendship, *sqlgraph.CreateSpec) {
 		_node.UserID = nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := fc.mutation.FriendIDs(); len(nodes) > 0 {
+	if nodes := fc.mutation.FriendUserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: false,
-			Table:   friendship.FriendTable,
-			Columns: []string{friendship.FriendColumn},
+			Table:   friendship.FriendUserTable,
+			Columns: []string{friendship.FriendUserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -257,7 +257,7 @@ func (fc *FriendshipCreate) createSpec() (*Friendship, *sqlgraph.CreateSpec) {
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.FriendID = nodes[0]
+		_node.FriendUserID = nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
@@ -332,8 +332,8 @@ func (u *FriendshipUpsertOne) UpdateNewValues() *FriendshipUpsertOne {
 		if _, exists := u.create.mutation.UserID(); exists {
 			s.SetIgnore(friendship.FieldUserID)
 		}
-		if _, exists := u.create.mutation.FriendID(); exists {
-			s.SetIgnore(friendship.FieldFriendID)
+		if _, exists := u.create.mutation.FriendUserID(); exists {
+			s.SetIgnore(friendship.FieldFriendUserID)
 		}
 		if _, exists := u.create.mutation.CreatedAt(); exists {
 			s.SetIgnore(friendship.FieldCreatedAt)
@@ -551,8 +551,8 @@ func (u *FriendshipUpsertBulk) UpdateNewValues() *FriendshipUpsertBulk {
 			if _, exists := b.mutation.UserID(); exists {
 				s.SetIgnore(friendship.FieldUserID)
 			}
-			if _, exists := b.mutation.FriendID(); exists {
-				s.SetIgnore(friendship.FieldFriendID)
+			if _, exists := b.mutation.FriendUserID(); exists {
+				s.SetIgnore(friendship.FieldFriendUserID)
 			}
 			if _, exists := b.mutation.CreatedAt(); exists {
 				s.SetIgnore(friendship.FieldCreatedAt)

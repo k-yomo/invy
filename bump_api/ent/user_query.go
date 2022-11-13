@@ -28,11 +28,11 @@ type UserQuery struct {
 	fields               []string
 	predicates           []predicate.User
 	withUserProfile      *UserProfileQuery
-	withFriends          *UserQuery
+	withFriendUsers      *UserQuery
 	withFriendships      *FriendshipQuery
 	modifiers            []func(*sql.Selector)
 	loadTotal            []func(context.Context, []*User) error
-	withNamedFriends     map[string]*UserQuery
+	withNamedFriendUsers map[string]*UserQuery
 	withNamedFriendships map[string]*FriendshipQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -92,8 +92,8 @@ func (uq *UserQuery) QueryUserProfile() *UserProfileQuery {
 	return query
 }
 
-// QueryFriends chains the current query on the "friends" edge.
-func (uq *UserQuery) QueryFriends() *UserQuery {
+// QueryFriendUsers chains the current query on the "friend_users" edge.
+func (uq *UserQuery) QueryFriendUsers() *UserQuery {
 	query := &UserQuery{config: uq.config}
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := uq.prepareQuery(ctx); err != nil {
@@ -106,7 +106,7 @@ func (uq *UserQuery) QueryFriends() *UserQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(user.Table, user.FieldID, selector),
 			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, false, user.FriendsTable, user.FriendsPrimaryKey...),
+			sqlgraph.Edge(sqlgraph.M2M, false, user.FriendUsersTable, user.FriendUsersPrimaryKey...),
 		)
 		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
 		return fromU, nil
@@ -318,7 +318,7 @@ func (uq *UserQuery) Clone() *UserQuery {
 		order:           append([]OrderFunc{}, uq.order...),
 		predicates:      append([]predicate.User{}, uq.predicates...),
 		withUserProfile: uq.withUserProfile.Clone(),
-		withFriends:     uq.withFriends.Clone(),
+		withFriendUsers: uq.withFriendUsers.Clone(),
 		withFriendships: uq.withFriendships.Clone(),
 		// clone intermediate query.
 		sql:    uq.sql.Clone(),
@@ -338,14 +338,14 @@ func (uq *UserQuery) WithUserProfile(opts ...func(*UserProfileQuery)) *UserQuery
 	return uq
 }
 
-// WithFriends tells the query-builder to eager-load the nodes that are connected to
-// the "friends" edge. The optional arguments are used to configure the query builder of the edge.
-func (uq *UserQuery) WithFriends(opts ...func(*UserQuery)) *UserQuery {
+// WithFriendUsers tells the query-builder to eager-load the nodes that are connected to
+// the "friend_users" edge. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithFriendUsers(opts ...func(*UserQuery)) *UserQuery {
 	query := &UserQuery{config: uq.config}
 	for _, opt := range opts {
 		opt(query)
 	}
-	uq.withFriends = query
+	uq.withFriendUsers = query
 	return uq
 }
 
@@ -435,7 +435,7 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 		_spec       = uq.querySpec()
 		loadedTypes = [3]bool{
 			uq.withUserProfile != nil,
-			uq.withFriends != nil,
+			uq.withFriendUsers != nil,
 			uq.withFriendships != nil,
 		}
 	)
@@ -466,10 +466,10 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 			return nil, err
 		}
 	}
-	if query := uq.withFriends; query != nil {
-		if err := uq.loadFriends(ctx, query, nodes,
-			func(n *User) { n.Edges.Friends = []*User{} },
-			func(n *User, e *User) { n.Edges.Friends = append(n.Edges.Friends, e) }); err != nil {
+	if query := uq.withFriendUsers; query != nil {
+		if err := uq.loadFriendUsers(ctx, query, nodes,
+			func(n *User) { n.Edges.FriendUsers = []*User{} },
+			func(n *User, e *User) { n.Edges.FriendUsers = append(n.Edges.FriendUsers, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -480,10 +480,10 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 			return nil, err
 		}
 	}
-	for name, query := range uq.withNamedFriends {
-		if err := uq.loadFriends(ctx, query, nodes,
-			func(n *User) { n.appendNamedFriends(name) },
-			func(n *User, e *User) { n.appendNamedFriends(name, e) }); err != nil {
+	for name, query := range uq.withNamedFriendUsers {
+		if err := uq.loadFriendUsers(ctx, query, nodes,
+			func(n *User) { n.appendNamedFriendUsers(name) },
+			func(n *User, e *User) { n.appendNamedFriendUsers(name, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -526,7 +526,7 @@ func (uq *UserQuery) loadUserProfile(ctx context.Context, query *UserProfileQuer
 	}
 	return nil
 }
-func (uq *UserQuery) loadFriends(ctx context.Context, query *UserQuery, nodes []*User, init func(*User), assign func(*User, *User)) error {
+func (uq *UserQuery) loadFriendUsers(ctx context.Context, query *UserQuery, nodes []*User, init func(*User), assign func(*User, *User)) error {
 	edgeIDs := make([]driver.Value, len(nodes))
 	byID := make(map[uuid.UUID]*User)
 	nids := make(map[uuid.UUID]map[*User]struct{})
@@ -538,11 +538,11 @@ func (uq *UserQuery) loadFriends(ctx context.Context, query *UserQuery, nodes []
 		}
 	}
 	query.Where(func(s *sql.Selector) {
-		joinT := sql.Table(user.FriendsTable)
-		s.Join(joinT).On(s.C(user.FieldID), joinT.C(user.FriendsPrimaryKey[1]))
-		s.Where(sql.InValues(joinT.C(user.FriendsPrimaryKey[0]), edgeIDs...))
+		joinT := sql.Table(user.FriendUsersTable)
+		s.Join(joinT).On(s.C(user.FieldID), joinT.C(user.FriendUsersPrimaryKey[1]))
+		s.Where(sql.InValues(joinT.C(user.FriendUsersPrimaryKey[0]), edgeIDs...))
 		columns := s.SelectedColumns()
-		s.Select(joinT.C(user.FriendsPrimaryKey[0]))
+		s.Select(joinT.C(user.FriendUsersPrimaryKey[0]))
 		s.AppendSelect(columns...)
 		s.SetDistinct(false)
 	})
@@ -576,7 +576,7 @@ func (uq *UserQuery) loadFriends(ctx context.Context, query *UserQuery, nodes []
 	for _, n := range neighbors {
 		nodes, ok := nids[n.ID]
 		if !ok {
-			return fmt.Errorf(`unexpected "friends" node returned %v`, n.ID)
+			return fmt.Errorf(`unexpected "friend_users" node returned %v`, n.ID)
 		}
 		for kn := range nodes {
 			assign(kn, n)
@@ -715,17 +715,17 @@ func (uq *UserQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	return selector
 }
 
-// WithNamedFriends tells the query-builder to eager-load the nodes that are connected to the "friends"
+// WithNamedFriendUsers tells the query-builder to eager-load the nodes that are connected to the "friend_users"
 // edge with the given name. The optional arguments are used to configure the query builder of the edge.
-func (uq *UserQuery) WithNamedFriends(name string, opts ...func(*UserQuery)) *UserQuery {
+func (uq *UserQuery) WithNamedFriendUsers(name string, opts ...func(*UserQuery)) *UserQuery {
 	query := &UserQuery{config: uq.config}
 	for _, opt := range opts {
 		opt(query)
 	}
-	if uq.withNamedFriends == nil {
-		uq.withNamedFriends = make(map[string]*UserQuery)
+	if uq.withNamedFriendUsers == nil {
+		uq.withNamedFriendUsers = make(map[string]*UserQuery)
 	}
-	uq.withNamedFriends[name] = query
+	uq.withNamedFriendUsers[name] = query
 	return uq
 }
 

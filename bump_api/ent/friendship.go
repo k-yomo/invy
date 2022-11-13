@@ -20,8 +20,8 @@ type Friendship struct {
 	ID uuid.UUID `json:"id,omitempty"`
 	// UserID holds the value of the "user_id" field.
 	UserID uuid.UUID `json:"user_id,omitempty"`
-	// FriendID holds the value of the "friend_id" field.
-	FriendID uuid.UUID `json:"friend_id,omitempty"`
+	// FriendUserID holds the value of the "friend_user_id" field.
+	FriendUserID uuid.UUID `json:"friend_user_id,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
@@ -33,8 +33,8 @@ type Friendship struct {
 type FriendshipEdges struct {
 	// User holds the value of the user edge.
 	User *User `json:"user,omitempty"`
-	// Friend holds the value of the friend edge.
-	Friend *User `json:"friend,omitempty"`
+	// FriendUser holds the value of the friend_user edge.
+	FriendUser *User `json:"friend_user,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [2]bool
@@ -55,17 +55,17 @@ func (e FriendshipEdges) UserOrErr() (*User, error) {
 	return nil, &NotLoadedError{edge: "user"}
 }
 
-// FriendOrErr returns the Friend value or an error if the edge
+// FriendUserOrErr returns the FriendUser value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
-func (e FriendshipEdges) FriendOrErr() (*User, error) {
+func (e FriendshipEdges) FriendUserOrErr() (*User, error) {
 	if e.loadedTypes[1] {
-		if e.Friend == nil {
+		if e.FriendUser == nil {
 			// Edge was loaded but was not found.
 			return nil, &NotFoundError{label: user.Label}
 		}
-		return e.Friend, nil
+		return e.FriendUser, nil
 	}
-	return nil, &NotLoadedError{edge: "friend"}
+	return nil, &NotLoadedError{edge: "friend_user"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -75,7 +75,7 @@ func (*Friendship) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case friendship.FieldCreatedAt:
 			values[i] = new(sql.NullTime)
-		case friendship.FieldID, friendship.FieldUserID, friendship.FieldFriendID:
+		case friendship.FieldID, friendship.FieldUserID, friendship.FieldFriendUserID:
 			values[i] = new(uuid.UUID)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type Friendship", columns[i])
@@ -104,11 +104,11 @@ func (f *Friendship) assignValues(columns []string, values []any) error {
 			} else if value != nil {
 				f.UserID = *value
 			}
-		case friendship.FieldFriendID:
+		case friendship.FieldFriendUserID:
 			if value, ok := values[i].(*uuid.UUID); !ok {
-				return fmt.Errorf("unexpected type %T for field friend_id", values[i])
+				return fmt.Errorf("unexpected type %T for field friend_user_id", values[i])
 			} else if value != nil {
-				f.FriendID = *value
+				f.FriendUserID = *value
 			}
 		case friendship.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -126,9 +126,9 @@ func (f *Friendship) QueryUser() *UserQuery {
 	return (&FriendshipClient{config: f.config}).QueryUser(f)
 }
 
-// QueryFriend queries the "friend" edge of the Friendship entity.
-func (f *Friendship) QueryFriend() *UserQuery {
-	return (&FriendshipClient{config: f.config}).QueryFriend(f)
+// QueryFriendUser queries the "friend_user" edge of the Friendship entity.
+func (f *Friendship) QueryFriendUser() *UserQuery {
+	return (&FriendshipClient{config: f.config}).QueryFriendUser(f)
 }
 
 // Update returns a builder for updating this Friendship.
@@ -157,8 +157,8 @@ func (f *Friendship) String() string {
 	builder.WriteString("user_id=")
 	builder.WriteString(fmt.Sprintf("%v", f.UserID))
 	builder.WriteString(", ")
-	builder.WriteString("friend_id=")
-	builder.WriteString(fmt.Sprintf("%v", f.FriendID))
+	builder.WriteString("friend_user_id=")
+	builder.WriteString(fmt.Sprintf("%v", f.FriendUserID))
 	builder.WriteString(", ")
 	builder.WriteString("created_at=")
 	builder.WriteString(f.CreatedAt.Format(time.ANSIC))
