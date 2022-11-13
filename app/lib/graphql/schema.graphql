@@ -1,1 +1,145 @@
-../../../defs/graphql/schema.graphql
+schema { 
+  query: Query 
+  mutation: Mutation   
+}
+
+"""
+#############################
+ Directives
+#############################
+"""
+directive @authRequired on FIELD_DEFINITION
+
+directive @constraint(min: Int, max: Int, pattern: String, format: ConstraintFormat) on INPUT_FIELD_DEFINITION | ARGUMENT_DEFINITION
+
+directive @goField(forceResolver: Boolean, name: String) on INPUT_FIELD_DEFINITION | FIELD_DEFINITION
+
+type Bump implements Node {
+  id: UUID!
+}
+
+enum ConstraintFormat {
+  EMAIL
+  URL
+}
+
+input CreateFriendGroupInput {
+  name: String!
+  friendUserIds: [UUID!]!
+}
+
+scalar Cursor
+
+type FriendGroup implements Node {
+  id: UUID!
+  userId: UUID!
+  name: String!
+  friendUsers: [User!]!
+}
+
+type FriendshipRequest implements Node {
+  id: UUID!
+  fromUserId: UUID!
+  fromUser: User!
+  toUserId: UUID!
+  toUser: User!
+  createdAt: Time!
+}
+
+type Mutation {
+  signUp(input: SignUpInput): Boolean!
+  requestFriendShip(friendUserId: UUID!): FriendshipRequest!
+  cancelFriendShipRequest(friendshipRequestId: UUID!): Boolean!
+  denyFriendShipRequest(friendshipRequestId: UUID!): Boolean!
+  approveFriendShipRequest(friendshipRequestId: UUID!): Boolean!
+  createFriendGroup(input: CreateFriendGroupInput!): FriendGroup!
+  updateFriendGroup(input: UpdateFriendGroupInput!): FriendGroup!
+  deleteFriendGroup(friendGroupId: UUID!): Boolean!
+  muteUser(muteUserId: UUID!): Boolean!
+  unmuteUser(muteUserId: UUID!): Boolean!
+  sendBump(input: SendBumpInput): Bump!
+  acceptBump(bumpId: UUID!): Boolean!
+}
+
+"""
+#############################
+ Interfaces
+#############################
+"""
+interface Node {
+  id: UUID!
+}
+
+type PageInfo {
+  startCursor: Cursor
+  endCursor: Cursor
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+}
+
+type Query {
+  viewer: User!
+  user(userId: UUID!): User!
+
+  """fetch friends of the logged in user"""
+  friends(after: Cursor, first: Int, before: Cursor, last: Int): UserConnection!
+
+  """fetch friend ship requests need to be approved by the logged in user"""
+  pendingFriendShipRequests: [FriendshipRequest!]!
+
+  """fetch friend ship requests sent by the logged in user"""
+  requestingFriendShipRequests: [FriendshipRequest!]!
+
+  """
+  fetch friend group
+  Other user's group can't be fetched
+  """
+  friendGroup(friendGroupId: UUID!): FriendGroup!
+
+  """fetch friend groups of the logged in user"""
+  friendGroups: [FriendGroup!]!
+}
+
+input SendBumpInput {
+  targetFriendGroupIds: [UUID!]!
+  targetFriendUserIds: [UUID!]!
+}
+
+input SignUpInput {
+  email: String!
+  nickname: String!
+  avatarUrl: String
+}
+
+scalar Time
+
+input UpdateFriendGroupInput {
+  id: UUID!
+  name: String!
+  friendUserIds: [UUID!]!
+}
+
+"""
+#############################
+ Types
+#############################
+"""
+type User implements Node {
+  id: UUID!
+  nickname: String!
+  avatarUrl: String
+  isMuted: Boolean!
+}
+
+type UserConnection {
+  edges: [UserEdge!]!
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+type UserEdge {
+  node: User!
+  cursor: Cursor!
+}
+
+scalar UUID

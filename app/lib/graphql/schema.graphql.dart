@@ -1,3 +1,285 @@
+class Input$CreateFriendGroupInput {
+  factory Input$CreateFriendGroupInput({
+    required String name,
+    required List<String> friendUserIds,
+  }) =>
+      Input$CreateFriendGroupInput._({
+        r'name': name,
+        r'friendUserIds': friendUserIds,
+      });
+
+  Input$CreateFriendGroupInput._(this._$data);
+
+  factory Input$CreateFriendGroupInput.fromJson(Map<String, dynamic> data) {
+    final result$data = <String, dynamic>{};
+    final l$name = data['name'];
+    result$data['name'] = (l$name as String);
+    final l$friendUserIds = data['friendUserIds'];
+    result$data['friendUserIds'] =
+        (l$friendUserIds as List<dynamic>).map((e) => (e as String)).toList();
+    return Input$CreateFriendGroupInput._(result$data);
+  }
+
+  Map<String, dynamic> _$data;
+
+  String get name => (_$data['name'] as String);
+  List<String> get friendUserIds => (_$data['friendUserIds'] as List<String>);
+  Map<String, dynamic> toJson() {
+    final result$data = <String, dynamic>{};
+    final l$name = name;
+    result$data['name'] = l$name;
+    final l$friendUserIds = friendUserIds;
+    result$data['friendUserIds'] = l$friendUserIds.map((e) => e).toList();
+    return result$data;
+  }
+
+  CopyWith$Input$CreateFriendGroupInput<Input$CreateFriendGroupInput>
+      get copyWith => CopyWith$Input$CreateFriendGroupInput(
+            this,
+            (i) => i,
+          );
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    if (!(other is Input$CreateFriendGroupInput) ||
+        runtimeType != other.runtimeType) {
+      return false;
+    }
+    final l$name = name;
+    final lOther$name = other.name;
+    if (l$name != lOther$name) {
+      return false;
+    }
+    final l$friendUserIds = friendUserIds;
+    final lOther$friendUserIds = other.friendUserIds;
+    if (l$friendUserIds.length != lOther$friendUserIds.length) {
+      return false;
+    }
+    for (int i = 0; i < l$friendUserIds.length; i++) {
+      final l$friendUserIds$entry = l$friendUserIds[i];
+      final lOther$friendUserIds$entry = lOther$friendUserIds[i];
+      if (l$friendUserIds$entry != lOther$friendUserIds$entry) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  @override
+  int get hashCode {
+    final l$name = name;
+    final l$friendUserIds = friendUserIds;
+    return Object.hashAll([
+      l$name,
+      Object.hashAll(l$friendUserIds.map((v) => v)),
+    ]);
+  }
+}
+
+abstract class CopyWith$Input$CreateFriendGroupInput<TRes> {
+  factory CopyWith$Input$CreateFriendGroupInput(
+    Input$CreateFriendGroupInput instance,
+    TRes Function(Input$CreateFriendGroupInput) then,
+  ) = _CopyWithImpl$Input$CreateFriendGroupInput;
+
+  factory CopyWith$Input$CreateFriendGroupInput.stub(TRes res) =
+      _CopyWithStubImpl$Input$CreateFriendGroupInput;
+
+  TRes call({
+    String? name,
+    List<String>? friendUserIds,
+  });
+}
+
+class _CopyWithImpl$Input$CreateFriendGroupInput<TRes>
+    implements CopyWith$Input$CreateFriendGroupInput<TRes> {
+  _CopyWithImpl$Input$CreateFriendGroupInput(
+    this._instance,
+    this._then,
+  );
+
+  final Input$CreateFriendGroupInput _instance;
+
+  final TRes Function(Input$CreateFriendGroupInput) _then;
+
+  static const _undefined = {};
+
+  TRes call({
+    Object? name = _undefined,
+    Object? friendUserIds = _undefined,
+  }) =>
+      _then(Input$CreateFriendGroupInput._({
+        ..._instance._$data,
+        if (name != _undefined && name != null) 'name': (name as String),
+        if (friendUserIds != _undefined && friendUserIds != null)
+          'friendUserIds': (friendUserIds as List<String>),
+      }));
+}
+
+class _CopyWithStubImpl$Input$CreateFriendGroupInput<TRes>
+    implements CopyWith$Input$CreateFriendGroupInput<TRes> {
+  _CopyWithStubImpl$Input$CreateFriendGroupInput(this._res);
+
+  TRes _res;
+
+  call({
+    String? name,
+    List<String>? friendUserIds,
+  }) =>
+      _res;
+}
+
+class Input$SendBumpInput {
+  factory Input$SendBumpInput({
+    required List<String> targetFriendGroupIds,
+    required List<String> targetFriendUserIds,
+  }) =>
+      Input$SendBumpInput._({
+        r'targetFriendGroupIds': targetFriendGroupIds,
+        r'targetFriendUserIds': targetFriendUserIds,
+      });
+
+  Input$SendBumpInput._(this._$data);
+
+  factory Input$SendBumpInput.fromJson(Map<String, dynamic> data) {
+    final result$data = <String, dynamic>{};
+    final l$targetFriendGroupIds = data['targetFriendGroupIds'];
+    result$data['targetFriendGroupIds'] =
+        (l$targetFriendGroupIds as List<dynamic>)
+            .map((e) => (e as String))
+            .toList();
+    final l$targetFriendUserIds = data['targetFriendUserIds'];
+    result$data['targetFriendUserIds'] =
+        (l$targetFriendUserIds as List<dynamic>)
+            .map((e) => (e as String))
+            .toList();
+    return Input$SendBumpInput._(result$data);
+  }
+
+  Map<String, dynamic> _$data;
+
+  List<String> get targetFriendGroupIds =>
+      (_$data['targetFriendGroupIds'] as List<String>);
+  List<String> get targetFriendUserIds =>
+      (_$data['targetFriendUserIds'] as List<String>);
+  Map<String, dynamic> toJson() {
+    final result$data = <String, dynamic>{};
+    final l$targetFriendGroupIds = targetFriendGroupIds;
+    result$data['targetFriendGroupIds'] =
+        l$targetFriendGroupIds.map((e) => e).toList();
+    final l$targetFriendUserIds = targetFriendUserIds;
+    result$data['targetFriendUserIds'] =
+        l$targetFriendUserIds.map((e) => e).toList();
+    return result$data;
+  }
+
+  CopyWith$Input$SendBumpInput<Input$SendBumpInput> get copyWith =>
+      CopyWith$Input$SendBumpInput(
+        this,
+        (i) => i,
+      );
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    if (!(other is Input$SendBumpInput) || runtimeType != other.runtimeType) {
+      return false;
+    }
+    final l$targetFriendGroupIds = targetFriendGroupIds;
+    final lOther$targetFriendGroupIds = other.targetFriendGroupIds;
+    if (l$targetFriendGroupIds.length != lOther$targetFriendGroupIds.length) {
+      return false;
+    }
+    for (int i = 0; i < l$targetFriendGroupIds.length; i++) {
+      final l$targetFriendGroupIds$entry = l$targetFriendGroupIds[i];
+      final lOther$targetFriendGroupIds$entry = lOther$targetFriendGroupIds[i];
+      if (l$targetFriendGroupIds$entry != lOther$targetFriendGroupIds$entry) {
+        return false;
+      }
+    }
+    final l$targetFriendUserIds = targetFriendUserIds;
+    final lOther$targetFriendUserIds = other.targetFriendUserIds;
+    if (l$targetFriendUserIds.length != lOther$targetFriendUserIds.length) {
+      return false;
+    }
+    for (int i = 0; i < l$targetFriendUserIds.length; i++) {
+      final l$targetFriendUserIds$entry = l$targetFriendUserIds[i];
+      final lOther$targetFriendUserIds$entry = lOther$targetFriendUserIds[i];
+      if (l$targetFriendUserIds$entry != lOther$targetFriendUserIds$entry) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  @override
+  int get hashCode {
+    final l$targetFriendGroupIds = targetFriendGroupIds;
+    final l$targetFriendUserIds = targetFriendUserIds;
+    return Object.hashAll([
+      Object.hashAll(l$targetFriendGroupIds.map((v) => v)),
+      Object.hashAll(l$targetFriendUserIds.map((v) => v)),
+    ]);
+  }
+}
+
+abstract class CopyWith$Input$SendBumpInput<TRes> {
+  factory CopyWith$Input$SendBumpInput(
+    Input$SendBumpInput instance,
+    TRes Function(Input$SendBumpInput) then,
+  ) = _CopyWithImpl$Input$SendBumpInput;
+
+  factory CopyWith$Input$SendBumpInput.stub(TRes res) =
+      _CopyWithStubImpl$Input$SendBumpInput;
+
+  TRes call({
+    List<String>? targetFriendGroupIds,
+    List<String>? targetFriendUserIds,
+  });
+}
+
+class _CopyWithImpl$Input$SendBumpInput<TRes>
+    implements CopyWith$Input$SendBumpInput<TRes> {
+  _CopyWithImpl$Input$SendBumpInput(
+    this._instance,
+    this._then,
+  );
+
+  final Input$SendBumpInput _instance;
+
+  final TRes Function(Input$SendBumpInput) _then;
+
+  static const _undefined = {};
+
+  TRes call({
+    Object? targetFriendGroupIds = _undefined,
+    Object? targetFriendUserIds = _undefined,
+  }) =>
+      _then(Input$SendBumpInput._({
+        ..._instance._$data,
+        if (targetFriendGroupIds != _undefined && targetFriendGroupIds != null)
+          'targetFriendGroupIds': (targetFriendGroupIds as List<String>),
+        if (targetFriendUserIds != _undefined && targetFriendUserIds != null)
+          'targetFriendUserIds': (targetFriendUserIds as List<String>),
+      }));
+}
+
+class _CopyWithStubImpl$Input$SendBumpInput<TRes>
+    implements CopyWith$Input$SendBumpInput<TRes> {
+  _CopyWithStubImpl$Input$SendBumpInput(this._res);
+
+  TRes _res;
+
+  call({
+    List<String>? targetFriendGroupIds,
+    List<String>? targetFriendUserIds,
+  }) =>
+      _res;
+}
+
 class Input$SignUpInput {
   factory Input$SignUpInput({
     required String email,
@@ -144,139 +426,6 @@ class _CopyWithStubImpl$Input$SignUpInput<TRes>
     String? email,
     String? nickname,
     String? avatarUrl,
-  }) =>
-      _res;
-}
-
-class Input$CreateFriendGroupInput {
-  factory Input$CreateFriendGroupInput({
-    required String name,
-    required List<String> friendUserIds,
-  }) =>
-      Input$CreateFriendGroupInput._({
-        r'name': name,
-        r'friendUserIds': friendUserIds,
-      });
-
-  Input$CreateFriendGroupInput._(this._$data);
-
-  factory Input$CreateFriendGroupInput.fromJson(Map<String, dynamic> data) {
-    final result$data = <String, dynamic>{};
-    final l$name = data['name'];
-    result$data['name'] = (l$name as String);
-    final l$friendUserIds = data['friendUserIds'];
-    result$data['friendUserIds'] =
-        (l$friendUserIds as List<dynamic>).map((e) => (e as String)).toList();
-    return Input$CreateFriendGroupInput._(result$data);
-  }
-
-  Map<String, dynamic> _$data;
-
-  String get name => (_$data['name'] as String);
-  List<String> get friendUserIds => (_$data['friendUserIds'] as List<String>);
-  Map<String, dynamic> toJson() {
-    final result$data = <String, dynamic>{};
-    final l$name = name;
-    result$data['name'] = l$name;
-    final l$friendUserIds = friendUserIds;
-    result$data['friendUserIds'] = l$friendUserIds.map((e) => e).toList();
-    return result$data;
-  }
-
-  CopyWith$Input$CreateFriendGroupInput<Input$CreateFriendGroupInput>
-      get copyWith => CopyWith$Input$CreateFriendGroupInput(
-            this,
-            (i) => i,
-          );
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) {
-      return true;
-    }
-    if (!(other is Input$CreateFriendGroupInput) ||
-        runtimeType != other.runtimeType) {
-      return false;
-    }
-    final l$name = name;
-    final lOther$name = other.name;
-    if (l$name != lOther$name) {
-      return false;
-    }
-    final l$friendUserIds = friendUserIds;
-    final lOther$friendUserIds = other.friendUserIds;
-    if (l$friendUserIds.length != lOther$friendUserIds.length) {
-      return false;
-    }
-    for (int i = 0; i < l$friendUserIds.length; i++) {
-      final l$friendUserIds$entry = l$friendUserIds[i];
-      final lOther$friendUserIds$entry = lOther$friendUserIds[i];
-      if (l$friendUserIds$entry != lOther$friendUserIds$entry) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  @override
-  int get hashCode {
-    final l$name = name;
-    final l$friendUserIds = friendUserIds;
-    return Object.hashAll([
-      l$name,
-      Object.hashAll(l$friendUserIds.map((v) => v)),
-    ]);
-  }
-}
-
-abstract class CopyWith$Input$CreateFriendGroupInput<TRes> {
-  factory CopyWith$Input$CreateFriendGroupInput(
-    Input$CreateFriendGroupInput instance,
-    TRes Function(Input$CreateFriendGroupInput) then,
-  ) = _CopyWithImpl$Input$CreateFriendGroupInput;
-
-  factory CopyWith$Input$CreateFriendGroupInput.stub(TRes res) =
-      _CopyWithStubImpl$Input$CreateFriendGroupInput;
-
-  TRes call({
-    String? name,
-    List<String>? friendUserIds,
-  });
-}
-
-class _CopyWithImpl$Input$CreateFriendGroupInput<TRes>
-    implements CopyWith$Input$CreateFriendGroupInput<TRes> {
-  _CopyWithImpl$Input$CreateFriendGroupInput(
-    this._instance,
-    this._then,
-  );
-
-  final Input$CreateFriendGroupInput _instance;
-
-  final TRes Function(Input$CreateFriendGroupInput) _then;
-
-  static const _undefined = {};
-
-  TRes call({
-    Object? name = _undefined,
-    Object? friendUserIds = _undefined,
-  }) =>
-      _then(Input$CreateFriendGroupInput._({
-        ..._instance._$data,
-        if (name != _undefined && name != null) 'name': (name as String),
-        if (friendUserIds != _undefined && friendUserIds != null)
-          'friendUserIds': (friendUserIds as List<String>),
-      }));
-}
-
-class _CopyWithStubImpl$Input$CreateFriendGroupInput<TRes>
-    implements CopyWith$Input$CreateFriendGroupInput<TRes> {
-  _CopyWithStubImpl$Input$CreateFriendGroupInput(this._res);
-
-  TRes _res;
-
-  call({
-    String? name,
-    List<String>? friendUserIds,
   }) =>
       _res;
 }
@@ -458,8 +607,9 @@ Enum$ConstraintFormat fromJson$Enum$ConstraintFormat(String value) {
 
 const possibleTypesMap = {
   'Node': {
-    'User',
-    'FriendshipRequest',
+    'Bump',
     'FriendGroup',
+    'FriendshipRequest',
+    'User',
   }
 };

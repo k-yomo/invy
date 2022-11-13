@@ -17,6 +17,13 @@ type Node interface {
 	GetID() uuid.UUID
 }
 
+type Bump struct {
+	ID uuid.UUID `json:"id"`
+}
+
+func (Bump) IsNode()               {}
+func (this Bump) GetID() uuid.UUID { return this.ID }
+
 type CreateFriendGroupInput struct {
 	Name          string      `json:"name"`
 	FriendUserIds []uuid.UUID `json:"friendUserIds"`
@@ -49,6 +56,11 @@ type PageInfo struct {
 	EndCursor       *ent.Cursor `json:"endCursor"`
 	HasNextPage     bool        `json:"hasNextPage"`
 	HasPreviousPage bool        `json:"hasPreviousPage"`
+}
+
+type SendBumpInput struct {
+	TargetFriendGroupIds []uuid.UUID `json:"targetFriendGroupIds"`
+	TargetFriendUserIds  []uuid.UUID `json:"targetFriendUserIds"`
 }
 
 type SignUpInput struct {

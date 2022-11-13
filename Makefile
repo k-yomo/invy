@@ -2,13 +2,13 @@
 
 .PHONY: generate
 setup: ## Setup project
-	npm install -g graphql-cli
+	npm install -g graphql-cli graphql-schema-utilities
 
 .PHONY: generate
 generate: ## Generate graphql code / ent code from schema
-	cd bump_api && go generate ./... & \
-	cd app && flutter pub run build_runner build & \
-	wait
+	cd bump_api && go generate ./...
+	graphql-schema-utilities -s defs/graphql/* -o app/lib/graphql/schema.graphql
+	cd app && flutter pub run build_runner build
 	make fmt
 
 .PHONY: run-dbs

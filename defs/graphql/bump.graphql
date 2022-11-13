@@ -1,0 +1,14 @@
+
+extend type Mutation {
+    sendBump(input: SendBumpInput): Bump! @authRequired
+    acceptBump(bumpId: UUID!): Boolean! @authRequired
+}
+
+type Bump implements Node {
+    id: UUID!
+}
+
+input SendBumpInput {
+    targetFriendGroupIds: [UUID!]!
+    targetFriendUserIds: [UUID!]!
+}
