@@ -54,10 +54,10 @@ class LoginScreen extends HookConsumerWidget {
     );
     UserCredential userCredential =
         await FirebaseAuth.instance.signInWithCredential(credential);
-    if (userCredential.additionalUserInfo != null &&
-        userCredential.additionalUserInfo!.isNewUser) {
-      // New user
-    }
+    // TODO:
+    // check if userId claim exists
+    // signUp mutation
+    // re-login to firebase auth (id token is expired here because claim is updated in backend)
     return userCredential;
   }
 }

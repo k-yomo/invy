@@ -33,12 +33,6 @@ func init() {
 	friendshiprequestDescCreatedAt := friendshiprequestFields[3].Descriptor()
 	// friendshiprequest.DefaultCreatedAt holds the default value on creation for the created_at field.
 	friendshiprequest.DefaultCreatedAt = friendshiprequestDescCreatedAt.Default.(func() time.Time)
-	// friendshiprequestDescUpdatedAt is the schema descriptor for updated_at field.
-	friendshiprequestDescUpdatedAt := friendshiprequestFields[4].Descriptor()
-	// friendshiprequest.DefaultUpdatedAt holds the default value on creation for the updated_at field.
-	friendshiprequest.DefaultUpdatedAt = friendshiprequestDescUpdatedAt.Default.(func() time.Time)
-	// friendshiprequest.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
-	friendshiprequest.UpdateDefaultUpdatedAt = friendshiprequestDescUpdatedAt.UpdateDefault.(func() time.Time)
 	// friendshiprequestDescID is the schema descriptor for id field.
 	friendshiprequestDescID := friendshiprequestFields[0].Descriptor()
 	// friendshiprequest.DefaultID holds the default value on creation for the id field.

@@ -564,7 +564,6 @@ type FriendshipRequestMutation struct {
 	typ               string
 	id                *uuid.UUID
 	created_at        *time.Time
-	updated_at        *time.Time
 	clearedFields     map[string]struct{}
 	from_users        *uuid.UUID
 	clearedfrom_users bool
@@ -787,42 +786,6 @@ func (m *FriendshipRequestMutation) ResetCreatedAt() {
 	m.created_at = nil
 }
 
-// SetUpdatedAt sets the "updated_at" field.
-func (m *FriendshipRequestMutation) SetUpdatedAt(t time.Time) {
-	m.updated_at = &t
-}
-
-// UpdatedAt returns the value of the "updated_at" field in the mutation.
-func (m *FriendshipRequestMutation) UpdatedAt() (r time.Time, exists bool) {
-	v := m.updated_at
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldUpdatedAt returns the old "updated_at" field's value of the FriendshipRequest entity.
-// If the FriendshipRequest object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *FriendshipRequestMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
-	}
-	return oldValue.UpdatedAt, nil
-}
-
-// ResetUpdatedAt resets all changes to the "updated_at" field.
-func (m *FriendshipRequestMutation) ResetUpdatedAt() {
-	m.updated_at = nil
-}
-
 // SetFromUsersID sets the "from_users" edge to the User entity by id.
 func (m *FriendshipRequestMutation) SetFromUsersID(id uuid.UUID) {
 	m.from_users = &id
@@ -920,7 +883,7 @@ func (m *FriendshipRequestMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *FriendshipRequestMutation) Fields() []string {
-	fields := make([]string, 0, 4)
+	fields := make([]string, 0, 3)
 	if m.from_users != nil {
 		fields = append(fields, friendshiprequest.FieldFromUserID)
 	}
@@ -929,9 +892,6 @@ func (m *FriendshipRequestMutation) Fields() []string {
 	}
 	if m.created_at != nil {
 		fields = append(fields, friendshiprequest.FieldCreatedAt)
-	}
-	if m.updated_at != nil {
-		fields = append(fields, friendshiprequest.FieldUpdatedAt)
 	}
 	return fields
 }
@@ -947,8 +907,6 @@ func (m *FriendshipRequestMutation) Field(name string) (ent.Value, bool) {
 		return m.ToUserID()
 	case friendshiprequest.FieldCreatedAt:
 		return m.CreatedAt()
-	case friendshiprequest.FieldUpdatedAt:
-		return m.UpdatedAt()
 	}
 	return nil, false
 }
@@ -964,8 +922,6 @@ func (m *FriendshipRequestMutation) OldField(ctx context.Context, name string) (
 		return m.OldToUserID(ctx)
 	case friendshiprequest.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
-	case friendshiprequest.FieldUpdatedAt:
-		return m.OldUpdatedAt(ctx)
 	}
 	return nil, fmt.Errorf("unknown FriendshipRequest field %s", name)
 }
@@ -995,13 +951,6 @@ func (m *FriendshipRequestMutation) SetField(name string, value ent.Value) error
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetCreatedAt(v)
-		return nil
-	case friendshiprequest.FieldUpdatedAt:
-		v, ok := value.(time.Time)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetUpdatedAt(v)
 		return nil
 	}
 	return fmt.Errorf("unknown FriendshipRequest field %s", name)
@@ -1060,9 +1009,6 @@ func (m *FriendshipRequestMutation) ResetField(name string) error {
 		return nil
 	case friendshiprequest.FieldCreatedAt:
 		m.ResetCreatedAt()
-		return nil
-	case friendshiprequest.FieldUpdatedAt:
-		m.ResetUpdatedAt()
 		return nil
 	}
 	return fmt.Errorf("unknown FriendshipRequest field %s", name)

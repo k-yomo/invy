@@ -26,12 +26,12 @@ const (
 	// Table holds the table name of the user in the database.
 	Table = "users"
 	// UserProfileTable is the table that holds the user_profile relation/edge.
-	UserProfileTable = "users"
+	UserProfileTable = "user_profiles"
 	// UserProfileInverseTable is the table name for the UserProfile entity.
 	// It exists in this package in order to avoid circular dependency with the "userprofile" package.
 	UserProfileInverseTable = "user_profiles"
 	// UserProfileColumn is the table column denoting the user_profile relation/edge.
-	UserProfileColumn = "user_user_profile"
+	UserProfileColumn = "user_id"
 	// FriendsTable is the table that holds the friends relation/edge. The primary key declared below.
 	FriendsTable = "friendships"
 	// FriendshipsTable is the table that holds the friendships relation/edge.
@@ -50,12 +50,6 @@ var Columns = []string{
 	FieldCreatedAt,
 }
 
-// ForeignKeys holds the SQL foreign-keys that are owned by the "users"
-// table and are not defined as standalone fields in the schema.
-var ForeignKeys = []string{
-	"user_user_profile",
-}
-
 var (
 	// FriendsPrimaryKey and FriendsColumn2 are the table columns denoting the
 	// primary key for the friends relation (M2M).
@@ -66,11 +60,6 @@ var (
 func ValidColumn(column string) bool {
 	for i := range Columns {
 		if column == Columns[i] {
-			return true
-		}
-	}
-	for i := range ForeignKeys {
-		if column == ForeignKeys[i] {
 			return true
 		}
 	}

@@ -30,7 +30,6 @@ type UserQuery struct {
 	withUserProfile      *UserProfileQuery
 	withFriends          *UserQuery
 	withFriendships      *FriendshipQuery
-	withFKs              bool
 	modifiers            []func(*sql.Selector)
 	loadTotal            []func(context.Context, []*User) error
 	withNamedFriends     map[string]*UserQuery
@@ -85,7 +84,7 @@ func (uq *UserQuery) QueryUserProfile() *UserProfileQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(user.Table, user.FieldID, selector),
 			sqlgraph.To(userprofile.Table, userprofile.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, false, user.UserProfileTable, user.UserProfileColumn),
+			sqlgraph.Edge(sqlgraph.O2O, false, user.UserProfileTable, user.UserProfileColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
 		return fromU, nil
@@ -433,7 +432,6 @@ func (uq *UserQuery) prepareQuery(ctx context.Context) error {
 func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, error) {
 	var (
 		nodes       = []*User{}
-		withFKs     = uq.withFKs
 		_spec       = uq.querySpec()
 		loadedTypes = [3]bool{
 			uq.withUserProfile != nil,
@@ -441,12 +439,6 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 			uq.withFriendships != nil,
 		}
 	)
-	if uq.withUserProfile != nil {
-		withFKs = true
-	}
-	if withFKs {
-		_spec.Node.Columns = append(_spec.Node.Columns, user.ForeignKeys...)
-	}
 	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*User).scanValues(nil, columns)
 	}
@@ -511,31 +503,26 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 }
 
 func (uq *UserQuery) loadUserProfile(ctx context.Context, query *UserProfileQuery, nodes []*User, init func(*User), assign func(*User, *UserProfile)) error {
-	ids := make([]uuid.UUID, 0, len(nodes))
-	nodeids := make(map[uuid.UUID][]*User)
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[uuid.UUID]*User)
 	for i := range nodes {
-		if nodes[i].user_user_profile == nil {
-			continue
-		}
-		fk := *nodes[i].user_user_profile
-		if _, ok := nodeids[fk]; !ok {
-			ids = append(ids, fk)
-		}
-		nodeids[fk] = append(nodeids[fk], nodes[i])
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
 	}
-	query.Where(userprofile.IDIn(ids...))
+	query.Where(predicate.UserProfile(func(s *sql.Selector) {
+		s.Where(sql.InValues(user.UserProfileColumn, fks...))
+	}))
 	neighbors, err := query.All(ctx)
 	if err != nil {
 		return err
 	}
 	for _, n := range neighbors {
-		nodes, ok := nodeids[n.ID]
+		fk := n.UserID
+		node, ok := nodeids[fk]
 		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "user_user_profile" returned %v`, n.ID)
+			return fmt.Errorf(`unexpected foreign-key "user_id" returned %v for node %v`, fk, n.ID)
 		}
-		for i := range nodes {
-			assign(nodes[i], n)
-		}
+		assign(node, n)
 	}
 	return nil
 }

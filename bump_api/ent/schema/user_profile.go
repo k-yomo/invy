@@ -36,7 +36,8 @@ func (UserProfile) Fields() []ent.Field {
 // Edges of the UserProfile.
 func (UserProfile) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.To("user", User.Type).
+		edge.From("user", User.Type).
+			Ref("user_profile").
 			Field("user_id").
 			Unique().
 			Required().

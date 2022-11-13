@@ -79,9 +79,9 @@ type UserConnection {
 type FriendshipRequest implements Node {
     id: UUID!
     fromUserId: UUID!
-    fromUser: User!
+    fromUser: User! @goField(forceResolver: true)
     toUserId: UUID!
-    toUser: User!
+    toUser: User! @goField(forceResolver: true)
     createdAt: Time!
 }
 

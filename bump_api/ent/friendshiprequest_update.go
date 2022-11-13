@@ -6,7 +6,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -28,12 +27,6 @@ func (fru *FriendshipRequestUpdate) Where(ps ...predicate.FriendshipRequest) *Fr
 	return fru
 }
 
-// SetUpdatedAt sets the "updated_at" field.
-func (fru *FriendshipRequestUpdate) SetUpdatedAt(t time.Time) *FriendshipRequestUpdate {
-	fru.mutation.SetUpdatedAt(t)
-	return fru
-}
-
 // Mutation returns the FriendshipRequestMutation object of the builder.
 func (fru *FriendshipRequestUpdate) Mutation() *FriendshipRequestMutation {
 	return fru.mutation
@@ -45,7 +38,6 @@ func (fru *FriendshipRequestUpdate) Save(ctx context.Context) (int, error) {
 		err      error
 		affected int
 	)
-	fru.defaults()
 	if len(fru.hooks) == 0 {
 		if err = fru.check(); err != nil {
 			return 0, err
@@ -100,14 +92,6 @@ func (fru *FriendshipRequestUpdate) ExecX(ctx context.Context) {
 	}
 }
 
-// defaults sets the default values of the builder before save.
-func (fru *FriendshipRequestUpdate) defaults() {
-	if _, ok := fru.mutation.UpdatedAt(); !ok {
-		v := friendshiprequest.UpdateDefaultUpdatedAt()
-		fru.mutation.SetUpdatedAt(v)
-	}
-}
-
 // check runs all checks and user-defined validators on the builder.
 func (fru *FriendshipRequestUpdate) check() error {
 	if _, ok := fru.mutation.FromUsersID(); fru.mutation.FromUsersCleared() && !ok {
@@ -137,9 +121,6 @@ func (fru *FriendshipRequestUpdate) sqlSave(ctx context.Context) (n int, err err
 			}
 		}
 	}
-	if value, ok := fru.mutation.UpdatedAt(); ok {
-		_spec.SetField(friendshiprequest.FieldUpdatedAt, field.TypeTime, value)
-	}
 	if n, err = sqlgraph.UpdateNodes(ctx, fru.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{friendshiprequest.Label}
@@ -157,12 +138,6 @@ type FriendshipRequestUpdateOne struct {
 	fields   []string
 	hooks    []Hook
 	mutation *FriendshipRequestMutation
-}
-
-// SetUpdatedAt sets the "updated_at" field.
-func (fruo *FriendshipRequestUpdateOne) SetUpdatedAt(t time.Time) *FriendshipRequestUpdateOne {
-	fruo.mutation.SetUpdatedAt(t)
-	return fruo
 }
 
 // Mutation returns the FriendshipRequestMutation object of the builder.
@@ -183,7 +158,6 @@ func (fruo *FriendshipRequestUpdateOne) Save(ctx context.Context) (*FriendshipRe
 		err  error
 		node *FriendshipRequest
 	)
-	fruo.defaults()
 	if len(fruo.hooks) == 0 {
 		if err = fruo.check(); err != nil {
 			return nil, err
@@ -244,14 +218,6 @@ func (fruo *FriendshipRequestUpdateOne) ExecX(ctx context.Context) {
 	}
 }
 
-// defaults sets the default values of the builder before save.
-func (fruo *FriendshipRequestUpdateOne) defaults() {
-	if _, ok := fruo.mutation.UpdatedAt(); !ok {
-		v := friendshiprequest.UpdateDefaultUpdatedAt()
-		fruo.mutation.SetUpdatedAt(v)
-	}
-}
-
 // check runs all checks and user-defined validators on the builder.
 func (fruo *FriendshipRequestUpdateOne) check() error {
 	if _, ok := fruo.mutation.FromUsersID(); fruo.mutation.FromUsersCleared() && !ok {
@@ -297,9 +263,6 @@ func (fruo *FriendshipRequestUpdateOne) sqlSave(ctx context.Context) (_node *Fri
 				ps[i](selector)
 			}
 		}
-	}
-	if value, ok := fruo.mutation.UpdatedAt(); ok {
-		_spec.SetField(friendshiprequest.FieldUpdatedAt, field.TypeTime, value)
 	}
 	_node = &FriendshipRequest{config: fruo.config}
 	_spec.Assign = _node.assignValues

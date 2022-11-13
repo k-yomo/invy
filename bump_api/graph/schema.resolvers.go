@@ -22,6 +22,28 @@ import (
 	"github.com/k-yomo/bump/pkg/requestutil"
 )
 
+// FromUser is the resolver for the fromUser field.
+func (r *friendshipRequestResolver) FromUser(ctx context.Context, obj *gqlmodel.FriendshipRequest) (*gqlmodel.User, error) {
+	userProfile, err := r.DBClient.UserProfile.Query().
+		Where(userprofile.UserID(obj.FromUserID)).
+		First(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return conv.ConvertFromDBUserProfile(userProfile), nil
+}
+
+// ToUser is the resolver for the toUser field.
+func (r *friendshipRequestResolver) ToUser(ctx context.Context, obj *gqlmodel.FriendshipRequest) (*gqlmodel.User, error) {
+	userProfile, err := r.DBClient.UserProfile.Query().
+		Where(userprofile.UserID(obj.ToUserID)).
+		First(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return conv.ConvertFromDBUserProfile(userProfile), nil
+}
+
 // SignUp is the resolver for the signUp field.
 func (r *mutationResolver) SignUp(ctx context.Context, input *gqlmodel.SignUpInput) (bool, error) {
 	header := requestutil.GetRequestHeader(ctx)
@@ -190,7 +212,7 @@ func (r *queryResolver) Friends(ctx context.Context, after *ent.Cursor, first *i
 		Direction: ent.OrderDirectionDesc,
 		Field:     ent.FriendshipOrderFieldCreatedAt,
 	}
-	friendshipConnection, err := r.DBClient.Friendship.Query().
+	friendshipConnection, err := r.DBClient.Debug().Friendship.Query().
 		WithFriend(func(q *ent.UserQuery) {
 			q.WithUserProfile()
 		}).
@@ -236,11 +258,17 @@ func (r *queryResolver) RequestingFriendShipRequests(ctx context.Context) ([]*gq
 	return convutil.ConvertToList(pendingRequests, conv.ConvertFromDBFriendshipRequest), nil
 }
 
+// FriendshipRequest returns gqlgen.FriendshipRequestResolver implementation.
+func (r *Resolver) FriendshipRequest() gqlgen.FriendshipRequestResolver {
+	return &friendshipRequestResolver{r}
+}
+
 // Mutation returns gqlgen.MutationResolver implementation.
 func (r *Resolver) Mutation() gqlgen.MutationResolver { return &mutationResolver{r} }
 
 // Query returns gqlgen.QueryResolver implementation.
 func (r *Resolver) Query() gqlgen.QueryResolver { return &queryResolver{r} }
 
+type friendshipRequestResolver struct{ *Resolver }
 type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }

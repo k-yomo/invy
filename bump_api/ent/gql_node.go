@@ -103,7 +103,7 @@ func (fr *FriendshipRequest) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     fr.ID,
 		Type:   "FriendshipRequest",
-		Fields: make([]*Field, 4),
+		Fields: make([]*Field, 3),
 		Edges:  make([]*Edge, 2),
 	}
 	var buf []byte
@@ -129,14 +129,6 @@ func (fr *FriendshipRequest) Node(ctx context.Context) (node *Node, err error) {
 	node.Fields[2] = &Field{
 		Type:  "time.Time",
 		Name:  "created_at",
-		Value: string(buf),
-	}
-	if buf, err = json.Marshal(fr.UpdatedAt); err != nil {
-		return nil, err
-	}
-	node.Fields[3] = &Field{
-		Type:  "time.Time",
-		Name:  "updated_at",
 		Value: string(buf),
 	}
 	node.Edges[0] = &Edge{

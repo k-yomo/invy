@@ -265,7 +265,7 @@ func HasUserProfile() predicate.User {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
 			sqlgraph.To(UserProfileTable, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, false, UserProfileTable, UserProfileColumn),
+			sqlgraph.Edge(sqlgraph.O2O, false, UserProfileTable, UserProfileColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
@@ -277,7 +277,7 @@ func HasUserProfileWith(preds ...predicate.UserProfile) predicate.User {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
 			sqlgraph.To(UserProfileInverseTable, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, false, UserProfileTable, UserProfileColumn),
+			sqlgraph.Edge(sqlgraph.O2O, false, UserProfileTable, UserProfileColumn),
 		)
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {

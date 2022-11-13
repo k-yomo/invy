@@ -51,20 +51,6 @@ func (frc *FriendshipRequestCreate) SetNillableCreatedAt(t *time.Time) *Friendsh
 	return frc
 }
 
-// SetUpdatedAt sets the "updated_at" field.
-func (frc *FriendshipRequestCreate) SetUpdatedAt(t time.Time) *FriendshipRequestCreate {
-	frc.mutation.SetUpdatedAt(t)
-	return frc
-}
-
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (frc *FriendshipRequestCreate) SetNillableUpdatedAt(t *time.Time) *FriendshipRequestCreate {
-	if t != nil {
-		frc.SetUpdatedAt(*t)
-	}
-	return frc
-}
-
 // SetID sets the "id" field.
 func (frc *FriendshipRequestCreate) SetID(u uuid.UUID) *FriendshipRequestCreate {
 	frc.mutation.SetID(u)
@@ -182,10 +168,6 @@ func (frc *FriendshipRequestCreate) defaults() {
 		v := friendshiprequest.DefaultCreatedAt()
 		frc.mutation.SetCreatedAt(v)
 	}
-	if _, ok := frc.mutation.UpdatedAt(); !ok {
-		v := friendshiprequest.DefaultUpdatedAt()
-		frc.mutation.SetUpdatedAt(v)
-	}
 	if _, ok := frc.mutation.ID(); !ok {
 		v := friendshiprequest.DefaultID()
 		frc.mutation.SetID(v)
@@ -202,9 +184,6 @@ func (frc *FriendshipRequestCreate) check() error {
 	}
 	if _, ok := frc.mutation.CreatedAt(); !ok {
 		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "FriendshipRequest.created_at"`)}
-	}
-	if _, ok := frc.mutation.UpdatedAt(); !ok {
-		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "FriendshipRequest.updated_at"`)}
 	}
 	if _, ok := frc.mutation.FromUsersID(); !ok {
 		return &ValidationError{Name: "from_users", err: errors.New(`ent: missing required edge "FriendshipRequest.from_users"`)}
@@ -252,10 +231,6 @@ func (frc *FriendshipRequestCreate) createSpec() (*FriendshipRequest, *sqlgraph.
 	if value, ok := frc.mutation.CreatedAt(); ok {
 		_spec.SetField(friendshiprequest.FieldCreatedAt, field.TypeTime, value)
 		_node.CreatedAt = value
-	}
-	if value, ok := frc.mutation.UpdatedAt(); ok {
-		_spec.SetField(friendshiprequest.FieldUpdatedAt, field.TypeTime, value)
-		_node.UpdatedAt = value
 	}
 	if nodes := frc.mutation.FromUsersIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -349,18 +324,6 @@ type (
 	}
 )
 
-// SetUpdatedAt sets the "updated_at" field.
-func (u *FriendshipRequestUpsert) SetUpdatedAt(v time.Time) *FriendshipRequestUpsert {
-	u.Set(friendshiprequest.FieldUpdatedAt, v)
-	return u
-}
-
-// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
-func (u *FriendshipRequestUpsert) UpdateUpdatedAt() *FriendshipRequestUpsert {
-	u.SetExcluded(friendshiprequest.FieldUpdatedAt)
-	return u
-}
-
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
@@ -416,20 +379,6 @@ func (u *FriendshipRequestUpsertOne) Update(set func(*FriendshipRequestUpsert)) 
 		set(&FriendshipRequestUpsert{UpdateSet: update})
 	}))
 	return u
-}
-
-// SetUpdatedAt sets the "updated_at" field.
-func (u *FriendshipRequestUpsertOne) SetUpdatedAt(v time.Time) *FriendshipRequestUpsertOne {
-	return u.Update(func(s *FriendshipRequestUpsert) {
-		s.SetUpdatedAt(v)
-	})
-}
-
-// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
-func (u *FriendshipRequestUpsertOne) UpdateUpdatedAt() *FriendshipRequestUpsertOne {
-	return u.Update(func(s *FriendshipRequestUpsert) {
-		s.UpdateUpdatedAt()
-	})
 }
 
 // Exec executes the query.
@@ -650,20 +599,6 @@ func (u *FriendshipRequestUpsertBulk) Update(set func(*FriendshipRequestUpsert))
 		set(&FriendshipRequestUpsert{UpdateSet: update})
 	}))
 	return u
-}
-
-// SetUpdatedAt sets the "updated_at" field.
-func (u *FriendshipRequestUpsertBulk) SetUpdatedAt(v time.Time) *FriendshipRequestUpsertBulk {
-	return u.Update(func(s *FriendshipRequestUpsert) {
-		s.SetUpdatedAt(v)
-	})
-}
-
-// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
-func (u *FriendshipRequestUpsertBulk) UpdateUpdatedAt() *FriendshipRequestUpsertBulk {
-	return u.Update(func(s *FriendshipRequestUpsert) {
-		s.UpdateUpdatedAt()
-	})
 }
 
 // Exec executes the query.

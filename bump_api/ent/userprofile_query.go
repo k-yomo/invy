@@ -78,7 +78,7 @@ func (upq *UserProfileQuery) QueryUser() *UserQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(userprofile.Table, userprofile.FieldID, selector),
 			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, false, userprofile.UserTable, userprofile.UserColumn),
+			sqlgraph.Edge(sqlgraph.O2O, true, userprofile.UserTable, userprofile.UserColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(upq.driver.Dialect(), step)
 		return fromU, nil

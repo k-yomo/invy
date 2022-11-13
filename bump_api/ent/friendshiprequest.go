@@ -24,8 +24,6 @@ type FriendshipRequest struct {
 	ToUserID uuid.UUID `json:"to_user_id,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt time.Time `json:"created_at,omitempty"`
-	// UpdatedAt holds the value of the "updated_at" field.
-	UpdatedAt time.Time `json:"updated_at,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the FriendshipRequestQuery when eager-loading is set.
 	Edges FriendshipRequestEdges `json:"edges"`
@@ -75,7 +73,7 @@ func (*FriendshipRequest) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case friendshiprequest.FieldCreatedAt, friendshiprequest.FieldUpdatedAt:
+		case friendshiprequest.FieldCreatedAt:
 			values[i] = new(sql.NullTime)
 		case friendshiprequest.FieldID, friendshiprequest.FieldFromUserID, friendshiprequest.FieldToUserID:
 			values[i] = new(uuid.UUID)
@@ -117,12 +115,6 @@ func (fr *FriendshipRequest) assignValues(columns []string, values []any) error 
 				return fmt.Errorf("unexpected type %T for field created_at", values[i])
 			} else if value.Valid {
 				fr.CreatedAt = value.Time
-			}
-		case friendshiprequest.FieldUpdatedAt:
-			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
-			} else if value.Valid {
-				fr.UpdatedAt = value.Time
 			}
 		}
 	}
@@ -170,9 +162,6 @@ func (fr *FriendshipRequest) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("created_at=")
 	builder.WriteString(fr.CreatedAt.Format(time.ANSIC))
-	builder.WriteString(", ")
-	builder.WriteString("updated_at=")
-	builder.WriteString(fr.UpdatedAt.Format(time.ANSIC))
 	builder.WriteByte(')')
 	return builder.String()
 }

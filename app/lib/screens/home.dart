@@ -6,10 +6,10 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    FirebaseAuth.instance.signOut();
-    // FirebaseAuth.instance.currentUser!
-    //     .getIdToken()
-    //     .then((idToken) => {printWrapped(idToken)});
+    // FirebaseAuth.instance.signOut();
+    FirebaseAuth.instance.currentUser!
+        .getIdToken()
+        .then((idToken) => {printWrapped(idToken)});
     return Scaffold(
       appBar: AppBar(
         title: const Text('ホーム'),

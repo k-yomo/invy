@@ -40,6 +40,7 @@ type Config struct {
 }
 
 type ResolverRoot interface {
+	FriendshipRequest() FriendshipRequestResolver
 	Mutation() MutationResolver
 	Query() QueryResolver
 }
@@ -100,6 +101,11 @@ type ComplexityRoot struct {
 	}
 }
 
+type FriendshipRequestResolver interface {
+	FromUser(ctx context.Context, obj *gqlmodel.FriendshipRequest) (*gqlmodel.User, error)
+
+	ToUser(ctx context.Context, obj *gqlmodel.FriendshipRequest) (*gqlmodel.User, error)
+}
 type MutationResolver interface {
 	SignUp(ctx context.Context, input *gqlmodel.SignUpInput) (bool, error)
 	RequestFriendShip(ctx context.Context, userID uuid.UUID) (bool, error)
@@ -511,9 +517,9 @@ type UserConnection {
 type FriendshipRequest implements Node {
     id: UUID!
     fromUserId: UUID!
-    fromUser: User!
+    fromUser: User! @goField(forceResolver: true)
     toUserId: UUID!
-    toUser: User!
+    toUser: User! @goField(forceResolver: true)
     createdAt: Time!
 }
 
@@ -859,7 +865,7 @@ func (ec *executionContext) _FriendshipRequest_fromUser(ctx context.Context, fie
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.FromUser, nil
+		return ec.resolvers.FriendshipRequest().FromUser(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -880,8 +886,8 @@ func (ec *executionContext) fieldContext_FriendshipRequest_fromUser(ctx context.
 	fc = &graphql.FieldContext{
 		Object:     "FriendshipRequest",
 		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
+		IsMethod:   true,
+		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
@@ -955,7 +961,7 @@ func (ec *executionContext) _FriendshipRequest_toUser(ctx context.Context, field
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.ToUser, nil
+		return ec.resolvers.FriendshipRequest().ToUser(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -976,8 +982,8 @@ func (ec *executionContext) fieldContext_FriendshipRequest_toUser(ctx context.Co
 	fc = &graphql.FieldContext{
 		Object:     "FriendshipRequest",
 		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
+		IsMethod:   true,
+		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
@@ -4377,42 +4383,68 @@ func (ec *executionContext) _FriendshipRequest(ctx context.Context, sel ast.Sele
 			out.Values[i] = ec._FriendshipRequest_id(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "fromUserId":
 
 			out.Values[i] = ec._FriendshipRequest_fromUserId(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "fromUser":
+			field := field
 
-			out.Values[i] = ec._FriendshipRequest_fromUser(ctx, field, obj)
-
-			if out.Values[i] == graphql.Null {
-				invalids++
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._FriendshipRequest_fromUser(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
 			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return innerFunc(ctx)
+
+			})
 		case "toUserId":
 
 			out.Values[i] = ec._FriendshipRequest_toUserId(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "toUser":
+			field := field
 
-			out.Values[i] = ec._FriendshipRequest_toUser(ctx, field, obj)
-
-			if out.Values[i] == graphql.Null {
-				invalids++
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._FriendshipRequest_toUser(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
 			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return innerFunc(ctx)
+
+			})
 		case "createdAt":
 
 			out.Values[i] = ec._FriendshipRequest_createdAt(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))

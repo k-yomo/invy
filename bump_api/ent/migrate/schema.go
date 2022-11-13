@@ -46,7 +46,6 @@ var (
 	FriendshipRequestsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUUID},
 		{Name: "created_at", Type: field.TypeTime},
-		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "from_user_id", Type: field.TypeUUID},
 		{Name: "to_user_id", Type: field.TypeUUID},
 	}
@@ -58,13 +57,13 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "friendship_requests_users_from_users",
-				Columns:    []*schema.Column{FriendshipRequestsColumns[3]},
+				Columns:    []*schema.Column{FriendshipRequestsColumns[2]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
 				Symbol:     "friendship_requests_users_to_users",
-				Columns:    []*schema.Column{FriendshipRequestsColumns[4]},
+				Columns:    []*schema.Column{FriendshipRequestsColumns[3]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -73,7 +72,7 @@ var (
 			{
 				Name:    "friendshiprequest_from_user_id_to_user_id",
 				Unique:  true,
-				Columns: []*schema.Column{FriendshipRequestsColumns[3], FriendshipRequestsColumns[4]},
+				Columns: []*schema.Column{FriendshipRequestsColumns[2], FriendshipRequestsColumns[3]},
 			},
 		},
 	}
@@ -82,21 +81,12 @@ var (
 		{Name: "id", Type: field.TypeUUID},
 		{Name: "auth_id", Type: field.TypeString},
 		{Name: "created_at", Type: field.TypeTime},
-		{Name: "user_user_profile", Type: field.TypeUUID, Nullable: true},
 	}
 	// UsersTable holds the schema information for the "users" table.
 	UsersTable = &schema.Table{
 		Name:       "users",
 		Columns:    UsersColumns,
 		PrimaryKey: []*schema.Column{UsersColumns[0]},
-		ForeignKeys: []*schema.ForeignKey{
-			{
-				Symbol:     "users_user_profiles_user_profile",
-				Columns:    []*schema.Column{UsersColumns[3]},
-				RefColumns: []*schema.Column{UserProfilesColumns[0]},
-				OnDelete:   schema.SetNull,
-			},
-		},
 	}
 	// UserProfilesColumns holds the columns for the "user_profiles" table.
 	UserProfilesColumns = []*schema.Column{
@@ -106,7 +96,7 @@ var (
 		{Name: "avatar_url", Type: field.TypeString, Nullable: true},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
-		{Name: "user_id", Type: field.TypeUUID},
+		{Name: "user_id", Type: field.TypeUUID, Unique: true},
 	}
 	// UserProfilesTable holds the schema information for the "user_profiles" table.
 	UserProfilesTable = &schema.Table{
@@ -115,7 +105,7 @@ var (
 		PrimaryKey: []*schema.Column{UserProfilesColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:     "user_profiles_users_user",
+				Symbol:     "user_profiles_users_user_profile",
 				Columns:    []*schema.Column{UserProfilesColumns[6]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
@@ -136,6 +126,5 @@ func init() {
 	FriendshipsTable.ForeignKeys[1].RefTable = UsersTable
 	FriendshipRequestsTable.ForeignKeys[0].RefTable = UsersTable
 	FriendshipRequestsTable.ForeignKeys[1].RefTable = UsersTable
-	UsersTable.ForeignKeys[0].RefTable = UserProfilesTable
 	UserProfilesTable.ForeignKeys[0].RefTable = UsersTable
 }
