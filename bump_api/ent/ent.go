@@ -15,6 +15,7 @@ import (
 	"github.com/k-yomo/bump/bump_api/ent/friendshiprequest"
 	"github.com/k-yomo/bump/bump_api/ent/user"
 	"github.com/k-yomo/bump/bump_api/ent/userfriendgroup"
+	"github.com/k-yomo/bump/bump_api/ent/usermute"
 	"github.com/k-yomo/bump/bump_api/ent/userprofile"
 )
 
@@ -41,6 +42,7 @@ func columnChecker(table string) func(string) error {
 		friendshiprequest.Table: friendshiprequest.ValidColumn,
 		user.Table:              user.ValidColumn,
 		userfriendgroup.Table:   userfriendgroup.ValidColumn,
+		usermute.Table:          usermute.ValidColumn,
 		userprofile.Table:       userprofile.ValidColumn,
 	}
 	check, ok := checks[table]

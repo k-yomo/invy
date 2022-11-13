@@ -16,6 +16,7 @@ import (
 	"github.com/k-yomo/bump/bump_api/ent/friendshiprequest"
 	"github.com/k-yomo/bump/bump_api/ent/user"
 	"github.com/k-yomo/bump/bump_api/ent/userfriendgroup"
+	"github.com/k-yomo/bump/bump_api/ent/usermute"
 	"github.com/k-yomo/bump/bump_api/ent/userprofile"
 
 	"entgo.io/ent/dialect"
@@ -38,6 +39,8 @@ type Client struct {
 	User *UserClient
 	// UserFriendGroup is the client for interacting with the UserFriendGroup builders.
 	UserFriendGroup *UserFriendGroupClient
+	// UserMute is the client for interacting with the UserMute builders.
+	UserMute *UserMuteClient
 	// UserProfile is the client for interacting with the UserProfile builders.
 	UserProfile *UserProfileClient
 }
@@ -58,6 +61,7 @@ func (c *Client) init() {
 	c.FriendshipRequest = NewFriendshipRequestClient(c.config)
 	c.User = NewUserClient(c.config)
 	c.UserFriendGroup = NewUserFriendGroupClient(c.config)
+	c.UserMute = NewUserMuteClient(c.config)
 	c.UserProfile = NewUserProfileClient(c.config)
 }
 
@@ -97,6 +101,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		FriendshipRequest: NewFriendshipRequestClient(cfg),
 		User:              NewUserClient(cfg),
 		UserFriendGroup:   NewUserFriendGroupClient(cfg),
+		UserMute:          NewUserMuteClient(cfg),
 		UserProfile:       NewUserProfileClient(cfg),
 	}, nil
 }
@@ -122,6 +127,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		FriendshipRequest: NewFriendshipRequestClient(cfg),
 		User:              NewUserClient(cfg),
 		UserFriendGroup:   NewUserFriendGroupClient(cfg),
+		UserMute:          NewUserMuteClient(cfg),
 		UserProfile:       NewUserProfileClient(cfg),
 	}, nil
 }
@@ -156,6 +162,7 @@ func (c *Client) Use(hooks ...Hook) {
 	c.FriendshipRequest.Use(hooks...)
 	c.User.Use(hooks...)
 	c.UserFriendGroup.Use(hooks...)
+	c.UserMute.Use(hooks...)
 	c.UserProfile.Use(hooks...)
 }
 
@@ -847,6 +854,128 @@ func (c *UserFriendGroupClient) QueryUser(ufg *UserFriendGroup) *UserQuery {
 // Hooks returns the client hooks.
 func (c *UserFriendGroupClient) Hooks() []Hook {
 	return c.hooks.UserFriendGroup
+}
+
+// UserMuteClient is a client for the UserMute schema.
+type UserMuteClient struct {
+	config
+}
+
+// NewUserMuteClient returns a client for the UserMute from the given config.
+func NewUserMuteClient(c config) *UserMuteClient {
+	return &UserMuteClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `usermute.Hooks(f(g(h())))`.
+func (c *UserMuteClient) Use(hooks ...Hook) {
+	c.hooks.UserMute = append(c.hooks.UserMute, hooks...)
+}
+
+// Create returns a builder for creating a UserMute entity.
+func (c *UserMuteClient) Create() *UserMuteCreate {
+	mutation := newUserMuteMutation(c.config, OpCreate)
+	return &UserMuteCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of UserMute entities.
+func (c *UserMuteClient) CreateBulk(builders ...*UserMuteCreate) *UserMuteCreateBulk {
+	return &UserMuteCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for UserMute.
+func (c *UserMuteClient) Update() *UserMuteUpdate {
+	mutation := newUserMuteMutation(c.config, OpUpdate)
+	return &UserMuteUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *UserMuteClient) UpdateOne(um *UserMute) *UserMuteUpdateOne {
+	mutation := newUserMuteMutation(c.config, OpUpdateOne, withUserMute(um))
+	return &UserMuteUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *UserMuteClient) UpdateOneID(id uuid.UUID) *UserMuteUpdateOne {
+	mutation := newUserMuteMutation(c.config, OpUpdateOne, withUserMuteID(id))
+	return &UserMuteUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for UserMute.
+func (c *UserMuteClient) Delete() *UserMuteDelete {
+	mutation := newUserMuteMutation(c.config, OpDelete)
+	return &UserMuteDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *UserMuteClient) DeleteOne(um *UserMute) *UserMuteDeleteOne {
+	return c.DeleteOneID(um.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *UserMuteClient) DeleteOneID(id uuid.UUID) *UserMuteDeleteOne {
+	builder := c.Delete().Where(usermute.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &UserMuteDeleteOne{builder}
+}
+
+// Query returns a query builder for UserMute.
+func (c *UserMuteClient) Query() *UserMuteQuery {
+	return &UserMuteQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a UserMute entity by its id.
+func (c *UserMuteClient) Get(ctx context.Context, id uuid.UUID) (*UserMute, error) {
+	return c.Query().Where(usermute.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *UserMuteClient) GetX(ctx context.Context, id uuid.UUID) *UserMute {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryUser queries the user edge of a UserMute.
+func (c *UserMuteClient) QueryUser(um *UserMute) *UserQuery {
+	query := &UserQuery{config: c.config}
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := um.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(usermute.Table, usermute.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, usermute.UserTable, usermute.UserColumn),
+		)
+		fromV = sqlgraph.Neighbors(um.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryMuteUser queries the mute_user edge of a UserMute.
+func (c *UserMuteClient) QueryMuteUser(um *UserMute) *UserQuery {
+	query := &UserQuery{config: c.config}
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := um.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(usermute.Table, usermute.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, usermute.MuteUserTable, usermute.MuteUserColumn),
+		)
+		fromV = sqlgraph.Neighbors(um.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *UserMuteClient) Hooks() []Hook {
+	return c.hooks.UserMute
 }
 
 // UserProfileClient is a client for the UserProfile schema.

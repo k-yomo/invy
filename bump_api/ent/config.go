@@ -29,6 +29,7 @@ type hooks struct {
 	FriendshipRequest []ent.Hook
 	User              []ent.Hook
 	UserFriendGroup   []ent.Hook
+	UserMute          []ent.Hook
 	UserProfile       []ent.Hook
 }
 

@@ -24,8 +24,8 @@ type CreateFriendGroupInput struct {
 
 type FriendGroup struct {
 	ID          uuid.UUID `json:"id"`
-	Name        string    `json:"name"`
 	UserID      uuid.UUID `json:"userId"`
+	Name        string    `json:"name"`
 	FriendUsers []*User   `json:"friendUsers"`
 }
 
@@ -67,6 +67,7 @@ type User struct {
 	ID        uuid.UUID `json:"id"`
 	Nickname  string    `json:"nickname"`
 	AvatarURL *string   `json:"avatarUrl"`
+	IsMuted   bool      `json:"isMuted"`
 }
 
 func (User) IsNode()               {}

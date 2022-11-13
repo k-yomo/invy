@@ -156,6 +156,22 @@ func (ufg *UserFriendGroup) User(ctx context.Context) (*User, error) {
 	return result, err
 }
 
+func (um *UserMute) User(ctx context.Context) (*User, error) {
+	result, err := um.Edges.UserOrErr()
+	if IsNotLoaded(err) {
+		result, err = um.QueryUser().Only(ctx)
+	}
+	return result, err
+}
+
+func (um *UserMute) MuteUser(ctx context.Context) (*User, error) {
+	result, err := um.Edges.MuteUserOrErr()
+	if IsNotLoaded(err) {
+		result, err = um.QueryMuteUser().Only(ctx)
+	}
+	return result, err
+}
+
 func (up *UserProfile) User(ctx context.Context) (*User, error) {
 	result, err := up.Edges.UserOrErr()
 	if IsNotLoaded(err) {

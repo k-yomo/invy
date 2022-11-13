@@ -12,6 +12,7 @@ import (
 	"github.com/k-yomo/bump/bump_api/ent/schema"
 	"github.com/k-yomo/bump/bump_api/ent/user"
 	"github.com/k-yomo/bump/bump_api/ent/userfriendgroup"
+	"github.com/k-yomo/bump/bump_api/ent/usermute"
 	"github.com/k-yomo/bump/bump_api/ent/userprofile"
 )
 
@@ -75,6 +76,16 @@ func init() {
 	userfriendgroupDescID := userfriendgroupFields[0].Descriptor()
 	// userfriendgroup.DefaultID holds the default value on creation for the id field.
 	userfriendgroup.DefaultID = userfriendgroupDescID.Default.(func() uuid.UUID)
+	usermuteFields := schema.UserMute{}.Fields()
+	_ = usermuteFields
+	// usermuteDescCreatedAt is the schema descriptor for created_at field.
+	usermuteDescCreatedAt := usermuteFields[3].Descriptor()
+	// usermute.DefaultCreatedAt holds the default value on creation for the created_at field.
+	usermute.DefaultCreatedAt = usermuteDescCreatedAt.Default.(func() time.Time)
+	// usermuteDescID is the schema descriptor for id field.
+	usermuteDescID := usermuteFields[0].Descriptor()
+	// usermute.DefaultID holds the default value on creation for the id field.
+	usermute.DefaultID = usermuteDescID.Default.(func() uuid.UUID)
 	userprofileFields := schema.UserProfile{}.Fields()
 	_ = userprofileFields
 	// userprofileDescCreatedAt is the schema descriptor for created_at field.

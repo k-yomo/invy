@@ -20,6 +20,7 @@ import (
 	"github.com/k-yomo/bump/bump_api/ent/friendshiprequest"
 	"github.com/k-yomo/bump/bump_api/ent/user"
 	"github.com/k-yomo/bump/bump_api/ent/userfriendgroup"
+	"github.com/k-yomo/bump/bump_api/ent/usermute"
 	"github.com/k-yomo/bump/bump_api/ent/userprofile"
 	"github.com/vektah/gqlparser/v2/gqlerror"
 	"github.com/vmihailenco/msgpack/v5"
@@ -1442,6 +1443,237 @@ func (ufg *UserFriendGroup) ToEdge(order *UserFriendGroupOrder) *UserFriendGroup
 	return &UserFriendGroupEdge{
 		Node:   ufg,
 		Cursor: order.Field.toCursor(ufg),
+	}
+}
+
+// UserMuteEdge is the edge representation of UserMute.
+type UserMuteEdge struct {
+	Node   *UserMute `json:"node"`
+	Cursor Cursor    `json:"cursor"`
+}
+
+// UserMuteConnection is the connection containing edges to UserMute.
+type UserMuteConnection struct {
+	Edges      []*UserMuteEdge `json:"edges"`
+	PageInfo   PageInfo        `json:"pageInfo"`
+	TotalCount int             `json:"totalCount"`
+}
+
+func (c *UserMuteConnection) build(nodes []*UserMute, pager *usermutePager, after *Cursor, first *int, before *Cursor, last *int) {
+	c.PageInfo.HasNextPage = before != nil
+	c.PageInfo.HasPreviousPage = after != nil
+	if first != nil && *first+1 == len(nodes) {
+		c.PageInfo.HasNextPage = true
+		nodes = nodes[:len(nodes)-1]
+	} else if last != nil && *last+1 == len(nodes) {
+		c.PageInfo.HasPreviousPage = true
+		nodes = nodes[:len(nodes)-1]
+	}
+	var nodeAt func(int) *UserMute
+	if last != nil {
+		n := len(nodes) - 1
+		nodeAt = func(i int) *UserMute {
+			return nodes[n-i]
+		}
+	} else {
+		nodeAt = func(i int) *UserMute {
+			return nodes[i]
+		}
+	}
+	c.Edges = make([]*UserMuteEdge, len(nodes))
+	for i := range nodes {
+		node := nodeAt(i)
+		c.Edges[i] = &UserMuteEdge{
+			Node:   node,
+			Cursor: pager.toCursor(node),
+		}
+	}
+	if l := len(c.Edges); l > 0 {
+		c.PageInfo.StartCursor = &c.Edges[0].Cursor
+		c.PageInfo.EndCursor = &c.Edges[l-1].Cursor
+	}
+	if c.TotalCount == 0 {
+		c.TotalCount = len(nodes)
+	}
+}
+
+// UserMutePaginateOption enables pagination customization.
+type UserMutePaginateOption func(*usermutePager) error
+
+// WithUserMuteOrder configures pagination ordering.
+func WithUserMuteOrder(order *UserMuteOrder) UserMutePaginateOption {
+	if order == nil {
+		order = DefaultUserMuteOrder
+	}
+	o := *order
+	return func(pager *usermutePager) error {
+		if err := o.Direction.Validate(); err != nil {
+			return err
+		}
+		if o.Field == nil {
+			o.Field = DefaultUserMuteOrder.Field
+		}
+		pager.order = &o
+		return nil
+	}
+}
+
+// WithUserMuteFilter configures pagination filter.
+func WithUserMuteFilter(filter func(*UserMuteQuery) (*UserMuteQuery, error)) UserMutePaginateOption {
+	return func(pager *usermutePager) error {
+		if filter == nil {
+			return errors.New("UserMuteQuery filter cannot be nil")
+		}
+		pager.filter = filter
+		return nil
+	}
+}
+
+type usermutePager struct {
+	order  *UserMuteOrder
+	filter func(*UserMuteQuery) (*UserMuteQuery, error)
+}
+
+func newUserMutePager(opts []UserMutePaginateOption) (*usermutePager, error) {
+	pager := &usermutePager{}
+	for _, opt := range opts {
+		if err := opt(pager); err != nil {
+			return nil, err
+		}
+	}
+	if pager.order == nil {
+		pager.order = DefaultUserMuteOrder
+	}
+	return pager, nil
+}
+
+func (p *usermutePager) applyFilter(query *UserMuteQuery) (*UserMuteQuery, error) {
+	if p.filter != nil {
+		return p.filter(query)
+	}
+	return query, nil
+}
+
+func (p *usermutePager) toCursor(um *UserMute) Cursor {
+	return p.order.Field.toCursor(um)
+}
+
+func (p *usermutePager) applyCursors(query *UserMuteQuery, after, before *Cursor) *UserMuteQuery {
+	for _, predicate := range cursorsToPredicates(
+		p.order.Direction, after, before,
+		p.order.Field.field, DefaultUserMuteOrder.Field.field,
+	) {
+		query = query.Where(predicate)
+	}
+	return query
+}
+
+func (p *usermutePager) applyOrder(query *UserMuteQuery, reverse bool) *UserMuteQuery {
+	direction := p.order.Direction
+	if reverse {
+		direction = direction.reverse()
+	}
+	query = query.Order(direction.orderFunc(p.order.Field.field))
+	if p.order.Field != DefaultUserMuteOrder.Field {
+		query = query.Order(direction.orderFunc(DefaultUserMuteOrder.Field.field))
+	}
+	return query
+}
+
+func (p *usermutePager) orderExpr(reverse bool) sql.Querier {
+	direction := p.order.Direction
+	if reverse {
+		direction = direction.reverse()
+	}
+	return sql.ExprFunc(func(b *sql.Builder) {
+		b.Ident(p.order.Field.field).Pad().WriteString(string(direction))
+		if p.order.Field != DefaultUserMuteOrder.Field {
+			b.Comma().Ident(DefaultUserMuteOrder.Field.field).Pad().WriteString(string(direction))
+		}
+	})
+}
+
+// Paginate executes the query and returns a relay based cursor connection to UserMute.
+func (um *UserMuteQuery) Paginate(
+	ctx context.Context, after *Cursor, first *int,
+	before *Cursor, last *int, opts ...UserMutePaginateOption,
+) (*UserMuteConnection, error) {
+	if err := validateFirstLast(first, last); err != nil {
+		return nil, err
+	}
+	pager, err := newUserMutePager(opts)
+	if err != nil {
+		return nil, err
+	}
+	if um, err = pager.applyFilter(um); err != nil {
+		return nil, err
+	}
+	conn := &UserMuteConnection{Edges: []*UserMuteEdge{}}
+	ignoredEdges := !hasCollectedField(ctx, edgesField)
+	if hasCollectedField(ctx, totalCountField) || hasCollectedField(ctx, pageInfoField) {
+		hasPagination := after != nil || first != nil || before != nil || last != nil
+		if hasPagination || ignoredEdges {
+			if conn.TotalCount, err = um.Count(ctx); err != nil {
+				return nil, err
+			}
+			conn.PageInfo.HasNextPage = first != nil && conn.TotalCount > 0
+			conn.PageInfo.HasPreviousPage = last != nil && conn.TotalCount > 0
+		}
+	}
+	if ignoredEdges || (first != nil && *first == 0) || (last != nil && *last == 0) {
+		return conn, nil
+	}
+
+	um = pager.applyCursors(um, after, before)
+	um = pager.applyOrder(um, last != nil)
+	if limit := paginateLimit(first, last); limit != 0 {
+		um.Limit(limit)
+	}
+	if field := collectedField(ctx, edgesField, nodeField); field != nil {
+		if err := um.collectField(ctx, graphql.GetOperationContext(ctx), *field, []string{edgesField, nodeField}); err != nil {
+			return nil, err
+		}
+	}
+
+	nodes, err := um.All(ctx)
+	if err != nil {
+		return nil, err
+	}
+	conn.build(nodes, pager, after, first, before, last)
+	return conn, nil
+}
+
+// UserMuteOrderField defines the ordering field of UserMute.
+type UserMuteOrderField struct {
+	field    string
+	toCursor func(*UserMute) Cursor
+}
+
+// UserMuteOrder defines the ordering of UserMute.
+type UserMuteOrder struct {
+	Direction OrderDirection      `json:"direction"`
+	Field     *UserMuteOrderField `json:"field"`
+}
+
+// DefaultUserMuteOrder is the default ordering of UserMute.
+var DefaultUserMuteOrder = &UserMuteOrder{
+	Direction: OrderDirectionAsc,
+	Field: &UserMuteOrderField{
+		field: usermute.FieldID,
+		toCursor: func(um *UserMute) Cursor {
+			return Cursor{ID: um.ID}
+		},
+	},
+}
+
+// ToEdge converts UserMute into UserMuteEdge.
+func (um *UserMute) ToEdge(order *UserMuteOrder) *UserMuteEdge {
+	if order == nil {
+		order = DefaultUserMuteOrder
+	}
+	return &UserMuteEdge{
+		Node:   um,
+		Cursor: order.Field.toCursor(um),
 	}
 }
 

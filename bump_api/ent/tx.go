@@ -22,6 +22,8 @@ type Tx struct {
 	User *UserClient
 	// UserFriendGroup is the client for interacting with the UserFriendGroup builders.
 	UserFriendGroup *UserFriendGroupClient
+	// UserMute is the client for interacting with the UserMute builders.
+	UserMute *UserMuteClient
 	// UserProfile is the client for interacting with the UserProfile builders.
 	UserProfile *UserProfileClient
 
@@ -160,6 +162,7 @@ func (tx *Tx) init() {
 	tx.FriendshipRequest = NewFriendshipRequestClient(tx.config)
 	tx.User = NewUserClient(tx.config)
 	tx.UserFriendGroup = NewUserFriendGroupClient(tx.config)
+	tx.UserMute = NewUserMuteClient(tx.config)
 	tx.UserProfile = NewUserProfileClient(tx.config)
 }
 

@@ -74,6 +74,19 @@ func (f UserFriendGroupFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Va
 	return f(ctx, mv)
 }
 
+// The UserMuteFunc type is an adapter to allow the use of ordinary
+// function as UserMute mutator.
+type UserMuteFunc func(context.Context, *ent.UserMuteMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f UserMuteFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.UserMuteMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.UserMuteMutation", m)
+	}
+	return f(ctx, mv)
+}
+
 // The UserProfileFunc type is an adapter to allow the use of ordinary
 // function as UserProfile mutator.
 type UserProfileFunc func(context.Context, *ent.UserProfileMutation) (ent.Value, error)

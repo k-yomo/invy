@@ -144,6 +144,40 @@ var (
 			},
 		},
 	}
+	// UserMutesColumns holds the columns for the "user_mutes" table.
+	UserMutesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "user_id", Type: field.TypeUUID},
+		{Name: "mute_user_id", Type: field.TypeUUID},
+	}
+	// UserMutesTable holds the schema information for the "user_mutes" table.
+	UserMutesTable = &schema.Table{
+		Name:       "user_mutes",
+		Columns:    UserMutesColumns,
+		PrimaryKey: []*schema.Column{UserMutesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "user_mutes_users_user",
+				Columns:    []*schema.Column{UserMutesColumns[2]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "user_mutes_users_mute_user",
+				Columns:    []*schema.Column{UserMutesColumns[3]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "usermute_user_id_mute_user_id",
+				Unique:  true,
+				Columns: []*schema.Column{UserMutesColumns[2], UserMutesColumns[3]},
+			},
+		},
+	}
 	// UserProfilesColumns holds the columns for the "user_profiles" table.
 	UserProfilesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUUID},
@@ -175,6 +209,7 @@ var (
 		FriendshipRequestsTable,
 		UsersTable,
 		UserFriendGroupsTable,
+		UserMutesTable,
 		UserProfilesTable,
 	}
 )
@@ -187,5 +222,7 @@ func init() {
 	FriendshipRequestsTable.ForeignKeys[1].RefTable = UsersTable
 	UserFriendGroupsTable.ForeignKeys[0].RefTable = FriendGroupsTable
 	UserFriendGroupsTable.ForeignKeys[1].RefTable = UsersTable
+	UserMutesTable.ForeignKeys[0].RefTable = UsersTable
+	UserMutesTable.ForeignKeys[1].RefTable = UsersTable
 	UserProfilesTable.ForeignKeys[0].RefTable = UsersTable
 }

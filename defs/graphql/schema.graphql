@@ -22,7 +22,7 @@ type Query {
 type Mutation {
     signUp(input: SignUpInput): Boolean!
 
-    requestFriendShip(userId: UUID!): FriendshipRequest! @authRequired
+    requestFriendShip(friendUserId: UUID!): FriendshipRequest! @authRequired
     cancelFriendShipRequest(friendshipRequestId: UUID!): Boolean! @authRequired
     denyFriendShipRequest(friendshipRequestId: UUID!): Boolean! @authRequired
     approveFriendShipRequest(friendshipRequestId: UUID!): Boolean! @authRequired
@@ -30,6 +30,9 @@ type Mutation {
     createFriendGroup(input: CreateFriendGroupInput!): FriendGroup! @authRequired
     updateFriendGroup(input: UpdateFriendGroupInput!): FriendGroup! @authRequired
     deleteFriendGroup(friendGroupId: UUID!): Boolean! @authRequired
+
+    muteUser(muteUserId: UUID!): Boolean! @authRequired
+    unmuteUser(muteUserId: UUID!): Boolean! @authRequired
 }
 
 ##############################
@@ -73,6 +76,7 @@ type User implements Node {
     id: UUID!
     nickname: String!
     avatarUrl: String
+    isMuted: Boolean! @goField(forceResolver: true)
 }
 
 type UserEdge {

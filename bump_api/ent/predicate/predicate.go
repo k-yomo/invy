@@ -21,5 +21,8 @@ type User func(*sql.Selector)
 // UserFriendGroup is the predicate function for userfriendgroup builders.
 type UserFriendGroup func(*sql.Selector)
 
+// UserMute is the predicate function for usermute builders.
+type UserMute func(*sql.Selector)
+
 // UserProfile is the predicate function for userprofile builders.
 type UserProfile func(*sql.Selector)
