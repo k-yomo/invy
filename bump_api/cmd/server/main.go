@@ -22,6 +22,7 @@ import (
 	"github.com/k-yomo/bump/bump_api/graph"
 	"github.com/k-yomo/bump/bump_api/graph/directive"
 	"github.com/k-yomo/bump/bump_api/graph/gqlgen"
+	"github.com/k-yomo/bump/bump_api/graph/loader"
 	"github.com/k-yomo/bump/pkg/logging"
 	"github.com/k-yomo/bump/pkg/requestutil"
 	"github.com/k-yomo/bump/pkg/tracing"
@@ -55,13 +56,13 @@ func main() {
 		}
 	}
 
-	dbClient, err := ent.Open(appConfig.DBConfig.Driver, appConfig.DBConfig.Dsn())
+	db, err := ent.Open(appConfig.DBConfig.Driver, appConfig.DBConfig.Dsn())
 	if err != nil {
-		logger.Fatal("initialize dbClient failed", zap.Error(err))
+		logger.Fatal("initialize db failed", zap.Error(err))
 	}
-	defer dbClient.Close()
+	defer db.Close()
 	// Run migration.
-	if err := dbClient.Schema.Create(ctx); err != nil {
+	if err := db.Schema.Create(ctx); err != nil {
 		logger.Fatal("creating schema resources failed", zap.Error(err))
 	}
 
@@ -81,7 +82,7 @@ func main() {
 
 	gqlConfig := gqlgen.Config{
 		Resolvers: &graph.Resolver{
-			DBClient:           dbClient,
+			DB:                 db,
 			FirebaseAuthClient: firebaseAuthClient,
 		},
 		Directives: gqlgen.DirectiveRoot{
@@ -95,7 +96,7 @@ func main() {
 	gqlServer.Use(logging.GraphQLResponseInterceptor{})
 
 	r := newBaseRouter(appConfig, logger, firebaseAuthClient)
-	r.Handle("/query", gqlServer)
+	r.With(loader.Middleware(db)).Handle("/query", gqlServer)
 
 	if appConfig.Env == config.EnvLocal {
 		r.Get("/", playground.Handler("GraphQL playground", "/query"))

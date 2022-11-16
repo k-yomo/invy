@@ -45,11 +45,14 @@ func (FriendshipRequest) IsNode()               {}
 func (this FriendshipRequest) GetID() uuid.UUID { return this.ID }
 
 type Invitation struct {
-	ID        uuid.UUID `json:"id"`
-	Location  string    `json:"location"`
-	Comment   string    `json:"comment"`
-	StartsAt  time.Time `json:"startsAt"`
-	ExpiresAt time.Time `json:"expiresAt"`
+	ID            uuid.UUID `json:"id"`
+	UserID        uuid.UUID `json:"userId"`
+	User          *User     `json:"user"`
+	Location      string    `json:"location"`
+	Comment       string    `json:"comment"`
+	StartsAt      time.Time `json:"startsAt"`
+	ExpiresAt     time.Time `json:"expiresAt"`
+	AcceptedUsers []*User   `json:"acceptedUsers"`
 }
 
 func (Invitation) IsNode()               {}

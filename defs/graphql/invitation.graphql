@@ -11,10 +11,14 @@ extend type Mutation {
 
 type Invitation implements Node {
     id: UUID!
+    userId: UUID!
+    user: User!
     location: String!
     comment: String!
     startsAt: Time!
     expiresAt: Time!
+
+    acceptedUsers: [User!]! @goField(forceResolver: true)
 }
 
 input SendInvitationInput {
