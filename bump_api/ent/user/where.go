@@ -371,6 +371,62 @@ func HasBelongingFriendGroupsWith(preds ...predicate.FriendGroup) predicate.User
 	})
 }
 
+// HasInvitationAcceptances applies the HasEdge predicate on the "invitation_acceptances" edge.
+func HasInvitationAcceptances() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(InvitationAcceptancesTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, true, InvitationAcceptancesTable, InvitationAcceptancesColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasInvitationAcceptancesWith applies the HasEdge predicate on the "invitation_acceptances" edge with a given conditions (other predicates).
+func HasInvitationAcceptancesWith(preds ...predicate.InvitationAcceptance) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(InvitationAcceptancesInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, true, InvitationAcceptancesTable, InvitationAcceptancesColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasInvitationDenials applies the HasEdge predicate on the "invitation_denials" edge.
+func HasInvitationDenials() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(InvitationDenialsTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, true, InvitationDenialsTable, InvitationDenialsColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasInvitationDenialsWith applies the HasEdge predicate on the "invitation_denials" edge with a given conditions (other predicates).
+func HasInvitationDenialsWith(preds ...predicate.InvitationDenial) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(InvitationDenialsInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, true, InvitationDenialsTable, InvitationDenialsColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // HasFriendships applies the HasEdge predicate on the "friendships" edge.
 func HasFriendships() predicate.User {
 	return predicate.User(func(s *sql.Selector) {

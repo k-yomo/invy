@@ -131,19 +131,27 @@ class _CopyWithStubImpl$Input$CreateFriendGroupInput<TRes>
       _res;
 }
 
-class Input$SendBumpInput {
-  factory Input$SendBumpInput({
+class Input$SendInvitationInput {
+  factory Input$SendInvitationInput({
     required List<String> targetFriendGroupIds,
     required List<String> targetFriendUserIds,
+    required String expiresAt,
+    required String startsAt,
+    required String location,
+    required String comment,
   }) =>
-      Input$SendBumpInput._({
+      Input$SendInvitationInput._({
         r'targetFriendGroupIds': targetFriendGroupIds,
         r'targetFriendUserIds': targetFriendUserIds,
+        r'expiresAt': expiresAt,
+        r'startsAt': startsAt,
+        r'location': location,
+        r'comment': comment,
       });
 
-  Input$SendBumpInput._(this._$data);
+  Input$SendInvitationInput._(this._$data);
 
-  factory Input$SendBumpInput.fromJson(Map<String, dynamic> data) {
+  factory Input$SendInvitationInput.fromJson(Map<String, dynamic> data) {
     final result$data = <String, dynamic>{};
     final l$targetFriendGroupIds = data['targetFriendGroupIds'];
     result$data['targetFriendGroupIds'] =
@@ -155,7 +163,15 @@ class Input$SendBumpInput {
         (l$targetFriendUserIds as List<dynamic>)
             .map((e) => (e as String))
             .toList();
-    return Input$SendBumpInput._(result$data);
+    final l$expiresAt = data['expiresAt'];
+    result$data['expiresAt'] = (l$expiresAt as String);
+    final l$startsAt = data['startsAt'];
+    result$data['startsAt'] = (l$startsAt as String);
+    final l$location = data['location'];
+    result$data['location'] = (l$location as String);
+    final l$comment = data['comment'];
+    result$data['comment'] = (l$comment as String);
+    return Input$SendInvitationInput._(result$data);
   }
 
   Map<String, dynamic> _$data;
@@ -164,6 +180,10 @@ class Input$SendBumpInput {
       (_$data['targetFriendGroupIds'] as List<String>);
   List<String> get targetFriendUserIds =>
       (_$data['targetFriendUserIds'] as List<String>);
+  String get expiresAt => (_$data['expiresAt'] as String);
+  String get startsAt => (_$data['startsAt'] as String);
+  String get location => (_$data['location'] as String);
+  String get comment => (_$data['comment'] as String);
   Map<String, dynamic> toJson() {
     final result$data = <String, dynamic>{};
     final l$targetFriendGroupIds = targetFriendGroupIds;
@@ -172,11 +192,19 @@ class Input$SendBumpInput {
     final l$targetFriendUserIds = targetFriendUserIds;
     result$data['targetFriendUserIds'] =
         l$targetFriendUserIds.map((e) => e).toList();
+    final l$expiresAt = expiresAt;
+    result$data['expiresAt'] = l$expiresAt;
+    final l$startsAt = startsAt;
+    result$data['startsAt'] = l$startsAt;
+    final l$location = location;
+    result$data['location'] = l$location;
+    final l$comment = comment;
+    result$data['comment'] = l$comment;
     return result$data;
   }
 
-  CopyWith$Input$SendBumpInput<Input$SendBumpInput> get copyWith =>
-      CopyWith$Input$SendBumpInput(
+  CopyWith$Input$SendInvitationInput<Input$SendInvitationInput> get copyWith =>
+      CopyWith$Input$SendInvitationInput(
         this,
         (i) => i,
       );
@@ -185,7 +213,8 @@ class Input$SendBumpInput {
     if (identical(this, other)) {
       return true;
     }
-    if (!(other is Input$SendBumpInput) || runtimeType != other.runtimeType) {
+    if (!(other is Input$SendInvitationInput) ||
+        runtimeType != other.runtimeType) {
       return false;
     }
     final l$targetFriendGroupIds = targetFriendGroupIds;
@@ -212,6 +241,26 @@ class Input$SendBumpInput {
         return false;
       }
     }
+    final l$expiresAt = expiresAt;
+    final lOther$expiresAt = other.expiresAt;
+    if (l$expiresAt != lOther$expiresAt) {
+      return false;
+    }
+    final l$startsAt = startsAt;
+    final lOther$startsAt = other.startsAt;
+    if (l$startsAt != lOther$startsAt) {
+      return false;
+    }
+    final l$location = location;
+    final lOther$location = other.location;
+    if (l$location != lOther$location) {
+      return false;
+    }
+    final l$comment = comment;
+    final lOther$comment = other.comment;
+    if (l$comment != lOther$comment) {
+      return false;
+    }
     return true;
   }
 
@@ -219,63 +268,91 @@ class Input$SendBumpInput {
   int get hashCode {
     final l$targetFriendGroupIds = targetFriendGroupIds;
     final l$targetFriendUserIds = targetFriendUserIds;
+    final l$expiresAt = expiresAt;
+    final l$startsAt = startsAt;
+    final l$location = location;
+    final l$comment = comment;
     return Object.hashAll([
       Object.hashAll(l$targetFriendGroupIds.map((v) => v)),
       Object.hashAll(l$targetFriendUserIds.map((v) => v)),
+      l$expiresAt,
+      l$startsAt,
+      l$location,
+      l$comment,
     ]);
   }
 }
 
-abstract class CopyWith$Input$SendBumpInput<TRes> {
-  factory CopyWith$Input$SendBumpInput(
-    Input$SendBumpInput instance,
-    TRes Function(Input$SendBumpInput) then,
-  ) = _CopyWithImpl$Input$SendBumpInput;
+abstract class CopyWith$Input$SendInvitationInput<TRes> {
+  factory CopyWith$Input$SendInvitationInput(
+    Input$SendInvitationInput instance,
+    TRes Function(Input$SendInvitationInput) then,
+  ) = _CopyWithImpl$Input$SendInvitationInput;
 
-  factory CopyWith$Input$SendBumpInput.stub(TRes res) =
-      _CopyWithStubImpl$Input$SendBumpInput;
+  factory CopyWith$Input$SendInvitationInput.stub(TRes res) =
+      _CopyWithStubImpl$Input$SendInvitationInput;
 
   TRes call({
     List<String>? targetFriendGroupIds,
     List<String>? targetFriendUserIds,
+    String? expiresAt,
+    String? startsAt,
+    String? location,
+    String? comment,
   });
 }
 
-class _CopyWithImpl$Input$SendBumpInput<TRes>
-    implements CopyWith$Input$SendBumpInput<TRes> {
-  _CopyWithImpl$Input$SendBumpInput(
+class _CopyWithImpl$Input$SendInvitationInput<TRes>
+    implements CopyWith$Input$SendInvitationInput<TRes> {
+  _CopyWithImpl$Input$SendInvitationInput(
     this._instance,
     this._then,
   );
 
-  final Input$SendBumpInput _instance;
+  final Input$SendInvitationInput _instance;
 
-  final TRes Function(Input$SendBumpInput) _then;
+  final TRes Function(Input$SendInvitationInput) _then;
 
   static const _undefined = {};
 
   TRes call({
     Object? targetFriendGroupIds = _undefined,
     Object? targetFriendUserIds = _undefined,
+    Object? expiresAt = _undefined,
+    Object? startsAt = _undefined,
+    Object? location = _undefined,
+    Object? comment = _undefined,
   }) =>
-      _then(Input$SendBumpInput._({
+      _then(Input$SendInvitationInput._({
         ..._instance._$data,
         if (targetFriendGroupIds != _undefined && targetFriendGroupIds != null)
           'targetFriendGroupIds': (targetFriendGroupIds as List<String>),
         if (targetFriendUserIds != _undefined && targetFriendUserIds != null)
           'targetFriendUserIds': (targetFriendUserIds as List<String>),
+        if (expiresAt != _undefined && expiresAt != null)
+          'expiresAt': (expiresAt as String),
+        if (startsAt != _undefined && startsAt != null)
+          'startsAt': (startsAt as String),
+        if (location != _undefined && location != null)
+          'location': (location as String),
+        if (comment != _undefined && comment != null)
+          'comment': (comment as String),
       }));
 }
 
-class _CopyWithStubImpl$Input$SendBumpInput<TRes>
-    implements CopyWith$Input$SendBumpInput<TRes> {
-  _CopyWithStubImpl$Input$SendBumpInput(this._res);
+class _CopyWithStubImpl$Input$SendInvitationInput<TRes>
+    implements CopyWith$Input$SendInvitationInput<TRes> {
+  _CopyWithStubImpl$Input$SendInvitationInput(this._res);
 
   TRes _res;
 
   call({
     List<String>? targetFriendGroupIds,
     List<String>? targetFriendUserIds,
+    String? expiresAt,
+    String? startsAt,
+    String? location,
+    String? comment,
   }) =>
       _res;
 }
@@ -607,9 +684,9 @@ Enum$ConstraintFormat fromJson$Enum$ConstraintFormat(String value) {
 
 const possibleTypesMap = {
   'Node': {
-    'Bump',
     'FriendGroup',
     'FriendshipRequest',
+    'Invitation',
     'User',
   }
 };

@@ -98,6 +98,139 @@ var (
 			},
 		},
 	}
+	// InvitationsColumns holds the columns for the "invitations" table.
+	InvitationsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID},
+		{Name: "location", Type: field.TypeString},
+		{Name: "comment", Type: field.TypeString},
+		{Name: "starts_at", Type: field.TypeTime},
+		{Name: "expires_at", Type: field.TypeTime},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "user_id", Type: field.TypeUUID},
+	}
+	// InvitationsTable holds the schema information for the "invitations" table.
+	InvitationsTable = &schema.Table{
+		Name:       "invitations",
+		Columns:    InvitationsColumns,
+		PrimaryKey: []*schema.Column{InvitationsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "invitations_users_user",
+				Columns:    []*schema.Column{InvitationsColumns[7]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+	}
+	// InvitationAcceptancesColumns holds the columns for the "invitation_acceptances" table.
+	InvitationAcceptancesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "user_id", Type: field.TypeUUID},
+		{Name: "invitation_id", Type: field.TypeUUID},
+	}
+	// InvitationAcceptancesTable holds the schema information for the "invitation_acceptances" table.
+	InvitationAcceptancesTable = &schema.Table{
+		Name:       "invitation_acceptances",
+		Columns:    InvitationAcceptancesColumns,
+		PrimaryKey: []*schema.Column{InvitationAcceptancesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "invitation_acceptances_users_user",
+				Columns:    []*schema.Column{InvitationAcceptancesColumns[2]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "invitation_acceptances_invitations_invitation",
+				Columns:    []*schema.Column{InvitationAcceptancesColumns[3]},
+				RefColumns: []*schema.Column{InvitationsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+	}
+	// InvitationDenialsColumns holds the columns for the "invitation_denials" table.
+	InvitationDenialsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "user_id", Type: field.TypeUUID},
+		{Name: "invitation_id", Type: field.TypeUUID},
+	}
+	// InvitationDenialsTable holds the schema information for the "invitation_denials" table.
+	InvitationDenialsTable = &schema.Table{
+		Name:       "invitation_denials",
+		Columns:    InvitationDenialsColumns,
+		PrimaryKey: []*schema.Column{InvitationDenialsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "invitation_denials_users_user",
+				Columns:    []*schema.Column{InvitationDenialsColumns[2]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "invitation_denials_invitations_invitation",
+				Columns:    []*schema.Column{InvitationDenialsColumns[3]},
+				RefColumns: []*schema.Column{InvitationsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+	}
+	// InvitationFriendGroupsColumns holds the columns for the "invitation_friend_groups" table.
+	InvitationFriendGroupsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "invitation_id", Type: field.TypeUUID},
+		{Name: "friend_group_id", Type: field.TypeUUID},
+	}
+	// InvitationFriendGroupsTable holds the schema information for the "invitation_friend_groups" table.
+	InvitationFriendGroupsTable = &schema.Table{
+		Name:       "invitation_friend_groups",
+		Columns:    InvitationFriendGroupsColumns,
+		PrimaryKey: []*schema.Column{InvitationFriendGroupsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "invitation_friend_groups_invitations_invitation",
+				Columns:    []*schema.Column{InvitationFriendGroupsColumns[2]},
+				RefColumns: []*schema.Column{InvitationsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "invitation_friend_groups_friend_groups_friend_group",
+				Columns:    []*schema.Column{InvitationFriendGroupsColumns[3]},
+				RefColumns: []*schema.Column{FriendGroupsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+	}
+	// InvitationUsersColumns holds the columns for the "invitation_users" table.
+	InvitationUsersColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "invitation_id", Type: field.TypeUUID},
+		{Name: "user_id", Type: field.TypeUUID},
+	}
+	// InvitationUsersTable holds the schema information for the "invitation_users" table.
+	InvitationUsersTable = &schema.Table{
+		Name:       "invitation_users",
+		Columns:    InvitationUsersColumns,
+		PrimaryKey: []*schema.Column{InvitationUsersColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "invitation_users_invitations_invitation",
+				Columns:    []*schema.Column{InvitationUsersColumns[2]},
+				RefColumns: []*schema.Column{InvitationsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "invitation_users_users_user",
+				Columns:    []*schema.Column{InvitationUsersColumns[3]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+	}
 	// UsersColumns holds the columns for the "users" table.
 	UsersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUUID},
@@ -207,6 +340,11 @@ var (
 		FriendGroupsTable,
 		FriendshipsTable,
 		FriendshipRequestsTable,
+		InvitationsTable,
+		InvitationAcceptancesTable,
+		InvitationDenialsTable,
+		InvitationFriendGroupsTable,
+		InvitationUsersTable,
 		UsersTable,
 		UserFriendGroupsTable,
 		UserMutesTable,
@@ -220,6 +358,15 @@ func init() {
 	FriendshipsTable.ForeignKeys[1].RefTable = UsersTable
 	FriendshipRequestsTable.ForeignKeys[0].RefTable = UsersTable
 	FriendshipRequestsTable.ForeignKeys[1].RefTable = UsersTable
+	InvitationsTable.ForeignKeys[0].RefTable = UsersTable
+	InvitationAcceptancesTable.ForeignKeys[0].RefTable = UsersTable
+	InvitationAcceptancesTable.ForeignKeys[1].RefTable = InvitationsTable
+	InvitationDenialsTable.ForeignKeys[0].RefTable = UsersTable
+	InvitationDenialsTable.ForeignKeys[1].RefTable = InvitationsTable
+	InvitationFriendGroupsTable.ForeignKeys[0].RefTable = InvitationsTable
+	InvitationFriendGroupsTable.ForeignKeys[1].RefTable = FriendGroupsTable
+	InvitationUsersTable.ForeignKeys[0].RefTable = InvitationsTable
+	InvitationUsersTable.ForeignKeys[1].RefTable = UsersTable
 	UserFriendGroupsTable.ForeignKeys[0].RefTable = FriendGroupsTable
 	UserFriendGroupsTable.ForeignKeys[1].RefTable = UsersTable
 	UserMutesTable.ForeignKeys[0].RefTable = UsersTable

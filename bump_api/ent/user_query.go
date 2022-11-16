@@ -14,6 +14,8 @@ import (
 	"github.com/google/uuid"
 	"github.com/k-yomo/bump/bump_api/ent/friendgroup"
 	"github.com/k-yomo/bump/bump_api/ent/friendship"
+	"github.com/k-yomo/bump/bump_api/ent/invitationacceptance"
+	"github.com/k-yomo/bump/bump_api/ent/invitationdenial"
 	"github.com/k-yomo/bump/bump_api/ent/predicate"
 	"github.com/k-yomo/bump/bump_api/ent/user"
 	"github.com/k-yomo/bump/bump_api/ent/userfriendgroup"
@@ -33,6 +35,8 @@ type UserQuery struct {
 	withFriendUsers                *UserQuery
 	withFriendGroups               *FriendGroupQuery
 	withBelongingFriendGroups      *FriendGroupQuery
+	withInvitationAcceptances      *InvitationAcceptanceQuery
+	withInvitationDenials          *InvitationDenialQuery
 	withFriendships                *FriendshipQuery
 	withUserFriendGroups           *UserFriendGroupQuery
 	modifiers                      []func(*sql.Selector)
@@ -40,6 +44,8 @@ type UserQuery struct {
 	withNamedFriendUsers           map[string]*UserQuery
 	withNamedFriendGroups          map[string]*FriendGroupQuery
 	withNamedBelongingFriendGroups map[string]*FriendGroupQuery
+	withNamedInvitationAcceptances map[string]*InvitationAcceptanceQuery
+	withNamedInvitationDenials     map[string]*InvitationDenialQuery
 	withNamedFriendships           map[string]*FriendshipQuery
 	withNamedUserFriendGroups      map[string]*UserFriendGroupQuery
 	// intermediate query (i.e. traversal path).
@@ -159,6 +165,50 @@ func (uq *UserQuery) QueryBelongingFriendGroups() *FriendGroupQuery {
 			sqlgraph.From(user.Table, user.FieldID, selector),
 			sqlgraph.To(friendgroup.Table, friendgroup.FieldID),
 			sqlgraph.Edge(sqlgraph.M2M, true, user.BelongingFriendGroupsTable, user.BelongingFriendGroupsPrimaryKey...),
+		)
+		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryInvitationAcceptances chains the current query on the "invitation_acceptances" edge.
+func (uq *UserQuery) QueryInvitationAcceptances() *InvitationAcceptanceQuery {
+	query := &InvitationAcceptanceQuery{config: uq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := uq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := uq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(invitationacceptance.Table, invitationacceptance.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, true, user.InvitationAcceptancesTable, user.InvitationAcceptancesColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryInvitationDenials chains the current query on the "invitation_denials" edge.
+func (uq *UserQuery) QueryInvitationDenials() *InvitationDenialQuery {
+	query := &InvitationDenialQuery{config: uq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := uq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := uq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(invitationdenial.Table, invitationdenial.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, true, user.InvitationDenialsTable, user.InvitationDenialsColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
 		return fromU, nil
@@ -395,6 +445,8 @@ func (uq *UserQuery) Clone() *UserQuery {
 		withFriendUsers:           uq.withFriendUsers.Clone(),
 		withFriendGroups:          uq.withFriendGroups.Clone(),
 		withBelongingFriendGroups: uq.withBelongingFriendGroups.Clone(),
+		withInvitationAcceptances: uq.withInvitationAcceptances.Clone(),
+		withInvitationDenials:     uq.withInvitationDenials.Clone(),
 		withFriendships:           uq.withFriendships.Clone(),
 		withUserFriendGroups:      uq.withUserFriendGroups.Clone(),
 		// clone intermediate query.
@@ -445,6 +497,28 @@ func (uq *UserQuery) WithBelongingFriendGroups(opts ...func(*FriendGroupQuery)) 
 		opt(query)
 	}
 	uq.withBelongingFriendGroups = query
+	return uq
+}
+
+// WithInvitationAcceptances tells the query-builder to eager-load the nodes that are connected to
+// the "invitation_acceptances" edge. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithInvitationAcceptances(opts ...func(*InvitationAcceptanceQuery)) *UserQuery {
+	query := &InvitationAcceptanceQuery{config: uq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	uq.withInvitationAcceptances = query
+	return uq
+}
+
+// WithInvitationDenials tells the query-builder to eager-load the nodes that are connected to
+// the "invitation_denials" edge. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithInvitationDenials(opts ...func(*InvitationDenialQuery)) *UserQuery {
+	query := &InvitationDenialQuery{config: uq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	uq.withInvitationDenials = query
 	return uq
 }
 
@@ -543,11 +617,13 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 	var (
 		nodes       = []*User{}
 		_spec       = uq.querySpec()
-		loadedTypes = [6]bool{
+		loadedTypes = [8]bool{
 			uq.withUserProfile != nil,
 			uq.withFriendUsers != nil,
 			uq.withFriendGroups != nil,
 			uq.withBelongingFriendGroups != nil,
+			uq.withInvitationAcceptances != nil,
+			uq.withInvitationDenials != nil,
 			uq.withFriendships != nil,
 			uq.withUserFriendGroups != nil,
 		}
@@ -602,6 +678,22 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 			return nil, err
 		}
 	}
+	if query := uq.withInvitationAcceptances; query != nil {
+		if err := uq.loadInvitationAcceptances(ctx, query, nodes,
+			func(n *User) { n.Edges.InvitationAcceptances = []*InvitationAcceptance{} },
+			func(n *User, e *InvitationAcceptance) {
+				n.Edges.InvitationAcceptances = append(n.Edges.InvitationAcceptances, e)
+			}); err != nil {
+			return nil, err
+		}
+	}
+	if query := uq.withInvitationDenials; query != nil {
+		if err := uq.loadInvitationDenials(ctx, query, nodes,
+			func(n *User) { n.Edges.InvitationDenials = []*InvitationDenial{} },
+			func(n *User, e *InvitationDenial) { n.Edges.InvitationDenials = append(n.Edges.InvitationDenials, e) }); err != nil {
+			return nil, err
+		}
+	}
 	if query := uq.withFriendships; query != nil {
 		if err := uq.loadFriendships(ctx, query, nodes,
 			func(n *User) { n.Edges.Friendships = []*Friendship{} },
@@ -634,6 +726,20 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 		if err := uq.loadBelongingFriendGroups(ctx, query, nodes,
 			func(n *User) { n.appendNamedBelongingFriendGroups(name) },
 			func(n *User, e *FriendGroup) { n.appendNamedBelongingFriendGroups(name, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for name, query := range uq.withNamedInvitationAcceptances {
+		if err := uq.loadInvitationAcceptances(ctx, query, nodes,
+			func(n *User) { n.appendNamedInvitationAcceptances(name) },
+			func(n *User, e *InvitationAcceptance) { n.appendNamedInvitationAcceptances(name, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for name, query := range uq.withNamedInvitationDenials {
+		if err := uq.loadInvitationDenials(ctx, query, nodes,
+			func(n *User) { n.appendNamedInvitationDenials(name) },
+			func(n *User, e *InvitationDenial) { n.appendNamedInvitationDenials(name, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -823,6 +929,60 @@ func (uq *UserQuery) loadBelongingFriendGroups(ctx context.Context, query *Frien
 		for kn := range nodes {
 			assign(kn, n)
 		}
+	}
+	return nil
+}
+func (uq *UserQuery) loadInvitationAcceptances(ctx context.Context, query *InvitationAcceptanceQuery, nodes []*User, init func(*User), assign func(*User, *InvitationAcceptance)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[uuid.UUID]*User)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	query.Where(predicate.InvitationAcceptance(func(s *sql.Selector) {
+		s.Where(sql.InValues(user.InvitationAcceptancesColumn, fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.UserID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected foreign-key "user_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (uq *UserQuery) loadInvitationDenials(ctx context.Context, query *InvitationDenialQuery, nodes []*User, init func(*User), assign func(*User, *InvitationDenial)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[uuid.UUID]*User)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	query.Where(predicate.InvitationDenial(func(s *sql.Selector) {
+		s.Where(sql.InValues(user.InvitationDenialsColumn, fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.UserID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected foreign-key "user_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
 	}
 	return nil
 }
@@ -1023,6 +1183,34 @@ func (uq *UserQuery) WithNamedBelongingFriendGroups(name string, opts ...func(*F
 		uq.withNamedBelongingFriendGroups = make(map[string]*FriendGroupQuery)
 	}
 	uq.withNamedBelongingFriendGroups[name] = query
+	return uq
+}
+
+// WithNamedInvitationAcceptances tells the query-builder to eager-load the nodes that are connected to the "invitation_acceptances"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithNamedInvitationAcceptances(name string, opts ...func(*InvitationAcceptanceQuery)) *UserQuery {
+	query := &InvitationAcceptanceQuery{config: uq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	if uq.withNamedInvitationAcceptances == nil {
+		uq.withNamedInvitationAcceptances = make(map[string]*InvitationAcceptanceQuery)
+	}
+	uq.withNamedInvitationAcceptances[name] = query
+	return uq
+}
+
+// WithNamedInvitationDenials tells the query-builder to eager-load the nodes that are connected to the "invitation_denials"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithNamedInvitationDenials(name string, opts ...func(*InvitationDenialQuery)) *UserQuery {
+	query := &InvitationDenialQuery{config: uq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	if uq.withNamedInvitationDenials == nil {
+		uq.withNamedInvitationDenials = make(map[string]*InvitationDenialQuery)
+	}
+	uq.withNamedInvitationDenials[name] = query
 	return uq
 }
 

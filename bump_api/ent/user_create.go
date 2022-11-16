@@ -15,6 +15,8 @@ import (
 	"github.com/google/uuid"
 	"github.com/k-yomo/bump/bump_api/ent/friendgroup"
 	"github.com/k-yomo/bump/bump_api/ent/friendship"
+	"github.com/k-yomo/bump/bump_api/ent/invitationacceptance"
+	"github.com/k-yomo/bump/bump_api/ent/invitationdenial"
 	"github.com/k-yomo/bump/bump_api/ent/user"
 	"github.com/k-yomo/bump/bump_api/ent/userfriendgroup"
 	"github.com/k-yomo/bump/bump_api/ent/userprofile"
@@ -124,6 +126,36 @@ func (uc *UserCreate) AddBelongingFriendGroups(f ...*FriendGroup) *UserCreate {
 		ids[i] = f[i].ID
 	}
 	return uc.AddBelongingFriendGroupIDs(ids...)
+}
+
+// AddInvitationAcceptanceIDs adds the "invitation_acceptances" edge to the InvitationAcceptance entity by IDs.
+func (uc *UserCreate) AddInvitationAcceptanceIDs(ids ...uuid.UUID) *UserCreate {
+	uc.mutation.AddInvitationAcceptanceIDs(ids...)
+	return uc
+}
+
+// AddInvitationAcceptances adds the "invitation_acceptances" edges to the InvitationAcceptance entity.
+func (uc *UserCreate) AddInvitationAcceptances(i ...*InvitationAcceptance) *UserCreate {
+	ids := make([]uuid.UUID, len(i))
+	for j := range i {
+		ids[j] = i[j].ID
+	}
+	return uc.AddInvitationAcceptanceIDs(ids...)
+}
+
+// AddInvitationDenialIDs adds the "invitation_denials" edge to the InvitationDenial entity by IDs.
+func (uc *UserCreate) AddInvitationDenialIDs(ids ...uuid.UUID) *UserCreate {
+	uc.mutation.AddInvitationDenialIDs(ids...)
+	return uc
+}
+
+// AddInvitationDenials adds the "invitation_denials" edges to the InvitationDenial entity.
+func (uc *UserCreate) AddInvitationDenials(i ...*InvitationDenial) *UserCreate {
+	ids := make([]uuid.UUID, len(i))
+	for j := range i {
+		ids[j] = i[j].ID
+	}
+	return uc.AddInvitationDenialIDs(ids...)
 }
 
 // AddFriendshipIDs adds the "friendships" edge to the Friendship entity by IDs.
@@ -383,6 +415,44 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		edge.Target.Fields = specE.Fields
 		if specE.ID.Value != nil {
 			edge.Target.Fields = append(edge.Target.Fields, specE.ID)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.InvitationAcceptancesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.InvitationAcceptancesTable,
+			Columns: []string{user.InvitationAcceptancesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeUUID,
+					Column: invitationacceptance.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.InvitationDenialsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.InvitationDenialsTable,
+			Columns: []string{user.InvitationDenialsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeUUID,
+					Column: invitationdenial.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}

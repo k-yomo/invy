@@ -24,13 +24,18 @@ type config struct {
 
 // hooks per client, for fast access.
 type hooks struct {
-	FriendGroup       []ent.Hook
-	Friendship        []ent.Hook
-	FriendshipRequest []ent.Hook
-	User              []ent.Hook
-	UserFriendGroup   []ent.Hook
-	UserMute          []ent.Hook
-	UserProfile       []ent.Hook
+	FriendGroup           []ent.Hook
+	Friendship            []ent.Hook
+	FriendshipRequest     []ent.Hook
+	Invitation            []ent.Hook
+	InvitationAcceptance  []ent.Hook
+	InvitationDenial      []ent.Hook
+	InvitationFriendGroup []ent.Hook
+	InvitationUser        []ent.Hook
+	User                  []ent.Hook
+	UserFriendGroup       []ent.Hook
+	UserMute              []ent.Hook
+	UserProfile           []ent.Hook
 }
 
 // Options applies the options on the config object.

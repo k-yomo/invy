@@ -48,6 +48,71 @@ func (f FriendshipRequestFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.
 	return f(ctx, mv)
 }
 
+// The InvitationFunc type is an adapter to allow the use of ordinary
+// function as Invitation mutator.
+type InvitationFunc func(context.Context, *ent.InvitationMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f InvitationFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.InvitationMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.InvitationMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The InvitationAcceptanceFunc type is an adapter to allow the use of ordinary
+// function as InvitationAcceptance mutator.
+type InvitationAcceptanceFunc func(context.Context, *ent.InvitationAcceptanceMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f InvitationAcceptanceFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.InvitationAcceptanceMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.InvitationAcceptanceMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The InvitationDenialFunc type is an adapter to allow the use of ordinary
+// function as InvitationDenial mutator.
+type InvitationDenialFunc func(context.Context, *ent.InvitationDenialMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f InvitationDenialFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.InvitationDenialMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.InvitationDenialMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The InvitationFriendGroupFunc type is an adapter to allow the use of ordinary
+// function as InvitationFriendGroup mutator.
+type InvitationFriendGroupFunc func(context.Context, *ent.InvitationFriendGroupMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f InvitationFriendGroupFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.InvitationFriendGroupMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.InvitationFriendGroupMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The InvitationUserFunc type is an adapter to allow the use of ordinary
+// function as InvitationUser mutator.
+type InvitationUserFunc func(context.Context, *ent.InvitationUserMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f InvitationUserFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.InvitationUserMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.InvitationUserMutation", m)
+	}
+	return f(ctx, mv)
+}
+
 // The UserFunc type is an adapter to allow the use of ordinary
 // function as User mutator.
 type UserFunc func(context.Context, *ent.UserMutation) (ent.Value, error)

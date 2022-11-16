@@ -14,6 +14,11 @@ import (
 	"github.com/k-yomo/bump/bump_api/ent/friendgroup"
 	"github.com/k-yomo/bump/bump_api/ent/friendship"
 	"github.com/k-yomo/bump/bump_api/ent/friendshiprequest"
+	"github.com/k-yomo/bump/bump_api/ent/invitation"
+	"github.com/k-yomo/bump/bump_api/ent/invitationacceptance"
+	"github.com/k-yomo/bump/bump_api/ent/invitationdenial"
+	"github.com/k-yomo/bump/bump_api/ent/invitationfriendgroup"
+	"github.com/k-yomo/bump/bump_api/ent/invitationuser"
 	"github.com/k-yomo/bump/bump_api/ent/user"
 	"github.com/k-yomo/bump/bump_api/ent/userfriendgroup"
 	"github.com/k-yomo/bump/bump_api/ent/usermute"
@@ -35,6 +40,16 @@ type Client struct {
 	Friendship *FriendshipClient
 	// FriendshipRequest is the client for interacting with the FriendshipRequest builders.
 	FriendshipRequest *FriendshipRequestClient
+	// Invitation is the client for interacting with the Invitation builders.
+	Invitation *InvitationClient
+	// InvitationAcceptance is the client for interacting with the InvitationAcceptance builders.
+	InvitationAcceptance *InvitationAcceptanceClient
+	// InvitationDenial is the client for interacting with the InvitationDenial builders.
+	InvitationDenial *InvitationDenialClient
+	// InvitationFriendGroup is the client for interacting with the InvitationFriendGroup builders.
+	InvitationFriendGroup *InvitationFriendGroupClient
+	// InvitationUser is the client for interacting with the InvitationUser builders.
+	InvitationUser *InvitationUserClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
 	// UserFriendGroup is the client for interacting with the UserFriendGroup builders.
@@ -59,6 +74,11 @@ func (c *Client) init() {
 	c.FriendGroup = NewFriendGroupClient(c.config)
 	c.Friendship = NewFriendshipClient(c.config)
 	c.FriendshipRequest = NewFriendshipRequestClient(c.config)
+	c.Invitation = NewInvitationClient(c.config)
+	c.InvitationAcceptance = NewInvitationAcceptanceClient(c.config)
+	c.InvitationDenial = NewInvitationDenialClient(c.config)
+	c.InvitationFriendGroup = NewInvitationFriendGroupClient(c.config)
+	c.InvitationUser = NewInvitationUserClient(c.config)
 	c.User = NewUserClient(c.config)
 	c.UserFriendGroup = NewUserFriendGroupClient(c.config)
 	c.UserMute = NewUserMuteClient(c.config)
@@ -94,15 +114,20 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	cfg := c.config
 	cfg.driver = tx
 	return &Tx{
-		ctx:               ctx,
-		config:            cfg,
-		FriendGroup:       NewFriendGroupClient(cfg),
-		Friendship:        NewFriendshipClient(cfg),
-		FriendshipRequest: NewFriendshipRequestClient(cfg),
-		User:              NewUserClient(cfg),
-		UserFriendGroup:   NewUserFriendGroupClient(cfg),
-		UserMute:          NewUserMuteClient(cfg),
-		UserProfile:       NewUserProfileClient(cfg),
+		ctx:                   ctx,
+		config:                cfg,
+		FriendGroup:           NewFriendGroupClient(cfg),
+		Friendship:            NewFriendshipClient(cfg),
+		FriendshipRequest:     NewFriendshipRequestClient(cfg),
+		Invitation:            NewInvitationClient(cfg),
+		InvitationAcceptance:  NewInvitationAcceptanceClient(cfg),
+		InvitationDenial:      NewInvitationDenialClient(cfg),
+		InvitationFriendGroup: NewInvitationFriendGroupClient(cfg),
+		InvitationUser:        NewInvitationUserClient(cfg),
+		User:                  NewUserClient(cfg),
+		UserFriendGroup:       NewUserFriendGroupClient(cfg),
+		UserMute:              NewUserMuteClient(cfg),
+		UserProfile:           NewUserProfileClient(cfg),
 	}, nil
 }
 
@@ -120,15 +145,20 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	cfg := c.config
 	cfg.driver = &txDriver{tx: tx, drv: c.driver}
 	return &Tx{
-		ctx:               ctx,
-		config:            cfg,
-		FriendGroup:       NewFriendGroupClient(cfg),
-		Friendship:        NewFriendshipClient(cfg),
-		FriendshipRequest: NewFriendshipRequestClient(cfg),
-		User:              NewUserClient(cfg),
-		UserFriendGroup:   NewUserFriendGroupClient(cfg),
-		UserMute:          NewUserMuteClient(cfg),
-		UserProfile:       NewUserProfileClient(cfg),
+		ctx:                   ctx,
+		config:                cfg,
+		FriendGroup:           NewFriendGroupClient(cfg),
+		Friendship:            NewFriendshipClient(cfg),
+		FriendshipRequest:     NewFriendshipRequestClient(cfg),
+		Invitation:            NewInvitationClient(cfg),
+		InvitationAcceptance:  NewInvitationAcceptanceClient(cfg),
+		InvitationDenial:      NewInvitationDenialClient(cfg),
+		InvitationFriendGroup: NewInvitationFriendGroupClient(cfg),
+		InvitationUser:        NewInvitationUserClient(cfg),
+		User:                  NewUserClient(cfg),
+		UserFriendGroup:       NewUserFriendGroupClient(cfg),
+		UserMute:              NewUserMuteClient(cfg),
+		UserProfile:           NewUserProfileClient(cfg),
 	}, nil
 }
 
@@ -160,6 +190,11 @@ func (c *Client) Use(hooks ...Hook) {
 	c.FriendGroup.Use(hooks...)
 	c.Friendship.Use(hooks...)
 	c.FriendshipRequest.Use(hooks...)
+	c.Invitation.Use(hooks...)
+	c.InvitationAcceptance.Use(hooks...)
+	c.InvitationDenial.Use(hooks...)
+	c.InvitationFriendGroup.Use(hooks...)
+	c.InvitationUser.Use(hooks...)
 	c.User.Use(hooks...)
 	c.UserFriendGroup.Use(hooks...)
 	c.UserMute.Use(hooks...)
@@ -276,6 +311,22 @@ func (c *FriendGroupClient) QueryFriendUsers(fg *FriendGroup) *UserQuery {
 			sqlgraph.From(friendgroup.Table, friendgroup.FieldID, id),
 			sqlgraph.To(user.Table, user.FieldID),
 			sqlgraph.Edge(sqlgraph.M2M, false, friendgroup.FriendUsersTable, friendgroup.FriendUsersPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(fg.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryInvitationFriendGroups queries the invitation_friend_groups edge of a FriendGroup.
+func (c *FriendGroupClient) QueryInvitationFriendGroups(fg *FriendGroup) *InvitationFriendGroupQuery {
+	query := &InvitationFriendGroupQuery{config: c.config}
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := fg.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(friendgroup.Table, friendgroup.FieldID, id),
+			sqlgraph.To(invitationfriendgroup.Table, invitationfriendgroup.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, true, friendgroup.InvitationFriendGroupsTable, friendgroup.InvitationFriendGroupsColumn),
 		)
 		fromV = sqlgraph.Neighbors(fg.driver.Dialect(), step)
 		return fromV, nil
@@ -548,6 +599,664 @@ func (c *FriendshipRequestClient) Hooks() []Hook {
 	return c.hooks.FriendshipRequest
 }
 
+// InvitationClient is a client for the Invitation schema.
+type InvitationClient struct {
+	config
+}
+
+// NewInvitationClient returns a client for the Invitation from the given config.
+func NewInvitationClient(c config) *InvitationClient {
+	return &InvitationClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `invitation.Hooks(f(g(h())))`.
+func (c *InvitationClient) Use(hooks ...Hook) {
+	c.hooks.Invitation = append(c.hooks.Invitation, hooks...)
+}
+
+// Create returns a builder for creating a Invitation entity.
+func (c *InvitationClient) Create() *InvitationCreate {
+	mutation := newInvitationMutation(c.config, OpCreate)
+	return &InvitationCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Invitation entities.
+func (c *InvitationClient) CreateBulk(builders ...*InvitationCreate) *InvitationCreateBulk {
+	return &InvitationCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Invitation.
+func (c *InvitationClient) Update() *InvitationUpdate {
+	mutation := newInvitationMutation(c.config, OpUpdate)
+	return &InvitationUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *InvitationClient) UpdateOne(i *Invitation) *InvitationUpdateOne {
+	mutation := newInvitationMutation(c.config, OpUpdateOne, withInvitation(i))
+	return &InvitationUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *InvitationClient) UpdateOneID(id uuid.UUID) *InvitationUpdateOne {
+	mutation := newInvitationMutation(c.config, OpUpdateOne, withInvitationID(id))
+	return &InvitationUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Invitation.
+func (c *InvitationClient) Delete() *InvitationDelete {
+	mutation := newInvitationMutation(c.config, OpDelete)
+	return &InvitationDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *InvitationClient) DeleteOne(i *Invitation) *InvitationDeleteOne {
+	return c.DeleteOneID(i.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *InvitationClient) DeleteOneID(id uuid.UUID) *InvitationDeleteOne {
+	builder := c.Delete().Where(invitation.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &InvitationDeleteOne{builder}
+}
+
+// Query returns a query builder for Invitation.
+func (c *InvitationClient) Query() *InvitationQuery {
+	return &InvitationQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a Invitation entity by its id.
+func (c *InvitationClient) Get(ctx context.Context, id uuid.UUID) (*Invitation, error) {
+	return c.Query().Where(invitation.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *InvitationClient) GetX(ctx context.Context, id uuid.UUID) *Invitation {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryUser queries the user edge of a Invitation.
+func (c *InvitationClient) QueryUser(i *Invitation) *UserQuery {
+	query := &UserQuery{config: c.config}
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := i.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(invitation.Table, invitation.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, invitation.UserTable, invitation.UserColumn),
+		)
+		fromV = sqlgraph.Neighbors(i.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryInvitationUsers queries the invitation_users edge of a Invitation.
+func (c *InvitationClient) QueryInvitationUsers(i *Invitation) *InvitationUserQuery {
+	query := &InvitationUserQuery{config: c.config}
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := i.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(invitation.Table, invitation.FieldID, id),
+			sqlgraph.To(invitationuser.Table, invitationuser.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, true, invitation.InvitationUsersTable, invitation.InvitationUsersColumn),
+		)
+		fromV = sqlgraph.Neighbors(i.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryInvitationFriendGroups queries the invitation_friend_groups edge of a Invitation.
+func (c *InvitationClient) QueryInvitationFriendGroups(i *Invitation) *InvitationFriendGroupQuery {
+	query := &InvitationFriendGroupQuery{config: c.config}
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := i.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(invitation.Table, invitation.FieldID, id),
+			sqlgraph.To(invitationfriendgroup.Table, invitationfriendgroup.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, true, invitation.InvitationFriendGroupsTable, invitation.InvitationFriendGroupsColumn),
+		)
+		fromV = sqlgraph.Neighbors(i.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryInvitationAcceptances queries the invitation_acceptances edge of a Invitation.
+func (c *InvitationClient) QueryInvitationAcceptances(i *Invitation) *InvitationAcceptanceQuery {
+	query := &InvitationAcceptanceQuery{config: c.config}
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := i.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(invitation.Table, invitation.FieldID, id),
+			sqlgraph.To(invitationacceptance.Table, invitationacceptance.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, true, invitation.InvitationAcceptancesTable, invitation.InvitationAcceptancesColumn),
+		)
+		fromV = sqlgraph.Neighbors(i.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryInvitationDenials queries the invitation_denials edge of a Invitation.
+func (c *InvitationClient) QueryInvitationDenials(i *Invitation) *InvitationDenialQuery {
+	query := &InvitationDenialQuery{config: c.config}
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := i.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(invitation.Table, invitation.FieldID, id),
+			sqlgraph.To(invitationdenial.Table, invitationdenial.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, true, invitation.InvitationDenialsTable, invitation.InvitationDenialsColumn),
+		)
+		fromV = sqlgraph.Neighbors(i.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *InvitationClient) Hooks() []Hook {
+	return c.hooks.Invitation
+}
+
+// InvitationAcceptanceClient is a client for the InvitationAcceptance schema.
+type InvitationAcceptanceClient struct {
+	config
+}
+
+// NewInvitationAcceptanceClient returns a client for the InvitationAcceptance from the given config.
+func NewInvitationAcceptanceClient(c config) *InvitationAcceptanceClient {
+	return &InvitationAcceptanceClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `invitationacceptance.Hooks(f(g(h())))`.
+func (c *InvitationAcceptanceClient) Use(hooks ...Hook) {
+	c.hooks.InvitationAcceptance = append(c.hooks.InvitationAcceptance, hooks...)
+}
+
+// Create returns a builder for creating a InvitationAcceptance entity.
+func (c *InvitationAcceptanceClient) Create() *InvitationAcceptanceCreate {
+	mutation := newInvitationAcceptanceMutation(c.config, OpCreate)
+	return &InvitationAcceptanceCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of InvitationAcceptance entities.
+func (c *InvitationAcceptanceClient) CreateBulk(builders ...*InvitationAcceptanceCreate) *InvitationAcceptanceCreateBulk {
+	return &InvitationAcceptanceCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for InvitationAcceptance.
+func (c *InvitationAcceptanceClient) Update() *InvitationAcceptanceUpdate {
+	mutation := newInvitationAcceptanceMutation(c.config, OpUpdate)
+	return &InvitationAcceptanceUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *InvitationAcceptanceClient) UpdateOne(ia *InvitationAcceptance) *InvitationAcceptanceUpdateOne {
+	mutation := newInvitationAcceptanceMutation(c.config, OpUpdateOne, withInvitationAcceptance(ia))
+	return &InvitationAcceptanceUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *InvitationAcceptanceClient) UpdateOneID(id uuid.UUID) *InvitationAcceptanceUpdateOne {
+	mutation := newInvitationAcceptanceMutation(c.config, OpUpdateOne, withInvitationAcceptanceID(id))
+	return &InvitationAcceptanceUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for InvitationAcceptance.
+func (c *InvitationAcceptanceClient) Delete() *InvitationAcceptanceDelete {
+	mutation := newInvitationAcceptanceMutation(c.config, OpDelete)
+	return &InvitationAcceptanceDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *InvitationAcceptanceClient) DeleteOne(ia *InvitationAcceptance) *InvitationAcceptanceDeleteOne {
+	return c.DeleteOneID(ia.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *InvitationAcceptanceClient) DeleteOneID(id uuid.UUID) *InvitationAcceptanceDeleteOne {
+	builder := c.Delete().Where(invitationacceptance.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &InvitationAcceptanceDeleteOne{builder}
+}
+
+// Query returns a query builder for InvitationAcceptance.
+func (c *InvitationAcceptanceClient) Query() *InvitationAcceptanceQuery {
+	return &InvitationAcceptanceQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a InvitationAcceptance entity by its id.
+func (c *InvitationAcceptanceClient) Get(ctx context.Context, id uuid.UUID) (*InvitationAcceptance, error) {
+	return c.Query().Where(invitationacceptance.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *InvitationAcceptanceClient) GetX(ctx context.Context, id uuid.UUID) *InvitationAcceptance {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryUser queries the user edge of a InvitationAcceptance.
+func (c *InvitationAcceptanceClient) QueryUser(ia *InvitationAcceptance) *UserQuery {
+	query := &UserQuery{config: c.config}
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := ia.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(invitationacceptance.Table, invitationacceptance.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, invitationacceptance.UserTable, invitationacceptance.UserColumn),
+		)
+		fromV = sqlgraph.Neighbors(ia.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryInvitation queries the invitation edge of a InvitationAcceptance.
+func (c *InvitationAcceptanceClient) QueryInvitation(ia *InvitationAcceptance) *InvitationQuery {
+	query := &InvitationQuery{config: c.config}
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := ia.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(invitationacceptance.Table, invitationacceptance.FieldID, id),
+			sqlgraph.To(invitation.Table, invitation.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, invitationacceptance.InvitationTable, invitationacceptance.InvitationColumn),
+		)
+		fromV = sqlgraph.Neighbors(ia.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *InvitationAcceptanceClient) Hooks() []Hook {
+	return c.hooks.InvitationAcceptance
+}
+
+// InvitationDenialClient is a client for the InvitationDenial schema.
+type InvitationDenialClient struct {
+	config
+}
+
+// NewInvitationDenialClient returns a client for the InvitationDenial from the given config.
+func NewInvitationDenialClient(c config) *InvitationDenialClient {
+	return &InvitationDenialClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `invitationdenial.Hooks(f(g(h())))`.
+func (c *InvitationDenialClient) Use(hooks ...Hook) {
+	c.hooks.InvitationDenial = append(c.hooks.InvitationDenial, hooks...)
+}
+
+// Create returns a builder for creating a InvitationDenial entity.
+func (c *InvitationDenialClient) Create() *InvitationDenialCreate {
+	mutation := newInvitationDenialMutation(c.config, OpCreate)
+	return &InvitationDenialCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of InvitationDenial entities.
+func (c *InvitationDenialClient) CreateBulk(builders ...*InvitationDenialCreate) *InvitationDenialCreateBulk {
+	return &InvitationDenialCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for InvitationDenial.
+func (c *InvitationDenialClient) Update() *InvitationDenialUpdate {
+	mutation := newInvitationDenialMutation(c.config, OpUpdate)
+	return &InvitationDenialUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *InvitationDenialClient) UpdateOne(id *InvitationDenial) *InvitationDenialUpdateOne {
+	mutation := newInvitationDenialMutation(c.config, OpUpdateOne, withInvitationDenial(id))
+	return &InvitationDenialUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *InvitationDenialClient) UpdateOneID(id uuid.UUID) *InvitationDenialUpdateOne {
+	mutation := newInvitationDenialMutation(c.config, OpUpdateOne, withInvitationDenialID(id))
+	return &InvitationDenialUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for InvitationDenial.
+func (c *InvitationDenialClient) Delete() *InvitationDenialDelete {
+	mutation := newInvitationDenialMutation(c.config, OpDelete)
+	return &InvitationDenialDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *InvitationDenialClient) DeleteOne(id *InvitationDenial) *InvitationDenialDeleteOne {
+	return c.DeleteOneID(id.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *InvitationDenialClient) DeleteOneID(id uuid.UUID) *InvitationDenialDeleteOne {
+	builder := c.Delete().Where(invitationdenial.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &InvitationDenialDeleteOne{builder}
+}
+
+// Query returns a query builder for InvitationDenial.
+func (c *InvitationDenialClient) Query() *InvitationDenialQuery {
+	return &InvitationDenialQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a InvitationDenial entity by its id.
+func (c *InvitationDenialClient) Get(ctx context.Context, id uuid.UUID) (*InvitationDenial, error) {
+	return c.Query().Where(invitationdenial.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *InvitationDenialClient) GetX(ctx context.Context, id uuid.UUID) *InvitationDenial {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryUser queries the user edge of a InvitationDenial.
+func (c *InvitationDenialClient) QueryUser(node *InvitationDenial) *UserQuery {
+	query := &UserQuery{config: c.config}
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := node.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(invitationdenial.Table, invitationdenial.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, invitationdenial.UserTable, invitationdenial.UserColumn),
+		)
+		fromV = sqlgraph.Neighbors(node.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryInvitation queries the invitation edge of a InvitationDenial.
+func (c *InvitationDenialClient) QueryInvitation(node *InvitationDenial) *InvitationQuery {
+	query := &InvitationQuery{config: c.config}
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := node.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(invitationdenial.Table, invitationdenial.FieldID, id),
+			sqlgraph.To(invitation.Table, invitation.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, invitationdenial.InvitationTable, invitationdenial.InvitationColumn),
+		)
+		fromV = sqlgraph.Neighbors(node.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *InvitationDenialClient) Hooks() []Hook {
+	return c.hooks.InvitationDenial
+}
+
+// InvitationFriendGroupClient is a client for the InvitationFriendGroup schema.
+type InvitationFriendGroupClient struct {
+	config
+}
+
+// NewInvitationFriendGroupClient returns a client for the InvitationFriendGroup from the given config.
+func NewInvitationFriendGroupClient(c config) *InvitationFriendGroupClient {
+	return &InvitationFriendGroupClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `invitationfriendgroup.Hooks(f(g(h())))`.
+func (c *InvitationFriendGroupClient) Use(hooks ...Hook) {
+	c.hooks.InvitationFriendGroup = append(c.hooks.InvitationFriendGroup, hooks...)
+}
+
+// Create returns a builder for creating a InvitationFriendGroup entity.
+func (c *InvitationFriendGroupClient) Create() *InvitationFriendGroupCreate {
+	mutation := newInvitationFriendGroupMutation(c.config, OpCreate)
+	return &InvitationFriendGroupCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of InvitationFriendGroup entities.
+func (c *InvitationFriendGroupClient) CreateBulk(builders ...*InvitationFriendGroupCreate) *InvitationFriendGroupCreateBulk {
+	return &InvitationFriendGroupCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for InvitationFriendGroup.
+func (c *InvitationFriendGroupClient) Update() *InvitationFriendGroupUpdate {
+	mutation := newInvitationFriendGroupMutation(c.config, OpUpdate)
+	return &InvitationFriendGroupUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *InvitationFriendGroupClient) UpdateOne(ifg *InvitationFriendGroup) *InvitationFriendGroupUpdateOne {
+	mutation := newInvitationFriendGroupMutation(c.config, OpUpdateOne, withInvitationFriendGroup(ifg))
+	return &InvitationFriendGroupUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *InvitationFriendGroupClient) UpdateOneID(id uuid.UUID) *InvitationFriendGroupUpdateOne {
+	mutation := newInvitationFriendGroupMutation(c.config, OpUpdateOne, withInvitationFriendGroupID(id))
+	return &InvitationFriendGroupUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for InvitationFriendGroup.
+func (c *InvitationFriendGroupClient) Delete() *InvitationFriendGroupDelete {
+	mutation := newInvitationFriendGroupMutation(c.config, OpDelete)
+	return &InvitationFriendGroupDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *InvitationFriendGroupClient) DeleteOne(ifg *InvitationFriendGroup) *InvitationFriendGroupDeleteOne {
+	return c.DeleteOneID(ifg.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *InvitationFriendGroupClient) DeleteOneID(id uuid.UUID) *InvitationFriendGroupDeleteOne {
+	builder := c.Delete().Where(invitationfriendgroup.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &InvitationFriendGroupDeleteOne{builder}
+}
+
+// Query returns a query builder for InvitationFriendGroup.
+func (c *InvitationFriendGroupClient) Query() *InvitationFriendGroupQuery {
+	return &InvitationFriendGroupQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a InvitationFriendGroup entity by its id.
+func (c *InvitationFriendGroupClient) Get(ctx context.Context, id uuid.UUID) (*InvitationFriendGroup, error) {
+	return c.Query().Where(invitationfriendgroup.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *InvitationFriendGroupClient) GetX(ctx context.Context, id uuid.UUID) *InvitationFriendGroup {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryInvitation queries the invitation edge of a InvitationFriendGroup.
+func (c *InvitationFriendGroupClient) QueryInvitation(ifg *InvitationFriendGroup) *InvitationQuery {
+	query := &InvitationQuery{config: c.config}
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := ifg.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(invitationfriendgroup.Table, invitationfriendgroup.FieldID, id),
+			sqlgraph.To(invitation.Table, invitation.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, invitationfriendgroup.InvitationTable, invitationfriendgroup.InvitationColumn),
+		)
+		fromV = sqlgraph.Neighbors(ifg.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryFriendGroup queries the friend_group edge of a InvitationFriendGroup.
+func (c *InvitationFriendGroupClient) QueryFriendGroup(ifg *InvitationFriendGroup) *FriendGroupQuery {
+	query := &FriendGroupQuery{config: c.config}
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := ifg.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(invitationfriendgroup.Table, invitationfriendgroup.FieldID, id),
+			sqlgraph.To(friendgroup.Table, friendgroup.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, invitationfriendgroup.FriendGroupTable, invitationfriendgroup.FriendGroupColumn),
+		)
+		fromV = sqlgraph.Neighbors(ifg.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *InvitationFriendGroupClient) Hooks() []Hook {
+	return c.hooks.InvitationFriendGroup
+}
+
+// InvitationUserClient is a client for the InvitationUser schema.
+type InvitationUserClient struct {
+	config
+}
+
+// NewInvitationUserClient returns a client for the InvitationUser from the given config.
+func NewInvitationUserClient(c config) *InvitationUserClient {
+	return &InvitationUserClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `invitationuser.Hooks(f(g(h())))`.
+func (c *InvitationUserClient) Use(hooks ...Hook) {
+	c.hooks.InvitationUser = append(c.hooks.InvitationUser, hooks...)
+}
+
+// Create returns a builder for creating a InvitationUser entity.
+func (c *InvitationUserClient) Create() *InvitationUserCreate {
+	mutation := newInvitationUserMutation(c.config, OpCreate)
+	return &InvitationUserCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of InvitationUser entities.
+func (c *InvitationUserClient) CreateBulk(builders ...*InvitationUserCreate) *InvitationUserCreateBulk {
+	return &InvitationUserCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for InvitationUser.
+func (c *InvitationUserClient) Update() *InvitationUserUpdate {
+	mutation := newInvitationUserMutation(c.config, OpUpdate)
+	return &InvitationUserUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *InvitationUserClient) UpdateOne(iu *InvitationUser) *InvitationUserUpdateOne {
+	mutation := newInvitationUserMutation(c.config, OpUpdateOne, withInvitationUser(iu))
+	return &InvitationUserUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *InvitationUserClient) UpdateOneID(id uuid.UUID) *InvitationUserUpdateOne {
+	mutation := newInvitationUserMutation(c.config, OpUpdateOne, withInvitationUserID(id))
+	return &InvitationUserUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for InvitationUser.
+func (c *InvitationUserClient) Delete() *InvitationUserDelete {
+	mutation := newInvitationUserMutation(c.config, OpDelete)
+	return &InvitationUserDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *InvitationUserClient) DeleteOne(iu *InvitationUser) *InvitationUserDeleteOne {
+	return c.DeleteOneID(iu.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *InvitationUserClient) DeleteOneID(id uuid.UUID) *InvitationUserDeleteOne {
+	builder := c.Delete().Where(invitationuser.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &InvitationUserDeleteOne{builder}
+}
+
+// Query returns a query builder for InvitationUser.
+func (c *InvitationUserClient) Query() *InvitationUserQuery {
+	return &InvitationUserQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a InvitationUser entity by its id.
+func (c *InvitationUserClient) Get(ctx context.Context, id uuid.UUID) (*InvitationUser, error) {
+	return c.Query().Where(invitationuser.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *InvitationUserClient) GetX(ctx context.Context, id uuid.UUID) *InvitationUser {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryInvitation queries the invitation edge of a InvitationUser.
+func (c *InvitationUserClient) QueryInvitation(iu *InvitationUser) *InvitationQuery {
+	query := &InvitationQuery{config: c.config}
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := iu.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(invitationuser.Table, invitationuser.FieldID, id),
+			sqlgraph.To(invitation.Table, invitation.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, invitationuser.InvitationTable, invitationuser.InvitationColumn),
+		)
+		fromV = sqlgraph.Neighbors(iu.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryUser queries the user edge of a InvitationUser.
+func (c *InvitationUserClient) QueryUser(iu *InvitationUser) *UserQuery {
+	query := &UserQuery{config: c.config}
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := iu.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(invitationuser.Table, invitationuser.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, invitationuser.UserTable, invitationuser.UserColumn),
+		)
+		fromV = sqlgraph.Neighbors(iu.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *InvitationUserClient) Hooks() []Hook {
+	return c.hooks.InvitationUser
+}
+
 // UserClient is a client for the User schema.
 type UserClient struct {
 	config
@@ -690,6 +1399,38 @@ func (c *UserClient) QueryBelongingFriendGroups(u *User) *FriendGroupQuery {
 			sqlgraph.From(user.Table, user.FieldID, id),
 			sqlgraph.To(friendgroup.Table, friendgroup.FieldID),
 			sqlgraph.Edge(sqlgraph.M2M, true, user.BelongingFriendGroupsTable, user.BelongingFriendGroupsPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryInvitationAcceptances queries the invitation_acceptances edge of a User.
+func (c *UserClient) QueryInvitationAcceptances(u *User) *InvitationAcceptanceQuery {
+	query := &InvitationAcceptanceQuery{config: c.config}
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := u.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(invitationacceptance.Table, invitationacceptance.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, true, user.InvitationAcceptancesTable, user.InvitationAcceptancesColumn),
+		)
+		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryInvitationDenials queries the invitation_denials edge of a User.
+func (c *UserClient) QueryInvitationDenials(u *User) *InvitationDenialQuery {
+	query := &InvitationDenialQuery{config: c.config}
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := u.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(invitationdenial.Table, invitationdenial.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, true, user.InvitationDenialsTable, user.InvitationDenialsColumn),
 		)
 		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
 		return fromV, nil

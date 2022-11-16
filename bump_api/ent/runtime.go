@@ -9,6 +9,11 @@ import (
 	"github.com/k-yomo/bump/bump_api/ent/friendgroup"
 	"github.com/k-yomo/bump/bump_api/ent/friendship"
 	"github.com/k-yomo/bump/bump_api/ent/friendshiprequest"
+	"github.com/k-yomo/bump/bump_api/ent/invitation"
+	"github.com/k-yomo/bump/bump_api/ent/invitationacceptance"
+	"github.com/k-yomo/bump/bump_api/ent/invitationdenial"
+	"github.com/k-yomo/bump/bump_api/ent/invitationfriendgroup"
+	"github.com/k-yomo/bump/bump_api/ent/invitationuser"
 	"github.com/k-yomo/bump/bump_api/ent/schema"
 	"github.com/k-yomo/bump/bump_api/ent/user"
 	"github.com/k-yomo/bump/bump_api/ent/userfriendgroup"
@@ -56,6 +61,62 @@ func init() {
 	friendshiprequestDescID := friendshiprequestFields[0].Descriptor()
 	// friendshiprequest.DefaultID holds the default value on creation for the id field.
 	friendshiprequest.DefaultID = friendshiprequestDescID.Default.(func() uuid.UUID)
+	invitationFields := schema.Invitation{}.Fields()
+	_ = invitationFields
+	// invitationDescCreatedAt is the schema descriptor for created_at field.
+	invitationDescCreatedAt := invitationFields[6].Descriptor()
+	// invitation.DefaultCreatedAt holds the default value on creation for the created_at field.
+	invitation.DefaultCreatedAt = invitationDescCreatedAt.Default.(func() time.Time)
+	// invitationDescUpdatedAt is the schema descriptor for updated_at field.
+	invitationDescUpdatedAt := invitationFields[7].Descriptor()
+	// invitation.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	invitation.DefaultUpdatedAt = invitationDescUpdatedAt.Default.(func() time.Time)
+	// invitation.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	invitation.UpdateDefaultUpdatedAt = invitationDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// invitationDescID is the schema descriptor for id field.
+	invitationDescID := invitationFields[0].Descriptor()
+	// invitation.DefaultID holds the default value on creation for the id field.
+	invitation.DefaultID = invitationDescID.Default.(func() uuid.UUID)
+	invitationacceptanceFields := schema.InvitationAcceptance{}.Fields()
+	_ = invitationacceptanceFields
+	// invitationacceptanceDescCreatedAt is the schema descriptor for created_at field.
+	invitationacceptanceDescCreatedAt := invitationacceptanceFields[3].Descriptor()
+	// invitationacceptance.DefaultCreatedAt holds the default value on creation for the created_at field.
+	invitationacceptance.DefaultCreatedAt = invitationacceptanceDescCreatedAt.Default.(func() time.Time)
+	// invitationacceptanceDescID is the schema descriptor for id field.
+	invitationacceptanceDescID := invitationacceptanceFields[0].Descriptor()
+	// invitationacceptance.DefaultID holds the default value on creation for the id field.
+	invitationacceptance.DefaultID = invitationacceptanceDescID.Default.(func() uuid.UUID)
+	invitationdenialFields := schema.InvitationDenial{}.Fields()
+	_ = invitationdenialFields
+	// invitationdenialDescCreatedAt is the schema descriptor for created_at field.
+	invitationdenialDescCreatedAt := invitationdenialFields[3].Descriptor()
+	// invitationdenial.DefaultCreatedAt holds the default value on creation for the created_at field.
+	invitationdenial.DefaultCreatedAt = invitationdenialDescCreatedAt.Default.(func() time.Time)
+	// invitationdenialDescID is the schema descriptor for id field.
+	invitationdenialDescID := invitationdenialFields[0].Descriptor()
+	// invitationdenial.DefaultID holds the default value on creation for the id field.
+	invitationdenial.DefaultID = invitationdenialDescID.Default.(func() uuid.UUID)
+	invitationfriendgroupFields := schema.InvitationFriendGroup{}.Fields()
+	_ = invitationfriendgroupFields
+	// invitationfriendgroupDescCreatedAt is the schema descriptor for created_at field.
+	invitationfriendgroupDescCreatedAt := invitationfriendgroupFields[3].Descriptor()
+	// invitationfriendgroup.DefaultCreatedAt holds the default value on creation for the created_at field.
+	invitationfriendgroup.DefaultCreatedAt = invitationfriendgroupDescCreatedAt.Default.(func() time.Time)
+	// invitationfriendgroupDescID is the schema descriptor for id field.
+	invitationfriendgroupDescID := invitationfriendgroupFields[0].Descriptor()
+	// invitationfriendgroup.DefaultID holds the default value on creation for the id field.
+	invitationfriendgroup.DefaultID = invitationfriendgroupDescID.Default.(func() uuid.UUID)
+	invitationuserFields := schema.InvitationUser{}.Fields()
+	_ = invitationuserFields
+	// invitationuserDescCreatedAt is the schema descriptor for created_at field.
+	invitationuserDescCreatedAt := invitationuserFields[3].Descriptor()
+	// invitationuser.DefaultCreatedAt holds the default value on creation for the created_at field.
+	invitationuser.DefaultCreatedAt = invitationuserDescCreatedAt.Default.(func() time.Time)
+	// invitationuserDescID is the schema descriptor for id field.
+	invitationuserDescID := invitationuserFields[0].Descriptor()
+	// invitationuser.DefaultID holds the default value on creation for the id field.
+	invitationuser.DefaultID = invitationuserDescID.Default.(func() uuid.UUID)
 	userFields := schema.User{}.Fields()
 	_ = userFields
 	// userDescCreatedAt is the schema descriptor for created_at field.

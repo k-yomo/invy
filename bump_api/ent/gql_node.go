@@ -14,6 +14,11 @@ import (
 	"github.com/k-yomo/bump/bump_api/ent/friendgroup"
 	"github.com/k-yomo/bump/bump_api/ent/friendship"
 	"github.com/k-yomo/bump/bump_api/ent/friendshiprequest"
+	"github.com/k-yomo/bump/bump_api/ent/invitation"
+	"github.com/k-yomo/bump/bump_api/ent/invitationacceptance"
+	"github.com/k-yomo/bump/bump_api/ent/invitationdenial"
+	"github.com/k-yomo/bump/bump_api/ent/invitationfriendgroup"
+	"github.com/k-yomo/bump/bump_api/ent/invitationuser"
 	"github.com/k-yomo/bump/bump_api/ent/user"
 	"github.com/k-yomo/bump/bump_api/ent/userfriendgroup"
 	"github.com/k-yomo/bump/bump_api/ent/usermute"
@@ -52,7 +57,7 @@ func (fg *FriendGroup) Node(ctx context.Context) (node *Node, err error) {
 		ID:     fg.ID,
 		Type:   "FriendGroup",
 		Fields: make([]*Field, 4),
-		Edges:  make([]*Edge, 3),
+		Edges:  make([]*Edge, 4),
 	}
 	var buf []byte
 	if buf, err = json.Marshal(fg.UserID); err != nil {
@@ -108,12 +113,22 @@ func (fg *FriendGroup) Node(ctx context.Context) (node *Node, err error) {
 		return nil, err
 	}
 	node.Edges[2] = &Edge{
+		Type: "InvitationFriendGroup",
+		Name: "invitation_friend_groups",
+	}
+	err = fg.QueryInvitationFriendGroups().
+		Select(invitationfriendgroup.FieldID).
+		Scan(ctx, &node.Edges[2].IDs)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[3] = &Edge{
 		Type: "UserFriendGroup",
 		Name: "user_friend_groups",
 	}
 	err = fg.QueryUserFriendGroups().
 		Select(userfriendgroup.FieldID).
-		Scan(ctx, &node.Edges[2].IDs)
+		Scan(ctx, &node.Edges[3].IDs)
 	if err != nil {
 		return nil, err
 	}
@@ -230,12 +245,349 @@ func (fr *FriendshipRequest) Node(ctx context.Context) (node *Node, err error) {
 	return node, nil
 }
 
+func (i *Invitation) Node(ctx context.Context) (node *Node, err error) {
+	node = &Node{
+		ID:     i.ID,
+		Type:   "Invitation",
+		Fields: make([]*Field, 7),
+		Edges:  make([]*Edge, 5),
+	}
+	var buf []byte
+	if buf, err = json.Marshal(i.UserID); err != nil {
+		return nil, err
+	}
+	node.Fields[0] = &Field{
+		Type:  "uuid.UUID",
+		Name:  "user_id",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(i.Location); err != nil {
+		return nil, err
+	}
+	node.Fields[1] = &Field{
+		Type:  "string",
+		Name:  "location",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(i.Comment); err != nil {
+		return nil, err
+	}
+	node.Fields[2] = &Field{
+		Type:  "string",
+		Name:  "comment",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(i.StartsAt); err != nil {
+		return nil, err
+	}
+	node.Fields[3] = &Field{
+		Type:  "time.Time",
+		Name:  "starts_at",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(i.ExpiresAt); err != nil {
+		return nil, err
+	}
+	node.Fields[4] = &Field{
+		Type:  "time.Time",
+		Name:  "expires_at",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(i.CreatedAt); err != nil {
+		return nil, err
+	}
+	node.Fields[5] = &Field{
+		Type:  "time.Time",
+		Name:  "created_at",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(i.UpdatedAt); err != nil {
+		return nil, err
+	}
+	node.Fields[6] = &Field{
+		Type:  "time.Time",
+		Name:  "updated_at",
+		Value: string(buf),
+	}
+	node.Edges[0] = &Edge{
+		Type: "User",
+		Name: "user",
+	}
+	err = i.QueryUser().
+		Select(user.FieldID).
+		Scan(ctx, &node.Edges[0].IDs)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[1] = &Edge{
+		Type: "InvitationUser",
+		Name: "invitation_users",
+	}
+	err = i.QueryInvitationUsers().
+		Select(invitationuser.FieldID).
+		Scan(ctx, &node.Edges[1].IDs)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[2] = &Edge{
+		Type: "InvitationFriendGroup",
+		Name: "invitation_friend_groups",
+	}
+	err = i.QueryInvitationFriendGroups().
+		Select(invitationfriendgroup.FieldID).
+		Scan(ctx, &node.Edges[2].IDs)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[3] = &Edge{
+		Type: "InvitationAcceptance",
+		Name: "invitation_acceptances",
+	}
+	err = i.QueryInvitationAcceptances().
+		Select(invitationacceptance.FieldID).
+		Scan(ctx, &node.Edges[3].IDs)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[4] = &Edge{
+		Type: "InvitationDenial",
+		Name: "invitation_denials",
+	}
+	err = i.QueryInvitationDenials().
+		Select(invitationdenial.FieldID).
+		Scan(ctx, &node.Edges[4].IDs)
+	if err != nil {
+		return nil, err
+	}
+	return node, nil
+}
+
+func (ia *InvitationAcceptance) Node(ctx context.Context) (node *Node, err error) {
+	node = &Node{
+		ID:     ia.ID,
+		Type:   "InvitationAcceptance",
+		Fields: make([]*Field, 3),
+		Edges:  make([]*Edge, 2),
+	}
+	var buf []byte
+	if buf, err = json.Marshal(ia.UserID); err != nil {
+		return nil, err
+	}
+	node.Fields[0] = &Field{
+		Type:  "uuid.UUID",
+		Name:  "user_id",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(ia.InvitationID); err != nil {
+		return nil, err
+	}
+	node.Fields[1] = &Field{
+		Type:  "uuid.UUID",
+		Name:  "invitation_id",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(ia.CreatedAt); err != nil {
+		return nil, err
+	}
+	node.Fields[2] = &Field{
+		Type:  "time.Time",
+		Name:  "created_at",
+		Value: string(buf),
+	}
+	node.Edges[0] = &Edge{
+		Type: "User",
+		Name: "user",
+	}
+	err = ia.QueryUser().
+		Select(user.FieldID).
+		Scan(ctx, &node.Edges[0].IDs)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[1] = &Edge{
+		Type: "Invitation",
+		Name: "invitation",
+	}
+	err = ia.QueryInvitation().
+		Select(invitation.FieldID).
+		Scan(ctx, &node.Edges[1].IDs)
+	if err != nil {
+		return nil, err
+	}
+	return node, nil
+}
+
+func (id *InvitationDenial) Node(ctx context.Context) (node *Node, err error) {
+	node = &Node{
+		ID:     id.ID,
+		Type:   "InvitationDenial",
+		Fields: make([]*Field, 3),
+		Edges:  make([]*Edge, 2),
+	}
+	var buf []byte
+	if buf, err = json.Marshal(id.UserID); err != nil {
+		return nil, err
+	}
+	node.Fields[0] = &Field{
+		Type:  "uuid.UUID",
+		Name:  "user_id",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(id.InvitationID); err != nil {
+		return nil, err
+	}
+	node.Fields[1] = &Field{
+		Type:  "uuid.UUID",
+		Name:  "invitation_id",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(id.CreatedAt); err != nil {
+		return nil, err
+	}
+	node.Fields[2] = &Field{
+		Type:  "time.Time",
+		Name:  "created_at",
+		Value: string(buf),
+	}
+	node.Edges[0] = &Edge{
+		Type: "User",
+		Name: "user",
+	}
+	err = id.QueryUser().
+		Select(user.FieldID).
+		Scan(ctx, &node.Edges[0].IDs)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[1] = &Edge{
+		Type: "Invitation",
+		Name: "invitation",
+	}
+	err = id.QueryInvitation().
+		Select(invitation.FieldID).
+		Scan(ctx, &node.Edges[1].IDs)
+	if err != nil {
+		return nil, err
+	}
+	return node, nil
+}
+
+func (ifg *InvitationFriendGroup) Node(ctx context.Context) (node *Node, err error) {
+	node = &Node{
+		ID:     ifg.ID,
+		Type:   "InvitationFriendGroup",
+		Fields: make([]*Field, 3),
+		Edges:  make([]*Edge, 2),
+	}
+	var buf []byte
+	if buf, err = json.Marshal(ifg.InvitationID); err != nil {
+		return nil, err
+	}
+	node.Fields[0] = &Field{
+		Type:  "uuid.UUID",
+		Name:  "invitation_id",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(ifg.FriendGroupID); err != nil {
+		return nil, err
+	}
+	node.Fields[1] = &Field{
+		Type:  "uuid.UUID",
+		Name:  "friend_group_id",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(ifg.CreatedAt); err != nil {
+		return nil, err
+	}
+	node.Fields[2] = &Field{
+		Type:  "time.Time",
+		Name:  "created_at",
+		Value: string(buf),
+	}
+	node.Edges[0] = &Edge{
+		Type: "Invitation",
+		Name: "invitation",
+	}
+	err = ifg.QueryInvitation().
+		Select(invitation.FieldID).
+		Scan(ctx, &node.Edges[0].IDs)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[1] = &Edge{
+		Type: "FriendGroup",
+		Name: "friend_group",
+	}
+	err = ifg.QueryFriendGroup().
+		Select(friendgroup.FieldID).
+		Scan(ctx, &node.Edges[1].IDs)
+	if err != nil {
+		return nil, err
+	}
+	return node, nil
+}
+
+func (iu *InvitationUser) Node(ctx context.Context) (node *Node, err error) {
+	node = &Node{
+		ID:     iu.ID,
+		Type:   "InvitationUser",
+		Fields: make([]*Field, 3),
+		Edges:  make([]*Edge, 2),
+	}
+	var buf []byte
+	if buf, err = json.Marshal(iu.InvitationID); err != nil {
+		return nil, err
+	}
+	node.Fields[0] = &Field{
+		Type:  "uuid.UUID",
+		Name:  "invitation_id",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(iu.UserID); err != nil {
+		return nil, err
+	}
+	node.Fields[1] = &Field{
+		Type:  "uuid.UUID",
+		Name:  "user_id",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(iu.CreatedAt); err != nil {
+		return nil, err
+	}
+	node.Fields[2] = &Field{
+		Type:  "time.Time",
+		Name:  "created_at",
+		Value: string(buf),
+	}
+	node.Edges[0] = &Edge{
+		Type: "Invitation",
+		Name: "invitation",
+	}
+	err = iu.QueryInvitation().
+		Select(invitation.FieldID).
+		Scan(ctx, &node.Edges[0].IDs)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[1] = &Edge{
+		Type: "User",
+		Name: "user",
+	}
+	err = iu.QueryUser().
+		Select(user.FieldID).
+		Scan(ctx, &node.Edges[1].IDs)
+	if err != nil {
+		return nil, err
+	}
+	return node, nil
+}
+
 func (u *User) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     u.ID,
 		Type:   "User",
 		Fields: make([]*Field, 2),
-		Edges:  make([]*Edge, 6),
+		Edges:  make([]*Edge, 8),
 	}
 	var buf []byte
 	if buf, err = json.Marshal(u.AuthID); err != nil {
@@ -295,22 +647,42 @@ func (u *User) Node(ctx context.Context) (node *Node, err error) {
 		return nil, err
 	}
 	node.Edges[4] = &Edge{
-		Type: "Friendship",
-		Name: "friendships",
+		Type: "InvitationAcceptance",
+		Name: "invitation_acceptances",
 	}
-	err = u.QueryFriendships().
-		Select(friendship.FieldID).
+	err = u.QueryInvitationAcceptances().
+		Select(invitationacceptance.FieldID).
 		Scan(ctx, &node.Edges[4].IDs)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[5] = &Edge{
+		Type: "InvitationDenial",
+		Name: "invitation_denials",
+	}
+	err = u.QueryInvitationDenials().
+		Select(invitationdenial.FieldID).
+		Scan(ctx, &node.Edges[5].IDs)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[6] = &Edge{
+		Type: "Friendship",
+		Name: "friendships",
+	}
+	err = u.QueryFriendships().
+		Select(friendship.FieldID).
+		Scan(ctx, &node.Edges[6].IDs)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[7] = &Edge{
 		Type: "UserFriendGroup",
 		Name: "user_friend_groups",
 	}
 	err = u.QueryUserFriendGroups().
 		Select(userfriendgroup.FieldID).
-		Scan(ctx, &node.Edges[5].IDs)
+		Scan(ctx, &node.Edges[7].IDs)
 	if err != nil {
 		return nil, err
 	}
@@ -598,6 +970,66 @@ func (c *Client) noder(ctx context.Context, table string, id uuid.UUID) (Noder, 
 			return nil, err
 		}
 		return n, nil
+	case invitation.Table:
+		query := c.Invitation.Query().
+			Where(invitation.ID(id))
+		query, err := query.CollectFields(ctx, "Invitation")
+		if err != nil {
+			return nil, err
+		}
+		n, err := query.Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
+	case invitationacceptance.Table:
+		query := c.InvitationAcceptance.Query().
+			Where(invitationacceptance.ID(id))
+		query, err := query.CollectFields(ctx, "InvitationAcceptance")
+		if err != nil {
+			return nil, err
+		}
+		n, err := query.Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
+	case invitationdenial.Table:
+		query := c.InvitationDenial.Query().
+			Where(invitationdenial.ID(id))
+		query, err := query.CollectFields(ctx, "InvitationDenial")
+		if err != nil {
+			return nil, err
+		}
+		n, err := query.Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
+	case invitationfriendgroup.Table:
+		query := c.InvitationFriendGroup.Query().
+			Where(invitationfriendgroup.ID(id))
+		query, err := query.CollectFields(ctx, "InvitationFriendGroup")
+		if err != nil {
+			return nil, err
+		}
+		n, err := query.Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
+	case invitationuser.Table:
+		query := c.InvitationUser.Query().
+			Where(invitationuser.ID(id))
+		query, err := query.CollectFields(ctx, "InvitationUser")
+		if err != nil {
+			return nil, err
+		}
+		n, err := query.Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
 	case user.Table:
 		query := c.User.Query().
 			Where(user.ID(id))
@@ -755,6 +1187,86 @@ func (c *Client) noders(ctx context.Context, table string, ids []uuid.UUID) ([]N
 		query := c.FriendshipRequest.Query().
 			Where(friendshiprequest.IDIn(ids...))
 		query, err := query.CollectFields(ctx, "FriendshipRequest")
+		if err != nil {
+			return nil, err
+		}
+		nodes, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, node := range nodes {
+			for _, noder := range idmap[node.ID] {
+				*noder = node
+			}
+		}
+	case invitation.Table:
+		query := c.Invitation.Query().
+			Where(invitation.IDIn(ids...))
+		query, err := query.CollectFields(ctx, "Invitation")
+		if err != nil {
+			return nil, err
+		}
+		nodes, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, node := range nodes {
+			for _, noder := range idmap[node.ID] {
+				*noder = node
+			}
+		}
+	case invitationacceptance.Table:
+		query := c.InvitationAcceptance.Query().
+			Where(invitationacceptance.IDIn(ids...))
+		query, err := query.CollectFields(ctx, "InvitationAcceptance")
+		if err != nil {
+			return nil, err
+		}
+		nodes, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, node := range nodes {
+			for _, noder := range idmap[node.ID] {
+				*noder = node
+			}
+		}
+	case invitationdenial.Table:
+		query := c.InvitationDenial.Query().
+			Where(invitationdenial.IDIn(ids...))
+		query, err := query.CollectFields(ctx, "InvitationDenial")
+		if err != nil {
+			return nil, err
+		}
+		nodes, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, node := range nodes {
+			for _, noder := range idmap[node.ID] {
+				*noder = node
+			}
+		}
+	case invitationfriendgroup.Table:
+		query := c.InvitationFriendGroup.Query().
+			Where(invitationfriendgroup.IDIn(ids...))
+		query, err := query.CollectFields(ctx, "InvitationFriendGroup")
+		if err != nil {
+			return nil, err
+		}
+		nodes, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, node := range nodes {
+			for _, noder := range idmap[node.ID] {
+				*noder = node
+			}
+		}
+	case invitationuser.Table:
+		query := c.InvitationUser.Query().
+			Where(invitationuser.IDIn(ids...))
+		query, err := query.CollectFields(ctx, "InvitationUser")
 		if err != nil {
 			return nil, err
 		}

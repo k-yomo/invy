@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:universal_platform/universal_platform.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import 'graphql_client_perovider.dart';
 import 'repositories/auth.dart';
 import 'screens/home.dart';
 import 'screens/chat.dart';
@@ -18,8 +19,8 @@ String get host {
   }
 }
 
-final graphqlEndpoint = 'http://$host:3000/graphql';
-final subscriptionEndpoint = 'ws://$host:3000/subscriptions';
+final graphqlEndpoint = 'http://$host:8000/query';
+final graphqlSubscriptionEndpoint = 'ws://$host:8000/subscriptions';
 
 class App extends HookConsumerWidget {
   const App({Key? key}) : super(key: key);
@@ -43,22 +44,26 @@ class App extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final authState = ref.watch(authStateProvider);
-    return MaterialApp(
-      title: 'Bump',
-      theme: ThemeData(
-        primarySwatch: materialWhite,
-      ),
-      darkTheme: ThemeData.dark(),
-      home: authState.when(
-        data: (data) {
-          if (data != null) {
-            return const RootWidget();
-          } else {
-            return const LoginScreen();
-          }
-        },
-        error: (e, trace) => const CircularProgressIndicator(),
-        loading: () => const CircularProgressIndicator(),
+    return ClientProvider(
+      uri: graphqlEndpoint,
+      subscriptionUri: graphqlSubscriptionEndpoint,
+      child: MaterialApp(
+        title: 'Bump',
+        theme: ThemeData(
+          primarySwatch: materialWhite,
+        ),
+        darkTheme: ThemeData.dark(),
+        home: authState.when(
+          data: (data) {
+            if (data != null) {
+              return const RootWidget();
+            } else {
+              return const LoginScreen();
+            }
+          },
+          error: (e, trace) => const CircularProgressIndicator(),
+          loading: () => const CircularProgressIndicator(),
+        ),
       ),
     );
   }

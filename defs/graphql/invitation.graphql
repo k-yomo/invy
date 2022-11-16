@@ -1,0 +1,27 @@
+extend type Query {
+    pendingInvitations: [Invitation!]! @authRequired
+    acceptedInvitations: [Invitation!]! @authRequired
+}
+
+extend type Mutation {
+    sendInvitation(input: SendInvitationInput): Invitation! @authRequired
+    acceptInvitation(invitationId: UUID!): Boolean! @authRequired
+    denyInvitation(invitationId: UUID!): Boolean! @authRequired
+}
+
+type Invitation implements Node {
+    id: UUID!
+    location: String!
+    comment: String!
+    startsAt: Time!
+    expiresAt: Time!
+}
+
+input SendInvitationInput {
+    targetFriendGroupIds: [UUID!]!
+    targetFriendUserIds: [UUID!]!
+    expiresAt: Time!
+    startsAt: Time!
+    location: String!
+    comment: String!
+}

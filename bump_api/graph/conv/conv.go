@@ -38,3 +38,13 @@ func ConvertFromDBFriendGroup(friendGroup *ent.FriendGroup) *gqlmodel.FriendGrou
 		Name:   friendGroup.Name,
 	}
 }
+
+func ConvertFromDBInvitation(invitation *ent.Invitation) *gqlmodel.Invitation {
+	return &gqlmodel.Invitation{
+		ID:        invitation.ID,
+		Location:  invitation.Location,
+		Comment:   invitation.Comment,
+		StartsAt:  invitation.StartsAt,
+		ExpiresAt: invitation.ExpiresAt,
+	}
+}

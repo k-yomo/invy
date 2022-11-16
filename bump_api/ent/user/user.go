@@ -25,6 +25,10 @@ const (
 	EdgeFriendGroups = "friend_groups"
 	// EdgeBelongingFriendGroups holds the string denoting the belonging_friend_groups edge name in mutations.
 	EdgeBelongingFriendGroups = "belonging_friend_groups"
+	// EdgeInvitationAcceptances holds the string denoting the invitation_acceptances edge name in mutations.
+	EdgeInvitationAcceptances = "invitation_acceptances"
+	// EdgeInvitationDenials holds the string denoting the invitation_denials edge name in mutations.
+	EdgeInvitationDenials = "invitation_denials"
 	// EdgeFriendships holds the string denoting the friendships edge name in mutations.
 	EdgeFriendships = "friendships"
 	// EdgeUserFriendGroups holds the string denoting the user_friend_groups edge name in mutations.
@@ -52,6 +56,20 @@ const (
 	// BelongingFriendGroupsInverseTable is the table name for the FriendGroup entity.
 	// It exists in this package in order to avoid circular dependency with the "friendgroup" package.
 	BelongingFriendGroupsInverseTable = "friend_groups"
+	// InvitationAcceptancesTable is the table that holds the invitation_acceptances relation/edge.
+	InvitationAcceptancesTable = "invitation_acceptances"
+	// InvitationAcceptancesInverseTable is the table name for the InvitationAcceptance entity.
+	// It exists in this package in order to avoid circular dependency with the "invitationacceptance" package.
+	InvitationAcceptancesInverseTable = "invitation_acceptances"
+	// InvitationAcceptancesColumn is the table column denoting the invitation_acceptances relation/edge.
+	InvitationAcceptancesColumn = "user_id"
+	// InvitationDenialsTable is the table that holds the invitation_denials relation/edge.
+	InvitationDenialsTable = "invitation_denials"
+	// InvitationDenialsInverseTable is the table name for the InvitationDenial entity.
+	// It exists in this package in order to avoid circular dependency with the "invitationdenial" package.
+	InvitationDenialsInverseTable = "invitation_denials"
+	// InvitationDenialsColumn is the table column denoting the invitation_denials relation/edge.
+	InvitationDenialsColumn = "user_id"
 	// FriendshipsTable is the table that holds the friendships relation/edge.
 	FriendshipsTable = "friendships"
 	// FriendshipsInverseTable is the table name for the Friendship entity.

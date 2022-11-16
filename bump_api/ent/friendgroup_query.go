@@ -13,6 +13,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
 	"github.com/k-yomo/bump/bump_api/ent/friendgroup"
+	"github.com/k-yomo/bump/bump_api/ent/invitationfriendgroup"
 	"github.com/k-yomo/bump/bump_api/ent/predicate"
 	"github.com/k-yomo/bump/bump_api/ent/user"
 	"github.com/k-yomo/bump/bump_api/ent/userfriendgroup"
@@ -21,19 +22,21 @@ import (
 // FriendGroupQuery is the builder for querying FriendGroup entities.
 type FriendGroupQuery struct {
 	config
-	limit                     *int
-	offset                    *int
-	unique                    *bool
-	order                     []OrderFunc
-	fields                    []string
-	predicates                []predicate.FriendGroup
-	withUser                  *UserQuery
-	withFriendUsers           *UserQuery
-	withUserFriendGroups      *UserFriendGroupQuery
-	modifiers                 []func(*sql.Selector)
-	loadTotal                 []func(context.Context, []*FriendGroup) error
-	withNamedFriendUsers      map[string]*UserQuery
-	withNamedUserFriendGroups map[string]*UserFriendGroupQuery
+	limit                           *int
+	offset                          *int
+	unique                          *bool
+	order                           []OrderFunc
+	fields                          []string
+	predicates                      []predicate.FriendGroup
+	withUser                        *UserQuery
+	withFriendUsers                 *UserQuery
+	withInvitationFriendGroups      *InvitationFriendGroupQuery
+	withUserFriendGroups            *UserFriendGroupQuery
+	modifiers                       []func(*sql.Selector)
+	loadTotal                       []func(context.Context, []*FriendGroup) error
+	withNamedFriendUsers            map[string]*UserQuery
+	withNamedInvitationFriendGroups map[string]*InvitationFriendGroupQuery
+	withNamedUserFriendGroups       map[string]*UserFriendGroupQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -107,6 +110,28 @@ func (fgq *FriendGroupQuery) QueryFriendUsers() *UserQuery {
 			sqlgraph.From(friendgroup.Table, friendgroup.FieldID, selector),
 			sqlgraph.To(user.Table, user.FieldID),
 			sqlgraph.Edge(sqlgraph.M2M, false, friendgroup.FriendUsersTable, friendgroup.FriendUsersPrimaryKey...),
+		)
+		fromU = sqlgraph.SetNeighbors(fgq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryInvitationFriendGroups chains the current query on the "invitation_friend_groups" edge.
+func (fgq *FriendGroupQuery) QueryInvitationFriendGroups() *InvitationFriendGroupQuery {
+	query := &InvitationFriendGroupQuery{config: fgq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := fgq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := fgq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(friendgroup.Table, friendgroup.FieldID, selector),
+			sqlgraph.To(invitationfriendgroup.Table, invitationfriendgroup.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, true, friendgroup.InvitationFriendGroupsTable, friendgroup.InvitationFriendGroupsColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(fgq.driver.Dialect(), step)
 		return fromU, nil
@@ -312,14 +337,15 @@ func (fgq *FriendGroupQuery) Clone() *FriendGroupQuery {
 		return nil
 	}
 	return &FriendGroupQuery{
-		config:               fgq.config,
-		limit:                fgq.limit,
-		offset:               fgq.offset,
-		order:                append([]OrderFunc{}, fgq.order...),
-		predicates:           append([]predicate.FriendGroup{}, fgq.predicates...),
-		withUser:             fgq.withUser.Clone(),
-		withFriendUsers:      fgq.withFriendUsers.Clone(),
-		withUserFriendGroups: fgq.withUserFriendGroups.Clone(),
+		config:                     fgq.config,
+		limit:                      fgq.limit,
+		offset:                     fgq.offset,
+		order:                      append([]OrderFunc{}, fgq.order...),
+		predicates:                 append([]predicate.FriendGroup{}, fgq.predicates...),
+		withUser:                   fgq.withUser.Clone(),
+		withFriendUsers:            fgq.withFriendUsers.Clone(),
+		withInvitationFriendGroups: fgq.withInvitationFriendGroups.Clone(),
+		withUserFriendGroups:       fgq.withUserFriendGroups.Clone(),
 		// clone intermediate query.
 		sql:    fgq.sql.Clone(),
 		path:   fgq.path,
@@ -346,6 +372,17 @@ func (fgq *FriendGroupQuery) WithFriendUsers(opts ...func(*UserQuery)) *FriendGr
 		opt(query)
 	}
 	fgq.withFriendUsers = query
+	return fgq
+}
+
+// WithInvitationFriendGroups tells the query-builder to eager-load the nodes that are connected to
+// the "invitation_friend_groups" edge. The optional arguments are used to configure the query builder of the edge.
+func (fgq *FriendGroupQuery) WithInvitationFriendGroups(opts ...func(*InvitationFriendGroupQuery)) *FriendGroupQuery {
+	query := &InvitationFriendGroupQuery{config: fgq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	fgq.withInvitationFriendGroups = query
 	return fgq
 }
 
@@ -433,9 +470,10 @@ func (fgq *FriendGroupQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]
 	var (
 		nodes       = []*FriendGroup{}
 		_spec       = fgq.querySpec()
-		loadedTypes = [3]bool{
+		loadedTypes = [4]bool{
 			fgq.withUser != nil,
 			fgq.withFriendUsers != nil,
+			fgq.withInvitationFriendGroups != nil,
 			fgq.withUserFriendGroups != nil,
 		}
 	)
@@ -473,6 +511,15 @@ func (fgq *FriendGroupQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]
 			return nil, err
 		}
 	}
+	if query := fgq.withInvitationFriendGroups; query != nil {
+		if err := fgq.loadInvitationFriendGroups(ctx, query, nodes,
+			func(n *FriendGroup) { n.Edges.InvitationFriendGroups = []*InvitationFriendGroup{} },
+			func(n *FriendGroup, e *InvitationFriendGroup) {
+				n.Edges.InvitationFriendGroups = append(n.Edges.InvitationFriendGroups, e)
+			}); err != nil {
+			return nil, err
+		}
+	}
 	if query := fgq.withUserFriendGroups; query != nil {
 		if err := fgq.loadUserFriendGroups(ctx, query, nodes,
 			func(n *FriendGroup) { n.Edges.UserFriendGroups = []*UserFriendGroup{} },
@@ -486,6 +533,13 @@ func (fgq *FriendGroupQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]
 		if err := fgq.loadFriendUsers(ctx, query, nodes,
 			func(n *FriendGroup) { n.appendNamedFriendUsers(name) },
 			func(n *FriendGroup, e *User) { n.appendNamedFriendUsers(name, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for name, query := range fgq.withNamedInvitationFriendGroups {
+		if err := fgq.loadInvitationFriendGroups(ctx, query, nodes,
+			func(n *FriendGroup) { n.appendNamedInvitationFriendGroups(name) },
+			func(n *FriendGroup, e *InvitationFriendGroup) { n.appendNamedInvitationFriendGroups(name, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -585,6 +639,33 @@ func (fgq *FriendGroupQuery) loadFriendUsers(ctx context.Context, query *UserQue
 		for kn := range nodes {
 			assign(kn, n)
 		}
+	}
+	return nil
+}
+func (fgq *FriendGroupQuery) loadInvitationFriendGroups(ctx context.Context, query *InvitationFriendGroupQuery, nodes []*FriendGroup, init func(*FriendGroup), assign func(*FriendGroup, *InvitationFriendGroup)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[uuid.UUID]*FriendGroup)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	query.Where(predicate.InvitationFriendGroup(func(s *sql.Selector) {
+		s.Where(sql.InValues(friendgroup.InvitationFriendGroupsColumn, fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.FriendGroupID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected foreign-key "friend_group_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
 	}
 	return nil
 }
@@ -730,6 +811,20 @@ func (fgq *FriendGroupQuery) WithNamedFriendUsers(name string, opts ...func(*Use
 		fgq.withNamedFriendUsers = make(map[string]*UserQuery)
 	}
 	fgq.withNamedFriendUsers[name] = query
+	return fgq
+}
+
+// WithNamedInvitationFriendGroups tells the query-builder to eager-load the nodes that are connected to the "invitation_friend_groups"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (fgq *FriendGroupQuery) WithNamedInvitationFriendGroups(name string, opts ...func(*InvitationFriendGroupQuery)) *FriendGroupQuery {
+	query := &InvitationFriendGroupQuery{config: fgq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	if fgq.withNamedInvitationFriendGroups == nil {
+		fgq.withNamedInvitationFriendGroups = make(map[string]*InvitationFriendGroupQuery)
+	}
+	fgq.withNamedInvitationFriendGroups[name] = query
 	return fgq
 }
 

@@ -40,5 +40,7 @@ func (FriendGroup) Edges() []ent.Edge {
 			Field("user_id"),
 		edge.To("friend_users", User.Type).
 			Through("user_friend_groups", UserFriendGroup.Type),
+		edge.From("invitation_friend_groups", InvitationFriendGroup.Type).
+			Ref("friend_group"),
 	}
 }

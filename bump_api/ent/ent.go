@@ -13,6 +13,11 @@ import (
 	"github.com/k-yomo/bump/bump_api/ent/friendgroup"
 	"github.com/k-yomo/bump/bump_api/ent/friendship"
 	"github.com/k-yomo/bump/bump_api/ent/friendshiprequest"
+	"github.com/k-yomo/bump/bump_api/ent/invitation"
+	"github.com/k-yomo/bump/bump_api/ent/invitationacceptance"
+	"github.com/k-yomo/bump/bump_api/ent/invitationdenial"
+	"github.com/k-yomo/bump/bump_api/ent/invitationfriendgroup"
+	"github.com/k-yomo/bump/bump_api/ent/invitationuser"
 	"github.com/k-yomo/bump/bump_api/ent/user"
 	"github.com/k-yomo/bump/bump_api/ent/userfriendgroup"
 	"github.com/k-yomo/bump/bump_api/ent/usermute"
@@ -37,13 +42,18 @@ type OrderFunc func(*sql.Selector)
 // columnChecker returns a function indicates if the column exists in the given column.
 func columnChecker(table string) func(string) error {
 	checks := map[string]func(string) bool{
-		friendgroup.Table:       friendgroup.ValidColumn,
-		friendship.Table:        friendship.ValidColumn,
-		friendshiprequest.Table: friendshiprequest.ValidColumn,
-		user.Table:              user.ValidColumn,
-		userfriendgroup.Table:   userfriendgroup.ValidColumn,
-		usermute.Table:          usermute.ValidColumn,
-		userprofile.Table:       userprofile.ValidColumn,
+		friendgroup.Table:           friendgroup.ValidColumn,
+		friendship.Table:            friendship.ValidColumn,
+		friendshiprequest.Table:     friendshiprequest.ValidColumn,
+		invitation.Table:            invitation.ValidColumn,
+		invitationacceptance.Table:  invitationacceptance.ValidColumn,
+		invitationdenial.Table:      invitationdenial.ValidColumn,
+		invitationfriendgroup.Table: invitationfriendgroup.ValidColumn,
+		invitationuser.Table:        invitationuser.ValidColumn,
+		user.Table:                  user.ValidColumn,
+		userfriendgroup.Table:       userfriendgroup.ValidColumn,
+		usermute.Table:              usermute.ValidColumn,
+		userprofile.Table:           userprofile.ValidColumn,
 	}
 	check, ok := checks[table]
 	if !ok {

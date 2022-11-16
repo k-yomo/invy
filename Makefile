@@ -7,7 +7,7 @@ setup: ## Setup project
 .PHONY: generate
 generate: ## Generate graphql code / ent code from schema
 	cd bump_api && go generate ./...
-	graphql-schema-utilities -s defs/graphql/* -o app/lib/graphql/schema.graphql
+	graphql-schema-utilities -s "defs/graphql/*" -o app/lib/graphql/schema.graphql
 	cd app && flutter pub run build_runner build
 	make fmt
 

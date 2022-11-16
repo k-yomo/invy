@@ -17,13 +17,6 @@ type Node interface {
 	GetID() uuid.UUID
 }
 
-type Bump struct {
-	ID uuid.UUID `json:"id"`
-}
-
-func (Bump) IsNode()               {}
-func (this Bump) GetID() uuid.UUID { return this.ID }
-
 type CreateFriendGroupInput struct {
 	Name          string      `json:"name"`
 	FriendUserIds []uuid.UUID `json:"friendUserIds"`
@@ -51,6 +44,17 @@ type FriendshipRequest struct {
 func (FriendshipRequest) IsNode()               {}
 func (this FriendshipRequest) GetID() uuid.UUID { return this.ID }
 
+type Invitation struct {
+	ID        uuid.UUID `json:"id"`
+	Location  string    `json:"location"`
+	Comment   string    `json:"comment"`
+	StartsAt  time.Time `json:"startsAt"`
+	ExpiresAt time.Time `json:"expiresAt"`
+}
+
+func (Invitation) IsNode()               {}
+func (this Invitation) GetID() uuid.UUID { return this.ID }
+
 type PageInfo struct {
 	StartCursor     *ent.Cursor `json:"startCursor"`
 	EndCursor       *ent.Cursor `json:"endCursor"`
@@ -58,9 +62,13 @@ type PageInfo struct {
 	HasPreviousPage bool        `json:"hasPreviousPage"`
 }
 
-type SendBumpInput struct {
+type SendInvitationInput struct {
 	TargetFriendGroupIds []uuid.UUID `json:"targetFriendGroupIds"`
 	TargetFriendUserIds  []uuid.UUID `json:"targetFriendUserIds"`
+	ExpiresAt            time.Time   `json:"expiresAt"`
+	StartsAt             time.Time   `json:"startsAt"`
+	Location             string      `json:"location"`
+	Comment              string      `json:"comment"`
 }
 
 type SignUpInput struct {

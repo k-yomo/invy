@@ -13,6 +13,8 @@ import (
 	"github.com/google/uuid"
 	"github.com/k-yomo/bump/bump_api/ent/friendgroup"
 	"github.com/k-yomo/bump/bump_api/ent/friendship"
+	"github.com/k-yomo/bump/bump_api/ent/invitationacceptance"
+	"github.com/k-yomo/bump/bump_api/ent/invitationdenial"
 	"github.com/k-yomo/bump/bump_api/ent/predicate"
 	"github.com/k-yomo/bump/bump_api/ent/user"
 	"github.com/k-yomo/bump/bump_api/ent/userfriendgroup"
@@ -94,6 +96,36 @@ func (uu *UserUpdate) AddBelongingFriendGroups(f ...*FriendGroup) *UserUpdate {
 		ids[i] = f[i].ID
 	}
 	return uu.AddBelongingFriendGroupIDs(ids...)
+}
+
+// AddInvitationAcceptanceIDs adds the "invitation_acceptances" edge to the InvitationAcceptance entity by IDs.
+func (uu *UserUpdate) AddInvitationAcceptanceIDs(ids ...uuid.UUID) *UserUpdate {
+	uu.mutation.AddInvitationAcceptanceIDs(ids...)
+	return uu
+}
+
+// AddInvitationAcceptances adds the "invitation_acceptances" edges to the InvitationAcceptance entity.
+func (uu *UserUpdate) AddInvitationAcceptances(i ...*InvitationAcceptance) *UserUpdate {
+	ids := make([]uuid.UUID, len(i))
+	for j := range i {
+		ids[j] = i[j].ID
+	}
+	return uu.AddInvitationAcceptanceIDs(ids...)
+}
+
+// AddInvitationDenialIDs adds the "invitation_denials" edge to the InvitationDenial entity by IDs.
+func (uu *UserUpdate) AddInvitationDenialIDs(ids ...uuid.UUID) *UserUpdate {
+	uu.mutation.AddInvitationDenialIDs(ids...)
+	return uu
+}
+
+// AddInvitationDenials adds the "invitation_denials" edges to the InvitationDenial entity.
+func (uu *UserUpdate) AddInvitationDenials(i ...*InvitationDenial) *UserUpdate {
+	ids := make([]uuid.UUID, len(i))
+	for j := range i {
+		ids[j] = i[j].ID
+	}
+	return uu.AddInvitationDenialIDs(ids...)
 }
 
 // AddFriendshipIDs adds the "friendships" edge to the Friendship entity by IDs.
@@ -198,6 +230,48 @@ func (uu *UserUpdate) RemoveBelongingFriendGroups(f ...*FriendGroup) *UserUpdate
 		ids[i] = f[i].ID
 	}
 	return uu.RemoveBelongingFriendGroupIDs(ids...)
+}
+
+// ClearInvitationAcceptances clears all "invitation_acceptances" edges to the InvitationAcceptance entity.
+func (uu *UserUpdate) ClearInvitationAcceptances() *UserUpdate {
+	uu.mutation.ClearInvitationAcceptances()
+	return uu
+}
+
+// RemoveInvitationAcceptanceIDs removes the "invitation_acceptances" edge to InvitationAcceptance entities by IDs.
+func (uu *UserUpdate) RemoveInvitationAcceptanceIDs(ids ...uuid.UUID) *UserUpdate {
+	uu.mutation.RemoveInvitationAcceptanceIDs(ids...)
+	return uu
+}
+
+// RemoveInvitationAcceptances removes "invitation_acceptances" edges to InvitationAcceptance entities.
+func (uu *UserUpdate) RemoveInvitationAcceptances(i ...*InvitationAcceptance) *UserUpdate {
+	ids := make([]uuid.UUID, len(i))
+	for j := range i {
+		ids[j] = i[j].ID
+	}
+	return uu.RemoveInvitationAcceptanceIDs(ids...)
+}
+
+// ClearInvitationDenials clears all "invitation_denials" edges to the InvitationDenial entity.
+func (uu *UserUpdate) ClearInvitationDenials() *UserUpdate {
+	uu.mutation.ClearInvitationDenials()
+	return uu
+}
+
+// RemoveInvitationDenialIDs removes the "invitation_denials" edge to InvitationDenial entities by IDs.
+func (uu *UserUpdate) RemoveInvitationDenialIDs(ids ...uuid.UUID) *UserUpdate {
+	uu.mutation.RemoveInvitationDenialIDs(ids...)
+	return uu
+}
+
+// RemoveInvitationDenials removes "invitation_denials" edges to InvitationDenial entities.
+func (uu *UserUpdate) RemoveInvitationDenials(i ...*InvitationDenial) *UserUpdate {
+	ids := make([]uuid.UUID, len(i))
+	for j := range i {
+		ids[j] = i[j].ID
+	}
+	return uu.RemoveInvitationDenialIDs(ids...)
 }
 
 // ClearFriendships clears all "friendships" edges to the Friendship entity.
@@ -553,6 +627,114 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if uu.mutation.InvitationAcceptancesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.InvitationAcceptancesTable,
+			Columns: []string{user.InvitationAcceptancesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeUUID,
+					Column: invitationacceptance.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RemovedInvitationAcceptancesIDs(); len(nodes) > 0 && !uu.mutation.InvitationAcceptancesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.InvitationAcceptancesTable,
+			Columns: []string{user.InvitationAcceptancesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeUUID,
+					Column: invitationacceptance.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.InvitationAcceptancesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.InvitationAcceptancesTable,
+			Columns: []string{user.InvitationAcceptancesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeUUID,
+					Column: invitationacceptance.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uu.mutation.InvitationDenialsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.InvitationDenialsTable,
+			Columns: []string{user.InvitationDenialsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeUUID,
+					Column: invitationdenial.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RemovedInvitationDenialsIDs(); len(nodes) > 0 && !uu.mutation.InvitationDenialsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.InvitationDenialsTable,
+			Columns: []string{user.InvitationDenialsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeUUID,
+					Column: invitationdenial.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.InvitationDenialsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.InvitationDenialsTable,
+			Columns: []string{user.InvitationDenialsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeUUID,
+					Column: invitationdenial.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if uu.mutation.FriendshipsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
@@ -744,6 +926,36 @@ func (uuo *UserUpdateOne) AddBelongingFriendGroups(f ...*FriendGroup) *UserUpdat
 	return uuo.AddBelongingFriendGroupIDs(ids...)
 }
 
+// AddInvitationAcceptanceIDs adds the "invitation_acceptances" edge to the InvitationAcceptance entity by IDs.
+func (uuo *UserUpdateOne) AddInvitationAcceptanceIDs(ids ...uuid.UUID) *UserUpdateOne {
+	uuo.mutation.AddInvitationAcceptanceIDs(ids...)
+	return uuo
+}
+
+// AddInvitationAcceptances adds the "invitation_acceptances" edges to the InvitationAcceptance entity.
+func (uuo *UserUpdateOne) AddInvitationAcceptances(i ...*InvitationAcceptance) *UserUpdateOne {
+	ids := make([]uuid.UUID, len(i))
+	for j := range i {
+		ids[j] = i[j].ID
+	}
+	return uuo.AddInvitationAcceptanceIDs(ids...)
+}
+
+// AddInvitationDenialIDs adds the "invitation_denials" edge to the InvitationDenial entity by IDs.
+func (uuo *UserUpdateOne) AddInvitationDenialIDs(ids ...uuid.UUID) *UserUpdateOne {
+	uuo.mutation.AddInvitationDenialIDs(ids...)
+	return uuo
+}
+
+// AddInvitationDenials adds the "invitation_denials" edges to the InvitationDenial entity.
+func (uuo *UserUpdateOne) AddInvitationDenials(i ...*InvitationDenial) *UserUpdateOne {
+	ids := make([]uuid.UUID, len(i))
+	for j := range i {
+		ids[j] = i[j].ID
+	}
+	return uuo.AddInvitationDenialIDs(ids...)
+}
+
 // AddFriendshipIDs adds the "friendships" edge to the Friendship entity by IDs.
 func (uuo *UserUpdateOne) AddFriendshipIDs(ids ...uuid.UUID) *UserUpdateOne {
 	uuo.mutation.AddFriendshipIDs(ids...)
@@ -846,6 +1058,48 @@ func (uuo *UserUpdateOne) RemoveBelongingFriendGroups(f ...*FriendGroup) *UserUp
 		ids[i] = f[i].ID
 	}
 	return uuo.RemoveBelongingFriendGroupIDs(ids...)
+}
+
+// ClearInvitationAcceptances clears all "invitation_acceptances" edges to the InvitationAcceptance entity.
+func (uuo *UserUpdateOne) ClearInvitationAcceptances() *UserUpdateOne {
+	uuo.mutation.ClearInvitationAcceptances()
+	return uuo
+}
+
+// RemoveInvitationAcceptanceIDs removes the "invitation_acceptances" edge to InvitationAcceptance entities by IDs.
+func (uuo *UserUpdateOne) RemoveInvitationAcceptanceIDs(ids ...uuid.UUID) *UserUpdateOne {
+	uuo.mutation.RemoveInvitationAcceptanceIDs(ids...)
+	return uuo
+}
+
+// RemoveInvitationAcceptances removes "invitation_acceptances" edges to InvitationAcceptance entities.
+func (uuo *UserUpdateOne) RemoveInvitationAcceptances(i ...*InvitationAcceptance) *UserUpdateOne {
+	ids := make([]uuid.UUID, len(i))
+	for j := range i {
+		ids[j] = i[j].ID
+	}
+	return uuo.RemoveInvitationAcceptanceIDs(ids...)
+}
+
+// ClearInvitationDenials clears all "invitation_denials" edges to the InvitationDenial entity.
+func (uuo *UserUpdateOne) ClearInvitationDenials() *UserUpdateOne {
+	uuo.mutation.ClearInvitationDenials()
+	return uuo
+}
+
+// RemoveInvitationDenialIDs removes the "invitation_denials" edge to InvitationDenial entities by IDs.
+func (uuo *UserUpdateOne) RemoveInvitationDenialIDs(ids ...uuid.UUID) *UserUpdateOne {
+	uuo.mutation.RemoveInvitationDenialIDs(ids...)
+	return uuo
+}
+
+// RemoveInvitationDenials removes "invitation_denials" edges to InvitationDenial entities.
+func (uuo *UserUpdateOne) RemoveInvitationDenials(i ...*InvitationDenial) *UserUpdateOne {
+	ids := make([]uuid.UUID, len(i))
+	for j := range i {
+		ids[j] = i[j].ID
+	}
+	return uuo.RemoveInvitationDenialIDs(ids...)
 }
 
 // ClearFriendships clears all "friendships" edges to the Friendship entity.
@@ -1228,6 +1482,114 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 		edge.Target.Fields = specE.Fields
 		if specE.ID.Value != nil {
 			edge.Target.Fields = append(edge.Target.Fields, specE.ID)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uuo.mutation.InvitationAcceptancesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.InvitationAcceptancesTable,
+			Columns: []string{user.InvitationAcceptancesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeUUID,
+					Column: invitationacceptance.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RemovedInvitationAcceptancesIDs(); len(nodes) > 0 && !uuo.mutation.InvitationAcceptancesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.InvitationAcceptancesTable,
+			Columns: []string{user.InvitationAcceptancesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeUUID,
+					Column: invitationacceptance.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.InvitationAcceptancesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.InvitationAcceptancesTable,
+			Columns: []string{user.InvitationAcceptancesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeUUID,
+					Column: invitationacceptance.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uuo.mutation.InvitationDenialsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.InvitationDenialsTable,
+			Columns: []string{user.InvitationDenialsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeUUID,
+					Column: invitationdenial.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RemovedInvitationDenialsIDs(); len(nodes) > 0 && !uuo.mutation.InvitationDenialsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.InvitationDenialsTable,
+			Columns: []string{user.InvitationDenialsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeUUID,
+					Column: invitationdenial.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.InvitationDenialsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.InvitationDenialsTable,
+			Columns: []string{user.InvitationDenialsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeUUID,
+					Column: invitationdenial.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}

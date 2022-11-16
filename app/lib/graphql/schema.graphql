@@ -3,20 +3,11 @@ schema {
   mutation: Mutation   
 }
 
-"""
-#############################
- Directives
-#############################
-"""
 directive @authRequired on FIELD_DEFINITION
 
 directive @constraint(min: Int, max: Int, pattern: String, format: ConstraintFormat) on INPUT_FIELD_DEFINITION | ARGUMENT_DEFINITION
 
 directive @goField(forceResolver: Boolean, name: String) on INPUT_FIELD_DEFINITION | FIELD_DEFINITION
-
-type Bump implements Node {
-  id: UUID!
-}
 
 enum ConstraintFormat {
   EMAIL
@@ -46,7 +37,18 @@ type FriendshipRequest implements Node {
   createdAt: Time!
 }
 
+type Invitation implements Node {
+  id: UUID!
+  location: String!
+  comment: String!
+  startsAt: Time!
+  expiresAt: Time!
+}
+
 type Mutation {
+  sendInvitation(input: SendInvitationInput): Invitation!
+  acceptInvitation(invitationId: UUID!): Boolean!
+  denyInvitation(invitationId: UUID!): Boolean!
   signUp(input: SignUpInput): Boolean!
   requestFriendShip(friendUserId: UUID!): FriendshipRequest!
   cancelFriendShipRequest(friendshipRequestId: UUID!): Boolean!
@@ -57,15 +59,8 @@ type Mutation {
   deleteFriendGroup(friendGroupId: UUID!): Boolean!
   muteUser(muteUserId: UUID!): Boolean!
   unmuteUser(muteUserId: UUID!): Boolean!
-  sendBump(input: SendBumpInput): Bump!
-  acceptBump(bumpId: UUID!): Boolean!
 }
 
-"""
-#############################
- Interfaces
-#############################
-"""
 interface Node {
   id: UUID!
 }
@@ -78,6 +73,8 @@ type PageInfo {
 }
 
 type Query {
+  pendingInvitations: [Invitation!]!
+  acceptedInvitations: [Invitation!]!
   viewer: User!
   user(userId: UUID!): User!
 
@@ -100,9 +97,13 @@ type Query {
   friendGroups: [FriendGroup!]!
 }
 
-input SendBumpInput {
+input SendInvitationInput {
   targetFriendGroupIds: [UUID!]!
   targetFriendUserIds: [UUID!]!
+  expiresAt: Time!
+  startsAt: Time!
+  location: String!
+  comment: String!
 }
 
 input SignUpInput {
@@ -119,11 +120,6 @@ input UpdateFriendGroupInput {
   friendUserIds: [UUID!]!
 }
 
-"""
-#############################
- Types
-#############################
-"""
 type User implements Node {
   id: UUID!
   nickname: String!
