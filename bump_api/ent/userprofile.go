@@ -20,10 +20,12 @@ type UserProfile struct {
 	ID uuid.UUID `json:"id,omitempty"`
 	// UserID holds the value of the "user_id" field.
 	UserID uuid.UUID `json:"user_id,omitempty"`
+	// ScreenID holds the value of the "screen_id" field.
+	ScreenID string `json:"screen_id,omitempty"`
 	// Nickname holds the value of the "nickname" field.
 	Nickname string `json:"nickname,omitempty"`
 	// Email holds the value of the "email" field.
-	Email string `json:"email,omitempty"`
+	Email *string `json:"email,omitempty"`
 	// AvatarURL holds the value of the "avatar_url" field.
 	AvatarURL string `json:"avatar_url,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
@@ -64,7 +66,7 @@ func (*UserProfile) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case userprofile.FieldNickname, userprofile.FieldEmail, userprofile.FieldAvatarURL:
+		case userprofile.FieldScreenID, userprofile.FieldNickname, userprofile.FieldEmail, userprofile.FieldAvatarURL:
 			values[i] = new(sql.NullString)
 		case userprofile.FieldCreatedAt, userprofile.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
@@ -97,6 +99,12 @@ func (up *UserProfile) assignValues(columns []string, values []any) error {
 			} else if value != nil {
 				up.UserID = *value
 			}
+		case userprofile.FieldScreenID:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field screen_id", values[i])
+			} else if value.Valid {
+				up.ScreenID = value.String
+			}
 		case userprofile.FieldNickname:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field nickname", values[i])
@@ -107,7 +115,8 @@ func (up *UserProfile) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field email", values[i])
 			} else if value.Valid {
-				up.Email = value.String
+				up.Email = new(string)
+				*up.Email = value.String
 			}
 		case userprofile.FieldAvatarURL:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -163,11 +172,16 @@ func (up *UserProfile) String() string {
 	builder.WriteString("user_id=")
 	builder.WriteString(fmt.Sprintf("%v", up.UserID))
 	builder.WriteString(", ")
+	builder.WriteString("screen_id=")
+	builder.WriteString(up.ScreenID)
+	builder.WriteString(", ")
 	builder.WriteString("nickname=")
 	builder.WriteString(up.Nickname)
 	builder.WriteString(", ")
-	builder.WriteString("email=")
-	builder.WriteString(up.Email)
+	if v := up.Email; v != nil {
+		builder.WriteString("email=")
+		builder.WriteString(*v)
+	}
 	builder.WriteString(", ")
 	builder.WriteString("avatar_url=")
 	builder.WriteString(up.AvatarURL)

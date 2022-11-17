@@ -76,7 +76,7 @@ type SendInvitationInput struct {
 }
 
 type SignUpInput struct {
-	Email     string  `json:"email"`
+	Email     *string `json:"email"`
 	Nickname  string  `json:"nickname"`
 	AvatarURL *string `json:"avatarUrl"`
 }
@@ -92,6 +92,7 @@ type User struct {
 	Nickname  string    `json:"nickname"`
 	AvatarURL string    `json:"avatarUrl"`
 	IsMuted   bool      `json:"isMuted"`
+	IsFriend  bool      `json:"isFriend"`
 }
 
 func (User) IsNode()               {}
@@ -110,12 +111,13 @@ type UserEdge struct {
 
 type Viewer struct {
 	ID                           uuid.UUID            `json:"id"`
+	ScreenID                     string               `json:"screenId"`
+	Email                        *string              `json:"email"`
 	Nickname                     string               `json:"nickname"`
 	AvatarURL                    string               `json:"avatarUrl"`
-	IsMuted                      bool                 `json:"isMuted"`
 	Friends                      *UserConnection      `json:"friends"`
-	PendingFriendShipRequests    []*FriendshipRequest `json:"pendingFriendShipRequests"`
-	RequestingFriendShipRequests []*FriendshipRequest `json:"requestingFriendShipRequests"`
+	PendingFriendshipRequests    []*FriendshipRequest `json:"pendingFriendshipRequests"`
+	RequestingFriendshipRequests []*FriendshipRequest `json:"requestingFriendshipRequests"`
 	FriendGroup                  *FriendGroup         `json:"friendGroup"`
 	FriendGroups                 []*FriendGroup       `json:"friendGroups"`
 }

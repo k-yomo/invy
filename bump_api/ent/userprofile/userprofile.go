@@ -15,6 +15,8 @@ const (
 	FieldID = "id"
 	// FieldUserID holds the string denoting the user_id field in the database.
 	FieldUserID = "user_id"
+	// FieldScreenID holds the string denoting the screen_id field in the database.
+	FieldScreenID = "screen_id"
 	// FieldNickname holds the string denoting the nickname field in the database.
 	FieldNickname = "nickname"
 	// FieldEmail holds the string denoting the email field in the database.
@@ -42,6 +44,7 @@ const (
 var Columns = []string{
 	FieldID,
 	FieldUserID,
+	FieldScreenID,
 	FieldNickname,
 	FieldEmail,
 	FieldAvatarURL,

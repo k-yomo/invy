@@ -89,6 +89,13 @@ func UserID(v uuid.UUID) predicate.UserProfile {
 	})
 }
 
+// ScreenID applies equality check predicate on the "screen_id" field. It's identical to ScreenIDEQ.
+func ScreenID(v string) predicate.UserProfile {
+	return predicate.UserProfile(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldScreenID), v))
+	})
+}
+
 // Nickname applies equality check predicate on the "nickname" field. It's identical to NicknameEQ.
 func Nickname(v string) predicate.UserProfile {
 	return predicate.UserProfile(func(s *sql.Selector) {
@@ -157,6 +164,105 @@ func UserIDNotIn(vs ...uuid.UUID) predicate.UserProfile {
 	}
 	return predicate.UserProfile(func(s *sql.Selector) {
 		s.Where(sql.NotIn(s.C(FieldUserID), v...))
+	})
+}
+
+// ScreenIDEQ applies the EQ predicate on the "screen_id" field.
+func ScreenIDEQ(v string) predicate.UserProfile {
+	return predicate.UserProfile(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldScreenID), v))
+	})
+}
+
+// ScreenIDNEQ applies the NEQ predicate on the "screen_id" field.
+func ScreenIDNEQ(v string) predicate.UserProfile {
+	return predicate.UserProfile(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldScreenID), v))
+	})
+}
+
+// ScreenIDIn applies the In predicate on the "screen_id" field.
+func ScreenIDIn(vs ...string) predicate.UserProfile {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.UserProfile(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldScreenID), v...))
+	})
+}
+
+// ScreenIDNotIn applies the NotIn predicate on the "screen_id" field.
+func ScreenIDNotIn(vs ...string) predicate.UserProfile {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.UserProfile(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldScreenID), v...))
+	})
+}
+
+// ScreenIDGT applies the GT predicate on the "screen_id" field.
+func ScreenIDGT(v string) predicate.UserProfile {
+	return predicate.UserProfile(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldScreenID), v))
+	})
+}
+
+// ScreenIDGTE applies the GTE predicate on the "screen_id" field.
+func ScreenIDGTE(v string) predicate.UserProfile {
+	return predicate.UserProfile(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldScreenID), v))
+	})
+}
+
+// ScreenIDLT applies the LT predicate on the "screen_id" field.
+func ScreenIDLT(v string) predicate.UserProfile {
+	return predicate.UserProfile(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldScreenID), v))
+	})
+}
+
+// ScreenIDLTE applies the LTE predicate on the "screen_id" field.
+func ScreenIDLTE(v string) predicate.UserProfile {
+	return predicate.UserProfile(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldScreenID), v))
+	})
+}
+
+// ScreenIDContains applies the Contains predicate on the "screen_id" field.
+func ScreenIDContains(v string) predicate.UserProfile {
+	return predicate.UserProfile(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldScreenID), v))
+	})
+}
+
+// ScreenIDHasPrefix applies the HasPrefix predicate on the "screen_id" field.
+func ScreenIDHasPrefix(v string) predicate.UserProfile {
+	return predicate.UserProfile(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldScreenID), v))
+	})
+}
+
+// ScreenIDHasSuffix applies the HasSuffix predicate on the "screen_id" field.
+func ScreenIDHasSuffix(v string) predicate.UserProfile {
+	return predicate.UserProfile(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldScreenID), v))
+	})
+}
+
+// ScreenIDEqualFold applies the EqualFold predicate on the "screen_id" field.
+func ScreenIDEqualFold(v string) predicate.UserProfile {
+	return predicate.UserProfile(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldScreenID), v))
+	})
+}
+
+// ScreenIDContainsFold applies the ContainsFold predicate on the "screen_id" field.
+func ScreenIDContainsFold(v string) predicate.UserProfile {
+	return predicate.UserProfile(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldScreenID), v))
 	})
 }
 

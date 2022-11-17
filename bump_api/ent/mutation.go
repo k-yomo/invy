@@ -7188,6 +7188,7 @@ type UserProfileMutation struct {
 	op            Op
 	typ           string
 	id            *uuid.UUID
+	screen_id     *string
 	nickname      *string
 	email         *string
 	avatar_url    *string
@@ -7341,6 +7342,42 @@ func (m *UserProfileMutation) ResetUserID() {
 	m.user = nil
 }
 
+// SetScreenID sets the "screen_id" field.
+func (m *UserProfileMutation) SetScreenID(s string) {
+	m.screen_id = &s
+}
+
+// ScreenID returns the value of the "screen_id" field in the mutation.
+func (m *UserProfileMutation) ScreenID() (r string, exists bool) {
+	v := m.screen_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldScreenID returns the old "screen_id" field's value of the UserProfile entity.
+// If the UserProfile object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserProfileMutation) OldScreenID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldScreenID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldScreenID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldScreenID: %w", err)
+	}
+	return oldValue.ScreenID, nil
+}
+
+// ResetScreenID resets all changes to the "screen_id" field.
+func (m *UserProfileMutation) ResetScreenID() {
+	m.screen_id = nil
+}
+
 // SetNickname sets the "nickname" field.
 func (m *UserProfileMutation) SetNickname(s string) {
 	m.nickname = &s
@@ -7394,7 +7431,7 @@ func (m *UserProfileMutation) Email() (r string, exists bool) {
 // OldEmail returns the old "email" field's value of the UserProfile entity.
 // If the UserProfile object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UserProfileMutation) OldEmail(ctx context.Context) (v string, err error) {
+func (m *UserProfileMutation) OldEmail(ctx context.Context) (v *string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldEmail is only allowed on UpdateOne operations")
 	}
@@ -7579,9 +7616,12 @@ func (m *UserProfileMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserProfileMutation) Fields() []string {
-	fields := make([]string, 0, 6)
+	fields := make([]string, 0, 7)
 	if m.user != nil {
 		fields = append(fields, userprofile.FieldUserID)
+	}
+	if m.screen_id != nil {
+		fields = append(fields, userprofile.FieldScreenID)
 	}
 	if m.nickname != nil {
 		fields = append(fields, userprofile.FieldNickname)
@@ -7608,6 +7648,8 @@ func (m *UserProfileMutation) Field(name string) (ent.Value, bool) {
 	switch name {
 	case userprofile.FieldUserID:
 		return m.UserID()
+	case userprofile.FieldScreenID:
+		return m.ScreenID()
 	case userprofile.FieldNickname:
 		return m.Nickname()
 	case userprofile.FieldEmail:
@@ -7629,6 +7671,8 @@ func (m *UserProfileMutation) OldField(ctx context.Context, name string) (ent.Va
 	switch name {
 	case userprofile.FieldUserID:
 		return m.OldUserID(ctx)
+	case userprofile.FieldScreenID:
+		return m.OldScreenID(ctx)
 	case userprofile.FieldNickname:
 		return m.OldNickname(ctx)
 	case userprofile.FieldEmail:
@@ -7654,6 +7698,13 @@ func (m *UserProfileMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUserID(v)
+		return nil
+	case userprofile.FieldScreenID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetScreenID(v)
 		return nil
 	case userprofile.FieldNickname:
 		v, ok := value.(string)
@@ -7750,6 +7801,9 @@ func (m *UserProfileMutation) ResetField(name string) error {
 	switch name {
 	case userprofile.FieldUserID:
 		m.ResetUserID()
+		return nil
+	case userprofile.FieldScreenID:
+		m.ResetScreenID()
 		return nil
 	case userprofile.FieldNickname:
 		m.ResetNickname()

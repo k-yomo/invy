@@ -23,6 +23,7 @@ import (
 	"github.com/k-yomo/bump/bump_api/graph/loader"
 	"github.com/k-yomo/bump/pkg/convutil"
 	"github.com/k-yomo/bump/pkg/requestutil"
+	"github.com/k-yomo/bump/pkg/shortid"
 )
 
 // FriendUsers is the resolver for the friendUsers field.
@@ -80,6 +81,10 @@ func (r *mutationResolver) SignUp(ctx context.Context, input *gqlmodel.SignUpInp
 	if input.AvatarURL != nil {
 		avatarURL = *input.AvatarURL
 	}
+	var email *string
+	if firebaseUser.EmailVerified && firebaseUser.Email != "" {
+		email = &firebaseUser.Email
+	}
 
 	var dbUserProfile *ent.UserProfile
 	err = ent.RunInTx(ctx, r.DB, func(tx *ent.Tx) error {
@@ -98,9 +103,26 @@ func (r *mutationResolver) SignUp(ctx context.Context, input *gqlmodel.SignUpInp
 		if err != nil {
 			return err
 		}
+
+		screenID := shortid.Generate()
+		for i := 0; i < 5; i++ {
+			exist, err := tx.UserProfile.Query().
+				Where(userprofile.ScreenID(screenID)).
+				Exist(ctx)
+			if err != nil {
+				return err
+			}
+			if exist {
+				screenID = shortid.Generate()
+			} else {
+				break
+			}
+		}
+
 		dbUserProfile, err = tx.UserProfile.Create().
 			SetUserID(dbUser.ID).
-			SetEmail(firebaseUser.Email).
+			SetScreenID(screenID).
+			SetNillableEmail(email).
 			SetNickname(input.Nickname).
 			SetAvatarURL(avatarURL).
 			Save(ctx)
@@ -124,8 +146,8 @@ func (r *mutationResolver) SignUp(ctx context.Context, input *gqlmodel.SignUpInp
 	return conv.ConvertFromDBUserProfile(dbUserProfile), nil
 }
 
-// RequestFriendShip is the resolver for the requestFriendShip field.
-func (r *mutationResolver) RequestFriendShip(ctx context.Context, friendUserID uuid.UUID) (*gqlmodel.FriendshipRequest, error) {
+// RequestFriendship is the resolver for the requestFriendship field.
+func (r *mutationResolver) RequestFriendship(ctx context.Context, friendUserID uuid.UUID) (*gqlmodel.FriendshipRequest, error) {
 	authUserID := auth.GetUserID(ctx)
 	dbFriendshipRequest, err := r.DB.FriendshipRequest.Create().
 		SetFromUserID(authUserID).
@@ -138,8 +160,8 @@ func (r *mutationResolver) RequestFriendShip(ctx context.Context, friendUserID u
 	return conv.ConvertFromDBFriendshipRequest(dbFriendshipRequest), nil
 }
 
-// CancelFriendShipRequest is the resolver for the cancelFriendShipRequest field.
-func (r *mutationResolver) CancelFriendShipRequest(ctx context.Context, friendshipRequestID uuid.UUID) (bool, error) {
+// CancelFriendshipRequest is the resolver for the cancelFriendshipRequest field.
+func (r *mutationResolver) CancelFriendshipRequest(ctx context.Context, friendshipRequestID uuid.UUID) (bool, error) {
 	authUserID := auth.GetUserID(ctx)
 	_, err := r.DB.FriendshipRequest.Delete().
 		Where(
@@ -153,8 +175,8 @@ func (r *mutationResolver) CancelFriendShipRequest(ctx context.Context, friendsh
 	return true, nil
 }
 
-// DenyFriendShipRequest is the resolver for the denyFriendShipRequest field.
-func (r *mutationResolver) DenyFriendShipRequest(ctx context.Context, friendshipRequestID uuid.UUID) (bool, error) {
+// DenyFriendshipRequest is the resolver for the denyFriendshipRequest field.
+func (r *mutationResolver) DenyFriendshipRequest(ctx context.Context, friendshipRequestID uuid.UUID) (bool, error) {
 	authUserID := auth.GetUserID(ctx)
 	_, err := r.DB.FriendshipRequest.Delete().
 		Where(
@@ -168,8 +190,8 @@ func (r *mutationResolver) DenyFriendShipRequest(ctx context.Context, friendship
 	return true, nil
 }
 
-// ApproveFriendShipRequest is the resolver for the approveFriendShipRequest field.
-func (r *mutationResolver) ApproveFriendShipRequest(ctx context.Context, friendshipRequestID uuid.UUID) (bool, error) {
+// ApproveFriendshipRequest is the resolver for the approveFriendshipRequest field.
+func (r *mutationResolver) ApproveFriendshipRequest(ctx context.Context, friendshipRequestID uuid.UUID) (bool, error) {
 	authUserID := auth.GetUserID(ctx)
 	err := ent.RunInTx(ctx, r.DB, func(tx *ent.Tx) error {
 		friendshipRequest, err := r.DB.FriendshipRequest.Query().
@@ -364,6 +386,19 @@ func (r *userResolver) IsMuted(ctx context.Context, obj *gqlmodel.User) (bool, e
 	return true, nil
 }
 
+// IsFriend is the resolver for the isFriend field.
+func (r *userResolver) IsFriend(ctx context.Context, obj *gqlmodel.User) (bool, error) {
+	authUserID := auth.GetUserID(ctx)
+	_, err := loader.Get(ctx).Friendship.Load(ctx, loader.FriendshipKey{UserID: authUserID, FriendUserID: obj.ID})()
+	if err != nil && !errors.Is(err, loader.ErrNotFound) {
+		return false, err
+	}
+	if errors.Is(err, loader.ErrNotFound) {
+		return false, nil
+	}
+	return true, nil
+}
+
 // Friends is the resolver for the friends field.
 func (r *viewerResolver) Friends(ctx context.Context, obj *gqlmodel.Viewer, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*gqlmodel.UserConnection, error) {
 	authUserID := auth.GetUserID(ctx)
@@ -393,8 +428,8 @@ func (r *viewerResolver) Friends(ctx context.Context, obj *gqlmodel.Viewer, afte
 	return &userConnection, nil
 }
 
-// PendingFriendShipRequests is the resolver for the pendingFriendShipRequests field.
-func (r *viewerResolver) PendingFriendShipRequests(ctx context.Context, _ *gqlmodel.Viewer) ([]*gqlmodel.FriendshipRequest, error) {
+// PendingFriendshipRequests is the resolver for the pendingFriendshipRequests field.
+func (r *viewerResolver) PendingFriendshipRequests(ctx context.Context, obj *gqlmodel.Viewer) ([]*gqlmodel.FriendshipRequest, error) {
 	authUserID := auth.GetUserID(ctx)
 	dbPendingRequests, err := r.DB.FriendshipRequest.Query().
 		Where(friendshiprequest.ToUserID(authUserID)).
@@ -405,8 +440,8 @@ func (r *viewerResolver) PendingFriendShipRequests(ctx context.Context, _ *gqlmo
 	return convutil.ConvertToList(dbPendingRequests, conv.ConvertFromDBFriendshipRequest), nil
 }
 
-// RequestingFriendShipRequests is the resolver for the requestingFriendShipRequests field.
-func (r *viewerResolver) RequestingFriendShipRequests(ctx context.Context, _ *gqlmodel.Viewer) ([]*gqlmodel.FriendshipRequest, error) {
+// RequestingFriendshipRequests is the resolver for the requestingFriendshipRequests field.
+func (r *viewerResolver) RequestingFriendshipRequests(ctx context.Context, obj *gqlmodel.Viewer) ([]*gqlmodel.FriendshipRequest, error) {
 	authUserID := auth.GetUserID(ctx)
 	dbPendingRequests, err := r.DB.FriendshipRequest.Query().
 		Where(friendshiprequest.FromUserID(authUserID)).
@@ -418,7 +453,7 @@ func (r *viewerResolver) RequestingFriendShipRequests(ctx context.Context, _ *gq
 }
 
 // FriendGroup is the resolver for the friendGroup field.
-func (r *viewerResolver) FriendGroup(ctx context.Context, _ *gqlmodel.Viewer, friendGroupID uuid.UUID) (*gqlmodel.FriendGroup, error) {
+func (r *viewerResolver) FriendGroup(ctx context.Context, obj *gqlmodel.Viewer, friendGroupID uuid.UUID) (*gqlmodel.FriendGroup, error) {
 	authUserID := auth.GetUserID(ctx)
 	dbFriendGroup, err := r.DB.FriendGroup.Query().
 		Where(friendgroup.ID(friendGroupID), friendgroup.UserID(authUserID)).
@@ -430,7 +465,7 @@ func (r *viewerResolver) FriendGroup(ctx context.Context, _ *gqlmodel.Viewer, fr
 }
 
 // FriendGroups is the resolver for the friendGroups field.
-func (r *viewerResolver) FriendGroups(ctx context.Context, _ *gqlmodel.Viewer) ([]*gqlmodel.FriendGroup, error) {
+func (r *viewerResolver) FriendGroups(ctx context.Context, obj *gqlmodel.Viewer) ([]*gqlmodel.FriendGroup, error) {
 	authUserID := auth.GetUserID(ctx)
 	dbFriendGroups, err := r.DB.FriendGroup.Query().
 		Where(friendgroup.UserID(authUserID)).

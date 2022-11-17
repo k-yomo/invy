@@ -17,6 +17,8 @@ func ConvertFromDBPageInfo(pageInfo *ent.PageInfo) *gqlmodel.PageInfo {
 func ConvertFromDBUserProfileToViewer(userProfile *ent.UserProfile) *gqlmodel.Viewer {
 	return &gqlmodel.Viewer{
 		ID:        userProfile.UserID,
+		ScreenID:  userProfile.ScreenID,
+		Email:     userProfile.Email,
 		Nickname:  userProfile.Nickname,
 		AvatarURL: userProfile.AvatarURL,
 	}

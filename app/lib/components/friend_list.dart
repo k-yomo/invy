@@ -86,7 +86,7 @@ class _FriendListItem extends HookConsumerWidget {
                   child: Text(
                     friend.value.nickname,
                     style: const TextStyle(
-                        fontSize: 16, fontWeight: FontWeight.bold),
+                        fontSize: 14, fontWeight: FontWeight.bold),
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),

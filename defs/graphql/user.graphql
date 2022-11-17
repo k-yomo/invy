@@ -9,10 +9,10 @@ extend type Query {
 extend type Mutation {
     signUp(input: SignUpInput): User!
 
-    requestFriendShip(friendUserId: UUID!): FriendshipRequest! @authRequired
-    cancelFriendShipRequest(friendshipRequestId: UUID!): Boolean! @authRequired
-    denyFriendShipRequest(friendshipRequestId: UUID!): Boolean! @authRequired
-    approveFriendShipRequest(friendshipRequestId: UUID!): Boolean! @authRequired
+    requestFriendship(friendUserId: UUID!): FriendshipRequest! @authRequired
+    cancelFriendshipRequest(friendshipRequestId: UUID!): Boolean! @authRequired
+    denyFriendshipRequest(friendshipRequestId: UUID!): Boolean! @authRequired
+    approveFriendshipRequest(friendshipRequestId: UUID!): Boolean! @authRequired
 
     createFriendGroup(input: CreateFriendGroupInput!): FriendGroup! @authRequired
     updateFriendGroup(input: UpdateFriendGroupInput!): FriendGroup! @authRequired
@@ -25,15 +25,16 @@ extend type Mutation {
 # Currently logged in user
 type Viewer implements Node {
     id: UUID!
+    screenId: String!
+    email: String
     nickname: String!
     avatarUrl: String!
-    isMuted: Boolean!
 
     friends(after: Cursor, first: Int, before: Cursor, last: Int): UserConnection! @goField(forceResolver: true)
     # fetch friend ship requests need to be approved by the logged in user
-    pendingFriendShipRequests: [FriendshipRequest!]! @goField(forceResolver: true)
+    pendingFriendshipRequests: [FriendshipRequest!]! @goField(forceResolver: true)
     # fetch friend ship requests sent by the logged in user
-    requestingFriendShipRequests: [FriendshipRequest!]! @goField(forceResolver: true)
+    requestingFriendshipRequests: [FriendshipRequest!]! @goField(forceResolver: true)
 
     # fetch friend group
     # Other user's group can't be fetched
@@ -49,6 +50,7 @@ type User implements Node {
     nickname: String!
     avatarUrl: String!
     isMuted: Boolean! @goField(forceResolver: true)
+    isFriend: Boolean! @goField(forceResolver: true)
 }
 
 type UserEdge {
@@ -81,7 +83,7 @@ type FriendGroup implements Node {
 
 
 input SignUpInput {
-    email: String! @constraint(format: EMAIL)
+    email: String @constraint(format: EMAIL)
     nickname: String! @constraint(min: 3)
     avatarUrl: String @constraint(format: URL)
 }

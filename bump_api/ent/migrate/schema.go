@@ -315,6 +315,7 @@ var (
 	// UserProfilesColumns holds the columns for the "user_profiles" table.
 	UserProfilesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUUID},
+		{Name: "screen_id", Type: field.TypeString, Unique: true},
 		{Name: "nickname", Type: field.TypeString},
 		{Name: "email", Type: field.TypeString, Unique: true, Nullable: true},
 		{Name: "avatar_url", Type: field.TypeString},
@@ -330,7 +331,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "user_profiles_users_user_profile",
-				Columns:    []*schema.Column{UserProfilesColumns[6]},
+				Columns:    []*schema.Column{UserProfilesColumns[7]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},

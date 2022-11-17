@@ -28,6 +28,12 @@ func (upu *UserProfileUpdate) Where(ps ...predicate.UserProfile) *UserProfileUpd
 	return upu
 }
 
+// SetScreenID sets the "screen_id" field.
+func (upu *UserProfileUpdate) SetScreenID(s string) *UserProfileUpdate {
+	upu.mutation.SetScreenID(s)
+	return upu
+}
+
 // SetNickname sets the "nickname" field.
 func (upu *UserProfileUpdate) SetNickname(s string) *UserProfileUpdate {
 	upu.mutation.SetNickname(s)
@@ -166,6 +172,9 @@ func (upu *UserProfileUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
+	if value, ok := upu.mutation.ScreenID(); ok {
+		_spec.SetField(userprofile.FieldScreenID, field.TypeString, value)
+	}
 	if value, ok := upu.mutation.Nickname(); ok {
 		_spec.SetField(userprofile.FieldNickname, field.TypeString, value)
 	}
@@ -198,6 +207,12 @@ type UserProfileUpdateOne struct {
 	fields   []string
 	hooks    []Hook
 	mutation *UserProfileMutation
+}
+
+// SetScreenID sets the "screen_id" field.
+func (upuo *UserProfileUpdateOne) SetScreenID(s string) *UserProfileUpdateOne {
+	upuo.mutation.SetScreenID(s)
+	return upuo
 }
 
 // SetNickname sets the "nickname" field.
@@ -367,6 +382,9 @@ func (upuo *UserProfileUpdateOne) sqlSave(ctx context.Context) (_node *UserProfi
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := upuo.mutation.ScreenID(); ok {
+		_spec.SetField(userprofile.FieldScreenID, field.TypeString, value)
 	}
 	if value, ok := upuo.mutation.Nickname(); ok {
 		_spec.SetField(userprofile.FieldNickname, field.TypeString, value)

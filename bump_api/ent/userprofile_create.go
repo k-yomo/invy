@@ -31,6 +31,12 @@ func (upc *UserProfileCreate) SetUserID(u uuid.UUID) *UserProfileCreate {
 	return upc
 }
 
+// SetScreenID sets the "screen_id" field.
+func (upc *UserProfileCreate) SetScreenID(s string) *UserProfileCreate {
+	upc.mutation.SetScreenID(s)
+	return upc
+}
+
 // SetNickname sets the "nickname" field.
 func (upc *UserProfileCreate) SetNickname(s string) *UserProfileCreate {
 	upc.mutation.SetNickname(s)
@@ -200,6 +206,9 @@ func (upc *UserProfileCreate) check() error {
 	if _, ok := upc.mutation.UserID(); !ok {
 		return &ValidationError{Name: "user_id", err: errors.New(`ent: missing required field "UserProfile.user_id"`)}
 	}
+	if _, ok := upc.mutation.ScreenID(); !ok {
+		return &ValidationError{Name: "screen_id", err: errors.New(`ent: missing required field "UserProfile.screen_id"`)}
+	}
 	if _, ok := upc.mutation.Nickname(); !ok {
 		return &ValidationError{Name: "nickname", err: errors.New(`ent: missing required field "UserProfile.nickname"`)}
 	}
@@ -252,13 +261,17 @@ func (upc *UserProfileCreate) createSpec() (*UserProfile, *sqlgraph.CreateSpec) 
 		_node.ID = id
 		_spec.ID.Value = &id
 	}
+	if value, ok := upc.mutation.ScreenID(); ok {
+		_spec.SetField(userprofile.FieldScreenID, field.TypeString, value)
+		_node.ScreenID = value
+	}
 	if value, ok := upc.mutation.Nickname(); ok {
 		_spec.SetField(userprofile.FieldNickname, field.TypeString, value)
 		_node.Nickname = value
 	}
 	if value, ok := upc.mutation.Email(); ok {
 		_spec.SetField(userprofile.FieldEmail, field.TypeString, value)
-		_node.Email = value
+		_node.Email = &value
 	}
 	if value, ok := upc.mutation.AvatarURL(); ok {
 		_spec.SetField(userprofile.FieldAvatarURL, field.TypeString, value)
@@ -343,6 +356,18 @@ type (
 		*sql.UpdateSet
 	}
 )
+
+// SetScreenID sets the "screen_id" field.
+func (u *UserProfileUpsert) SetScreenID(v string) *UserProfileUpsert {
+	u.Set(userprofile.FieldScreenID, v)
+	return u
+}
+
+// UpdateScreenID sets the "screen_id" field to the value that was provided on create.
+func (u *UserProfileUpsert) UpdateScreenID() *UserProfileUpsert {
+	u.SetExcluded(userprofile.FieldScreenID)
+	return u
+}
 
 // SetNickname sets the "nickname" field.
 func (u *UserProfileUpsert) SetNickname(v string) *UserProfileUpsert {
@@ -450,6 +475,20 @@ func (u *UserProfileUpsertOne) Update(set func(*UserProfileUpsert)) *UserProfile
 		set(&UserProfileUpsert{UpdateSet: update})
 	}))
 	return u
+}
+
+// SetScreenID sets the "screen_id" field.
+func (u *UserProfileUpsertOne) SetScreenID(v string) *UserProfileUpsertOne {
+	return u.Update(func(s *UserProfileUpsert) {
+		s.SetScreenID(v)
+	})
+}
+
+// UpdateScreenID sets the "screen_id" field to the value that was provided on create.
+func (u *UserProfileUpsertOne) UpdateScreenID() *UserProfileUpsertOne {
+	return u.Update(func(s *UserProfileUpsert) {
+		s.UpdateScreenID()
+	})
 }
 
 // SetNickname sets the "nickname" field.
@@ -730,6 +769,20 @@ func (u *UserProfileUpsertBulk) Update(set func(*UserProfileUpsert)) *UserProfil
 		set(&UserProfileUpsert{UpdateSet: update})
 	}))
 	return u
+}
+
+// SetScreenID sets the "screen_id" field.
+func (u *UserProfileUpsertBulk) SetScreenID(v string) *UserProfileUpsertBulk {
+	return u.Update(func(s *UserProfileUpsert) {
+		s.SetScreenID(v)
+	})
+}
+
+// UpdateScreenID sets the "screen_id" field to the value that was provided on create.
+func (u *UserProfileUpsertBulk) UpdateScreenID() *UserProfileUpsertBulk {
+	return u.Update(func(s *UserProfileUpsert) {
+		s.UpdateScreenID()
+	})
 }
 
 // SetNickname sets the "nickname" field.

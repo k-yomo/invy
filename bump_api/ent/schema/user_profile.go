@@ -21,8 +21,9 @@ func (UserProfile) Fields() []ent.Field {
 			Default(uuid.New).
 			Immutable(),
 		field.UUID("user_id", uuid.UUID{}).Immutable(),
+		field.String("screen_id").Unique(),
 		field.String("nickname"),
-		field.String("email").Unique().Optional(),
+		field.String("email").Unique().Nillable().Optional(),
 		field.String("avatar_url"),
 		field.Time("created_at").
 			Immutable().

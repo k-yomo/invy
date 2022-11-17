@@ -54,10 +54,10 @@ type Mutation {
   acceptInvitation(invitationId: UUID!): Boolean!
   denyInvitation(invitationId: UUID!): Boolean!
   signUp(input: SignUpInput): User!
-  requestFriendShip(friendUserId: UUID!): FriendshipRequest!
-  cancelFriendShipRequest(friendshipRequestId: UUID!): Boolean!
-  denyFriendShipRequest(friendshipRequestId: UUID!): Boolean!
-  approveFriendShipRequest(friendshipRequestId: UUID!): Boolean!
+  requestFriendship(friendUserId: UUID!): FriendshipRequest!
+  cancelFriendshipRequest(friendshipRequestId: UUID!): Boolean!
+  denyFriendshipRequest(friendshipRequestId: UUID!): Boolean!
+  approveFriendshipRequest(friendshipRequestId: UUID!): Boolean!
   createFriendGroup(input: CreateFriendGroupInput!): FriendGroup!
   updateFriendGroup(input: UpdateFriendGroupInput!): FriendGroup!
   deleteFriendGroup(friendGroupId: UUID!): Boolean!
@@ -118,6 +118,7 @@ type User implements Node {
   nickname: String!
   avatarUrl: String!
   isMuted: Boolean!
+  isFriend: Boolean!
 }
 
 type UserConnection {
@@ -136,16 +137,17 @@ scalar UUID
 """Currently logged in user"""
 type Viewer implements Node {
   id: UUID!
+  screenId: String!
+  email: String
   nickname: String!
   avatarUrl: String!
-  isMuted: Boolean!
   friends(after: Cursor, first: Int, before: Cursor, last: Int): UserConnection!
 
   """fetch friend ship requests need to be approved by the logged in user"""
-  pendingFriendShipRequests: [FriendshipRequest!]!
+  pendingFriendshipRequests: [FriendshipRequest!]!
 
   """fetch friend ship requests sent by the logged in user"""
-  requestingFriendShipRequests: [FriendshipRequest!]!
+  requestingFriendshipRequests: [FriendshipRequest!]!
 
   """
   fetch friend group

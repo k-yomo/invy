@@ -811,7 +811,7 @@ func (up *UserProfile) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     up.ID,
 		Type:   "UserProfile",
-		Fields: make([]*Field, 6),
+		Fields: make([]*Field, 7),
 		Edges:  make([]*Edge, 1),
 	}
 	var buf []byte
@@ -823,10 +823,18 @@ func (up *UserProfile) Node(ctx context.Context) (node *Node, err error) {
 		Name:  "user_id",
 		Value: string(buf),
 	}
-	if buf, err = json.Marshal(up.Nickname); err != nil {
+	if buf, err = json.Marshal(up.ScreenID); err != nil {
 		return nil, err
 	}
 	node.Fields[1] = &Field{
+		Type:  "string",
+		Name:  "screen_id",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(up.Nickname); err != nil {
+		return nil, err
+	}
+	node.Fields[2] = &Field{
 		Type:  "string",
 		Name:  "nickname",
 		Value: string(buf),
@@ -834,7 +842,7 @@ func (up *UserProfile) Node(ctx context.Context) (node *Node, err error) {
 	if buf, err = json.Marshal(up.Email); err != nil {
 		return nil, err
 	}
-	node.Fields[2] = &Field{
+	node.Fields[3] = &Field{
 		Type:  "string",
 		Name:  "email",
 		Value: string(buf),
@@ -842,7 +850,7 @@ func (up *UserProfile) Node(ctx context.Context) (node *Node, err error) {
 	if buf, err = json.Marshal(up.AvatarURL); err != nil {
 		return nil, err
 	}
-	node.Fields[3] = &Field{
+	node.Fields[4] = &Field{
 		Type:  "string",
 		Name:  "avatar_url",
 		Value: string(buf),
@@ -850,7 +858,7 @@ func (up *UserProfile) Node(ctx context.Context) (node *Node, err error) {
 	if buf, err = json.Marshal(up.CreatedAt); err != nil {
 		return nil, err
 	}
-	node.Fields[4] = &Field{
+	node.Fields[5] = &Field{
 		Type:  "time.Time",
 		Name:  "created_at",
 		Value: string(buf),
@@ -858,7 +866,7 @@ func (up *UserProfile) Node(ctx context.Context) (node *Node, err error) {
 	if buf, err = json.Marshal(up.UpdatedAt); err != nil {
 		return nil, err
 	}
-	node.Fields[5] = &Field{
+	node.Fields[6] = &Field{
 		Type:  "time.Time",
 		Name:  "updated_at",
 		Value: string(buf),

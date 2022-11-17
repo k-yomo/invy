@@ -6,6 +6,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/graph-gophers/dataloader/v7"
 	"github.com/k-yomo/bump/bump_api/ent"
+	"github.com/k-yomo/bump/bump_api/ent/friendship"
 	"github.com/k-yomo/bump/bump_api/ent/invitationacceptance"
 	"github.com/k-yomo/bump/bump_api/ent/usermute"
 	"github.com/k-yomo/bump/bump_api/ent/userprofile"
@@ -14,6 +15,7 @@ import (
 
 type Loaders struct {
 	UserProfile                    *dataloader.Loader[uuid.UUID, *ent.UserProfile]
+	Friendship                     *dataloader.Loader[FriendshipKey, *ent.Friendship]
 	UserMute                       *dataloader.Loader[UserMuteKey, *ent.UserMute]
 	InvitationAcceptedUserProfiles *dataloader.Loader[uuid.UUID, []*ent.UserProfile]
 }
@@ -23,6 +25,10 @@ func NewLoaders(db *ent.Client) *Loaders {
 		UserProfile: dataloader.NewBatchedLoader(
 			NewUserProfileLoader(db),
 			dataloader.WithCache[uuid.UUID, *ent.UserProfile](&dataloader.NoCache[uuid.UUID, *ent.UserProfile]{}),
+		),
+		Friendship: dataloader.NewBatchedLoader(
+			NewFriendshipLoader(db),
+			dataloader.WithCache[FriendshipKey, *ent.Friendship](&dataloader.NoCache[FriendshipKey, *ent.Friendship]{}),
 		),
 		UserMute: dataloader.NewBatchedLoader(
 			NewUserMuteLoader(db),
@@ -51,6 +57,34 @@ func NewUserProfileLoader(db *ent.Client) func(context.Context, []uuid.UUID) []*
 			userIDProfileMap[up.UserID] = up
 		}
 		return convertToResults(userIDs, userIDProfileMap)
+	}
+}
+
+type FriendshipKey struct {
+	UserID       uuid.UUID
+	FriendUserID uuid.UUID
+}
+
+func NewFriendshipLoader(db *ent.Client) func(context.Context, []FriendshipKey) []*dataloader.Result[*ent.Friendship] {
+	return func(ctx context.Context, keys []FriendshipKey) []*dataloader.Result[*ent.Friendship] {
+		if len(keys) == 0 {
+			return nil
+		}
+		userID := keys[0].UserID
+		friendUserIDs := convutil.ConvertToList(keys, func(from FriendshipKey) uuid.UUID {
+			return from.FriendUserID
+		})
+		dbFriendships, err := db.Friendship.Query().
+			Where(friendship.UserID(userID), friendship.FriendUserIDIn(friendUserIDs...)).
+			All(ctx)
+		if err != nil {
+			return convertToErrorResults[*ent.Friendship](err, len(friendUserIDs))
+		}
+		friendUserIDFriendshipMap := map[uuid.UUID]*ent.Friendship{}
+		for _, f := range dbFriendships {
+			friendUserIDFriendshipMap[f.FriendUserID] = f
+		}
+		return convertToResults(friendUserIDs, friendUserIDFriendshipMap)
 	}
 }
 
