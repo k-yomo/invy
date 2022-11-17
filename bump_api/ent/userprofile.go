@@ -25,7 +25,7 @@ type UserProfile struct {
 	// Email holds the value of the "email" field.
 	Email string `json:"email,omitempty"`
 	// AvatarURL holds the value of the "avatar_url" field.
-	AvatarURL *string `json:"avatar_url,omitempty"`
+	AvatarURL string `json:"avatar_url,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
@@ -113,8 +113,7 @@ func (up *UserProfile) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field avatar_url", values[i])
 			} else if value.Valid {
-				up.AvatarURL = new(string)
-				*up.AvatarURL = value.String
+				up.AvatarURL = value.String
 			}
 		case userprofile.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -170,10 +169,8 @@ func (up *UserProfile) String() string {
 	builder.WriteString("email=")
 	builder.WriteString(up.Email)
 	builder.WriteString(", ")
-	if v := up.AvatarURL; v != nil {
-		builder.WriteString("avatar_url=")
-		builder.WriteString(*v)
-	}
+	builder.WriteString("avatar_url=")
+	builder.WriteString(up.AvatarURL)
 	builder.WriteString(", ")
 	builder.WriteString("created_at=")
 	builder.WriteString(up.CreatedAt.Format(time.ANSIC))

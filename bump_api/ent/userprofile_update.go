@@ -60,20 +60,6 @@ func (upu *UserProfileUpdate) SetAvatarURL(s string) *UserProfileUpdate {
 	return upu
 }
 
-// SetNillableAvatarURL sets the "avatar_url" field if the given value is not nil.
-func (upu *UserProfileUpdate) SetNillableAvatarURL(s *string) *UserProfileUpdate {
-	if s != nil {
-		upu.SetAvatarURL(*s)
-	}
-	return upu
-}
-
-// ClearAvatarURL clears the value of the "avatar_url" field.
-func (upu *UserProfileUpdate) ClearAvatarURL() *UserProfileUpdate {
-	upu.mutation.ClearAvatarURL()
-	return upu
-}
-
 // SetUpdatedAt sets the "updated_at" field.
 func (upu *UserProfileUpdate) SetUpdatedAt(t time.Time) *UserProfileUpdate {
 	upu.mutation.SetUpdatedAt(t)
@@ -192,9 +178,6 @@ func (upu *UserProfileUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := upu.mutation.AvatarURL(); ok {
 		_spec.SetField(userprofile.FieldAvatarURL, field.TypeString, value)
 	}
-	if upu.mutation.AvatarURLCleared() {
-		_spec.ClearField(userprofile.FieldAvatarURL, field.TypeString)
-	}
 	if value, ok := upu.mutation.UpdatedAt(); ok {
 		_spec.SetField(userprofile.FieldUpdatedAt, field.TypeTime, value)
 	}
@@ -246,20 +229,6 @@ func (upuo *UserProfileUpdateOne) ClearEmail() *UserProfileUpdateOne {
 // SetAvatarURL sets the "avatar_url" field.
 func (upuo *UserProfileUpdateOne) SetAvatarURL(s string) *UserProfileUpdateOne {
 	upuo.mutation.SetAvatarURL(s)
-	return upuo
-}
-
-// SetNillableAvatarURL sets the "avatar_url" field if the given value is not nil.
-func (upuo *UserProfileUpdateOne) SetNillableAvatarURL(s *string) *UserProfileUpdateOne {
-	if s != nil {
-		upuo.SetAvatarURL(*s)
-	}
-	return upuo
-}
-
-// ClearAvatarURL clears the value of the "avatar_url" field.
-func (upuo *UserProfileUpdateOne) ClearAvatarURL() *UserProfileUpdateOne {
-	upuo.mutation.ClearAvatarURL()
 	return upuo
 }
 
@@ -410,9 +379,6 @@ func (upuo *UserProfileUpdateOne) sqlSave(ctx context.Context) (_node *UserProfi
 	}
 	if value, ok := upuo.mutation.AvatarURL(); ok {
 		_spec.SetField(userprofile.FieldAvatarURL, field.TypeString, value)
-	}
-	if upuo.mutation.AvatarURLCleared() {
-		_spec.ClearField(userprofile.FieldAvatarURL, field.TypeString)
 	}
 	if value, ok := upuo.mutation.UpdatedAt(); ok {
 		_spec.SetField(userprofile.FieldUpdatedAt, field.TypeTime, value)

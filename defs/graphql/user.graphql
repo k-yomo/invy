@@ -1,23 +1,13 @@
 
 extend type Query {
-    viewer: User! @authRequired
+    viewer: Viewer! @authRequired
     user(userId: UUID!): User! @authRequired
     # fetch friends of the logged in user
     friends(after: Cursor, first: Int, before: Cursor, last: Int): UserConnection! @authRequired
-    # fetch friend ship requests need to be approved by the logged in user
-    pendingFriendShipRequests: [FriendshipRequest!]! @authRequired
-    # fetch friend ship requests sent by the logged in user
-    requestingFriendShipRequests: [FriendshipRequest!]! @authRequired
-
-    # fetch friend group
-    # Other user's group can't be fetched
-    friendGroup(friendGroupId: UUID!): FriendGroup! @authRequired
-    # fetch friend groups of the logged in user
-    friendGroups: [FriendGroup!]! @authRequired
 }
 
 extend type Mutation {
-    signUp(input: SignUpInput): Boolean!
+    signUp(input: SignUpInput): User!
 
     requestFriendShip(friendUserId: UUID!): FriendshipRequest! @authRequired
     cancelFriendShipRequest(friendshipRequestId: UUID!): Boolean! @authRequired
@@ -32,10 +22,32 @@ extend type Mutation {
     unmuteUser(muteUserId: UUID!): Boolean! @authRequired
 }
 
+# Currently logged in user
+type Viewer implements Node {
+    id: UUID!
+    nickname: String!
+    avatarUrl: String!
+    isMuted: Boolean!
+
+    friends(after: Cursor, first: Int, before: Cursor, last: Int): UserConnection! @goField(forceResolver: true)
+    # fetch friend ship requests need to be approved by the logged in user
+    pendingFriendShipRequests: [FriendshipRequest!]! @goField(forceResolver: true)
+    # fetch friend ship requests sent by the logged in user
+    requestingFriendShipRequests: [FriendshipRequest!]! @goField(forceResolver: true)
+
+    # fetch friend group
+    # Other user's group can't be fetched
+    friendGroup(friendGroupId: UUID!): FriendGroup! @goField(forceResolver: true)
+    # fetch friend groups of the logged in user
+    friendGroups: [FriendGroup!]! @goField(forceResolver: true)
+}
+
+# User is a public interface for a user
+# User MUST NOT have private information such as email
 type User implements Node {
     id: UUID!
     nickname: String!
-    avatarUrl: String
+    avatarUrl: String!
     isMuted: Boolean! @goField(forceResolver: true)
 }
 
@@ -63,6 +75,7 @@ type FriendGroup implements Node {
     id: UUID!
     userId: UUID!
     name: String!
+    totalCount: Int!
     friendUsers: [User!]! @goField(forceResolver: true)
 }
 

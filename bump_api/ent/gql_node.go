@@ -56,7 +56,7 @@ func (fg *FriendGroup) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     fg.ID,
 		Type:   "FriendGroup",
-		Fields: make([]*Field, 4),
+		Fields: make([]*Field, 5),
 		Edges:  make([]*Edge, 4),
 	}
 	var buf []byte
@@ -76,10 +76,18 @@ func (fg *FriendGroup) Node(ctx context.Context) (node *Node, err error) {
 		Name:  "name",
 		Value: string(buf),
 	}
-	if buf, err = json.Marshal(fg.CreatedAt); err != nil {
+	if buf, err = json.Marshal(fg.TotalCount); err != nil {
 		return nil, err
 	}
 	node.Fields[2] = &Field{
+		Type:  "int",
+		Name:  "total_count",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(fg.CreatedAt); err != nil {
+		return nil, err
+	}
+	node.Fields[3] = &Field{
 		Type:  "time.Time",
 		Name:  "created_at",
 		Value: string(buf),
@@ -87,7 +95,7 @@ func (fg *FriendGroup) Node(ctx context.Context) (node *Node, err error) {
 	if buf, err = json.Marshal(fg.UpdatedAt); err != nil {
 		return nil, err
 	}
-	node.Fields[3] = &Field{
+	node.Fields[4] = &Field{
 		Type:  "time.Time",
 		Name:  "updated_at",
 		Value: string(buf),

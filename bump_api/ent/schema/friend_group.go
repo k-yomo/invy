@@ -21,6 +21,7 @@ func (FriendGroup) Fields() []ent.Field {
 			Default(uuid.New),
 		field.UUID("user_id", uuid.UUID{}).Immutable(),
 		field.String("name"),
+		field.Int("total_count").Default(0),
 		field.Time("created_at").
 			Immutable().
 			Default(time.Now),

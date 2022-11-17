@@ -1,0 +1,7 @@
+
+fragment friendListItemFragment on User {
+    id
+    nickname
+    avatarUrl
+    isMuted
+}

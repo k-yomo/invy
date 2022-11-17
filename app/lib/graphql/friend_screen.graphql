@@ -1,0 +1,37 @@
+
+query friendScreenViewer {
+    viewer {
+        friendGroups {
+            ...friendGroupListItemFragment
+        }
+        friends(first: 100) {
+            edges {
+                node {
+                    ...friendListItemFragment
+                }
+            }
+            pageInfo {
+                startCursor
+                endCursor
+                hasNextPage
+                hasPreviousPage
+            }
+        }
+    }
+}
+
+query friendScreenFriends($after: Cursor, $first: Int) {
+    friends(after: $after, first: $first) {
+        edges {
+            node {
+                ...friendListItemFragment
+            }
+        }
+        pageInfo {
+            startCursor
+            endCursor
+            hasNextPage
+            hasPreviousPage
+        }
+    }
+}

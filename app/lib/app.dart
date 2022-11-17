@@ -1,14 +1,14 @@
-import 'package:bump/screens/login.dart';
 import 'package:flutter/material.dart';
-import 'package:universal_platform/universal_platform.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:universal_platform/universal_platform.dart';
 
-import 'graphql_client_perovider.dart';
-import 'repositories/auth.dart';
-import 'screens/home.dart';
-import 'screens/chat.dart';
-import 'screens/notification.dart';
-import 'screens/profile.dart';
+import 'services/graphql_client.dart';
+import 'screens/login_screen.dart';
+import 'state/auth.dart';
+import 'screens/chat_screen.dart';
+import 'screens/home_screen.dart';
+import 'screens/friend_screen.dart';
+import 'screens/profile_screen.dart';
 
 String get host {
 // https://github.com/flutter/flutter/issues/36126#issuecomment-596215587
@@ -43,7 +43,7 @@ class App extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final authState = ref.watch(authStateProvider);
+    final loggedInUser = ref.watch(loggedInUserProvider);
     return ClientProvider(
       uri: graphqlEndpoint,
       subscriptionUri: graphqlSubscriptionEndpoint,
@@ -51,19 +51,11 @@ class App extends HookConsumerWidget {
         title: 'Bump',
         theme: ThemeData(
           primarySwatch: materialWhite,
+          useMaterial3: true,
         ),
         darkTheme: ThemeData.dark(),
-        home: authState.when(
-          data: (data) {
-            if (data != null) {
-              return const RootWidget();
-            } else {
-              return const LoginScreen();
-            }
-          },
-          error: (e, trace) => const CircularProgressIndicator(),
-          loading: () => const CircularProgressIndicator(),
-        ),
+        themeMode: ThemeMode.system,
+        home: (loggedInUser != null) ? const RootWidget() : const LoginScreen(),
       ),
     );
   }
@@ -80,7 +72,7 @@ class _RootWidgetState extends State<RootWidget> {
   static const screens = [
     HomeScreen(),
     ChatScreen(),
-    NotificationScreen(),
+    FriendScreen(),
     ProfileScreen(),
   ];
 
@@ -104,13 +96,13 @@ class _RootWidgetState extends State<RootWidget> {
                 icon: Icon(Icons.home_outlined), label: 'ホーム'),
             BottomNavigationBarItem(
                 icon: Icon(Icons.chat_rounded), label: 'チャット'),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.notifications), label: '通知'),
+            BottomNavigationBarItem(icon: Icon(Icons.people), label: '友達'),
             BottomNavigationBarItem(icon: Icon(Icons.person), label: 'アカウント'),
           ],
           type: BottomNavigationBarType.fixed,
-          backgroundColor: Colors.red,
-          unselectedItemColor: Colors.white,
+          backgroundColor: Colors.white,
+          selectedItemColor: Colors.black,
+          unselectedItemColor: Colors.grey.shade400,
           enableFeedback: true,
         ));
   }

@@ -5,7 +5,7 @@ import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'app.dart';
-import 'firebase_options.dart';
+import 'services/firebase_options.dart';
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();

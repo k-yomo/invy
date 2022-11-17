@@ -14,6 +14,14 @@ func ConvertFromDBPageInfo(pageInfo *ent.PageInfo) *gqlmodel.PageInfo {
 	}
 }
 
+func ConvertFromDBUserProfileToViewer(userProfile *ent.UserProfile) *gqlmodel.Viewer {
+	return &gqlmodel.Viewer{
+		ID:        userProfile.UserID,
+		Nickname:  userProfile.Nickname,
+		AvatarURL: userProfile.AvatarURL,
+	}
+}
+
 func ConvertFromDBUserProfile(userProfile *ent.UserProfile) *gqlmodel.User {
 	return &gqlmodel.User{
 		ID:        userProfile.UserID,
@@ -33,9 +41,10 @@ func ConvertFromDBFriendshipRequest(friendshipRequest *ent.FriendshipRequest) *g
 
 func ConvertFromDBFriendGroup(friendGroup *ent.FriendGroup) *gqlmodel.FriendGroup {
 	return &gqlmodel.FriendGroup{
-		ID:     friendGroup.ID,
-		UserID: friendGroup.UserID,
-		Name:   friendGroup.Name,
+		ID:         friendGroup.ID,
+		UserID:     friendGroup.UserID,
+		Name:       friendGroup.Name,
+		TotalCount: friendGroup.TotalCount,
 	}
 }
 

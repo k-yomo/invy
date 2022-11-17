@@ -688,5 +688,6 @@ const possibleTypesMap = {
     'FriendshipRequest',
     'Invitation',
     'User',
+    'Viewer',
   }
 };

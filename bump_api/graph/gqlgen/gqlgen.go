@@ -46,6 +46,7 @@ type ResolverRoot interface {
 	Mutation() MutationResolver
 	Query() QueryResolver
 	User() UserResolver
+	Viewer() ViewerResolver
 }
 
 type DirectiveRoot struct {
@@ -58,6 +59,7 @@ type ComplexityRoot struct {
 		FriendUsers func(childComplexity int) int
 		ID          func(childComplexity int) int
 		Name        func(childComplexity int) int
+		TotalCount  func(childComplexity int) int
 		UserID      func(childComplexity int) int
 	}
 
@@ -105,15 +107,11 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		AcceptedInvitations          func(childComplexity int) int
-		FriendGroup                  func(childComplexity int, friendGroupID uuid.UUID) int
-		FriendGroups                 func(childComplexity int) int
-		Friends                      func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
-		PendingFriendShipRequests    func(childComplexity int) int
-		PendingInvitations           func(childComplexity int) int
-		RequestingFriendShipRequests func(childComplexity int) int
-		User                         func(childComplexity int, userID uuid.UUID) int
-		Viewer                       func(childComplexity int) int
+		AcceptedInvitations func(childComplexity int) int
+		Friends             func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
+		PendingInvitations  func(childComplexity int) int
+		User                func(childComplexity int, userID uuid.UUID) int
+		Viewer              func(childComplexity int) int
 	}
 
 	User struct {
@@ -133,6 +131,18 @@ type ComplexityRoot struct {
 		Cursor func(childComplexity int) int
 		Node   func(childComplexity int) int
 	}
+
+	Viewer struct {
+		AvatarURL                    func(childComplexity int) int
+		FriendGroup                  func(childComplexity int, friendGroupID uuid.UUID) int
+		FriendGroups                 func(childComplexity int) int
+		Friends                      func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
+		ID                           func(childComplexity int) int
+		IsMuted                      func(childComplexity int) int
+		Nickname                     func(childComplexity int) int
+		PendingFriendShipRequests    func(childComplexity int) int
+		RequestingFriendShipRequests func(childComplexity int) int
+	}
 }
 
 type FriendGroupResolver interface {
@@ -150,7 +160,7 @@ type MutationResolver interface {
 	SendInvitation(ctx context.Context, input *gqlmodel.SendInvitationInput) (*gqlmodel.Invitation, error)
 	AcceptInvitation(ctx context.Context, invitationID uuid.UUID) (bool, error)
 	DenyInvitation(ctx context.Context, invitationID uuid.UUID) (bool, error)
-	SignUp(ctx context.Context, input *gqlmodel.SignUpInput) (bool, error)
+	SignUp(ctx context.Context, input *gqlmodel.SignUpInput) (*gqlmodel.User, error)
 	RequestFriendShip(ctx context.Context, friendUserID uuid.UUID) (*gqlmodel.FriendshipRequest, error)
 	CancelFriendShipRequest(ctx context.Context, friendshipRequestID uuid.UUID) (bool, error)
 	DenyFriendShipRequest(ctx context.Context, friendshipRequestID uuid.UUID) (bool, error)
@@ -164,16 +174,19 @@ type MutationResolver interface {
 type QueryResolver interface {
 	PendingInvitations(ctx context.Context) ([]*gqlmodel.Invitation, error)
 	AcceptedInvitations(ctx context.Context) ([]*gqlmodel.Invitation, error)
-	Viewer(ctx context.Context) (*gqlmodel.User, error)
+	Viewer(ctx context.Context) (*gqlmodel.Viewer, error)
 	User(ctx context.Context, userID uuid.UUID) (*gqlmodel.User, error)
 	Friends(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*gqlmodel.UserConnection, error)
-	PendingFriendShipRequests(ctx context.Context) ([]*gqlmodel.FriendshipRequest, error)
-	RequestingFriendShipRequests(ctx context.Context) ([]*gqlmodel.FriendshipRequest, error)
-	FriendGroup(ctx context.Context, friendGroupID uuid.UUID) (*gqlmodel.FriendGroup, error)
-	FriendGroups(ctx context.Context) ([]*gqlmodel.FriendGroup, error)
 }
 type UserResolver interface {
 	IsMuted(ctx context.Context, obj *gqlmodel.User) (bool, error)
+}
+type ViewerResolver interface {
+	Friends(ctx context.Context, obj *gqlmodel.Viewer, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*gqlmodel.UserConnection, error)
+	PendingFriendShipRequests(ctx context.Context, obj *gqlmodel.Viewer) ([]*gqlmodel.FriendshipRequest, error)
+	RequestingFriendShipRequests(ctx context.Context, obj *gqlmodel.Viewer) ([]*gqlmodel.FriendshipRequest, error)
+	FriendGroup(ctx context.Context, obj *gqlmodel.Viewer, friendGroupID uuid.UUID) (*gqlmodel.FriendGroup, error)
+	FriendGroups(ctx context.Context, obj *gqlmodel.Viewer) ([]*gqlmodel.FriendGroup, error)
 }
 
 type executableSchema struct {
@@ -211,6 +224,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.FriendGroup.Name(childComplexity), true
+
+	case "FriendGroup.totalCount":
+		if e.complexity.FriendGroup.TotalCount == nil {
+			break
+		}
+
+		return e.complexity.FriendGroup.TotalCount(childComplexity), true
 
 	case "FriendGroup.userId":
 		if e.complexity.FriendGroup.UserID == nil {
@@ -508,25 +528,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.AcceptedInvitations(childComplexity), true
 
-	case "Query.friendGroup":
-		if e.complexity.Query.FriendGroup == nil {
-			break
-		}
-
-		args, err := ec.field_Query_friendGroup_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.FriendGroup(childComplexity, args["friendGroupId"].(uuid.UUID)), true
-
-	case "Query.friendGroups":
-		if e.complexity.Query.FriendGroups == nil {
-			break
-		}
-
-		return e.complexity.Query.FriendGroups(childComplexity), true
-
 	case "Query.friends":
 		if e.complexity.Query.Friends == nil {
 			break
@@ -539,26 +540,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.Friends(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int)), true
 
-	case "Query.pendingFriendShipRequests":
-		if e.complexity.Query.PendingFriendShipRequests == nil {
-			break
-		}
-
-		return e.complexity.Query.PendingFriendShipRequests(childComplexity), true
-
 	case "Query.pendingInvitations":
 		if e.complexity.Query.PendingInvitations == nil {
 			break
 		}
 
 		return e.complexity.Query.PendingInvitations(childComplexity), true
-
-	case "Query.requestingFriendShipRequests":
-		if e.complexity.Query.RequestingFriendShipRequests == nil {
-			break
-		}
-
-		return e.complexity.Query.RequestingFriendShipRequests(childComplexity), true
 
 	case "Query.user":
 		if e.complexity.Query.User == nil {
@@ -641,6 +628,79 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.UserEdge.Node(childComplexity), true
+
+	case "Viewer.avatarUrl":
+		if e.complexity.Viewer.AvatarURL == nil {
+			break
+		}
+
+		return e.complexity.Viewer.AvatarURL(childComplexity), true
+
+	case "Viewer.friendGroup":
+		if e.complexity.Viewer.FriendGroup == nil {
+			break
+		}
+
+		args, err := ec.field_Viewer_friendGroup_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Viewer.FriendGroup(childComplexity, args["friendGroupId"].(uuid.UUID)), true
+
+	case "Viewer.friendGroups":
+		if e.complexity.Viewer.FriendGroups == nil {
+			break
+		}
+
+		return e.complexity.Viewer.FriendGroups(childComplexity), true
+
+	case "Viewer.friends":
+		if e.complexity.Viewer.Friends == nil {
+			break
+		}
+
+		args, err := ec.field_Viewer_friends_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Viewer.Friends(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int)), true
+
+	case "Viewer.id":
+		if e.complexity.Viewer.ID == nil {
+			break
+		}
+
+		return e.complexity.Viewer.ID(childComplexity), true
+
+	case "Viewer.isMuted":
+		if e.complexity.Viewer.IsMuted == nil {
+			break
+		}
+
+		return e.complexity.Viewer.IsMuted(childComplexity), true
+
+	case "Viewer.nickname":
+		if e.complexity.Viewer.Nickname == nil {
+			break
+		}
+
+		return e.complexity.Viewer.Nickname(childComplexity), true
+
+	case "Viewer.pendingFriendShipRequests":
+		if e.complexity.Viewer.PendingFriendShipRequests == nil {
+			break
+		}
+
+		return e.complexity.Viewer.PendingFriendShipRequests(childComplexity), true
+
+	case "Viewer.requestingFriendShipRequests":
+		if e.complexity.Viewer.RequestingFriendShipRequests == nil {
+			break
+		}
+
+		return e.complexity.Viewer.RequestingFriendShipRequests(childComplexity), true
 
 	}
 	return 0, false
@@ -783,24 +843,14 @@ type PageInfo {
 `, BuiltIn: false},
 	{Name: "../../../defs/graphql/user.graphql", Input: `
 extend type Query {
-    viewer: User! @authRequired
+    viewer: Viewer! @authRequired
     user(userId: UUID!): User! @authRequired
     # fetch friends of the logged in user
     friends(after: Cursor, first: Int, before: Cursor, last: Int): UserConnection! @authRequired
-    # fetch friend ship requests need to be approved by the logged in user
-    pendingFriendShipRequests: [FriendshipRequest!]! @authRequired
-    # fetch friend ship requests sent by the logged in user
-    requestingFriendShipRequests: [FriendshipRequest!]! @authRequired
-
-    # fetch friend group
-    # Other user's group can't be fetched
-    friendGroup(friendGroupId: UUID!): FriendGroup! @authRequired
-    # fetch friend groups of the logged in user
-    friendGroups: [FriendGroup!]! @authRequired
 }
 
 extend type Mutation {
-    signUp(input: SignUpInput): Boolean!
+    signUp(input: SignUpInput): User!
 
     requestFriendShip(friendUserId: UUID!): FriendshipRequest! @authRequired
     cancelFriendShipRequest(friendshipRequestId: UUID!): Boolean! @authRequired
@@ -815,10 +865,32 @@ extend type Mutation {
     unmuteUser(muteUserId: UUID!): Boolean! @authRequired
 }
 
+# Currently logged in user
+type Viewer implements Node {
+    id: UUID!
+    nickname: String!
+    avatarUrl: String!
+    isMuted: Boolean!
+
+    friends(after: Cursor, first: Int, before: Cursor, last: Int): UserConnection! @goField(forceResolver: true)
+    # fetch friend ship requests need to be approved by the logged in user
+    pendingFriendShipRequests: [FriendshipRequest!]! @goField(forceResolver: true)
+    # fetch friend ship requests sent by the logged in user
+    requestingFriendShipRequests: [FriendshipRequest!]! @goField(forceResolver: true)
+
+    # fetch friend group
+    # Other user's group can't be fetched
+    friendGroup(friendGroupId: UUID!): FriendGroup! @goField(forceResolver: true)
+    # fetch friend groups of the logged in user
+    friendGroups: [FriendGroup!]! @goField(forceResolver: true)
+}
+
+# User is a public interface for a user
+# User MUST NOT have private information such as email
 type User implements Node {
     id: UUID!
     nickname: String!
-    avatarUrl: String
+    avatarUrl: String!
     isMuted: Boolean! @goField(forceResolver: true)
 }
 
@@ -846,6 +918,7 @@ type FriendGroup implements Node {
     id: UUID!
     userId: UUID!
     name: String!
+    totalCount: Int!
     friendUsers: [User!]! @goField(forceResolver: true)
 }
 
@@ -1126,21 +1199,6 @@ func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs
 	return args, nil
 }
 
-func (ec *executionContext) field_Query_friendGroup_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 uuid.UUID
-	if tmp, ok := rawArgs["friendGroupId"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("friendGroupId"))
-		arg0, err = ec.unmarshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["friendGroupId"] = arg0
-	return args, nil
-}
-
 func (ec *executionContext) field_Query_friends_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -1195,6 +1253,63 @@ func (ec *executionContext) field_Query_user_args(ctx context.Context, rawArgs m
 		}
 	}
 	args["userId"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Viewer_friendGroup_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 uuid.UUID
+	if tmp, ok := rawArgs["friendGroupId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("friendGroupId"))
+		arg0, err = ec.unmarshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["friendGroupId"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Viewer_friends_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *ent.Cursor
+	if tmp, ok := rawArgs["after"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("after"))
+		arg0, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋbump_apiᚋentᚐCursor(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["after"] = arg0
+	var arg1 *int
+	if tmp, ok := rawArgs["first"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("first"))
+		arg1, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["first"] = arg1
+	var arg2 *ent.Cursor
+	if tmp, ok := rawArgs["before"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("before"))
+		arg2, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋbump_apiᚋentᚐCursor(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["before"] = arg2
+	var arg3 *int
+	if tmp, ok := rawArgs["last"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("last"))
+		arg3, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["last"] = arg3
 	return args, nil
 }
 
@@ -1363,6 +1478,50 @@ func (ec *executionContext) fieldContext_FriendGroup_name(ctx context.Context, f
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _FriendGroup_totalCount(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.FriendGroup) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_FriendGroup_totalCount(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TotalCount, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_FriendGroup_totalCount(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "FriendGroup",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
 		},
 	}
 	return fc, nil
@@ -2347,9 +2506,9 @@ func (ec *executionContext) _Mutation_signUp(ctx context.Context, field graphql.
 		}
 		return graphql.Null
 	}
-	res := resTmp.(bool)
+	res := resTmp.(*gqlmodel.User)
 	fc.Result = res
-	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+	return ec.marshalNUser2ᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋbump_apiᚋgraphᚋgqlmodelᚐUser(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_signUp(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -2359,7 +2518,17 @@ func (ec *executionContext) fieldContext_Mutation_signUp(ctx context.Context, fi
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Boolean does not have child fields")
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_User_id(ctx, field)
+			case "nickname":
+				return ec.fieldContext_User_nickname(ctx, field)
+			case "avatarUrl":
+				return ec.fieldContext_User_avatarUrl(ctx, field)
+			case "isMuted":
+				return ec.fieldContext_User_isMuted(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
 	}
 	defer func() {
@@ -2755,6 +2924,8 @@ func (ec *executionContext) fieldContext_Mutation_createFriendGroup(ctx context.
 				return ec.fieldContext_FriendGroup_userId(ctx, field)
 			case "name":
 				return ec.fieldContext_FriendGroup_name(ctx, field)
+			case "totalCount":
+				return ec.fieldContext_FriendGroup_totalCount(ctx, field)
 			case "friendUsers":
 				return ec.fieldContext_FriendGroup_friendUsers(ctx, field)
 			}
@@ -2840,6 +3011,8 @@ func (ec *executionContext) fieldContext_Mutation_updateFriendGroup(ctx context.
 				return ec.fieldContext_FriendGroup_userId(ctx, field)
 			case "name":
 				return ec.fieldContext_FriendGroup_name(ctx, field)
+			case "totalCount":
+				return ec.fieldContext_FriendGroup_totalCount(ctx, field)
 			case "friendUsers":
 				return ec.fieldContext_FriendGroup_friendUsers(ctx, field)
 			}
@@ -3450,10 +3623,10 @@ func (ec *executionContext) _Query_viewer(ctx context.Context, field graphql.Col
 		if tmp == nil {
 			return nil, nil
 		}
-		if data, ok := tmp.(*gqlmodel.User); ok {
+		if data, ok := tmp.(*gqlmodel.Viewer); ok {
 			return data, nil
 		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/k-yomo/bump/bump_api/graph/gqlmodel.User`, tmp)
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/k-yomo/bump/bump_api/graph/gqlmodel.Viewer`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3465,9 +3638,9 @@ func (ec *executionContext) _Query_viewer(ctx context.Context, field graphql.Col
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*gqlmodel.User)
+	res := resTmp.(*gqlmodel.Viewer)
 	fc.Result = res
-	return ec.marshalNUser2ᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋbump_apiᚋgraphᚋgqlmodelᚐUser(ctx, field.Selections, res)
+	return ec.marshalNViewer2ᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋbump_apiᚋgraphᚋgqlmodelᚐViewer(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_viewer(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -3479,15 +3652,25 @@ func (ec *executionContext) fieldContext_Query_viewer(ctx context.Context, field
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
-				return ec.fieldContext_User_id(ctx, field)
+				return ec.fieldContext_Viewer_id(ctx, field)
 			case "nickname":
-				return ec.fieldContext_User_nickname(ctx, field)
+				return ec.fieldContext_Viewer_nickname(ctx, field)
 			case "avatarUrl":
-				return ec.fieldContext_User_avatarUrl(ctx, field)
+				return ec.fieldContext_Viewer_avatarUrl(ctx, field)
 			case "isMuted":
-				return ec.fieldContext_User_isMuted(ctx, field)
+				return ec.fieldContext_Viewer_isMuted(ctx, field)
+			case "friends":
+				return ec.fieldContext_Viewer_friends(ctx, field)
+			case "pendingFriendShipRequests":
+				return ec.fieldContext_Viewer_pendingFriendShipRequests(ctx, field)
+			case "requestingFriendShipRequests":
+				return ec.fieldContext_Viewer_requestingFriendShipRequests(ctx, field)
+			case "friendGroup":
+				return ec.fieldContext_Viewer_friendGroup(ctx, field)
+			case "friendGroups":
+				return ec.fieldContext_Viewer_friendGroups(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type Viewer", field.Name)
 		},
 	}
 	return fc, nil
@@ -3657,321 +3840,6 @@ func (ec *executionContext) fieldContext_Query_friends(ctx context.Context, fiel
 	if fc.Args, err = ec.field_Query_friends_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Query_pendingFriendShipRequests(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_pendingFriendShipRequests(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		directive0 := func(rctx context.Context) (interface{}, error) {
-			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Query().PendingFriendShipRequests(rctx)
-		}
-		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.AuthRequired == nil {
-				return nil, errors.New("directive authRequired is not implemented")
-			}
-			return ec.directives.AuthRequired(ctx, nil, directive0)
-		}
-
-		tmp, err := directive1(rctx)
-		if err != nil {
-			return nil, graphql.ErrorOnPath(ctx, err)
-		}
-		if tmp == nil {
-			return nil, nil
-		}
-		if data, ok := tmp.([]*gqlmodel.FriendshipRequest); ok {
-			return data, nil
-		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/k-yomo/bump/bump_api/graph/gqlmodel.FriendshipRequest`, tmp)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]*gqlmodel.FriendshipRequest)
-	fc.Result = res
-	return ec.marshalNFriendshipRequest2ᚕᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋbump_apiᚋgraphᚋgqlmodelᚐFriendshipRequestᚄ(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Query_pendingFriendShipRequests(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Query",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_FriendshipRequest_id(ctx, field)
-			case "fromUserId":
-				return ec.fieldContext_FriendshipRequest_fromUserId(ctx, field)
-			case "fromUser":
-				return ec.fieldContext_FriendshipRequest_fromUser(ctx, field)
-			case "toUserId":
-				return ec.fieldContext_FriendshipRequest_toUserId(ctx, field)
-			case "toUser":
-				return ec.fieldContext_FriendshipRequest_toUser(ctx, field)
-			case "createdAt":
-				return ec.fieldContext_FriendshipRequest_createdAt(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type FriendshipRequest", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Query_requestingFriendShipRequests(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_requestingFriendShipRequests(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		directive0 := func(rctx context.Context) (interface{}, error) {
-			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Query().RequestingFriendShipRequests(rctx)
-		}
-		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.AuthRequired == nil {
-				return nil, errors.New("directive authRequired is not implemented")
-			}
-			return ec.directives.AuthRequired(ctx, nil, directive0)
-		}
-
-		tmp, err := directive1(rctx)
-		if err != nil {
-			return nil, graphql.ErrorOnPath(ctx, err)
-		}
-		if tmp == nil {
-			return nil, nil
-		}
-		if data, ok := tmp.([]*gqlmodel.FriendshipRequest); ok {
-			return data, nil
-		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/k-yomo/bump/bump_api/graph/gqlmodel.FriendshipRequest`, tmp)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]*gqlmodel.FriendshipRequest)
-	fc.Result = res
-	return ec.marshalNFriendshipRequest2ᚕᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋbump_apiᚋgraphᚋgqlmodelᚐFriendshipRequestᚄ(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Query_requestingFriendShipRequests(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Query",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_FriendshipRequest_id(ctx, field)
-			case "fromUserId":
-				return ec.fieldContext_FriendshipRequest_fromUserId(ctx, field)
-			case "fromUser":
-				return ec.fieldContext_FriendshipRequest_fromUser(ctx, field)
-			case "toUserId":
-				return ec.fieldContext_FriendshipRequest_toUserId(ctx, field)
-			case "toUser":
-				return ec.fieldContext_FriendshipRequest_toUser(ctx, field)
-			case "createdAt":
-				return ec.fieldContext_FriendshipRequest_createdAt(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type FriendshipRequest", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Query_friendGroup(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_friendGroup(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		directive0 := func(rctx context.Context) (interface{}, error) {
-			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Query().FriendGroup(rctx, fc.Args["friendGroupId"].(uuid.UUID))
-		}
-		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.AuthRequired == nil {
-				return nil, errors.New("directive authRequired is not implemented")
-			}
-			return ec.directives.AuthRequired(ctx, nil, directive0)
-		}
-
-		tmp, err := directive1(rctx)
-		if err != nil {
-			return nil, graphql.ErrorOnPath(ctx, err)
-		}
-		if tmp == nil {
-			return nil, nil
-		}
-		if data, ok := tmp.(*gqlmodel.FriendGroup); ok {
-			return data, nil
-		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/k-yomo/bump/bump_api/graph/gqlmodel.FriendGroup`, tmp)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*gqlmodel.FriendGroup)
-	fc.Result = res
-	return ec.marshalNFriendGroup2ᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋbump_apiᚋgraphᚋgqlmodelᚐFriendGroup(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Query_friendGroup(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Query",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_FriendGroup_id(ctx, field)
-			case "userId":
-				return ec.fieldContext_FriendGroup_userId(ctx, field)
-			case "name":
-				return ec.fieldContext_FriendGroup_name(ctx, field)
-			case "friendUsers":
-				return ec.fieldContext_FriendGroup_friendUsers(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type FriendGroup", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Query_friendGroup_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Query_friendGroups(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_friendGroups(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		directive0 := func(rctx context.Context) (interface{}, error) {
-			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Query().FriendGroups(rctx)
-		}
-		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.AuthRequired == nil {
-				return nil, errors.New("directive authRequired is not implemented")
-			}
-			return ec.directives.AuthRequired(ctx, nil, directive0)
-		}
-
-		tmp, err := directive1(rctx)
-		if err != nil {
-			return nil, graphql.ErrorOnPath(ctx, err)
-		}
-		if tmp == nil {
-			return nil, nil
-		}
-		if data, ok := tmp.([]*gqlmodel.FriendGroup); ok {
-			return data, nil
-		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/k-yomo/bump/bump_api/graph/gqlmodel.FriendGroup`, tmp)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]*gqlmodel.FriendGroup)
-	fc.Result = res
-	return ec.marshalNFriendGroup2ᚕᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋbump_apiᚋgraphᚋgqlmodelᚐFriendGroupᚄ(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Query_friendGroups(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Query",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_FriendGroup_id(ctx, field)
-			case "userId":
-				return ec.fieldContext_FriendGroup_userId(ctx, field)
-			case "name":
-				return ec.fieldContext_FriendGroup_name(ctx, field)
-			case "friendUsers":
-				return ec.fieldContext_FriendGroup_friendUsers(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type FriendGroup", field.Name)
-		},
 	}
 	return fc, nil
 }
@@ -4214,11 +4082,14 @@ func (ec *executionContext) _User_avatarUrl(ctx context.Context, field graphql.C
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
-	res := resTmp.(*string)
+	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_User_avatarUrl(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -4519,6 +4390,484 @@ func (ec *executionContext) fieldContext_UserEdge_cursor(ctx context.Context, fi
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type Cursor does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Viewer_id(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Viewer) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Viewer_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(uuid.UUID)
+	fc.Result = res
+	return ec.marshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Viewer_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Viewer",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type UUID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Viewer_nickname(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Viewer) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Viewer_nickname(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Nickname, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Viewer_nickname(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Viewer",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Viewer_avatarUrl(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Viewer) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Viewer_avatarUrl(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.AvatarURL, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Viewer_avatarUrl(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Viewer",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Viewer_isMuted(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Viewer) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Viewer_isMuted(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.IsMuted, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Viewer_isMuted(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Viewer",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Viewer_friends(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Viewer) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Viewer_friends(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Viewer().Friends(rctx, obj, fc.Args["after"].(*ent.Cursor), fc.Args["first"].(*int), fc.Args["before"].(*ent.Cursor), fc.Args["last"].(*int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.UserConnection)
+	fc.Result = res
+	return ec.marshalNUserConnection2ᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋbump_apiᚋgraphᚋgqlmodelᚐUserConnection(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Viewer_friends(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Viewer",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "edges":
+				return ec.fieldContext_UserConnection_edges(ctx, field)
+			case "pageInfo":
+				return ec.fieldContext_UserConnection_pageInfo(ctx, field)
+			case "totalCount":
+				return ec.fieldContext_UserConnection_totalCount(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type UserConnection", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Viewer_friends_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Viewer_pendingFriendShipRequests(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Viewer) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Viewer_pendingFriendShipRequests(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Viewer().PendingFriendShipRequests(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*gqlmodel.FriendshipRequest)
+	fc.Result = res
+	return ec.marshalNFriendshipRequest2ᚕᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋbump_apiᚋgraphᚋgqlmodelᚐFriendshipRequestᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Viewer_pendingFriendShipRequests(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Viewer",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_FriendshipRequest_id(ctx, field)
+			case "fromUserId":
+				return ec.fieldContext_FriendshipRequest_fromUserId(ctx, field)
+			case "fromUser":
+				return ec.fieldContext_FriendshipRequest_fromUser(ctx, field)
+			case "toUserId":
+				return ec.fieldContext_FriendshipRequest_toUserId(ctx, field)
+			case "toUser":
+				return ec.fieldContext_FriendshipRequest_toUser(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_FriendshipRequest_createdAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type FriendshipRequest", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Viewer_requestingFriendShipRequests(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Viewer) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Viewer_requestingFriendShipRequests(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Viewer().RequestingFriendShipRequests(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*gqlmodel.FriendshipRequest)
+	fc.Result = res
+	return ec.marshalNFriendshipRequest2ᚕᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋbump_apiᚋgraphᚋgqlmodelᚐFriendshipRequestᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Viewer_requestingFriendShipRequests(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Viewer",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_FriendshipRequest_id(ctx, field)
+			case "fromUserId":
+				return ec.fieldContext_FriendshipRequest_fromUserId(ctx, field)
+			case "fromUser":
+				return ec.fieldContext_FriendshipRequest_fromUser(ctx, field)
+			case "toUserId":
+				return ec.fieldContext_FriendshipRequest_toUserId(ctx, field)
+			case "toUser":
+				return ec.fieldContext_FriendshipRequest_toUser(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_FriendshipRequest_createdAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type FriendshipRequest", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Viewer_friendGroup(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Viewer) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Viewer_friendGroup(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Viewer().FriendGroup(rctx, obj, fc.Args["friendGroupId"].(uuid.UUID))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.FriendGroup)
+	fc.Result = res
+	return ec.marshalNFriendGroup2ᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋbump_apiᚋgraphᚋgqlmodelᚐFriendGroup(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Viewer_friendGroup(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Viewer",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_FriendGroup_id(ctx, field)
+			case "userId":
+				return ec.fieldContext_FriendGroup_userId(ctx, field)
+			case "name":
+				return ec.fieldContext_FriendGroup_name(ctx, field)
+			case "totalCount":
+				return ec.fieldContext_FriendGroup_totalCount(ctx, field)
+			case "friendUsers":
+				return ec.fieldContext_FriendGroup_friendUsers(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type FriendGroup", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Viewer_friendGroup_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Viewer_friendGroups(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Viewer) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Viewer_friendGroups(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Viewer().FriendGroups(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*gqlmodel.FriendGroup)
+	fc.Result = res
+	return ec.marshalNFriendGroup2ᚕᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋbump_apiᚋgraphᚋgqlmodelᚐFriendGroupᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Viewer_friendGroups(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Viewer",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_FriendGroup_id(ctx, field)
+			case "userId":
+				return ec.fieldContext_FriendGroup_userId(ctx, field)
+			case "name":
+				return ec.fieldContext_FriendGroup_name(ctx, field)
+			case "totalCount":
+				return ec.fieldContext_FriendGroup_totalCount(ctx, field)
+			case "friendUsers":
+				return ec.fieldContext_FriendGroup_friendUsers(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type FriendGroup", field.Name)
 		},
 	}
 	return fc, nil
@@ -6596,6 +6945,13 @@ func (ec *executionContext) _Node(ctx context.Context, sel ast.SelectionSet, obj
 			return graphql.Null
 		}
 		return ec._Invitation(ctx, sel, obj)
+	case gqlmodel.Viewer:
+		return ec._Viewer(ctx, sel, &obj)
+	case *gqlmodel.Viewer:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._Viewer(ctx, sel, obj)
 	case gqlmodel.User:
 		return ec._User(ctx, sel, &obj)
 	case *gqlmodel.User:
@@ -6653,6 +7009,13 @@ func (ec *executionContext) _FriendGroup(ctx context.Context, sel ast.SelectionS
 		case "name":
 
 			out.Values[i] = ec._FriendGroup_name(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "totalCount":
+
+			out.Values[i] = ec._FriendGroup_totalCount(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
@@ -7191,98 +7554,6 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			out.Concurrently(i, func() graphql.Marshaler {
 				return rrm(innerCtx)
 			})
-		case "pendingFriendShipRequests":
-			field := field
-
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_pendingFriendShipRequests(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
-				return res
-			}
-
-			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
-			}
-
-			out.Concurrently(i, func() graphql.Marshaler {
-				return rrm(innerCtx)
-			})
-		case "requestingFriendShipRequests":
-			field := field
-
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_requestingFriendShipRequests(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
-				return res
-			}
-
-			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
-			}
-
-			out.Concurrently(i, func() graphql.Marshaler {
-				return rrm(innerCtx)
-			})
-		case "friendGroup":
-			field := field
-
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_friendGroup(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
-				return res
-			}
-
-			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
-			}
-
-			out.Concurrently(i, func() graphql.Marshaler {
-				return rrm(innerCtx)
-			})
-		case "friendGroups":
-			field := field
-
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_friendGroups(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
-				return res
-			}
-
-			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
-			}
-
-			out.Concurrently(i, func() graphql.Marshaler {
-				return rrm(innerCtx)
-			})
 		case "__type":
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
@@ -7334,6 +7605,9 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 
 			out.Values[i] = ec._User_avatarUrl(ctx, field, obj)
 
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
 		case "isMuted":
 			field := field
 
@@ -7431,6 +7705,155 @@ func (ec *executionContext) _UserEdge(ctx context.Context, sel ast.SelectionSet,
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var viewerImplementors = []string{"Viewer", "Node"}
+
+func (ec *executionContext) _Viewer(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.Viewer) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, viewerImplementors)
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Viewer")
+		case "id":
+
+			out.Values[i] = ec._Viewer_id(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "nickname":
+
+			out.Values[i] = ec._Viewer_nickname(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "avatarUrl":
+
+			out.Values[i] = ec._Viewer_avatarUrl(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "isMuted":
+
+			out.Values[i] = ec._Viewer_isMuted(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "friends":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Viewer_friends(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return innerFunc(ctx)
+
+			})
+		case "pendingFriendShipRequests":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Viewer_pendingFriendShipRequests(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return innerFunc(ctx)
+
+			})
+		case "requestingFriendShipRequests":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Viewer_requestingFriendShipRequests(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return innerFunc(ctx)
+
+			})
+		case "friendGroup":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Viewer_friendGroup(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return innerFunc(ctx)
+
+			})
+		case "friendGroups":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Viewer_friendGroups(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return innerFunc(ctx)
+
+			})
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -8195,6 +8618,20 @@ func (ec *executionContext) marshalNUserEdge2ᚖgithubᚗcomᚋkᚑyomoᚋbump�
 		return graphql.Null
 	}
 	return ec._UserEdge(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNViewer2githubᚗcomᚋkᚑyomoᚋbumpᚋbump_apiᚋgraphᚋgqlmodelᚐViewer(ctx context.Context, sel ast.SelectionSet, v gqlmodel.Viewer) graphql.Marshaler {
+	return ec._Viewer(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNViewer2ᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋbump_apiᚋgraphᚋgqlmodelᚐViewer(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.Viewer) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._Viewer(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalN__Directive2githubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐDirective(ctx context.Context, sel ast.SelectionSet, v introspection.Directive) graphql.Marshaler {

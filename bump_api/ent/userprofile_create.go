@@ -57,14 +57,6 @@ func (upc *UserProfileCreate) SetAvatarURL(s string) *UserProfileCreate {
 	return upc
 }
 
-// SetNillableAvatarURL sets the "avatar_url" field if the given value is not nil.
-func (upc *UserProfileCreate) SetNillableAvatarURL(s *string) *UserProfileCreate {
-	if s != nil {
-		upc.SetAvatarURL(*s)
-	}
-	return upc
-}
-
 // SetCreatedAt sets the "created_at" field.
 func (upc *UserProfileCreate) SetCreatedAt(t time.Time) *UserProfileCreate {
 	upc.mutation.SetCreatedAt(t)
@@ -211,6 +203,9 @@ func (upc *UserProfileCreate) check() error {
 	if _, ok := upc.mutation.Nickname(); !ok {
 		return &ValidationError{Name: "nickname", err: errors.New(`ent: missing required field "UserProfile.nickname"`)}
 	}
+	if _, ok := upc.mutation.AvatarURL(); !ok {
+		return &ValidationError{Name: "avatar_url", err: errors.New(`ent: missing required field "UserProfile.avatar_url"`)}
+	}
 	if _, ok := upc.mutation.CreatedAt(); !ok {
 		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "UserProfile.created_at"`)}
 	}
@@ -267,7 +262,7 @@ func (upc *UserProfileCreate) createSpec() (*UserProfile, *sqlgraph.CreateSpec) 
 	}
 	if value, ok := upc.mutation.AvatarURL(); ok {
 		_spec.SetField(userprofile.FieldAvatarURL, field.TypeString, value)
-		_node.AvatarURL = &value
+		_node.AvatarURL = value
 	}
 	if value, ok := upc.mutation.CreatedAt(); ok {
 		_spec.SetField(userprofile.FieldCreatedAt, field.TypeTime, value)
@@ -391,12 +386,6 @@ func (u *UserProfileUpsert) UpdateAvatarURL() *UserProfileUpsert {
 	return u
 }
 
-// ClearAvatarURL clears the value of the "avatar_url" field.
-func (u *UserProfileUpsert) ClearAvatarURL() *UserProfileUpsert {
-	u.SetNull(userprofile.FieldAvatarURL)
-	return u
-}
-
 // SetUpdatedAt sets the "updated_at" field.
 func (u *UserProfileUpsert) SetUpdatedAt(v time.Time) *UserProfileUpsert {
 	u.Set(userprofile.FieldUpdatedAt, v)
@@ -509,13 +498,6 @@ func (u *UserProfileUpsertOne) SetAvatarURL(v string) *UserProfileUpsertOne {
 func (u *UserProfileUpsertOne) UpdateAvatarURL() *UserProfileUpsertOne {
 	return u.Update(func(s *UserProfileUpsert) {
 		s.UpdateAvatarURL()
-	})
-}
-
-// ClearAvatarURL clears the value of the "avatar_url" field.
-func (u *UserProfileUpsertOne) ClearAvatarURL() *UserProfileUpsertOne {
-	return u.Update(func(s *UserProfileUpsert) {
-		s.ClearAvatarURL()
 	})
 }
 
@@ -796,13 +778,6 @@ func (u *UserProfileUpsertBulk) SetAvatarURL(v string) *UserProfileUpsertBulk {
 func (u *UserProfileUpsertBulk) UpdateAvatarURL() *UserProfileUpsertBulk {
 	return u.Update(func(s *UserProfileUpsert) {
 		s.UpdateAvatarURL()
-	})
-}
-
-// ClearAvatarURL clears the value of the "avatar_url" field.
-func (u *UserProfileUpsertBulk) ClearAvatarURL() *UserProfileUpsertBulk {
-	return u.Update(func(s *UserProfileUpsert) {
-		s.ClearAvatarURL()
 	})
 }
 

@@ -1,0 +1,6 @@
+
+fragment friendGroupListItemFragment on FriendGroup {
+    id
+    name
+    totalCount
+}

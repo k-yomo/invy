@@ -63,6 +63,6 @@ func (g GraphQLResponseInterceptor) Validate(schema graphql.ExecutableSchema) er
 
 func (g GraphQLResponseInterceptor) InterceptResponse(ctx context.Context, next graphql.ResponseHandler) *graphql.Response {
 	oc := graphql.GetOperationContext(ctx)
-	Logger(ctx).Info(oc.OperationName, zap.String("query", oc.RawQuery), zap.Any("variables", oc.Variables))
+	Logger(ctx).Debug(oc.OperationName, zap.String("query", oc.RawQuery), zap.Any("variables", oc.Variables))
 	return next(ctx)
 }

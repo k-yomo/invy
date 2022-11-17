@@ -27,12 +27,16 @@ import (
 func init() {
 	friendgroupFields := schema.FriendGroup{}.Fields()
 	_ = friendgroupFields
+	// friendgroupDescTotalCount is the schema descriptor for total_count field.
+	friendgroupDescTotalCount := friendgroupFields[3].Descriptor()
+	// friendgroup.DefaultTotalCount holds the default value on creation for the total_count field.
+	friendgroup.DefaultTotalCount = friendgroupDescTotalCount.Default.(int)
 	// friendgroupDescCreatedAt is the schema descriptor for created_at field.
-	friendgroupDescCreatedAt := friendgroupFields[3].Descriptor()
+	friendgroupDescCreatedAt := friendgroupFields[4].Descriptor()
 	// friendgroup.DefaultCreatedAt holds the default value on creation for the created_at field.
 	friendgroup.DefaultCreatedAt = friendgroupDescCreatedAt.Default.(func() time.Time)
 	// friendgroupDescUpdatedAt is the schema descriptor for updated_at field.
-	friendgroupDescUpdatedAt := friendgroupFields[4].Descriptor()
+	friendgroupDescUpdatedAt := friendgroupFields[5].Descriptor()
 	// friendgroup.DefaultUpdatedAt holds the default value on creation for the updated_at field.
 	friendgroup.DefaultUpdatedAt = friendgroupDescUpdatedAt.Default.(func() time.Time)
 	// friendgroup.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.

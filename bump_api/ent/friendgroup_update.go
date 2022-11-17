@@ -38,6 +38,27 @@ func (fgu *FriendGroupUpdate) SetName(s string) *FriendGroupUpdate {
 	return fgu
 }
 
+// SetTotalCount sets the "total_count" field.
+func (fgu *FriendGroupUpdate) SetTotalCount(i int) *FriendGroupUpdate {
+	fgu.mutation.ResetTotalCount()
+	fgu.mutation.SetTotalCount(i)
+	return fgu
+}
+
+// SetNillableTotalCount sets the "total_count" field if the given value is not nil.
+func (fgu *FriendGroupUpdate) SetNillableTotalCount(i *int) *FriendGroupUpdate {
+	if i != nil {
+		fgu.SetTotalCount(*i)
+	}
+	return fgu
+}
+
+// AddTotalCount adds i to the "total_count" field.
+func (fgu *FriendGroupUpdate) AddTotalCount(i int) *FriendGroupUpdate {
+	fgu.mutation.AddTotalCount(i)
+	return fgu
+}
+
 // SetUpdatedAt sets the "updated_at" field.
 func (fgu *FriendGroupUpdate) SetUpdatedAt(t time.Time) *FriendGroupUpdate {
 	fgu.mutation.SetUpdatedAt(t)
@@ -255,6 +276,12 @@ func (fgu *FriendGroupUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := fgu.mutation.Name(); ok {
 		_spec.SetField(friendgroup.FieldName, field.TypeString, value)
 	}
+	if value, ok := fgu.mutation.TotalCount(); ok {
+		_spec.SetField(friendgroup.FieldTotalCount, field.TypeInt, value)
+	}
+	if value, ok := fgu.mutation.AddedTotalCount(); ok {
+		_spec.AddField(friendgroup.FieldTotalCount, field.TypeInt, value)
+	}
 	if value, ok := fgu.mutation.UpdatedAt(); ok {
 		_spec.SetField(friendgroup.FieldUpdatedAt, field.TypeTime, value)
 	}
@@ -463,6 +490,27 @@ type FriendGroupUpdateOne struct {
 // SetName sets the "name" field.
 func (fguo *FriendGroupUpdateOne) SetName(s string) *FriendGroupUpdateOne {
 	fguo.mutation.SetName(s)
+	return fguo
+}
+
+// SetTotalCount sets the "total_count" field.
+func (fguo *FriendGroupUpdateOne) SetTotalCount(i int) *FriendGroupUpdateOne {
+	fguo.mutation.ResetTotalCount()
+	fguo.mutation.SetTotalCount(i)
+	return fguo
+}
+
+// SetNillableTotalCount sets the "total_count" field if the given value is not nil.
+func (fguo *FriendGroupUpdateOne) SetNillableTotalCount(i *int) *FriendGroupUpdateOne {
+	if i != nil {
+		fguo.SetTotalCount(*i)
+	}
+	return fguo
+}
+
+// AddTotalCount adds i to the "total_count" field.
+func (fguo *FriendGroupUpdateOne) AddTotalCount(i int) *FriendGroupUpdateOne {
+	fguo.mutation.AddTotalCount(i)
 	return fguo
 }
 
@@ -712,6 +760,12 @@ func (fguo *FriendGroupUpdateOne) sqlSave(ctx context.Context) (_node *FriendGro
 	}
 	if value, ok := fguo.mutation.Name(); ok {
 		_spec.SetField(friendgroup.FieldName, field.TypeString, value)
+	}
+	if value, ok := fguo.mutation.TotalCount(); ok {
+		_spec.SetField(friendgroup.FieldTotalCount, field.TypeInt, value)
+	}
+	if value, ok := fguo.mutation.AddedTotalCount(); ok {
+		_spec.AddField(friendgroup.FieldTotalCount, field.TypeInt, value)
 	}
 	if value, ok := fguo.mutation.UpdatedAt(); ok {
 		_spec.SetField(friendgroup.FieldUpdatedAt, field.TypeTime, value)

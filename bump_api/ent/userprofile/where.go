@@ -457,20 +457,6 @@ func AvatarURLHasSuffix(v string) predicate.UserProfile {
 	})
 }
 
-// AvatarURLIsNil applies the IsNil predicate on the "avatar_url" field.
-func AvatarURLIsNil() predicate.UserProfile {
-	return predicate.UserProfile(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldAvatarURL)))
-	})
-}
-
-// AvatarURLNotNil applies the NotNil predicate on the "avatar_url" field.
-func AvatarURLNotNil() predicate.UserProfile {
-	return predicate.UserProfile(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldAvatarURL)))
-	})
-}
-
 // AvatarURLEqualFold applies the EqualFold predicate on the "avatar_url" field.
 func AvatarURLEqualFold(v string) predicate.UserProfile {
 	return predicate.UserProfile(func(s *sql.Selector) {

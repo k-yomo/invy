@@ -22,6 +22,8 @@ type FriendGroup struct {
 	UserID uuid.UUID `json:"user_id,omitempty"`
 	// Name holds the value of the "name" field.
 	Name string `json:"name,omitempty"`
+	// TotalCount holds the value of the "total_count" field.
+	TotalCount int `json:"total_count,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
@@ -97,6 +99,8 @@ func (*FriendGroup) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
+		case friendgroup.FieldTotalCount:
+			values[i] = new(sql.NullInt64)
 		case friendgroup.FieldName:
 			values[i] = new(sql.NullString)
 		case friendgroup.FieldCreatedAt, friendgroup.FieldUpdatedAt:
@@ -135,6 +139,12 @@ func (fg *FriendGroup) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field name", values[i])
 			} else if value.Valid {
 				fg.Name = value.String
+			}
+		case friendgroup.FieldTotalCount:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field total_count", values[i])
+			} else if value.Valid {
+				fg.TotalCount = int(value.Int64)
 			}
 		case friendgroup.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -201,6 +211,9 @@ func (fg *FriendGroup) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("name=")
 	builder.WriteString(fg.Name)
+	builder.WriteString(", ")
+	builder.WriteString("total_count=")
+	builder.WriteString(fmt.Sprintf("%v", fg.TotalCount))
 	builder.WriteString(", ")
 	builder.WriteString("created_at=")
 	builder.WriteString(fg.CreatedAt.Format(time.ANSIC))

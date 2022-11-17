@@ -39,6 +39,20 @@ func (fgc *FriendGroupCreate) SetName(s string) *FriendGroupCreate {
 	return fgc
 }
 
+// SetTotalCount sets the "total_count" field.
+func (fgc *FriendGroupCreate) SetTotalCount(i int) *FriendGroupCreate {
+	fgc.mutation.SetTotalCount(i)
+	return fgc
+}
+
+// SetNillableTotalCount sets the "total_count" field if the given value is not nil.
+func (fgc *FriendGroupCreate) SetNillableTotalCount(i *int) *FriendGroupCreate {
+	if i != nil {
+		fgc.SetTotalCount(*i)
+	}
+	return fgc
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (fgc *FriendGroupCreate) SetCreatedAt(t time.Time) *FriendGroupCreate {
 	fgc.mutation.SetCreatedAt(t)
@@ -208,6 +222,10 @@ func (fgc *FriendGroupCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (fgc *FriendGroupCreate) defaults() {
+	if _, ok := fgc.mutation.TotalCount(); !ok {
+		v := friendgroup.DefaultTotalCount
+		fgc.mutation.SetTotalCount(v)
+	}
 	if _, ok := fgc.mutation.CreatedAt(); !ok {
 		v := friendgroup.DefaultCreatedAt()
 		fgc.mutation.SetCreatedAt(v)
@@ -229,6 +247,9 @@ func (fgc *FriendGroupCreate) check() error {
 	}
 	if _, ok := fgc.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New(`ent: missing required field "FriendGroup.name"`)}
+	}
+	if _, ok := fgc.mutation.TotalCount(); !ok {
+		return &ValidationError{Name: "total_count", err: errors.New(`ent: missing required field "FriendGroup.total_count"`)}
 	}
 	if _, ok := fgc.mutation.CreatedAt(); !ok {
 		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "FriendGroup.created_at"`)}
@@ -279,6 +300,10 @@ func (fgc *FriendGroupCreate) createSpec() (*FriendGroup, *sqlgraph.CreateSpec) 
 	if value, ok := fgc.mutation.Name(); ok {
 		_spec.SetField(friendgroup.FieldName, field.TypeString, value)
 		_node.Name = value
+	}
+	if value, ok := fgc.mutation.TotalCount(); ok {
+		_spec.SetField(friendgroup.FieldTotalCount, field.TypeInt, value)
+		_node.TotalCount = value
 	}
 	if value, ok := fgc.mutation.CreatedAt(); ok {
 		_spec.SetField(friendgroup.FieldCreatedAt, field.TypeTime, value)
@@ -436,6 +461,24 @@ func (u *FriendGroupUpsert) UpdateName() *FriendGroupUpsert {
 	return u
 }
 
+// SetTotalCount sets the "total_count" field.
+func (u *FriendGroupUpsert) SetTotalCount(v int) *FriendGroupUpsert {
+	u.Set(friendgroup.FieldTotalCount, v)
+	return u
+}
+
+// UpdateTotalCount sets the "total_count" field to the value that was provided on create.
+func (u *FriendGroupUpsert) UpdateTotalCount() *FriendGroupUpsert {
+	u.SetExcluded(friendgroup.FieldTotalCount)
+	return u
+}
+
+// AddTotalCount adds v to the "total_count" field.
+func (u *FriendGroupUpsert) AddTotalCount(v int) *FriendGroupUpsert {
+	u.Add(friendgroup.FieldTotalCount, v)
+	return u
+}
+
 // SetUpdatedAt sets the "updated_at" field.
 func (u *FriendGroupUpsert) SetUpdatedAt(v time.Time) *FriendGroupUpsert {
 	u.Set(friendgroup.FieldUpdatedAt, v)
@@ -513,6 +556,27 @@ func (u *FriendGroupUpsertOne) SetName(v string) *FriendGroupUpsertOne {
 func (u *FriendGroupUpsertOne) UpdateName() *FriendGroupUpsertOne {
 	return u.Update(func(s *FriendGroupUpsert) {
 		s.UpdateName()
+	})
+}
+
+// SetTotalCount sets the "total_count" field.
+func (u *FriendGroupUpsertOne) SetTotalCount(v int) *FriendGroupUpsertOne {
+	return u.Update(func(s *FriendGroupUpsert) {
+		s.SetTotalCount(v)
+	})
+}
+
+// AddTotalCount adds v to the "total_count" field.
+func (u *FriendGroupUpsertOne) AddTotalCount(v int) *FriendGroupUpsertOne {
+	return u.Update(func(s *FriendGroupUpsert) {
+		s.AddTotalCount(v)
+	})
+}
+
+// UpdateTotalCount sets the "total_count" field to the value that was provided on create.
+func (u *FriendGroupUpsertOne) UpdateTotalCount() *FriendGroupUpsertOne {
+	return u.Update(func(s *FriendGroupUpsert) {
+		s.UpdateTotalCount()
 	})
 }
 
@@ -758,6 +822,27 @@ func (u *FriendGroupUpsertBulk) SetName(v string) *FriendGroupUpsertBulk {
 func (u *FriendGroupUpsertBulk) UpdateName() *FriendGroupUpsertBulk {
 	return u.Update(func(s *FriendGroupUpsert) {
 		s.UpdateName()
+	})
+}
+
+// SetTotalCount sets the "total_count" field.
+func (u *FriendGroupUpsertBulk) SetTotalCount(v int) *FriendGroupUpsertBulk {
+	return u.Update(func(s *FriendGroupUpsert) {
+		s.SetTotalCount(v)
+	})
+}
+
+// AddTotalCount adds v to the "total_count" field.
+func (u *FriendGroupUpsertBulk) AddTotalCount(v int) *FriendGroupUpsertBulk {
+	return u.Update(func(s *FriendGroupUpsert) {
+		s.AddTotalCount(v)
+	})
+}
+
+// UpdateTotalCount sets the "total_count" field to the value that was provided on create.
+func (u *FriendGroupUpsertBulk) UpdateTotalCount() *FriendGroupUpsertBulk {
+	return u.Update(func(s *FriendGroupUpsert) {
+		s.UpdateTotalCount()
 	})
 }
 

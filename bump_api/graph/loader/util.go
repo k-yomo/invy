@@ -1,10 +1,13 @@
 package loader
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/graph-gophers/dataloader/v7"
 )
+
+var ErrNotFound = errors.New("not found")
 
 func convertToErrorResults[T any](err error, length int) []*dataloader.Result[T] {
 	results := make([]*dataloader.Result[T], 0, length)
@@ -22,7 +25,7 @@ func convertToResults[K comparable, V any](keys []K, kvMap map[K]V) []*dataloade
 			results = append(results, &dataloader.Result[V]{Data: v, Error: nil})
 		} else {
 			var nilValue V
-			err := fmt.Errorf("value %q not found", key)
+			err := fmt.Errorf("value %q: %w", key, ErrNotFound)
 			results = append(results, &dataloader.Result[V]{Data: nilValue, Error: err})
 		}
 	}

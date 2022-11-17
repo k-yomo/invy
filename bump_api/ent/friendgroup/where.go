@@ -96,6 +96,13 @@ func Name(v string) predicate.FriendGroup {
 	})
 }
 
+// TotalCount applies equality check predicate on the "total_count" field. It's identical to TotalCountEQ.
+func TotalCount(v int) predicate.FriendGroup {
+	return predicate.FriendGroup(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldTotalCount), v))
+	})
+}
+
 // CreatedAt applies equality check predicate on the "created_at" field. It's identical to CreatedAtEQ.
 func CreatedAt(v time.Time) predicate.FriendGroup {
 	return predicate.FriendGroup(func(s *sql.Selector) {
@@ -242,6 +249,70 @@ func NameEqualFold(v string) predicate.FriendGroup {
 func NameContainsFold(v string) predicate.FriendGroup {
 	return predicate.FriendGroup(func(s *sql.Selector) {
 		s.Where(sql.ContainsFold(s.C(FieldName), v))
+	})
+}
+
+// TotalCountEQ applies the EQ predicate on the "total_count" field.
+func TotalCountEQ(v int) predicate.FriendGroup {
+	return predicate.FriendGroup(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldTotalCount), v))
+	})
+}
+
+// TotalCountNEQ applies the NEQ predicate on the "total_count" field.
+func TotalCountNEQ(v int) predicate.FriendGroup {
+	return predicate.FriendGroup(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldTotalCount), v))
+	})
+}
+
+// TotalCountIn applies the In predicate on the "total_count" field.
+func TotalCountIn(vs ...int) predicate.FriendGroup {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.FriendGroup(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldTotalCount), v...))
+	})
+}
+
+// TotalCountNotIn applies the NotIn predicate on the "total_count" field.
+func TotalCountNotIn(vs ...int) predicate.FriendGroup {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.FriendGroup(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldTotalCount), v...))
+	})
+}
+
+// TotalCountGT applies the GT predicate on the "total_count" field.
+func TotalCountGT(v int) predicate.FriendGroup {
+	return predicate.FriendGroup(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldTotalCount), v))
+	})
+}
+
+// TotalCountGTE applies the GTE predicate on the "total_count" field.
+func TotalCountGTE(v int) predicate.FriendGroup {
+	return predicate.FriendGroup(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldTotalCount), v))
+	})
+}
+
+// TotalCountLT applies the LT predicate on the "total_count" field.
+func TotalCountLT(v int) predicate.FriendGroup {
+	return predicate.FriendGroup(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldTotalCount), v))
+	})
+}
+
+// TotalCountLTE applies the LTE predicate on the "total_count" field.
+func TotalCountLTE(v int) predicate.FriendGroup {
+	return predicate.FriendGroup(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldTotalCount), v))
 	})
 }
 

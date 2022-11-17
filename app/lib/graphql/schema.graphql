@@ -25,6 +25,7 @@ type FriendGroup implements Node {
   id: UUID!
   userId: UUID!
   name: String!
+  totalCount: Int!
   friendUsers: [User!]!
 }
 
@@ -52,7 +53,7 @@ type Mutation {
   sendInvitation(input: SendInvitationInput): Invitation!
   acceptInvitation(invitationId: UUID!): Boolean!
   denyInvitation(invitationId: UUID!): Boolean!
-  signUp(input: SignUpInput): Boolean!
+  signUp(input: SignUpInput): User!
   requestFriendShip(friendUserId: UUID!): FriendshipRequest!
   cancelFriendShipRequest(friendshipRequestId: UUID!): Boolean!
   denyFriendShipRequest(friendshipRequestId: UUID!): Boolean!
@@ -78,26 +79,11 @@ type PageInfo {
 type Query {
   pendingInvitations: [Invitation!]!
   acceptedInvitations: [Invitation!]!
-  viewer: User!
+  viewer: Viewer!
   user(userId: UUID!): User!
 
   """fetch friends of the logged in user"""
   friends(after: Cursor, first: Int, before: Cursor, last: Int): UserConnection!
-
-  """fetch friend ship requests need to be approved by the logged in user"""
-  pendingFriendShipRequests: [FriendshipRequest!]!
-
-  """fetch friend ship requests sent by the logged in user"""
-  requestingFriendShipRequests: [FriendshipRequest!]!
-
-  """
-  fetch friend group
-  Other user's group can't be fetched
-  """
-  friendGroup(friendGroupId: UUID!): FriendGroup!
-
-  """fetch friend groups of the logged in user"""
-  friendGroups: [FriendGroup!]!
 }
 
 input SendInvitationInput {
@@ -123,10 +109,14 @@ input UpdateFriendGroupInput {
   friendUserIds: [UUID!]!
 }
 
+"""
+User is a public interface for a user
+User MUST NOT have private information such as email
+"""
 type User implements Node {
   id: UUID!
   nickname: String!
-  avatarUrl: String
+  avatarUrl: String!
   isMuted: Boolean!
 }
 
@@ -142,3 +132,27 @@ type UserEdge {
 }
 
 scalar UUID
+
+"""Currently logged in user"""
+type Viewer implements Node {
+  id: UUID!
+  nickname: String!
+  avatarUrl: String!
+  isMuted: Boolean!
+  friends(after: Cursor, first: Int, before: Cursor, last: Int): UserConnection!
+
+  """fetch friend ship requests need to be approved by the logged in user"""
+  pendingFriendShipRequests: [FriendshipRequest!]!
+
+  """fetch friend ship requests sent by the logged in user"""
+  requestingFriendShipRequests: [FriendshipRequest!]!
+
+  """
+  fetch friend group
+  Other user's group can't be fetched
+  """
+  friendGroup(friendGroupId: UUID!): FriendGroup!
+
+  """fetch friend groups of the logged in user"""
+  friendGroups: [FriendGroup!]!
+}

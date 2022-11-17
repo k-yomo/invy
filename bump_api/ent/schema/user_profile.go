@@ -23,7 +23,7 @@ func (UserProfile) Fields() []ent.Field {
 		field.UUID("user_id", uuid.UUID{}).Immutable(),
 		field.String("nickname"),
 		field.String("email").Unique().Optional(),
-		field.String("avatar_url").Nillable().Optional(),
+		field.String("avatar_url"),
 		field.Time("created_at").
 			Immutable().
 			Default(time.Now),

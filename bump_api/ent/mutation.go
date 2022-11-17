@@ -57,6 +57,8 @@ type FriendGroupMutation struct {
 	typ                             string
 	id                              *uuid.UUID
 	name                            *string
+	total_count                     *int
+	addtotal_count                  *int
 	created_at                      *time.Time
 	updated_at                      *time.Time
 	clearedFields                   map[string]struct{}
@@ -250,6 +252,62 @@ func (m *FriendGroupMutation) OldName(ctx context.Context) (v string, err error)
 // ResetName resets all changes to the "name" field.
 func (m *FriendGroupMutation) ResetName() {
 	m.name = nil
+}
+
+// SetTotalCount sets the "total_count" field.
+func (m *FriendGroupMutation) SetTotalCount(i int) {
+	m.total_count = &i
+	m.addtotal_count = nil
+}
+
+// TotalCount returns the value of the "total_count" field in the mutation.
+func (m *FriendGroupMutation) TotalCount() (r int, exists bool) {
+	v := m.total_count
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTotalCount returns the old "total_count" field's value of the FriendGroup entity.
+// If the FriendGroup object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FriendGroupMutation) OldTotalCount(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTotalCount is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTotalCount requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTotalCount: %w", err)
+	}
+	return oldValue.TotalCount, nil
+}
+
+// AddTotalCount adds i to the "total_count" field.
+func (m *FriendGroupMutation) AddTotalCount(i int) {
+	if m.addtotal_count != nil {
+		*m.addtotal_count += i
+	} else {
+		m.addtotal_count = &i
+	}
+}
+
+// AddedTotalCount returns the value that was added to the "total_count" field in this mutation.
+func (m *FriendGroupMutation) AddedTotalCount() (r int, exists bool) {
+	v := m.addtotal_count
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetTotalCount resets all changes to the "total_count" field.
+func (m *FriendGroupMutation) ResetTotalCount() {
+	m.total_count = nil
+	m.addtotal_count = nil
 }
 
 // SetCreatedAt sets the "created_at" field.
@@ -531,12 +589,15 @@ func (m *FriendGroupMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *FriendGroupMutation) Fields() []string {
-	fields := make([]string, 0, 4)
+	fields := make([]string, 0, 5)
 	if m.user != nil {
 		fields = append(fields, friendgroup.FieldUserID)
 	}
 	if m.name != nil {
 		fields = append(fields, friendgroup.FieldName)
+	}
+	if m.total_count != nil {
+		fields = append(fields, friendgroup.FieldTotalCount)
 	}
 	if m.created_at != nil {
 		fields = append(fields, friendgroup.FieldCreatedAt)
@@ -556,6 +617,8 @@ func (m *FriendGroupMutation) Field(name string) (ent.Value, bool) {
 		return m.UserID()
 	case friendgroup.FieldName:
 		return m.Name()
+	case friendgroup.FieldTotalCount:
+		return m.TotalCount()
 	case friendgroup.FieldCreatedAt:
 		return m.CreatedAt()
 	case friendgroup.FieldUpdatedAt:
@@ -573,6 +636,8 @@ func (m *FriendGroupMutation) OldField(ctx context.Context, name string) (ent.Va
 		return m.OldUserID(ctx)
 	case friendgroup.FieldName:
 		return m.OldName(ctx)
+	case friendgroup.FieldTotalCount:
+		return m.OldTotalCount(ctx)
 	case friendgroup.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
 	case friendgroup.FieldUpdatedAt:
@@ -600,6 +665,13 @@ func (m *FriendGroupMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetName(v)
 		return nil
+	case friendgroup.FieldTotalCount:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTotalCount(v)
+		return nil
 	case friendgroup.FieldCreatedAt:
 		v, ok := value.(time.Time)
 		if !ok {
@@ -621,13 +693,21 @@ func (m *FriendGroupMutation) SetField(name string, value ent.Value) error {
 // AddedFields returns all numeric fields that were incremented/decremented during
 // this mutation.
 func (m *FriendGroupMutation) AddedFields() []string {
-	return nil
+	var fields []string
+	if m.addtotal_count != nil {
+		fields = append(fields, friendgroup.FieldTotalCount)
+	}
+	return fields
 }
 
 // AddedField returns the numeric value that was incremented/decremented on a field
 // with the given name. The second boolean return value indicates that this field
 // was not set, or was not defined in the schema.
 func (m *FriendGroupMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case friendgroup.FieldTotalCount:
+		return m.AddedTotalCount()
+	}
 	return nil, false
 }
 
@@ -636,6 +716,13 @@ func (m *FriendGroupMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *FriendGroupMutation) AddField(name string, value ent.Value) error {
 	switch name {
+	case friendgroup.FieldTotalCount:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTotalCount(v)
+		return nil
 	}
 	return fmt.Errorf("unknown FriendGroup numeric field %s", name)
 }
@@ -668,6 +755,9 @@ func (m *FriendGroupMutation) ResetField(name string) error {
 		return nil
 	case friendgroup.FieldName:
 		m.ResetName()
+		return nil
+	case friendgroup.FieldTotalCount:
+		m.ResetTotalCount()
 		return nil
 	case friendgroup.FieldCreatedAt:
 		m.ResetCreatedAt()
@@ -7353,7 +7443,7 @@ func (m *UserProfileMutation) AvatarURL() (r string, exists bool) {
 // OldAvatarURL returns the old "avatar_url" field's value of the UserProfile entity.
 // If the UserProfile object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UserProfileMutation) OldAvatarURL(ctx context.Context) (v *string, err error) {
+func (m *UserProfileMutation) OldAvatarURL(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldAvatarURL is only allowed on UpdateOne operations")
 	}
@@ -7367,22 +7457,9 @@ func (m *UserProfileMutation) OldAvatarURL(ctx context.Context) (v *string, err 
 	return oldValue.AvatarURL, nil
 }
 
-// ClearAvatarURL clears the value of the "avatar_url" field.
-func (m *UserProfileMutation) ClearAvatarURL() {
-	m.avatar_url = nil
-	m.clearedFields[userprofile.FieldAvatarURL] = struct{}{}
-}
-
-// AvatarURLCleared returns if the "avatar_url" field was cleared in this mutation.
-func (m *UserProfileMutation) AvatarURLCleared() bool {
-	_, ok := m.clearedFields[userprofile.FieldAvatarURL]
-	return ok
-}
-
 // ResetAvatarURL resets all changes to the "avatar_url" field.
 func (m *UserProfileMutation) ResetAvatarURL() {
 	m.avatar_url = nil
-	delete(m.clearedFields, userprofile.FieldAvatarURL)
 }
 
 // SetCreatedAt sets the "created_at" field.
@@ -7646,9 +7723,6 @@ func (m *UserProfileMutation) ClearedFields() []string {
 	if m.FieldCleared(userprofile.FieldEmail) {
 		fields = append(fields, userprofile.FieldEmail)
 	}
-	if m.FieldCleared(userprofile.FieldAvatarURL) {
-		fields = append(fields, userprofile.FieldAvatarURL)
-	}
 	return fields
 }
 
@@ -7665,9 +7739,6 @@ func (m *UserProfileMutation) ClearField(name string) error {
 	switch name {
 	case userprofile.FieldEmail:
 		m.ClearEmail()
-		return nil
-	case userprofile.FieldAvatarURL:
-		m.ClearAvatarURL()
 		return nil
 	}
 	return fmt.Errorf("unknown UserProfile nullable field %s", name)

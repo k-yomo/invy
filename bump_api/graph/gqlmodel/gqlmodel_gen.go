@@ -26,6 +26,7 @@ type FriendGroup struct {
 	ID          uuid.UUID `json:"id"`
 	UserID      uuid.UUID `json:"userId"`
 	Name        string    `json:"name"`
+	TotalCount  int       `json:"totalCount"`
 	FriendUsers []*User   `json:"friendUsers"`
 }
 
@@ -89,7 +90,7 @@ type UpdateFriendGroupInput struct {
 type User struct {
 	ID        uuid.UUID `json:"id"`
 	Nickname  string    `json:"nickname"`
-	AvatarURL *string   `json:"avatarUrl"`
+	AvatarURL string    `json:"avatarUrl"`
 	IsMuted   bool      `json:"isMuted"`
 }
 
@@ -106,6 +107,21 @@ type UserEdge struct {
 	Node   *User      `json:"node"`
 	Cursor ent.Cursor `json:"cursor"`
 }
+
+type Viewer struct {
+	ID                           uuid.UUID            `json:"id"`
+	Nickname                     string               `json:"nickname"`
+	AvatarURL                    string               `json:"avatarUrl"`
+	IsMuted                      bool                 `json:"isMuted"`
+	Friends                      *UserConnection      `json:"friends"`
+	PendingFriendShipRequests    []*FriendshipRequest `json:"pendingFriendShipRequests"`
+	RequestingFriendShipRequests []*FriendshipRequest `json:"requestingFriendShipRequests"`
+	FriendGroup                  *FriendGroup         `json:"friendGroup"`
+	FriendGroups                 []*FriendGroup       `json:"friendGroups"`
+}
+
+func (Viewer) IsNode()               {}
+func (this Viewer) GetID() uuid.UUID { return this.ID }
 
 type ConstraintFormat string
 
