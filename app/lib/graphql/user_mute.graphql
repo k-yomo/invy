@@ -1,0 +1,8 @@
+
+mutation muteFriend($muteUserId: UUID!) {
+    muteUser(muteUserId: $muteUserId)
+}
+
+mutation unmuteFriend($muteUserId: UUID!) {
+    unmuteUser(muteUserId:  $muteUserId)
+}

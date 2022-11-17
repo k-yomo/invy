@@ -34,18 +34,21 @@ class FriendGroupList extends StatelessWidget {
                             ),
                           ),
                           child: CircleAvatar(
-                            child: Text(friendGroup.name.substring(0, 1)),
                             backgroundColor: Colors.transparent,
+                            child: Text(friendGroup.name.substring(0, 1)),
                           ),
                         ),
                         Container(
-                          margin: EdgeInsets.only(left: 10, right: 2),
-                          child: Text(friendGroup.name,
-                              style: TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.bold)),
+                          margin: const EdgeInsets.only(left: 10, right: 2),
+                          child: Text(
+                            friendGroup.name,
+                            style: const TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.bold),
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
                         Text("(${friendGroup.totalCount.toString()})",
-                            style: TextStyle(
+                            style: const TextStyle(
                                 fontSize: 16, fontWeight: FontWeight.bold))
                       ],
                     ),

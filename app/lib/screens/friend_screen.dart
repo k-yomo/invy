@@ -9,8 +9,8 @@ class FriendScreen extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final viewerQueryResult = useQuery$friendScreenViewer(Options$Query$friendScreenViewer(
-    )).result;
+    final viewerQueryResult =
+        useQuery$friendScreenViewer(Options$Query$friendScreenViewer()).result;
 
     final viewer = viewerQueryResult.parsedData?.viewer;
 
@@ -20,9 +20,8 @@ class FriendScreen extends HookConsumerWidget {
           'Friends',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
-        shape: Border(
-            bottom: BorderSide(color: Colors.grey.shade200, width: 1)
-        ),
+        shape:
+            Border(bottom: BorderSide(color: Colors.grey.shade200, width: 1)),
       ),
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
@@ -45,97 +44,12 @@ class FriendScreen extends HookConsumerWidget {
                           child: const Text("グループを作る"),
                         )
                       ])),
-                viewer?.friendGroups != null
-                    ? FriendGroupList(
-                        friendGroups: viewer!.friendGroups!.toList())
-                    : Container(
-                        child: Column(children: [
-                        ElevatedButton(
-                          onPressed: () {},
-                          style: ElevatedButton.styleFrom(
-                            foregroundColor: Colors.black,
-                          ),
-                          child: const Text("グループを作る"),
-                        )
-                      ])),
-                viewer?.friendGroups != null
-                    ? FriendGroupList(
-                        friendGroups: viewer!.friendGroups!.toList())
-                    : Container(
-                        child: Column(children: [
-                        ElevatedButton(
-                          onPressed: () {},
-                          style: ElevatedButton.styleFrom(
-                            foregroundColor: Colors.black,
-                          ),
-                          child: const Text("グループを作る"),
-                        )
-                      ])),
-                viewer?.friendGroups != null
-                    ? FriendGroupList(
-                        friendGroups: viewer!.friendGroups!.toList())
-                    : Container(
-                        child: Column(children: [
-                        ElevatedButton(
-                          onPressed: () {},
-                          style: ElevatedButton.styleFrom(
-                            foregroundColor: Colors.black,
-                          ),
-                          child: const Text("グループを作る"),
-                        )
-                      ])),
-                viewer?.friendGroups != null
-                    ? FriendGroupList(
-                        friendGroups: viewer!.friendGroups!.toList())
-                    : Container(
-                        child: Column(children: [
-                        ElevatedButton(
-                          onPressed: () {},
-                          style: ElevatedButton.styleFrom(
-                            foregroundColor: Colors.black,
-                          ),
-                          child: const Text("グループを作る"),
-                        )
-                      ])),
-                viewer?.friendGroups != null
-                    ? FriendGroupList(
-                        friendGroups: viewer!.friendGroups!.toList())
-                    : Container(
-                        child: Column(children: [
-                        ElevatedButton(
-                          onPressed: () {},
-                          style: ElevatedButton.styleFrom(
-                            foregroundColor: Colors.black,
-                          ),
-                          child: const Text("グループを作る"),
-                        )
-                      ])),
               ],
             ),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const _Title(text: "友達"),
-                viewer?.friendGroups != null
-                    ? FriendList(
-                        friends:
-                            viewer!.friends.edges.map((e) => e.node).toList())
-                    : Container(),
-                viewer?.friendGroups != null
-                    ? FriendList(
-                        friends:
-                            viewer!.friends.edges.map((e) => e.node).toList())
-                    : Container(),
-                viewer?.friendGroups != null
-                    ? FriendList(
-                        friends:
-                            viewer!.friends.edges.map((e) => e.node).toList())
-                    : Container(),
-                viewer?.friendGroups != null
-                    ? FriendList(
-                        friends:
-                            viewer!.friends.edges.map((e) => e.node).toList())
-                    : Container(),
                 viewer?.friendGroups != null
                     ? FriendList(
                         friends:
