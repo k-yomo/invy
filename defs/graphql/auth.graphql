@@ -1,0 +1,9 @@
+extend type Mutation {
+    signUp(input: SignUpInput): Viewer!
+}
+
+input SignUpInput {
+    email: String @constraint(format: EMAIL)
+    nickname: String! @constraint(min: 3)
+    avatarUrl: String @constraint(format: URL)
+}

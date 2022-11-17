@@ -4,9 +4,13 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 @immutable
 class LoggedInUser {
   const LoggedInUser(
-      {required this.id, required this.nickname, required this.avatarUrl});
+      {required this.id,
+      required this.screenId,
+      required this.nickname,
+      required this.avatarUrl});
 
   final String id;
+  final String screenId;
   final String nickname;
   final String avatarUrl;
 }

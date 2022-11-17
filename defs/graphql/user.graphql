@@ -7,8 +7,6 @@ extend type Query {
 }
 
 extend type Mutation {
-    signUp(input: SignUpInput): User!
-
     requestFriendship(friendUserId: UUID!): FriendshipRequest! @authRequired
     cancelFriendshipRequest(friendshipRequestId: UUID!): Boolean! @authRequired
     denyFriendshipRequest(friendshipRequestId: UUID!): Boolean! @authRequired
@@ -79,13 +77,6 @@ type FriendGroup implements Node {
     name: String!
     totalCount: Int!
     friendUsers: [User!]! @goField(forceResolver: true)
-}
-
-
-input SignUpInput {
-    email: String @constraint(format: EMAIL)
-    nickname: String! @constraint(min: 3)
-    avatarUrl: String @constraint(format: URL)
 }
 
 input CreateFriendGroupInput {

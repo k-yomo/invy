@@ -151,6 +151,13 @@ const documentNodeQueryviewer = DocumentNode(definitions: [
             selectionSet: null,
           ),
           FieldNode(
+            name: NameNode(value: 'screenId'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: null,
+          ),
+          FieldNode(
             name: NameNode(value: 'nickname'),
             alias: null,
             arguments: [],
@@ -294,6 +301,7 @@ class Query$viewer$Widget extends graphql_flutter.Query<Query$viewer> {
 class Query$viewer$viewer {
   Query$viewer$viewer({
     required this.id,
+    required this.screenId,
     required this.nickname,
     required this.avatarUrl,
     required this.$__typename,
@@ -301,11 +309,13 @@ class Query$viewer$viewer {
 
   factory Query$viewer$viewer.fromJson(Map<String, dynamic> json) {
     final l$id = json['id'];
+    final l$screenId = json['screenId'];
     final l$nickname = json['nickname'];
     final l$avatarUrl = json['avatarUrl'];
     final l$$__typename = json['__typename'];
     return Query$viewer$viewer(
       id: (l$id as String),
+      screenId: (l$screenId as String),
       nickname: (l$nickname as String),
       avatarUrl: (l$avatarUrl as String),
       $__typename: (l$$__typename as String),
@@ -313,6 +323,8 @@ class Query$viewer$viewer {
   }
 
   final String id;
+
+  final String screenId;
 
   final String nickname;
 
@@ -324,6 +336,8 @@ class Query$viewer$viewer {
     final _resultData = <String, dynamic>{};
     final l$id = id;
     _resultData['id'] = l$id;
+    final l$screenId = screenId;
+    _resultData['screenId'] = l$screenId;
     final l$nickname = nickname;
     _resultData['nickname'] = l$nickname;
     final l$avatarUrl = avatarUrl;
@@ -336,11 +350,13 @@ class Query$viewer$viewer {
   @override
   int get hashCode {
     final l$id = id;
+    final l$screenId = screenId;
     final l$nickname = nickname;
     final l$avatarUrl = avatarUrl;
     final l$$__typename = $__typename;
     return Object.hashAll([
       l$id,
+      l$screenId,
       l$nickname,
       l$avatarUrl,
       l$$__typename,
@@ -358,6 +374,11 @@ class Query$viewer$viewer {
     final l$id = id;
     final lOther$id = other.id;
     if (l$id != lOther$id) {
+      return false;
+    }
+    final l$screenId = screenId;
+    final lOther$screenId = other.screenId;
+    if (l$screenId != lOther$screenId) {
       return false;
     }
     final l$nickname = nickname;
@@ -398,6 +419,7 @@ abstract class CopyWith$Query$viewer$viewer<TRes> {
 
   TRes call({
     String? id,
+    String? screenId,
     String? nickname,
     String? avatarUrl,
     String? $__typename,
@@ -419,12 +441,16 @@ class _CopyWithImpl$Query$viewer$viewer<TRes>
 
   TRes call({
     Object? id = _undefined,
+    Object? screenId = _undefined,
     Object? nickname = _undefined,
     Object? avatarUrl = _undefined,
     Object? $__typename = _undefined,
   }) =>
       _then(Query$viewer$viewer(
         id: id == _undefined || id == null ? _instance.id : (id as String),
+        screenId: screenId == _undefined || screenId == null
+            ? _instance.screenId
+            : (screenId as String),
         nickname: nickname == _undefined || nickname == null
             ? _instance.nickname
             : (nickname as String),
@@ -445,6 +471,7 @@ class _CopyWithStubImpl$Query$viewer$viewer<TRes>
 
   call({
     String? id,
+    String? screenId,
     String? nickname,
     String? avatarUrl,
     String? $__typename,

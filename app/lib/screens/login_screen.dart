@@ -30,6 +30,7 @@ class LoginScreen extends HookConsumerWidget {
               final user = res!.parsedData!.viewer;
               ref.read(loggedInUserProvider.notifier).state = LoggedInUser(
                 id: user.id,
+                screenId: user.screenId,
                 nickname: user.nickname,
                 avatarUrl: user.avatarUrl,
               );
@@ -52,6 +53,7 @@ class LoginScreen extends HookConsumerWidget {
             final user = res!.parsedData!.signUp;
             ref.read(loggedInUserProvider.notifier).state = LoggedInUser(
                 id: user.id,
+                screenId: user.screenId,
                 nickname: user.nickname,
                 avatarUrl: user.avatarUrl);
             print("signed up in successfully");

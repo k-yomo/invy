@@ -50,10 +50,10 @@ type Invitation implements Node {
 }
 
 type Mutation {
+  signUp(input: SignUpInput): Viewer!
   sendInvitation(input: SendInvitationInput): Invitation!
   acceptInvitation(invitationId: UUID!): Boolean!
   denyInvitation(invitationId: UUID!): Boolean!
-  signUp(input: SignUpInput): User!
   requestFriendship(friendUserId: UUID!): FriendshipRequest!
   cancelFriendshipRequest(friendshipRequestId: UUID!): Boolean!
   denyFriendshipRequest(friendshipRequestId: UUID!): Boolean!
@@ -96,7 +96,7 @@ input SendInvitationInput {
 }
 
 input SignUpInput {
-  email: String!
+  email: String
   nickname: String!
   avatarUrl: String
 }

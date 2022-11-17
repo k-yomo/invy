@@ -159,10 +159,10 @@ type InvitationResolver interface {
 	AcceptedUsers(ctx context.Context, obj *gqlmodel.Invitation) ([]*gqlmodel.User, error)
 }
 type MutationResolver interface {
+	SignUp(ctx context.Context, input *gqlmodel.SignUpInput) (*gqlmodel.Viewer, error)
 	SendInvitation(ctx context.Context, input *gqlmodel.SendInvitationInput) (*gqlmodel.Invitation, error)
 	AcceptInvitation(ctx context.Context, invitationID uuid.UUID) (bool, error)
 	DenyInvitation(ctx context.Context, invitationID uuid.UUID) (bool, error)
-	SignUp(ctx context.Context, input *gqlmodel.SignUpInput) (*gqlmodel.User, error)
 	RequestFriendship(ctx context.Context, friendUserID uuid.UUID) (*gqlmodel.FriendshipRequest, error)
 	CancelFriendshipRequest(ctx context.Context, friendshipRequestID uuid.UUID) (bool, error)
 	DenyFriendshipRequest(ctx context.Context, friendshipRequestID uuid.UUID) (bool, error)
@@ -791,6 +791,16 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 }
 
 var sources = []*ast.Source{
+	{Name: "../../../defs/graphql/auth.graphql", Input: `extend type Mutation {
+    signUp(input: SignUpInput): Viewer!
+}
+
+input SignUpInput {
+    email: String @constraint(format: EMAIL)
+    nickname: String! @constraint(min: 3)
+    avatarUrl: String @constraint(format: URL)
+}
+`, BuiltIn: false},
 	{Name: "../../../defs/graphql/invitation.graphql", Input: `extend type Query {
     pendingInvitations: [Invitation!]! @authRequired
     acceptedInvitations: [Invitation!]! @authRequired
@@ -867,8 +877,6 @@ extend type Query {
 }
 
 extend type Mutation {
-    signUp(input: SignUpInput): User!
-
     requestFriendship(friendUserId: UUID!): FriendshipRequest! @authRequired
     cancelFriendshipRequest(friendshipRequestId: UUID!): Boolean! @authRequired
     denyFriendshipRequest(friendshipRequestId: UUID!): Boolean! @authRequired
@@ -939,13 +947,6 @@ type FriendGroup implements Node {
     name: String!
     totalCount: Int!
     friendUsers: [User!]! @goField(forceResolver: true)
-}
-
-
-input SignUpInput {
-    email: String @constraint(format: EMAIL)
-    nickname: String! @constraint(min: 3)
-    avatarUrl: String @constraint(format: URL)
 }
 
 input CreateFriendGroupInput {
@@ -2266,6 +2267,83 @@ func (ec *executionContext) fieldContext_Invitation_acceptedUsers(ctx context.Co
 	return fc, nil
 }
 
+func (ec *executionContext) _Mutation_signUp(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_signUp(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().SignUp(rctx, fc.Args["input"].(*gqlmodel.SignUpInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.Viewer)
+	fc.Result = res
+	return ec.marshalNViewer2ᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋbump_apiᚋgraphᚋgqlmodelᚐViewer(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_signUp(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Viewer_id(ctx, field)
+			case "screenId":
+				return ec.fieldContext_Viewer_screenId(ctx, field)
+			case "email":
+				return ec.fieldContext_Viewer_email(ctx, field)
+			case "nickname":
+				return ec.fieldContext_Viewer_nickname(ctx, field)
+			case "avatarUrl":
+				return ec.fieldContext_Viewer_avatarUrl(ctx, field)
+			case "friends":
+				return ec.fieldContext_Viewer_friends(ctx, field)
+			case "pendingFriendshipRequests":
+				return ec.fieldContext_Viewer_pendingFriendshipRequests(ctx, field)
+			case "requestingFriendshipRequests":
+				return ec.fieldContext_Viewer_requestingFriendshipRequests(ctx, field)
+			case "friendGroup":
+				return ec.fieldContext_Viewer_friendGroup(ctx, field)
+			case "friendGroups":
+				return ec.fieldContext_Viewer_friendGroups(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Viewer", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_signUp_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Mutation_sendInvitation(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Mutation_sendInvitation(ctx, field)
 	if err != nil {
@@ -2503,73 +2581,6 @@ func (ec *executionContext) fieldContext_Mutation_denyInvitation(ctx context.Con
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_denyInvitation_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Mutation_signUp(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_signUp(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().SignUp(rctx, fc.Args["input"].(*gqlmodel.SignUpInput))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*gqlmodel.User)
-	fc.Result = res
-	return ec.marshalNUser2ᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋbump_apiᚋgraphᚋgqlmodelᚐUser(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Mutation_signUp(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Mutation",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_User_id(ctx, field)
-			case "nickname":
-				return ec.fieldContext_User_nickname(ctx, field)
-			case "avatarUrl":
-				return ec.fieldContext_User_avatarUrl(ctx, field)
-			case "isMuted":
-				return ec.fieldContext_User_isMuted(ctx, field)
-			case "isFriend":
-				return ec.fieldContext_User_isFriend(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_signUp_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return
 	}
@@ -7373,6 +7384,15 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Mutation")
+		case "signUp":
+
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_signUp(ctx, field)
+			})
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "sendInvitation":
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
@@ -7395,15 +7415,6 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_denyInvitation(ctx, field)
-			})
-
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "signUp":
-
-			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_signUp(ctx, field)
 			})
 
 			if out.Values[i] == graphql.Null {

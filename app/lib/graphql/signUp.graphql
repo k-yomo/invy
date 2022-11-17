@@ -2,6 +2,7 @@
 mutation signUp($input: SignUpInput) {
     signUp(input: $input) {
         id
+        screenId
         nickname
         avatarUrl
     }
