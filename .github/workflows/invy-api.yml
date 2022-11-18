@@ -1,0 +1,102 @@
+name: Invy API Workflow
+on:
+  push:
+    paths:
+      - ".github/workflows/invy_api.yml"
+      - "invy_api/**"
+      - "pkg/**"
+
+permissions:
+  contents: read
+  id-token: write
+
+env:
+  GO111MODULE: "on"
+  TZ: "Asia/Tokyo"
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-go@v3
+        with:
+          go-version-file: 'go.mod'
+          cache: true
+
+      - name: Download Modules
+        run: go mod download
+
+      - name: Install gotestsum
+        run: go install gotest.tools/gotestsum
+      #      - name: Lint
+      #        uses: golangci/golangci-lint-action@v3.1.0
+      #        with:
+      #          version: v1.33
+      #
+      - name: Test
+        run: make test
+
+  deploy-dev:
+    name: Deploy Dev
+    needs: test
+    runs-on: ubuntu-latest
+    environment: invy-api-dev
+    steps:
+      - uses: actions/checkout@v3
+      - name: Authenticate Google Cloud
+        uses: google-github-actions/auth@v0
+        with:
+          workload_identity_provider: projects/434214998297/locations/global/workloadIdentityPools/github/providers/github-provider
+          service_account: api-ci-dev@invy-dev.iam.gserviceaccount.com
+
+      - name: Setup Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+
+      - name: Push Docker Image to Dev GAR
+        if: github.ref == 'refs/heads/main'
+        run: |
+          gcloud --quiet auth configure-docker asia-northeast1-docker.pkg.dev
+          docker build -t invy-api -f invy_api.Dockerfile .
+          docker tag invy-api asia-northeast1-docker.pkg.dev/invy-dev/invy/invy-api:latest
+          docker push asia-northeast1-docker.pkg.dev/invy-dev/invy/invy-api
+        env:
+          DOCKER_BUILDKIT: 1
+
+      - name: Deploy Dev
+        if: github.ref == 'refs/heads/main'
+        run: |
+          gcloud run deploy invy-api-dev --image=asia-northeast1-docker.pkg.dev/invy-dev/invy/invy-api:latest --project=invy-dev --region=asia-northeast1 --platform=managed
+
+  # TODO: Deploy when release tag is cut after releasing app
+  deploy-prod:
+    name: Deploy Prod
+    needs: test
+    runs-on: ubuntu-latest
+    environment: invy-api-prod
+    steps:
+     - uses: actions/checkout@v3
+     - name: Authenticate Google Cloud
+       uses: google-github-actions/auth@v1
+       with:
+         workload_identity_provider: projects/936800855868/locations/global/workloadIdentityPools/github/providers/github-provider
+         service_account: api-ci-prod@invy-prod.iam.gserviceaccount.com
+
+     - name: Setup Cloud SDK
+       uses: google-github-actions/setup-gcloud@v1
+
+     - name: Push Docker Image to Prod GAR
+       if: github.ref == 'refs/heads/main'
+       run: |
+         gcloud --quiet auth configure-docker asia-northeast1-docker.pkg.dev
+         docker build -t invy-api -f invy_api.Dockerfile .
+         docker tag invy-api asia-northeast1-docker.pkg.dev/invy-prod/invy/invy-api:latest
+         docker push asia-northeast1-docker.pkg.dev/invy-prod/invy/invy-api
+       env:
+         DOCKER_BUILDKIT: 1
+
+     - name: Deploy Prod
+       if: github.ref == 'refs/heads/main'
+       run: |
+         gcloud run deploy invy-api-prod --image=asia-northeast1-docker.pkg.dev/invy-prod/invy/invy-api:latest --project=invy-prod --region=asia-northeast1 --platform=managed
