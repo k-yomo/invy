@@ -3,6 +3,7 @@
 .PHONY: generate
 setup: ## Setup project
 	npm install -g graphql-cli graphql-schema-utilities
+	go install gotest.tools/gotestsum
 
 .PHONY: generate
 generate: ## Generate graphql code / ent code from schema
@@ -37,6 +38,10 @@ run-app: ## Run app
 .PHONY: run-db
 run-db:
 	docker-compose up -d db
+
+.PHONY: test
+test: ## Run tests
+	gotestsum -- -v -race -coverprofile=coverage.out ./...
 
 .PHONY: fmt
 fmt: ## Format code

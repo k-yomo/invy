@@ -9,6 +9,11 @@ import (
 
 var ErrNotFound = errors.New("not found")
 
+type LoaderKey interface {
+	comparable
+	fmt.Stringer
+}
+
 func convertToErrorResults[T any](err error, length int) []*dataloader.Result[T] {
 	results := make([]*dataloader.Result[T], 0, length)
 	for i := 0; i < length; i++ {
@@ -18,7 +23,7 @@ func convertToErrorResults[T any](err error, length int) []*dataloader.Result[T]
 	return results
 }
 
-func convertToResults[K comparable, V any](keys []K, kvMap map[K]V) []*dataloader.Result[V] {
+func convertToResults[K LoaderKey, V any](keys []K, kvMap map[K]V) []*dataloader.Result[V] {
 	results := make([]*dataloader.Result[V], 0, len(keys))
 	for _, key := range keys {
 		if v, ok := kvMap[key]; ok {
