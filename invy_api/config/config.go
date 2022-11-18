@@ -38,7 +38,7 @@ type AppConfig struct {
 
 type DBConfig struct {
 	Driver   string `default:"postgres"`
-	DBName   string `default:"bump_db" envconfig:"DB_NAME"`
+	DBName   string `default:"invy" envconfig:"DB_NAME"`
 	User     string `default:"postgres" envconfig:"DB_USER"`
 	Password string `default:"password" envconfig:"DB_PASSWORD"`
 	// either one of DB_URL or DB_CONNECTION_NAME must be supplied

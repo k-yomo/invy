@@ -10,7 +10,7 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
-      POSTGRES_DB: bump_db
+      POSTGRES_DB: invy
 
 volumes:
   db_data:
