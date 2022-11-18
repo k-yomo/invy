@@ -58,12 +58,12 @@ jobs:
 #        run: |
 #          gcloud --quiet auth configure-docker asia-northeast1-docker.pkg.dev
 #          docker build -t invy-api -f invy_api.Dockerfile .
-#          docker tag invy-api asia-northeast1-docker.pkg.dev/${{ secrets.PROD_GCP_PROJECT }}/shing/invy-api:latest
-#          docker push asia-northeast1-docker.pkg.dev/${{ secrets.PROD_GCP_PROJECT }}/shing/invy-api
+#          docker tag invy-api asia-northeast1-docker.pkg.dev/${{ secrets.PROD_GCP_PROJECT }}/invy/invy-api:latest
+#          docker push asia-northeast1-docker.pkg.dev/${{ secrets.PROD_GCP_PROJECT }}/invy/invy-api
 #        env:
 #          DOCKER_BUILDKIT: 1
 #
 #      - name: Deploy
 #        if: github.ref == 'refs/heads/main'
 #        run: |
-#          gcloud run deploy invy-api-prod --image=asia-northeast1-docker.pkg.dev/${{ secrets.PROD_GCP_PROJECT }}/shing/invy-api:latest --project=${{ secrets.PROD_GCP_PROJECT }} --region=asia-northeast1 --platform=managed
+#          gcloud run deploy invy-api-prod --image=asia-northeast1-docker.pkg.dev/${{ secrets.PROD_GCP_PROJECT }}/invy/invy-api:latest --project=${{ secrets.PROD_GCP_PROJECT }} --region=asia-northeast1 --platform=managed
