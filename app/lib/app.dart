@@ -1,3 +1,4 @@
+import 'package:bump/screens/invitation_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:universal_platform/universal_platform.dart';
@@ -5,7 +6,6 @@ import 'package:universal_platform/universal_platform.dart';
 import 'services/graphql_client.dart';
 import 'screens/login_screen.dart';
 import 'state/auth.dart';
-import 'screens/chat_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/friend_screen.dart';
 import 'screens/profile_screen.dart';
@@ -71,7 +71,7 @@ class RootWidget extends StatefulWidget {
 class _RootWidgetState extends State<RootWidget> {
   static const screens = [
     HomeScreen(),
-    ChatScreen(),
+    InvitationScreen(),
     FriendScreen(),
     ProfileScreen(),
   ];
@@ -94,8 +94,7 @@ class _RootWidgetState extends State<RootWidget> {
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(
                 icon: Icon(Icons.home_outlined), label: 'ホーム'),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.chat_rounded), label: 'チャット'),
+            BottomNavigationBarItem(icon: Icon(Icons.insert_invitation), label: 'さそう'),
             BottomNavigationBarItem(icon: Icon(Icons.people), label: '友達'),
             BottomNavigationBarItem(icon: Icon(Icons.person), label: 'アカウント'),
           ],

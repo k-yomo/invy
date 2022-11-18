@@ -4,6 +4,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import '../components/app_bar_leading.dart';
 import '../state/auth.dart';
 
 class FriendRequestScreen extends HookConsumerWidget {
@@ -17,10 +18,7 @@ class FriendRequestScreen extends HookConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
+        leading: AppBarLeading(),
         title: const Text(
           '友だち追加',
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),

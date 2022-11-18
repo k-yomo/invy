@@ -1,4 +1,5 @@
 import 'package:bump/components/friend_group_fragment.graphql.dart';
+import 'package:bump/components/friend_group_icon.dart';
 import 'package:bump/screens/freind_group_detail_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -49,24 +50,7 @@ class _FriendGroupListItem extends StatelessWidget {
       margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
       child: Row(
         children: [
-          Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(100),
-              gradient: const LinearGradient(
-                begin: Alignment.topRight,
-                end: Alignment.bottomRight,
-                colors: [
-                  Colors.purple,
-                  Colors.pink,
-                  Colors.orange,
-                ],
-              ),
-            ),
-            child: CircleAvatar(
-              backgroundColor: Colors.transparent,
-              child: Text(friendGroup.name.substring(0, 1)),
-            ),
-          ),
+          FriendGroupIcon(friendGroup.name),
           Container(
             margin: const EdgeInsets.only(left: 10, right: 2),
             child: Text(

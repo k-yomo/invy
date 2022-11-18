@@ -1,0 +1,35 @@
+
+query pendingInvitations {
+    pendingInvitations {
+        id
+        user {
+            id
+            nickname
+            avatarUrl
+        }
+        acceptedUsers {
+            id
+            nickname
+            avatarUrl
+        }
+    }
+}
+
+
+query acceptedInvitations {
+    acceptedInvitations {
+        id
+        user {
+            id
+            nickname
+            avatarUrl
+        }
+        location
+        startsAt
+        acceptedUsers {
+            id
+            nickname
+            avatarUrl
+        }
+    }
+}

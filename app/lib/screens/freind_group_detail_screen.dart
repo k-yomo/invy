@@ -1,6 +1,7 @@
 import 'package:bump/components/friend_list.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import '../components/app_bar_leading.dart';
 import '../graphql/friend_group_detail_screen.graphql.dart';
 
 class FriendGroupDetailScreen extends HookConsumerWidget {
@@ -22,10 +23,7 @@ class FriendGroupDetailScreen extends HookConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
+        leading: AppBarLeading(),
         title: Text(
           viewer?.friendGroup.name ?? '',
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),

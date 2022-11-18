@@ -15,7 +15,9 @@ class LoginScreen extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final graphqlClient = GraphQLProvider.of(context).value;
+    final graphqlClient = GraphQLProvider
+        .of(context)
+        .value;
     final signUp = useMutation$signUp();
 
     onGoogleLoginPressed() async {
@@ -29,7 +31,9 @@ class LoginScreen extends HookConsumerWidget {
           graphqlClient.query$viewer().then((res) {
             if (res?.parsedData?.viewer != null) {
               final user = res!.parsedData!.viewer;
-              ref.read(loggedInUserProvider.notifier).state = LoggedInUser(
+              ref
+                  .read(loggedInUserProvider.notifier)
+                  .state = LoggedInUser(
                 id: user.id,
                 screenId: user.screenId,
                 nickname: user.nickname,
@@ -42,7 +46,7 @@ class LoginScreen extends HookConsumerWidget {
         } else {
           final res = await signUp
               .runMutation(
-                  variables: Variables$Mutation$signUp(
+              variables: Variables$Mutation$signUp(
                 input: Input$SignUpInput(
                   email: firebaseUser.email!,
                   nickname: firebaseUser.displayName!,
@@ -52,7 +56,9 @@ class LoginScreen extends HookConsumerWidget {
               .networkResult;
           if (res?.parsedData != null) {
             final user = res!.parsedData!.signUp;
-            ref.read(loggedInUserProvider.notifier).state = LoggedInUser(
+            ref
+                .read(loggedInUserProvider.notifier)
+                .state = LoggedInUser(
                 id: user.id,
                 screenId: user.screenId,
                 nickname: user.nickname,
@@ -70,21 +76,56 @@ class LoginScreen extends HookConsumerWidget {
       }
     }
 
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Column(
-        children: <Widget>[
-          Expanded(
-            child: Center(
-                child: ElevatedButton(
-                    onPressed: onGoogleLoginPressed,
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.grey,
-                        foregroundColor: textColor),
-                    child: const Text('Google ログイン'))),
+    return Scaffold(
+        appBar: AppBar(
+          title: const Text(
+            '友だち追加',
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
           ),
-        ],
-      ),
+          shape:
+          Border(bottom: BorderSide(color: Colors.grey.shade200, width: 1)),
+        ),
+        body: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            children: <Widget>[
+              Expanded(
+                child: Center(
+                    child: Container(
+                      margin: EdgeInsets.only(top: 100),
+                      child: Column(
+                        children: [
+                          OutlinedButton(
+                              onPressed: onGoogleLoginPressed,
+                              style: ElevatedButton.styleFrom(
+                                padding: EdgeInsets.symmetric(vertical: 5, horizontal: 60),
+                                  backgroundColor: Colors.white,
+                                  foregroundColor: Colors.black,
+                              ),
+                              child: const Text('Google ログイン')),
+                          OutlinedButton(
+                              onPressed: onGoogleLoginPressed,
+                              style: ElevatedButton.styleFrom(
+                                padding: EdgeInsets.symmetric(vertical: 5, horizontal: 60),
+                                backgroundColor: Colors.white,
+                                foregroundColor: Colors.black,
+                              ),
+                              child: const Text('Apple ログイン')),
+                          OutlinedButton(
+                              onPressed: onGoogleLoginPressed,
+                              style: ElevatedButton.styleFrom(
+                                padding: EdgeInsets.symmetric(vertical: 5, horizontal: 60),
+                                backgroundColor: Colors.white,
+                                foregroundColor: Colors.black,
+                              ),
+                              child: const Text('LINE ログイン')),
+                        ],
+                      ),
+                    )),
+              ),
+            ],
+          ),
+        )
     );
   }
 
@@ -101,7 +142,7 @@ class LoginScreen extends HookConsumerWidget {
       idToken: googleAuth.idToken,
     );
     UserCredential userCredential =
-        await FirebaseAuth.instance.signInWithCredential(credential);
+    await FirebaseAuth.instance.signInWithCredential(credential);
     return userCredential;
   }
 }
