@@ -8,7 +8,7 @@ import (
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/blendle/zapdriver"
 	"github.com/grpc-ecosystem/go-grpc-middleware/logging/zap/ctxzap"
-	"github.com/k-yomo/bump/pkg/requestutil"
+	"github.com/k-yomo/invy/pkg/requestutil"
 	"go.uber.org/zap"
 )
 

@@ -6,7 +6,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/k-yomo/bump/pkg/xuuid"
+	"github.com/k-yomo/invy/pkg/xuuid"
 )
 
 func TestMiddleware(t *testing.T) {

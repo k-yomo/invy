@@ -1,4 +1,4 @@
-module github.com/k-yomo/bump
+module github.com/k-yomo/invy
 
 go 1.19
 

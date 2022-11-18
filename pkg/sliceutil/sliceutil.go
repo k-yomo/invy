@@ -2,7 +2,7 @@ package sliceutil
 
 import (
 	"github.com/google/uuid"
-	"github.com/k-yomo/bump/bump_api/graph/gqlmodel"
+	"github.com/k-yomo/invy/invy_api/graph/gqlmodel"
 )
 
 func MergeNodes[V gqlmodel.Node](a []V, b []V) []V {

@@ -16,5 +16,5 @@
 
 **/tmp
 
-bump_api/admin_sdk_key.firebase.json
+invy_api/admin_sdk_key.firebase.json
 **/.envrc

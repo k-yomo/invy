@@ -4,7 +4,7 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/k-yomo/bump/pkg/xuuid"
+	"github.com/k-yomo/invy/pkg/xuuid"
 )
 
 type (
