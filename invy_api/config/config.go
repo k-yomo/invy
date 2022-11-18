@@ -29,11 +29,8 @@ type AppConfig struct {
 	GCPProjectID          string   `default:"invy-prod" envconfig:"GCP_PROJECT_ID"`
 	FirebaseSecretKeyPath string   `envconfig:"FIREBASE_SECRET_KEY_PATH"`
 	AllowedOrigins        []string `default:"http://localhost:3000,http://localhost:4000" envconfig:"ALLOWED_ORIGINS"`
-	SessionCookieDomain   string   `default:"localhost" envconfig:"SESSION_COOKIE_DOMAIN"`
-	RootURL               string   `default:"http://localhost:8000" envconfig:"ROOT_URL"`
 
-	DBConfig   *DBConfig
-	LineConfig *LineConfig
+	DBConfig *DBConfig
 }
 
 type DBConfig struct {
@@ -44,14 +41,6 @@ type DBConfig struct {
 	// either one of DB_URL or DB_CONNECTION_NAME must be supplied
 	DBURL          string `default:"localhost:15432" envconfig:"DB_URL"`
 	ConnectionName string `envconfig:"DB_CONNECTION_NAME"`
-}
-
-type LineConfig struct {
-	LineAuthClientKey string `envconfig:"LINE_AUTH_CLIENT_KEY"`
-	LineAuthSecret    string `envconfig:"LINE_AUTH_SECRET"`
-
-	LineMessageAccessToken string `envconfig:"LINE_MESSAGE_ACCESS_TOKEN"`
-	LineMessageSecret      string `envconfig:"LINE_MESSAGE_SECRET"`
 }
 
 func NewAppConfig() (*AppConfig, error) {
