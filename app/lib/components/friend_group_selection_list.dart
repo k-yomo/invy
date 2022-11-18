@@ -1,5 +1,5 @@
-import 'package:bump/components/friend_group_fragment.graphql.dart';
-import 'package:bump/components/friend_group_icon.dart';
+import 'package:invy/components/friend_group_fragment.graphql.dart';
+import 'package:invy/components/friend_group_icon.dart';
 import 'package:flutter/material.dart';
 
 class FriendGroupSelectionList extends StatelessWidget {
@@ -18,8 +18,7 @@ class FriendGroupSelectionList extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
         children: friendGroups.map((friendGroup) {
-      final isSelected =
-          selectedFriendGroups.contains(friendGroup);
+      final isSelected = selectedFriendGroups.contains(friendGroup);
       return Column(
         children: [
           InkWell(

@@ -1,4 +1,4 @@
-import 'package:bump/components/friend_list.dart';
+import 'package:invy/components/friend_list.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../components/app_bar_leading.dart';

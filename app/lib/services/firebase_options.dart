@@ -47,9 +47,9 @@ class DefaultFirebaseOptions {
     apiKey: 'AIzaSyC2okLQccMO0qp_Xg2oi1VXu7n9wPn8OkU',
     appId: '1:502402000923:web:48b9ff864d40b76acf30be',
     messagingSenderId: '502402000923',
-    projectId: 'bump-platform-prod',
-    authDomain: 'bump-platform-prod.firebaseapp.com',
-    storageBucket: 'bump-platform-prod.appspot.com',
+    projectId: 'invy-platform-prod',
+    authDomain: 'invy-platform-prod.firebaseapp.com',
+    storageBucket: 'invy-platform-prod.appspot.com',
     measurementId: 'G-VCC5G26FTF',
   );
 
@@ -57,29 +57,29 @@ class DefaultFirebaseOptions {
     apiKey: 'AIzaSyB-1kwgQeBAoa39mWuK3_qaTuMrhky4Q-k',
     appId: '1:502402000923:android:571bcdfc965250afcf30be',
     messagingSenderId: '502402000923',
-    projectId: 'bump-platform-prod',
-    storageBucket: 'bump-platform-prod.appspot.com',
+    projectId: 'invy-platform-prod',
+    storageBucket: 'invy-platform-prod.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyCU4evPaXPi5wGOUDrnLCPy6uHvXauUhDg',
     appId: '1:502402000923:ios:6d3fef2daad82404cf30be',
     messagingSenderId: '502402000923',
-    projectId: 'bump-platform-prod',
-    storageBucket: 'bump-platform-prod.appspot.com',
+    projectId: 'invy-platform-prod',
+    storageBucket: 'invy-platform-prod.appspot.com',
     iosClientId:
         '502402000923-nmipc52gnp6sncta172l218tpetssa19.apps.googleusercontent.com',
-    iosBundleId: 'dev.bump.bump',
+    iosBundleId: 'com.invy-app.invy',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
     apiKey: 'AIzaSyCU4evPaXPi5wGOUDrnLCPy6uHvXauUhDg',
     appId: '1:502402000923:ios:6d3fef2daad82404cf30be',
     messagingSenderId: '502402000923',
-    projectId: 'bump-platform-prod',
-    storageBucket: 'bump-platform-prod.appspot.com',
+    projectId: 'invy-platform-prod',
+    storageBucket: 'invy-platform-prod.appspot.com',
     iosClientId:
         '502402000923-nmipc52gnp6sncta172l218tpetssa19.apps.googleusercontent.com',
-    iosBundleId: 'dev.bump.bump',
+    iosBundleId: 'com.invy-app.invy',
   );
 }

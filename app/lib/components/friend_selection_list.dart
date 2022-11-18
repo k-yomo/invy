@@ -17,28 +17,25 @@ class FriendSelectionList extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
         children: friends.map((friend) {
-          final isSelected =
-          selectedFriends.contains(friend);
-          return Column(
-            children: [
-              InkWell(
-                onTap: () {
-                  if (isSelected) {
-                    selectedFriends.remove(friend);
-                  } else {
-                    selectedFriends.add(friend);
-                  }
-                  onChange(selectedFriends);
-                },
-                child: _FriendListItem(
-                    key: Key(friend.id),
-                    friend: friend,
-                    isSelected: isSelected),
-              ),
-              Divider(height: 0, thickness: 1, color: Colors.grey.shade200),
-            ],
-          );
-        }).toList());
+      final isSelected = selectedFriends.contains(friend);
+      return Column(
+        children: [
+          InkWell(
+            onTap: () {
+              if (isSelected) {
+                selectedFriends.remove(friend);
+              } else {
+                selectedFriends.add(friend);
+              }
+              onChange(selectedFriends);
+            },
+            child: _FriendListItem(
+                key: Key(friend.id), friend: friend, isSelected: isSelected),
+          ),
+          Divider(height: 0, thickness: 1, color: Colors.grey.shade200),
+        ],
+      );
+    }).toList());
   }
 }
 
@@ -62,15 +59,15 @@ class _FriendListItem extends StatelessWidget {
             backgroundImage: NetworkImage(friend.avatarUrl),
           ),
           Expanded(
-          child:
-          Container(
-            margin: const EdgeInsets.only(left: 10, right: 2),
-            child: Text(
-              friend.nickname,
-              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-              overflow: TextOverflow.ellipsis,
+            child: Container(
+              margin: const EdgeInsets.only(left: 10, right: 2),
+              child: Text(
+                friend.nickname,
+                style:
+                    const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
-          ),
           ),
           isSelected ? Icon(Icons.check) : SizedBox(),
         ],

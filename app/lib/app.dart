@@ -1,4 +1,4 @@
-import 'package:bump/screens/invitation_screen.dart';
+import 'package:invy/screens/invitation_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:universal_platform/universal_platform.dart';
@@ -94,7 +94,8 @@ class _RootWidgetState extends State<RootWidget> {
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(
                 icon: Icon(Icons.home_outlined), label: 'ホーム'),
-            BottomNavigationBarItem(icon: Icon(Icons.insert_invitation), label: 'さそう'),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.insert_invitation), label: 'さそう'),
             BottomNavigationBarItem(icon: Icon(Icons.people), label: '友達'),
             BottomNavigationBarItem(icon: Icon(Icons.person), label: 'アカウント'),
           ],

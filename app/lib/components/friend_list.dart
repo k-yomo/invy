@@ -1,5 +1,5 @@
-import 'package:bump/components/friend_fragment.graphql.dart';
-import 'package:bump/graphql/user_mute.graphql.dart';
+import 'package:invy/components/friend_fragment.graphql.dart';
+import 'package:invy/graphql/user_mute.graphql.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';

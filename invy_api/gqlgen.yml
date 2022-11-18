@@ -42,7 +42,7 @@ resolver:
 # gqlgen will search for any type names in the schema in these go packages
 # if they match it will use them, otherwise it will generate them.
 autobind:
-#  - "github.com/shing-dev/bump/invy_api/graph/model"
+#  - "github.com/k-yomo/invy/invy_api/graph/model"
 
 # This section declares type mapping between the GraphQL and go type systems
 #
@@ -63,7 +63,7 @@ models:
       - github.com/99designs/gqlgen/graphql.Int32
   UUID:
     model:
-      - github.com/k-yomo/bump/invy_api/graph/scalar.UUID
+      - github.com/k-yomo/invy/invy_api/graph/scalar.UUID
   Cursor:
     model:
-      - github.com/k-yomo/bump/invy_api/ent.Cursor
+      - github.com/k-yomo/invy/invy_api/ent.Cursor

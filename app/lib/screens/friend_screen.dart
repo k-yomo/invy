@@ -1,6 +1,6 @@
-import 'package:bump/components/friend_group_list.dart';
-import 'package:bump/components/friend_list.dart';
-import 'package:bump/graphql/friend_screen.graphql.dart';
+import 'package:invy/components/friend_group_list.dart';
+import 'package:invy/components/friend_list.dart';
+import 'package:invy/graphql/friend_screen.graphql.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 

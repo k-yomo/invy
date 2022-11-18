@@ -1,5 +1,5 @@
-import 'package:bump/graphql/home_screen.graphql.dart';
-import 'package:bump/screens/invitation_screen.dart';
+import 'package:invy/graphql/home_screen.graphql.dart';
+import 'package:invy/screens/invitation_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -36,7 +36,10 @@ class HomeScreen extends HookConsumerWidget {
                 backgroundColor: Colors.white,
                 foregroundColor: Colors.black,
               ),
-              child: const Text('さそぼ', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),)),
+              child: const Text(
+                'さそぼ',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              )),
         )));
   }
 }

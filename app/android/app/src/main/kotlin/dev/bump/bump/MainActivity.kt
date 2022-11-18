@@ -1,4 +1,4 @@
-package dev.bump.bump
+package com.invy-app.invy
 
 import io.flutter.embedding.android.FlutterActivity
 

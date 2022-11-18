@@ -89,13 +89,13 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
-            VALUE "CompanyName", "dev.bump" "\0"
-            VALUE "FileDescription", "bump" "\0"
+            VALUE "CompanyName", "com.invy-app" "\0"
+            VALUE "FileDescription", "invy" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "bump" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2022 dev.bump. All rights reserved." "\0"
-            VALUE "OriginalFilename", "bump.exe" "\0"
-            VALUE "ProductName", "bump" "\0"
+            VALUE "InternalName", "invy" "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2022 com.invy-app. All rights reserved." "\0"
+            VALUE "OriginalFilename", "invy.exe" "\0"
+            VALUE "ProductName", "invy" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

@@ -26,7 +26,7 @@ func (e Env) IsDeployed() bool {
 type AppConfig struct {
 	Env                   Env      `default:"local" envconfig:"APP_ENV"`
 	Port                  int      `default:"8000" envconfig:"PORT"`
-	GCPProjectID          string   `default:"bump-platform-prod" envconfig:"GCP_PROJECT_ID"`
+	GCPProjectID          string   `default:"invy-prod" envconfig:"GCP_PROJECT_ID"`
 	FirebaseSecretKeyPath string   `envconfig:"FIREBASE_SECRET_KEY_PATH"`
 	AllowedOrigins        []string `default:"http://localhost:3000,http://localhost:4000" envconfig:"ALLOWED_ORIGINS"`
 	SessionCookieDomain   string   `default:"localhost" envconfig:"SESSION_COOKIE_DOMAIN"`

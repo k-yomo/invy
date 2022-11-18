@@ -1016,7 +1016,7 @@ func (ec *executionContext) dir_constraint_args(ctx context.Context, rawArgs map
 	var arg3 *gqlmodel.ConstraintFormat
 	if tmp, ok := rawArgs["format"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("format"))
-		arg3, err = ec.unmarshalOConstraintFormat2ᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋinvy_apiᚋgraphᚋgqlmodelᚐConstraintFormat(ctx, tmp)
+		arg3, err = ec.unmarshalOConstraintFormat2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐConstraintFormat(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -1076,7 +1076,7 @@ func (ec *executionContext) field_Mutation_createFriendGroup_args(ctx context.Co
 	var arg0 gqlmodel.CreateFriendGroupInput
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNCreateFriendGroupInput2githubᚗcomᚋkᚑyomoᚋbumpᚋinvy_apiᚋgraphᚋgqlmodelᚐCreateFriendGroupInput(ctx, tmp)
+		arg0, err = ec.unmarshalNCreateFriendGroupInput2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐCreateFriendGroupInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -1166,7 +1166,7 @@ func (ec *executionContext) field_Mutation_sendInvitation_args(ctx context.Conte
 	var arg0 *gqlmodel.SendInvitationInput
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalOSendInvitationInput2ᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋinvy_apiᚋgraphᚋgqlmodelᚐSendInvitationInput(ctx, tmp)
+		arg0, err = ec.unmarshalOSendInvitationInput2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐSendInvitationInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -1181,7 +1181,7 @@ func (ec *executionContext) field_Mutation_signUp_args(ctx context.Context, rawA
 	var arg0 *gqlmodel.SignUpInput
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalOSignUpInput2ᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋinvy_apiᚋgraphᚋgqlmodelᚐSignUpInput(ctx, tmp)
+		arg0, err = ec.unmarshalOSignUpInput2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐSignUpInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -1211,7 +1211,7 @@ func (ec *executionContext) field_Mutation_updateFriendGroup_args(ctx context.Co
 	var arg0 gqlmodel.UpdateFriendGroupInput
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNUpdateFriendGroupInput2githubᚗcomᚋkᚑyomoᚋbumpᚋinvy_apiᚋgraphᚋgqlmodelᚐUpdateFriendGroupInput(ctx, tmp)
+		arg0, err = ec.unmarshalNUpdateFriendGroupInput2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐUpdateFriendGroupInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -1241,7 +1241,7 @@ func (ec *executionContext) field_Query_friends_args(ctx context.Context, rawArg
 	var arg0 *ent.Cursor
 	if tmp, ok := rawArgs["after"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("after"))
-		arg0, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋinvy_apiᚋentᚐCursor(ctx, tmp)
+		arg0, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋentᚐCursor(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -1259,7 +1259,7 @@ func (ec *executionContext) field_Query_friends_args(ctx context.Context, rawArg
 	var arg2 *ent.Cursor
 	if tmp, ok := rawArgs["before"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("before"))
-		arg2, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋinvy_apiᚋentᚐCursor(ctx, tmp)
+		arg2, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋentᚐCursor(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -1328,7 +1328,7 @@ func (ec *executionContext) field_Viewer_friends_args(ctx context.Context, rawAr
 	var arg0 *ent.Cursor
 	if tmp, ok := rawArgs["after"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("after"))
-		arg0, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋinvy_apiᚋentᚐCursor(ctx, tmp)
+		arg0, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋentᚐCursor(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -1346,7 +1346,7 @@ func (ec *executionContext) field_Viewer_friends_args(ctx context.Context, rawAr
 	var arg2 *ent.Cursor
 	if tmp, ok := rawArgs["before"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("before"))
-		arg2, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋinvy_apiᚋentᚐCursor(ctx, tmp)
+		arg2, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋentᚐCursor(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -1606,7 +1606,7 @@ func (ec *executionContext) _FriendGroup_friendUsers(ctx context.Context, field 
 	}
 	res := resTmp.([]*gqlmodel.User)
 	fc.Result = res
-	return ec.marshalNUser2ᚕᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋinvy_apiᚋgraphᚋgqlmodelᚐUserᚄ(ctx, field.Selections, res)
+	return ec.marshalNUser2ᚕᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐUserᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_FriendGroup_friendUsers(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1750,7 +1750,7 @@ func (ec *executionContext) _FriendshipRequest_fromUser(ctx context.Context, fie
 	}
 	res := resTmp.(*gqlmodel.User)
 	fc.Result = res
-	return ec.marshalNUser2ᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋinvy_apiᚋgraphᚋgqlmodelᚐUser(ctx, field.Selections, res)
+	return ec.marshalNUser2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐUser(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_FriendshipRequest_fromUser(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1850,7 +1850,7 @@ func (ec *executionContext) _FriendshipRequest_toUser(ctx context.Context, field
 	}
 	res := resTmp.(*gqlmodel.User)
 	fc.Result = res
-	return ec.marshalNUser2ᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋinvy_apiᚋgraphᚋgqlmodelᚐUser(ctx, field.Selections, res)
+	return ec.marshalNUser2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐUser(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_FriendshipRequest_toUser(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -2038,7 +2038,7 @@ func (ec *executionContext) _Invitation_user(ctx context.Context, field graphql.
 	}
 	res := resTmp.(*gqlmodel.User)
 	fc.Result = res
-	return ec.marshalNUser2ᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋinvy_apiᚋgraphᚋgqlmodelᚐUser(ctx, field.Selections, res)
+	return ec.marshalNUser2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐUser(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Invitation_user(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -2270,7 +2270,7 @@ func (ec *executionContext) _Invitation_acceptedUsers(ctx context.Context, field
 	}
 	res := resTmp.([]*gqlmodel.User)
 	fc.Result = res
-	return ec.marshalNUser2ᚕᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋinvy_apiᚋgraphᚋgqlmodelᚐUserᚄ(ctx, field.Selections, res)
+	return ec.marshalNUser2ᚕᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐUserᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Invitation_acceptedUsers(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -2326,7 +2326,7 @@ func (ec *executionContext) _Mutation_signUp(ctx context.Context, field graphql.
 	}
 	res := resTmp.(*gqlmodel.Viewer)
 	fc.Result = res
-	return ec.marshalNViewer2ᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋinvy_apiᚋgraphᚋgqlmodelᚐViewer(ctx, field.Selections, res)
+	return ec.marshalNViewer2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐViewer(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_signUp(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -2409,7 +2409,7 @@ func (ec *executionContext) _Mutation_sendInvitation(ctx context.Context, field 
 		if data, ok := tmp.(*gqlmodel.Invitation); ok {
 			return data, nil
 		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/k-yomo/bump/invy_api/graph/gqlmodel.Invitation`, tmp)
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/k-yomo/invy/invy_api/graph/gqlmodel.Invitation`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2423,7 +2423,7 @@ func (ec *executionContext) _Mutation_sendInvitation(ctx context.Context, field 
 	}
 	res := resTmp.(*gqlmodel.Invitation)
 	fc.Result = res
-	return ec.marshalNInvitation2ᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋinvy_apiᚋgraphᚋgqlmodelᚐInvitation(ctx, field.Selections, res)
+	return ec.marshalNInvitation2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐInvitation(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_sendInvitation(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -2652,7 +2652,7 @@ func (ec *executionContext) _Mutation_requestFriendship(ctx context.Context, fie
 		if data, ok := tmp.(*gqlmodel.FriendshipRequest); ok {
 			return data, nil
 		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/k-yomo/bump/invy_api/graph/gqlmodel.FriendshipRequest`, tmp)
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/k-yomo/invy/invy_api/graph/gqlmodel.FriendshipRequest`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2666,7 +2666,7 @@ func (ec *executionContext) _Mutation_requestFriendship(ctx context.Context, fie
 	}
 	res := resTmp.(*gqlmodel.FriendshipRequest)
 	fc.Result = res
-	return ec.marshalNFriendshipRequest2ᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋinvy_apiᚋgraphᚋgqlmodelᚐFriendshipRequest(ctx, field.Selections, res)
+	return ec.marshalNFriendshipRequest2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐFriendshipRequest(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_requestFriendship(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -2966,7 +2966,7 @@ func (ec *executionContext) _Mutation_createFriendGroup(ctx context.Context, fie
 		if data, ok := tmp.(*gqlmodel.FriendGroup); ok {
 			return data, nil
 		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/k-yomo/bump/invy_api/graph/gqlmodel.FriendGroup`, tmp)
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/k-yomo/invy/invy_api/graph/gqlmodel.FriendGroup`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2980,7 +2980,7 @@ func (ec *executionContext) _Mutation_createFriendGroup(ctx context.Context, fie
 	}
 	res := resTmp.(*gqlmodel.FriendGroup)
 	fc.Result = res
-	return ec.marshalNFriendGroup2ᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋinvy_apiᚋgraphᚋgqlmodelᚐFriendGroup(ctx, field.Selections, res)
+	return ec.marshalNFriendGroup2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐFriendGroup(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_createFriendGroup(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -3053,7 +3053,7 @@ func (ec *executionContext) _Mutation_updateFriendGroup(ctx context.Context, fie
 		if data, ok := tmp.(*gqlmodel.FriendGroup); ok {
 			return data, nil
 		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/k-yomo/bump/invy_api/graph/gqlmodel.FriendGroup`, tmp)
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/k-yomo/invy/invy_api/graph/gqlmodel.FriendGroup`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3067,7 +3067,7 @@ func (ec *executionContext) _Mutation_updateFriendGroup(ctx context.Context, fie
 	}
 	res := resTmp.(*gqlmodel.FriendGroup)
 	fc.Result = res
-	return ec.marshalNFriendGroup2ᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋinvy_apiᚋgraphᚋgqlmodelᚐFriendGroup(ctx, field.Selections, res)
+	return ec.marshalNFriendGroup2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐFriendGroup(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_updateFriendGroup(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -3356,7 +3356,7 @@ func (ec *executionContext) _PageInfo_startCursor(ctx context.Context, field gra
 	}
 	res := resTmp.(*ent.Cursor)
 	fc.Result = res
-	return ec.marshalOCursor2ᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋinvy_apiᚋentᚐCursor(ctx, field.Selections, res)
+	return ec.marshalOCursor2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋentᚐCursor(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_PageInfo_startCursor(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -3397,7 +3397,7 @@ func (ec *executionContext) _PageInfo_endCursor(ctx context.Context, field graph
 	}
 	res := resTmp.(*ent.Cursor)
 	fc.Result = res
-	return ec.marshalOCursor2ᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋinvy_apiᚋentᚐCursor(ctx, field.Selections, res)
+	return ec.marshalOCursor2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋentᚐCursor(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_PageInfo_endCursor(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -3535,7 +3535,7 @@ func (ec *executionContext) _Query_pendingInvitations(ctx context.Context, field
 		if data, ok := tmp.([]*gqlmodel.Invitation); ok {
 			return data, nil
 		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/k-yomo/bump/invy_api/graph/gqlmodel.Invitation`, tmp)
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/k-yomo/invy/invy_api/graph/gqlmodel.Invitation`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3549,7 +3549,7 @@ func (ec *executionContext) _Query_pendingInvitations(ctx context.Context, field
 	}
 	res := resTmp.([]*gqlmodel.Invitation)
 	fc.Result = res
-	return ec.marshalNInvitation2ᚕᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋinvy_apiᚋgraphᚋgqlmodelᚐInvitationᚄ(ctx, field.Selections, res)
+	return ec.marshalNInvitation2ᚕᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐInvitationᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_pendingInvitations(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -3617,7 +3617,7 @@ func (ec *executionContext) _Query_acceptedInvitations(ctx context.Context, fiel
 		if data, ok := tmp.([]*gqlmodel.Invitation); ok {
 			return data, nil
 		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/k-yomo/bump/invy_api/graph/gqlmodel.Invitation`, tmp)
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/k-yomo/invy/invy_api/graph/gqlmodel.Invitation`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3631,7 +3631,7 @@ func (ec *executionContext) _Query_acceptedInvitations(ctx context.Context, fiel
 	}
 	res := resTmp.([]*gqlmodel.Invitation)
 	fc.Result = res
-	return ec.marshalNInvitation2ᚕᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋinvy_apiᚋgraphᚋgqlmodelᚐInvitationᚄ(ctx, field.Selections, res)
+	return ec.marshalNInvitation2ᚕᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐInvitationᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_acceptedInvitations(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -3699,7 +3699,7 @@ func (ec *executionContext) _Query_viewer(ctx context.Context, field graphql.Col
 		if data, ok := tmp.(*gqlmodel.Viewer); ok {
 			return data, nil
 		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/k-yomo/bump/invy_api/graph/gqlmodel.Viewer`, tmp)
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/k-yomo/invy/invy_api/graph/gqlmodel.Viewer`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3713,7 +3713,7 @@ func (ec *executionContext) _Query_viewer(ctx context.Context, field graphql.Col
 	}
 	res := resTmp.(*gqlmodel.Viewer)
 	fc.Result = res
-	return ec.marshalNViewer2ᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋinvy_apiᚋgraphᚋgqlmodelᚐViewer(ctx, field.Selections, res)
+	return ec.marshalNViewer2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐViewer(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_viewer(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -3785,7 +3785,7 @@ func (ec *executionContext) _Query_user(ctx context.Context, field graphql.Colle
 		if data, ok := tmp.(*gqlmodel.User); ok {
 			return data, nil
 		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/k-yomo/bump/invy_api/graph/gqlmodel.User`, tmp)
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/k-yomo/invy/invy_api/graph/gqlmodel.User`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3799,7 +3799,7 @@ func (ec *executionContext) _Query_user(ctx context.Context, field graphql.Colle
 	}
 	res := resTmp.(*gqlmodel.User)
 	fc.Result = res
-	return ec.marshalNUser2ᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋinvy_apiᚋgraphᚋgqlmodelᚐUser(ctx, field.Selections, res)
+	return ec.marshalNUser2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐUser(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_user(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -3872,7 +3872,7 @@ func (ec *executionContext) _Query_userByScreenId(ctx context.Context, field gra
 		if data, ok := tmp.(*gqlmodel.User); ok {
 			return data, nil
 		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/k-yomo/bump/invy_api/graph/gqlmodel.User`, tmp)
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/k-yomo/invy/invy_api/graph/gqlmodel.User`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3886,7 +3886,7 @@ func (ec *executionContext) _Query_userByScreenId(ctx context.Context, field gra
 	}
 	res := resTmp.(*gqlmodel.User)
 	fc.Result = res
-	return ec.marshalNUser2ᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋinvy_apiᚋgraphᚋgqlmodelᚐUser(ctx, field.Selections, res)
+	return ec.marshalNUser2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐUser(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_userByScreenId(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -3959,7 +3959,7 @@ func (ec *executionContext) _Query_friends(ctx context.Context, field graphql.Co
 		if data, ok := tmp.(*gqlmodel.UserConnection); ok {
 			return data, nil
 		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/k-yomo/bump/invy_api/graph/gqlmodel.UserConnection`, tmp)
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/k-yomo/invy/invy_api/graph/gqlmodel.UserConnection`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3973,7 +3973,7 @@ func (ec *executionContext) _Query_friends(ctx context.Context, field graphql.Co
 	}
 	res := resTmp.(*gqlmodel.UserConnection)
 	fc.Result = res
-	return ec.marshalNUserConnection2ᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋinvy_apiᚋgraphᚋgqlmodelᚐUserConnection(ctx, field.Selections, res)
+	return ec.marshalNUserConnection2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐUserConnection(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_friends(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -4385,7 +4385,7 @@ func (ec *executionContext) _UserConnection_edges(ctx context.Context, field gra
 	}
 	res := resTmp.([]*gqlmodel.UserEdge)
 	fc.Result = res
-	return ec.marshalNUserEdge2ᚕᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋinvy_apiᚋgraphᚋgqlmodelᚐUserEdgeᚄ(ctx, field.Selections, res)
+	return ec.marshalNUserEdge2ᚕᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐUserEdgeᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_UserConnection_edges(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -4435,7 +4435,7 @@ func (ec *executionContext) _UserConnection_pageInfo(ctx context.Context, field 
 	}
 	res := resTmp.(*gqlmodel.PageInfo)
 	fc.Result = res
-	return ec.marshalNPageInfo2ᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋinvy_apiᚋgraphᚋgqlmodelᚐPageInfo(ctx, field.Selections, res)
+	return ec.marshalNPageInfo2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐPageInfo(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_UserConnection_pageInfo(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -4533,7 +4533,7 @@ func (ec *executionContext) _UserEdge_node(ctx context.Context, field graphql.Co
 	}
 	res := resTmp.(*gqlmodel.User)
 	fc.Result = res
-	return ec.marshalNUser2ᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋinvy_apiᚋgraphᚋgqlmodelᚐUser(ctx, field.Selections, res)
+	return ec.marshalNUser2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐUser(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_UserEdge_node(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -4589,7 +4589,7 @@ func (ec *executionContext) _UserEdge_cursor(ctx context.Context, field graphql.
 	}
 	res := resTmp.(ent.Cursor)
 	fc.Result = res
-	return ec.marshalNCursor2githubᚗcomᚋkᚑyomoᚋbumpᚋinvy_apiᚋentᚐCursor(ctx, field.Selections, res)
+	return ec.marshalNCursor2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋentᚐCursor(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_UserEdge_cursor(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -4850,7 +4850,7 @@ func (ec *executionContext) _Viewer_friends(ctx context.Context, field graphql.C
 	}
 	res := resTmp.(*gqlmodel.UserConnection)
 	fc.Result = res
-	return ec.marshalNUserConnection2ᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋinvy_apiᚋgraphᚋgqlmodelᚐUserConnection(ctx, field.Selections, res)
+	return ec.marshalNUserConnection2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐUserConnection(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Viewer_friends(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -4913,7 +4913,7 @@ func (ec *executionContext) _Viewer_pendingFriendshipRequests(ctx context.Contex
 	}
 	res := resTmp.([]*gqlmodel.FriendshipRequest)
 	fc.Result = res
-	return ec.marshalNFriendshipRequest2ᚕᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋinvy_apiᚋgraphᚋgqlmodelᚐFriendshipRequestᚄ(ctx, field.Selections, res)
+	return ec.marshalNFriendshipRequest2ᚕᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐFriendshipRequestᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Viewer_pendingFriendshipRequests(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -4971,7 +4971,7 @@ func (ec *executionContext) _Viewer_requestingFriendshipRequests(ctx context.Con
 	}
 	res := resTmp.([]*gqlmodel.FriendshipRequest)
 	fc.Result = res
-	return ec.marshalNFriendshipRequest2ᚕᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋinvy_apiᚋgraphᚋgqlmodelᚐFriendshipRequestᚄ(ctx, field.Selections, res)
+	return ec.marshalNFriendshipRequest2ᚕᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐFriendshipRequestᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Viewer_requestingFriendshipRequests(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -5029,7 +5029,7 @@ func (ec *executionContext) _Viewer_friendGroup(ctx context.Context, field graph
 	}
 	res := resTmp.(*gqlmodel.FriendGroup)
 	fc.Result = res
-	return ec.marshalNFriendGroup2ᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋinvy_apiᚋgraphᚋgqlmodelᚐFriendGroup(ctx, field.Selections, res)
+	return ec.marshalNFriendGroup2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐFriendGroup(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Viewer_friendGroup(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -5096,7 +5096,7 @@ func (ec *executionContext) _Viewer_friendGroups(ctx context.Context, field grap
 	}
 	res := resTmp.([]*gqlmodel.FriendGroup)
 	fc.Result = res
-	return ec.marshalNFriendGroup2ᚕᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋinvy_apiᚋgraphᚋgqlmodelᚐFriendGroupᚄ(ctx, field.Selections, res)
+	return ec.marshalNFriendGroup2ᚕᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐFriendGroupᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Viewer_friendGroups(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -7039,7 +7039,7 @@ func (ec *executionContext) unmarshalInputSignUpInput(ctx context.Context, obj i
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("email"))
 			directive0 := func(ctx context.Context) (interface{}, error) { return ec.unmarshalOString2ᚖstring(ctx, v) }
 			directive1 := func(ctx context.Context) (interface{}, error) {
-				format, err := ec.unmarshalOConstraintFormat2ᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋinvy_apiᚋgraphᚋgqlmodelᚐConstraintFormat(ctx, "EMAIL")
+				format, err := ec.unmarshalOConstraintFormat2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐConstraintFormat(ctx, "EMAIL")
 				if err != nil {
 					return nil, err
 				}
@@ -7093,7 +7093,7 @@ func (ec *executionContext) unmarshalInputSignUpInput(ctx context.Context, obj i
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("avatarUrl"))
 			directive0 := func(ctx context.Context) (interface{}, error) { return ec.unmarshalOString2ᚖstring(ctx, v) }
 			directive1 := func(ctx context.Context) (interface{}, error) {
-				format, err := ec.unmarshalOConstraintFormat2ᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋinvy_apiᚋgraphᚋgqlmodelᚐConstraintFormat(ctx, "URL")
+				format, err := ec.unmarshalOConstraintFormat2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐConstraintFormat(ctx, "URL")
 				if err != nil {
 					return nil, err
 				}
@@ -8498,26 +8498,26 @@ func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.Se
 	return res
 }
 
-func (ec *executionContext) unmarshalNCreateFriendGroupInput2githubᚗcomᚋkᚑyomoᚋbumpᚋinvy_apiᚋgraphᚋgqlmodelᚐCreateFriendGroupInput(ctx context.Context, v interface{}) (gqlmodel.CreateFriendGroupInput, error) {
+func (ec *executionContext) unmarshalNCreateFriendGroupInput2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐCreateFriendGroupInput(ctx context.Context, v interface{}) (gqlmodel.CreateFriendGroupInput, error) {
 	res, err := ec.unmarshalInputCreateFriendGroupInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNCursor2githubᚗcomᚋkᚑyomoᚋbumpᚋinvy_apiᚋentᚐCursor(ctx context.Context, v interface{}) (ent.Cursor, error) {
+func (ec *executionContext) unmarshalNCursor2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋentᚐCursor(ctx context.Context, v interface{}) (ent.Cursor, error) {
 	var res ent.Cursor
 	err := res.UnmarshalGQL(v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNCursor2githubᚗcomᚋkᚑyomoᚋbumpᚋinvy_apiᚋentᚐCursor(ctx context.Context, sel ast.SelectionSet, v ent.Cursor) graphql.Marshaler {
+func (ec *executionContext) marshalNCursor2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋentᚐCursor(ctx context.Context, sel ast.SelectionSet, v ent.Cursor) graphql.Marshaler {
 	return v
 }
 
-func (ec *executionContext) marshalNFriendGroup2githubᚗcomᚋkᚑyomoᚋbumpᚋinvy_apiᚋgraphᚋgqlmodelᚐFriendGroup(ctx context.Context, sel ast.SelectionSet, v gqlmodel.FriendGroup) graphql.Marshaler {
+func (ec *executionContext) marshalNFriendGroup2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐFriendGroup(ctx context.Context, sel ast.SelectionSet, v gqlmodel.FriendGroup) graphql.Marshaler {
 	return ec._FriendGroup(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNFriendGroup2ᚕᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋinvy_apiᚋgraphᚋgqlmodelᚐFriendGroupᚄ(ctx context.Context, sel ast.SelectionSet, v []*gqlmodel.FriendGroup) graphql.Marshaler {
+func (ec *executionContext) marshalNFriendGroup2ᚕᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐFriendGroupᚄ(ctx context.Context, sel ast.SelectionSet, v []*gqlmodel.FriendGroup) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -8541,7 +8541,7 @@ func (ec *executionContext) marshalNFriendGroup2ᚕᚖgithubᚗcomᚋkᚑyomoᚋ
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNFriendGroup2ᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋinvy_apiᚋgraphᚋgqlmodelᚐFriendGroup(ctx, sel, v[i])
+			ret[i] = ec.marshalNFriendGroup2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐFriendGroup(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -8561,7 +8561,7 @@ func (ec *executionContext) marshalNFriendGroup2ᚕᚖgithubᚗcomᚋkᚑyomoᚋ
 	return ret
 }
 
-func (ec *executionContext) marshalNFriendGroup2ᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋinvy_apiᚋgraphᚋgqlmodelᚐFriendGroup(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.FriendGroup) graphql.Marshaler {
+func (ec *executionContext) marshalNFriendGroup2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐFriendGroup(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.FriendGroup) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -8571,11 +8571,11 @@ func (ec *executionContext) marshalNFriendGroup2ᚖgithubᚗcomᚋkᚑyomoᚋbum
 	return ec._FriendGroup(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNFriendshipRequest2githubᚗcomᚋkᚑyomoᚋbumpᚋinvy_apiᚋgraphᚋgqlmodelᚐFriendshipRequest(ctx context.Context, sel ast.SelectionSet, v gqlmodel.FriendshipRequest) graphql.Marshaler {
+func (ec *executionContext) marshalNFriendshipRequest2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐFriendshipRequest(ctx context.Context, sel ast.SelectionSet, v gqlmodel.FriendshipRequest) graphql.Marshaler {
 	return ec._FriendshipRequest(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNFriendshipRequest2ᚕᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋinvy_apiᚋgraphᚋgqlmodelᚐFriendshipRequestᚄ(ctx context.Context, sel ast.SelectionSet, v []*gqlmodel.FriendshipRequest) graphql.Marshaler {
+func (ec *executionContext) marshalNFriendshipRequest2ᚕᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐFriendshipRequestᚄ(ctx context.Context, sel ast.SelectionSet, v []*gqlmodel.FriendshipRequest) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -8599,7 +8599,7 @@ func (ec *executionContext) marshalNFriendshipRequest2ᚕᚖgithubᚗcomᚋkᚑy
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNFriendshipRequest2ᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋinvy_apiᚋgraphᚋgqlmodelᚐFriendshipRequest(ctx, sel, v[i])
+			ret[i] = ec.marshalNFriendshipRequest2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐFriendshipRequest(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -8619,7 +8619,7 @@ func (ec *executionContext) marshalNFriendshipRequest2ᚕᚖgithubᚗcomᚋkᚑy
 	return ret
 }
 
-func (ec *executionContext) marshalNFriendshipRequest2ᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋinvy_apiᚋgraphᚋgqlmodelᚐFriendshipRequest(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.FriendshipRequest) graphql.Marshaler {
+func (ec *executionContext) marshalNFriendshipRequest2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐFriendshipRequest(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.FriendshipRequest) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -8644,11 +8644,11 @@ func (ec *executionContext) marshalNInt2int(ctx context.Context, sel ast.Selecti
 	return res
 }
 
-func (ec *executionContext) marshalNInvitation2githubᚗcomᚋkᚑyomoᚋbumpᚋinvy_apiᚋgraphᚋgqlmodelᚐInvitation(ctx context.Context, sel ast.SelectionSet, v gqlmodel.Invitation) graphql.Marshaler {
+func (ec *executionContext) marshalNInvitation2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐInvitation(ctx context.Context, sel ast.SelectionSet, v gqlmodel.Invitation) graphql.Marshaler {
 	return ec._Invitation(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNInvitation2ᚕᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋinvy_apiᚋgraphᚋgqlmodelᚐInvitationᚄ(ctx context.Context, sel ast.SelectionSet, v []*gqlmodel.Invitation) graphql.Marshaler {
+func (ec *executionContext) marshalNInvitation2ᚕᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐInvitationᚄ(ctx context.Context, sel ast.SelectionSet, v []*gqlmodel.Invitation) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -8672,7 +8672,7 @@ func (ec *executionContext) marshalNInvitation2ᚕᚖgithubᚗcomᚋkᚑyomoᚋb
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNInvitation2ᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋinvy_apiᚋgraphᚋgqlmodelᚐInvitation(ctx, sel, v[i])
+			ret[i] = ec.marshalNInvitation2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐInvitation(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -8692,7 +8692,7 @@ func (ec *executionContext) marshalNInvitation2ᚕᚖgithubᚗcomᚋkᚑyomoᚋb
 	return ret
 }
 
-func (ec *executionContext) marshalNInvitation2ᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋinvy_apiᚋgraphᚋgqlmodelᚐInvitation(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.Invitation) graphql.Marshaler {
+func (ec *executionContext) marshalNInvitation2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐInvitation(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.Invitation) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -8702,7 +8702,7 @@ func (ec *executionContext) marshalNInvitation2ᚖgithubᚗcomᚋkᚑyomoᚋbump
 	return ec._Invitation(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNPageInfo2ᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋinvy_apiᚋgraphᚋgqlmodelᚐPageInfo(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.PageInfo) graphql.Marshaler {
+func (ec *executionContext) marshalNPageInfo2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐPageInfo(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.PageInfo) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -8789,16 +8789,16 @@ func (ec *executionContext) marshalNUUID2ᚕgithubᚗcomᚋgoogleᚋuuidᚐUUID�
 	return ret
 }
 
-func (ec *executionContext) unmarshalNUpdateFriendGroupInput2githubᚗcomᚋkᚑyomoᚋbumpᚋinvy_apiᚋgraphᚋgqlmodelᚐUpdateFriendGroupInput(ctx context.Context, v interface{}) (gqlmodel.UpdateFriendGroupInput, error) {
+func (ec *executionContext) unmarshalNUpdateFriendGroupInput2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐUpdateFriendGroupInput(ctx context.Context, v interface{}) (gqlmodel.UpdateFriendGroupInput, error) {
 	res, err := ec.unmarshalInputUpdateFriendGroupInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNUser2githubᚗcomᚋkᚑyomoᚋbumpᚋinvy_apiᚋgraphᚋgqlmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v gqlmodel.User) graphql.Marshaler {
+func (ec *executionContext) marshalNUser2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v gqlmodel.User) graphql.Marshaler {
 	return ec._User(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNUser2ᚕᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋinvy_apiᚋgraphᚋgqlmodelᚐUserᚄ(ctx context.Context, sel ast.SelectionSet, v []*gqlmodel.User) graphql.Marshaler {
+func (ec *executionContext) marshalNUser2ᚕᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐUserᚄ(ctx context.Context, sel ast.SelectionSet, v []*gqlmodel.User) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -8822,7 +8822,7 @@ func (ec *executionContext) marshalNUser2ᚕᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋ
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNUser2ᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋinvy_apiᚋgraphᚋgqlmodelᚐUser(ctx, sel, v[i])
+			ret[i] = ec.marshalNUser2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐUser(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -8842,7 +8842,7 @@ func (ec *executionContext) marshalNUser2ᚕᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋ
 	return ret
 }
 
-func (ec *executionContext) marshalNUser2ᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋinvy_apiᚋgraphᚋgqlmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.User) graphql.Marshaler {
+func (ec *executionContext) marshalNUser2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.User) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -8852,11 +8852,11 @@ func (ec *executionContext) marshalNUser2ᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋinv
 	return ec._User(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNUserConnection2githubᚗcomᚋkᚑyomoᚋbumpᚋinvy_apiᚋgraphᚋgqlmodelᚐUserConnection(ctx context.Context, sel ast.SelectionSet, v gqlmodel.UserConnection) graphql.Marshaler {
+func (ec *executionContext) marshalNUserConnection2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐUserConnection(ctx context.Context, sel ast.SelectionSet, v gqlmodel.UserConnection) graphql.Marshaler {
 	return ec._UserConnection(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNUserConnection2ᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋinvy_apiᚋgraphᚋgqlmodelᚐUserConnection(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.UserConnection) graphql.Marshaler {
+func (ec *executionContext) marshalNUserConnection2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐUserConnection(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.UserConnection) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -8866,7 +8866,7 @@ func (ec *executionContext) marshalNUserConnection2ᚖgithubᚗcomᚋkᚑyomoᚋ
 	return ec._UserConnection(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNUserEdge2ᚕᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋinvy_apiᚋgraphᚋgqlmodelᚐUserEdgeᚄ(ctx context.Context, sel ast.SelectionSet, v []*gqlmodel.UserEdge) graphql.Marshaler {
+func (ec *executionContext) marshalNUserEdge2ᚕᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐUserEdgeᚄ(ctx context.Context, sel ast.SelectionSet, v []*gqlmodel.UserEdge) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -8890,7 +8890,7 @@ func (ec *executionContext) marshalNUserEdge2ᚕᚖgithubᚗcomᚋkᚑyomoᚋbum
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNUserEdge2ᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋinvy_apiᚋgraphᚋgqlmodelᚐUserEdge(ctx, sel, v[i])
+			ret[i] = ec.marshalNUserEdge2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐUserEdge(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -8910,7 +8910,7 @@ func (ec *executionContext) marshalNUserEdge2ᚕᚖgithubᚗcomᚋkᚑyomoᚋbum
 	return ret
 }
 
-func (ec *executionContext) marshalNUserEdge2ᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋinvy_apiᚋgraphᚋgqlmodelᚐUserEdge(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.UserEdge) graphql.Marshaler {
+func (ec *executionContext) marshalNUserEdge2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐUserEdge(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.UserEdge) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -8920,11 +8920,11 @@ func (ec *executionContext) marshalNUserEdge2ᚖgithubᚗcomᚋkᚑyomoᚋbump�
 	return ec._UserEdge(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNViewer2githubᚗcomᚋkᚑyomoᚋbumpᚋinvy_apiᚋgraphᚋgqlmodelᚐViewer(ctx context.Context, sel ast.SelectionSet, v gqlmodel.Viewer) graphql.Marshaler {
+func (ec *executionContext) marshalNViewer2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐViewer(ctx context.Context, sel ast.SelectionSet, v gqlmodel.Viewer) graphql.Marshaler {
 	return ec._Viewer(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNViewer2ᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋinvy_apiᚋgraphᚋgqlmodelᚐViewer(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.Viewer) graphql.Marshaler {
+func (ec *executionContext) marshalNViewer2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐViewer(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.Viewer) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -9213,7 +9213,7 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	return res
 }
 
-func (ec *executionContext) unmarshalOConstraintFormat2ᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋinvy_apiᚋgraphᚋgqlmodelᚐConstraintFormat(ctx context.Context, v interface{}) (*gqlmodel.ConstraintFormat, error) {
+func (ec *executionContext) unmarshalOConstraintFormat2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐConstraintFormat(ctx context.Context, v interface{}) (*gqlmodel.ConstraintFormat, error) {
 	if v == nil {
 		return nil, nil
 	}
@@ -9222,14 +9222,14 @@ func (ec *executionContext) unmarshalOConstraintFormat2ᚖgithubᚗcomᚋkᚑyom
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalOConstraintFormat2ᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋinvy_apiᚋgraphᚋgqlmodelᚐConstraintFormat(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.ConstraintFormat) graphql.Marshaler {
+func (ec *executionContext) marshalOConstraintFormat2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐConstraintFormat(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.ConstraintFormat) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
 	return v
 }
 
-func (ec *executionContext) unmarshalOCursor2ᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋinvy_apiᚋentᚐCursor(ctx context.Context, v interface{}) (*ent.Cursor, error) {
+func (ec *executionContext) unmarshalOCursor2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋentᚐCursor(ctx context.Context, v interface{}) (*ent.Cursor, error) {
 	if v == nil {
 		return nil, nil
 	}
@@ -9238,7 +9238,7 @@ func (ec *executionContext) unmarshalOCursor2ᚖgithubᚗcomᚋkᚑyomoᚋbump�
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalOCursor2ᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋinvy_apiᚋentᚐCursor(ctx context.Context, sel ast.SelectionSet, v *ent.Cursor) graphql.Marshaler {
+func (ec *executionContext) marshalOCursor2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋentᚐCursor(ctx context.Context, sel ast.SelectionSet, v *ent.Cursor) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -9261,7 +9261,7 @@ func (ec *executionContext) marshalOInt2ᚖint(ctx context.Context, sel ast.Sele
 	return res
 }
 
-func (ec *executionContext) unmarshalOSendInvitationInput2ᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋinvy_apiᚋgraphᚋgqlmodelᚐSendInvitationInput(ctx context.Context, v interface{}) (*gqlmodel.SendInvitationInput, error) {
+func (ec *executionContext) unmarshalOSendInvitationInput2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐSendInvitationInput(ctx context.Context, v interface{}) (*gqlmodel.SendInvitationInput, error) {
 	if v == nil {
 		return nil, nil
 	}
@@ -9269,7 +9269,7 @@ func (ec *executionContext) unmarshalOSendInvitationInput2ᚖgithubᚗcomᚋkᚑ
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalOSignUpInput2ᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋinvy_apiᚋgraphᚋgqlmodelᚐSignUpInput(ctx context.Context, v interface{}) (*gqlmodel.SignUpInput, error) {
+func (ec *executionContext) unmarshalOSignUpInput2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐSignUpInput(ctx context.Context, v interface{}) (*gqlmodel.SignUpInput, error) {
 	if v == nil {
 		return nil, nil
 	}

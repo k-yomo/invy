@@ -1,6 +1,6 @@
-import 'package:bump/components/friend_group_fragment.graphql.dart';
-import 'package:bump/components/friend_group_icon.dart';
-import 'package:bump/screens/freind_group_detail_screen.dart';
+import 'package:invy/components/friend_group_fragment.graphql.dart';
+import 'package:invy/components/friend_group_icon.dart';
+import 'package:invy/screens/freind_group_detail_screen.dart';
 import 'package:flutter/material.dart';
 
 class FriendGroupList extends StatelessWidget {
