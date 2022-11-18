@@ -56,6 +56,22 @@ func (r *friendshipRequestResolver) ToUser(ctx context.Context, obj *gqlmodel.Fr
 // RequestFriendship is the resolver for the requestFriendship field.
 func (r *mutationResolver) RequestFriendship(ctx context.Context, friendUserID uuid.UUID) (*gqlmodel.FriendshipRequest, error) {
 	authUserID := auth.GetUserID(ctx)
+	if friendUserID == authUserID {
+		return nil, errors.New("friendship can't be requested to currently logged-in user")
+	}
+	alreadyFriend, err := r.DB.Friendship.Query().
+		Where(
+			friendship.UserID(authUserID),
+			friendship.FriendUserID(friendUserID),
+		).
+		Exist(ctx)
+	if err != nil {
+		return nil, err
+	}
+	if alreadyFriend {
+		return nil, errors.New("already friend")
+	}
+
 	dbFriendshipRequest, err := r.DB.FriendshipRequest.Create().
 		SetFromUserID(authUserID).
 		SetToUserID(friendUserID).
@@ -242,6 +258,15 @@ func (r *queryResolver) Viewer(ctx context.Context) (*gqlmodel.Viewer, error) {
 // User is the resolver for the user field.
 func (r *queryResolver) User(ctx context.Context, userID uuid.UUID) (*gqlmodel.User, error) {
 	dbUserProfile, err := loader.Get(ctx).UserProfile.Load(ctx, userID)()
+	if err != nil {
+		return nil, err
+	}
+	return conv.ConvertFromDBUserProfile(dbUserProfile), nil
+}
+
+// UserByScreenID is the resolver for the userByScreenId field.
+func (r *queryResolver) UserByScreenID(ctx context.Context, screenID string) (*gqlmodel.User, error) {
+	dbUserProfile, err := r.DB.UserProfile.Query().Where(userprofile.ScreenID(screenID)).Only(ctx)
 	if err != nil {
 		return nil, err
 	}

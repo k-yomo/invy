@@ -75,7 +75,7 @@ class _FriendListItem extends HookConsumerWidget {
       child: Column(
         children: [
           Container(
-            margin: const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
+            margin: const EdgeInsets.all(15),
             child: Row(
               children: [
                 CircleAvatar(

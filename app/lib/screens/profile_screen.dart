@@ -4,6 +4,7 @@ import 'package:bump/state/auth.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class ProfileScreen extends HookConsumerWidget {
@@ -47,21 +48,41 @@ class ProfileScreen extends HookConsumerWidget {
                     style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                   ),
                 ),
-                OutlinedButton(
-                  onPressed: () async {
-                    Clipboard.setData(ClipboardData(text: user.screenId));
-                  },
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                          "ユーザーID / ${user.screenId}",
-                          style: TextStyle(color: Colors.black, fontSize: 16)),
-                      Container(
-                          margin: EdgeInsets.only(left: 15),
-                          child: Icon(Icons.copy, color: Colors.black))
-                    ],
-                  ),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text("ユーザーID | ${user.screenId}",
+                        style: TextStyle(color: Colors.black, fontSize: 16)),
+                    Container(
+                      margin: EdgeInsets.only(left: 10),
+                      child: OutlinedButton(
+                        style: OutlinedButton.styleFrom(
+                          minimumSize: Size.zero,
+                          padding:
+                              EdgeInsets.symmetric(vertical: 3, horizontal: 10),
+                        ),
+                        onPressed: () async {
+                          Clipboard.setData(ClipboardData(text: user.screenId))
+                              .then((_) => Fluttertoast.showToast(
+                                  msg: "コピーしました",
+                                  toastLength: Toast.LENGTH_SHORT,
+                                  gravity: ToastGravity.TOP,
+                                  timeInSecForIosWeb: 1,
+                                  backgroundColor: Colors.black,
+                                  textColor: Colors.white,
+                                  fontSize: 16.0));
+                        },
+                        child: Row(
+                          children: [
+                            Text("コピー",
+                                style: TextStyle(
+                                    color: Colors.black, fontSize: 12)),
+                            Icon(Icons.copy_all, color: Colors.black)
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),

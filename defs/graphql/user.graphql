@@ -2,6 +2,8 @@
 extend type Query {
     viewer: Viewer! @authRequired
     user(userId: UUID!): User! @authRequired
+    # fetch user by screen id
+    userByScreenId(screenId: String!): User! @authRequired
     # fetch friends of the logged in user
     friends(after: Cursor, first: Int, before: Cursor, last: Int): UserConnection! @authRequired
 }

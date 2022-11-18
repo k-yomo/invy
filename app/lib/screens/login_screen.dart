@@ -5,6 +5,7 @@ import 'package:bump/graphql/viewer.graphql.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../theme.dart';
@@ -14,8 +15,8 @@ class LoginScreen extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final graphqlClient = GraphQLProvider.of(context).value;
     final signUp = useMutation$signUp();
-    final viewer = useQuery$viewer();
 
     onGoogleLoginPressed() async {
       try {
@@ -25,7 +26,7 @@ class LoginScreen extends HookConsumerWidget {
 
         final result = await firebaseUser.getIdTokenResult();
         if (result.claims?.containsKey("userId") ?? false) {
-          viewer.refetch().then((res) {
+          graphqlClient.query$viewer().then((res) {
             if (res?.parsedData?.viewer != null) {
               final user = res!.parsedData!.viewer;
               ref.read(loggedInUserProvider.notifier).state = LoggedInUser(

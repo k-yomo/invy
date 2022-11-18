@@ -1,7 +1,0 @@
-#
-#
-#mutation requestFriendship {
-#    requestFriendship(friendUserId: ) {
-#
-#    }
-#}

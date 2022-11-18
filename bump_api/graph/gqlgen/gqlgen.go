@@ -111,6 +111,7 @@ type ComplexityRoot struct {
 		Friends             func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
 		PendingInvitations  func(childComplexity int) int
 		User                func(childComplexity int, userID uuid.UUID) int
+		UserByScreenID      func(childComplexity int, screenID string) int
 		Viewer              func(childComplexity int) int
 	}
 
@@ -178,6 +179,7 @@ type QueryResolver interface {
 	AcceptedInvitations(ctx context.Context) ([]*gqlmodel.Invitation, error)
 	Viewer(ctx context.Context) (*gqlmodel.Viewer, error)
 	User(ctx context.Context, userID uuid.UUID) (*gqlmodel.User, error)
+	UserByScreenID(ctx context.Context, screenID string) (*gqlmodel.User, error)
 	Friends(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*gqlmodel.UserConnection, error)
 }
 type UserResolver interface {
@@ -562,6 +564,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.User(childComplexity, args["userId"].(uuid.UUID)), true
 
+	case "Query.userByScreenId":
+		if e.complexity.Query.UserByScreenID == nil {
+			break
+		}
+
+		args, err := ec.field_Query_userByScreenId_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.UserByScreenID(childComplexity, args["screenId"].(string)), true
+
 	case "Query.viewer":
 		if e.complexity.Query.Viewer == nil {
 			break
@@ -872,6 +886,8 @@ type PageInfo {
 extend type Query {
     viewer: Viewer! @authRequired
     user(userId: UUID!): User! @authRequired
+    # fetch user by screen id
+    userByScreenId(screenId: String!): User! @authRequired
     # fetch friends of the logged in user
     friends(after: Cursor, first: Int, before: Cursor, last: Int): UserConnection! @authRequired
 }
@@ -1258,6 +1274,21 @@ func (ec *executionContext) field_Query_friends_args(ctx context.Context, rawArg
 		}
 	}
 	args["last"] = arg3
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_userByScreenId_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["screenId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("screenId"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["screenId"] = arg0
 	return args, nil
 }
 
@@ -3801,6 +3832,93 @@ func (ec *executionContext) fieldContext_Query_user(ctx context.Context, field g
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_user_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_userByScreenId(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_userByScreenId(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().UserByScreenID(rctx, fc.Args["screenId"].(string))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.AuthRequired == nil {
+				return nil, errors.New("directive authRequired is not implemented")
+			}
+			return ec.directives.AuthRequired(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*gqlmodel.User); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/k-yomo/bump/bump_api/graph/gqlmodel.User`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.User)
+	fc.Result = res
+	return ec.marshalNUser2ᚖgithubᚗcomᚋkᚑyomoᚋbumpᚋbump_apiᚋgraphᚋgqlmodelᚐUser(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_userByScreenId(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_User_id(ctx, field)
+			case "nickname":
+				return ec.fieldContext_User_nickname(ctx, field)
+			case "avatarUrl":
+				return ec.fieldContext_User_avatarUrl(ctx, field)
+			case "isMuted":
+				return ec.fieldContext_User_isMuted(ctx, field)
+			case "isFriend":
+				return ec.fieldContext_User_isFriend(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_userByScreenId_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return
 	}
@@ -7653,6 +7771,29 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_user(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return rrm(innerCtx)
+			})
+		case "userByScreenId":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_userByScreenId(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}

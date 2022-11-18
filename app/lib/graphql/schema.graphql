@@ -82,6 +82,9 @@ type Query {
   viewer: Viewer!
   user(userId: UUID!): User!
 
+  """fetch user by screen id"""
+  userByScreenId(screenId: String!): User!
+
   """fetch friends of the logged in user"""
   friends(after: Cursor, first: Int, before: Cursor, last: Int): UserConnection!
 }
