@@ -19,6 +19,17 @@ String get host {
   }
 }
 
+String getGraphqlApiRootUrl() {
+  const flavor = String.fromEnvironment('FLAVOR');
+  switch (flavor) {
+    case 'prod':
+      return 'https://api.invy-app.com';
+    case 'dev':
+      return 'https://api.invy-app.dev';
+    default:
+      return 'http://$host:8000';
+  }
+}
 final graphqlEndpoint = 'http://$host:8000/query';
 final graphqlSubscriptionEndpoint = 'ws://$host:8000/subscriptions';
 
@@ -45,10 +56,10 @@ class App extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final loggedInUser = ref.watch(loggedInUserProvider);
     return ClientProvider(
-      uri: graphqlEndpoint,
-      subscriptionUri: graphqlSubscriptionEndpoint,
+      uri: '${getGraphqlApiRootUrl()}/query',
+      subscriptionUri: '${getGraphqlApiRootUrl()}/query',
       child: MaterialApp(
-        title: 'Bump',
+        title: 'Invy',
         theme: ThemeData(
           primarySwatch: materialWhite,
           useMaterial3: true,

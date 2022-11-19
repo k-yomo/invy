@@ -3,21 +3,21 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>502402000923-nmipc52gnp6sncta172l218tpetssa19.apps.googleusercontent.com</string>
+	<string>434214998297-qv9avs2uoq3f7mv9pv3nfsh2t39p0ue0.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.502402000923-nmipc52gnp6sncta172l218tpetssa19</string>
+	<string>com.googleusercontent.apps.434214998297-qv9avs2uoq3f7mv9pv3nfsh2t39p0ue0</string>
 	<key>API_KEY</key>
-	<string>AIzaSyCU4evPaXPi5wGOUDrnLCPy6uHvXauUhDg</string>
+	<string>AIzaSyB3jXar0DvD7RGipQyMmX73Ig_lK0ty9tg</string>
 	<key>GCM_SENDER_ID</key>
-	<string>502402000923</string>
+	<string>434214998297</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
 	<string>com.invy-app.invy</string>
 	<key>PROJECT_ID</key>
-	<string>invy-platform-prod</string>
+	<string>invy-dev</string>
 	<key>STORAGE_BUCKET</key>
-	<string>invy-platform-prod.appspot.com</string>
+	<string>invy-dev.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -29,6 +29,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:502402000923:ios:6d3fef2daad82404cf30be</string>
+	<string>1:434214998297:ios:3011c17df73cd3f9017588</string>
 </dict>
 </plist>

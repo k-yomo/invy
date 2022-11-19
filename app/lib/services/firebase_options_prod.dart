@@ -8,7 +8,7 @@ import 'package:flutter/foundation.dart'
 ///
 /// Example:
 /// ```dart
-/// import 'firebase_options.dart';
+/// import 'firebase_options_prod.dart';
 /// // ...
 /// await Firebase.initializeApp(
 ///   options: DefaultFirebaseOptions.currentPlatform,
@@ -44,42 +44,40 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyC2okLQccMO0qp_Xg2oi1VXu7n9wPn8OkU',
-    appId: '1:502402000923:web:48b9ff864d40b76acf30be',
-    messagingSenderId: '502402000923',
-    projectId: 'invy-platform-prod',
-    authDomain: 'invy-platform-prod.firebaseapp.com',
-    storageBucket: 'invy-platform-prod.appspot.com',
-    measurementId: 'G-VCC5G26FTF',
+    apiKey: 'AIzaSyCnQLS7LhGwBObcxE9GyX-nyvS_J29TrGk',
+    appId: '1:936800855868:web:22f1e5374d71179a372039',
+    messagingSenderId: '936800855868',
+    projectId: 'invy-prod',
+    authDomain: 'invy-prod.firebaseapp.com',
+    storageBucket: 'invy-prod.appspot.com',
+    measurementId: 'G-LY64W99EJD',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyB-1kwgQeBAoa39mWuK3_qaTuMrhky4Q-k',
-    appId: '1:502402000923:android:571bcdfc965250afcf30be',
-    messagingSenderId: '502402000923',
-    projectId: 'invy-platform-prod',
-    storageBucket: 'invy-platform-prod.appspot.com',
+    apiKey: 'AIzaSyA00U2AzPNFCNnqjmEFBcrOe4A0xpl6WxE',
+    appId: '1:936800855868:android:244cfd4a925c0cd1372039',
+    messagingSenderId: '936800855868',
+    projectId: 'invy-prod',
+    storageBucket: 'invy-prod.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyCU4evPaXPi5wGOUDrnLCPy6uHvXauUhDg',
-    appId: '1:502402000923:ios:6d3fef2daad82404cf30be',
-    messagingSenderId: '502402000923',
-    projectId: 'invy-platform-prod',
-    storageBucket: 'invy-platform-prod.appspot.com',
-    iosClientId:
-        '502402000923-nmipc52gnp6sncta172l218tpetssa19.apps.googleusercontent.com',
+    apiKey: 'AIzaSyCV5O5yVDXflbvQitfo1lG_rtaAPAkZVWk',
+    appId: '1:936800855868:ios:f9307aa120d6c703372039',
+    messagingSenderId: '936800855868',
+    projectId: 'invy-prod',
+    storageBucket: 'invy-prod.appspot.com',
+    iosClientId: '936800855868-026sf7rmspjb9lq1ggpnpnqb8uhukli1.apps.googleusercontent.com',
     iosBundleId: 'com.invy-app.invy',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyCU4evPaXPi5wGOUDrnLCPy6uHvXauUhDg',
-    appId: '1:502402000923:ios:6d3fef2daad82404cf30be',
-    messagingSenderId: '502402000923',
-    projectId: 'invy-platform-prod',
-    storageBucket: 'invy-platform-prod.appspot.com',
-    iosClientId:
-        '502402000923-nmipc52gnp6sncta172l218tpetssa19.apps.googleusercontent.com',
+    apiKey: 'AIzaSyCV5O5yVDXflbvQitfo1lG_rtaAPAkZVWk',
+    appId: '1:936800855868:ios:f9307aa120d6c703372039',
+    messagingSenderId: '936800855868',
+    projectId: 'invy-prod',
+    storageBucket: 'invy-prod.appspot.com',
+    iosClientId: '936800855868-026sf7rmspjb9lq1ggpnpnqb8uhukli1.apps.googleusercontent.com',
     iosBundleId: 'com.invy-app.invy',
   );
 }
