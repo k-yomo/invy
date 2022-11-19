@@ -62,7 +62,7 @@ func stringConstraint(value string, min *int, max *int, pattern *string, format 
 		case gqlmodel.ConstraintFormatEmail:
 			err := validation.Validate(value,
 				validation.Required,
-				is.URL,
+				is.Email,
 			)
 			if err != nil {
 				return err
@@ -70,7 +70,7 @@ func stringConstraint(value string, min *int, max *int, pattern *string, format 
 		case gqlmodel.ConstraintFormatURL:
 			err := validation.Validate(value,
 				validation.Required,
-				is.Email,
+				is.URL,
 			)
 			if err != nil {
 				return err

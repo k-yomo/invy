@@ -1,3 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:graphql/client.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:invy/graphql/viewer.graphql.dart';
 import 'package:invy/screens/invitation_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -55,18 +60,46 @@ class App extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final loggedInUser = ref.watch(loggedInUserProvider);
+
     return ClientProvider(
       uri: '${getGraphqlApiRootUrl()}/query',
       subscriptionUri: '${getGraphqlApiRootUrl()}/query',
-      child: MaterialApp(
-        title: 'Invy',
-        theme: ThemeData(
-          primarySwatch: materialWhite,
-          useMaterial3: true,
-        ),
-        darkTheme: ThemeData.dark(),
-        themeMode: ThemeMode.system,
-        home: (loggedInUser != null) ? const RootWidget() : const LoginScreen(),
+      child: StreamBuilder<User?>(
+        stream: FirebaseAuth.instance.authStateChanges(),
+        builder: (context, authSnapshot) {
+          if (authSnapshot.connectionState == ConnectionState.waiting) {
+            return const SizedBox();
+          }
+          return FutureBuilder<Query$viewer$viewer?>(
+            future: () async {
+              if (loggedInUser != null) {
+                return null;
+              }
+              if (authSnapshot.hasData) {
+                final viewer = await GraphQLProvider.of(context).value.query$viewer();
+                if (viewer.parsedData != null) {
+                  setViewerToLoggedInUser(ref, viewer.parsedData!.viewer);
+                }
+              }
+              return null;
+            }(),
+            builder: (context, viewerSnapshot) {
+              FlutterNativeSplash.remove();
+
+              return MaterialApp(
+                title: 'Invy',
+                theme: ThemeData(
+                  primarySwatch: materialWhite,
+                  useMaterial3: true,
+                ),
+                darkTheme: ThemeData.dark(),
+                themeMode: ThemeMode.system,
+                home: (loggedInUser != null) ? const RootWidget() : const LoginScreen(),
+              );
+            },
+          );
+
+        }
       ),
     );
   }

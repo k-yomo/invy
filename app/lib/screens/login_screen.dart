@@ -22,34 +22,41 @@ class LoginScreen extends HookConsumerWidget {
       try {
         await signInWithGoogle();
         final firebaseUser = FirebaseAuth.instance.currentUser;
-        if (firebaseUser == null) return;
+        if (firebaseUser == null) {
+          // TODO: show error
+          return;
+        }
 
         final result = await firebaseUser.getIdTokenResult();
         if (result.claims?.containsKey("userId") ?? false) {
-          graphqlClient.query$viewer().then((res) {
-            if (res?.parsedData?.viewer != null) {
-              final user = res!.parsedData!.viewer;
-              ref.read(loggedInUserProvider.notifier).state = LoggedInUser(
-                id: user.id,
-                screenId: user.screenId,
-                nickname: user.nickname,
-                avatarUrl: user.avatarUrl,
-              );
-              print("logged in successfully");
-            }
-          });
+          final viewerQueryResult = await graphqlClient.query$viewer();
+          // TODO: if not found, then make signUp mutation.
+          if (viewerQueryResult.hasException) {
+            // TODO: logging and show error
+            return;
+          }
+          final user = viewerQueryResult!.parsedData!.viewer;
+          ref.read(loggedInUserProvider.notifier).state = LoggedInUser(
+            id: user.id,
+            screenId: user.screenId,
+            nickname: user.nickname,
+            avatarUrl: user.avatarUrl,
+          );
+          print("logged in successfully");
           return;
         } else {
           final res = await signUp
               .runMutation(
                   variables: Variables$Mutation$signUp(
                 input: Input$SignUpInput(
-                  email: firebaseUser.email!,
+                  email: firebaseUser.email,
                   nickname: firebaseUser.displayName!,
                   avatarUrl: firebaseUser.photoURL,
                 ),
               ))
               .networkResult;
+          // Refresh id token to get new token containing user id in claims.
+          await firebaseUser.getIdToken(true);
           if (res?.parsedData != null) {
             final user = res!.parsedData!.signUp;
             ref.read(loggedInUserProvider.notifier).state = LoggedInUser(
@@ -59,6 +66,8 @@ class LoginScreen extends HookConsumerWidget {
                 avatarUrl: user.avatarUrl);
             print("signed up in successfully");
             // TODO: redirect to user profile update page?
+          } else {
+            print(res?.exception);
           }
         }
       } on FirebaseAuthException catch (e) {

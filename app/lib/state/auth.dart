@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:invy/graphql/viewer.graphql.dart';
 
 @immutable
 class LoggedInUser {
@@ -16,3 +17,12 @@ class LoggedInUser {
 }
 
 final loggedInUserProvider = StateProvider<LoggedInUser?>((ref) => null);
+
+void setViewerToLoggedInUser(WidgetRef ref, Query$viewer$viewer viewer) {
+  ref.read(loggedInUserProvider.notifier).state = LoggedInUser(
+    id: viewer.id,
+    screenId: viewer.screenId,
+    nickname: viewer.nickname,
+    avatarUrl: viewer.avatarUrl,
+  );
+}
