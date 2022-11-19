@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.invy-app.invy">
+    package="com.invy_app.invy">
    <application
         android:label="Invy"
         android:name="${applicationName}"

@@ -33,7 +33,11 @@ push-api-prod: docker-build-api  ## Build and push docker image to dev artifact 
 
 .PHONY: run-app
 run-app: ## Run app
-	cd app && flutter run
+	cd app && flutter run --dart-define=FLAVOR=local
+
+.PHONY: run-app-dev
+run-app-dev: ## Run app with connecting to dev env
+	cd app && flutter run --dart-define=FLAVOR=dev
 
 .PHONY: run-db
 run-db:
