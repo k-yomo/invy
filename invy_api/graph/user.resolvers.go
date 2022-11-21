@@ -117,7 +117,7 @@ func (r *mutationResolver) DenyFriendshipRequest(ctx context.Context, friendship
 func (r *mutationResolver) AcceptFriendshipRequest(ctx context.Context, friendshipRequestID uuid.UUID) (bool, error) {
 	authUserID := auth.GetUserID(ctx)
 	err := ent.RunInTx(ctx, r.DB, func(tx *ent.Tx) error {
-		friendshipRequest, err := r.DB.FriendshipRequest.Query().
+		friendshipRequest, err := tx.FriendshipRequest.Query().
 			Where(
 				friendshiprequest.ID(friendshipRequestID),
 				friendshiprequest.ToUserID(authUserID),
@@ -125,17 +125,17 @@ func (r *mutationResolver) AcceptFriendshipRequest(ctx context.Context, friendsh
 		if err != nil {
 			return err
 		}
-		if err := r.DB.FriendshipRequest.DeleteOne(friendshipRequest).Exec(ctx); err != nil {
+		if err := tx.FriendshipRequest.DeleteOne(friendshipRequest).Exec(ctx); err != nil {
 			return err
 		}
-		err = r.DB.Friendship.Create().
+		err = tx.Friendship.Create().
 			SetUserID(friendshipRequest.FromUserID).
 			SetFriendUserID(friendshipRequest.ToUserID).
 			Exec(ctx)
 		if err != nil {
 			return err
 		}
-		err = r.DB.Friendship.Create().
+		err = tx.Friendship.Create().
 			SetUserID(friendshipRequest.ToUserID).
 			SetFriendUserID(friendshipRequest.FromUserID).
 			Exec(ctx)
@@ -157,7 +157,7 @@ func (r *mutationResolver) CreateFriendGroup(ctx context.Context, input gqlmodel
 	var dbFriendGroup *ent.FriendGroup
 	err := ent.RunInTx(ctx, r.DB, func(tx *ent.Tx) error {
 		var err error
-		dbFriendGroup, err = r.DB.FriendGroup.Create().
+		dbFriendGroup, err = tx.FriendGroup.Create().
 			SetName(input.Name).
 			SetUserID(authUserID).
 			AddFriendUserIDs(input.FriendUserIds...).
@@ -175,14 +175,14 @@ func (r *mutationResolver) UpdateFriendGroup(ctx context.Context, input gqlmodel
 	authUserID := auth.GetUserID(ctx)
 	err := ent.RunInTx(ctx, r.DB, func(tx *ent.Tx) error {
 		// FIXME: remove -diff & add +diff might be better than clear then add
-		err := r.DB.FriendGroup.Update().
+		err := tx.FriendGroup.Update().
 			Where(friendgroup.ID(input.ID), friendgroup.UserID(authUserID)).
 			ClearFriendUsers().
 			Exec(ctx)
 		if err != nil {
 			return err
 		}
-		err = r.DB.FriendGroup.Update().
+		err = tx.FriendGroup.Update().
 			Where(friendgroup.ID(input.ID), friendgroup.UserID(authUserID)).
 			SetName(input.Name).
 			SetTotalCount(len(input.FriendUserIds)).
