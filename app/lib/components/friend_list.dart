@@ -1,9 +1,11 @@
-import 'package:invy/components/friend_fragment.graphql.dart';
-import 'package:invy/graphql/user_mute.graphql.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:invy/graphql/user_mute.graphql.dart';
+
+import '../services/graphql_client.dart';
+import 'friend_list_item_fragment.graphql.dart';
 
 class FriendList extends HookConsumerWidget {
   const FriendList({
@@ -32,27 +34,25 @@ class _FriendListItem extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final graphqlClient = ref.read(graphqlClientProvider);
     final friend = useState(this.friend);
-    final muteFriendMutation = useMutation$muteFriend();
-    final unmuteFriendMutation = useMutation$unmuteFriend();
 
     onPressed(BuildContext context) async {
       if (friend.value.isMuted) {
-        final result = await unmuteFriendMutation
-            .runMutation(
+        final result = await graphqlClient
+            .mutate$unmuteFriend(Options$Mutation$unmuteFriend(
+          variables:
               Variables$Mutation$unmuteFriend(muteUserId: friend.value.id),
-            )
-            .networkResult;
-        if (result?.parsedData?.unmuteUser ?? false) {
+        ));
+        if (result.parsedData?.unmuteUser ?? false) {
           friend.value = friend.value.copyWith(isMuted: false);
         }
       } else {
-        final result = await muteFriendMutation
-            .runMutation(
-              Variables$Mutation$muteFriend(muteUserId: friend.value.id),
-            )
-            .networkResult;
-        if (result?.parsedData?.muteUser ?? false) {
+        final result =
+            await graphqlClient.mutate$muteFriend(Options$Mutation$muteFriend(
+          variables: Variables$Mutation$muteFriend(muteUserId: friend.value.id),
+        ));
+        if (result.parsedData?.muteUser ?? false) {
           friend.value = friend.value.copyWith(isMuted: true);
         }
       }

@@ -57,7 +57,7 @@ type Mutation {
   requestFriendship(friendUserId: UUID!): FriendshipRequest!
   cancelFriendshipRequest(friendshipRequestId: UUID!): Boolean!
   denyFriendshipRequest(friendshipRequestId: UUID!): Boolean!
-  approveFriendshipRequest(friendshipRequestId: UUID!): Boolean!
+  acceptFriendshipRequest(friendshipRequestId: UUID!): Boolean!
   createFriendGroup(input: CreateFriendGroupInput!): FriendGroup!
   updateFriendGroup(input: UpdateFriendGroupInput!): FriendGroup!
   deleteFriendGroup(friendGroupId: UUID!): Boolean!

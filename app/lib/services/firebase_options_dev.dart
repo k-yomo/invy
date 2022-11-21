@@ -67,7 +67,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '434214998297',
     projectId: 'invy-dev',
     storageBucket: 'invy-dev.appspot.com',
-    iosClientId: '434214998297-qv9avs2uoq3f7mv9pv3nfsh2t39p0ue0.apps.googleusercontent.com',
+    iosClientId:
+        '434214998297-qv9avs2uoq3f7mv9pv3nfsh2t39p0ue0.apps.googleusercontent.com',
     iosBundleId: 'com.invy-app.invy',
   );
 
@@ -77,7 +78,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '434214998297',
     projectId: 'invy-dev',
     storageBucket: 'invy-dev.appspot.com',
-    iosClientId: '434214998297-qv9avs2uoq3f7mv9pv3nfsh2t39p0ue0.apps.googleusercontent.com',
+    iosClientId:
+        '434214998297-qv9avs2uoq3f7mv9pv3nfsh2t39p0ue0.apps.googleusercontent.com',
     iosBundleId: 'com.invy-app.invy',
   );
 }

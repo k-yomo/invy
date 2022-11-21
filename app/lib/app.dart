@@ -1,19 +1,17 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
-import 'package:graphql/client.dart';
-import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:invy/graphql/viewer.graphql.dart';
 import 'package:invy/screens/invitation_screen.dart';
-import 'package:flutter/material.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:invy/services/graphql_client.dart';
 import 'package:universal_platform/universal_platform.dart';
 
-import 'services/graphql_client.dart';
-import 'screens/login_screen.dart';
-import 'state/auth.dart';
-import 'screens/home_screen.dart';
 import 'screens/friend_screen.dart';
+import 'screens/home_screen.dart';
+import 'screens/login_screen.dart';
 import 'screens/profile_screen.dart';
+import 'state/auth.dart';
 
 String get host {
 // https://github.com/flutter/flutter/issues/36126#issuecomment-596215587
@@ -23,20 +21,6 @@ String get host {
     return '127.0.0.1';
   }
 }
-
-String getGraphqlApiRootUrl() {
-  const flavor = String.fromEnvironment('FLAVOR');
-  switch (flavor) {
-    case 'prod':
-      return 'https://api.invy-app.com';
-    case 'dev':
-      return 'https://api.invy-app.dev';
-    default:
-      return 'http://$host:8000';
-  }
-}
-final graphqlEndpoint = 'http://$host:8000/query';
-final graphqlSubscriptionEndpoint = 'ws://$host:8000/subscriptions';
 
 class App extends HookConsumerWidget {
   const App({Key? key}) : super(key: key);
@@ -61,46 +45,44 @@ class App extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final loggedInUser = ref.watch(loggedInUserProvider);
 
-    return ClientProvider(
-      uri: '${getGraphqlApiRootUrl()}/query',
-      subscriptionUri: '${getGraphqlApiRootUrl()}/query',
-      child: StreamBuilder<User?>(
-        stream: FirebaseAuth.instance.authStateChanges(),
-        builder: (context, authSnapshot) {
-          if (authSnapshot.connectionState == ConnectionState.waiting) {
-            return const SizedBox();
-          }
-          return FutureBuilder<Query$viewer$viewer?>(
-            future: () async {
-              if (loggedInUser != null) {
-                return null;
-              }
-              if (authSnapshot.hasData) {
-                final viewer = await GraphQLProvider.of(context).value.query$viewer();
-                if (viewer.parsedData != null) {
-                  setViewerToLoggedInUser(ref, viewer.parsedData!.viewer);
-                }
-              }
-              return null;
-            }(),
-            builder: (context, viewerSnapshot) {
-              FlutterNativeSplash.remove();
-
-              return MaterialApp(
-                title: 'Invy',
-                theme: ThemeData(
-                  primarySwatch: materialWhite,
-                  useMaterial3: true,
-                ),
-                darkTheme: ThemeData.dark(),
-                themeMode: ThemeMode.system,
-                home: (loggedInUser != null) ? const RootWidget() : const LoginScreen(),
-              );
-            },
-          );
-
+    return StreamBuilder<User?>(
+      stream: FirebaseAuth.instance.authStateChanges(),
+      builder: (context, authSnapshot) {
+        if (authSnapshot.connectionState == ConnectionState.waiting) {
+          return const SizedBox();
         }
-      ),
+        return FutureBuilder<Query$viewer$viewer?>(
+          future: () async {
+            if (loggedInUser != null) {
+              return null;
+            }
+            if (authSnapshot.hasData) {
+              final graphqlClient = ref.read(graphqlClientProvider);
+              final viewer = await graphqlClient.query$viewer();
+              if (viewer.parsedData != null) {
+                setViewerToLoggedInUser(ref, viewer.parsedData!.viewer);
+              }
+            }
+            return null;
+          }(),
+          builder: (context, viewerSnapshot) {
+            FlutterNativeSplash.remove();
+
+            return MaterialApp(
+              title: 'Invy',
+              theme: ThemeData(
+                primarySwatch: materialWhite,
+                useMaterial3: true,
+              ),
+              darkTheme: ThemeData.dark(),
+              themeMode: ThemeMode.system,
+              home: (loggedInUser != null)
+                  ? const RootWidget()
+                  : const LoginScreen(),
+            );
+          },
+        );
+      },
     );
   }
 }

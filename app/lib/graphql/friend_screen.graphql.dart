@@ -1,5 +1,7 @@
-import '../components/friend_fragment.graphql.dart';
 import '../components/friend_group_fragment.graphql.dart';
+import '../components/friend_list_item_fragment.graphql.dart';
+import '../components/pending_friendship_request_list_fragment.graphql.dart';
+import 'dart:async';
 import 'package:flutter/widgets.dart' as widgets;
 import 'package:gql/ast.dart';
 import 'package:graphql/client.dart' as graphql;
@@ -269,6 +271,25 @@ const documentNodeQueryfriendScreenViewer = DocumentNode(definitions: [
             ]),
           ),
           FieldNode(
+            name: NameNode(value: 'pendingFriendshipRequests'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: SelectionSetNode(selections: [
+              FragmentSpreadNode(
+                name: NameNode(value: 'pendingFriendRequestItemFragment'),
+                directives: [],
+              ),
+              FieldNode(
+                name: NameNode(value: '__typename'),
+                alias: null,
+                arguments: [],
+                directives: [],
+                selectionSet: null,
+              ),
+            ]),
+          ),
+          FieldNode(
             name: NameNode(value: '__typename'),
             alias: null,
             arguments: [],
@@ -288,6 +309,7 @@ const documentNodeQueryfriendScreenViewer = DocumentNode(definitions: [
   ),
   fragmentDefinitionfriendGroupListItemFragment,
   fragmentDefinitionfriendListItemFragment,
+  fragmentDefinitionpendingFriendRequestItemFragment,
 ]);
 Query$friendScreenViewer _parserFn$Query$friendScreenViewer(
         Map<String, dynamic> data) =>
@@ -413,12 +435,14 @@ class Query$friendScreenViewer$viewer {
   Query$friendScreenViewer$viewer({
     required this.friendGroups,
     required this.friends,
+    required this.pendingFriendshipRequests,
     required this.$__typename,
   });
 
   factory Query$friendScreenViewer$viewer.fromJson(Map<String, dynamic> json) {
     final l$friendGroups = json['friendGroups'];
     final l$friends = json['friends'];
+    final l$pendingFriendshipRequests = json['pendingFriendshipRequests'];
     final l$$__typename = json['__typename'];
     return Query$friendScreenViewer$viewer(
       friendGroups: (l$friendGroups as List<dynamic>)
@@ -427,6 +451,10 @@ class Query$friendScreenViewer$viewer {
           .toList(),
       friends: Query$friendScreenViewer$viewer$friends.fromJson(
           (l$friends as Map<String, dynamic>)),
+      pendingFriendshipRequests: (l$pendingFriendshipRequests as List<dynamic>)
+          .map((e) => Fragment$pendingFriendRequestItemFragment.fromJson(
+              (e as Map<String, dynamic>)))
+          .toList(),
       $__typename: (l$$__typename as String),
     );
   }
@@ -434,6 +462,9 @@ class Query$friendScreenViewer$viewer {
   final List<Fragment$friendGroupListItemFragment> friendGroups;
 
   final Query$friendScreenViewer$viewer$friends friends;
+
+  final List<Fragment$pendingFriendRequestItemFragment>
+      pendingFriendshipRequests;
 
   final String $__typename;
 
@@ -444,6 +475,9 @@ class Query$friendScreenViewer$viewer {
         l$friendGroups.map((e) => e.toJson()).toList();
     final l$friends = friends;
     _resultData['friends'] = l$friends.toJson();
+    final l$pendingFriendshipRequests = pendingFriendshipRequests;
+    _resultData['pendingFriendshipRequests'] =
+        l$pendingFriendshipRequests.map((e) => e.toJson()).toList();
     final l$$__typename = $__typename;
     _resultData['__typename'] = l$$__typename;
     return _resultData;
@@ -453,10 +487,12 @@ class Query$friendScreenViewer$viewer {
   int get hashCode {
     final l$friendGroups = friendGroups;
     final l$friends = friends;
+    final l$pendingFriendshipRequests = pendingFriendshipRequests;
     final l$$__typename = $__typename;
     return Object.hashAll([
       Object.hashAll(l$friendGroups.map((v) => v)),
       l$friends,
+      Object.hashAll(l$pendingFriendshipRequests.map((v) => v)),
       l$$__typename,
     ]);
   }
@@ -486,6 +522,21 @@ class Query$friendScreenViewer$viewer {
     final lOther$friends = other.friends;
     if (l$friends != lOther$friends) {
       return false;
+    }
+    final l$pendingFriendshipRequests = pendingFriendshipRequests;
+    final lOther$pendingFriendshipRequests = other.pendingFriendshipRequests;
+    if (l$pendingFriendshipRequests.length !=
+        lOther$pendingFriendshipRequests.length) {
+      return false;
+    }
+    for (int i = 0; i < l$pendingFriendshipRequests.length; i++) {
+      final l$pendingFriendshipRequests$entry = l$pendingFriendshipRequests[i];
+      final lOther$pendingFriendshipRequests$entry =
+          lOther$pendingFriendshipRequests[i];
+      if (l$pendingFriendshipRequests$entry !=
+          lOther$pendingFriendshipRequests$entry) {
+        return false;
+      }
     }
     final l$$__typename = $__typename;
     final lOther$$__typename = other.$__typename;
@@ -517,6 +568,7 @@ abstract class CopyWith$Query$friendScreenViewer$viewer<TRes> {
   TRes call({
     List<Fragment$friendGroupListItemFragment>? friendGroups,
     Query$friendScreenViewer$viewer$friends? friends,
+    List<Fragment$pendingFriendRequestItemFragment>? pendingFriendshipRequests,
     String? $__typename,
   });
   TRes friendGroups(
@@ -526,6 +578,12 @@ abstract class CopyWith$Query$friendScreenViewer$viewer<TRes> {
                       Fragment$friendGroupListItemFragment>>)
           _fn);
   CopyWith$Query$friendScreenViewer$viewer$friends<TRes> get friends;
+  TRes pendingFriendshipRequests(
+      Iterable<Fragment$pendingFriendRequestItemFragment> Function(
+              Iterable<
+                  CopyWith$Fragment$pendingFriendRequestItemFragment<
+                      Fragment$pendingFriendRequestItemFragment>>)
+          _fn);
 }
 
 class _CopyWithImpl$Query$friendScreenViewer$viewer<TRes>
@@ -544,6 +602,7 @@ class _CopyWithImpl$Query$friendScreenViewer$viewer<TRes>
   TRes call({
     Object? friendGroups = _undefined,
     Object? friends = _undefined,
+    Object? pendingFriendshipRequests = _undefined,
     Object? $__typename = _undefined,
   }) =>
       _then(Query$friendScreenViewer$viewer(
@@ -553,6 +612,11 @@ class _CopyWithImpl$Query$friendScreenViewer$viewer<TRes>
         friends: friends == _undefined || friends == null
             ? _instance.friends
             : (friends as Query$friendScreenViewer$viewer$friends),
+        pendingFriendshipRequests: pendingFriendshipRequests == _undefined ||
+                pendingFriendshipRequests == null
+            ? _instance.pendingFriendshipRequests
+            : (pendingFriendshipRequests
+                as List<Fragment$pendingFriendRequestItemFragment>),
         $__typename: $__typename == _undefined || $__typename == null
             ? _instance.$__typename
             : ($__typename as String),
@@ -574,6 +638,19 @@ class _CopyWithImpl$Query$friendScreenViewer$viewer<TRes>
     return CopyWith$Query$friendScreenViewer$viewer$friends(
         local$friends, (e) => call(friends: e));
   }
+
+  TRes pendingFriendshipRequests(
+          Iterable<Fragment$pendingFriendRequestItemFragment> Function(
+                  Iterable<
+                      CopyWith$Fragment$pendingFriendRequestItemFragment<
+                          Fragment$pendingFriendRequestItemFragment>>)
+              _fn) =>
+      call(
+          pendingFriendshipRequests: _fn(_instance.pendingFriendshipRequests
+              .map((e) => CopyWith$Fragment$pendingFriendRequestItemFragment(
+                    e,
+                    (i) => i,
+                  ))).toList());
 }
 
 class _CopyWithStubImpl$Query$friendScreenViewer$viewer<TRes>
@@ -585,12 +662,14 @@ class _CopyWithStubImpl$Query$friendScreenViewer$viewer<TRes>
   call({
     List<Fragment$friendGroupListItemFragment>? friendGroups,
     Query$friendScreenViewer$viewer$friends? friends,
+    List<Fragment$pendingFriendRequestItemFragment>? pendingFriendshipRequests,
     String? $__typename,
   }) =>
       _res;
   friendGroups(_fn) => _res;
   CopyWith$Query$friendScreenViewer$viewer$friends<TRes> get friends =>
       CopyWith$Query$friendScreenViewer$viewer$friends.stub(_res);
+  pendingFriendshipRequests(_fn) => _res;
 }
 
 class Query$friendScreenViewer$viewer$friends {
@@ -2157,4 +2236,956 @@ class _CopyWithStubImpl$Query$friendScreenFriends$friends$pageInfo<TRes>
     String? $__typename,
   }) =>
       _res;
+}
+
+class Variables$Mutation$acceptFriendshipRequest {
+  factory Variables$Mutation$acceptFriendshipRequest(
+          {required String friendshipRequestId}) =>
+      Variables$Mutation$acceptFriendshipRequest._({
+        r'friendshipRequestId': friendshipRequestId,
+      });
+
+  Variables$Mutation$acceptFriendshipRequest._(this._$data);
+
+  factory Variables$Mutation$acceptFriendshipRequest.fromJson(
+      Map<String, dynamic> data) {
+    final result$data = <String, dynamic>{};
+    final l$friendshipRequestId = data['friendshipRequestId'];
+    result$data['friendshipRequestId'] = (l$friendshipRequestId as String);
+    return Variables$Mutation$acceptFriendshipRequest._(result$data);
+  }
+
+  Map<String, dynamic> _$data;
+
+  String get friendshipRequestId => (_$data['friendshipRequestId'] as String);
+  Map<String, dynamic> toJson() {
+    final result$data = <String, dynamic>{};
+    final l$friendshipRequestId = friendshipRequestId;
+    result$data['friendshipRequestId'] = l$friendshipRequestId;
+    return result$data;
+  }
+
+  CopyWith$Variables$Mutation$acceptFriendshipRequest<
+          Variables$Mutation$acceptFriendshipRequest>
+      get copyWith => CopyWith$Variables$Mutation$acceptFriendshipRequest(
+            this,
+            (i) => i,
+          );
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    if (!(other is Variables$Mutation$acceptFriendshipRequest) ||
+        runtimeType != other.runtimeType) {
+      return false;
+    }
+    final l$friendshipRequestId = friendshipRequestId;
+    final lOther$friendshipRequestId = other.friendshipRequestId;
+    if (l$friendshipRequestId != lOther$friendshipRequestId) {
+      return false;
+    }
+    return true;
+  }
+
+  @override
+  int get hashCode {
+    final l$friendshipRequestId = friendshipRequestId;
+    return Object.hashAll([l$friendshipRequestId]);
+  }
+}
+
+abstract class CopyWith$Variables$Mutation$acceptFriendshipRequest<TRes> {
+  factory CopyWith$Variables$Mutation$acceptFriendshipRequest(
+    Variables$Mutation$acceptFriendshipRequest instance,
+    TRes Function(Variables$Mutation$acceptFriendshipRequest) then,
+  ) = _CopyWithImpl$Variables$Mutation$acceptFriendshipRequest;
+
+  factory CopyWith$Variables$Mutation$acceptFriendshipRequest.stub(TRes res) =
+      _CopyWithStubImpl$Variables$Mutation$acceptFriendshipRequest;
+
+  TRes call({String? friendshipRequestId});
+}
+
+class _CopyWithImpl$Variables$Mutation$acceptFriendshipRequest<TRes>
+    implements CopyWith$Variables$Mutation$acceptFriendshipRequest<TRes> {
+  _CopyWithImpl$Variables$Mutation$acceptFriendshipRequest(
+    this._instance,
+    this._then,
+  );
+
+  final Variables$Mutation$acceptFriendshipRequest _instance;
+
+  final TRes Function(Variables$Mutation$acceptFriendshipRequest) _then;
+
+  static const _undefined = {};
+
+  TRes call({Object? friendshipRequestId = _undefined}) =>
+      _then(Variables$Mutation$acceptFriendshipRequest._({
+        ..._instance._$data,
+        if (friendshipRequestId != _undefined && friendshipRequestId != null)
+          'friendshipRequestId': (friendshipRequestId as String),
+      }));
+}
+
+class _CopyWithStubImpl$Variables$Mutation$acceptFriendshipRequest<TRes>
+    implements CopyWith$Variables$Mutation$acceptFriendshipRequest<TRes> {
+  _CopyWithStubImpl$Variables$Mutation$acceptFriendshipRequest(this._res);
+
+  TRes _res;
+
+  call({String? friendshipRequestId}) => _res;
+}
+
+class Mutation$acceptFriendshipRequest {
+  Mutation$acceptFriendshipRequest({
+    required this.acceptFriendshipRequest,
+    required this.$__typename,
+  });
+
+  factory Mutation$acceptFriendshipRequest.fromJson(Map<String, dynamic> json) {
+    final l$acceptFriendshipRequest = json['acceptFriendshipRequest'];
+    final l$$__typename = json['__typename'];
+    return Mutation$acceptFriendshipRequest(
+      acceptFriendshipRequest: (l$acceptFriendshipRequest as bool),
+      $__typename: (l$$__typename as String),
+    );
+  }
+
+  final bool acceptFriendshipRequest;
+
+  final String $__typename;
+
+  Map<String, dynamic> toJson() {
+    final _resultData = <String, dynamic>{};
+    final l$acceptFriendshipRequest = acceptFriendshipRequest;
+    _resultData['acceptFriendshipRequest'] = l$acceptFriendshipRequest;
+    final l$$__typename = $__typename;
+    _resultData['__typename'] = l$$__typename;
+    return _resultData;
+  }
+
+  @override
+  int get hashCode {
+    final l$acceptFriendshipRequest = acceptFriendshipRequest;
+    final l$$__typename = $__typename;
+    return Object.hashAll([
+      l$acceptFriendshipRequest,
+      l$$__typename,
+    ]);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    if (!(other is Mutation$acceptFriendshipRequest) ||
+        runtimeType != other.runtimeType) {
+      return false;
+    }
+    final l$acceptFriendshipRequest = acceptFriendshipRequest;
+    final lOther$acceptFriendshipRequest = other.acceptFriendshipRequest;
+    if (l$acceptFriendshipRequest != lOther$acceptFriendshipRequest) {
+      return false;
+    }
+    final l$$__typename = $__typename;
+    final lOther$$__typename = other.$__typename;
+    if (l$$__typename != lOther$$__typename) {
+      return false;
+    }
+    return true;
+  }
+}
+
+extension UtilityExtension$Mutation$acceptFriendshipRequest
+    on Mutation$acceptFriendshipRequest {
+  CopyWith$Mutation$acceptFriendshipRequest<Mutation$acceptFriendshipRequest>
+      get copyWith => CopyWith$Mutation$acceptFriendshipRequest(
+            this,
+            (i) => i,
+          );
+}
+
+abstract class CopyWith$Mutation$acceptFriendshipRequest<TRes> {
+  factory CopyWith$Mutation$acceptFriendshipRequest(
+    Mutation$acceptFriendshipRequest instance,
+    TRes Function(Mutation$acceptFriendshipRequest) then,
+  ) = _CopyWithImpl$Mutation$acceptFriendshipRequest;
+
+  factory CopyWith$Mutation$acceptFriendshipRequest.stub(TRes res) =
+      _CopyWithStubImpl$Mutation$acceptFriendshipRequest;
+
+  TRes call({
+    bool? acceptFriendshipRequest,
+    String? $__typename,
+  });
+}
+
+class _CopyWithImpl$Mutation$acceptFriendshipRequest<TRes>
+    implements CopyWith$Mutation$acceptFriendshipRequest<TRes> {
+  _CopyWithImpl$Mutation$acceptFriendshipRequest(
+    this._instance,
+    this._then,
+  );
+
+  final Mutation$acceptFriendshipRequest _instance;
+
+  final TRes Function(Mutation$acceptFriendshipRequest) _then;
+
+  static const _undefined = {};
+
+  TRes call({
+    Object? acceptFriendshipRequest = _undefined,
+    Object? $__typename = _undefined,
+  }) =>
+      _then(Mutation$acceptFriendshipRequest(
+        acceptFriendshipRequest: acceptFriendshipRequest == _undefined ||
+                acceptFriendshipRequest == null
+            ? _instance.acceptFriendshipRequest
+            : (acceptFriendshipRequest as bool),
+        $__typename: $__typename == _undefined || $__typename == null
+            ? _instance.$__typename
+            : ($__typename as String),
+      ));
+}
+
+class _CopyWithStubImpl$Mutation$acceptFriendshipRequest<TRes>
+    implements CopyWith$Mutation$acceptFriendshipRequest<TRes> {
+  _CopyWithStubImpl$Mutation$acceptFriendshipRequest(this._res);
+
+  TRes _res;
+
+  call({
+    bool? acceptFriendshipRequest,
+    String? $__typename,
+  }) =>
+      _res;
+}
+
+const documentNodeMutationacceptFriendshipRequest = DocumentNode(definitions: [
+  OperationDefinitionNode(
+    type: OperationType.mutation,
+    name: NameNode(value: 'acceptFriendshipRequest'),
+    variableDefinitions: [
+      VariableDefinitionNode(
+        variable: VariableNode(name: NameNode(value: 'friendshipRequestId')),
+        type: NamedTypeNode(
+          name: NameNode(value: 'UUID'),
+          isNonNull: true,
+        ),
+        defaultValue: DefaultValueNode(value: null),
+        directives: [],
+      )
+    ],
+    directives: [],
+    selectionSet: SelectionSetNode(selections: [
+      FieldNode(
+        name: NameNode(value: 'acceptFriendshipRequest'),
+        alias: null,
+        arguments: [
+          ArgumentNode(
+            name: NameNode(value: 'friendshipRequestId'),
+            value: VariableNode(name: NameNode(value: 'friendshipRequestId')),
+          )
+        ],
+        directives: [],
+        selectionSet: null,
+      ),
+      FieldNode(
+        name: NameNode(value: '__typename'),
+        alias: null,
+        arguments: [],
+        directives: [],
+        selectionSet: null,
+      ),
+    ]),
+  ),
+]);
+Mutation$acceptFriendshipRequest _parserFn$Mutation$acceptFriendshipRequest(
+        Map<String, dynamic> data) =>
+    Mutation$acceptFriendshipRequest.fromJson(data);
+typedef OnMutationCompleted$Mutation$acceptFriendshipRequest = FutureOr<void>
+    Function(
+  dynamic,
+  Mutation$acceptFriendshipRequest?,
+);
+
+class Options$Mutation$acceptFriendshipRequest
+    extends graphql.MutationOptions<Mutation$acceptFriendshipRequest> {
+  Options$Mutation$acceptFriendshipRequest({
+    String? operationName,
+    required Variables$Mutation$acceptFriendshipRequest variables,
+    graphql.FetchPolicy? fetchPolicy,
+    graphql.ErrorPolicy? errorPolicy,
+    graphql.CacheRereadPolicy? cacheRereadPolicy,
+    Object? optimisticResult,
+    graphql.Context? context,
+    OnMutationCompleted$Mutation$acceptFriendshipRequest? onCompleted,
+    graphql.OnMutationUpdate<Mutation$acceptFriendshipRequest>? update,
+    graphql.OnError? onError,
+  })  : onCompletedWithParsed = onCompleted,
+        super(
+          variables: variables.toJson(),
+          operationName: operationName,
+          fetchPolicy: fetchPolicy,
+          errorPolicy: errorPolicy,
+          cacheRereadPolicy: cacheRereadPolicy,
+          optimisticResult: optimisticResult,
+          context: context,
+          onCompleted: onCompleted == null
+              ? null
+              : (data) => onCompleted(
+                    data,
+                    data == null
+                        ? null
+                        : _parserFn$Mutation$acceptFriendshipRequest(data),
+                  ),
+          update: update,
+          onError: onError,
+          document: documentNodeMutationacceptFriendshipRequest,
+          parserFn: _parserFn$Mutation$acceptFriendshipRequest,
+        );
+
+  final OnMutationCompleted$Mutation$acceptFriendshipRequest?
+      onCompletedWithParsed;
+
+  @override
+  List<Object?> get properties => [
+        ...super.onCompleted == null
+            ? super.properties
+            : super.properties.where((property) => property != onCompleted),
+        onCompletedWithParsed,
+      ];
+}
+
+class WatchOptions$Mutation$acceptFriendshipRequest
+    extends graphql.WatchQueryOptions<Mutation$acceptFriendshipRequest> {
+  WatchOptions$Mutation$acceptFriendshipRequest({
+    String? operationName,
+    required Variables$Mutation$acceptFriendshipRequest variables,
+    graphql.FetchPolicy? fetchPolicy,
+    graphql.ErrorPolicy? errorPolicy,
+    graphql.CacheRereadPolicy? cacheRereadPolicy,
+    Object? optimisticResult,
+    graphql.Context? context,
+    Duration? pollInterval,
+    bool? eagerlyFetchResults,
+    bool carryForwardDataOnException = true,
+    bool fetchResults = false,
+  }) : super(
+          variables: variables.toJson(),
+          operationName: operationName,
+          fetchPolicy: fetchPolicy,
+          errorPolicy: errorPolicy,
+          cacheRereadPolicy: cacheRereadPolicy,
+          optimisticResult: optimisticResult,
+          context: context,
+          document: documentNodeMutationacceptFriendshipRequest,
+          pollInterval: pollInterval,
+          eagerlyFetchResults: eagerlyFetchResults,
+          carryForwardDataOnException: carryForwardDataOnException,
+          fetchResults: fetchResults,
+          parserFn: _parserFn$Mutation$acceptFriendshipRequest,
+        );
+}
+
+extension ClientExtension$Mutation$acceptFriendshipRequest
+    on graphql.GraphQLClient {
+  Future<graphql.QueryResult<Mutation$acceptFriendshipRequest>>
+      mutate$acceptFriendshipRequest(
+              Options$Mutation$acceptFriendshipRequest options) async =>
+          await this.mutate(options);
+  graphql.ObservableQuery<Mutation$acceptFriendshipRequest>
+      watchMutation$acceptFriendshipRequest(
+              WatchOptions$Mutation$acceptFriendshipRequest options) =>
+          this.watchMutation(options);
+}
+
+class Mutation$acceptFriendshipRequest$HookResult {
+  Mutation$acceptFriendshipRequest$HookResult(
+    this.runMutation,
+    this.result,
+  );
+
+  final RunMutation$Mutation$acceptFriendshipRequest runMutation;
+
+  final graphql.QueryResult<Mutation$acceptFriendshipRequest> result;
+}
+
+Mutation$acceptFriendshipRequest$HookResult useMutation$acceptFriendshipRequest(
+    [WidgetOptions$Mutation$acceptFriendshipRequest? options]) {
+  final result = graphql_flutter
+      .useMutation(options ?? WidgetOptions$Mutation$acceptFriendshipRequest());
+  return Mutation$acceptFriendshipRequest$HookResult(
+    (variables, {optimisticResult}) => result.runMutation(
+      variables.toJson(),
+      optimisticResult: optimisticResult,
+    ),
+    result.result,
+  );
+}
+
+graphql.ObservableQuery<Mutation$acceptFriendshipRequest>
+    useWatchMutation$acceptFriendshipRequest(
+            WatchOptions$Mutation$acceptFriendshipRequest options) =>
+        graphql_flutter.useWatchMutation(options);
+
+class WidgetOptions$Mutation$acceptFriendshipRequest
+    extends graphql.MutationOptions<Mutation$acceptFriendshipRequest> {
+  WidgetOptions$Mutation$acceptFriendshipRequest({
+    String? operationName,
+    graphql.FetchPolicy? fetchPolicy,
+    graphql.ErrorPolicy? errorPolicy,
+    graphql.CacheRereadPolicy? cacheRereadPolicy,
+    Object? optimisticResult,
+    graphql.Context? context,
+    OnMutationCompleted$Mutation$acceptFriendshipRequest? onCompleted,
+    graphql.OnMutationUpdate<Mutation$acceptFriendshipRequest>? update,
+    graphql.OnError? onError,
+  })  : onCompletedWithParsed = onCompleted,
+        super(
+          operationName: operationName,
+          fetchPolicy: fetchPolicy,
+          errorPolicy: errorPolicy,
+          cacheRereadPolicy: cacheRereadPolicy,
+          optimisticResult: optimisticResult,
+          context: context,
+          onCompleted: onCompleted == null
+              ? null
+              : (data) => onCompleted(
+                    data,
+                    data == null
+                        ? null
+                        : _parserFn$Mutation$acceptFriendshipRequest(data),
+                  ),
+          update: update,
+          onError: onError,
+          document: documentNodeMutationacceptFriendshipRequest,
+          parserFn: _parserFn$Mutation$acceptFriendshipRequest,
+        );
+
+  final OnMutationCompleted$Mutation$acceptFriendshipRequest?
+      onCompletedWithParsed;
+
+  @override
+  List<Object?> get properties => [
+        ...super.onCompleted == null
+            ? super.properties
+            : super.properties.where((property) => property != onCompleted),
+        onCompletedWithParsed,
+      ];
+}
+
+typedef RunMutation$Mutation$acceptFriendshipRequest
+    = graphql.MultiSourceResult<Mutation$acceptFriendshipRequest> Function(
+  Variables$Mutation$acceptFriendshipRequest, {
+  Object? optimisticResult,
+});
+typedef Builder$Mutation$acceptFriendshipRequest = widgets.Widget Function(
+  RunMutation$Mutation$acceptFriendshipRequest,
+  graphql.QueryResult<Mutation$acceptFriendshipRequest>?,
+);
+
+class Mutation$acceptFriendshipRequest$Widget
+    extends graphql_flutter.Mutation<Mutation$acceptFriendshipRequest> {
+  Mutation$acceptFriendshipRequest$Widget({
+    widgets.Key? key,
+    WidgetOptions$Mutation$acceptFriendshipRequest? options,
+    required Builder$Mutation$acceptFriendshipRequest builder,
+  }) : super(
+          key: key,
+          options: options ?? WidgetOptions$Mutation$acceptFriendshipRequest(),
+          builder: (
+            run,
+            result,
+          ) =>
+              builder(
+            (
+              variables, {
+              optimisticResult,
+            }) =>
+                run(
+              variables.toJson(),
+              optimisticResult: optimisticResult,
+            ),
+            result,
+          ),
+        );
+}
+
+class Variables$Mutation$denyFriendshipRequest {
+  factory Variables$Mutation$denyFriendshipRequest(
+          {required String friendshipRequestId}) =>
+      Variables$Mutation$denyFriendshipRequest._({
+        r'friendshipRequestId': friendshipRequestId,
+      });
+
+  Variables$Mutation$denyFriendshipRequest._(this._$data);
+
+  factory Variables$Mutation$denyFriendshipRequest.fromJson(
+      Map<String, dynamic> data) {
+    final result$data = <String, dynamic>{};
+    final l$friendshipRequestId = data['friendshipRequestId'];
+    result$data['friendshipRequestId'] = (l$friendshipRequestId as String);
+    return Variables$Mutation$denyFriendshipRequest._(result$data);
+  }
+
+  Map<String, dynamic> _$data;
+
+  String get friendshipRequestId => (_$data['friendshipRequestId'] as String);
+  Map<String, dynamic> toJson() {
+    final result$data = <String, dynamic>{};
+    final l$friendshipRequestId = friendshipRequestId;
+    result$data['friendshipRequestId'] = l$friendshipRequestId;
+    return result$data;
+  }
+
+  CopyWith$Variables$Mutation$denyFriendshipRequest<
+          Variables$Mutation$denyFriendshipRequest>
+      get copyWith => CopyWith$Variables$Mutation$denyFriendshipRequest(
+            this,
+            (i) => i,
+          );
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    if (!(other is Variables$Mutation$denyFriendshipRequest) ||
+        runtimeType != other.runtimeType) {
+      return false;
+    }
+    final l$friendshipRequestId = friendshipRequestId;
+    final lOther$friendshipRequestId = other.friendshipRequestId;
+    if (l$friendshipRequestId != lOther$friendshipRequestId) {
+      return false;
+    }
+    return true;
+  }
+
+  @override
+  int get hashCode {
+    final l$friendshipRequestId = friendshipRequestId;
+    return Object.hashAll([l$friendshipRequestId]);
+  }
+}
+
+abstract class CopyWith$Variables$Mutation$denyFriendshipRequest<TRes> {
+  factory CopyWith$Variables$Mutation$denyFriendshipRequest(
+    Variables$Mutation$denyFriendshipRequest instance,
+    TRes Function(Variables$Mutation$denyFriendshipRequest) then,
+  ) = _CopyWithImpl$Variables$Mutation$denyFriendshipRequest;
+
+  factory CopyWith$Variables$Mutation$denyFriendshipRequest.stub(TRes res) =
+      _CopyWithStubImpl$Variables$Mutation$denyFriendshipRequest;
+
+  TRes call({String? friendshipRequestId});
+}
+
+class _CopyWithImpl$Variables$Mutation$denyFriendshipRequest<TRes>
+    implements CopyWith$Variables$Mutation$denyFriendshipRequest<TRes> {
+  _CopyWithImpl$Variables$Mutation$denyFriendshipRequest(
+    this._instance,
+    this._then,
+  );
+
+  final Variables$Mutation$denyFriendshipRequest _instance;
+
+  final TRes Function(Variables$Mutation$denyFriendshipRequest) _then;
+
+  static const _undefined = {};
+
+  TRes call({Object? friendshipRequestId = _undefined}) =>
+      _then(Variables$Mutation$denyFriendshipRequest._({
+        ..._instance._$data,
+        if (friendshipRequestId != _undefined && friendshipRequestId != null)
+          'friendshipRequestId': (friendshipRequestId as String),
+      }));
+}
+
+class _CopyWithStubImpl$Variables$Mutation$denyFriendshipRequest<TRes>
+    implements CopyWith$Variables$Mutation$denyFriendshipRequest<TRes> {
+  _CopyWithStubImpl$Variables$Mutation$denyFriendshipRequest(this._res);
+
+  TRes _res;
+
+  call({String? friendshipRequestId}) => _res;
+}
+
+class Mutation$denyFriendshipRequest {
+  Mutation$denyFriendshipRequest({
+    required this.denyFriendshipRequest,
+    required this.$__typename,
+  });
+
+  factory Mutation$denyFriendshipRequest.fromJson(Map<String, dynamic> json) {
+    final l$denyFriendshipRequest = json['denyFriendshipRequest'];
+    final l$$__typename = json['__typename'];
+    return Mutation$denyFriendshipRequest(
+      denyFriendshipRequest: (l$denyFriendshipRequest as bool),
+      $__typename: (l$$__typename as String),
+    );
+  }
+
+  final bool denyFriendshipRequest;
+
+  final String $__typename;
+
+  Map<String, dynamic> toJson() {
+    final _resultData = <String, dynamic>{};
+    final l$denyFriendshipRequest = denyFriendshipRequest;
+    _resultData['denyFriendshipRequest'] = l$denyFriendshipRequest;
+    final l$$__typename = $__typename;
+    _resultData['__typename'] = l$$__typename;
+    return _resultData;
+  }
+
+  @override
+  int get hashCode {
+    final l$denyFriendshipRequest = denyFriendshipRequest;
+    final l$$__typename = $__typename;
+    return Object.hashAll([
+      l$denyFriendshipRequest,
+      l$$__typename,
+    ]);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    if (!(other is Mutation$denyFriendshipRequest) ||
+        runtimeType != other.runtimeType) {
+      return false;
+    }
+    final l$denyFriendshipRequest = denyFriendshipRequest;
+    final lOther$denyFriendshipRequest = other.denyFriendshipRequest;
+    if (l$denyFriendshipRequest != lOther$denyFriendshipRequest) {
+      return false;
+    }
+    final l$$__typename = $__typename;
+    final lOther$$__typename = other.$__typename;
+    if (l$$__typename != lOther$$__typename) {
+      return false;
+    }
+    return true;
+  }
+}
+
+extension UtilityExtension$Mutation$denyFriendshipRequest
+    on Mutation$denyFriendshipRequest {
+  CopyWith$Mutation$denyFriendshipRequest<Mutation$denyFriendshipRequest>
+      get copyWith => CopyWith$Mutation$denyFriendshipRequest(
+            this,
+            (i) => i,
+          );
+}
+
+abstract class CopyWith$Mutation$denyFriendshipRequest<TRes> {
+  factory CopyWith$Mutation$denyFriendshipRequest(
+    Mutation$denyFriendshipRequest instance,
+    TRes Function(Mutation$denyFriendshipRequest) then,
+  ) = _CopyWithImpl$Mutation$denyFriendshipRequest;
+
+  factory CopyWith$Mutation$denyFriendshipRequest.stub(TRes res) =
+      _CopyWithStubImpl$Mutation$denyFriendshipRequest;
+
+  TRes call({
+    bool? denyFriendshipRequest,
+    String? $__typename,
+  });
+}
+
+class _CopyWithImpl$Mutation$denyFriendshipRequest<TRes>
+    implements CopyWith$Mutation$denyFriendshipRequest<TRes> {
+  _CopyWithImpl$Mutation$denyFriendshipRequest(
+    this._instance,
+    this._then,
+  );
+
+  final Mutation$denyFriendshipRequest _instance;
+
+  final TRes Function(Mutation$denyFriendshipRequest) _then;
+
+  static const _undefined = {};
+
+  TRes call({
+    Object? denyFriendshipRequest = _undefined,
+    Object? $__typename = _undefined,
+  }) =>
+      _then(Mutation$denyFriendshipRequest(
+        denyFriendshipRequest:
+            denyFriendshipRequest == _undefined || denyFriendshipRequest == null
+                ? _instance.denyFriendshipRequest
+                : (denyFriendshipRequest as bool),
+        $__typename: $__typename == _undefined || $__typename == null
+            ? _instance.$__typename
+            : ($__typename as String),
+      ));
+}
+
+class _CopyWithStubImpl$Mutation$denyFriendshipRequest<TRes>
+    implements CopyWith$Mutation$denyFriendshipRequest<TRes> {
+  _CopyWithStubImpl$Mutation$denyFriendshipRequest(this._res);
+
+  TRes _res;
+
+  call({
+    bool? denyFriendshipRequest,
+    String? $__typename,
+  }) =>
+      _res;
+}
+
+const documentNodeMutationdenyFriendshipRequest = DocumentNode(definitions: [
+  OperationDefinitionNode(
+    type: OperationType.mutation,
+    name: NameNode(value: 'denyFriendshipRequest'),
+    variableDefinitions: [
+      VariableDefinitionNode(
+        variable: VariableNode(name: NameNode(value: 'friendshipRequestId')),
+        type: NamedTypeNode(
+          name: NameNode(value: 'UUID'),
+          isNonNull: true,
+        ),
+        defaultValue: DefaultValueNode(value: null),
+        directives: [],
+      )
+    ],
+    directives: [],
+    selectionSet: SelectionSetNode(selections: [
+      FieldNode(
+        name: NameNode(value: 'denyFriendshipRequest'),
+        alias: null,
+        arguments: [
+          ArgumentNode(
+            name: NameNode(value: 'friendshipRequestId'),
+            value: VariableNode(name: NameNode(value: 'friendshipRequestId')),
+          )
+        ],
+        directives: [],
+        selectionSet: null,
+      ),
+      FieldNode(
+        name: NameNode(value: '__typename'),
+        alias: null,
+        arguments: [],
+        directives: [],
+        selectionSet: null,
+      ),
+    ]),
+  ),
+]);
+Mutation$denyFriendshipRequest _parserFn$Mutation$denyFriendshipRequest(
+        Map<String, dynamic> data) =>
+    Mutation$denyFriendshipRequest.fromJson(data);
+typedef OnMutationCompleted$Mutation$denyFriendshipRequest = FutureOr<void>
+    Function(
+  dynamic,
+  Mutation$denyFriendshipRequest?,
+);
+
+class Options$Mutation$denyFriendshipRequest
+    extends graphql.MutationOptions<Mutation$denyFriendshipRequest> {
+  Options$Mutation$denyFriendshipRequest({
+    String? operationName,
+    required Variables$Mutation$denyFriendshipRequest variables,
+    graphql.FetchPolicy? fetchPolicy,
+    graphql.ErrorPolicy? errorPolicy,
+    graphql.CacheRereadPolicy? cacheRereadPolicy,
+    Object? optimisticResult,
+    graphql.Context? context,
+    OnMutationCompleted$Mutation$denyFriendshipRequest? onCompleted,
+    graphql.OnMutationUpdate<Mutation$denyFriendshipRequest>? update,
+    graphql.OnError? onError,
+  })  : onCompletedWithParsed = onCompleted,
+        super(
+          variables: variables.toJson(),
+          operationName: operationName,
+          fetchPolicy: fetchPolicy,
+          errorPolicy: errorPolicy,
+          cacheRereadPolicy: cacheRereadPolicy,
+          optimisticResult: optimisticResult,
+          context: context,
+          onCompleted: onCompleted == null
+              ? null
+              : (data) => onCompleted(
+                    data,
+                    data == null
+                        ? null
+                        : _parserFn$Mutation$denyFriendshipRequest(data),
+                  ),
+          update: update,
+          onError: onError,
+          document: documentNodeMutationdenyFriendshipRequest,
+          parserFn: _parserFn$Mutation$denyFriendshipRequest,
+        );
+
+  final OnMutationCompleted$Mutation$denyFriendshipRequest?
+      onCompletedWithParsed;
+
+  @override
+  List<Object?> get properties => [
+        ...super.onCompleted == null
+            ? super.properties
+            : super.properties.where((property) => property != onCompleted),
+        onCompletedWithParsed,
+      ];
+}
+
+class WatchOptions$Mutation$denyFriendshipRequest
+    extends graphql.WatchQueryOptions<Mutation$denyFriendshipRequest> {
+  WatchOptions$Mutation$denyFriendshipRequest({
+    String? operationName,
+    required Variables$Mutation$denyFriendshipRequest variables,
+    graphql.FetchPolicy? fetchPolicy,
+    graphql.ErrorPolicy? errorPolicy,
+    graphql.CacheRereadPolicy? cacheRereadPolicy,
+    Object? optimisticResult,
+    graphql.Context? context,
+    Duration? pollInterval,
+    bool? eagerlyFetchResults,
+    bool carryForwardDataOnException = true,
+    bool fetchResults = false,
+  }) : super(
+          variables: variables.toJson(),
+          operationName: operationName,
+          fetchPolicy: fetchPolicy,
+          errorPolicy: errorPolicy,
+          cacheRereadPolicy: cacheRereadPolicy,
+          optimisticResult: optimisticResult,
+          context: context,
+          document: documentNodeMutationdenyFriendshipRequest,
+          pollInterval: pollInterval,
+          eagerlyFetchResults: eagerlyFetchResults,
+          carryForwardDataOnException: carryForwardDataOnException,
+          fetchResults: fetchResults,
+          parserFn: _parserFn$Mutation$denyFriendshipRequest,
+        );
+}
+
+extension ClientExtension$Mutation$denyFriendshipRequest
+    on graphql.GraphQLClient {
+  Future<graphql.QueryResult<Mutation$denyFriendshipRequest>>
+      mutate$denyFriendshipRequest(
+              Options$Mutation$denyFriendshipRequest options) async =>
+          await this.mutate(options);
+  graphql.ObservableQuery<Mutation$denyFriendshipRequest>
+      watchMutation$denyFriendshipRequest(
+              WatchOptions$Mutation$denyFriendshipRequest options) =>
+          this.watchMutation(options);
+}
+
+class Mutation$denyFriendshipRequest$HookResult {
+  Mutation$denyFriendshipRequest$HookResult(
+    this.runMutation,
+    this.result,
+  );
+
+  final RunMutation$Mutation$denyFriendshipRequest runMutation;
+
+  final graphql.QueryResult<Mutation$denyFriendshipRequest> result;
+}
+
+Mutation$denyFriendshipRequest$HookResult useMutation$denyFriendshipRequest(
+    [WidgetOptions$Mutation$denyFriendshipRequest? options]) {
+  final result = graphql_flutter
+      .useMutation(options ?? WidgetOptions$Mutation$denyFriendshipRequest());
+  return Mutation$denyFriendshipRequest$HookResult(
+    (variables, {optimisticResult}) => result.runMutation(
+      variables.toJson(),
+      optimisticResult: optimisticResult,
+    ),
+    result.result,
+  );
+}
+
+graphql.ObservableQuery<Mutation$denyFriendshipRequest>
+    useWatchMutation$denyFriendshipRequest(
+            WatchOptions$Mutation$denyFriendshipRequest options) =>
+        graphql_flutter.useWatchMutation(options);
+
+class WidgetOptions$Mutation$denyFriendshipRequest
+    extends graphql.MutationOptions<Mutation$denyFriendshipRequest> {
+  WidgetOptions$Mutation$denyFriendshipRequest({
+    String? operationName,
+    graphql.FetchPolicy? fetchPolicy,
+    graphql.ErrorPolicy? errorPolicy,
+    graphql.CacheRereadPolicy? cacheRereadPolicy,
+    Object? optimisticResult,
+    graphql.Context? context,
+    OnMutationCompleted$Mutation$denyFriendshipRequest? onCompleted,
+    graphql.OnMutationUpdate<Mutation$denyFriendshipRequest>? update,
+    graphql.OnError? onError,
+  })  : onCompletedWithParsed = onCompleted,
+        super(
+          operationName: operationName,
+          fetchPolicy: fetchPolicy,
+          errorPolicy: errorPolicy,
+          cacheRereadPolicy: cacheRereadPolicy,
+          optimisticResult: optimisticResult,
+          context: context,
+          onCompleted: onCompleted == null
+              ? null
+              : (data) => onCompleted(
+                    data,
+                    data == null
+                        ? null
+                        : _parserFn$Mutation$denyFriendshipRequest(data),
+                  ),
+          update: update,
+          onError: onError,
+          document: documentNodeMutationdenyFriendshipRequest,
+          parserFn: _parserFn$Mutation$denyFriendshipRequest,
+        );
+
+  final OnMutationCompleted$Mutation$denyFriendshipRequest?
+      onCompletedWithParsed;
+
+  @override
+  List<Object?> get properties => [
+        ...super.onCompleted == null
+            ? super.properties
+            : super.properties.where((property) => property != onCompleted),
+        onCompletedWithParsed,
+      ];
+}
+
+typedef RunMutation$Mutation$denyFriendshipRequest
+    = graphql.MultiSourceResult<Mutation$denyFriendshipRequest> Function(
+  Variables$Mutation$denyFriendshipRequest, {
+  Object? optimisticResult,
+});
+typedef Builder$Mutation$denyFriendshipRequest = widgets.Widget Function(
+  RunMutation$Mutation$denyFriendshipRequest,
+  graphql.QueryResult<Mutation$denyFriendshipRequest>?,
+);
+
+class Mutation$denyFriendshipRequest$Widget
+    extends graphql_flutter.Mutation<Mutation$denyFriendshipRequest> {
+  Mutation$denyFriendshipRequest$Widget({
+    widgets.Key? key,
+    WidgetOptions$Mutation$denyFriendshipRequest? options,
+    required Builder$Mutation$denyFriendshipRequest builder,
+  }) : super(
+          key: key,
+          options: options ?? WidgetOptions$Mutation$denyFriendshipRequest(),
+          builder: (
+            run,
+            result,
+          ) =>
+              builder(
+            (
+              variables, {
+              optimisticResult,
+            }) =>
+                run(
+              variables.toJson(),
+              optimisticResult: optimisticResult,
+            ),
+            result,
+          ),
+        );
 }

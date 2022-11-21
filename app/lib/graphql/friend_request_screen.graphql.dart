@@ -460,7 +460,7 @@ class Query$searchUser$userByScreenId {
 
   final String avatarUrl;
 
-  final bool isFriend;
+  late final bool isFriend;
 
   final String $__typename;
 

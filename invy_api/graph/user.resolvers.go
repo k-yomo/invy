@@ -113,8 +113,8 @@ func (r *mutationResolver) DenyFriendshipRequest(ctx context.Context, friendship
 	return true, nil
 }
 
-// ApproveFriendshipRequest is the resolver for the approveFriendshipRequest field.
-func (r *mutationResolver) ApproveFriendshipRequest(ctx context.Context, friendshipRequestID uuid.UUID) (bool, error) {
+// AcceptFriendshipRequest is the resolver for the acceptFriendshipRequest field.
+func (r *mutationResolver) AcceptFriendshipRequest(ctx context.Context, friendshipRequestID uuid.UUID) (bool, error) {
 	authUserID := auth.GetUserID(ctx)
 	err := ent.RunInTx(ctx, r.DB, func(tx *ent.Tx) error {
 		friendshipRequest, err := r.DB.FriendshipRequest.Query().

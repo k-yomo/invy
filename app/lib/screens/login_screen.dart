@@ -1,4 +1,5 @@
 import 'package:invy/graphql/schema.graphql.dart';
+import 'package:invy/services/graphql_client.dart';
 import 'package:invy/state/auth.dart';
 import 'package:invy/graphql/signUp.graphql.dart';
 import 'package:invy/graphql/viewer.graphql.dart';
@@ -15,7 +16,7 @@ class LoginScreen extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final graphqlClient = GraphQLProvider.of(context).value;
+    final graphqlClient = ref.read(graphqlClientProvider);
     final signUp = useMutation$signUp();
 
     onGoogleLoginPressed() async {
@@ -29,7 +30,10 @@ class LoginScreen extends HookConsumerWidget {
 
         final result = await firebaseUser.getIdTokenResult();
         if (result.claims?.containsKey("userId") ?? false) {
-          final viewerQueryResult = await graphqlClient.query$viewer();
+          final viewerQueryResult =
+              await graphqlClient.query$viewer(Options$Query$viewer(
+            fetchPolicy: FetchPolicy.networkOnly,
+          ));
           // TODO: if not found, then make signUp mutation.
           if (viewerQueryResult.hasException) {
             // TODO: logging and show error
@@ -45,20 +49,18 @@ class LoginScreen extends HookConsumerWidget {
           print("logged in successfully");
           return;
         } else {
-          final res = await signUp
-              .runMutation(
-                  variables: Variables$Mutation$signUp(
-                input: Input$SignUpInput(
-                  email: firebaseUser.email,
-                  nickname: firebaseUser.displayName!,
-                  avatarUrl: firebaseUser.photoURL,
-                ),
-              ))
-              .networkResult;
+          final res = await graphqlClient.mutate(Options$Mutation$signUp(
+              variables: Variables$Mutation$signUp(
+            input: Input$SignUpInput(
+              email: firebaseUser.email,
+              nickname: firebaseUser.displayName!,
+              avatarUrl: firebaseUser.photoURL,
+            ),
+          )));
           // Refresh id token to get new token containing user id in claims.
           await firebaseUser.getIdToken(true);
-          if (res?.parsedData != null) {
-            final user = res!.parsedData!.signUp;
+          if (res.parsedData != null) {
+            final user = res.parsedData!.signUp;
             ref.read(loggedInUserProvider.notifier).state = LoggedInUser(
                 id: user.id,
                 screenId: user.screenId,
@@ -67,7 +69,7 @@ class LoginScreen extends HookConsumerWidget {
             print("signed up in successfully");
             // TODO: redirect to user profile update page?
           } else {
-            print(res?.exception);
+            print(res.exception);
           }
         }
       } on FirebaseAuthException catch (e) {

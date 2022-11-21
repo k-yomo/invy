@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 String? uuidFromObject(Object object) {
   if (object is Map<String, Object>) {
@@ -13,10 +13,16 @@ String? uuidFromObject(Object object) {
   return null;
 }
 
-ValueNotifier<GraphQLClient> clientFor({
+final graphqlClientProvider = Provider<GraphQLClient>((_) {
+  throw Exception();
+});
+
+Future<GraphQLClient> initGraphQLClient({
   required String uri,
   String? subscriptionUri,
-}) {
+}) async {
+  await initHiveForFlutter();
+
   Link httpLink = HttpLink(uri);
   Link authLink = AuthLink(getToken: () async {
     final currentUser = FirebaseAuth.instance.currentUser;
@@ -35,35 +41,8 @@ ValueNotifier<GraphQLClient> clientFor({
     link = Link.split((request) => request.isSubscription, websocketLink, link);
   }
 
-  return ValueNotifier<GraphQLClient>(
-    GraphQLClient(
-      cache: GraphQLCache(store: HiveStore()),
-      link: link,
-    ),
+  return GraphQLClient(
+    cache: GraphQLCache(store: HiveStore()),
+    link: link,
   );
-}
-
-/// Wraps the root application with the `graphql_flutter` client.
-/// We use the cache for all state management.
-class ClientProvider extends StatelessWidget {
-  ClientProvider({
-    super.key,
-    required this.child,
-    required String uri,
-    required String subscriptionUri,
-  }) : client = clientFor(
-          uri: uri,
-          subscriptionUri: subscriptionUri,
-        );
-
-  final Widget child;
-  final ValueNotifier<GraphQLClient> client;
-
-  @override
-  Widget build(BuildContext context) {
-    return GraphQLProvider(
-      client: client,
-      child: child,
-    );
-  }
 }

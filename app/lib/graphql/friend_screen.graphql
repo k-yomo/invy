@@ -17,6 +17,9 @@ query friendScreenViewer {
                 hasPreviousPage
             }
         }
+        pendingFriendshipRequests {
+            ...pendingFriendRequestItemFragment
+        }
     }
 }
 
@@ -34,4 +37,12 @@ query friendScreenFriends($after: Cursor, $first: Int) {
             hasPreviousPage
         }
     }
+}
+
+mutation acceptFriendshipRequest($friendshipRequestId: UUID!) {
+    acceptFriendshipRequest(friendshipRequestId: $friendshipRequestId)
+}
+
+mutation denyFriendshipRequest($friendshipRequestId: UUID!) {
+    denyFriendshipRequest(friendshipRequestId: $friendshipRequestId)
 }

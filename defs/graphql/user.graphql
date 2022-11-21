@@ -12,7 +12,7 @@ extend type Mutation {
     requestFriendship(friendUserId: UUID!): FriendshipRequest! @authRequired
     cancelFriendshipRequest(friendshipRequestId: UUID!): Boolean! @authRequired
     denyFriendshipRequest(friendshipRequestId: UUID!): Boolean! @authRequired
-    approveFriendshipRequest(friendshipRequestId: UUID!): Boolean! @authRequired
+    acceptFriendshipRequest(friendshipRequestId: UUID!): Boolean! @authRequired
 
     createFriendGroup(input: CreateFriendGroupInput!): FriendGroup! @authRequired
     updateFriendGroup(input: UpdateFriendGroupInput!): FriendGroup! @authRequired

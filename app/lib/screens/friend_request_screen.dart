@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:invy/services/graphql_client.dart';
 
 import '../components/app_bar_leading.dart';
 import '../state/auth.dart';
@@ -12,7 +13,7 @@ class FriendRequestScreen extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final graphqlClient = GraphQLProvider.of(context).value;
+    final graphqlClient = ref.read(graphqlClientProvider);
     final searchUserQueryResult =
         useState<QueryResult<Query$searchUser>?>(null);
 
@@ -82,7 +83,7 @@ class _FriendSearchResult extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.read(loggedInUserProvider)!;
-    final requestFriendshipMutation = useMutation$requestFriendship();
+    final graphqlClient = ref.read(graphqlClientProvider)!;
     if (searchResult.parsedData == null ||
         searchResult.parsedData!.userByScreenId.id == user.id) {
       return Container(
@@ -122,10 +123,16 @@ class _FriendSearchResult extends HookConsumerWidget {
                             EdgeInsets.symmetric(vertical: 5, horizontal: 12),
                       ),
                       onPressed: () async {
-                        final result = await requestFriendshipMutation
-                            .runMutation(Variables$Mutation$requestFriendship(
-                                userId: foundUser.id))
-                            .networkResult;
+                        final result =
+                            await graphqlClient.mutate$requestFriendship(
+                                Options$Mutation$requestFriendship(
+                                    variables:
+                                        Variables$Mutation$requestFriendship(
+                                            userId: foundUser.id)));
+                        if (result.hasException) {
+                          // TODO: show error
+                          return;
+                        }
                       },
                       child: Text("申請する",
                           style: TextStyle(color: Colors.black, fontSize: 16)),

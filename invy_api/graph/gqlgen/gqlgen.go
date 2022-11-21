@@ -84,19 +84,19 @@ type ComplexityRoot struct {
 	}
 
 	Mutation struct {
-		AcceptInvitation         func(childComplexity int, invitationID uuid.UUID) int
-		ApproveFriendshipRequest func(childComplexity int, friendshipRequestID uuid.UUID) int
-		CancelFriendshipRequest  func(childComplexity int, friendshipRequestID uuid.UUID) int
-		CreateFriendGroup        func(childComplexity int, input gqlmodel.CreateFriendGroupInput) int
-		DeleteFriendGroup        func(childComplexity int, friendGroupID uuid.UUID) int
-		DenyFriendshipRequest    func(childComplexity int, friendshipRequestID uuid.UUID) int
-		DenyInvitation           func(childComplexity int, invitationID uuid.UUID) int
-		MuteUser                 func(childComplexity int, muteUserID uuid.UUID) int
-		RequestFriendship        func(childComplexity int, friendUserID uuid.UUID) int
-		SendInvitation           func(childComplexity int, input *gqlmodel.SendInvitationInput) int
-		SignUp                   func(childComplexity int, input *gqlmodel.SignUpInput) int
-		UnmuteUser               func(childComplexity int, muteUserID uuid.UUID) int
-		UpdateFriendGroup        func(childComplexity int, input gqlmodel.UpdateFriendGroupInput) int
+		AcceptFriendshipRequest func(childComplexity int, friendshipRequestID uuid.UUID) int
+		AcceptInvitation        func(childComplexity int, invitationID uuid.UUID) int
+		CancelFriendshipRequest func(childComplexity int, friendshipRequestID uuid.UUID) int
+		CreateFriendGroup       func(childComplexity int, input gqlmodel.CreateFriendGroupInput) int
+		DeleteFriendGroup       func(childComplexity int, friendGroupID uuid.UUID) int
+		DenyFriendshipRequest   func(childComplexity int, friendshipRequestID uuid.UUID) int
+		DenyInvitation          func(childComplexity int, invitationID uuid.UUID) int
+		MuteUser                func(childComplexity int, muteUserID uuid.UUID) int
+		RequestFriendship       func(childComplexity int, friendUserID uuid.UUID) int
+		SendInvitation          func(childComplexity int, input *gqlmodel.SendInvitationInput) int
+		SignUp                  func(childComplexity int, input *gqlmodel.SignUpInput) int
+		UnmuteUser              func(childComplexity int, muteUserID uuid.UUID) int
+		UpdateFriendGroup       func(childComplexity int, input gqlmodel.UpdateFriendGroupInput) int
 	}
 
 	PageInfo struct {
@@ -167,7 +167,7 @@ type MutationResolver interface {
 	RequestFriendship(ctx context.Context, friendUserID uuid.UUID) (*gqlmodel.FriendshipRequest, error)
 	CancelFriendshipRequest(ctx context.Context, friendshipRequestID uuid.UUID) (bool, error)
 	DenyFriendshipRequest(ctx context.Context, friendshipRequestID uuid.UUID) (bool, error)
-	ApproveFriendshipRequest(ctx context.Context, friendshipRequestID uuid.UUID) (bool, error)
+	AcceptFriendshipRequest(ctx context.Context, friendshipRequestID uuid.UUID) (bool, error)
 	CreateFriendGroup(ctx context.Context, input gqlmodel.CreateFriendGroupInput) (*gqlmodel.FriendGroup, error)
 	UpdateFriendGroup(ctx context.Context, input gqlmodel.UpdateFriendGroupInput) (*gqlmodel.FriendGroup, error)
 	DeleteFriendGroup(ctx context.Context, friendGroupID uuid.UUID) (bool, error)
@@ -342,6 +342,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Invitation.UserID(childComplexity), true
 
+	case "Mutation.acceptFriendshipRequest":
+		if e.complexity.Mutation.AcceptFriendshipRequest == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_acceptFriendshipRequest_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.AcceptFriendshipRequest(childComplexity, args["friendshipRequestId"].(uuid.UUID)), true
+
 	case "Mutation.acceptInvitation":
 		if e.complexity.Mutation.AcceptInvitation == nil {
 			break
@@ -353,18 +365,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.AcceptInvitation(childComplexity, args["invitationId"].(uuid.UUID)), true
-
-	case "Mutation.approveFriendshipRequest":
-		if e.complexity.Mutation.ApproveFriendshipRequest == nil {
-			break
-		}
-
-		args, err := ec.field_Mutation_approveFriendshipRequest_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.ApproveFriendshipRequest(childComplexity, args["friendshipRequestId"].(uuid.UUID)), true
 
 	case "Mutation.cancelFriendshipRequest":
 		if e.complexity.Mutation.CancelFriendshipRequest == nil {
@@ -896,7 +896,7 @@ extend type Mutation {
     requestFriendship(friendUserId: UUID!): FriendshipRequest! @authRequired
     cancelFriendshipRequest(friendshipRequestId: UUID!): Boolean! @authRequired
     denyFriendshipRequest(friendshipRequestId: UUID!): Boolean! @authRequired
-    approveFriendshipRequest(friendshipRequestId: UUID!): Boolean! @authRequired
+    acceptFriendshipRequest(friendshipRequestId: UUID!): Boolean! @authRequired
 
     createFriendGroup(input: CreateFriendGroupInput!): FriendGroup! @authRequired
     updateFriendGroup(input: UpdateFriendGroupInput!): FriendGroup! @authRequired
@@ -1025,6 +1025,21 @@ func (ec *executionContext) dir_constraint_args(ctx context.Context, rawArgs map
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_acceptFriendshipRequest_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 uuid.UUID
+	if tmp, ok := rawArgs["friendshipRequestId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("friendshipRequestId"))
+		arg0, err = ec.unmarshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["friendshipRequestId"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_acceptInvitation_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -1037,21 +1052,6 @@ func (ec *executionContext) field_Mutation_acceptInvitation_args(ctx context.Con
 		}
 	}
 	args["invitationId"] = arg0
-	return args, nil
-}
-
-func (ec *executionContext) field_Mutation_approveFriendshipRequest_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 uuid.UUID
-	if tmp, ok := rawArgs["friendshipRequestId"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("friendshipRequestId"))
-		arg0, err = ec.unmarshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["friendshipRequestId"] = arg0
 	return args, nil
 }
 
@@ -2857,8 +2857,8 @@ func (ec *executionContext) fieldContext_Mutation_denyFriendshipRequest(ctx cont
 	return fc, nil
 }
 
-func (ec *executionContext) _Mutation_approveFriendshipRequest(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_approveFriendshipRequest(ctx, field)
+func (ec *executionContext) _Mutation_acceptFriendshipRequest(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_acceptFriendshipRequest(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -2872,7 +2872,7 @@ func (ec *executionContext) _Mutation_approveFriendshipRequest(ctx context.Conte
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().ApproveFriendshipRequest(rctx, fc.Args["friendshipRequestId"].(uuid.UUID))
+			return ec.resolvers.Mutation().AcceptFriendshipRequest(rctx, fc.Args["friendshipRequestId"].(uuid.UUID))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.AuthRequired == nil {
@@ -2908,7 +2908,7 @@ func (ec *executionContext) _Mutation_approveFriendshipRequest(ctx context.Conte
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Mutation_approveFriendshipRequest(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Mutation_acceptFriendshipRequest(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Mutation",
 		Field:      field,
@@ -2925,7 +2925,7 @@ func (ec *executionContext) fieldContext_Mutation_approveFriendshipRequest(ctx c
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_approveFriendshipRequest_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Mutation_acceptFriendshipRequest_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return
 	}
@@ -7565,10 +7565,10 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "approveFriendshipRequest":
+		case "acceptFriendshipRequest":
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_approveFriendshipRequest(ctx, field)
+				return ec._Mutation_acceptFriendshipRequest(ctx, field)
 			})
 
 			if out.Values[i] == graphql.Null {

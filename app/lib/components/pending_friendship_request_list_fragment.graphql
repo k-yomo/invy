@@ -1,0 +1,7 @@
+
+fragment pendingFriendRequestItemFragment on FriendshipRequest {
+    id
+    fromUser {
+        ...friendListItemFragment
+    }
+}

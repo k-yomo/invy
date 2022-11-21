@@ -1,4 +1,4 @@
-import '../components/friend_fragment.graphql.dart';
+import '../components/friend_list_item_fragment.graphql.dart';
 import 'package:flutter/widgets.dart' as widgets;
 import 'package:gql/ast.dart';
 import 'package:graphql/client.dart' as graphql;

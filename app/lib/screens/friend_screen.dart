@@ -1,9 +1,13 @@
+import 'package:flutter/material.dart';
+import 'package:graphql/client.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:invy/components/friend_group_list.dart';
 import 'package:invy/components/friend_list.dart';
 import 'package:invy/graphql/friend_screen.graphql.dart';
-import 'package:flutter/material.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:invy/services/graphql_client.dart';
 
+import '../components/pending_friendship_request_list.dart';
+import '../components/pending_friendship_request_list_fragment.graphql.dart';
 import 'freind_group_create_screen.dart';
 import 'friend_request_screen.dart';
 
@@ -12,67 +16,80 @@ class FriendScreen extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final viewerQueryResult =
-        useQuery$friendScreenViewer(Options$Query$friendScreenViewer()).result;
+    final graphqlClient = ref.read(graphqlClientProvider);
 
-    final viewer = viewerQueryResult.parsedData?.viewer;
-
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Friends',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-        ),
-        shape:
-            Border(bottom: BorderSide(color: Colors.grey.shade200, width: 1)),
-      ),
-      backgroundColor: Colors.white,
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const _Title(text: "グループ"),
-                InkWell(
-                  onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        fullscreenDialog: true,
-                        builder: (context) => FriendGroupCreateScreen(),
-                      ),
-                    );
-                  },
-                  child: _AddFriendGroup(),
-                ),
-                FriendGroupList(
-                    friendGroups: viewer?.friendGroups.toList() ?? [])
-              ],
+    return FutureBuilder<QueryResult<Query$friendScreenViewer>>(
+        future: graphqlClient
+            .query$friendScreenViewer(Options$Query$friendScreenViewer(
+          fetchPolicy: FetchPolicy.cacheAndNetwork,
+        )),
+        builder: (context, viewerSnapshot) {
+          final viewer = viewerSnapshot.data?.parsedData?.viewer;
+          return Scaffold(
+            appBar: AppBar(
+              title: const Text(
+                'Friends',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+              ),
+              shape: Border(
+                  bottom: BorderSide(color: Colors.grey.shade200, width: 1)),
             ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const _Title(text: "友だち"),
-                InkWell(
-                  onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        fullscreenDialog: true,
-                        builder: (context) => FriendRequestScreen(),
+            backgroundColor: Colors.white,
+            body: SingleChildScrollView(
+              child: Column(
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const _Title(text: "グループ"),
+                      InkWell(
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              fullscreenDialog: true,
+                              builder: (context) => FriendGroupCreateScreen(),
+                            ),
+                          );
+                        },
+                        child: _AddFriendGroup(),
                       ),
-                    );
-                  },
-                  child: _AddFriend(),
-                ),
-                FriendList(
-                    friends:
-                        viewer?.friends.edges.map((e) => e.node).toList() ?? [])
-              ],
+                      FriendGroupList(
+                          friendGroups: viewer?.friendGroups.toList() ?? [])
+                    ],
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const _Title(text: "友だち"),
+                      InkWell(
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              fullscreenDialog: true,
+                              builder: (context) => FriendRequestScreen(),
+                            ),
+                          );
+                        },
+                        child: _AddFriend(),
+                      ),
+                      PendingFriendshipRequestList(
+                        pendingFriendshipRequests:
+                            viewer?.pendingFriendshipRequests ?? [],
+                        onClick: (Fragment$pendingFriendRequestItemFragment
+                            request) {},
+                      ),
+                      FriendList(
+                          friends: viewer?.friends.edges
+                                  .map((e) => e.node)
+                                  .toList() ??
+                              [])
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ],
-        ),
-      ),
-    );
+          );
+        });
   }
 }
 

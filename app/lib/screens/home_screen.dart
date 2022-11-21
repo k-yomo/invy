@@ -2,14 +2,16 @@ import 'package:invy/graphql/home_screen.graphql.dart';
 import 'package:invy/screens/invitation_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:invy/services/graphql_client.dart';
 
 class HomeScreen extends HookConsumerWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final pendingInvitationsResult = useQuery$pendingInvitations();
-    final acceptedInvitationsResult = useQuery$acceptedInvitations();
+    final graphqlClient = ref.read(graphqlClientProvider);
+    // final pendingInvitationsResult = useQuery$pendingInvitations();
+    // final acceptedInvitationsResult = useQuery$acceptedInvitations();
 
     return Scaffold(
         appBar: AppBar(
