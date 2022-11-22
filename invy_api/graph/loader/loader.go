@@ -7,6 +7,7 @@ import (
 	"github.com/graph-gophers/dataloader/v7"
 	"github.com/k-yomo/invy/invy_api/ent"
 	"github.com/k-yomo/invy/invy_api/ent/friendship"
+	"github.com/k-yomo/invy/invy_api/ent/friendshiprequest"
 	"github.com/k-yomo/invy/invy_api/ent/invitationacceptance"
 	"github.com/k-yomo/invy/invy_api/ent/usermute"
 	"github.com/k-yomo/invy/invy_api/ent/userprofile"
@@ -16,6 +17,7 @@ import (
 type Loaders struct {
 	UserProfile                    *dataloader.Loader[uuid.UUID, *ent.UserProfile]
 	Friendship                     *dataloader.Loader[FriendshipKey, *ent.Friendship]
+	FriendshipRequest              *dataloader.Loader[FriendshipRequestKey, *ent.FriendshipRequest]
 	UserMute                       *dataloader.Loader[UserMuteKey, *ent.UserMute]
 	InvitationAcceptedUserProfiles *dataloader.Loader[uuid.UUID, []*ent.UserProfile]
 }
@@ -29,6 +31,10 @@ func NewLoaders(db *ent.Client) *Loaders {
 		Friendship: dataloader.NewBatchedLoader(
 			NewFriendshipLoader(db),
 			dataloader.WithCache[FriendshipKey, *ent.Friendship](&dataloader.NoCache[FriendshipKey, *ent.Friendship]{}),
+		),
+		FriendshipRequest: dataloader.NewBatchedLoader(
+			NewFriendshipRequestLoader(db),
+			dataloader.WithCache[FriendshipRequestKey, *ent.FriendshipRequest](&dataloader.NoCache[FriendshipRequestKey, *ent.FriendshipRequest]{}),
 		),
 		UserMute: dataloader.NewBatchedLoader(
 			NewUserMuteLoader(db),
@@ -85,6 +91,34 @@ func NewFriendshipLoader(db *ent.Client) func(context.Context, []FriendshipKey) 
 			friendUserIDFriendshipMap[f.FriendUserID] = f
 		}
 		return convertToResults(friendUserIDs, friendUserIDFriendshipMap)
+	}
+}
+
+type FriendshipRequestKey struct {
+	FromUserID uuid.UUID
+	ToUserID   uuid.UUID
+}
+
+func NewFriendshipRequestLoader(db *ent.Client) func(context.Context, []FriendshipRequestKey) []*dataloader.Result[*ent.FriendshipRequest] {
+	return func(ctx context.Context, keys []FriendshipRequestKey) []*dataloader.Result[*ent.FriendshipRequest] {
+		if len(keys) == 0 {
+			return nil
+		}
+		fromUserID := keys[0].FromUserID
+		toUserIDs := convutil.ConvertToList(keys, func(key FriendshipRequestKey) uuid.UUID {
+			return key.ToUserID
+		})
+		dbFriendships, err := db.FriendshipRequest.Query().
+			Where(friendshiprequest.FromUserID(fromUserID), friendshiprequest.ToUserIDIn(toUserIDs...)).
+			All(ctx)
+		if err != nil {
+			return convertToErrorResults[*ent.FriendshipRequest](err, len(toUserIDs))
+		}
+		toUserIDFriendshipRequestMap := map[uuid.UUID]*ent.FriendshipRequest{}
+		for _, f := range dbFriendships {
+			toUserIDFriendshipRequestMap[f.ToUserID] = f
+		}
+		return convertToResults(toUserIDs, toUserIDFriendshipRequestMap)
 	}
 }
 

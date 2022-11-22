@@ -1,5 +1,6 @@
 import 'package:graphql/client.dart';
 import 'package:invy/components/app_bar_leading.dart';
+import 'package:invy/components/friend_group_icon.dart';
 import 'package:invy/components/friend_list_item_fragment.graphql.dart';
 import 'package:invy/components/friend_selection_list.dart';
 import 'package:invy/graphql/invitation_screen.graphql.dart';
@@ -30,6 +31,10 @@ class InvitationScreen extends HookConsumerWidget {
           return Scaffold(
             appBar: AppBar(
               leading: AppBarLeading(),
+              title: Text(
+                selectedCount > 0 ? '選択中(${selectedCount})' : '友だちを選択',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
               actions: <Widget>[
                 TextButton(
                   onPressed: () {
@@ -60,10 +65,6 @@ class InvitationScreen extends HookConsumerWidget {
                           fontWeight: FontWeight.bold)),
                 ),
               ],
-              title: Text(
-                selectedCount > 0 ? '選択中(${selectedCount})' : '友だちを選択',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
               shape: Border(
                   bottom: BorderSide(color: Colors.grey.shade200, width: 1)),
             ),
@@ -73,6 +74,22 @@ class InvitationScreen extends HookConsumerWidget {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      // TODO: show selected groups and friends at the top
+                      // Column(
+                      //   children: [
+                      //     Row(
+                      //       children: selectedFriendGroups.value.map((friendGroup) =>
+                      //           FriendGroupIcon(friendGroup.name)).toList(),
+                      //     ),
+                      //     Row(
+                      //       children: selectedFriends.value.map((friend) =>
+                      //           CircleAvatar(
+                      //             backgroundImage: NetworkImage(friend.avatarUrl),
+                      //           )
+                      //       ).toList(),
+                      //     ),
+                      //   ],
+                      // ),
                       FriendGroupSelectionList(
                         friendGroups: viewer?.friendGroups.toList() ?? [],
                         selectedFriendGroups: selectedFriendGroups.value,

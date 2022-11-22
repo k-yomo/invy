@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:graphql/client.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:invy/components/pending_friendship_request_list_fragment.graphql.dart';
 import 'package:invy/graphql/friend_screen.graphql.dart';
@@ -16,11 +17,39 @@ class PendingFriendshipRequestList extends HookConsumerWidget {
 
   final List<Fragment$pendingFriendRequestItemFragment>
       pendingFriendshipRequests;
-  final Function(Fragment$pendingFriendRequestItemFragment requestId) onClick;
+  final Function(String requestId) onClick;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final graphqlClient = ref.read(graphqlClientProvider);
+
+    onPressedDenyFriendship(String requestId) async {
+      final result = await graphqlClient.mutate$denyFriendshipRequest(
+        Options$Mutation$denyFriendshipRequest(
+          variables: Variables$Mutation$denyFriendshipRequest(
+              friendshipRequestId: requestId),
+        ),
+      );
+      if (result.hasException) {
+        // TODO: show error;
+        return;
+      }
+      onClick(requestId);
+    }
+
+    onPressedAcceptFriendship(String requestId) async {
+      final result = await graphqlClient.mutate$acceptFriendshipRequest(
+        Options$Mutation$acceptFriendshipRequest(
+          variables: Variables$Mutation$acceptFriendshipRequest(
+              friendshipRequestId: requestId),
+        ),
+      );
+      if (result.hasException) {
+        // TODO: show error;
+        return;
+      }
+      onClick(requestId);
+    }
 
     return Column(
         children: pendingFriendshipRequests.map((request) {
@@ -40,20 +69,8 @@ class PendingFriendshipRequestList extends HookConsumerWidget {
                             borderRadius: BorderRadius.circular(8),
                             side: BorderSide(color: Colors.transparent)),
                       ),
-                      onPressed: () async {
-                        final result =
-                            await graphqlClient.mutate$denyFriendshipRequest(
-                                Options$Mutation$denyFriendshipRequest(
-                                    variables:
-                                        Variables$Mutation$denyFriendshipRequest(
-                                            friendshipRequestId: request.id)));
-                        if (result.hasException) {
-                          print(result.exception);
-                          // TODO: show error
-                          return;
-                        }
-                        onClick(request);
-                      },
+                      onPressed: () async =>
+                          onPressedDenyFriendship(request.id),
                       child: const Text('拒否',
                           style: TextStyle(color: Colors.black))),
                   Container(margin: EdgeInsets.symmetric(horizontal: 2)),
@@ -68,20 +85,8 @@ class PendingFriendshipRequestList extends HookConsumerWidget {
                         ),
                         backgroundColor: Colors.blue,
                       ),
-                      onPressed: () async {
-                        final result =
-                            await graphqlClient.mutate$acceptFriendshipRequest(
-                          Options$Mutation$acceptFriendshipRequest(
-                            variables:
-                                Variables$Mutation$acceptFriendshipRequest(
-                                    friendshipRequestId: request.id),
-                          ),
-                        );
-                        if (result.hasException) {
-                          print(result.exception);
-                          // TODO: show error
-                        }
-                      },
+                      onPressed: () async =>
+                          onPressedAcceptFriendship(request.id),
                       child: const Text('承認',
                           style: TextStyle(color: Colors.white))),
                 ],

@@ -88,11 +88,12 @@ type UpdateFriendGroupInput struct {
 }
 
 type User struct {
-	ID        uuid.UUID `json:"id"`
-	Nickname  string    `json:"nickname"`
-	AvatarURL string    `json:"avatarUrl"`
-	IsMuted   bool      `json:"isMuted"`
-	IsFriend  bool      `json:"isFriend"`
+	ID                     uuid.UUID `json:"id"`
+	Nickname               string    `json:"nickname"`
+	AvatarURL              string    `json:"avatarUrl"`
+	IsMuted                bool      `json:"isMuted"`
+	IsFriend               bool      `json:"isFriend"`
+	IsRequestingFriendship bool      `json:"isRequestingFriendship"`
 }
 
 func (User) IsNode()               {}

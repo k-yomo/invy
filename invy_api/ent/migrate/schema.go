@@ -261,7 +261,7 @@ var (
 				Symbol:     "user_friend_groups_friend_groups_friend_group",
 				Columns:    []*schema.Column{UserFriendGroupsColumns[2]},
 				RefColumns: []*schema.Column{FriendGroupsColumns[0]},
-				OnDelete:   schema.NoAction,
+				OnDelete:   schema.Cascade,
 			},
 			{
 				Symbol:     "user_friend_groups_users_user",

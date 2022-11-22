@@ -1,0 +1,23 @@
+query friendGroupCreateScreenViewer() {
+    viewer {
+        friends(first: 100) {
+            edges {
+                node {
+                    ...friendListItemFragment
+                }
+            }
+            pageInfo {
+                startCursor
+                endCursor
+                hasNextPage
+                hasPreviousPage
+            }
+        }
+    }
+}
+
+mutation createFriendGroup($input: CreateFriendGroupInput!) {
+    createFriendGroup(input: $input) {
+        id
+    }
+}

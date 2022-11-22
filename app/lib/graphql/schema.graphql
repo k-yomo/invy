@@ -122,6 +122,7 @@ type User implements Node {
   avatarUrl: String!
   isMuted: Boolean!
   isFriend: Boolean!
+  isRequestingFriendship: Boolean!
 }
 
 type UserConnection {

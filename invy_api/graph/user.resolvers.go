@@ -160,6 +160,7 @@ func (r *mutationResolver) CreateFriendGroup(ctx context.Context, input gqlmodel
 		dbFriendGroup, err = tx.FriendGroup.Create().
 			SetName(input.Name).
 			SetUserID(authUserID).
+			SetTotalCount(len(input.FriendUserIds)).
 			AddFriendUserIDs(input.FriendUserIds...).
 			Save(ctx)
 		return err
@@ -322,6 +323,20 @@ func (r *userResolver) IsMuted(ctx context.Context, obj *gqlmodel.User) (bool, e
 func (r *userResolver) IsFriend(ctx context.Context, obj *gqlmodel.User) (bool, error) {
 	authUserID := auth.GetUserID(ctx)
 	_, err := loader.Get(ctx).Friendship.Load(ctx, loader.FriendshipKey{UserID: authUserID, FriendUserID: obj.ID})()
+	if err != nil && !errors.Is(err, loader.ErrNotFound) {
+		return false, err
+	}
+	if errors.Is(err, loader.ErrNotFound) {
+		return false, nil
+	}
+	return true, nil
+}
+
+// IsRequestingFriendship is the resolver for the isRequestingFriendship field.
+func (r *userResolver) IsRequestingFriendship(ctx context.Context, obj *gqlmodel.User) (bool, error) {
+	authUserID := auth.GetUserID(ctx)
+	key := loader.FriendshipRequestKey{FromUserID: authUserID, ToUserID: obj.ID}
+	_, err := loader.Get(ctx).FriendshipRequest.Load(ctx, key)()
 	if err != nil && !errors.Is(err, loader.ErrNotFound) {
 		return false, err
 	}

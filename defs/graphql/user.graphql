@@ -51,6 +51,7 @@ type User implements Node {
     avatarUrl: String!
     isMuted: Boolean! @goField(forceResolver: true)
     isFriend: Boolean! @goField(forceResolver: true)
+    isRequestingFriendship: Boolean! @goField(forceResolver: true)
 }
 
 type UserEdge {

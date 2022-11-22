@@ -116,11 +116,12 @@ type ComplexityRoot struct {
 	}
 
 	User struct {
-		AvatarURL func(childComplexity int) int
-		ID        func(childComplexity int) int
-		IsFriend  func(childComplexity int) int
-		IsMuted   func(childComplexity int) int
-		Nickname  func(childComplexity int) int
+		AvatarURL              func(childComplexity int) int
+		ID                     func(childComplexity int) int
+		IsFriend               func(childComplexity int) int
+		IsMuted                func(childComplexity int) int
+		IsRequestingFriendship func(childComplexity int) int
+		Nickname               func(childComplexity int) int
 	}
 
 	UserConnection struct {
@@ -185,6 +186,7 @@ type QueryResolver interface {
 type UserResolver interface {
 	IsMuted(ctx context.Context, obj *gqlmodel.User) (bool, error)
 	IsFriend(ctx context.Context, obj *gqlmodel.User) (bool, error)
+	IsRequestingFriendship(ctx context.Context, obj *gqlmodel.User) (bool, error)
 }
 type ViewerResolver interface {
 	Friends(ctx context.Context, obj *gqlmodel.Viewer, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*gqlmodel.UserConnection, error)
@@ -611,6 +613,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.User.IsMuted(childComplexity), true
 
+	case "User.isRequestingFriendship":
+		if e.complexity.User.IsRequestingFriendship == nil {
+			break
+		}
+
+		return e.complexity.User.IsRequestingFriendship(childComplexity), true
+
 	case "User.nickname":
 		if e.complexity.User.Nickname == nil {
 			break
@@ -935,6 +944,7 @@ type User implements Node {
     avatarUrl: String!
     isMuted: Boolean! @goField(forceResolver: true)
     isFriend: Boolean! @goField(forceResolver: true)
+    isRequestingFriendship: Boolean! @goField(forceResolver: true)
 }
 
 type UserEdge {
@@ -1627,6 +1637,8 @@ func (ec *executionContext) fieldContext_FriendGroup_friendUsers(ctx context.Con
 				return ec.fieldContext_User_isMuted(ctx, field)
 			case "isFriend":
 				return ec.fieldContext_User_isFriend(ctx, field)
+			case "isRequestingFriendship":
+				return ec.fieldContext_User_isRequestingFriendship(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -1771,6 +1783,8 @@ func (ec *executionContext) fieldContext_FriendshipRequest_fromUser(ctx context.
 				return ec.fieldContext_User_isMuted(ctx, field)
 			case "isFriend":
 				return ec.fieldContext_User_isFriend(ctx, field)
+			case "isRequestingFriendship":
+				return ec.fieldContext_User_isRequestingFriendship(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -1871,6 +1885,8 @@ func (ec *executionContext) fieldContext_FriendshipRequest_toUser(ctx context.Co
 				return ec.fieldContext_User_isMuted(ctx, field)
 			case "isFriend":
 				return ec.fieldContext_User_isFriend(ctx, field)
+			case "isRequestingFriendship":
+				return ec.fieldContext_User_isRequestingFriendship(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -2059,6 +2075,8 @@ func (ec *executionContext) fieldContext_Invitation_user(ctx context.Context, fi
 				return ec.fieldContext_User_isMuted(ctx, field)
 			case "isFriend":
 				return ec.fieldContext_User_isFriend(ctx, field)
+			case "isRequestingFriendship":
+				return ec.fieldContext_User_isRequestingFriendship(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -2291,6 +2309,8 @@ func (ec *executionContext) fieldContext_Invitation_acceptedUsers(ctx context.Co
 				return ec.fieldContext_User_isMuted(ctx, field)
 			case "isFriend":
 				return ec.fieldContext_User_isFriend(ctx, field)
+			case "isRequestingFriendship":
+				return ec.fieldContext_User_isRequestingFriendship(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -3820,6 +3840,8 @@ func (ec *executionContext) fieldContext_Query_user(ctx context.Context, field g
 				return ec.fieldContext_User_isMuted(ctx, field)
 			case "isFriend":
 				return ec.fieldContext_User_isFriend(ctx, field)
+			case "isRequestingFriendship":
+				return ec.fieldContext_User_isRequestingFriendship(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -3907,6 +3929,8 @@ func (ec *executionContext) fieldContext_Query_userByScreenId(ctx context.Contex
 				return ec.fieldContext_User_isMuted(ctx, field)
 			case "isFriend":
 				return ec.fieldContext_User_isFriend(ctx, field)
+			case "isRequestingFriendship":
+				return ec.fieldContext_User_isRequestingFriendship(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -4357,6 +4381,50 @@ func (ec *executionContext) fieldContext_User_isFriend(ctx context.Context, fiel
 	return fc, nil
 }
 
+func (ec *executionContext) _User_isRequestingFriendship(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_isRequestingFriendship(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.User().IsRequestingFriendship(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_isRequestingFriendship(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _UserConnection_edges(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.UserConnection) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_UserConnection_edges(ctx, field)
 	if err != nil {
@@ -4554,6 +4622,8 @@ func (ec *executionContext) fieldContext_UserEdge_node(ctx context.Context, fiel
 				return ec.fieldContext_User_isMuted(ctx, field)
 			case "isFriend":
 				return ec.fieldContext_User_isFriend(ctx, field)
+			case "isRequestingFriendship":
+				return ec.fieldContext_User_isRequestingFriendship(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -7914,6 +7984,26 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 					}
 				}()
 				res = ec._User_isFriend(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return innerFunc(ctx)
+
+			})
+		case "isRequestingFriendship":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._User_isRequestingFriendship(ctx, field, obj)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}

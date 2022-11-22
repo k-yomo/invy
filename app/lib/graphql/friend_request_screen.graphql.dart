@@ -289,6 +289,13 @@ const documentNodeQuerysearchUser = DocumentNode(definitions: [
             selectionSet: null,
           ),
           FieldNode(
+            name: NameNode(value: 'isRequestingFriendship'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: null,
+          ),
+          FieldNode(
             name: NameNode(value: '__typename'),
             alias: null,
             arguments: [],
@@ -436,6 +443,7 @@ class Query$searchUser$userByScreenId {
     required this.nickname,
     required this.avatarUrl,
     required this.isFriend,
+    required this.isRequestingFriendship,
     required this.$__typename,
   });
 
@@ -444,12 +452,14 @@ class Query$searchUser$userByScreenId {
     final l$nickname = json['nickname'];
     final l$avatarUrl = json['avatarUrl'];
     final l$isFriend = json['isFriend'];
+    final l$isRequestingFriendship = json['isRequestingFriendship'];
     final l$$__typename = json['__typename'];
     return Query$searchUser$userByScreenId(
       id: (l$id as String),
       nickname: (l$nickname as String),
       avatarUrl: (l$avatarUrl as String),
       isFriend: (l$isFriend as bool),
+      isRequestingFriendship: (l$isRequestingFriendship as bool),
       $__typename: (l$$__typename as String),
     );
   }
@@ -460,7 +470,9 @@ class Query$searchUser$userByScreenId {
 
   final String avatarUrl;
 
-  late final bool isFriend;
+  final bool isFriend;
+
+  final bool isRequestingFriendship;
 
   final String $__typename;
 
@@ -474,6 +486,8 @@ class Query$searchUser$userByScreenId {
     _resultData['avatarUrl'] = l$avatarUrl;
     final l$isFriend = isFriend;
     _resultData['isFriend'] = l$isFriend;
+    final l$isRequestingFriendship = isRequestingFriendship;
+    _resultData['isRequestingFriendship'] = l$isRequestingFriendship;
     final l$$__typename = $__typename;
     _resultData['__typename'] = l$$__typename;
     return _resultData;
@@ -485,12 +499,14 @@ class Query$searchUser$userByScreenId {
     final l$nickname = nickname;
     final l$avatarUrl = avatarUrl;
     final l$isFriend = isFriend;
+    final l$isRequestingFriendship = isRequestingFriendship;
     final l$$__typename = $__typename;
     return Object.hashAll([
       l$id,
       l$nickname,
       l$avatarUrl,
       l$isFriend,
+      l$isRequestingFriendship,
       l$$__typename,
     ]);
   }
@@ -522,6 +538,11 @@ class Query$searchUser$userByScreenId {
     final l$isFriend = isFriend;
     final lOther$isFriend = other.isFriend;
     if (l$isFriend != lOther$isFriend) {
+      return false;
+    }
+    final l$isRequestingFriendship = isRequestingFriendship;
+    final lOther$isRequestingFriendship = other.isRequestingFriendship;
+    if (l$isRequestingFriendship != lOther$isRequestingFriendship) {
       return false;
     }
     final l$$__typename = $__typename;
@@ -556,6 +577,7 @@ abstract class CopyWith$Query$searchUser$userByScreenId<TRes> {
     String? nickname,
     String? avatarUrl,
     bool? isFriend,
+    bool? isRequestingFriendship,
     String? $__typename,
   });
 }
@@ -578,6 +600,7 @@ class _CopyWithImpl$Query$searchUser$userByScreenId<TRes>
     Object? nickname = _undefined,
     Object? avatarUrl = _undefined,
     Object? isFriend = _undefined,
+    Object? isRequestingFriendship = _undefined,
     Object? $__typename = _undefined,
   }) =>
       _then(Query$searchUser$userByScreenId(
@@ -591,6 +614,10 @@ class _CopyWithImpl$Query$searchUser$userByScreenId<TRes>
         isFriend: isFriend == _undefined || isFriend == null
             ? _instance.isFriend
             : (isFriend as bool),
+        isRequestingFriendship: isRequestingFriendship == _undefined ||
+                isRequestingFriendship == null
+            ? _instance.isRequestingFriendship
+            : (isRequestingFriendship as bool),
         $__typename: $__typename == _undefined || $__typename == null
             ? _instance.$__typename
             : ($__typename as String),
@@ -608,6 +635,7 @@ class _CopyWithStubImpl$Query$searchUser$userByScreenId<TRes>
     String? nickname,
     String? avatarUrl,
     bool? isFriend,
+    bool? isRequestingFriendship,
     String? $__typename,
   }) =>
       _res;

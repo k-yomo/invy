@@ -9,7 +9,7 @@ import 'package:invy/services/graphql_client.dart';
 import '../components/pending_friendship_request_list.dart';
 import '../components/pending_friendship_request_list_fragment.graphql.dart';
 import 'freind_group_create_screen.dart';
-import 'friend_request_screen.dart';
+import 'friendship_request_screen.dart';
 
 class FriendScreen extends HookConsumerWidget {
   const FriendScreen({Key? key}) : super(key: key);
@@ -17,12 +17,14 @@ class FriendScreen extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final graphqlClient = ref.read(graphqlClientProvider);
+    final viewerQuery = graphqlClient
+        .watchQuery$friendScreenViewer(WatchOptions$Query$friendScreenViewer(
+      fetchPolicy: FetchPolicy.cacheFirst,
+    ));
+    viewerQuery.fetchResults();
 
-    return FutureBuilder<QueryResult<Query$friendScreenViewer>>(
-        future: graphqlClient
-            .query$friendScreenViewer(Options$Query$friendScreenViewer(
-          fetchPolicy: FetchPolicy.cacheAndNetwork,
-        )),
+    return StreamBuilder<QueryResult<Query$friendScreenViewer>>(
+        stream: viewerQuery.stream,
         builder: (context, viewerSnapshot) {
           final viewer = viewerSnapshot.data?.parsedData?.viewer;
           return Scaffold(
@@ -66,7 +68,7 @@ class FriendScreen extends HookConsumerWidget {
                           Navigator.of(context).push(
                             MaterialPageRoute(
                               fullscreenDialog: true,
-                              builder: (context) => FriendRequestScreen(),
+                              builder: (context) => FriendshipRequestScreen(),
                             ),
                           );
                         },
@@ -75,8 +77,13 @@ class FriendScreen extends HookConsumerWidget {
                       PendingFriendshipRequestList(
                         pendingFriendshipRequests:
                             viewer?.pendingFriendshipRequests ?? [],
-                        onClick: (Fragment$pendingFriendRequestItemFragment
-                            request) {},
+                        onClick: (String requestId) async {
+                          print("onClick called");
+                          final result = await viewerQuery.refetch();
+                          if (result?.hasException ?? true) {
+                            return;
+                          }
+                        },
                       ),
                       FriendList(
                           friends: viewer?.friends.edges
