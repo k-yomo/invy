@@ -42,7 +42,7 @@ func (r *mutationResolver) SendInvitation(ctx context.Context, input *gqlmodel.S
 	if input.StartsAt.Before(now) {
 		return nil, errors.New("start time must be future date time")
 	}
-	authUserID := auth.GetUserID(ctx)
+	authUserID := auth.GetCurrentUserID(ctx)
 	dbInvitation, err := r.DB.Invitation.Create().
 		SetUserID(authUserID).
 		SetLocation(input.Location).
@@ -61,7 +61,7 @@ func (r *mutationResolver) SendInvitation(ctx context.Context, input *gqlmodel.S
 
 // AcceptInvitation is the resolver for the acceptInvitation field.
 func (r *mutationResolver) AcceptInvitation(ctx context.Context, invitationID uuid.UUID) (bool, error) {
-	authUserID := auth.GetUserID(ctx)
+	authUserID := auth.GetCurrentUserID(ctx)
 
 	isAuthUserInvited, err := IsAuthUserIncludedInTheInvitation(ctx, r.DB, invitationID)
 	if err != nil {
@@ -85,7 +85,7 @@ func (r *mutationResolver) AcceptInvitation(ctx context.Context, invitationID uu
 
 // DenyInvitation is the resolver for the denyInvitation field.
 func (r *mutationResolver) DenyInvitation(ctx context.Context, invitationID uuid.UUID) (bool, error) {
-	authUserID := auth.GetUserID(ctx)
+	authUserID := auth.GetCurrentUserID(ctx)
 
 	isAuthUserInvited, err := IsAuthUserIncludedInTheInvitation(ctx, r.DB, invitationID)
 	if err != nil {
@@ -108,7 +108,7 @@ func (r *mutationResolver) DenyInvitation(ctx context.Context, invitationID uuid
 
 // PendingInvitations is the resolver for the pendingInvitations field.
 func (r *queryResolver) PendingInvitations(ctx context.Context) ([]*gqlmodel.Invitation, error) {
-	authUserID := auth.GetUserID(ctx)
+	authUserID := auth.GetCurrentUserID(ctx)
 	now := time.Now()
 	dbInvitationsToUser, err := r.DB.InvitationUser.Query().
 		Where(invitationuser.UserID(authUserID)).
@@ -144,7 +144,7 @@ func (r *queryResolver) PendingInvitations(ctx context.Context) ([]*gqlmodel.Inv
 
 // AcceptedInvitations is the resolver for the acceptedInvitations field.
 func (r *queryResolver) AcceptedInvitations(ctx context.Context) ([]*gqlmodel.Invitation, error) {
-	authUserID := auth.GetUserID(ctx)
+	authUserID := auth.GetCurrentUserID(ctx)
 	dbInvitations, err := r.DB.InvitationAcceptance.Query().
 		Where(invitationacceptance.UserID(authUserID)).
 		QueryInvitation().

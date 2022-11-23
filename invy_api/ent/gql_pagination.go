@@ -15,6 +15,7 @@ import (
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/errcode"
 	"github.com/google/uuid"
+	"github.com/k-yomo/invy/invy_api/ent/account"
 	"github.com/k-yomo/invy/invy_api/ent/friendgroup"
 	"github.com/k-yomo/invy/invy_api/ent/friendship"
 	"github.com/k-yomo/invy/invy_api/ent/friendshiprequest"
@@ -251,6 +252,237 @@ func paginateLimit(first, last *int) int {
 		limit = *last + 1
 	}
 	return limit
+}
+
+// AccountEdge is the edge representation of Account.
+type AccountEdge struct {
+	Node   *Account `json:"node"`
+	Cursor Cursor   `json:"cursor"`
+}
+
+// AccountConnection is the connection containing edges to Account.
+type AccountConnection struct {
+	Edges      []*AccountEdge `json:"edges"`
+	PageInfo   PageInfo       `json:"pageInfo"`
+	TotalCount int            `json:"totalCount"`
+}
+
+func (c *AccountConnection) build(nodes []*Account, pager *accountPager, after *Cursor, first *int, before *Cursor, last *int) {
+	c.PageInfo.HasNextPage = before != nil
+	c.PageInfo.HasPreviousPage = after != nil
+	if first != nil && *first+1 == len(nodes) {
+		c.PageInfo.HasNextPage = true
+		nodes = nodes[:len(nodes)-1]
+	} else if last != nil && *last+1 == len(nodes) {
+		c.PageInfo.HasPreviousPage = true
+		nodes = nodes[:len(nodes)-1]
+	}
+	var nodeAt func(int) *Account
+	if last != nil {
+		n := len(nodes) - 1
+		nodeAt = func(i int) *Account {
+			return nodes[n-i]
+		}
+	} else {
+		nodeAt = func(i int) *Account {
+			return nodes[i]
+		}
+	}
+	c.Edges = make([]*AccountEdge, len(nodes))
+	for i := range nodes {
+		node := nodeAt(i)
+		c.Edges[i] = &AccountEdge{
+			Node:   node,
+			Cursor: pager.toCursor(node),
+		}
+	}
+	if l := len(c.Edges); l > 0 {
+		c.PageInfo.StartCursor = &c.Edges[0].Cursor
+		c.PageInfo.EndCursor = &c.Edges[l-1].Cursor
+	}
+	if c.TotalCount == 0 {
+		c.TotalCount = len(nodes)
+	}
+}
+
+// AccountPaginateOption enables pagination customization.
+type AccountPaginateOption func(*accountPager) error
+
+// WithAccountOrder configures pagination ordering.
+func WithAccountOrder(order *AccountOrder) AccountPaginateOption {
+	if order == nil {
+		order = DefaultAccountOrder
+	}
+	o := *order
+	return func(pager *accountPager) error {
+		if err := o.Direction.Validate(); err != nil {
+			return err
+		}
+		if o.Field == nil {
+			o.Field = DefaultAccountOrder.Field
+		}
+		pager.order = &o
+		return nil
+	}
+}
+
+// WithAccountFilter configures pagination filter.
+func WithAccountFilter(filter func(*AccountQuery) (*AccountQuery, error)) AccountPaginateOption {
+	return func(pager *accountPager) error {
+		if filter == nil {
+			return errors.New("AccountQuery filter cannot be nil")
+		}
+		pager.filter = filter
+		return nil
+	}
+}
+
+type accountPager struct {
+	order  *AccountOrder
+	filter func(*AccountQuery) (*AccountQuery, error)
+}
+
+func newAccountPager(opts []AccountPaginateOption) (*accountPager, error) {
+	pager := &accountPager{}
+	for _, opt := range opts {
+		if err := opt(pager); err != nil {
+			return nil, err
+		}
+	}
+	if pager.order == nil {
+		pager.order = DefaultAccountOrder
+	}
+	return pager, nil
+}
+
+func (p *accountPager) applyFilter(query *AccountQuery) (*AccountQuery, error) {
+	if p.filter != nil {
+		return p.filter(query)
+	}
+	return query, nil
+}
+
+func (p *accountPager) toCursor(a *Account) Cursor {
+	return p.order.Field.toCursor(a)
+}
+
+func (p *accountPager) applyCursors(query *AccountQuery, after, before *Cursor) *AccountQuery {
+	for _, predicate := range cursorsToPredicates(
+		p.order.Direction, after, before,
+		p.order.Field.field, DefaultAccountOrder.Field.field,
+	) {
+		query = query.Where(predicate)
+	}
+	return query
+}
+
+func (p *accountPager) applyOrder(query *AccountQuery, reverse bool) *AccountQuery {
+	direction := p.order.Direction
+	if reverse {
+		direction = direction.reverse()
+	}
+	query = query.Order(direction.orderFunc(p.order.Field.field))
+	if p.order.Field != DefaultAccountOrder.Field {
+		query = query.Order(direction.orderFunc(DefaultAccountOrder.Field.field))
+	}
+	return query
+}
+
+func (p *accountPager) orderExpr(reverse bool) sql.Querier {
+	direction := p.order.Direction
+	if reverse {
+		direction = direction.reverse()
+	}
+	return sql.ExprFunc(func(b *sql.Builder) {
+		b.Ident(p.order.Field.field).Pad().WriteString(string(direction))
+		if p.order.Field != DefaultAccountOrder.Field {
+			b.Comma().Ident(DefaultAccountOrder.Field.field).Pad().WriteString(string(direction))
+		}
+	})
+}
+
+// Paginate executes the query and returns a relay based cursor connection to Account.
+func (a *AccountQuery) Paginate(
+	ctx context.Context, after *Cursor, first *int,
+	before *Cursor, last *int, opts ...AccountPaginateOption,
+) (*AccountConnection, error) {
+	if err := validateFirstLast(first, last); err != nil {
+		return nil, err
+	}
+	pager, err := newAccountPager(opts)
+	if err != nil {
+		return nil, err
+	}
+	if a, err = pager.applyFilter(a); err != nil {
+		return nil, err
+	}
+	conn := &AccountConnection{Edges: []*AccountEdge{}}
+	ignoredEdges := !hasCollectedField(ctx, edgesField)
+	if hasCollectedField(ctx, totalCountField) || hasCollectedField(ctx, pageInfoField) {
+		hasPagination := after != nil || first != nil || before != nil || last != nil
+		if hasPagination || ignoredEdges {
+			if conn.TotalCount, err = a.Count(ctx); err != nil {
+				return nil, err
+			}
+			conn.PageInfo.HasNextPage = first != nil && conn.TotalCount > 0
+			conn.PageInfo.HasPreviousPage = last != nil && conn.TotalCount > 0
+		}
+	}
+	if ignoredEdges || (first != nil && *first == 0) || (last != nil && *last == 0) {
+		return conn, nil
+	}
+
+	a = pager.applyCursors(a, after, before)
+	a = pager.applyOrder(a, last != nil)
+	if limit := paginateLimit(first, last); limit != 0 {
+		a.Limit(limit)
+	}
+	if field := collectedField(ctx, edgesField, nodeField); field != nil {
+		if err := a.collectField(ctx, graphql.GetOperationContext(ctx), *field, []string{edgesField, nodeField}); err != nil {
+			return nil, err
+		}
+	}
+
+	nodes, err := a.All(ctx)
+	if err != nil {
+		return nil, err
+	}
+	conn.build(nodes, pager, after, first, before, last)
+	return conn, nil
+}
+
+// AccountOrderField defines the ordering field of Account.
+type AccountOrderField struct {
+	field    string
+	toCursor func(*Account) Cursor
+}
+
+// AccountOrder defines the ordering of Account.
+type AccountOrder struct {
+	Direction OrderDirection     `json:"direction"`
+	Field     *AccountOrderField `json:"field"`
+}
+
+// DefaultAccountOrder is the default ordering of Account.
+var DefaultAccountOrder = &AccountOrder{
+	Direction: OrderDirectionAsc,
+	Field: &AccountOrderField{
+		field: account.FieldID,
+		toCursor: func(a *Account) Cursor {
+			return Cursor{ID: a.ID}
+		},
+	},
+}
+
+// ToEdge converts Account into AccountEdge.
+func (a *Account) ToEdge(order *AccountOrder) *AccountEdge {
+	if order == nil {
+		order = DefaultAccountOrder
+	}
+	return &AccountEdge{
+		Node:   a,
+		Cursor: order.Field.toCursor(a),
+	}
 }
 
 // FriendGroupEdge is the edge representation of FriendGroup.

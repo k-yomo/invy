@@ -131,6 +131,138 @@ class _CopyWithStubImpl$Input$CreateFriendGroupInput<TRes>
       _res;
 }
 
+class Input$CreateUserInput {
+  factory Input$CreateUserInput({
+    required String nickname,
+    String? avatarUrl,
+  }) =>
+      Input$CreateUserInput._({
+        r'nickname': nickname,
+        if (avatarUrl != null) r'avatarUrl': avatarUrl,
+      });
+
+  Input$CreateUserInput._(this._$data);
+
+  factory Input$CreateUserInput.fromJson(Map<String, dynamic> data) {
+    final result$data = <String, dynamic>{};
+    final l$nickname = data['nickname'];
+    result$data['nickname'] = (l$nickname as String);
+    if (data.containsKey('avatarUrl')) {
+      final l$avatarUrl = data['avatarUrl'];
+      result$data['avatarUrl'] = (l$avatarUrl as String?);
+    }
+    return Input$CreateUserInput._(result$data);
+  }
+
+  Map<String, dynamic> _$data;
+
+  String get nickname => (_$data['nickname'] as String);
+  String? get avatarUrl => (_$data['avatarUrl'] as String?);
+  Map<String, dynamic> toJson() {
+    final result$data = <String, dynamic>{};
+    final l$nickname = nickname;
+    result$data['nickname'] = l$nickname;
+    if (_$data.containsKey('avatarUrl')) {
+      final l$avatarUrl = avatarUrl;
+      result$data['avatarUrl'] = l$avatarUrl;
+    }
+    return result$data;
+  }
+
+  CopyWith$Input$CreateUserInput<Input$CreateUserInput> get copyWith =>
+      CopyWith$Input$CreateUserInput(
+        this,
+        (i) => i,
+      );
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    if (!(other is Input$CreateUserInput) || runtimeType != other.runtimeType) {
+      return false;
+    }
+    final l$nickname = nickname;
+    final lOther$nickname = other.nickname;
+    if (l$nickname != lOther$nickname) {
+      return false;
+    }
+    final l$avatarUrl = avatarUrl;
+    final lOther$avatarUrl = other.avatarUrl;
+    if (_$data.containsKey('avatarUrl') !=
+        other._$data.containsKey('avatarUrl')) {
+      return false;
+    }
+    if (l$avatarUrl != lOther$avatarUrl) {
+      return false;
+    }
+    return true;
+  }
+
+  @override
+  int get hashCode {
+    final l$nickname = nickname;
+    final l$avatarUrl = avatarUrl;
+    return Object.hashAll([
+      l$nickname,
+      _$data.containsKey('avatarUrl') ? l$avatarUrl : const {},
+    ]);
+  }
+}
+
+abstract class CopyWith$Input$CreateUserInput<TRes> {
+  factory CopyWith$Input$CreateUserInput(
+    Input$CreateUserInput instance,
+    TRes Function(Input$CreateUserInput) then,
+  ) = _CopyWithImpl$Input$CreateUserInput;
+
+  factory CopyWith$Input$CreateUserInput.stub(TRes res) =
+      _CopyWithStubImpl$Input$CreateUserInput;
+
+  TRes call({
+    String? nickname,
+    String? avatarUrl,
+  });
+}
+
+class _CopyWithImpl$Input$CreateUserInput<TRes>
+    implements CopyWith$Input$CreateUserInput<TRes> {
+  _CopyWithImpl$Input$CreateUserInput(
+    this._instance,
+    this._then,
+  );
+
+  final Input$CreateUserInput _instance;
+
+  final TRes Function(Input$CreateUserInput) _then;
+
+  static const _undefined = {};
+
+  TRes call({
+    Object? nickname = _undefined,
+    Object? avatarUrl = _undefined,
+  }) =>
+      _then(Input$CreateUserInput._({
+        ..._instance._$data,
+        if (nickname != _undefined && nickname != null)
+          'nickname': (nickname as String),
+        if (avatarUrl != _undefined) 'avatarUrl': (avatarUrl as String?),
+      }));
+}
+
+class _CopyWithStubImpl$Input$CreateUserInput<TRes>
+    implements CopyWith$Input$CreateUserInput<TRes> {
+  _CopyWithStubImpl$Input$CreateUserInput(this._res);
+
+  TRes _res;
+
+  call({
+    String? nickname,
+    String? avatarUrl,
+  }) =>
+      _res;
+}
+
 class Input$SendInvitationInput {
   factory Input$SendInvitationInput({
     required List<String> targetFriendGroupIds,

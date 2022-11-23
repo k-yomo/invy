@@ -13,10 +13,12 @@ const (
 	Label = "user"
 	// FieldID holds the string denoting the id field in the database.
 	FieldID = "id"
-	// FieldAuthID holds the string denoting the auth_id field in the database.
-	FieldAuthID = "auth_id"
+	// FieldAccountID holds the string denoting the account_id field in the database.
+	FieldAccountID = "account_id"
 	// FieldCreatedAt holds the string denoting the created_at field in the database.
 	FieldCreatedAt = "created_at"
+	// EdgeAccount holds the string denoting the account edge name in mutations.
+	EdgeAccount = "account"
 	// EdgeUserProfile holds the string denoting the user_profile edge name in mutations.
 	EdgeUserProfile = "user_profile"
 	// EdgeFriendUsers holds the string denoting the friend_users edge name in mutations.
@@ -35,6 +37,13 @@ const (
 	EdgeUserFriendGroups = "user_friend_groups"
 	// Table holds the table name of the user in the database.
 	Table = "users"
+	// AccountTable is the table that holds the account relation/edge.
+	AccountTable = "users"
+	// AccountInverseTable is the table name for the Account entity.
+	// It exists in this package in order to avoid circular dependency with the "account" package.
+	AccountInverseTable = "accounts"
+	// AccountColumn is the table column denoting the account relation/edge.
+	AccountColumn = "account_id"
 	// UserProfileTable is the table that holds the user_profile relation/edge.
 	UserProfileTable = "user_profiles"
 	// UserProfileInverseTable is the table name for the UserProfile entity.
@@ -89,7 +98,7 @@ const (
 // Columns holds all SQL columns for user fields.
 var Columns = []string{
 	FieldID,
-	FieldAuthID,
+	FieldAccountID,
 	FieldCreatedAt,
 }
 

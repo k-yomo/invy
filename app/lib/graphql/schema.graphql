@@ -19,6 +19,11 @@ input CreateFriendGroupInput {
   friendUserIds: [UUID!]!
 }
 
+input CreateUserInput {
+  nickname: String!
+  avatarUrl: String
+}
+
 scalar Cursor
 
 type FriendGroup implements Node {
@@ -50,7 +55,9 @@ type Invitation implements Node {
 }
 
 type Mutation {
-  signUp(input: SignUpInput): Viewer!
+  signUp(input: SignUpInput!): Viewer!
+  createUser(input: CreateUserInput!): Viewer!
+  switchUser(userId: UUID!): Viewer!
   sendInvitation(input: SendInvitationInput): Invitation!
   acceptInvitation(invitationId: UUID!): Boolean!
   denyInvitation(invitationId: UUID!): Boolean!
@@ -142,7 +149,6 @@ scalar UUID
 type Viewer implements Node {
   id: UUID!
   screenId: String!
-  email: String
   nickname: String!
   avatarUrl: String!
   friends(after: Cursor, first: Int, before: Cursor, last: Int): UserConnection!

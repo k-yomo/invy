@@ -19,9 +19,8 @@ func (User) Fields() []ent.Field {
 	return []ent.Field{
 		field.UUID("id", uuid.UUID{}).
 			Default(uuid.New),
-		field.String("auth_id").
-			Immutable().
-			Unique(),
+		field.UUID("account_id", uuid.UUID{}).
+			Immutable(),
 		field.Time("created_at").
 			Immutable().
 			Default(time.Now),
@@ -31,7 +30,13 @@ func (User) Fields() []ent.Field {
 // Edges of the User.
 func (User) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.To("user_profile", UserProfile.Type).Unique(),
+		edge.To("account", Account.Type).
+			Field("account_id").
+			Required().
+			Unique().
+			Immutable(),
+		edge.To("user_profile", UserProfile.Type).
+			Unique(),
 		edge.To("friend_users", User.Type).
 			Through("friendships", Friendship.Type),
 		edge.From("friend_groups", FriendGroup.Type).Ref("user"),

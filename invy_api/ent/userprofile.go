@@ -24,8 +24,6 @@ type UserProfile struct {
 	ScreenID string `json:"screen_id,omitempty"`
 	// Nickname holds the value of the "nickname" field.
 	Nickname string `json:"nickname,omitempty"`
-	// Email holds the value of the "email" field.
-	Email *string `json:"email,omitempty"`
 	// AvatarURL holds the value of the "avatar_url" field.
 	AvatarURL string `json:"avatar_url,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
@@ -66,7 +64,7 @@ func (*UserProfile) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case userprofile.FieldScreenID, userprofile.FieldNickname, userprofile.FieldEmail, userprofile.FieldAvatarURL:
+		case userprofile.FieldScreenID, userprofile.FieldNickname, userprofile.FieldAvatarURL:
 			values[i] = new(sql.NullString)
 		case userprofile.FieldCreatedAt, userprofile.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
@@ -110,13 +108,6 @@ func (up *UserProfile) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field nickname", values[i])
 			} else if value.Valid {
 				up.Nickname = value.String
-			}
-		case userprofile.FieldEmail:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field email", values[i])
-			} else if value.Valid {
-				up.Email = new(string)
-				*up.Email = value.String
 			}
 		case userprofile.FieldAvatarURL:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -177,11 +168,6 @@ func (up *UserProfile) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("nickname=")
 	builder.WriteString(up.Nickname)
-	builder.WriteString(", ")
-	if v := up.Email; v != nil {
-		builder.WriteString("email=")
-		builder.WriteString(*v)
-	}
 	builder.WriteString(", ")
 	builder.WriteString("avatar_url=")
 	builder.WriteString(up.AvatarURL)

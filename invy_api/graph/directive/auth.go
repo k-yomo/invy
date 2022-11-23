@@ -10,7 +10,7 @@ import (
 )
 
 func AuthRequired(ctx context.Context, obj interface{}, next graphql.Resolver) (res interface{}, err error) {
-	if userID := auth.GetUserID(ctx); userID == uuid.Nil {
+	if userID := auth.GetCurrentUserID(ctx); userID == uuid.Nil {
 		return nil, errors.New("unauthenticated")
 	}
 	return next(ctx)

@@ -43,20 +43,6 @@ func (upc *UserProfileCreate) SetNickname(s string) *UserProfileCreate {
 	return upc
 }
 
-// SetEmail sets the "email" field.
-func (upc *UserProfileCreate) SetEmail(s string) *UserProfileCreate {
-	upc.mutation.SetEmail(s)
-	return upc
-}
-
-// SetNillableEmail sets the "email" field if the given value is not nil.
-func (upc *UserProfileCreate) SetNillableEmail(s *string) *UserProfileCreate {
-	if s != nil {
-		upc.SetEmail(*s)
-	}
-	return upc
-}
-
 // SetAvatarURL sets the "avatar_url" field.
 func (upc *UserProfileCreate) SetAvatarURL(s string) *UserProfileCreate {
 	upc.mutation.SetAvatarURL(s)
@@ -269,10 +255,6 @@ func (upc *UserProfileCreate) createSpec() (*UserProfile, *sqlgraph.CreateSpec) 
 		_spec.SetField(userprofile.FieldNickname, field.TypeString, value)
 		_node.Nickname = value
 	}
-	if value, ok := upc.mutation.Email(); ok {
-		_spec.SetField(userprofile.FieldEmail, field.TypeString, value)
-		_node.Email = &value
-	}
 	if value, ok := upc.mutation.AvatarURL(); ok {
 		_spec.SetField(userprofile.FieldAvatarURL, field.TypeString, value)
 		_node.AvatarURL = value
@@ -381,24 +363,6 @@ func (u *UserProfileUpsert) UpdateNickname() *UserProfileUpsert {
 	return u
 }
 
-// SetEmail sets the "email" field.
-func (u *UserProfileUpsert) SetEmail(v string) *UserProfileUpsert {
-	u.Set(userprofile.FieldEmail, v)
-	return u
-}
-
-// UpdateEmail sets the "email" field to the value that was provided on create.
-func (u *UserProfileUpsert) UpdateEmail() *UserProfileUpsert {
-	u.SetExcluded(userprofile.FieldEmail)
-	return u
-}
-
-// ClearEmail clears the value of the "email" field.
-func (u *UserProfileUpsert) ClearEmail() *UserProfileUpsert {
-	u.SetNull(userprofile.FieldEmail)
-	return u
-}
-
 // SetAvatarURL sets the "avatar_url" field.
 func (u *UserProfileUpsert) SetAvatarURL(v string) *UserProfileUpsert {
 	u.Set(userprofile.FieldAvatarURL, v)
@@ -502,27 +466,6 @@ func (u *UserProfileUpsertOne) SetNickname(v string) *UserProfileUpsertOne {
 func (u *UserProfileUpsertOne) UpdateNickname() *UserProfileUpsertOne {
 	return u.Update(func(s *UserProfileUpsert) {
 		s.UpdateNickname()
-	})
-}
-
-// SetEmail sets the "email" field.
-func (u *UserProfileUpsertOne) SetEmail(v string) *UserProfileUpsertOne {
-	return u.Update(func(s *UserProfileUpsert) {
-		s.SetEmail(v)
-	})
-}
-
-// UpdateEmail sets the "email" field to the value that was provided on create.
-func (u *UserProfileUpsertOne) UpdateEmail() *UserProfileUpsertOne {
-	return u.Update(func(s *UserProfileUpsert) {
-		s.UpdateEmail()
-	})
-}
-
-// ClearEmail clears the value of the "email" field.
-func (u *UserProfileUpsertOne) ClearEmail() *UserProfileUpsertOne {
-	return u.Update(func(s *UserProfileUpsert) {
-		s.ClearEmail()
 	})
 }
 
@@ -796,27 +739,6 @@ func (u *UserProfileUpsertBulk) SetNickname(v string) *UserProfileUpsertBulk {
 func (u *UserProfileUpsertBulk) UpdateNickname() *UserProfileUpsertBulk {
 	return u.Update(func(s *UserProfileUpsert) {
 		s.UpdateNickname()
-	})
-}
-
-// SetEmail sets the "email" field.
-func (u *UserProfileUpsertBulk) SetEmail(v string) *UserProfileUpsertBulk {
-	return u.Update(func(s *UserProfileUpsert) {
-		s.SetEmail(v)
-	})
-}
-
-// UpdateEmail sets the "email" field to the value that was provided on create.
-func (u *UserProfileUpsertBulk) UpdateEmail() *UserProfileUpsertBulk {
-	return u.Update(func(s *UserProfileUpsert) {
-		s.UpdateEmail()
-	})
-}
-
-// ClearEmail clears the value of the "email" field.
-func (u *UserProfileUpsertBulk) ClearEmail() *UserProfileUpsertBulk {
-	return u.Update(func(s *UserProfileUpsert) {
-		s.ClearEmail()
 	})
 }
 

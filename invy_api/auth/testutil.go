@@ -9,5 +9,5 @@ import (
 // DO NOT USE for production code
 func SetUserIDForTest(t *testing.T, ctx context.Context, userID string) context.Context {
 	t.Helper()
-	return context.WithValue(ctx, ctxKeyUserID{}, userID)
+	return context.WithValue(ctx, ctxKeyAccountID{}, userID)
 }

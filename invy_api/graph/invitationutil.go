@@ -12,7 +12,7 @@ import (
 )
 
 func IsAuthUserIncludedInTheInvitation(ctx context.Context, dbClient *ent.Client, invitationID uuid.UUID) (bool, error) {
-	authUserID := auth.GetUserID(ctx)
+	authUserID := auth.GetCurrentUserID(ctx)
 	_, invitationUserErr := dbClient.InvitationUser.Query().
 		Where(invitationuser.ID(invitationID), invitationuser.UserID(authUserID)).
 		Only(ctx)

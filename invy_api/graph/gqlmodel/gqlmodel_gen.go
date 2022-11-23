@@ -22,6 +22,11 @@ type CreateFriendGroupInput struct {
 	FriendUserIds []uuid.UUID `json:"friendUserIds"`
 }
 
+type CreateUserInput struct {
+	Nickname  string  `json:"nickname"`
+	AvatarURL *string `json:"avatarUrl"`
+}
+
 type FriendGroup struct {
 	ID          uuid.UUID `json:"id"`
 	UserID      uuid.UUID `json:"userId"`
@@ -113,7 +118,6 @@ type UserEdge struct {
 type Viewer struct {
 	ID                           uuid.UUID            `json:"id"`
 	ScreenID                     string               `json:"screenId"`
-	Email                        *string              `json:"email"`
 	Nickname                     string               `json:"nickname"`
 	AvatarURL                    string               `json:"avatarUrl"`
 	Friends                      *UserConnection      `json:"friends"`

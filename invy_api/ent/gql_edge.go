@@ -8,6 +8,18 @@ import (
 	"github.com/99designs/gqlgen/graphql"
 )
 
+func (a *Account) Users(ctx context.Context) (result []*User, err error) {
+	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
+		result, err = a.NamedUsers(graphql.GetFieldContext(ctx).Field.Alias)
+	} else {
+		result, err = a.Edges.UsersOrErr()
+	}
+	if IsNotLoaded(err) {
+		result, err = a.QueryUsers().All(ctx)
+	}
+	return result, err
+}
+
 func (fg *FriendGroup) User(ctx context.Context) (*User, error) {
 	result, err := fg.Edges.UserOrErr()
 	if IsNotLoaded(err) {
@@ -200,6 +212,14 @@ func (iu *InvitationUser) User(ctx context.Context) (*User, error) {
 	result, err := iu.Edges.UserOrErr()
 	if IsNotLoaded(err) {
 		result, err = iu.QueryUser().Only(ctx)
+	}
+	return result, err
+}
+
+func (u *User) Account(ctx context.Context) (*Account, error) {
+	result, err := u.Edges.AccountOrErr()
+	if IsNotLoaded(err) {
+		result, err = u.QueryAccount().Only(ctx)
 	}
 	return result, err
 }

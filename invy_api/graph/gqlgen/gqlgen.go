@@ -88,13 +88,15 @@ type ComplexityRoot struct {
 		AcceptInvitation        func(childComplexity int, invitationID uuid.UUID) int
 		CancelFriendshipRequest func(childComplexity int, friendshipRequestID uuid.UUID) int
 		CreateFriendGroup       func(childComplexity int, input gqlmodel.CreateFriendGroupInput) int
+		CreateUser              func(childComplexity int, input gqlmodel.CreateUserInput) int
 		DeleteFriendGroup       func(childComplexity int, friendGroupID uuid.UUID) int
 		DenyFriendshipRequest   func(childComplexity int, friendshipRequestID uuid.UUID) int
 		DenyInvitation          func(childComplexity int, invitationID uuid.UUID) int
 		MuteUser                func(childComplexity int, muteUserID uuid.UUID) int
 		RequestFriendship       func(childComplexity int, friendUserID uuid.UUID) int
 		SendInvitation          func(childComplexity int, input *gqlmodel.SendInvitationInput) int
-		SignUp                  func(childComplexity int, input *gqlmodel.SignUpInput) int
+		SignUp                  func(childComplexity int, input gqlmodel.SignUpInput) int
+		SwitchUser              func(childComplexity int, userID uuid.UUID) int
 		UnmuteUser              func(childComplexity int, muteUserID uuid.UUID) int
 		UpdateFriendGroup       func(childComplexity int, input gqlmodel.UpdateFriendGroupInput) int
 	}
@@ -137,7 +139,6 @@ type ComplexityRoot struct {
 
 	Viewer struct {
 		AvatarURL                    func(childComplexity int) int
-		Email                        func(childComplexity int) int
 		FriendGroup                  func(childComplexity int, friendGroupID uuid.UUID) int
 		FriendGroups                 func(childComplexity int) int
 		Friends                      func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
@@ -161,7 +162,9 @@ type InvitationResolver interface {
 	AcceptedUsers(ctx context.Context, obj *gqlmodel.Invitation) ([]*gqlmodel.User, error)
 }
 type MutationResolver interface {
-	SignUp(ctx context.Context, input *gqlmodel.SignUpInput) (*gqlmodel.Viewer, error)
+	SignUp(ctx context.Context, input gqlmodel.SignUpInput) (*gqlmodel.Viewer, error)
+	CreateUser(ctx context.Context, input gqlmodel.CreateUserInput) (*gqlmodel.Viewer, error)
+	SwitchUser(ctx context.Context, userID uuid.UUID) (*gqlmodel.Viewer, error)
 	SendInvitation(ctx context.Context, input *gqlmodel.SendInvitationInput) (*gqlmodel.Invitation, error)
 	AcceptInvitation(ctx context.Context, invitationID uuid.UUID) (bool, error)
 	DenyInvitation(ctx context.Context, invitationID uuid.UUID) (bool, error)
@@ -392,6 +395,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.CreateFriendGroup(childComplexity, args["input"].(gqlmodel.CreateFriendGroupInput)), true
 
+	case "Mutation.createUser":
+		if e.complexity.Mutation.CreateUser == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_createUser_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CreateUser(childComplexity, args["input"].(gqlmodel.CreateUserInput)), true
+
 	case "Mutation.deleteFriendGroup":
 		if e.complexity.Mutation.DeleteFriendGroup == nil {
 			break
@@ -474,7 +489,19 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.SignUp(childComplexity, args["input"].(*gqlmodel.SignUpInput)), true
+		return e.complexity.Mutation.SignUp(childComplexity, args["input"].(gqlmodel.SignUpInput)), true
+
+	case "Mutation.switchUser":
+		if e.complexity.Mutation.SwitchUser == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_switchUser_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.SwitchUser(childComplexity, args["userId"].(uuid.UUID)), true
 
 	case "Mutation.unmuteUser":
 		if e.complexity.Mutation.UnmuteUser == nil {
@@ -669,13 +696,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Viewer.AvatarURL(childComplexity), true
 
-	case "Viewer.email":
-		if e.complexity.Viewer.Email == nil {
-			break
-		}
-
-		return e.complexity.Viewer.Email(childComplexity), true
-
 	case "Viewer.friendGroup":
 		if e.complexity.Viewer.FriendGroup == nil {
 			break
@@ -751,6 +771,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	ec := executionContext{rc, e}
 	inputUnmarshalMap := graphql.BuildUnmarshalerMap(
 		ec.unmarshalInputCreateFriendGroupInput,
+		ec.unmarshalInputCreateUserInput,
 		ec.unmarshalInputSendInvitationInput,
 		ec.unmarshalInputSignUpInput,
 		ec.unmarshalInputUpdateFriendGroupInput,
@@ -815,11 +836,18 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 
 var sources = []*ast.Source{
 	{Name: "../../../defs/graphql/auth.graphql", Input: `extend type Mutation {
-    signUp(input: SignUpInput): Viewer!
+    signUp(input: SignUpInput!): Viewer!
+    createUser(input: CreateUserInput!): Viewer! @authRequired
+    switchUser(userId: UUID!): Viewer! @authRequired
 }
 
 input SignUpInput {
     email: String @constraint(format: EMAIL)
+    nickname: String! @constraint(min: 3)
+    avatarUrl: String @constraint(format: URL)
+}
+
+input CreateUserInput {
     nickname: String! @constraint(min: 3)
     avatarUrl: String @constraint(format: URL)
 }
@@ -919,7 +947,6 @@ extend type Mutation {
 type Viewer implements Node {
     id: UUID!
     screenId: String!
-    email: String
     nickname: String!
     avatarUrl: String!
 
@@ -1095,6 +1122,21 @@ func (ec *executionContext) field_Mutation_createFriendGroup_args(ctx context.Co
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_createUser_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 gqlmodel.CreateUserInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNCreateUserInput2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐCreateUserInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_deleteFriendGroup_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -1188,15 +1230,30 @@ func (ec *executionContext) field_Mutation_sendInvitation_args(ctx context.Conte
 func (ec *executionContext) field_Mutation_signUp_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 *gqlmodel.SignUpInput
+	var arg0 gqlmodel.SignUpInput
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalOSignUpInput2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐSignUpInput(ctx, tmp)
+		arg0, err = ec.unmarshalNSignUpInput2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐSignUpInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
 	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_switchUser_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 uuid.UUID
+	if tmp, ok := rawArgs["userId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userId"))
+		arg0, err = ec.unmarshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["userId"] = arg0
 	return args, nil
 }
 
@@ -2332,7 +2389,7 @@ func (ec *executionContext) _Mutation_signUp(ctx context.Context, field graphql.
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().SignUp(rctx, fc.Args["input"].(*gqlmodel.SignUpInput))
+		return ec.resolvers.Mutation().SignUp(rctx, fc.Args["input"].(gqlmodel.SignUpInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2361,8 +2418,6 @@ func (ec *executionContext) fieldContext_Mutation_signUp(ctx context.Context, fi
 				return ec.fieldContext_Viewer_id(ctx, field)
 			case "screenId":
 				return ec.fieldContext_Viewer_screenId(ctx, field)
-			case "email":
-				return ec.fieldContext_Viewer_email(ctx, field)
 			case "nickname":
 				return ec.fieldContext_Viewer_nickname(ctx, field)
 			case "avatarUrl":
@@ -2389,6 +2444,196 @@ func (ec *executionContext) fieldContext_Mutation_signUp(ctx context.Context, fi
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_signUp_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_createUser(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_createUser(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().CreateUser(rctx, fc.Args["input"].(gqlmodel.CreateUserInput))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.AuthRequired == nil {
+				return nil, errors.New("directive authRequired is not implemented")
+			}
+			return ec.directives.AuthRequired(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*gqlmodel.Viewer); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/k-yomo/invy/invy_api/graph/gqlmodel.Viewer`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.Viewer)
+	fc.Result = res
+	return ec.marshalNViewer2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐViewer(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_createUser(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Viewer_id(ctx, field)
+			case "screenId":
+				return ec.fieldContext_Viewer_screenId(ctx, field)
+			case "nickname":
+				return ec.fieldContext_Viewer_nickname(ctx, field)
+			case "avatarUrl":
+				return ec.fieldContext_Viewer_avatarUrl(ctx, field)
+			case "friends":
+				return ec.fieldContext_Viewer_friends(ctx, field)
+			case "pendingFriendshipRequests":
+				return ec.fieldContext_Viewer_pendingFriendshipRequests(ctx, field)
+			case "requestingFriendshipRequests":
+				return ec.fieldContext_Viewer_requestingFriendshipRequests(ctx, field)
+			case "friendGroup":
+				return ec.fieldContext_Viewer_friendGroup(ctx, field)
+			case "friendGroups":
+				return ec.fieldContext_Viewer_friendGroups(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Viewer", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_createUser_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_switchUser(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_switchUser(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().SwitchUser(rctx, fc.Args["userId"].(uuid.UUID))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.AuthRequired == nil {
+				return nil, errors.New("directive authRequired is not implemented")
+			}
+			return ec.directives.AuthRequired(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*gqlmodel.Viewer); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/k-yomo/invy/invy_api/graph/gqlmodel.Viewer`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.Viewer)
+	fc.Result = res
+	return ec.marshalNViewer2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐViewer(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_switchUser(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Viewer_id(ctx, field)
+			case "screenId":
+				return ec.fieldContext_Viewer_screenId(ctx, field)
+			case "nickname":
+				return ec.fieldContext_Viewer_nickname(ctx, field)
+			case "avatarUrl":
+				return ec.fieldContext_Viewer_avatarUrl(ctx, field)
+			case "friends":
+				return ec.fieldContext_Viewer_friends(ctx, field)
+			case "pendingFriendshipRequests":
+				return ec.fieldContext_Viewer_pendingFriendshipRequests(ctx, field)
+			case "requestingFriendshipRequests":
+				return ec.fieldContext_Viewer_requestingFriendshipRequests(ctx, field)
+			case "friendGroup":
+				return ec.fieldContext_Viewer_friendGroup(ctx, field)
+			case "friendGroups":
+				return ec.fieldContext_Viewer_friendGroups(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Viewer", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_switchUser_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return
 	}
@@ -3748,8 +3993,6 @@ func (ec *executionContext) fieldContext_Query_viewer(ctx context.Context, field
 				return ec.fieldContext_Viewer_id(ctx, field)
 			case "screenId":
 				return ec.fieldContext_Viewer_screenId(ctx, field)
-			case "email":
-				return ec.fieldContext_Viewer_email(ctx, field)
 			case "nickname":
 				return ec.fieldContext_Viewer_nickname(ctx, field)
 			case "avatarUrl":
@@ -4751,47 +4994,6 @@ func (ec *executionContext) _Viewer_screenId(ctx context.Context, field graphql.
 }
 
 func (ec *executionContext) fieldContext_Viewer_screenId(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Viewer",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Viewer_email(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Viewer) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Viewer_email(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Email, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Viewer_email(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Viewer",
 		Field:      field,
@@ -7021,6 +7223,80 @@ func (ec *executionContext) unmarshalInputCreateFriendGroupInput(ctx context.Con
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputCreateUserInput(ctx context.Context, obj interface{}) (gqlmodel.CreateUserInput, error) {
+	var it gqlmodel.CreateUserInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"nickname", "avatarUrl"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "nickname":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nickname"))
+			directive0 := func(ctx context.Context) (interface{}, error) { return ec.unmarshalNString2string(ctx, v) }
+			directive1 := func(ctx context.Context) (interface{}, error) {
+				min, err := ec.unmarshalOInt2ᚖint(ctx, 3)
+				if err != nil {
+					return nil, err
+				}
+				if ec.directives.Constraint == nil {
+					return nil, errors.New("directive constraint is not implemented")
+				}
+				return ec.directives.Constraint(ctx, obj, directive0, min, nil, nil, nil)
+			}
+
+			tmp, err := directive1(ctx)
+			if err != nil {
+				return it, graphql.ErrorOnPath(ctx, err)
+			}
+			if data, ok := tmp.(string); ok {
+				it.Nickname = data
+			} else {
+				err := fmt.Errorf(`unexpected type %T from directive, should be string`, tmp)
+				return it, graphql.ErrorOnPath(ctx, err)
+			}
+		case "avatarUrl":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("avatarUrl"))
+			directive0 := func(ctx context.Context) (interface{}, error) { return ec.unmarshalOString2ᚖstring(ctx, v) }
+			directive1 := func(ctx context.Context) (interface{}, error) {
+				format, err := ec.unmarshalOConstraintFormat2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐConstraintFormat(ctx, "URL")
+				if err != nil {
+					return nil, err
+				}
+				if ec.directives.Constraint == nil {
+					return nil, errors.New("directive constraint is not implemented")
+				}
+				return ec.directives.Constraint(ctx, obj, directive0, nil, nil, nil, format)
+			}
+
+			tmp, err := directive1(ctx)
+			if err != nil {
+				return it, graphql.ErrorOnPath(ctx, err)
+			}
+			if data, ok := tmp.(*string); ok {
+				it.AvatarURL = data
+			} else if tmp == nil {
+				it.AvatarURL = nil
+			} else {
+				err := fmt.Errorf(`unexpected type %T from directive, should be *string`, tmp)
+				return it, graphql.ErrorOnPath(ctx, err)
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputSendInvitationInput(ctx context.Context, obj interface{}) (gqlmodel.SendInvitationInput, error) {
 	var it gqlmodel.SendInvitationInput
 	asMap := map[string]interface{}{}
@@ -7581,6 +7857,24 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "createUser":
+
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_createUser(ctx, field)
+			})
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "switchUser":
+
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_switchUser(ctx, field)
+			})
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "sendInvitation":
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
@@ -8126,10 +8420,6 @@ func (ec *executionContext) _Viewer(ctx context.Context, sel ast.SelectionSet, o
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
 			}
-		case "email":
-
-			out.Values[i] = ec._Viewer_email(ctx, field, obj)
-
 		case "nickname":
 
 			out.Values[i] = ec._Viewer_nickname(ctx, field, obj)
@@ -8593,6 +8883,11 @@ func (ec *executionContext) unmarshalNCreateFriendGroupInput2githubᚗcomᚋkᚑ
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) unmarshalNCreateUserInput2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐCreateUserInput(ctx context.Context, v interface{}) (gqlmodel.CreateUserInput, error) {
+	res, err := ec.unmarshalInputCreateUserInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalNCursor2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋentᚐCursor(ctx context.Context, v interface{}) (ent.Cursor, error) {
 	var res ent.Cursor
 	err := res.UnmarshalGQL(v)
@@ -8800,6 +9095,11 @@ func (ec *executionContext) marshalNPageInfo2ᚖgithubᚗcomᚋkᚑyomoᚋinvy�
 		return graphql.Null
 	}
 	return ec._PageInfo(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNSignUpInput2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐSignUpInput(ctx context.Context, v interface{}) (gqlmodel.SignUpInput, error) {
+	res, err := ec.unmarshalInputSignUpInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalNString2string(ctx context.Context, v interface{}) (string, error) {
@@ -9356,14 +9656,6 @@ func (ec *executionContext) unmarshalOSendInvitationInput2ᚖgithubᚗcomᚋkᚑ
 		return nil, nil
 	}
 	res, err := ec.unmarshalInputSendInvitationInput(ctx, v)
-	return &res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) unmarshalOSignUpInput2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐSignUpInput(ctx context.Context, v interface{}) (*gqlmodel.SignUpInput, error) {
-	if v == nil {
-		return nil, nil
-	}
-	res, err := ec.unmarshalInputSignUpInput(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 

@@ -9,6 +9,7 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"github.com/google/uuid"
+	"github.com/k-yomo/invy/invy_api/ent/account"
 	"github.com/k-yomo/invy/invy_api/ent/user"
 	"github.com/k-yomo/invy/invy_api/ent/userprofile"
 )
@@ -18,8 +19,8 @@ type User struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID uuid.UUID `json:"id,omitempty"`
-	// AuthID holds the value of the "auth_id" field.
-	AuthID string `json:"auth_id,omitempty"`
+	// AccountID holds the value of the "account_id" field.
+	AccountID uuid.UUID `json:"account_id,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
@@ -29,6 +30,8 @@ type User struct {
 
 // UserEdges holds the relations/edges for other nodes in the graph.
 type UserEdges struct {
+	// Account holds the value of the account edge.
+	Account *Account `json:"account,omitempty"`
 	// UserProfile holds the value of the user_profile edge.
 	UserProfile *UserProfile `json:"user_profile,omitempty"`
 	// FriendUsers holds the value of the friend_users edge.
@@ -47,9 +50,9 @@ type UserEdges struct {
 	UserFriendGroups []*UserFriendGroup `json:"user_friend_groups,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [8]bool
+	loadedTypes [9]bool
 	// totalCount holds the count of the edges above.
-	totalCount [8]map[string]int
+	totalCount [9]map[string]int
 
 	namedFriendUsers           map[string][]*User
 	namedFriendGroups          map[string][]*FriendGroup
@@ -60,10 +63,23 @@ type UserEdges struct {
 	namedUserFriendGroups      map[string][]*UserFriendGroup
 }
 
+// AccountOrErr returns the Account value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e UserEdges) AccountOrErr() (*Account, error) {
+	if e.loadedTypes[0] {
+		if e.Account == nil {
+			// Edge was loaded but was not found.
+			return nil, &NotFoundError{label: account.Label}
+		}
+		return e.Account, nil
+	}
+	return nil, &NotLoadedError{edge: "account"}
+}
+
 // UserProfileOrErr returns the UserProfile value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
 func (e UserEdges) UserProfileOrErr() (*UserProfile, error) {
-	if e.loadedTypes[0] {
+	if e.loadedTypes[1] {
 		if e.UserProfile == nil {
 			// Edge was loaded but was not found.
 			return nil, &NotFoundError{label: userprofile.Label}
@@ -76,7 +92,7 @@ func (e UserEdges) UserProfileOrErr() (*UserProfile, error) {
 // FriendUsersOrErr returns the FriendUsers value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) FriendUsersOrErr() ([]*User, error) {
-	if e.loadedTypes[1] {
+	if e.loadedTypes[2] {
 		return e.FriendUsers, nil
 	}
 	return nil, &NotLoadedError{edge: "friend_users"}
@@ -85,7 +101,7 @@ func (e UserEdges) FriendUsersOrErr() ([]*User, error) {
 // FriendGroupsOrErr returns the FriendGroups value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) FriendGroupsOrErr() ([]*FriendGroup, error) {
-	if e.loadedTypes[2] {
+	if e.loadedTypes[3] {
 		return e.FriendGroups, nil
 	}
 	return nil, &NotLoadedError{edge: "friend_groups"}
@@ -94,7 +110,7 @@ func (e UserEdges) FriendGroupsOrErr() ([]*FriendGroup, error) {
 // BelongingFriendGroupsOrErr returns the BelongingFriendGroups value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) BelongingFriendGroupsOrErr() ([]*FriendGroup, error) {
-	if e.loadedTypes[3] {
+	if e.loadedTypes[4] {
 		return e.BelongingFriendGroups, nil
 	}
 	return nil, &NotLoadedError{edge: "belonging_friend_groups"}
@@ -103,7 +119,7 @@ func (e UserEdges) BelongingFriendGroupsOrErr() ([]*FriendGroup, error) {
 // InvitationAcceptancesOrErr returns the InvitationAcceptances value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) InvitationAcceptancesOrErr() ([]*InvitationAcceptance, error) {
-	if e.loadedTypes[4] {
+	if e.loadedTypes[5] {
 		return e.InvitationAcceptances, nil
 	}
 	return nil, &NotLoadedError{edge: "invitation_acceptances"}
@@ -112,7 +128,7 @@ func (e UserEdges) InvitationAcceptancesOrErr() ([]*InvitationAcceptance, error)
 // InvitationDenialsOrErr returns the InvitationDenials value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) InvitationDenialsOrErr() ([]*InvitationDenial, error) {
-	if e.loadedTypes[5] {
+	if e.loadedTypes[6] {
 		return e.InvitationDenials, nil
 	}
 	return nil, &NotLoadedError{edge: "invitation_denials"}
@@ -121,7 +137,7 @@ func (e UserEdges) InvitationDenialsOrErr() ([]*InvitationDenial, error) {
 // FriendshipsOrErr returns the Friendships value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) FriendshipsOrErr() ([]*Friendship, error) {
-	if e.loadedTypes[6] {
+	if e.loadedTypes[7] {
 		return e.Friendships, nil
 	}
 	return nil, &NotLoadedError{edge: "friendships"}
@@ -130,7 +146,7 @@ func (e UserEdges) FriendshipsOrErr() ([]*Friendship, error) {
 // UserFriendGroupsOrErr returns the UserFriendGroups value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) UserFriendGroupsOrErr() ([]*UserFriendGroup, error) {
-	if e.loadedTypes[7] {
+	if e.loadedTypes[8] {
 		return e.UserFriendGroups, nil
 	}
 	return nil, &NotLoadedError{edge: "user_friend_groups"}
@@ -141,11 +157,9 @@ func (*User) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case user.FieldAuthID:
-			values[i] = new(sql.NullString)
 		case user.FieldCreatedAt:
 			values[i] = new(sql.NullTime)
-		case user.FieldID:
+		case user.FieldID, user.FieldAccountID:
 			values[i] = new(uuid.UUID)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type User", columns[i])
@@ -168,11 +182,11 @@ func (u *User) assignValues(columns []string, values []any) error {
 			} else if value != nil {
 				u.ID = *value
 			}
-		case user.FieldAuthID:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field auth_id", values[i])
-			} else if value.Valid {
-				u.AuthID = value.String
+		case user.FieldAccountID:
+			if value, ok := values[i].(*uuid.UUID); !ok {
+				return fmt.Errorf("unexpected type %T for field account_id", values[i])
+			} else if value != nil {
+				u.AccountID = *value
 			}
 		case user.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -183,6 +197,11 @@ func (u *User) assignValues(columns []string, values []any) error {
 		}
 	}
 	return nil
+}
+
+// QueryAccount queries the "account" edge of the User entity.
+func (u *User) QueryAccount() *AccountQuery {
+	return (&UserClient{config: u.config}).QueryAccount(u)
 }
 
 // QueryUserProfile queries the "user_profile" edge of the User entity.
@@ -248,8 +267,8 @@ func (u *User) String() string {
 	var builder strings.Builder
 	builder.WriteString("User(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", u.ID))
-	builder.WriteString("auth_id=")
-	builder.WriteString(u.AuthID)
+	builder.WriteString("account_id=")
+	builder.WriteString(fmt.Sprintf("%v", u.AccountID))
 	builder.WriteString(", ")
 	builder.WriteString("created_at=")
 	builder.WriteString(u.CreatedAt.Format(time.ANSIC))

@@ -8,8 +8,10 @@ import (
 	"errors"
 	"strings"
 
+	"github.com/google/uuid"
 	"github.com/k-yomo/invy/invy_api/auth"
 	"github.com/k-yomo/invy/invy_api/ent"
+	"github.com/k-yomo/invy/invy_api/ent/account"
 	"github.com/k-yomo/invy/invy_api/ent/user"
 	"github.com/k-yomo/invy/invy_api/ent/userprofile"
 	"github.com/k-yomo/invy/invy_api/graph/conv"
@@ -19,7 +21,7 @@ import (
 )
 
 // SignUp is the resolver for the signUp field.
-func (r *mutationResolver) SignUp(ctx context.Context, input *gqlmodel.SignUpInput) (*gqlmodel.Viewer, error) {
+func (r *mutationResolver) SignUp(ctx context.Context, input gqlmodel.SignUpInput) (*gqlmodel.Viewer, error) {
 	header := requestutil.GetRequestHeader(ctx)
 	authHeader := header.Get("Authorization")
 	if authHeader == "" {
@@ -47,24 +49,33 @@ func (r *mutationResolver) SignUp(ctx context.Context, input *gqlmodel.SignUpInp
 		email = &firebaseUser.Email
 	}
 
+	var dbUser *ent.User
 	var dbUserProfile *ent.UserProfile
 	err = ent.RunInTx(ctx, r.DB, func(tx *ent.Tx) error {
 		var err error
-		dbUserProfile, err = tx.User.Query().
-			Where(user.AuthID(token.UID)).
-			QueryUserProfile().
+		dbAccount, err := tx.Account.Query().
+			Where(account.AuthID(token.UID)).
 			Only(ctx)
 		if err != nil && !ent.IsNotFound(err) {
 			return err
 		}
-		if dbUserProfile != nil {
+		if dbAccount != nil {
 			return nil
 		}
-		dbUser, err := tx.User.Create().SetAuthID(token.UID).Save(ctx)
+
+		dbAccount, err = tx.Account.Create().
+			SetAuthID(token.UID).
+			SetNillableEmail(email).
+			Save(ctx)
 		if err != nil {
 			return err
 		}
-
+		dbUser, err = tx.User.Create().
+			SetAccountID(dbAccount.ID).
+			Save(ctx)
+		if err != nil {
+			return err
+		}
 		screenID := shortid.Generate()
 		for i := 0; i < 5; i++ {
 			exist, err := tx.UserProfile.Query().
@@ -83,7 +94,6 @@ func (r *mutationResolver) SignUp(ctx context.Context, input *gqlmodel.SignUpInp
 		dbUserProfile, err = tx.UserProfile.Create().
 			SetUserID(dbUser.ID).
 			SetScreenID(screenID).
-			SetNillableEmail(email).
 			SetNickname(input.Nickname).
 			SetAvatarURL(avatarURL).
 			Save(ctx)
@@ -92,7 +102,8 @@ func (r *mutationResolver) SignUp(ctx context.Context, input *gqlmodel.SignUpInp
 		}
 
 		claims := map[string]interface{}{
-			auth.UserIDClaimKey: dbUser.ID,
+			auth.AccountIDClaimKey:     dbAccount.ID,
+			auth.CurrentUserIDClaimKey: dbUser.ID,
 		}
 		if err := r.FirebaseAuthClient.SetCustomUserClaims(ctx, token.UID, claims); err != nil {
 			return err
@@ -105,4 +116,87 @@ func (r *mutationResolver) SignUp(ctx context.Context, input *gqlmodel.SignUpInp
 	}
 
 	return conv.ConvertFromDBUserProfileToViewer(dbUserProfile), nil
+}
+
+// CreateUser is the resolver for the createUser field.
+func (r *mutationResolver) CreateUser(ctx context.Context, input gqlmodel.CreateUserInput) (*gqlmodel.Viewer, error) {
+	accountID := auth.GetAccountID(ctx)
+	userCount, err := r.DB.User.Query().
+		Where(user.AccountID(accountID)).
+		Count(ctx)
+	if err != nil {
+		return nil, err
+	}
+	const maxUserCountPerAccount = 5
+	if userCount >= maxUserCountPerAccount {
+		return nil, errors.New("account can't create more than 5 users")
+	}
+
+	avatarURL := "https://cdn-icons-png.flaticon.com/512/456/456283.png"
+	if input.AvatarURL != nil {
+		avatarURL = *input.AvatarURL
+	}
+
+	var dbUserProfile *ent.UserProfile
+	err = ent.RunInTx(ctx, r.DB, func(tx *ent.Tx) error {
+		dbUser, err := tx.User.Create().
+			SetAccountID(accountID).
+			Save(ctx)
+		if err != nil {
+			return err
+		}
+		screenID := shortid.Generate()
+		for i := 0; i < 5; i++ {
+			exist, err := tx.UserProfile.Query().
+				Where(userprofile.ScreenID(screenID)).
+				Exist(ctx)
+			if err != nil {
+				return err
+			}
+			if exist {
+				screenID = shortid.Generate()
+			} else {
+				break
+			}
+		}
+		dbUserProfile, err = tx.UserProfile.Create().
+			SetUserID(dbUser.ID).
+			SetScreenID(screenID).
+			SetAvatarURL(avatarURL).
+			SetNickname(input.Nickname).
+			Save(ctx)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	})
+
+	return conv.ConvertFromDBUserProfileToViewer(dbUserProfile), nil
+}
+
+// SwitchUser is the resolver for the switchUser field.
+func (r *mutationResolver) SwitchUser(ctx context.Context, userID uuid.UUID) (*gqlmodel.Viewer, error) {
+	accountID := auth.GetAccountID(ctx)
+	dbUser, err := r.DB.User.Query().
+		Where(
+			user.ID(userID),
+			user.AccountID(accountID),
+		).
+		WithAccount().
+		WithUserProfile().
+		Only(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	claims := map[string]interface{}{
+		auth.AccountIDClaimKey:     accountID,
+		auth.CurrentUserIDClaimKey: dbUser.ID,
+	}
+	if err := r.FirebaseAuthClient.SetCustomUserClaims(ctx, dbUser.Edges.Account.AuthID, claims); err != nil {
+		return nil, err
+	}
+
+	return conv.ConvertFromDBUserProfileToViewer(dbUser.Edges.UserProfile), nil
 }

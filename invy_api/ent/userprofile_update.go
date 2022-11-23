@@ -40,26 +40,6 @@ func (upu *UserProfileUpdate) SetNickname(s string) *UserProfileUpdate {
 	return upu
 }
 
-// SetEmail sets the "email" field.
-func (upu *UserProfileUpdate) SetEmail(s string) *UserProfileUpdate {
-	upu.mutation.SetEmail(s)
-	return upu
-}
-
-// SetNillableEmail sets the "email" field if the given value is not nil.
-func (upu *UserProfileUpdate) SetNillableEmail(s *string) *UserProfileUpdate {
-	if s != nil {
-		upu.SetEmail(*s)
-	}
-	return upu
-}
-
-// ClearEmail clears the value of the "email" field.
-func (upu *UserProfileUpdate) ClearEmail() *UserProfileUpdate {
-	upu.mutation.ClearEmail()
-	return upu
-}
-
 // SetAvatarURL sets the "avatar_url" field.
 func (upu *UserProfileUpdate) SetAvatarURL(s string) *UserProfileUpdate {
 	upu.mutation.SetAvatarURL(s)
@@ -178,12 +158,6 @@ func (upu *UserProfileUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := upu.mutation.Nickname(); ok {
 		_spec.SetField(userprofile.FieldNickname, field.TypeString, value)
 	}
-	if value, ok := upu.mutation.Email(); ok {
-		_spec.SetField(userprofile.FieldEmail, field.TypeString, value)
-	}
-	if upu.mutation.EmailCleared() {
-		_spec.ClearField(userprofile.FieldEmail, field.TypeString)
-	}
 	if value, ok := upu.mutation.AvatarURL(); ok {
 		_spec.SetField(userprofile.FieldAvatarURL, field.TypeString, value)
 	}
@@ -218,26 +192,6 @@ func (upuo *UserProfileUpdateOne) SetScreenID(s string) *UserProfileUpdateOne {
 // SetNickname sets the "nickname" field.
 func (upuo *UserProfileUpdateOne) SetNickname(s string) *UserProfileUpdateOne {
 	upuo.mutation.SetNickname(s)
-	return upuo
-}
-
-// SetEmail sets the "email" field.
-func (upuo *UserProfileUpdateOne) SetEmail(s string) *UserProfileUpdateOne {
-	upuo.mutation.SetEmail(s)
-	return upuo
-}
-
-// SetNillableEmail sets the "email" field if the given value is not nil.
-func (upuo *UserProfileUpdateOne) SetNillableEmail(s *string) *UserProfileUpdateOne {
-	if s != nil {
-		upuo.SetEmail(*s)
-	}
-	return upuo
-}
-
-// ClearEmail clears the value of the "email" field.
-func (upuo *UserProfileUpdateOne) ClearEmail() *UserProfileUpdateOne {
-	upuo.mutation.ClearEmail()
 	return upuo
 }
 
@@ -388,12 +342,6 @@ func (upuo *UserProfileUpdateOne) sqlSave(ctx context.Context) (_node *UserProfi
 	}
 	if value, ok := upuo.mutation.Nickname(); ok {
 		_spec.SetField(userprofile.FieldNickname, field.TypeString, value)
-	}
-	if value, ok := upuo.mutation.Email(); ok {
-		_spec.SetField(userprofile.FieldEmail, field.TypeString, value)
-	}
-	if upuo.mutation.EmailCleared() {
-		_spec.ClearField(userprofile.FieldEmail, field.TypeString)
 	}
 	if value, ok := upuo.mutation.AvatarURL(); ok {
 		_spec.SetField(userprofile.FieldAvatarURL, field.TypeString, value)

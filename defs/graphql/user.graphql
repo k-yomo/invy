@@ -26,7 +26,6 @@ extend type Mutation {
 type Viewer implements Node {
     id: UUID!
     screenId: String!
-    email: String
     nickname: String!
     avatarUrl: String!
 

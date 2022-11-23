@@ -8,6 +8,19 @@ import (
 )
 
 var (
+	// AccountsColumns holds the columns for the "accounts" table.
+	AccountsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID},
+		{Name: "auth_id", Type: field.TypeString, Unique: true},
+		{Name: "email", Type: field.TypeString, Unique: true, Nullable: true},
+		{Name: "created_at", Type: field.TypeTime},
+	}
+	// AccountsTable holds the schema information for the "accounts" table.
+	AccountsTable = &schema.Table{
+		Name:       "accounts",
+		Columns:    AccountsColumns,
+		PrimaryKey: []*schema.Column{AccountsColumns[0]},
+	}
 	// FriendGroupsColumns holds the columns for the "friend_groups" table.
 	FriendGroupsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUUID},
@@ -235,14 +248,22 @@ var (
 	// UsersColumns holds the columns for the "users" table.
 	UsersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUUID},
-		{Name: "auth_id", Type: field.TypeString, Unique: true},
 		{Name: "created_at", Type: field.TypeTime},
+		{Name: "account_id", Type: field.TypeUUID},
 	}
 	// UsersTable holds the schema information for the "users" table.
 	UsersTable = &schema.Table{
 		Name:       "users",
 		Columns:    UsersColumns,
 		PrimaryKey: []*schema.Column{UsersColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "users_accounts_account",
+				Columns:    []*schema.Column{UsersColumns[2]},
+				RefColumns: []*schema.Column{AccountsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
 	}
 	// UserFriendGroupsColumns holds the columns for the "user_friend_groups" table.
 	UserFriendGroupsColumns = []*schema.Column{
@@ -317,7 +338,6 @@ var (
 		{Name: "id", Type: field.TypeUUID},
 		{Name: "screen_id", Type: field.TypeString, Unique: true},
 		{Name: "nickname", Type: field.TypeString},
-		{Name: "email", Type: field.TypeString, Unique: true, Nullable: true},
 		{Name: "avatar_url", Type: field.TypeString},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
@@ -331,7 +351,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "user_profiles_users_user_profile",
-				Columns:    []*schema.Column{UserProfilesColumns[7]},
+				Columns:    []*schema.Column{UserProfilesColumns[6]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -339,6 +359,7 @@ var (
 	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
+		AccountsTable,
 		FriendGroupsTable,
 		FriendshipsTable,
 		FriendshipRequestsTable,
@@ -369,6 +390,7 @@ func init() {
 	InvitationFriendGroupsTable.ForeignKeys[1].RefTable = FriendGroupsTable
 	InvitationUsersTable.ForeignKeys[0].RefTable = InvitationsTable
 	InvitationUsersTable.ForeignKeys[1].RefTable = UsersTable
+	UsersTable.ForeignKeys[0].RefTable = AccountsTable
 	UserFriendGroupsTable.ForeignKeys[0].RefTable = FriendGroupsTable
 	UserFriendGroupsTable.ForeignKeys[1].RefTable = UsersTable
 	UserMutesTable.ForeignKeys[0].RefTable = UsersTable

@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
+	"github.com/k-yomo/invy/invy_api/ent/account"
 	"github.com/k-yomo/invy/invy_api/ent/friendgroup"
 	"github.com/k-yomo/invy/invy_api/ent/friendship"
 	"github.com/k-yomo/invy/invy_api/ent/invitationacceptance"
@@ -31,6 +32,7 @@ type UserQuery struct {
 	order                          []OrderFunc
 	fields                         []string
 	predicates                     []predicate.User
+	withAccount                    *AccountQuery
 	withUserProfile                *UserProfileQuery
 	withFriendUsers                *UserQuery
 	withFriendGroups               *FriendGroupQuery
@@ -82,6 +84,28 @@ func (uq *UserQuery) Unique(unique bool) *UserQuery {
 func (uq *UserQuery) Order(o ...OrderFunc) *UserQuery {
 	uq.order = append(uq.order, o...)
 	return uq
+}
+
+// QueryAccount chains the current query on the "account" edge.
+func (uq *UserQuery) QueryAccount() *AccountQuery {
+	query := &AccountQuery{config: uq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := uq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := uq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(account.Table, account.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, user.AccountTable, user.AccountColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
 }
 
 // QueryUserProfile chains the current query on the "user_profile" edge.
@@ -441,6 +465,7 @@ func (uq *UserQuery) Clone() *UserQuery {
 		offset:                    uq.offset,
 		order:                     append([]OrderFunc{}, uq.order...),
 		predicates:                append([]predicate.User{}, uq.predicates...),
+		withAccount:               uq.withAccount.Clone(),
 		withUserProfile:           uq.withUserProfile.Clone(),
 		withFriendUsers:           uq.withFriendUsers.Clone(),
 		withFriendGroups:          uq.withFriendGroups.Clone(),
@@ -454,6 +479,17 @@ func (uq *UserQuery) Clone() *UserQuery {
 		path:   uq.path,
 		unique: uq.unique,
 	}
+}
+
+// WithAccount tells the query-builder to eager-load the nodes that are connected to
+// the "account" edge. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithAccount(opts ...func(*AccountQuery)) *UserQuery {
+	query := &AccountQuery{config: uq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	uq.withAccount = query
+	return uq
 }
 
 // WithUserProfile tells the query-builder to eager-load the nodes that are connected to
@@ -550,12 +586,12 @@ func (uq *UserQuery) WithUserFriendGroups(opts ...func(*UserFriendGroupQuery)) *
 // Example:
 //
 //	var v []struct {
-//		AuthID string `json:"auth_id,omitempty"`
+//		AccountID uuid.UUID `json:"account_id,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.User.Query().
-//		GroupBy(user.FieldAuthID).
+//		GroupBy(user.FieldAccountID).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (uq *UserQuery) GroupBy(field string, fields ...string) *UserGroupBy {
@@ -578,11 +614,11 @@ func (uq *UserQuery) GroupBy(field string, fields ...string) *UserGroupBy {
 // Example:
 //
 //	var v []struct {
-//		AuthID string `json:"auth_id,omitempty"`
+//		AccountID uuid.UUID `json:"account_id,omitempty"`
 //	}
 //
 //	client.User.Query().
-//		Select(user.FieldAuthID).
+//		Select(user.FieldAccountID).
 //		Scan(ctx, &v)
 func (uq *UserQuery) Select(fields ...string) *UserSelect {
 	uq.fields = append(uq.fields, fields...)
@@ -617,7 +653,8 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 	var (
 		nodes       = []*User{}
 		_spec       = uq.querySpec()
-		loadedTypes = [8]bool{
+		loadedTypes = [9]bool{
+			uq.withAccount != nil,
 			uq.withUserProfile != nil,
 			uq.withFriendUsers != nil,
 			uq.withFriendGroups != nil,
@@ -648,6 +685,12 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 	}
 	if len(nodes) == 0 {
 		return nodes, nil
+	}
+	if query := uq.withAccount; query != nil {
+		if err := uq.loadAccount(ctx, query, nodes, nil,
+			func(n *User, e *Account) { n.Edges.Account = e }); err != nil {
+			return nil, err
+		}
 	}
 	if query := uq.withUserProfile; query != nil {
 		if err := uq.loadUserProfile(ctx, query, nodes, nil,
@@ -765,6 +808,32 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 	return nodes, nil
 }
 
+func (uq *UserQuery) loadAccount(ctx context.Context, query *AccountQuery, nodes []*User, init func(*User), assign func(*User, *Account)) error {
+	ids := make([]uuid.UUID, 0, len(nodes))
+	nodeids := make(map[uuid.UUID][]*User)
+	for i := range nodes {
+		fk := nodes[i].AccountID
+		if _, ok := nodeids[fk]; !ok {
+			ids = append(ids, fk)
+		}
+		nodeids[fk] = append(nodeids[fk], nodes[i])
+	}
+	query.Where(account.IDIn(ids...))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nodeids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected foreign-key "account_id" returned %v`, n.ID)
+		}
+		for i := range nodes {
+			assign(nodes[i], n)
+		}
+	}
+	return nil
+}
 func (uq *UserQuery) loadUserProfile(ctx context.Context, query *UserProfileQuery, nodes []*User, init func(*User), assign func(*User, *UserProfile)) error {
 	fks := make([]driver.Value, 0, len(nodes))
 	nodeids := make(map[uuid.UUID]*User)
