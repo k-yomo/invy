@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:graphql/client.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:invy/graphql/viewer.graphql.dart';
 import 'package:invy/screens/invitation_screen.dart';
@@ -58,7 +59,12 @@ class App extends HookConsumerWidget {
             }
             if (authSnapshot.hasData) {
               final graphqlClient = ref.read(graphqlClientProvider);
-              final viewer = await graphqlClient.query$viewer();
+              final viewer = await graphqlClient.query$viewer(
+                Options$Query$viewer(fetchPolicy: FetchPolicy.networkOnly),
+              );
+              if (viewer.hasException) {
+                return null;
+              }
               if (viewer.parsedData != null) {
                 setViewerToLoggedInUser(ref, viewer.parsedData!.viewer);
               }

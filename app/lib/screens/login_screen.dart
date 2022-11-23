@@ -26,7 +26,7 @@ class LoginScreen extends HookConsumerWidget {
         }
 
         final result = await firebaseUser.getIdTokenResult();
-        if (result.claims?.containsKey("userId") ?? false) {
+        if (result.claims?.containsKey("currentUserId") ?? false) {
           final viewerQueryResult =
               await graphqlClient.query$viewer(Options$Query$viewer(
             fetchPolicy: FetchPolicy.networkOnly,
@@ -36,7 +36,7 @@ class LoginScreen extends HookConsumerWidget {
             // TODO: logging and show error
             return;
           }
-          final user = viewerQueryResult!.parsedData!.viewer;
+          final user = viewerQueryResult.parsedData!.viewer;
           ref.read(loggedInUserProvider.notifier).state = LoggedInUser(
             id: user.id,
             screenId: user.screenId,
@@ -54,6 +54,10 @@ class LoginScreen extends HookConsumerWidget {
               avatarUrl: firebaseUser.photoURL,
             ),
           )));
+          if (res.hasException) {
+            print(res.exception);
+            return;
+          }
           // Refresh id token to get new token containing user id in claims.
           await firebaseUser.getIdToken(true);
           if (res.parsedData != null) {
@@ -65,8 +69,6 @@ class LoginScreen extends HookConsumerWidget {
                 avatarUrl: user.avatarUrl);
             print("signed up in successfully");
             // TODO: redirect to user profile update page?
-          } else {
-            print(res.exception);
           }
         }
       } on FirebaseAuthException catch (e) {

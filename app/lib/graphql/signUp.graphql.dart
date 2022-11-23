@@ -6,33 +6,28 @@ import 'package:graphql_flutter/graphql_flutter.dart' as graphql_flutter;
 import 'schema.graphql.dart';
 
 class Variables$Mutation$signUp {
-  factory Variables$Mutation$signUp({Input$SignUpInput? input}) =>
+  factory Variables$Mutation$signUp({required Input$SignUpInput input}) =>
       Variables$Mutation$signUp._({
-        if (input != null) r'input': input,
+        r'input': input,
       });
 
   Variables$Mutation$signUp._(this._$data);
 
   factory Variables$Mutation$signUp.fromJson(Map<String, dynamic> data) {
     final result$data = <String, dynamic>{};
-    if (data.containsKey('input')) {
-      final l$input = data['input'];
-      result$data['input'] = l$input == null
-          ? null
-          : Input$SignUpInput.fromJson((l$input as Map<String, dynamic>));
-    }
+    final l$input = data['input'];
+    result$data['input'] =
+        Input$SignUpInput.fromJson((l$input as Map<String, dynamic>));
     return Variables$Mutation$signUp._(result$data);
   }
 
   Map<String, dynamic> _$data;
 
-  Input$SignUpInput? get input => (_$data['input'] as Input$SignUpInput?);
+  Input$SignUpInput get input => (_$data['input'] as Input$SignUpInput);
   Map<String, dynamic> toJson() {
     final result$data = <String, dynamic>{};
-    if (_$data.containsKey('input')) {
-      final l$input = input;
-      result$data['input'] = l$input?.toJson();
-    }
+    final l$input = input;
+    result$data['input'] = l$input.toJson();
     return result$data;
   }
 
@@ -52,9 +47,6 @@ class Variables$Mutation$signUp {
     }
     final l$input = input;
     final lOther$input = other.input;
-    if (_$data.containsKey('input') != other._$data.containsKey('input')) {
-      return false;
-    }
     if (l$input != lOther$input) {
       return false;
     }
@@ -64,7 +56,7 @@ class Variables$Mutation$signUp {
   @override
   int get hashCode {
     final l$input = input;
-    return Object.hashAll([_$data.containsKey('input') ? l$input : const {}]);
+    return Object.hashAll([l$input]);
   }
 }
 
@@ -95,7 +87,8 @@ class _CopyWithImpl$Variables$Mutation$signUp<TRes>
 
   TRes call({Object? input = _undefined}) => _then(Variables$Mutation$signUp._({
         ..._instance._$data,
-        if (input != _undefined) 'input': (input as Input$SignUpInput?),
+        if (input != _undefined && input != null)
+          'input': (input as Input$SignUpInput),
       }));
 }
 
@@ -249,7 +242,7 @@ const documentNodeMutationsignUp = DocumentNode(definitions: [
         variable: VariableNode(name: NameNode(value: 'input')),
         type: NamedTypeNode(
           name: NameNode(value: 'SignUpInput'),
-          isNonNull: false,
+          isNonNull: true,
         ),
         defaultValue: DefaultValueNode(value: null),
         directives: [],
@@ -325,7 +318,7 @@ typedef OnMutationCompleted$Mutation$signUp = FutureOr<void> Function(
 class Options$Mutation$signUp extends graphql.MutationOptions<Mutation$signUp> {
   Options$Mutation$signUp({
     String? operationName,
-    Variables$Mutation$signUp? variables,
+    required Variables$Mutation$signUp variables,
     graphql.FetchPolicy? fetchPolicy,
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
@@ -336,7 +329,7 @@ class Options$Mutation$signUp extends graphql.MutationOptions<Mutation$signUp> {
     graphql.OnError? onError,
   })  : onCompletedWithParsed = onCompleted,
         super(
-          variables: variables?.toJson() ?? {},
+          variables: variables.toJson(),
           operationName: operationName,
           fetchPolicy: fetchPolicy,
           errorPolicy: errorPolicy,
@@ -370,7 +363,7 @@ class WatchOptions$Mutation$signUp
     extends graphql.WatchQueryOptions<Mutation$signUp> {
   WatchOptions$Mutation$signUp({
     String? operationName,
-    Variables$Mutation$signUp? variables,
+    required Variables$Mutation$signUp variables,
     graphql.FetchPolicy? fetchPolicy,
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
@@ -381,7 +374,7 @@ class WatchOptions$Mutation$signUp
     bool carryForwardDataOnException = true,
     bool fetchResults = false,
   }) : super(
-          variables: variables?.toJson() ?? {},
+          variables: variables.toJson(),
           operationName: operationName,
           fetchPolicy: fetchPolicy,
           errorPolicy: errorPolicy,
@@ -399,11 +392,11 @@ class WatchOptions$Mutation$signUp
 
 extension ClientExtension$Mutation$signUp on graphql.GraphQLClient {
   Future<graphql.QueryResult<Mutation$signUp>> mutate$signUp(
-          [Options$Mutation$signUp? options]) async =>
-      await this.mutate(options ?? Options$Mutation$signUp());
+          Options$Mutation$signUp options) async =>
+      await this.mutate(options);
   graphql.ObservableQuery<Mutation$signUp> watchMutation$signUp(
-          [WatchOptions$Mutation$signUp? options]) =>
-      this.watchMutation(options ?? WatchOptions$Mutation$signUp());
+          WatchOptions$Mutation$signUp options) =>
+      this.watchMutation(options);
 }
 
 class Mutation$signUp$HookResult {
@@ -422,8 +415,8 @@ Mutation$signUp$HookResult useMutation$signUp(
   final result =
       graphql_flutter.useMutation(options ?? WidgetOptions$Mutation$signUp());
   return Mutation$signUp$HookResult(
-    ({variables, optimisticResult}) => result.runMutation(
-      variables?.toJson() ?? const {},
+    (variables, {optimisticResult}) => result.runMutation(
+      variables.toJson(),
       optimisticResult: optimisticResult,
     ),
     result.result,
@@ -431,8 +424,8 @@ Mutation$signUp$HookResult useMutation$signUp(
 }
 
 graphql.ObservableQuery<Mutation$signUp> useWatchMutation$signUp(
-        [WatchOptions$Mutation$signUp? options]) =>
-    graphql_flutter.useWatchMutation(options ?? WatchOptions$Mutation$signUp());
+        WatchOptions$Mutation$signUp options) =>
+    graphql_flutter.useWatchMutation(options);
 
 class WidgetOptions$Mutation$signUp
     extends graphql.MutationOptions<Mutation$signUp> {
@@ -478,8 +471,8 @@ class WidgetOptions$Mutation$signUp
 }
 
 typedef RunMutation$Mutation$signUp = graphql.MultiSourceResult<Mutation$signUp>
-    Function({
-  Variables$Mutation$signUp? variables,
+    Function(
+  Variables$Mutation$signUp, {
   Object? optimisticResult,
 });
 typedef Builder$Mutation$signUp = widgets.Widget Function(
@@ -500,12 +493,12 @@ class Mutation$signUp$Widget extends graphql_flutter.Mutation<Mutation$signUp> {
             result,
           ) =>
               builder(
-            ({
-              variables,
+            (
+              variables, {
               optimisticResult,
             }) =>
                 run(
-              variables?.toJson() ?? const {},
+              variables.toJson(),
               optimisticResult: optimisticResult,
             ),
             result,
