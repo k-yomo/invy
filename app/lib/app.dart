@@ -6,22 +6,12 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:invy/graphql/viewer.graphql.dart';
 import 'package:invy/screens/invitation_screen.dart';
 import 'package:invy/services/graphql_client.dart';
-import 'package:universal_platform/universal_platform.dart';
 
 import 'screens/friend_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/profile_screen.dart';
 import 'state/auth.dart';
-
-String get host {
-// https://github.com/flutter/flutter/issues/36126#issuecomment-596215587
-  if (UniversalPlatform.isAndroid) {
-    return '10.0.2.2';
-  } else {
-    return '127.0.0.1';
-  }
-}
 
 class App extends HookConsumerWidget {
   const App({Key? key}) : super(key: key);
