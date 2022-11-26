@@ -7,21 +7,15 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"sort"
 	"time"
 
 	"github.com/google/uuid"
 	"github.com/k-yomo/invy/invy_api/auth"
-	"github.com/k-yomo/invy/invy_api/ent/invitation"
-	"github.com/k-yomo/invy/invy_api/ent/invitationacceptance"
-	"github.com/k-yomo/invy/invy_api/ent/invitationuser"
-	"github.com/k-yomo/invy/invy_api/ent/userfriendgroup"
 	"github.com/k-yomo/invy/invy_api/graph/conv"
 	"github.com/k-yomo/invy/invy_api/graph/gqlgen"
 	"github.com/k-yomo/invy/invy_api/graph/gqlmodel"
 	"github.com/k-yomo/invy/invy_api/graph/loader"
 	"github.com/k-yomo/invy/pkg/convutil"
-	"github.com/k-yomo/invy/pkg/sliceutil"
 )
 
 // AcceptedUsers is the resolver for the acceptedUsers field.
@@ -38,9 +32,6 @@ func (r *mutationResolver) SendInvitation(ctx context.Context, input *gqlmodel.S
 	now := time.Now()
 	if input.ExpiresAt.Before(now) {
 		return nil, errors.New("expiration time must be future date time")
-	}
-	if input.StartsAt.Before(now) {
-		return nil, errors.New("start time must be future date time")
 	}
 	authUserID := auth.GetCurrentUserID(ctx)
 	dbInvitation, err := r.DB.Invitation.Create().
@@ -104,56 +95,6 @@ func (r *mutationResolver) DenyInvitation(ctx context.Context, invitationID uuid
 		return false, err
 	}
 	return true, nil
-}
-
-// PendingInvitations is the resolver for the pendingInvitations field.
-func (r *queryResolver) PendingInvitations(ctx context.Context) ([]*gqlmodel.Invitation, error) {
-	authUserID := auth.GetCurrentUserID(ctx)
-	now := time.Now()
-	dbInvitationsToUser, err := r.DB.InvitationUser.Query().
-		Where(invitationuser.UserID(authUserID)).
-		QueryInvitation().
-		Where(invitation.ExpiresAtGTE(now)).
-		All(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	dbInvitationsToGroup, err := r.DB.UserFriendGroup.Query().
-		Where(userfriendgroup.UserID(authUserID)).
-		QueryFriendGroup().
-		QueryInvitationFriendGroups().
-		QueryInvitation().
-		Where(invitation.ExpiresAtGTE(now)).
-		All(ctx)
-	if err != nil {
-		return nil, err
-	}
-	invitations := sliceutil.MergeNodes(
-		convutil.ConvertToList(dbInvitationsToUser, conv.ConvertFromDBInvitation),
-		convutil.ConvertToList(dbInvitationsToGroup, conv.ConvertFromDBInvitation),
-	)
-
-	// sort by expiration time ASC
-	sort.Slice(invitations, func(i, j int) bool {
-		return invitations[i].ExpiresAt.Before(invitations[j].ExpiresAt)
-	})
-
-	return invitations, nil
-}
-
-// AcceptedInvitations is the resolver for the acceptedInvitations field.
-func (r *queryResolver) AcceptedInvitations(ctx context.Context) ([]*gqlmodel.Invitation, error) {
-	authUserID := auth.GetCurrentUserID(ctx)
-	dbInvitations, err := r.DB.InvitationAcceptance.Query().
-		Where(invitationacceptance.UserID(authUserID)).
-		QueryInvitation().
-		Where(invitation.StartsAtGTE(time.Now().Add(-12 * time.Hour))). // Do not show the old(started before 12H ago) invitations
-		All(ctx)
-	if err != nil {
-		return nil, err
-	}
-	return convutil.ConvertToList(dbInvitations, conv.ConvertFromDBInvitation), nil
 }
 
 // Invitation returns gqlgen.InvitationResolver implementation.

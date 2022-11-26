@@ -49,7 +49,6 @@ class LocalConfig implements AppConfig {
   FirebaseOptions get firebaseOptions =>
       dev.DefaultFirebaseOptions.currentPlatform;
 
-
   String get _host {
 // https://github.com/flutter/flutter/issues/36126#issuecomment-596215587
     if (UniversalPlatform.isAndroid) {

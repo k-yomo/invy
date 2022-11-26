@@ -1,16 +1,24 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:gap/gap.dart';
 import 'package:graphql/client.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:intl/intl.dart';
 import 'package:invy/components/app_bar_leading.dart';
 import 'package:invy/components/friend_list_item_fragment.graphql.dart';
 import 'package:invy/components/friend_selection_list.dart';
 import 'package:invy/graphql/invitation_screen.graphql.dart';
+import 'package:invy/graphql/schema.graphql.dart';
+import 'package:invy/screens/home_screen.dart';
 
 import '../components/friend_group_fragment.graphql.dart';
 import '../components/friend_group_icon.dart';
 import '../components/friend_group_selection_list.dart';
 import '../services/graphql_client.dart';
+
+final dateTimeFormat = 'yyyy年MM月dd日 HH時mm分';
 
 class InvitationScreen extends HookConsumerWidget {
   const InvitationScreen({Key? key}) : super(key: key);
@@ -38,22 +46,30 @@ class InvitationScreen extends HookConsumerWidget {
               actions: <Widget>[
                 TextButton(
                   onPressed: () {
+                    // TODO: uncomment
+                    // if (selectedCount == 0) {
+                    //   return;
+                    // }
                     showModalBottomSheet(
                         backgroundColor: Colors.transparent,
                         isScrollControlled: true,
                         context: context,
                         builder: (BuildContext context) {
-                          return InvitationDetailForm(
+                          return InvitationDetailFormModal(
                             selectedFriendGroups: selectedFriendGroups.value,
                             selectedFriends: selectedFriends.value,
                           );
                         });
                   },
-                  child: Text("次へ",
-                      style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.blue,
-                          fontWeight: FontWeight.bold)),
+                  child: Text(
+                    "次へ",
+                    style: TextStyle(
+                        fontSize: 16,
+                        color: selectedCount == 0
+                            ? Colors.grey.shade600
+                            : Colors.blue,
+                        fontWeight: FontWeight.bold),
+                  ),
                 ),
               ],
               shape: Border(
@@ -114,8 +130,8 @@ class InvitationScreen extends HookConsumerWidget {
   }
 }
 
-class InvitationDetailForm extends HookConsumerWidget {
-  const InvitationDetailForm({
+class InvitationDetailFormModal extends HookConsumerWidget {
+  const InvitationDetailFormModal({
     Key? key,
     required this.selectedFriendGroups,
     required this.selectedFriends,
@@ -126,6 +142,7 @@ class InvitationDetailForm extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final graphqlClient = ref.read(graphqlClientProvider);
     return Container(
       margin: EdgeInsets.only(top: 100),
       decoration: BoxDecoration(
@@ -137,19 +154,25 @@ class InvitationDetailForm extends HookConsumerWidget {
       ),
       child: Container(
         margin: EdgeInsets.only(top: 20),
-        child: Align(
-          child: Column(
-            children: [
-              Text("詳細設定",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-              Container(
-                margin: EdgeInsets.symmetric(vertical: 10),
-                child: Column(
-                  children: [
-                    Text("選択中",
+        child: Column(
+          children: [
+            Text("詳細設定",
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            Container(
+              margin: EdgeInsets.symmetric(vertical: 10),
+              width: double.infinity,
+              child: Column(
+                children: [
+                  Container(
+                    width: double.infinity,
+                    margin: EdgeInsets.symmetric(vertical: 5, horizontal: 20),
+                    child: Text("選択中",
                         style: TextStyle(
                             fontSize: 16, fontWeight: FontWeight.bold)),
-                    SingleChildScrollView(
+                  ),
+                  Container(
+                    width: double.infinity,
+                    child: SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
                       padding: EdgeInsets.symmetric(horizontal: 20),
                       child: Row(
@@ -194,31 +217,307 @@ class InvitationDetailForm extends HookConsumerWidget {
                         ],
                       ),
                     ),
-                    Container(
-                      margin: EdgeInsets.symmetric(horizontal: 20),
-                      child: Column(children: [
-                        TextFormField(
-                          // controller: emailController,
-                          decoration: const InputDecoration(
-                            hintText: '開催地',
-                            border: OutlineInputBorder(),
+                  ),
+                  InvitationDetailForm(
+                    onSubmitted: ({
+                      required String location,
+                      required DateTime startsAt,
+                      required DateTime expiresAt,
+                      String? comment,
+                    }) async {
+                      print(startsAt.toUtc().toIso8601String());
+                      final result = await graphqlClient.mutate$sendInvitation(
+                          Options$Mutation$sendInvitation(
+                        variables: Variables$Mutation$sendInvitation(
+                          input: Input$SendInvitationInput(
+                            location: location,
+                            startsAt: startsAt.toIso8601String(),
+                            expiresAt: expiresAt.toIso8601String(),
+                            comment: comment ?? '',
+                            targetFriendGroupIds: selectedFriendGroups
+                                .map((fg) => fg.id)
+                                .toList(),
+                            targetFriendUserIds:
+                                selectedFriends.map((fg) => fg.id).toList(),
                           ),
                         ),
-                        TextFormField(
-                          // controller: emailController,
-                          decoration: const InputDecoration(
-                            hintText: 'コメント',
-                            border: OutlineInputBorder(),
-                          ),
-                        ),
-                      ]),
-                    ),
-                  ],
+                      ));
+                      if (result.hasException) {
+                        print(result.exception);
+                        // TODO: Show error
+                        return;
+                      }
+                      Navigator.pushReplacement(context,
+                          MaterialPageRoute(builder: (BuildContext context) {
+                        return HomeScreen();
+                      }));
+                    },
+                  )
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class InvitationDetailForm extends StatefulWidget {
+  const InvitationDetailForm({super.key, required this.onSubmitted});
+
+  final Function({
+    required String location,
+    required DateTime startsAt,
+    required DateTime expiresAt,
+    String? comment,
+  }) onSubmitted;
+
+  @override
+  InvitationDetailFormState createState() {
+    return InvitationDetailFormState();
+  }
+}
+
+class InvitationDetailFormState extends State<InvitationDetailForm> {
+  final _formKey = GlobalKey<FormState>();
+
+  @override
+  Widget build(BuildContext context) {
+    final startsAtController = TextEditingController();
+    final expiresAtController = TextEditingController();
+    final now = DateTime.now();
+
+    // form values
+    String location = '';
+    DateTime startsAt = now;
+    DateTime expiresAt = now;
+    String? comment;
+
+    return Form(
+      key: _formKey,
+      child: Container(
+        margin: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+        child: Column(children: [
+          TextFormField(
+            // controller: emailController,
+            decoration: const InputDecoration(
+              labelText: '開催地',
+              labelStyle: TextStyle(color: Colors.grey),
+              border: OutlineInputBorder(),
+              enabledBorder: OutlineInputBorder(
+                // borderRadius: BorderRadius.circular(0),
+                borderSide: const BorderSide(
+                  width: 1,
+                  color: Colors.grey,
                 ),
               ),
-            ],
+              focusedBorder: OutlineInputBorder(
+                // borderRadius: BorderRadius.circular(0),
+                borderSide: const BorderSide(
+                  width: 2,
+                  color: Colors.black,
+                ),
+              ),
+            ),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return '開催地を入力してください';
+              }
+              return null;
+            },
+            onSaved: (value) {
+              location = value!;
+            },
           ),
-        ),
+          Gap(10),
+          Container(
+            width: double.infinity,
+            child: TextFormField(
+              controller: startsAtController,
+              onTap: () {
+                DatePicker.showDateTimePicker(
+                  context,
+                  showTitleActions: true,
+                  minTime: now,
+                  maxTime: now.add(Duration(days: 7)),
+                  onConfirm: (date) {
+                    startsAtController.text =
+                        DateFormat(dateTimeFormat).format(date);
+                  },
+                  currentTime: now,
+                  locale: LocaleType.jp,
+                );
+              },
+              decoration: const InputDecoration(
+                labelText: '開始日時',
+                labelStyle: TextStyle(color: Colors.grey),
+                border: OutlineInputBorder(
+                  // borderRadius: BorderRadius.circular(0),
+                  borderSide: const BorderSide(
+                    width: 1,
+                    color: Colors.grey,
+                  ),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  // borderRadius: BorderRadius.circular(0),
+                  borderSide: const BorderSide(
+                    width: 1,
+                    color: Colors.grey,
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  // borderRadius: BorderRadius.circular(0),
+                  borderSide: const BorderSide(
+                    width: 1,
+                    color: Colors.grey,
+                  ),
+                ),
+                errorBorder: OutlineInputBorder(
+                  // borderRadius: BorderRadius.circular(0),
+                  borderSide: const BorderSide(
+                    width: 1,
+                    color: Colors.red,
+                  ),
+                ),
+              ),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return '開始日時を入力してください';
+                }
+                try {
+                  DateFormat(dateTimeFormat).parse(value);
+                } catch (e) {
+                  return '不正なフォーマットです。日時を選択し直して下さい';
+                }
+                return null;
+              },
+              onSaved: (value) {
+                // TODO: adding 9 hour to get the JST time, but there must be smarter way to store
+                // time with timezone;
+                startsAt = DateFormat(dateTimeFormat).parse(value!).toUtc();
+              },
+            ),
+          ),
+          Gap(10),
+          Container(
+            width: double.infinity,
+            child: TextFormField(
+              controller: expiresAtController,
+              onTap: () {
+                DatePicker.showDateTimePicker(
+                  context,
+                  showTitleActions: true,
+                  minTime: now.add(Duration(minutes: 30)),
+                  maxTime: now.add(Duration(days: 7)),
+                  onConfirm: (date) {
+                    expiresAtController.text =
+                        DateFormat(dateTimeFormat).format(date);
+                  },
+                  currentTime: now.add(Duration(minutes: 30)),
+                  locale: LocaleType.jp,
+                );
+              },
+              decoration: const InputDecoration(
+                labelText: '返答期限',
+                labelStyle: TextStyle(color: Colors.grey),
+                border: OutlineInputBorder(
+                  // borderRadius: BorderRadius.circular(0),
+                  borderSide: const BorderSide(
+                    width: 1,
+                    color: Colors.grey,
+                  ),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  // borderRadius: BorderRadius.circular(0),
+                  borderSide: const BorderSide(
+                    width: 1,
+                    color: Colors.grey,
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  // borderRadius: BorderRadius.circular(0),
+                  borderSide: const BorderSide(
+                    width: 1,
+                    color: Colors.grey,
+                  ),
+                ),
+                errorBorder: OutlineInputBorder(
+                  // borderRadius: BorderRadius.circular(0),
+                  borderSide: const BorderSide(
+                    width: 1,
+                    color: Colors.red,
+                  ),
+                ),
+              ),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return '返答期限を設定してください';
+                }
+                try {
+                  DateFormat(dateTimeFormat).parse(value);
+                } catch (e) {
+                  return '不正なフォーマットです。日時を選択し直して下さい';
+                }
+                return null;
+              },
+              onSaved: (value) {
+                // TODO: adding 9 hour to get the JST time, but there must be smarter way to store
+                // time with timezone;
+                expiresAt = DateFormat(dateTimeFormat).parse(value!).toUtc();
+              },
+            ),
+          ),
+          Gap(10),
+          TextFormField(
+            // controller: emailController,
+            keyboardType: TextInputType.multiline,
+            minLines: 2,
+            maxLines: null,
+            decoration: const InputDecoration(
+              labelText: 'コメント',
+              labelStyle: TextStyle(color: Colors.grey),
+              enabledBorder: OutlineInputBorder(
+                // borderRadius: BorderRadius.circular(0),
+                borderSide: const BorderSide(
+                  width: 1,
+                  color: Colors.grey,
+                ),
+              ),
+              focusedBorder: OutlineInputBorder(
+                // borderRadius: BorderRadius.circular(0),
+                borderSide: const BorderSide(
+                  width: 2,
+                  color: Colors.black,
+                ),
+              ),
+            ),
+            onSaved: (value) {
+              comment = value;
+            },
+          ),
+          Gap(20),
+          Container(
+            width: double.infinity,
+            child: OutlinedButton(
+              onPressed: () {
+                if (_formKey.currentState!.validate()) {
+                  _formKey.currentState!.save();
+                  widget.onSubmitted(
+                    location: location,
+                    startsAt: startsAt,
+                    expiresAt: expiresAt,
+                    comment: comment,
+                  );
+                }
+              },
+              child: Text(
+                '招待を送信する',
+                style: TextStyle(fontSize: 20, color: Colors.black),
+              ),
+            ),
+          ),
+        ]),
       ),
     );
   }

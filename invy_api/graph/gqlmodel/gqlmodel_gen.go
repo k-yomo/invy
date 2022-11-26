@@ -125,6 +125,8 @@ type Viewer struct {
 	RequestingFriendshipRequests []*FriendshipRequest `json:"requestingFriendshipRequests"`
 	FriendGroup                  *FriendGroup         `json:"friendGroup"`
 	FriendGroups                 []*FriendGroup       `json:"friendGroups"`
+	PendingInvitations           []*Invitation        `json:"pendingInvitations"`
+	AcceptedInvitations          []*Invitation        `json:"acceptedInvitations"`
 }
 
 func (Viewer) IsNode()               {}

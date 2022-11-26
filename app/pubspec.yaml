@@ -55,6 +55,10 @@ dependencies:
   flutter_slidable: ^2.0.0
   nil: ^1.1.1
   fluttertoast: ^8.1.1
+  flutter_signin_button: ^2.0.0
+  gap: ^2.0.1
+  flutter_datetime_picker: ^1.5.1
+  intl: ^0.17.0
 
 dev_dependencies:
   flutter_test:

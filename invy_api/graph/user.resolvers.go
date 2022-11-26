@@ -6,6 +6,8 @@ package graph
 import (
 	"context"
 	"errors"
+	"sort"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/k-yomo/invy/invy_api/auth"
@@ -13,6 +15,10 @@ import (
 	"github.com/k-yomo/invy/invy_api/ent/friendgroup"
 	"github.com/k-yomo/invy/invy_api/ent/friendship"
 	"github.com/k-yomo/invy/invy_api/ent/friendshiprequest"
+	"github.com/k-yomo/invy/invy_api/ent/invitation"
+	"github.com/k-yomo/invy/invy_api/ent/invitationacceptance"
+	"github.com/k-yomo/invy/invy_api/ent/invitationuser"
+	"github.com/k-yomo/invy/invy_api/ent/userfriendgroup"
 	"github.com/k-yomo/invy/invy_api/ent/usermute"
 	"github.com/k-yomo/invy/invy_api/ent/userprofile"
 	"github.com/k-yomo/invy/invy_api/graph/conv"
@@ -20,6 +26,7 @@ import (
 	"github.com/k-yomo/invy/invy_api/graph/gqlmodel"
 	"github.com/k-yomo/invy/invy_api/graph/loader"
 	"github.com/k-yomo/invy/pkg/convutil"
+	"github.com/k-yomo/invy/pkg/sliceutil"
 )
 
 // FriendUsers is the resolver for the friendUsers field.
@@ -421,6 +428,56 @@ func (r *viewerResolver) FriendGroups(ctx context.Context, obj *gqlmodel.Viewer)
 		return nil, err
 	}
 	return convutil.ConvertToList(dbFriendGroups, conv.ConvertFromDBFriendGroup), nil
+}
+
+// PendingInvitations is the resolver for the pendingInvitations field.
+func (r *viewerResolver) PendingInvitations(ctx context.Context, obj *gqlmodel.Viewer) ([]*gqlmodel.Invitation, error) {
+	authUserID := auth.GetCurrentUserID(ctx)
+	now := time.Now()
+	dbInvitationsToUser, err := r.DB.InvitationUser.Query().
+		Where(invitationuser.UserID(authUserID)).
+		QueryInvitation().
+		Where(invitation.ExpiresAtGTE(now)).
+		All(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	dbInvitationsToGroup, err := r.DB.UserFriendGroup.Query().
+		Where(userfriendgroup.UserID(authUserID)).
+		QueryFriendGroup().
+		QueryInvitationFriendGroups().
+		QueryInvitation().
+		Where(invitation.ExpiresAtGTE(now)).
+		All(ctx)
+	if err != nil {
+		return nil, err
+	}
+	invitations := sliceutil.MergeNodes(
+		convutil.ConvertToList(dbInvitationsToUser, conv.ConvertFromDBInvitation),
+		convutil.ConvertToList(dbInvitationsToGroup, conv.ConvertFromDBInvitation),
+	)
+
+	// sort by expiration time ASC
+	sort.Slice(invitations, func(i, j int) bool {
+		return invitations[i].ExpiresAt.Before(invitations[j].ExpiresAt)
+	})
+
+	return invitations, nil
+}
+
+// AcceptedInvitations is the resolver for the acceptedInvitations field.
+func (r *viewerResolver) AcceptedInvitations(ctx context.Context, obj *gqlmodel.Viewer) ([]*gqlmodel.Invitation, error) {
+	authUserID := auth.GetCurrentUserID(ctx)
+	dbInvitations, err := r.DB.InvitationAcceptance.Query().
+		Where(invitationacceptance.UserID(authUserID)).
+		QueryInvitation().
+		Where(invitation.StartsAtGTE(time.Now().Add(-12 * time.Hour))). // Do not show the old(started before 12H ago) invitations
+		All(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return convutil.ConvertToList(dbInvitations, conv.ConvertFromDBInvitation), nil
 }
 
 // FriendGroup returns gqlgen.FriendGroupResolver implementation.

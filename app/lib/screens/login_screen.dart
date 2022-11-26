@@ -1,3 +1,6 @@
+import 'package:flutter_signin_button/button_list.dart';
+import 'package:flutter_signin_button/flutter_signin_button.dart';
+import 'package:gap/gap.dart';
 import 'package:invy/graphql/schema.graphql.dart';
 import 'package:invy/services/graphql_client.dart';
 import 'package:invy/state/auth.dart';
@@ -34,6 +37,7 @@ class LoginScreen extends HookConsumerWidget {
           // TODO: if not found, then make signUp mutation.
           if (viewerQueryResult.hasException) {
             // TODO: logging and show error
+            print(viewerQueryResult.exception);
             return;
           }
           final user = viewerQueryResult.parsedData!.viewer;
@@ -83,49 +87,66 @@ class LoginScreen extends HookConsumerWidget {
     return Scaffold(
         appBar: AppBar(
           title: const Text(
-            '友だち追加',
+            'サインイン',
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
           ),
           shape:
               Border(bottom: BorderSide(color: Colors.grey.shade200, width: 1)),
         ),
         body: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(30.0),
           child: Column(
             children: <Widget>[
               Expanded(
                 child: Center(
                     child: Container(
-                  margin: EdgeInsets.only(top: 100),
+                  margin: EdgeInsets.only(top: 80),
                   child: Column(
                     children: [
-                      OutlinedButton(
+                      SizedBox(
+                        width: double.infinity,
+                        child: SignInButton(
+                          Buttons.Google,
+                          text: 'Google サインイン',
                           onPressed: onGoogleLoginPressed,
-                          style: ElevatedButton.styleFrom(
-                            padding: EdgeInsets.symmetric(
-                                vertical: 5, horizontal: 60),
-                            backgroundColor: Colors.white,
-                            foregroundColor: Colors.black,
+                          padding:
+                              EdgeInsets.symmetric(vertical: 8, horizontal: 25),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
+                              side: BorderSide(color: Colors.black)),
+                          elevation: 0,
+                        ),
+                      ),
+                      Gap(10),
+                      SizedBox(
+                        width: double.infinity,
+                        child: SignInButton(
+                          Buttons.Apple,
+                          text: 'Apple サインイン',
+                          onPressed: () {},
+                          padding: EdgeInsets.symmetric(
+                              vertical: 15, horizontal: 25),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
+                              side: BorderSide(color: Colors.black)),
+                          elevation: 0,
+                        ),
+                      ),
+                      Gap(10),
+                      SizedBox(
+                        width: double.infinity,
+                        child: SignInButton(
+                          Buttons.Facebook,
+                          text: 'Facebook サインイン',
+                          onPressed: () {},
+                          padding: EdgeInsets.symmetric(
+                              vertical: 15, horizontal: 25),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
                           ),
-                          child: const Text('Google ログイン')),
-                      OutlinedButton(
-                          onPressed: onGoogleLoginPressed,
-                          style: ElevatedButton.styleFrom(
-                            padding: EdgeInsets.symmetric(
-                                vertical: 5, horizontal: 60),
-                            backgroundColor: Colors.white,
-                            foregroundColor: Colors.black,
-                          ),
-                          child: const Text('Apple ログイン')),
-                      OutlinedButton(
-                          onPressed: onGoogleLoginPressed,
-                          style: ElevatedButton.styleFrom(
-                            padding: EdgeInsets.symmetric(
-                                vertical: 5, horizontal: 60),
-                            backgroundColor: Colors.white,
-                            foregroundColor: Colors.black,
-                          ),
-                          child: const Text('LINE ログイン')),
+                          elevation: 0,
+                        ),
+                      )
                     ],
                   ),
                 )),

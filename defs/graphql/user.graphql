@@ -40,6 +40,9 @@ type Viewer implements Node {
     friendGroup(friendGroupId: UUID!): FriendGroup! @goField(forceResolver: true)
     # fetch friend groups of the logged in user
     friendGroups: [FriendGroup!]! @goField(forceResolver: true)
+
+    pendingInvitations: [Invitation!]!  @goField(forceResolver: true)
+    acceptedInvitations: [Invitation!]! @goField(forceResolver: true)
 }
 
 # User is a public interface for a user

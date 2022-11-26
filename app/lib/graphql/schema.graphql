@@ -84,8 +84,6 @@ type PageInfo {
 }
 
 type Query {
-  pendingInvitations: [Invitation!]!
-  acceptedInvitations: [Invitation!]!
   viewer: Viewer!
   user(userId: UUID!): User!
 
@@ -167,4 +165,6 @@ type Viewer implements Node {
 
   """fetch friend groups of the logged in user"""
   friendGroups: [FriendGroup!]!
+  pendingInvitations: [Invitation!]!
+  acceptedInvitations: [Invitation!]!
 }
