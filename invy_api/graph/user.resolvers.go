@@ -430,6 +430,19 @@ func (r *viewerResolver) FriendGroups(ctx context.Context, obj *gqlmodel.Viewer)
 	return convutil.ConvertToList(dbFriendGroups, conv.ConvertFromDBFriendGroup), nil
 }
 
+// SendingInvitations is the resolver for the sendingInvitations field.
+func (r *viewerResolver) SendingInvitations(ctx context.Context, obj *gqlmodel.Viewer) ([]*gqlmodel.Invitation, error) {
+	authUserID := auth.GetCurrentUserID(ctx)
+	dbInvitations, err := r.DB.Invitation.Query().
+		Where(invitation.UserID(authUserID)).
+		Where(invitation.StartsAtGTE(time.Now().Add(-12 * time.Hour))). // Do not show the old(started before 12H ago) invitations
+		All(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return convutil.ConvertToList(dbInvitations, conv.ConvertFromDBInvitation), nil
+}
+
 // PendingInvitations is the resolver for the pendingInvitations field.
 func (r *viewerResolver) PendingInvitations(ctx context.Context, obj *gqlmodel.Viewer) ([]*gqlmodel.Invitation, error) {
 	authUserID := auth.GetCurrentUserID(ctx)
@@ -457,6 +470,8 @@ func (r *viewerResolver) PendingInvitations(ctx context.Context, obj *gqlmodel.V
 		convutil.ConvertToList(dbInvitationsToUser, conv.ConvertFromDBInvitation),
 		convutil.ConvertToList(dbInvitationsToGroup, conv.ConvertFromDBInvitation),
 	)
+
+	// TODO: dedup
 
 	// sort by expiration time ASC
 	sort.Slice(invitations, func(i, j int) bool {

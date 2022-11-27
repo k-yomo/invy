@@ -147,6 +147,7 @@ type ComplexityRoot struct {
 		PendingInvitations           func(childComplexity int) int
 		RequestingFriendshipRequests func(childComplexity int) int
 		ScreenID                     func(childComplexity int) int
+		SendingInvitations           func(childComplexity int) int
 	}
 }
 
@@ -195,6 +196,7 @@ type ViewerResolver interface {
 	RequestingFriendshipRequests(ctx context.Context, obj *gqlmodel.Viewer) ([]*gqlmodel.FriendshipRequest, error)
 	FriendGroup(ctx context.Context, obj *gqlmodel.Viewer, friendGroupID uuid.UUID) (*gqlmodel.FriendGroup, error)
 	FriendGroups(ctx context.Context, obj *gqlmodel.Viewer) ([]*gqlmodel.FriendGroup, error)
+	SendingInvitations(ctx context.Context, obj *gqlmodel.Viewer) ([]*gqlmodel.Invitation, error)
 	PendingInvitations(ctx context.Context, obj *gqlmodel.Viewer) ([]*gqlmodel.Invitation, error)
 	AcceptedInvitations(ctx context.Context, obj *gqlmodel.Viewer) ([]*gqlmodel.Invitation, error)
 }
@@ -762,6 +764,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Viewer.ScreenID(childComplexity), true
 
+	case "Viewer.sendingInvitations":
+		if e.complexity.Viewer.SendingInvitations == nil {
+			break
+		}
+
+		return e.complexity.Viewer.SendingInvitations(childComplexity), true
+
 	}
 	return 0, false
 }
@@ -957,6 +966,7 @@ type Viewer implements Node {
     # fetch friend groups of the logged in user
     friendGroups: [FriendGroup!]! @goField(forceResolver: true)
 
+    sendingInvitations: [Invitation!]!  @goField(forceResolver: true)
     pendingInvitations: [Invitation!]!  @goField(forceResolver: true)
     acceptedInvitations: [Invitation!]! @goField(forceResolver: true)
 }
@@ -2430,6 +2440,8 @@ func (ec *executionContext) fieldContext_Mutation_signUp(ctx context.Context, fi
 				return ec.fieldContext_Viewer_friendGroup(ctx, field)
 			case "friendGroups":
 				return ec.fieldContext_Viewer_friendGroups(ctx, field)
+			case "sendingInvitations":
+				return ec.fieldContext_Viewer_sendingInvitations(ctx, field)
 			case "pendingInvitations":
 				return ec.fieldContext_Viewer_pendingInvitations(ctx, field)
 			case "acceptedInvitations":
@@ -2529,6 +2541,8 @@ func (ec *executionContext) fieldContext_Mutation_createUser(ctx context.Context
 				return ec.fieldContext_Viewer_friendGroup(ctx, field)
 			case "friendGroups":
 				return ec.fieldContext_Viewer_friendGroups(ctx, field)
+			case "sendingInvitations":
+				return ec.fieldContext_Viewer_sendingInvitations(ctx, field)
 			case "pendingInvitations":
 				return ec.fieldContext_Viewer_pendingInvitations(ctx, field)
 			case "acceptedInvitations":
@@ -2628,6 +2642,8 @@ func (ec *executionContext) fieldContext_Mutation_switchUser(ctx context.Context
 				return ec.fieldContext_Viewer_friendGroup(ctx, field)
 			case "friendGroups":
 				return ec.fieldContext_Viewer_friendGroups(ctx, field)
+			case "sendingInvitations":
+				return ec.fieldContext_Viewer_sendingInvitations(ctx, field)
 			case "pendingInvitations":
 				return ec.fieldContext_Viewer_pendingInvitations(ctx, field)
 			case "acceptedInvitations":
@@ -3853,6 +3869,8 @@ func (ec *executionContext) fieldContext_Query_viewer(ctx context.Context, field
 				return ec.fieldContext_Viewer_friendGroup(ctx, field)
 			case "friendGroups":
 				return ec.fieldContext_Viewer_friendGroups(ctx, field)
+			case "sendingInvitations":
+				return ec.fieldContext_Viewer_sendingInvitations(ctx, field)
 			case "pendingInvitations":
 				return ec.fieldContext_Viewer_pendingInvitations(ctx, field)
 			case "acceptedInvitations":
@@ -5241,6 +5259,68 @@ func (ec *executionContext) fieldContext_Viewer_friendGroups(ctx context.Context
 				return ec.fieldContext_FriendGroup_friendUsers(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type FriendGroup", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Viewer_sendingInvitations(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Viewer) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Viewer_sendingInvitations(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Viewer().SendingInvitations(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*gqlmodel.Invitation)
+	fc.Result = res
+	return ec.marshalNInvitation2ᚕᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐInvitationᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Viewer_sendingInvitations(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Viewer",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Invitation_id(ctx, field)
+			case "userId":
+				return ec.fieldContext_Invitation_userId(ctx, field)
+			case "user":
+				return ec.fieldContext_Invitation_user(ctx, field)
+			case "location":
+				return ec.fieldContext_Invitation_location(ctx, field)
+			case "comment":
+				return ec.fieldContext_Invitation_comment(ctx, field)
+			case "startsAt":
+				return ec.fieldContext_Invitation_startsAt(ctx, field)
+			case "expiresAt":
+				return ec.fieldContext_Invitation_expiresAt(ctx, field)
+			case "acceptedUsers":
+				return ec.fieldContext_Invitation_acceptedUsers(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Invitation", field.Name)
 		},
 	}
 	return fc, nil
@@ -8452,6 +8532,26 @@ func (ec *executionContext) _Viewer(ctx context.Context, sel ast.SelectionSet, o
 					}
 				}()
 				res = ec._Viewer_friendGroups(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return innerFunc(ctx)
+
+			})
+		case "sendingInvitations":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Viewer_sendingInvitations(ctx, field, obj)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
