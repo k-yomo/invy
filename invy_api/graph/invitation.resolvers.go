@@ -11,6 +11,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/k-yomo/invy/invy_api/auth"
+	"github.com/k-yomo/invy/invy_api/ent"
 	"github.com/k-yomo/invy/invy_api/graph/conv"
 	"github.com/k-yomo/invy/invy_api/graph/gqlgen"
 	"github.com/k-yomo/invy/invy_api/graph/gqlmodel"
@@ -34,15 +35,47 @@ func (r *mutationResolver) SendInvitation(ctx context.Context, input *gqlmodel.S
 		return nil, errors.New("expiration time must be future date time")
 	}
 	authUserID := auth.GetCurrentUserID(ctx)
-	dbInvitation, err := r.DB.Invitation.Create().
-		SetUserID(authUserID).
-		SetLocation(input.Location).
-		SetComment(input.Comment).
-		SetStartsAt(input.StartsAt).
-		SetExpiresAt(input.ExpiresAt).
-		AddInvitationUserIDs(input.TargetFriendUserIds...).
-		AddInvitationFriendGroupIDs(input.TargetFriendUserIds...).
-		Save(ctx)
+	var dbInvitation *ent.Invitation
+	err := ent.RunInTx(ctx, r.DB, func(tx *ent.Tx) error {
+		var err error
+		dbInvitation, err = tx.Invitation.Create().
+			SetUserID(authUserID).
+			SetLocation(input.Location).
+			SetComment(input.Comment).
+			SetStartsAt(input.StartsAt).
+			SetExpiresAt(input.ExpiresAt).
+			Save(ctx)
+		if err != nil {
+			return err
+		}
+		invitationFriendGroupCreates := make([]*ent.InvitationFriendGroupCreate, 0, len(input.TargetFriendGroupIds))
+		for _, targetFriendGroupID := range input.TargetFriendGroupIds {
+			invitationFriendGroupCreates = append(
+				invitationFriendGroupCreates,
+				tx.InvitationFriendGroup.Create().
+					SetInvitationID(dbInvitation.ID).
+					SetFriendGroupID(targetFriendGroupID),
+			)
+		}
+		err = tx.InvitationFriendGroup.CreateBulk(invitationFriendGroupCreates...).Exec(ctx)
+		if err != nil {
+			return err
+		}
+		invitationUserCreates := make([]*ent.InvitationUserCreate, 0, len(input.TargetFriendUserIds))
+		for _, targetUserID := range input.TargetFriendUserIds {
+			invitationUserCreates = append(
+				invitationUserCreates,
+				tx.InvitationUser.Create().
+					SetInvitationID(dbInvitation.ID).
+					SetUserID(targetUserID),
+			)
+		}
+		err = tx.InvitationUser.CreateBulk(invitationUserCreates...).Exec(ctx)
+		if err != nil {
+			return err
+		}
+		return nil
+	})
 	if err != nil {
 		return nil, err
 	}
