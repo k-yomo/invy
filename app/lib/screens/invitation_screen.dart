@@ -301,24 +301,12 @@ class InvitationDetailFormState extends State<InvitationDetailForm> {
         child: Column(children: [
           TextFormField(
             // controller: emailController,
-            decoration: const InputDecoration(
+            decoration: InputDecoration(
               labelText: '開催地',
-              labelStyle: TextStyle(color: Colors.grey),
-              border: OutlineInputBorder(),
-              enabledBorder: OutlineInputBorder(
-                // borderRadius: BorderRadius.circular(0),
-                borderSide: const BorderSide(
-                  width: 1,
-                  color: Colors.grey,
-                ),
-              ),
-              focusedBorder: OutlineInputBorder(
-                // borderRadius: BorderRadius.circular(0),
-                borderSide: const BorderSide(
-                  width: 2,
-                  color: Colors.black,
-                ),
-              ),
+              labelStyle: TextStyle(color: Colors.grey.shade600),
+              filled: true,
+              fillColor: Colors.grey.shade100,
+              border: InputBorder.none,
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
@@ -349,37 +337,12 @@ class InvitationDetailFormState extends State<InvitationDetailForm> {
                   locale: LocaleType.jp,
                 );
               },
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: '開始日時',
-                labelStyle: TextStyle(color: Colors.grey),
-                border: OutlineInputBorder(
-                  // borderRadius: BorderRadius.circular(0),
-                  borderSide: const BorderSide(
-                    width: 1,
-                    color: Colors.grey,
-                  ),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  // borderRadius: BorderRadius.circular(0),
-                  borderSide: const BorderSide(
-                    width: 1,
-                    color: Colors.grey,
-                  ),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  // borderRadius: BorderRadius.circular(0),
-                  borderSide: const BorderSide(
-                    width: 1,
-                    color: Colors.grey,
-                  ),
-                ),
-                errorBorder: OutlineInputBorder(
-                  // borderRadius: BorderRadius.circular(0),
-                  borderSide: const BorderSide(
-                    width: 1,
-                    color: Colors.red,
-                  ),
-                ),
+                labelStyle: TextStyle(color: Colors.grey.shade600),
+                filled: true,
+                fillColor: Colors.grey.shade100,
+                border: InputBorder.none,
               ),
               validator: (value) {
                 if (value == null || value.isEmpty) {
@@ -418,37 +381,12 @@ class InvitationDetailFormState extends State<InvitationDetailForm> {
                   locale: LocaleType.jp,
                 );
               },
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: '返答期限',
-                labelStyle: TextStyle(color: Colors.grey),
-                border: OutlineInputBorder(
-                  // borderRadius: BorderRadius.circular(0),
-                  borderSide: const BorderSide(
-                    width: 1,
-                    color: Colors.grey,
-                  ),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  // borderRadius: BorderRadius.circular(0),
-                  borderSide: const BorderSide(
-                    width: 1,
-                    color: Colors.grey,
-                  ),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  // borderRadius: BorderRadius.circular(0),
-                  borderSide: const BorderSide(
-                    width: 1,
-                    color: Colors.grey,
-                  ),
-                ),
-                errorBorder: OutlineInputBorder(
-                  // borderRadius: BorderRadius.circular(0),
-                  borderSide: const BorderSide(
-                    width: 1,
-                    color: Colors.red,
-                  ),
-                ),
+                labelStyle: TextStyle(color: Colors.grey.shade600),
+                filled: true,
+                fillColor: Colors.grey.shade100,
+                border: InputBorder.none,
               ),
               validator: (value) {
                 if (value == null || value.isEmpty) {
@@ -474,23 +412,12 @@ class InvitationDetailFormState extends State<InvitationDetailForm> {
             keyboardType: TextInputType.multiline,
             minLines: 2,
             maxLines: null,
-            decoration: const InputDecoration(
+            decoration: InputDecoration(
               labelText: 'コメント',
-              labelStyle: TextStyle(color: Colors.grey),
-              enabledBorder: OutlineInputBorder(
-                // borderRadius: BorderRadius.circular(0),
-                borderSide: const BorderSide(
-                  width: 1,
-                  color: Colors.grey,
-                ),
-              ),
-              focusedBorder: OutlineInputBorder(
-                // borderRadius: BorderRadius.circular(0),
-                borderSide: const BorderSide(
-                  width: 2,
-                  color: Colors.black,
-                ),
-              ),
+              labelStyle: TextStyle(color: Colors.grey.shade600),
+              filled: true,
+              fillColor: Colors.grey.shade100,
+              border: InputBorder.none,
             ),
             onSaved: (value) {
               comment = value;
@@ -500,6 +427,11 @@ class InvitationDetailFormState extends State<InvitationDetailForm> {
           Container(
             width: double.infinity,
             child: OutlinedButton(
+              style: ElevatedButton.styleFrom(
+                padding: EdgeInsets.symmetric(vertical: 15),
+                backgroundColor: Colors.white,
+                foregroundColor: Colors.black,
+              ),
               onPressed: () {
                 if (_formKey.currentState!.validate()) {
                   _formKey.currentState!.save();
@@ -513,7 +445,10 @@ class InvitationDetailFormState extends State<InvitationDetailForm> {
               },
               child: Text(
                 '招待を送信する',
-                style: TextStyle(fontSize: 20, color: Colors.black),
+                style: TextStyle(
+                    fontSize: 20,
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold),
               ),
             ),
           ),
