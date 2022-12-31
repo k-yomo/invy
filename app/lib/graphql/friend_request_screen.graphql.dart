@@ -907,11 +907,26 @@ const documentNodeMutationrequestFriendship = DocumentNode(definitions: [
         directives: [],
         selectionSet: SelectionSetNode(selections: [
           FieldNode(
-            name: NameNode(value: 'id'),
+            name: NameNode(value: 'friendShipRequest'),
             alias: null,
             arguments: [],
             directives: [],
-            selectionSet: null,
+            selectionSet: SelectionSetNode(selections: [
+              FieldNode(
+                name: NameNode(value: 'id'),
+                alias: null,
+                arguments: [],
+                directives: [],
+                selectionSet: null,
+              ),
+              FieldNode(
+                name: NameNode(value: '__typename'),
+                alias: null,
+                arguments: [],
+                directives: [],
+                selectionSet: null,
+              ),
+            ]),
           ),
           FieldNode(
             name: NameNode(value: '__typename'),
@@ -1143,15 +1158,161 @@ class Mutation$requestFriendship$Widget
 
 class Mutation$requestFriendship$requestFriendship {
   Mutation$requestFriendship$requestFriendship({
-    required this.id,
+    required this.friendShipRequest,
     required this.$__typename,
   });
 
   factory Mutation$requestFriendship$requestFriendship.fromJson(
       Map<String, dynamic> json) {
-    final l$id = json['id'];
+    final l$friendShipRequest = json['friendShipRequest'];
     final l$$__typename = json['__typename'];
     return Mutation$requestFriendship$requestFriendship(
+      friendShipRequest:
+          Mutation$requestFriendship$requestFriendship$friendShipRequest
+              .fromJson((l$friendShipRequest as Map<String, dynamic>)),
+      $__typename: (l$$__typename as String),
+    );
+  }
+
+  final Mutation$requestFriendship$requestFriendship$friendShipRequest
+      friendShipRequest;
+
+  final String $__typename;
+
+  Map<String, dynamic> toJson() {
+    final _resultData = <String, dynamic>{};
+    final l$friendShipRequest = friendShipRequest;
+    _resultData['friendShipRequest'] = l$friendShipRequest.toJson();
+    final l$$__typename = $__typename;
+    _resultData['__typename'] = l$$__typename;
+    return _resultData;
+  }
+
+  @override
+  int get hashCode {
+    final l$friendShipRequest = friendShipRequest;
+    final l$$__typename = $__typename;
+    return Object.hashAll([
+      l$friendShipRequest,
+      l$$__typename,
+    ]);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    if (!(other is Mutation$requestFriendship$requestFriendship) ||
+        runtimeType != other.runtimeType) {
+      return false;
+    }
+    final l$friendShipRequest = friendShipRequest;
+    final lOther$friendShipRequest = other.friendShipRequest;
+    if (l$friendShipRequest != lOther$friendShipRequest) {
+      return false;
+    }
+    final l$$__typename = $__typename;
+    final lOther$$__typename = other.$__typename;
+    if (l$$__typename != lOther$$__typename) {
+      return false;
+    }
+    return true;
+  }
+}
+
+extension UtilityExtension$Mutation$requestFriendship$requestFriendship
+    on Mutation$requestFriendship$requestFriendship {
+  CopyWith$Mutation$requestFriendship$requestFriendship<
+          Mutation$requestFriendship$requestFriendship>
+      get copyWith => CopyWith$Mutation$requestFriendship$requestFriendship(
+            this,
+            (i) => i,
+          );
+}
+
+abstract class CopyWith$Mutation$requestFriendship$requestFriendship<TRes> {
+  factory CopyWith$Mutation$requestFriendship$requestFriendship(
+    Mutation$requestFriendship$requestFriendship instance,
+    TRes Function(Mutation$requestFriendship$requestFriendship) then,
+  ) = _CopyWithImpl$Mutation$requestFriendship$requestFriendship;
+
+  factory CopyWith$Mutation$requestFriendship$requestFriendship.stub(TRes res) =
+      _CopyWithStubImpl$Mutation$requestFriendship$requestFriendship;
+
+  TRes call({
+    Mutation$requestFriendship$requestFriendship$friendShipRequest?
+        friendShipRequest,
+    String? $__typename,
+  });
+  CopyWith$Mutation$requestFriendship$requestFriendship$friendShipRequest<TRes>
+      get friendShipRequest;
+}
+
+class _CopyWithImpl$Mutation$requestFriendship$requestFriendship<TRes>
+    implements CopyWith$Mutation$requestFriendship$requestFriendship<TRes> {
+  _CopyWithImpl$Mutation$requestFriendship$requestFriendship(
+    this._instance,
+    this._then,
+  );
+
+  final Mutation$requestFriendship$requestFriendship _instance;
+
+  final TRes Function(Mutation$requestFriendship$requestFriendship) _then;
+
+  static const _undefined = {};
+
+  TRes call({
+    Object? friendShipRequest = _undefined,
+    Object? $__typename = _undefined,
+  }) =>
+      _then(Mutation$requestFriendship$requestFriendship(
+        friendShipRequest: friendShipRequest == _undefined ||
+                friendShipRequest == null
+            ? _instance.friendShipRequest
+            : (friendShipRequest
+                as Mutation$requestFriendship$requestFriendship$friendShipRequest),
+        $__typename: $__typename == _undefined || $__typename == null
+            ? _instance.$__typename
+            : ($__typename as String),
+      ));
+  CopyWith$Mutation$requestFriendship$requestFriendship$friendShipRequest<TRes>
+      get friendShipRequest {
+    final local$friendShipRequest = _instance.friendShipRequest;
+    return CopyWith$Mutation$requestFriendship$requestFriendship$friendShipRequest(
+        local$friendShipRequest, (e) => call(friendShipRequest: e));
+  }
+}
+
+class _CopyWithStubImpl$Mutation$requestFriendship$requestFriendship<TRes>
+    implements CopyWith$Mutation$requestFriendship$requestFriendship<TRes> {
+  _CopyWithStubImpl$Mutation$requestFriendship$requestFriendship(this._res);
+
+  TRes _res;
+
+  call({
+    Mutation$requestFriendship$requestFriendship$friendShipRequest?
+        friendShipRequest,
+    String? $__typename,
+  }) =>
+      _res;
+  CopyWith$Mutation$requestFriendship$requestFriendship$friendShipRequest<TRes>
+      get friendShipRequest =>
+          CopyWith$Mutation$requestFriendship$requestFriendship$friendShipRequest
+              .stub(_res);
+}
+
+class Mutation$requestFriendship$requestFriendship$friendShipRequest {
+  Mutation$requestFriendship$requestFriendship$friendShipRequest({
+    required this.id,
+    required this.$__typename,
+  });
+
+  factory Mutation$requestFriendship$requestFriendship$friendShipRequest.fromJson(
+      Map<String, dynamic> json) {
+    final l$id = json['id'];
+    final l$$__typename = json['__typename'];
+    return Mutation$requestFriendship$requestFriendship$friendShipRequest(
       id: (l$id as String),
       $__typename: (l$$__typename as String),
     );
@@ -1185,7 +1346,8 @@ class Mutation$requestFriendship$requestFriendship {
     if (identical(this, other)) {
       return true;
     }
-    if (!(other is Mutation$requestFriendship$requestFriendship) ||
+    if (!(other
+            is Mutation$requestFriendship$requestFriendship$friendShipRequest) ||
         runtimeType != other.runtimeType) {
       return false;
     }
@@ -1203,24 +1365,29 @@ class Mutation$requestFriendship$requestFriendship {
   }
 }
 
-extension UtilityExtension$Mutation$requestFriendship$requestFriendship
-    on Mutation$requestFriendship$requestFriendship {
-  CopyWith$Mutation$requestFriendship$requestFriendship<
-          Mutation$requestFriendship$requestFriendship>
-      get copyWith => CopyWith$Mutation$requestFriendship$requestFriendship(
+extension UtilityExtension$Mutation$requestFriendship$requestFriendship$friendShipRequest
+    on Mutation$requestFriendship$requestFriendship$friendShipRequest {
+  CopyWith$Mutation$requestFriendship$requestFriendship$friendShipRequest<
+          Mutation$requestFriendship$requestFriendship$friendShipRequest>
+      get copyWith =>
+          CopyWith$Mutation$requestFriendship$requestFriendship$friendShipRequest(
             this,
             (i) => i,
           );
 }
 
-abstract class CopyWith$Mutation$requestFriendship$requestFriendship<TRes> {
-  factory CopyWith$Mutation$requestFriendship$requestFriendship(
-    Mutation$requestFriendship$requestFriendship instance,
-    TRes Function(Mutation$requestFriendship$requestFriendship) then,
-  ) = _CopyWithImpl$Mutation$requestFriendship$requestFriendship;
+abstract class CopyWith$Mutation$requestFriendship$requestFriendship$friendShipRequest<
+    TRes> {
+  factory CopyWith$Mutation$requestFriendship$requestFriendship$friendShipRequest(
+    Mutation$requestFriendship$requestFriendship$friendShipRequest instance,
+    TRes Function(
+            Mutation$requestFriendship$requestFriendship$friendShipRequest)
+        then,
+  ) = _CopyWithImpl$Mutation$requestFriendship$requestFriendship$friendShipRequest;
 
-  factory CopyWith$Mutation$requestFriendship$requestFriendship.stub(TRes res) =
-      _CopyWithStubImpl$Mutation$requestFriendship$requestFriendship;
+  factory CopyWith$Mutation$requestFriendship$requestFriendship$friendShipRequest.stub(
+          TRes res) =
+      _CopyWithStubImpl$Mutation$requestFriendship$requestFriendship$friendShipRequest;
 
   TRes call({
     String? id,
@@ -1228,16 +1395,21 @@ abstract class CopyWith$Mutation$requestFriendship$requestFriendship<TRes> {
   });
 }
 
-class _CopyWithImpl$Mutation$requestFriendship$requestFriendship<TRes>
-    implements CopyWith$Mutation$requestFriendship$requestFriendship<TRes> {
-  _CopyWithImpl$Mutation$requestFriendship$requestFriendship(
+class _CopyWithImpl$Mutation$requestFriendship$requestFriendship$friendShipRequest<
+        TRes>
+    implements
+        CopyWith$Mutation$requestFriendship$requestFriendship$friendShipRequest<
+            TRes> {
+  _CopyWithImpl$Mutation$requestFriendship$requestFriendship$friendShipRequest(
     this._instance,
     this._then,
   );
 
-  final Mutation$requestFriendship$requestFriendship _instance;
+  final Mutation$requestFriendship$requestFriendship$friendShipRequest
+      _instance;
 
-  final TRes Function(Mutation$requestFriendship$requestFriendship) _then;
+  final TRes Function(
+      Mutation$requestFriendship$requestFriendship$friendShipRequest) _then;
 
   static const _undefined = {};
 
@@ -1245,7 +1417,7 @@ class _CopyWithImpl$Mutation$requestFriendship$requestFriendship<TRes>
     Object? id = _undefined,
     Object? $__typename = _undefined,
   }) =>
-      _then(Mutation$requestFriendship$requestFriendship(
+      _then(Mutation$requestFriendship$requestFriendship$friendShipRequest(
         id: id == _undefined || id == null ? _instance.id : (id as String),
         $__typename: $__typename == _undefined || $__typename == null
             ? _instance.$__typename
@@ -1253,9 +1425,13 @@ class _CopyWithImpl$Mutation$requestFriendship$requestFriendship<TRes>
       ));
 }
 
-class _CopyWithStubImpl$Mutation$requestFriendship$requestFriendship<TRes>
-    implements CopyWith$Mutation$requestFriendship$requestFriendship<TRes> {
-  _CopyWithStubImpl$Mutation$requestFriendship$requestFriendship(this._res);
+class _CopyWithStubImpl$Mutation$requestFriendship$requestFriendship$friendShipRequest<
+        TRes>
+    implements
+        CopyWith$Mutation$requestFriendship$requestFriendship$friendShipRequest<
+            TRes> {
+  _CopyWithStubImpl$Mutation$requestFriendship$requestFriendship$friendShipRequest(
+      this._res);
 
   TRes _res;
 

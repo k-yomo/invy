@@ -5,27 +5,27 @@ import 'package:graphql/client.dart' as graphql;
 import 'package:graphql_flutter/graphql_flutter.dart' as graphql_flutter;
 
 class Variables$Mutation$muteFriend {
-  factory Variables$Mutation$muteFriend({required String muteUserId}) =>
+  factory Variables$Mutation$muteFriend({required String userId}) =>
       Variables$Mutation$muteFriend._({
-        r'muteUserId': muteUserId,
+        r'userId': userId,
       });
 
   Variables$Mutation$muteFriend._(this._$data);
 
   factory Variables$Mutation$muteFriend.fromJson(Map<String, dynamic> data) {
     final result$data = <String, dynamic>{};
-    final l$muteUserId = data['muteUserId'];
-    result$data['muteUserId'] = (l$muteUserId as String);
+    final l$userId = data['userId'];
+    result$data['userId'] = (l$userId as String);
     return Variables$Mutation$muteFriend._(result$data);
   }
 
   Map<String, dynamic> _$data;
 
-  String get muteUserId => (_$data['muteUserId'] as String);
+  String get userId => (_$data['userId'] as String);
   Map<String, dynamic> toJson() {
     final result$data = <String, dynamic>{};
-    final l$muteUserId = muteUserId;
-    result$data['muteUserId'] = l$muteUserId;
+    final l$userId = userId;
+    result$data['userId'] = l$userId;
     return result$data;
   }
 
@@ -43,9 +43,9 @@ class Variables$Mutation$muteFriend {
         runtimeType != other.runtimeType) {
       return false;
     }
-    final l$muteUserId = muteUserId;
-    final lOther$muteUserId = other.muteUserId;
-    if (l$muteUserId != lOther$muteUserId) {
+    final l$userId = userId;
+    final lOther$userId = other.userId;
+    if (l$userId != lOther$userId) {
       return false;
     }
     return true;
@@ -53,8 +53,8 @@ class Variables$Mutation$muteFriend {
 
   @override
   int get hashCode {
-    final l$muteUserId = muteUserId;
-    return Object.hashAll([l$muteUserId]);
+    final l$userId = userId;
+    return Object.hashAll([l$userId]);
   }
 }
 
@@ -67,7 +67,7 @@ abstract class CopyWith$Variables$Mutation$muteFriend<TRes> {
   factory CopyWith$Variables$Mutation$muteFriend.stub(TRes res) =
       _CopyWithStubImpl$Variables$Mutation$muteFriend;
 
-  TRes call({String? muteUserId});
+  TRes call({String? userId});
 }
 
 class _CopyWithImpl$Variables$Mutation$muteFriend<TRes>
@@ -83,11 +83,11 @@ class _CopyWithImpl$Variables$Mutation$muteFriend<TRes>
 
   static const _undefined = {};
 
-  TRes call({Object? muteUserId = _undefined}) =>
+  TRes call({Object? userId = _undefined}) =>
       _then(Variables$Mutation$muteFriend._({
         ..._instance._$data,
-        if (muteUserId != _undefined && muteUserId != null)
-          'muteUserId': (muteUserId as String),
+        if (userId != _undefined && userId != null)
+          'userId': (userId as String),
       }));
 }
 
@@ -97,7 +97,7 @@ class _CopyWithStubImpl$Variables$Mutation$muteFriend<TRes>
 
   TRes _res;
 
-  call({String? muteUserId}) => _res;
+  call({String? userId}) => _res;
 }
 
 class Mutation$muteFriend {
@@ -110,19 +110,20 @@ class Mutation$muteFriend {
     final l$muteUser = json['muteUser'];
     final l$$__typename = json['__typename'];
     return Mutation$muteFriend(
-      muteUser: (l$muteUser as bool),
+      muteUser: Mutation$muteFriend$muteUser.fromJson(
+          (l$muteUser as Map<String, dynamic>)),
       $__typename: (l$$__typename as String),
     );
   }
 
-  final bool muteUser;
+  final Mutation$muteFriend$muteUser muteUser;
 
   final String $__typename;
 
   Map<String, dynamic> toJson() {
     final _resultData = <String, dynamic>{};
     final l$muteUser = muteUser;
-    _resultData['muteUser'] = l$muteUser;
+    _resultData['muteUser'] = l$muteUser.toJson();
     final l$$__typename = $__typename;
     _resultData['__typename'] = l$$__typename;
     return _resultData;
@@ -178,9 +179,10 @@ abstract class CopyWith$Mutation$muteFriend<TRes> {
       _CopyWithStubImpl$Mutation$muteFriend;
 
   TRes call({
-    bool? muteUser,
+    Mutation$muteFriend$muteUser? muteUser,
     String? $__typename,
   });
+  CopyWith$Mutation$muteFriend$muteUser<TRes> get muteUser;
 }
 
 class _CopyWithImpl$Mutation$muteFriend<TRes>
@@ -203,11 +205,16 @@ class _CopyWithImpl$Mutation$muteFriend<TRes>
       _then(Mutation$muteFriend(
         muteUser: muteUser == _undefined || muteUser == null
             ? _instance.muteUser
-            : (muteUser as bool),
+            : (muteUser as Mutation$muteFriend$muteUser),
         $__typename: $__typename == _undefined || $__typename == null
             ? _instance.$__typename
             : ($__typename as String),
       ));
+  CopyWith$Mutation$muteFriend$muteUser<TRes> get muteUser {
+    final local$muteUser = _instance.muteUser;
+    return CopyWith$Mutation$muteFriend$muteUser(
+        local$muteUser, (e) => call(muteUser: e));
+  }
 }
 
 class _CopyWithStubImpl$Mutation$muteFriend<TRes>
@@ -217,10 +224,12 @@ class _CopyWithStubImpl$Mutation$muteFriend<TRes>
   TRes _res;
 
   call({
-    bool? muteUser,
+    Mutation$muteFriend$muteUser? muteUser,
     String? $__typename,
   }) =>
       _res;
+  CopyWith$Mutation$muteFriend$muteUser<TRes> get muteUser =>
+      CopyWith$Mutation$muteFriend$muteUser.stub(_res);
 }
 
 const documentNodeMutationmuteFriend = DocumentNode(definitions: [
@@ -229,7 +238,7 @@ const documentNodeMutationmuteFriend = DocumentNode(definitions: [
     name: NameNode(value: 'muteFriend'),
     variableDefinitions: [
       VariableDefinitionNode(
-        variable: VariableNode(name: NameNode(value: 'muteUserId')),
+        variable: VariableNode(name: NameNode(value: 'userId')),
         type: NamedTypeNode(
           name: NameNode(value: 'UUID'),
           isNonNull: true,
@@ -245,8 +254,8 @@ const documentNodeMutationmuteFriend = DocumentNode(definitions: [
         alias: null,
         arguments: [
           ArgumentNode(
-            name: NameNode(value: 'muteUserId'),
-            value: VariableNode(name: NameNode(value: 'muteUserId')),
+            name: NameNode(value: 'userId'),
+            value: VariableNode(name: NameNode(value: 'userId')),
           )
         ],
         directives: [],
@@ -462,28 +471,104 @@ class Mutation$muteFriend$Widget
         );
 }
 
+class Mutation$muteFriend$muteUser {
+  Mutation$muteFriend$muteUser();
+
+  factory Mutation$muteFriend$muteUser.fromJson(Map<String, dynamic> json) {
+    return Mutation$muteFriend$muteUser();
+  }
+
+  Map<String, dynamic> toJson() {
+    final _resultData = <String, dynamic>{};
+    return _resultData;
+  }
+
+  @override
+  int get hashCode {
+    return Object.hashAll([]);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    if (!(other is Mutation$muteFriend$muteUser) ||
+        runtimeType != other.runtimeType) {
+      return false;
+    }
+    return true;
+  }
+}
+
+extension UtilityExtension$Mutation$muteFriend$muteUser
+    on Mutation$muteFriend$muteUser {
+  CopyWith$Mutation$muteFriend$muteUser<Mutation$muteFriend$muteUser>
+      get copyWith => CopyWith$Mutation$muteFriend$muteUser(
+            this,
+            (i) => i,
+          );
+}
+
+abstract class CopyWith$Mutation$muteFriend$muteUser<TRes> {
+  factory CopyWith$Mutation$muteFriend$muteUser(
+    Mutation$muteFriend$muteUser instance,
+    TRes Function(Mutation$muteFriend$muteUser) then,
+  ) = _CopyWithImpl$Mutation$muteFriend$muteUser;
+
+  factory CopyWith$Mutation$muteFriend$muteUser.stub(TRes res) =
+      _CopyWithStubImpl$Mutation$muteFriend$muteUser;
+
+  TRes call();
+}
+
+class _CopyWithImpl$Mutation$muteFriend$muteUser<TRes>
+    implements CopyWith$Mutation$muteFriend$muteUser<TRes> {
+  _CopyWithImpl$Mutation$muteFriend$muteUser(
+    this._instance,
+    this._then,
+  );
+
+  final Mutation$muteFriend$muteUser _instance;
+
+  final TRes Function(Mutation$muteFriend$muteUser) _then;
+
+  static const _undefined = {};
+
+  TRes call() => _then(Mutation$muteFriend$muteUser());
+}
+
+class _CopyWithStubImpl$Mutation$muteFriend$muteUser<TRes>
+    implements CopyWith$Mutation$muteFriend$muteUser<TRes> {
+  _CopyWithStubImpl$Mutation$muteFriend$muteUser(this._res);
+
+  TRes _res;
+
+  call() => _res;
+}
+
 class Variables$Mutation$unmuteFriend {
-  factory Variables$Mutation$unmuteFriend({required String muteUserId}) =>
+  factory Variables$Mutation$unmuteFriend({required String userId}) =>
       Variables$Mutation$unmuteFriend._({
-        r'muteUserId': muteUserId,
+        r'userId': userId,
       });
 
   Variables$Mutation$unmuteFriend._(this._$data);
 
   factory Variables$Mutation$unmuteFriend.fromJson(Map<String, dynamic> data) {
     final result$data = <String, dynamic>{};
-    final l$muteUserId = data['muteUserId'];
-    result$data['muteUserId'] = (l$muteUserId as String);
+    final l$userId = data['userId'];
+    result$data['userId'] = (l$userId as String);
     return Variables$Mutation$unmuteFriend._(result$data);
   }
 
   Map<String, dynamic> _$data;
 
-  String get muteUserId => (_$data['muteUserId'] as String);
+  String get userId => (_$data['userId'] as String);
   Map<String, dynamic> toJson() {
     final result$data = <String, dynamic>{};
-    final l$muteUserId = muteUserId;
-    result$data['muteUserId'] = l$muteUserId;
+    final l$userId = userId;
+    result$data['userId'] = l$userId;
     return result$data;
   }
 
@@ -501,9 +586,9 @@ class Variables$Mutation$unmuteFriend {
         runtimeType != other.runtimeType) {
       return false;
     }
-    final l$muteUserId = muteUserId;
-    final lOther$muteUserId = other.muteUserId;
-    if (l$muteUserId != lOther$muteUserId) {
+    final l$userId = userId;
+    final lOther$userId = other.userId;
+    if (l$userId != lOther$userId) {
       return false;
     }
     return true;
@@ -511,8 +596,8 @@ class Variables$Mutation$unmuteFriend {
 
   @override
   int get hashCode {
-    final l$muteUserId = muteUserId;
-    return Object.hashAll([l$muteUserId]);
+    final l$userId = userId;
+    return Object.hashAll([l$userId]);
   }
 }
 
@@ -525,7 +610,7 @@ abstract class CopyWith$Variables$Mutation$unmuteFriend<TRes> {
   factory CopyWith$Variables$Mutation$unmuteFriend.stub(TRes res) =
       _CopyWithStubImpl$Variables$Mutation$unmuteFriend;
 
-  TRes call({String? muteUserId});
+  TRes call({String? userId});
 }
 
 class _CopyWithImpl$Variables$Mutation$unmuteFriend<TRes>
@@ -541,11 +626,11 @@ class _CopyWithImpl$Variables$Mutation$unmuteFriend<TRes>
 
   static const _undefined = {};
 
-  TRes call({Object? muteUserId = _undefined}) =>
+  TRes call({Object? userId = _undefined}) =>
       _then(Variables$Mutation$unmuteFriend._({
         ..._instance._$data,
-        if (muteUserId != _undefined && muteUserId != null)
-          'muteUserId': (muteUserId as String),
+        if (userId != _undefined && userId != null)
+          'userId': (userId as String),
       }));
 }
 
@@ -555,7 +640,7 @@ class _CopyWithStubImpl$Variables$Mutation$unmuteFriend<TRes>
 
   TRes _res;
 
-  call({String? muteUserId}) => _res;
+  call({String? userId}) => _res;
 }
 
 class Mutation$unmuteFriend {
@@ -568,19 +653,20 @@ class Mutation$unmuteFriend {
     final l$unmuteUser = json['unmuteUser'];
     final l$$__typename = json['__typename'];
     return Mutation$unmuteFriend(
-      unmuteUser: (l$unmuteUser as bool),
+      unmuteUser: Mutation$unmuteFriend$unmuteUser.fromJson(
+          (l$unmuteUser as Map<String, dynamic>)),
       $__typename: (l$$__typename as String),
     );
   }
 
-  final bool unmuteUser;
+  final Mutation$unmuteFriend$unmuteUser unmuteUser;
 
   final String $__typename;
 
   Map<String, dynamic> toJson() {
     final _resultData = <String, dynamic>{};
     final l$unmuteUser = unmuteUser;
-    _resultData['unmuteUser'] = l$unmuteUser;
+    _resultData['unmuteUser'] = l$unmuteUser.toJson();
     final l$$__typename = $__typename;
     _resultData['__typename'] = l$$__typename;
     return _resultData;
@@ -636,9 +722,10 @@ abstract class CopyWith$Mutation$unmuteFriend<TRes> {
       _CopyWithStubImpl$Mutation$unmuteFriend;
 
   TRes call({
-    bool? unmuteUser,
+    Mutation$unmuteFriend$unmuteUser? unmuteUser,
     String? $__typename,
   });
+  CopyWith$Mutation$unmuteFriend$unmuteUser<TRes> get unmuteUser;
 }
 
 class _CopyWithImpl$Mutation$unmuteFriend<TRes>
@@ -661,11 +748,16 @@ class _CopyWithImpl$Mutation$unmuteFriend<TRes>
       _then(Mutation$unmuteFriend(
         unmuteUser: unmuteUser == _undefined || unmuteUser == null
             ? _instance.unmuteUser
-            : (unmuteUser as bool),
+            : (unmuteUser as Mutation$unmuteFriend$unmuteUser),
         $__typename: $__typename == _undefined || $__typename == null
             ? _instance.$__typename
             : ($__typename as String),
       ));
+  CopyWith$Mutation$unmuteFriend$unmuteUser<TRes> get unmuteUser {
+    final local$unmuteUser = _instance.unmuteUser;
+    return CopyWith$Mutation$unmuteFriend$unmuteUser(
+        local$unmuteUser, (e) => call(unmuteUser: e));
+  }
 }
 
 class _CopyWithStubImpl$Mutation$unmuteFriend<TRes>
@@ -675,10 +767,12 @@ class _CopyWithStubImpl$Mutation$unmuteFriend<TRes>
   TRes _res;
 
   call({
-    bool? unmuteUser,
+    Mutation$unmuteFriend$unmuteUser? unmuteUser,
     String? $__typename,
   }) =>
       _res;
+  CopyWith$Mutation$unmuteFriend$unmuteUser<TRes> get unmuteUser =>
+      CopyWith$Mutation$unmuteFriend$unmuteUser.stub(_res);
 }
 
 const documentNodeMutationunmuteFriend = DocumentNode(definitions: [
@@ -687,7 +781,7 @@ const documentNodeMutationunmuteFriend = DocumentNode(definitions: [
     name: NameNode(value: 'unmuteFriend'),
     variableDefinitions: [
       VariableDefinitionNode(
-        variable: VariableNode(name: NameNode(value: 'muteUserId')),
+        variable: VariableNode(name: NameNode(value: 'userId')),
         type: NamedTypeNode(
           name: NameNode(value: 'UUID'),
           isNonNull: true,
@@ -703,8 +797,8 @@ const documentNodeMutationunmuteFriend = DocumentNode(definitions: [
         alias: null,
         arguments: [
           ArgumentNode(
-            name: NameNode(value: 'muteUserId'),
-            value: VariableNode(name: NameNode(value: 'muteUserId')),
+            name: NameNode(value: 'userId'),
+            value: VariableNode(name: NameNode(value: 'userId')),
           )
         ],
         directives: [],
@@ -919,4 +1013,80 @@ class Mutation$unmuteFriend$Widget
             result,
           ),
         );
+}
+
+class Mutation$unmuteFriend$unmuteUser {
+  Mutation$unmuteFriend$unmuteUser();
+
+  factory Mutation$unmuteFriend$unmuteUser.fromJson(Map<String, dynamic> json) {
+    return Mutation$unmuteFriend$unmuteUser();
+  }
+
+  Map<String, dynamic> toJson() {
+    final _resultData = <String, dynamic>{};
+    return _resultData;
+  }
+
+  @override
+  int get hashCode {
+    return Object.hashAll([]);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    if (!(other is Mutation$unmuteFriend$unmuteUser) ||
+        runtimeType != other.runtimeType) {
+      return false;
+    }
+    return true;
+  }
+}
+
+extension UtilityExtension$Mutation$unmuteFriend$unmuteUser
+    on Mutation$unmuteFriend$unmuteUser {
+  CopyWith$Mutation$unmuteFriend$unmuteUser<Mutation$unmuteFriend$unmuteUser>
+      get copyWith => CopyWith$Mutation$unmuteFriend$unmuteUser(
+            this,
+            (i) => i,
+          );
+}
+
+abstract class CopyWith$Mutation$unmuteFriend$unmuteUser<TRes> {
+  factory CopyWith$Mutation$unmuteFriend$unmuteUser(
+    Mutation$unmuteFriend$unmuteUser instance,
+    TRes Function(Mutation$unmuteFriend$unmuteUser) then,
+  ) = _CopyWithImpl$Mutation$unmuteFriend$unmuteUser;
+
+  factory CopyWith$Mutation$unmuteFriend$unmuteUser.stub(TRes res) =
+      _CopyWithStubImpl$Mutation$unmuteFriend$unmuteUser;
+
+  TRes call();
+}
+
+class _CopyWithImpl$Mutation$unmuteFriend$unmuteUser<TRes>
+    implements CopyWith$Mutation$unmuteFriend$unmuteUser<TRes> {
+  _CopyWithImpl$Mutation$unmuteFriend$unmuteUser(
+    this._instance,
+    this._then,
+  );
+
+  final Mutation$unmuteFriend$unmuteUser _instance;
+
+  final TRes Function(Mutation$unmuteFriend$unmuteUser) _then;
+
+  static const _undefined = {};
+
+  TRes call() => _then(Mutation$unmuteFriend$unmuteUser());
+}
+
+class _CopyWithStubImpl$Mutation$unmuteFriend$unmuteUser<TRes>
+    implements CopyWith$Mutation$unmuteFriend$unmuteUser<TRes> {
+  _CopyWithStubImpl$Mutation$unmuteFriend$unmuteUser(this._res);
+
+  TRes _res;
+
+  call() => _res;
 }

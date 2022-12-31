@@ -262,32 +262,47 @@ const documentNodeMutationsignUp = DocumentNode(definitions: [
         directives: [],
         selectionSet: SelectionSetNode(selections: [
           FieldNode(
-            name: NameNode(value: 'id'),
+            name: NameNode(value: 'viewer'),
             alias: null,
             arguments: [],
             directives: [],
-            selectionSet: null,
-          ),
-          FieldNode(
-            name: NameNode(value: 'screenId'),
-            alias: null,
-            arguments: [],
-            directives: [],
-            selectionSet: null,
-          ),
-          FieldNode(
-            name: NameNode(value: 'nickname'),
-            alias: null,
-            arguments: [],
-            directives: [],
-            selectionSet: null,
-          ),
-          FieldNode(
-            name: NameNode(value: 'avatarUrl'),
-            alias: null,
-            arguments: [],
-            directives: [],
-            selectionSet: null,
+            selectionSet: SelectionSetNode(selections: [
+              FieldNode(
+                name: NameNode(value: 'id'),
+                alias: null,
+                arguments: [],
+                directives: [],
+                selectionSet: null,
+              ),
+              FieldNode(
+                name: NameNode(value: 'screenId'),
+                alias: null,
+                arguments: [],
+                directives: [],
+                selectionSet: null,
+              ),
+              FieldNode(
+                name: NameNode(value: 'nickname'),
+                alias: null,
+                arguments: [],
+                directives: [],
+                selectionSet: null,
+              ),
+              FieldNode(
+                name: NameNode(value: 'avatarUrl'),
+                alias: null,
+                arguments: [],
+                directives: [],
+                selectionSet: null,
+              ),
+              FieldNode(
+                name: NameNode(value: '__typename'),
+                alias: null,
+                arguments: [],
+                directives: [],
+                selectionSet: null,
+              ),
+            ]),
           ),
           FieldNode(
             name: NameNode(value: '__typename'),
@@ -508,6 +523,139 @@ class Mutation$signUp$Widget extends graphql_flutter.Mutation<Mutation$signUp> {
 
 class Mutation$signUp$signUp {
   Mutation$signUp$signUp({
+    required this.viewer,
+    required this.$__typename,
+  });
+
+  factory Mutation$signUp$signUp.fromJson(Map<String, dynamic> json) {
+    final l$viewer = json['viewer'];
+    final l$$__typename = json['__typename'];
+    return Mutation$signUp$signUp(
+      viewer: Mutation$signUp$signUp$viewer.fromJson(
+          (l$viewer as Map<String, dynamic>)),
+      $__typename: (l$$__typename as String),
+    );
+  }
+
+  final Mutation$signUp$signUp$viewer viewer;
+
+  final String $__typename;
+
+  Map<String, dynamic> toJson() {
+    final _resultData = <String, dynamic>{};
+    final l$viewer = viewer;
+    _resultData['viewer'] = l$viewer.toJson();
+    final l$$__typename = $__typename;
+    _resultData['__typename'] = l$$__typename;
+    return _resultData;
+  }
+
+  @override
+  int get hashCode {
+    final l$viewer = viewer;
+    final l$$__typename = $__typename;
+    return Object.hashAll([
+      l$viewer,
+      l$$__typename,
+    ]);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    if (!(other is Mutation$signUp$signUp) ||
+        runtimeType != other.runtimeType) {
+      return false;
+    }
+    final l$viewer = viewer;
+    final lOther$viewer = other.viewer;
+    if (l$viewer != lOther$viewer) {
+      return false;
+    }
+    final l$$__typename = $__typename;
+    final lOther$$__typename = other.$__typename;
+    if (l$$__typename != lOther$$__typename) {
+      return false;
+    }
+    return true;
+  }
+}
+
+extension UtilityExtension$Mutation$signUp$signUp on Mutation$signUp$signUp {
+  CopyWith$Mutation$signUp$signUp<Mutation$signUp$signUp> get copyWith =>
+      CopyWith$Mutation$signUp$signUp(
+        this,
+        (i) => i,
+      );
+}
+
+abstract class CopyWith$Mutation$signUp$signUp<TRes> {
+  factory CopyWith$Mutation$signUp$signUp(
+    Mutation$signUp$signUp instance,
+    TRes Function(Mutation$signUp$signUp) then,
+  ) = _CopyWithImpl$Mutation$signUp$signUp;
+
+  factory CopyWith$Mutation$signUp$signUp.stub(TRes res) =
+      _CopyWithStubImpl$Mutation$signUp$signUp;
+
+  TRes call({
+    Mutation$signUp$signUp$viewer? viewer,
+    String? $__typename,
+  });
+  CopyWith$Mutation$signUp$signUp$viewer<TRes> get viewer;
+}
+
+class _CopyWithImpl$Mutation$signUp$signUp<TRes>
+    implements CopyWith$Mutation$signUp$signUp<TRes> {
+  _CopyWithImpl$Mutation$signUp$signUp(
+    this._instance,
+    this._then,
+  );
+
+  final Mutation$signUp$signUp _instance;
+
+  final TRes Function(Mutation$signUp$signUp) _then;
+
+  static const _undefined = {};
+
+  TRes call({
+    Object? viewer = _undefined,
+    Object? $__typename = _undefined,
+  }) =>
+      _then(Mutation$signUp$signUp(
+        viewer: viewer == _undefined || viewer == null
+            ? _instance.viewer
+            : (viewer as Mutation$signUp$signUp$viewer),
+        $__typename: $__typename == _undefined || $__typename == null
+            ? _instance.$__typename
+            : ($__typename as String),
+      ));
+  CopyWith$Mutation$signUp$signUp$viewer<TRes> get viewer {
+    final local$viewer = _instance.viewer;
+    return CopyWith$Mutation$signUp$signUp$viewer(
+        local$viewer, (e) => call(viewer: e));
+  }
+}
+
+class _CopyWithStubImpl$Mutation$signUp$signUp<TRes>
+    implements CopyWith$Mutation$signUp$signUp<TRes> {
+  _CopyWithStubImpl$Mutation$signUp$signUp(this._res);
+
+  TRes _res;
+
+  call({
+    Mutation$signUp$signUp$viewer? viewer,
+    String? $__typename,
+  }) =>
+      _res;
+  CopyWith$Mutation$signUp$signUp$viewer<TRes> get viewer =>
+      CopyWith$Mutation$signUp$signUp$viewer.stub(_res);
+}
+
+class Mutation$signUp$signUp$viewer {
+  Mutation$signUp$signUp$viewer({
     required this.id,
     required this.screenId,
     required this.nickname,
@@ -515,13 +663,13 @@ class Mutation$signUp$signUp {
     required this.$__typename,
   });
 
-  factory Mutation$signUp$signUp.fromJson(Map<String, dynamic> json) {
+  factory Mutation$signUp$signUp$viewer.fromJson(Map<String, dynamic> json) {
     final l$id = json['id'];
     final l$screenId = json['screenId'];
     final l$nickname = json['nickname'];
     final l$avatarUrl = json['avatarUrl'];
     final l$$__typename = json['__typename'];
-    return Mutation$signUp$signUp(
+    return Mutation$signUp$signUp$viewer(
       id: (l$id as String),
       screenId: (l$screenId as String),
       nickname: (l$nickname as String),
@@ -576,7 +724,7 @@ class Mutation$signUp$signUp {
     if (identical(this, other)) {
       return true;
     }
-    if (!(other is Mutation$signUp$signUp) ||
+    if (!(other is Mutation$signUp$signUp$viewer) ||
         runtimeType != other.runtimeType) {
       return false;
     }
@@ -609,22 +757,23 @@ class Mutation$signUp$signUp {
   }
 }
 
-extension UtilityExtension$Mutation$signUp$signUp on Mutation$signUp$signUp {
-  CopyWith$Mutation$signUp$signUp<Mutation$signUp$signUp> get copyWith =>
-      CopyWith$Mutation$signUp$signUp(
-        this,
-        (i) => i,
-      );
+extension UtilityExtension$Mutation$signUp$signUp$viewer
+    on Mutation$signUp$signUp$viewer {
+  CopyWith$Mutation$signUp$signUp$viewer<Mutation$signUp$signUp$viewer>
+      get copyWith => CopyWith$Mutation$signUp$signUp$viewer(
+            this,
+            (i) => i,
+          );
 }
 
-abstract class CopyWith$Mutation$signUp$signUp<TRes> {
-  factory CopyWith$Mutation$signUp$signUp(
-    Mutation$signUp$signUp instance,
-    TRes Function(Mutation$signUp$signUp) then,
-  ) = _CopyWithImpl$Mutation$signUp$signUp;
+abstract class CopyWith$Mutation$signUp$signUp$viewer<TRes> {
+  factory CopyWith$Mutation$signUp$signUp$viewer(
+    Mutation$signUp$signUp$viewer instance,
+    TRes Function(Mutation$signUp$signUp$viewer) then,
+  ) = _CopyWithImpl$Mutation$signUp$signUp$viewer;
 
-  factory CopyWith$Mutation$signUp$signUp.stub(TRes res) =
-      _CopyWithStubImpl$Mutation$signUp$signUp;
+  factory CopyWith$Mutation$signUp$signUp$viewer.stub(TRes res) =
+      _CopyWithStubImpl$Mutation$signUp$signUp$viewer;
 
   TRes call({
     String? id,
@@ -635,16 +784,16 @@ abstract class CopyWith$Mutation$signUp$signUp<TRes> {
   });
 }
 
-class _CopyWithImpl$Mutation$signUp$signUp<TRes>
-    implements CopyWith$Mutation$signUp$signUp<TRes> {
-  _CopyWithImpl$Mutation$signUp$signUp(
+class _CopyWithImpl$Mutation$signUp$signUp$viewer<TRes>
+    implements CopyWith$Mutation$signUp$signUp$viewer<TRes> {
+  _CopyWithImpl$Mutation$signUp$signUp$viewer(
     this._instance,
     this._then,
   );
 
-  final Mutation$signUp$signUp _instance;
+  final Mutation$signUp$signUp$viewer _instance;
 
-  final TRes Function(Mutation$signUp$signUp) _then;
+  final TRes Function(Mutation$signUp$signUp$viewer) _then;
 
   static const _undefined = {};
 
@@ -655,7 +804,7 @@ class _CopyWithImpl$Mutation$signUp$signUp<TRes>
     Object? avatarUrl = _undefined,
     Object? $__typename = _undefined,
   }) =>
-      _then(Mutation$signUp$signUp(
+      _then(Mutation$signUp$signUp$viewer(
         id: id == _undefined || id == null ? _instance.id : (id as String),
         screenId: screenId == _undefined || screenId == null
             ? _instance.screenId
@@ -672,9 +821,9 @@ class _CopyWithImpl$Mutation$signUp$signUp<TRes>
       ));
 }
 
-class _CopyWithStubImpl$Mutation$signUp$signUp<TRes>
-    implements CopyWith$Mutation$signUp$signUp<TRes> {
-  _CopyWithStubImpl$Mutation$signUp$signUp(this._res);
+class _CopyWithStubImpl$Mutation$signUp$signUp$viewer<TRes>
+    implements CopyWith$Mutation$signUp$signUp$viewer<TRes> {
+  _CopyWithStubImpl$Mutation$signUp$signUp$viewer(this._res);
 
   TRes _res;
 

@@ -1357,11 +1357,26 @@ const documentNodeMutationcreateFriendGroup = DocumentNode(definitions: [
         directives: [],
         selectionSet: SelectionSetNode(selections: [
           FieldNode(
-            name: NameNode(value: 'id'),
+            name: NameNode(value: 'friendGroup'),
             alias: null,
             arguments: [],
             directives: [],
-            selectionSet: null,
+            selectionSet: SelectionSetNode(selections: [
+              FieldNode(
+                name: NameNode(value: 'id'),
+                alias: null,
+                arguments: [],
+                directives: [],
+                selectionSet: null,
+              ),
+              FieldNode(
+                name: NameNode(value: '__typename'),
+                alias: null,
+                arguments: [],
+                directives: [],
+                selectionSet: null,
+              ),
+            ]),
           ),
           FieldNode(
             name: NameNode(value: '__typename'),
@@ -1593,15 +1608,157 @@ class Mutation$createFriendGroup$Widget
 
 class Mutation$createFriendGroup$createFriendGroup {
   Mutation$createFriendGroup$createFriendGroup({
-    required this.id,
+    required this.friendGroup,
     required this.$__typename,
   });
 
   factory Mutation$createFriendGroup$createFriendGroup.fromJson(
       Map<String, dynamic> json) {
-    final l$id = json['id'];
+    final l$friendGroup = json['friendGroup'];
     final l$$__typename = json['__typename'];
     return Mutation$createFriendGroup$createFriendGroup(
+      friendGroup:
+          Mutation$createFriendGroup$createFriendGroup$friendGroup.fromJson(
+              (l$friendGroup as Map<String, dynamic>)),
+      $__typename: (l$$__typename as String),
+    );
+  }
+
+  final Mutation$createFriendGroup$createFriendGroup$friendGroup friendGroup;
+
+  final String $__typename;
+
+  Map<String, dynamic> toJson() {
+    final _resultData = <String, dynamic>{};
+    final l$friendGroup = friendGroup;
+    _resultData['friendGroup'] = l$friendGroup.toJson();
+    final l$$__typename = $__typename;
+    _resultData['__typename'] = l$$__typename;
+    return _resultData;
+  }
+
+  @override
+  int get hashCode {
+    final l$friendGroup = friendGroup;
+    final l$$__typename = $__typename;
+    return Object.hashAll([
+      l$friendGroup,
+      l$$__typename,
+    ]);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    if (!(other is Mutation$createFriendGroup$createFriendGroup) ||
+        runtimeType != other.runtimeType) {
+      return false;
+    }
+    final l$friendGroup = friendGroup;
+    final lOther$friendGroup = other.friendGroup;
+    if (l$friendGroup != lOther$friendGroup) {
+      return false;
+    }
+    final l$$__typename = $__typename;
+    final lOther$$__typename = other.$__typename;
+    if (l$$__typename != lOther$$__typename) {
+      return false;
+    }
+    return true;
+  }
+}
+
+extension UtilityExtension$Mutation$createFriendGroup$createFriendGroup
+    on Mutation$createFriendGroup$createFriendGroup {
+  CopyWith$Mutation$createFriendGroup$createFriendGroup<
+          Mutation$createFriendGroup$createFriendGroup>
+      get copyWith => CopyWith$Mutation$createFriendGroup$createFriendGroup(
+            this,
+            (i) => i,
+          );
+}
+
+abstract class CopyWith$Mutation$createFriendGroup$createFriendGroup<TRes> {
+  factory CopyWith$Mutation$createFriendGroup$createFriendGroup(
+    Mutation$createFriendGroup$createFriendGroup instance,
+    TRes Function(Mutation$createFriendGroup$createFriendGroup) then,
+  ) = _CopyWithImpl$Mutation$createFriendGroup$createFriendGroup;
+
+  factory CopyWith$Mutation$createFriendGroup$createFriendGroup.stub(TRes res) =
+      _CopyWithStubImpl$Mutation$createFriendGroup$createFriendGroup;
+
+  TRes call({
+    Mutation$createFriendGroup$createFriendGroup$friendGroup? friendGroup,
+    String? $__typename,
+  });
+  CopyWith$Mutation$createFriendGroup$createFriendGroup$friendGroup<TRes>
+      get friendGroup;
+}
+
+class _CopyWithImpl$Mutation$createFriendGroup$createFriendGroup<TRes>
+    implements CopyWith$Mutation$createFriendGroup$createFriendGroup<TRes> {
+  _CopyWithImpl$Mutation$createFriendGroup$createFriendGroup(
+    this._instance,
+    this._then,
+  );
+
+  final Mutation$createFriendGroup$createFriendGroup _instance;
+
+  final TRes Function(Mutation$createFriendGroup$createFriendGroup) _then;
+
+  static const _undefined = {};
+
+  TRes call({
+    Object? friendGroup = _undefined,
+    Object? $__typename = _undefined,
+  }) =>
+      _then(Mutation$createFriendGroup$createFriendGroup(
+        friendGroup: friendGroup == _undefined || friendGroup == null
+            ? _instance.friendGroup
+            : (friendGroup
+                as Mutation$createFriendGroup$createFriendGroup$friendGroup),
+        $__typename: $__typename == _undefined || $__typename == null
+            ? _instance.$__typename
+            : ($__typename as String),
+      ));
+  CopyWith$Mutation$createFriendGroup$createFriendGroup$friendGroup<TRes>
+      get friendGroup {
+    final local$friendGroup = _instance.friendGroup;
+    return CopyWith$Mutation$createFriendGroup$createFriendGroup$friendGroup(
+        local$friendGroup, (e) => call(friendGroup: e));
+  }
+}
+
+class _CopyWithStubImpl$Mutation$createFriendGroup$createFriendGroup<TRes>
+    implements CopyWith$Mutation$createFriendGroup$createFriendGroup<TRes> {
+  _CopyWithStubImpl$Mutation$createFriendGroup$createFriendGroup(this._res);
+
+  TRes _res;
+
+  call({
+    Mutation$createFriendGroup$createFriendGroup$friendGroup? friendGroup,
+    String? $__typename,
+  }) =>
+      _res;
+  CopyWith$Mutation$createFriendGroup$createFriendGroup$friendGroup<TRes>
+      get friendGroup =>
+          CopyWith$Mutation$createFriendGroup$createFriendGroup$friendGroup
+              .stub(_res);
+}
+
+class Mutation$createFriendGroup$createFriendGroup$friendGroup {
+  Mutation$createFriendGroup$createFriendGroup$friendGroup({
+    required this.id,
+    required this.$__typename,
+  });
+
+  factory Mutation$createFriendGroup$createFriendGroup$friendGroup.fromJson(
+      Map<String, dynamic> json) {
+    final l$id = json['id'];
+    final l$$__typename = json['__typename'];
+    return Mutation$createFriendGroup$createFriendGroup$friendGroup(
       id: (l$id as String),
       $__typename: (l$$__typename as String),
     );
@@ -1635,7 +1792,7 @@ class Mutation$createFriendGroup$createFriendGroup {
     if (identical(this, other)) {
       return true;
     }
-    if (!(other is Mutation$createFriendGroup$createFriendGroup) ||
+    if (!(other is Mutation$createFriendGroup$createFriendGroup$friendGroup) ||
         runtimeType != other.runtimeType) {
       return false;
     }
@@ -1653,24 +1810,28 @@ class Mutation$createFriendGroup$createFriendGroup {
   }
 }
 
-extension UtilityExtension$Mutation$createFriendGroup$createFriendGroup
-    on Mutation$createFriendGroup$createFriendGroup {
-  CopyWith$Mutation$createFriendGroup$createFriendGroup<
-          Mutation$createFriendGroup$createFriendGroup>
-      get copyWith => CopyWith$Mutation$createFriendGroup$createFriendGroup(
+extension UtilityExtension$Mutation$createFriendGroup$createFriendGroup$friendGroup
+    on Mutation$createFriendGroup$createFriendGroup$friendGroup {
+  CopyWith$Mutation$createFriendGroup$createFriendGroup$friendGroup<
+          Mutation$createFriendGroup$createFriendGroup$friendGroup>
+      get copyWith =>
+          CopyWith$Mutation$createFriendGroup$createFriendGroup$friendGroup(
             this,
             (i) => i,
           );
 }
 
-abstract class CopyWith$Mutation$createFriendGroup$createFriendGroup<TRes> {
-  factory CopyWith$Mutation$createFriendGroup$createFriendGroup(
-    Mutation$createFriendGroup$createFriendGroup instance,
-    TRes Function(Mutation$createFriendGroup$createFriendGroup) then,
-  ) = _CopyWithImpl$Mutation$createFriendGroup$createFriendGroup;
+abstract class CopyWith$Mutation$createFriendGroup$createFriendGroup$friendGroup<
+    TRes> {
+  factory CopyWith$Mutation$createFriendGroup$createFriendGroup$friendGroup(
+    Mutation$createFriendGroup$createFriendGroup$friendGroup instance,
+    TRes Function(Mutation$createFriendGroup$createFriendGroup$friendGroup)
+        then,
+  ) = _CopyWithImpl$Mutation$createFriendGroup$createFriendGroup$friendGroup;
 
-  factory CopyWith$Mutation$createFriendGroup$createFriendGroup.stub(TRes res) =
-      _CopyWithStubImpl$Mutation$createFriendGroup$createFriendGroup;
+  factory CopyWith$Mutation$createFriendGroup$createFriendGroup$friendGroup.stub(
+          TRes res) =
+      _CopyWithStubImpl$Mutation$createFriendGroup$createFriendGroup$friendGroup;
 
   TRes call({
     String? id,
@@ -1678,16 +1839,20 @@ abstract class CopyWith$Mutation$createFriendGroup$createFriendGroup<TRes> {
   });
 }
 
-class _CopyWithImpl$Mutation$createFriendGroup$createFriendGroup<TRes>
-    implements CopyWith$Mutation$createFriendGroup$createFriendGroup<TRes> {
-  _CopyWithImpl$Mutation$createFriendGroup$createFriendGroup(
+class _CopyWithImpl$Mutation$createFriendGroup$createFriendGroup$friendGroup<
+        TRes>
+    implements
+        CopyWith$Mutation$createFriendGroup$createFriendGroup$friendGroup<
+            TRes> {
+  _CopyWithImpl$Mutation$createFriendGroup$createFriendGroup$friendGroup(
     this._instance,
     this._then,
   );
 
-  final Mutation$createFriendGroup$createFriendGroup _instance;
+  final Mutation$createFriendGroup$createFriendGroup$friendGroup _instance;
 
-  final TRes Function(Mutation$createFriendGroup$createFriendGroup) _then;
+  final TRes Function(Mutation$createFriendGroup$createFriendGroup$friendGroup)
+      _then;
 
   static const _undefined = {};
 
@@ -1695,7 +1860,7 @@ class _CopyWithImpl$Mutation$createFriendGroup$createFriendGroup<TRes>
     Object? id = _undefined,
     Object? $__typename = _undefined,
   }) =>
-      _then(Mutation$createFriendGroup$createFriendGroup(
+      _then(Mutation$createFriendGroup$createFriendGroup$friendGroup(
         id: id == _undefined || id == null ? _instance.id : (id as String),
         $__typename: $__typename == _undefined || $__typename == null
             ? _instance.$__typename
@@ -1703,9 +1868,13 @@ class _CopyWithImpl$Mutation$createFriendGroup$createFriendGroup<TRes>
       ));
 }
 
-class _CopyWithStubImpl$Mutation$createFriendGroup$createFriendGroup<TRes>
-    implements CopyWith$Mutation$createFriendGroup$createFriendGroup<TRes> {
-  _CopyWithStubImpl$Mutation$createFriendGroup$createFriendGroup(this._res);
+class _CopyWithStubImpl$Mutation$createFriendGroup$createFriendGroup$friendGroup<
+        TRes>
+    implements
+        CopyWith$Mutation$createFriendGroup$createFriendGroup$friendGroup<
+            TRes> {
+  _CopyWithStubImpl$Mutation$createFriendGroup$createFriendGroup$friendGroup(
+      this._res);
 
   TRes _res;
 

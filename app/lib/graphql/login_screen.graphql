@@ -1,0 +1,11 @@
+
+mutation signUp($input: SignUpInput!) {
+    signUp(input: $input) {
+        viewer {
+            id
+            screenId
+            nickname
+            avatarUrl
+        }
+    }
+}

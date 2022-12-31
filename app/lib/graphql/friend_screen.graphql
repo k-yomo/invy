@@ -23,22 +23,6 @@ query friendScreenViewer {
     }
 }
 
-query friendScreenFriends($after: Cursor, $first: Int) {
-    friends(after: $after, first: $first) {
-        edges {
-            node {
-                ...friendListItemFragment
-            }
-        }
-        pageInfo {
-            startCursor
-            endCursor
-            hasNextPage
-            hasPreviousPage
-        }
-    }
-}
-
 mutation acceptFriendshipRequest($friendshipRequestId: UUID!) {
     acceptFriendshipRequest(friendshipRequestId: $friendshipRequestId)
 }

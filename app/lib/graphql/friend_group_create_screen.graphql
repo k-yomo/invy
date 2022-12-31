@@ -18,6 +18,8 @@ query friendGroupCreateScreenViewer() {
 
 mutation createFriendGroup($input: CreateFriendGroupInput!) {
     createFriendGroup(input: $input) {
-        id
+        friendGroup {
+            id
+        }
     }
 }

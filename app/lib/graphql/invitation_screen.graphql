@@ -22,9 +22,11 @@ query invitationScreenViewer {
 
 mutation sendInvitation($input: SendInvitationInput!) {
     sendInvitation(input: $input) {
-        id
-        location
-        startsAt
-        expiresAt
+        invitation {
+            id
+            location
+            startsAt
+            expiresAt
+        }
     }
 }

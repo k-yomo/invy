@@ -41,7 +41,7 @@ func (r *invitationResolver) AcceptedUsers(ctx context.Context, obj *gqlmodel.In
 }
 
 // SendInvitation is the resolver for the sendInvitation field.
-func (r *mutationResolver) SendInvitation(ctx context.Context, input *gqlmodel.SendInvitationInput) (*gqlmodel.Invitation, error) {
+func (r *mutationResolver) SendInvitation(ctx context.Context, input *gqlmodel.SendInvitationInput) (*gqlmodel.SendInvitationPayload, error) {
 	now := time.Now()
 	if input.ExpiresAt.Before(now) {
 		return nil, errors.New("expiration time must be future date time")
@@ -92,19 +92,19 @@ func (r *mutationResolver) SendInvitation(ctx context.Context, input *gqlmodel.S
 		return nil, err
 	}
 	// TODO: Notification to invited users
-	return conv.ConvertFromDBInvitation(dbInvitation), nil
+	return &gqlmodel.SendInvitationPayload{Invitation: conv.ConvertFromDBInvitation(dbInvitation)}, nil
 }
 
 // AcceptInvitation is the resolver for the acceptInvitation field.
-func (r *mutationResolver) AcceptInvitation(ctx context.Context, invitationID uuid.UUID) (bool, error) {
+func (r *mutationResolver) AcceptInvitation(ctx context.Context, invitationID uuid.UUID) (*gqlmodel.AcceptInvitationPayload, error) {
 	authUserID := auth.GetCurrentUserID(ctx)
 
 	isAuthUserInvited, err := IsAuthUserIncludedInTheInvitation(ctx, r.DB, invitationID)
 	if err != nil {
-		return false, err
+		return nil, err
 	}
 	if !isAuthUserInvited {
-		return false, fmt.Errorf("invitation %q not found", invitationID)
+		return nil, fmt.Errorf("invitation %q not found", invitationID)
 	}
 
 	// TODO: Should we check if user already denied?
@@ -113,22 +113,27 @@ func (r *mutationResolver) AcceptInvitation(ctx context.Context, invitationID uu
 		SetUserID(authUserID).
 		Exec(ctx)
 	if err != nil {
-		return false, err
+		return nil, err
 	}
 	// TODO: notification
-	return true, nil
+
+	dbInvitation, err := r.DB.Invitation.Get(ctx, invitationID)
+	if err != nil {
+		return nil, err
+	}
+	return &gqlmodel.AcceptInvitationPayload{Invitation: conv.ConvertFromDBInvitation(dbInvitation)}, nil
 }
 
 // DenyInvitation is the resolver for the denyInvitation field.
-func (r *mutationResolver) DenyInvitation(ctx context.Context, invitationID uuid.UUID) (bool, error) {
+func (r *mutationResolver) DenyInvitation(ctx context.Context, invitationID uuid.UUID) (*gqlmodel.DenyInvitationPayload, error) {
 	authUserID := auth.GetCurrentUserID(ctx)
 
 	isAuthUserInvited, err := IsAuthUserIncludedInTheInvitation(ctx, r.DB, invitationID)
 	if err != nil {
-		return false, err
+		return nil, err
 	}
 	if !isAuthUserInvited {
-		return false, fmt.Errorf("invitation %q not found", invitationID)
+		return nil, fmt.Errorf("invitation %q not found", invitationID)
 	}
 
 	// TODO: Should we check if user already accepted?
@@ -137,9 +142,14 @@ func (r *mutationResolver) DenyInvitation(ctx context.Context, invitationID uuid
 		SetUserID(authUserID).
 		Exec(ctx)
 	if err != nil {
-		return false, err
+		return nil, err
 	}
-	return true, nil
+
+	dbInvitation, err := r.DB.Invitation.Get(ctx, invitationID)
+	if err != nil {
+		return nil, err
+	}
+	return &gqlmodel.DenyInvitationPayload{Invitation: conv.ConvertFromDBInvitation(dbInvitation)}, nil
 }
 
 // Invitation returns gqlgen.InvitationResolver implementation.

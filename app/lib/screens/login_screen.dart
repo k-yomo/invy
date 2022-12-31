@@ -4,7 +4,7 @@ import 'package:gap/gap.dart';
 import 'package:invy/graphql/schema.graphql.dart';
 import 'package:invy/services/graphql_client.dart';
 import 'package:invy/state/auth.dart';
-import 'package:invy/graphql/signUp.graphql.dart';
+import 'package:invy/graphql/login_screen.graphql.dart';
 import 'package:invy/graphql/viewer.graphql.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -65,7 +65,7 @@ class LoginScreen extends HookConsumerWidget {
           // Refresh id token to get new token containing user id in claims.
           await firebaseUser.getIdToken(true);
           if (res.parsedData != null) {
-            final user = res.parsedData!.signUp;
+            final user = res.parsedData!.signUp.viewer;
             ref.read(loggedInUserProvider.notifier).state = LoggedInUser(
                 id: user.id,
                 screenId: user.screenId,

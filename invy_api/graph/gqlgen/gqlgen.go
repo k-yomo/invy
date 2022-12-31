@@ -55,6 +55,38 @@ type DirectiveRoot struct {
 }
 
 type ComplexityRoot struct {
+	AcceptFriendshipRequestPayload struct {
+		AcceptedFriendshipRequestID func(childComplexity int) int
+	}
+
+	AcceptInvitationPayload struct {
+		Invitation func(childComplexity int) int
+	}
+
+	CancelFriendshipRequestPayload struct {
+		CanceledFriendshipRequestID func(childComplexity int) int
+	}
+
+	CreateFriendGroupPayload struct {
+		FriendGroup func(childComplexity int) int
+	}
+
+	CreateUserPayload struct {
+		Viewer func(childComplexity int) int
+	}
+
+	DeleteFriendGroupPayload struct {
+		DeletedFriendGroupID func(childComplexity int) int
+	}
+
+	DenyFriendshipRequestPayload struct {
+		DeniedFriendshipRequestID func(childComplexity int) int
+	}
+
+	DenyInvitationPayload struct {
+		Invitation func(childComplexity int) int
+	}
+
 	FriendGroup struct {
 		FriendUsers func(childComplexity int) int
 		ID          func(childComplexity int) int
@@ -92,13 +124,17 @@ type ComplexityRoot struct {
 		DeleteFriendGroup       func(childComplexity int, friendGroupID uuid.UUID) int
 		DenyFriendshipRequest   func(childComplexity int, friendshipRequestID uuid.UUID) int
 		DenyInvitation          func(childComplexity int, invitationID uuid.UUID) int
-		MuteUser                func(childComplexity int, muteUserID uuid.UUID) int
+		MuteUser                func(childComplexity int, userID uuid.UUID) int
 		RequestFriendship       func(childComplexity int, friendUserID uuid.UUID) int
 		SendInvitation          func(childComplexity int, input *gqlmodel.SendInvitationInput) int
 		SignUp                  func(childComplexity int, input gqlmodel.SignUpInput) int
 		SwitchUser              func(childComplexity int, userID uuid.UUID) int
-		UnmuteUser              func(childComplexity int, muteUserID uuid.UUID) int
+		UnmuteUser              func(childComplexity int, userID uuid.UUID) int
 		UpdateFriendGroup       func(childComplexity int, input gqlmodel.UpdateFriendGroupInput) int
+	}
+
+	MuteUserPayload struct {
+		MutedUserID func(childComplexity int) int
 	}
 
 	PageInfo struct {
@@ -109,10 +145,33 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		Friends        func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
 		User           func(childComplexity int, userID uuid.UUID) int
 		UserByScreenID func(childComplexity int, screenID string) int
 		Viewer         func(childComplexity int) int
+	}
+
+	RequestFriendshipPayload struct {
+		FriendShipRequest func(childComplexity int) int
+	}
+
+	SendInvitationPayload struct {
+		Invitation func(childComplexity int) int
+	}
+
+	SignUpPayload struct {
+		Viewer func(childComplexity int) int
+	}
+
+	SwitchUserPayload struct {
+		Viewer func(childComplexity int) int
+	}
+
+	UnmuteUserPayload struct {
+		UnmutedUserID func(childComplexity int) int
+	}
+
+	UpdateFriendGroupPayload struct {
+		FriendGroup func(childComplexity int) int
 	}
 
 	User struct {
@@ -165,27 +224,26 @@ type InvitationResolver interface {
 	AcceptedUsers(ctx context.Context, obj *gqlmodel.Invitation) ([]*gqlmodel.User, error)
 }
 type MutationResolver interface {
-	SignUp(ctx context.Context, input gqlmodel.SignUpInput) (*gqlmodel.Viewer, error)
-	CreateUser(ctx context.Context, input gqlmodel.CreateUserInput) (*gqlmodel.Viewer, error)
-	SwitchUser(ctx context.Context, userID uuid.UUID) (*gqlmodel.Viewer, error)
-	SendInvitation(ctx context.Context, input *gqlmodel.SendInvitationInput) (*gqlmodel.Invitation, error)
-	AcceptInvitation(ctx context.Context, invitationID uuid.UUID) (bool, error)
-	DenyInvitation(ctx context.Context, invitationID uuid.UUID) (bool, error)
-	RequestFriendship(ctx context.Context, friendUserID uuid.UUID) (*gqlmodel.FriendshipRequest, error)
-	CancelFriendshipRequest(ctx context.Context, friendshipRequestID uuid.UUID) (bool, error)
-	DenyFriendshipRequest(ctx context.Context, friendshipRequestID uuid.UUID) (bool, error)
-	AcceptFriendshipRequest(ctx context.Context, friendshipRequestID uuid.UUID) (bool, error)
-	CreateFriendGroup(ctx context.Context, input gqlmodel.CreateFriendGroupInput) (*gqlmodel.FriendGroup, error)
-	UpdateFriendGroup(ctx context.Context, input gqlmodel.UpdateFriendGroupInput) (*gqlmodel.FriendGroup, error)
-	DeleteFriendGroup(ctx context.Context, friendGroupID uuid.UUID) (bool, error)
-	MuteUser(ctx context.Context, muteUserID uuid.UUID) (bool, error)
-	UnmuteUser(ctx context.Context, muteUserID uuid.UUID) (bool, error)
+	SignUp(ctx context.Context, input gqlmodel.SignUpInput) (*gqlmodel.SignUpPayload, error)
+	CreateUser(ctx context.Context, input gqlmodel.CreateUserInput) (*gqlmodel.CreateUserPayload, error)
+	SwitchUser(ctx context.Context, userID uuid.UUID) (*gqlmodel.SwitchUserPayload, error)
+	RequestFriendship(ctx context.Context, friendUserID uuid.UUID) (*gqlmodel.RequestFriendshipPayload, error)
+	CancelFriendshipRequest(ctx context.Context, friendshipRequestID uuid.UUID) (*gqlmodel.CancelFriendshipRequestPayload, error)
+	AcceptFriendshipRequest(ctx context.Context, friendshipRequestID uuid.UUID) (*gqlmodel.AcceptFriendshipRequestPayload, error)
+	DenyFriendshipRequest(ctx context.Context, friendshipRequestID uuid.UUID) (*gqlmodel.DenyFriendshipRequestPayload, error)
+	CreateFriendGroup(ctx context.Context, input gqlmodel.CreateFriendGroupInput) (*gqlmodel.CreateFriendGroupPayload, error)
+	UpdateFriendGroup(ctx context.Context, input gqlmodel.UpdateFriendGroupInput) (*gqlmodel.UpdateFriendGroupPayload, error)
+	DeleteFriendGroup(ctx context.Context, friendGroupID uuid.UUID) (*gqlmodel.DeleteFriendGroupPayload, error)
+	SendInvitation(ctx context.Context, input *gqlmodel.SendInvitationInput) (*gqlmodel.SendInvitationPayload, error)
+	AcceptInvitation(ctx context.Context, invitationID uuid.UUID) (*gqlmodel.AcceptInvitationPayload, error)
+	DenyInvitation(ctx context.Context, invitationID uuid.UUID) (*gqlmodel.DenyInvitationPayload, error)
+	MuteUser(ctx context.Context, userID uuid.UUID) (*gqlmodel.MuteUserPayload, error)
+	UnmuteUser(ctx context.Context, userID uuid.UUID) (*gqlmodel.UnmuteUserPayload, error)
 }
 type QueryResolver interface {
 	Viewer(ctx context.Context) (*gqlmodel.Viewer, error)
 	User(ctx context.Context, userID uuid.UUID) (*gqlmodel.User, error)
 	UserByScreenID(ctx context.Context, screenID string) (*gqlmodel.User, error)
-	Friends(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*gqlmodel.UserConnection, error)
 }
 type UserResolver interface {
 	IsMuted(ctx context.Context, obj *gqlmodel.User) (bool, error)
@@ -217,6 +275,62 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 	ec := executionContext{nil, e}
 	_ = ec
 	switch typeName + "." + field {
+
+	case "AcceptFriendshipRequestPayload.acceptedFriendshipRequestId":
+		if e.complexity.AcceptFriendshipRequestPayload.AcceptedFriendshipRequestID == nil {
+			break
+		}
+
+		return e.complexity.AcceptFriendshipRequestPayload.AcceptedFriendshipRequestID(childComplexity), true
+
+	case "AcceptInvitationPayload.invitation":
+		if e.complexity.AcceptInvitationPayload.Invitation == nil {
+			break
+		}
+
+		return e.complexity.AcceptInvitationPayload.Invitation(childComplexity), true
+
+	case "CancelFriendshipRequestPayload.canceledFriendshipRequestId":
+		if e.complexity.CancelFriendshipRequestPayload.CanceledFriendshipRequestID == nil {
+			break
+		}
+
+		return e.complexity.CancelFriendshipRequestPayload.CanceledFriendshipRequestID(childComplexity), true
+
+	case "CreateFriendGroupPayload.friendGroup":
+		if e.complexity.CreateFriendGroupPayload.FriendGroup == nil {
+			break
+		}
+
+		return e.complexity.CreateFriendGroupPayload.FriendGroup(childComplexity), true
+
+	case "CreateUserPayload.viewer":
+		if e.complexity.CreateUserPayload.Viewer == nil {
+			break
+		}
+
+		return e.complexity.CreateUserPayload.Viewer(childComplexity), true
+
+	case "DeleteFriendGroupPayload.deletedFriendGroupId":
+		if e.complexity.DeleteFriendGroupPayload.DeletedFriendGroupID == nil {
+			break
+		}
+
+		return e.complexity.DeleteFriendGroupPayload.DeletedFriendGroupID(childComplexity), true
+
+	case "DenyFriendshipRequestPayload.deniedFriendshipRequestId":
+		if e.complexity.DenyFriendshipRequestPayload.DeniedFriendshipRequestID == nil {
+			break
+		}
+
+		return e.complexity.DenyFriendshipRequestPayload.DeniedFriendshipRequestID(childComplexity), true
+
+	case "DenyInvitationPayload.invitation":
+		if e.complexity.DenyInvitationPayload.Invitation == nil {
+			break
+		}
+
+		return e.complexity.DenyInvitationPayload.Invitation(childComplexity), true
 
 	case "FriendGroup.friendUsers":
 		if e.complexity.FriendGroup.FriendUsers == nil {
@@ -457,7 +571,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.MuteUser(childComplexity, args["muteUserId"].(uuid.UUID)), true
+		return e.complexity.Mutation.MuteUser(childComplexity, args["userId"].(uuid.UUID)), true
 
 	case "Mutation.requestFriendship":
 		if e.complexity.Mutation.RequestFriendship == nil {
@@ -517,7 +631,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.UnmuteUser(childComplexity, args["muteUserId"].(uuid.UUID)), true
+		return e.complexity.Mutation.UnmuteUser(childComplexity, args["userId"].(uuid.UUID)), true
 
 	case "Mutation.updateFriendGroup":
 		if e.complexity.Mutation.UpdateFriendGroup == nil {
@@ -530,6 +644,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.UpdateFriendGroup(childComplexity, args["input"].(gqlmodel.UpdateFriendGroupInput)), true
+
+	case "MuteUserPayload.mutedUserId":
+		if e.complexity.MuteUserPayload.MutedUserID == nil {
+			break
+		}
+
+		return e.complexity.MuteUserPayload.MutedUserID(childComplexity), true
 
 	case "PageInfo.endCursor":
 		if e.complexity.PageInfo.EndCursor == nil {
@@ -558,18 +679,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.PageInfo.StartCursor(childComplexity), true
-
-	case "Query.friends":
-		if e.complexity.Query.Friends == nil {
-			break
-		}
-
-		args, err := ec.field_Query_friends_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.Friends(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int)), true
 
 	case "Query.user":
 		if e.complexity.Query.User == nil {
@@ -601,6 +710,48 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.Viewer(childComplexity), true
+
+	case "RequestFriendshipPayload.friendShipRequest":
+		if e.complexity.RequestFriendshipPayload.FriendShipRequest == nil {
+			break
+		}
+
+		return e.complexity.RequestFriendshipPayload.FriendShipRequest(childComplexity), true
+
+	case "SendInvitationPayload.invitation":
+		if e.complexity.SendInvitationPayload.Invitation == nil {
+			break
+		}
+
+		return e.complexity.SendInvitationPayload.Invitation(childComplexity), true
+
+	case "SignUpPayload.viewer":
+		if e.complexity.SignUpPayload.Viewer == nil {
+			break
+		}
+
+		return e.complexity.SignUpPayload.Viewer(childComplexity), true
+
+	case "SwitchUserPayload.viewer":
+		if e.complexity.SwitchUserPayload.Viewer == nil {
+			break
+		}
+
+		return e.complexity.SwitchUserPayload.Viewer(childComplexity), true
+
+	case "UnmuteUserPayload.unmutedUserId":
+		if e.complexity.UnmuteUserPayload.UnmutedUserID == nil {
+			break
+		}
+
+		return e.complexity.UnmuteUserPayload.UnmutedUserID(childComplexity), true
+
+	case "UpdateFriendGroupPayload.friendGroup":
+		if e.complexity.UpdateFriendGroupPayload.FriendGroup == nil {
+			break
+		}
+
+		return e.complexity.UpdateFriendGroupPayload.FriendGroup(childComplexity), true
 
 	case "User.avatarUrl":
 		if e.complexity.User.AvatarURL == nil {
@@ -847,26 +998,103 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 
 var sources = []*ast.Source{
 	{Name: "../../../defs/graphql/auth.graphql", Input: `extend type Mutation {
-    signUp(input: SignUpInput!): Viewer!
-    createUser(input: CreateUserInput!): Viewer! @authRequired
-    switchUser(userId: UUID!): Viewer! @authRequired
+    signUp(input: SignUpInput!): SignUpPayload!
+    createUser(input: CreateUserInput!): CreateUserPayload! @authRequired
+    switchUser(userId: UUID!): SwitchUserPayload! @authRequired
 }
+
 
 input SignUpInput {
     email: String @constraint(format: EMAIL)
     nickname: String! @constraint(min: 3)
     avatarUrl: String @constraint(format: URL)
 }
+type SignUpPayload {
+    viewer: Viewer!
+}
 
 input CreateUserInput {
     nickname: String! @constraint(min: 3)
     avatarUrl: String @constraint(format: URL)
 }
+type CreateUserPayload {
+    viewer: Viewer!
+}
+
+type SwitchUserPayload {
+    viewer: Viewer!
+}
+`, BuiltIn: false},
+	{Name: "../../../defs/graphql/friendship.graphql", Input: `
+extend type Mutation {
+    requestFriendship(friendUserId: UUID!): RequestFriendshipPayload! @authRequired
+    cancelFriendshipRequest(friendshipRequestId: UUID!): CancelFriendshipRequestPayload! @authRequired
+    acceptFriendshipRequest(friendshipRequestId: UUID!): AcceptFriendshipRequestPayload! @authRequired
+    denyFriendshipRequest(friendshipRequestId: UUID!): DenyFriendshipRequestPayload! @authRequired
+
+    createFriendGroup(input: CreateFriendGroupInput!): CreateFriendGroupPayload! @authRequired
+    updateFriendGroup(input: UpdateFriendGroupInput!): UpdateFriendGroupPayload! @authRequired
+    deleteFriendGroup(friendGroupId: UUID!): DeleteFriendGroupPayload! @authRequired
+}
+
+type FriendshipRequest implements Node {
+    id: UUID!
+    fromUserId: UUID!
+    fromUser: User! @goField(forceResolver: true)
+    toUserId: UUID!
+    toUser: User! @goField(forceResolver: true)
+    createdAt: Time!
+}
+
+type FriendGroup implements Node {
+    id: UUID!
+    userId: UUID!
+    name: String!
+    totalCount: Int!
+    friendUsers: [User!]! @goField(forceResolver: true)
+}
+
+type RequestFriendshipPayload {
+    friendShipRequest: FriendshipRequest!
+}
+
+type CancelFriendshipRequestPayload {
+    canceledFriendshipRequestId: UUID!
+}
+
+type AcceptFriendshipRequestPayload {
+    acceptedFriendshipRequestId: UUID!
+}
+
+type DenyFriendshipRequestPayload {
+    deniedFriendshipRequestId: UUID!
+}
+
+input CreateFriendGroupInput {
+    name: String! @constraint(max: 100)
+    friendUserIds: [UUID!]!
+}
+type CreateFriendGroupPayload {
+    friendGroup: FriendGroup!
+}
+
+input UpdateFriendGroupInput {
+    id: UUID!
+    name: String! @constraint(max: 100)
+    friendUserIds: [UUID!]!
+}
+type UpdateFriendGroupPayload {
+    friendGroup: FriendGroup!
+}
+
+type DeleteFriendGroupPayload {
+    deletedFriendGroupId: UUID!
+}
 `, BuiltIn: false},
 	{Name: "../../../defs/graphql/invitation.graphql", Input: `extend type Mutation {
-    sendInvitation(input: SendInvitationInput): Invitation! @authRequired
-    acceptInvitation(invitationId: UUID!): Boolean! @authRequired
-    denyInvitation(invitationId: UUID!): Boolean! @authRequired
+    sendInvitation(input: SendInvitationInput): SendInvitationPayload! @authRequired
+    acceptInvitation(invitationId: UUID!): AcceptInvitationPayload! @authRequired
+    denyInvitation(invitationId: UUID!): DenyInvitationPayload! @authRequired
 }
 
 type Invitation implements Node {
@@ -888,6 +1116,17 @@ input SendInvitationInput {
     startsAt: Time!
     location: String!
     comment: String!
+}
+type SendInvitationPayload {
+    invitation: Invitation!
+}
+
+type AcceptInvitationPayload {
+    invitation: Invitation!
+}
+
+type DenyInvitationPayload {
+    invitation: Invitation!
 }
 `, BuiltIn: false},
 	{Name: "../../../defs/graphql/schema.graphql", Input: `scalar Time
@@ -931,22 +1170,11 @@ extend type Query {
     user(userId: UUID!): User! @authRequired
     # fetch user by screen id
     userByScreenId(screenId: String!): User! @authRequired
-    # fetch friends of the logged in user
-    friends(after: Cursor, first: Int, before: Cursor, last: Int): UserConnection! @authRequired
 }
 
 extend type Mutation {
-    requestFriendship(friendUserId: UUID!): FriendshipRequest! @authRequired
-    cancelFriendshipRequest(friendshipRequestId: UUID!): Boolean! @authRequired
-    denyFriendshipRequest(friendshipRequestId: UUID!): Boolean! @authRequired
-    acceptFriendshipRequest(friendshipRequestId: UUID!): Boolean! @authRequired
-
-    createFriendGroup(input: CreateFriendGroupInput!): FriendGroup! @authRequired
-    updateFriendGroup(input: UpdateFriendGroupInput!): FriendGroup! @authRequired
-    deleteFriendGroup(friendGroupId: UUID!): Boolean! @authRequired
-
-    muteUser(muteUserId: UUID!): Boolean! @authRequired
-    unmuteUser(muteUserId: UUID!): Boolean! @authRequired
+    muteUser(userId: UUID!): MuteUserPayload! @authRequired
+    unmuteUser(userId: UUID!): UnmuteUserPayload! @authRequired
 }
 
 # Currently logged in user
@@ -995,32 +1223,12 @@ type UserConnection {
     totalCount: Int!
 }
 
-type FriendshipRequest implements Node {
-    id: UUID!
-    fromUserId: UUID!
-    fromUser: User! @goField(forceResolver: true)
-    toUserId: UUID!
-    toUser: User! @goField(forceResolver: true)
-    createdAt: Time!
+type MuteUserPayload {
+    mutedUserId: UUID!
 }
 
-type FriendGroup implements Node {
-    id: UUID!
-    userId: UUID!
-    name: String!
-    totalCount: Int!
-    friendUsers: [User!]! @goField(forceResolver: true)
-}
-
-input CreateFriendGroupInput {
-    name: String! @constraint(max: 100)
-    friendUserIds: [UUID!]!
-}
-
-input UpdateFriendGroupInput {
-    id: UUID!
-    name: String! @constraint(max: 100)
-    friendUserIds: [UUID!]!
+type UnmuteUserPayload {
+    unmutedUserId: UUID!
 }
 `, BuiltIn: false},
 }
@@ -1196,14 +1404,14 @@ func (ec *executionContext) field_Mutation_muteUser_args(ctx context.Context, ra
 	var err error
 	args := map[string]interface{}{}
 	var arg0 uuid.UUID
-	if tmp, ok := rawArgs["muteUserId"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("muteUserId"))
+	if tmp, ok := rawArgs["userId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userId"))
 		arg0, err = ec.unmarshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["muteUserId"] = arg0
+	args["userId"] = arg0
 	return args, nil
 }
 
@@ -1271,14 +1479,14 @@ func (ec *executionContext) field_Mutation_unmuteUser_args(ctx context.Context, 
 	var err error
 	args := map[string]interface{}{}
 	var arg0 uuid.UUID
-	if tmp, ok := rawArgs["muteUserId"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("muteUserId"))
+	if tmp, ok := rawArgs["userId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userId"))
 		arg0, err = ec.unmarshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["muteUserId"] = arg0
+	args["userId"] = arg0
 	return args, nil
 }
 
@@ -1309,48 +1517,6 @@ func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs
 		}
 	}
 	args["name"] = arg0
-	return args, nil
-}
-
-func (ec *executionContext) field_Query_friends_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 *ent.Cursor
-	if tmp, ok := rawArgs["after"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("after"))
-		arg0, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋentᚐCursor(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["after"] = arg0
-	var arg1 *int
-	if tmp, ok := rawArgs["first"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("first"))
-		arg1, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["first"] = arg1
-	var arg2 *ent.Cursor
-	if tmp, ok := rawArgs["before"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("before"))
-		arg2, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋentᚐCursor(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["before"] = arg2
-	var arg3 *int
-	if tmp, ok := rawArgs["last"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("last"))
-		arg3, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["last"] = arg3
 	return args, nil
 }
 
@@ -1478,6 +1644,432 @@ func (ec *executionContext) field___Type_fields_args(ctx context.Context, rawArg
 // endregion ************************** directives.gotpl **************************
 
 // region    **************************** field.gotpl *****************************
+
+func (ec *executionContext) _AcceptFriendshipRequestPayload_acceptedFriendshipRequestId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.AcceptFriendshipRequestPayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_AcceptFriendshipRequestPayload_acceptedFriendshipRequestId(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.AcceptedFriendshipRequestID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(uuid.UUID)
+	fc.Result = res
+	return ec.marshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_AcceptFriendshipRequestPayload_acceptedFriendshipRequestId(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "AcceptFriendshipRequestPayload",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type UUID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _AcceptInvitationPayload_invitation(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.AcceptInvitationPayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_AcceptInvitationPayload_invitation(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Invitation, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.Invitation)
+	fc.Result = res
+	return ec.marshalNInvitation2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐInvitation(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_AcceptInvitationPayload_invitation(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "AcceptInvitationPayload",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Invitation_id(ctx, field)
+			case "userId":
+				return ec.fieldContext_Invitation_userId(ctx, field)
+			case "user":
+				return ec.fieldContext_Invitation_user(ctx, field)
+			case "location":
+				return ec.fieldContext_Invitation_location(ctx, field)
+			case "comment":
+				return ec.fieldContext_Invitation_comment(ctx, field)
+			case "startsAt":
+				return ec.fieldContext_Invitation_startsAt(ctx, field)
+			case "expiresAt":
+				return ec.fieldContext_Invitation_expiresAt(ctx, field)
+			case "acceptedUsers":
+				return ec.fieldContext_Invitation_acceptedUsers(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Invitation", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CancelFriendshipRequestPayload_canceledFriendshipRequestId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.CancelFriendshipRequestPayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CancelFriendshipRequestPayload_canceledFriendshipRequestId(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CanceledFriendshipRequestID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(uuid.UUID)
+	fc.Result = res
+	return ec.marshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_CancelFriendshipRequestPayload_canceledFriendshipRequestId(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CancelFriendshipRequestPayload",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type UUID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CreateFriendGroupPayload_friendGroup(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.CreateFriendGroupPayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CreateFriendGroupPayload_friendGroup(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.FriendGroup, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.FriendGroup)
+	fc.Result = res
+	return ec.marshalNFriendGroup2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐFriendGroup(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_CreateFriendGroupPayload_friendGroup(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CreateFriendGroupPayload",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_FriendGroup_id(ctx, field)
+			case "userId":
+				return ec.fieldContext_FriendGroup_userId(ctx, field)
+			case "name":
+				return ec.fieldContext_FriendGroup_name(ctx, field)
+			case "totalCount":
+				return ec.fieldContext_FriendGroup_totalCount(ctx, field)
+			case "friendUsers":
+				return ec.fieldContext_FriendGroup_friendUsers(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type FriendGroup", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CreateUserPayload_viewer(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.CreateUserPayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CreateUserPayload_viewer(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Viewer, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.Viewer)
+	fc.Result = res
+	return ec.marshalNViewer2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐViewer(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_CreateUserPayload_viewer(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CreateUserPayload",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Viewer_id(ctx, field)
+			case "screenId":
+				return ec.fieldContext_Viewer_screenId(ctx, field)
+			case "nickname":
+				return ec.fieldContext_Viewer_nickname(ctx, field)
+			case "avatarUrl":
+				return ec.fieldContext_Viewer_avatarUrl(ctx, field)
+			case "friends":
+				return ec.fieldContext_Viewer_friends(ctx, field)
+			case "pendingFriendshipRequests":
+				return ec.fieldContext_Viewer_pendingFriendshipRequests(ctx, field)
+			case "requestingFriendshipRequests":
+				return ec.fieldContext_Viewer_requestingFriendshipRequests(ctx, field)
+			case "friendGroup":
+				return ec.fieldContext_Viewer_friendGroup(ctx, field)
+			case "friendGroups":
+				return ec.fieldContext_Viewer_friendGroups(ctx, field)
+			case "sentInvitations":
+				return ec.fieldContext_Viewer_sentInvitations(ctx, field)
+			case "pendingInvitations":
+				return ec.fieldContext_Viewer_pendingInvitations(ctx, field)
+			case "acceptedInvitations":
+				return ec.fieldContext_Viewer_acceptedInvitations(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Viewer", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _DeleteFriendGroupPayload_deletedFriendGroupId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.DeleteFriendGroupPayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_DeleteFriendGroupPayload_deletedFriendGroupId(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DeletedFriendGroupID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(uuid.UUID)
+	fc.Result = res
+	return ec.marshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_DeleteFriendGroupPayload_deletedFriendGroupId(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DeleteFriendGroupPayload",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type UUID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _DenyFriendshipRequestPayload_deniedFriendshipRequestId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.DenyFriendshipRequestPayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_DenyFriendshipRequestPayload_deniedFriendshipRequestId(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DeniedFriendshipRequestID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(uuid.UUID)
+	fc.Result = res
+	return ec.marshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_DenyFriendshipRequestPayload_deniedFriendshipRequestId(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DenyFriendshipRequestPayload",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type UUID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _DenyInvitationPayload_invitation(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.DenyInvitationPayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_DenyInvitationPayload_invitation(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Invitation, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.Invitation)
+	fc.Result = res
+	return ec.marshalNInvitation2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐInvitation(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_DenyInvitationPayload_invitation(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DenyInvitationPayload",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Invitation_id(ctx, field)
+			case "userId":
+				return ec.fieldContext_Invitation_userId(ctx, field)
+			case "user":
+				return ec.fieldContext_Invitation_user(ctx, field)
+			case "location":
+				return ec.fieldContext_Invitation_location(ctx, field)
+			case "comment":
+				return ec.fieldContext_Invitation_comment(ctx, field)
+			case "startsAt":
+				return ec.fieldContext_Invitation_startsAt(ctx, field)
+			case "expiresAt":
+				return ec.fieldContext_Invitation_expiresAt(ctx, field)
+			case "acceptedUsers":
+				return ec.fieldContext_Invitation_acceptedUsers(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Invitation", field.Name)
+		},
+	}
+	return fc, nil
+}
 
 func (ec *executionContext) _FriendGroup_id(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.FriendGroup) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_FriendGroup_id(ctx, field)
@@ -2411,9 +3003,9 @@ func (ec *executionContext) _Mutation_signUp(ctx context.Context, field graphql.
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*gqlmodel.Viewer)
+	res := resTmp.(*gqlmodel.SignUpPayload)
 	fc.Result = res
-	return ec.marshalNViewer2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐViewer(ctx, field.Selections, res)
+	return ec.marshalNSignUpPayload2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐSignUpPayload(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_signUp(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -2424,32 +3016,10 @@ func (ec *executionContext) fieldContext_Mutation_signUp(ctx context.Context, fi
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "id":
-				return ec.fieldContext_Viewer_id(ctx, field)
-			case "screenId":
-				return ec.fieldContext_Viewer_screenId(ctx, field)
-			case "nickname":
-				return ec.fieldContext_Viewer_nickname(ctx, field)
-			case "avatarUrl":
-				return ec.fieldContext_Viewer_avatarUrl(ctx, field)
-			case "friends":
-				return ec.fieldContext_Viewer_friends(ctx, field)
-			case "pendingFriendshipRequests":
-				return ec.fieldContext_Viewer_pendingFriendshipRequests(ctx, field)
-			case "requestingFriendshipRequests":
-				return ec.fieldContext_Viewer_requestingFriendshipRequests(ctx, field)
-			case "friendGroup":
-				return ec.fieldContext_Viewer_friendGroup(ctx, field)
-			case "friendGroups":
-				return ec.fieldContext_Viewer_friendGroups(ctx, field)
-			case "sentInvitations":
-				return ec.fieldContext_Viewer_sentInvitations(ctx, field)
-			case "pendingInvitations":
-				return ec.fieldContext_Viewer_pendingInvitations(ctx, field)
-			case "acceptedInvitations":
-				return ec.fieldContext_Viewer_acceptedInvitations(ctx, field)
+			case "viewer":
+				return ec.fieldContext_SignUpPayload_viewer(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type Viewer", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type SignUpPayload", field.Name)
 		},
 	}
 	defer func() {
@@ -2497,10 +3067,10 @@ func (ec *executionContext) _Mutation_createUser(ctx context.Context, field grap
 		if tmp == nil {
 			return nil, nil
 		}
-		if data, ok := tmp.(*gqlmodel.Viewer); ok {
+		if data, ok := tmp.(*gqlmodel.CreateUserPayload); ok {
 			return data, nil
 		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/k-yomo/invy/invy_api/graph/gqlmodel.Viewer`, tmp)
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/k-yomo/invy/invy_api/graph/gqlmodel.CreateUserPayload`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2512,9 +3082,9 @@ func (ec *executionContext) _Mutation_createUser(ctx context.Context, field grap
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*gqlmodel.Viewer)
+	res := resTmp.(*gqlmodel.CreateUserPayload)
 	fc.Result = res
-	return ec.marshalNViewer2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐViewer(ctx, field.Selections, res)
+	return ec.marshalNCreateUserPayload2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐCreateUserPayload(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_createUser(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -2525,32 +3095,10 @@ func (ec *executionContext) fieldContext_Mutation_createUser(ctx context.Context
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "id":
-				return ec.fieldContext_Viewer_id(ctx, field)
-			case "screenId":
-				return ec.fieldContext_Viewer_screenId(ctx, field)
-			case "nickname":
-				return ec.fieldContext_Viewer_nickname(ctx, field)
-			case "avatarUrl":
-				return ec.fieldContext_Viewer_avatarUrl(ctx, field)
-			case "friends":
-				return ec.fieldContext_Viewer_friends(ctx, field)
-			case "pendingFriendshipRequests":
-				return ec.fieldContext_Viewer_pendingFriendshipRequests(ctx, field)
-			case "requestingFriendshipRequests":
-				return ec.fieldContext_Viewer_requestingFriendshipRequests(ctx, field)
-			case "friendGroup":
-				return ec.fieldContext_Viewer_friendGroup(ctx, field)
-			case "friendGroups":
-				return ec.fieldContext_Viewer_friendGroups(ctx, field)
-			case "sentInvitations":
-				return ec.fieldContext_Viewer_sentInvitations(ctx, field)
-			case "pendingInvitations":
-				return ec.fieldContext_Viewer_pendingInvitations(ctx, field)
-			case "acceptedInvitations":
-				return ec.fieldContext_Viewer_acceptedInvitations(ctx, field)
+			case "viewer":
+				return ec.fieldContext_CreateUserPayload_viewer(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type Viewer", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type CreateUserPayload", field.Name)
 		},
 	}
 	defer func() {
@@ -2598,10 +3146,10 @@ func (ec *executionContext) _Mutation_switchUser(ctx context.Context, field grap
 		if tmp == nil {
 			return nil, nil
 		}
-		if data, ok := tmp.(*gqlmodel.Viewer); ok {
+		if data, ok := tmp.(*gqlmodel.SwitchUserPayload); ok {
 			return data, nil
 		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/k-yomo/invy/invy_api/graph/gqlmodel.Viewer`, tmp)
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/k-yomo/invy/invy_api/graph/gqlmodel.SwitchUserPayload`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2613,9 +3161,9 @@ func (ec *executionContext) _Mutation_switchUser(ctx context.Context, field grap
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*gqlmodel.Viewer)
+	res := resTmp.(*gqlmodel.SwitchUserPayload)
 	fc.Result = res
-	return ec.marshalNViewer2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐViewer(ctx, field.Selections, res)
+	return ec.marshalNSwitchUserPayload2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐSwitchUserPayload(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_switchUser(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -2626,32 +3174,10 @@ func (ec *executionContext) fieldContext_Mutation_switchUser(ctx context.Context
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "id":
-				return ec.fieldContext_Viewer_id(ctx, field)
-			case "screenId":
-				return ec.fieldContext_Viewer_screenId(ctx, field)
-			case "nickname":
-				return ec.fieldContext_Viewer_nickname(ctx, field)
-			case "avatarUrl":
-				return ec.fieldContext_Viewer_avatarUrl(ctx, field)
-			case "friends":
-				return ec.fieldContext_Viewer_friends(ctx, field)
-			case "pendingFriendshipRequests":
-				return ec.fieldContext_Viewer_pendingFriendshipRequests(ctx, field)
-			case "requestingFriendshipRequests":
-				return ec.fieldContext_Viewer_requestingFriendshipRequests(ctx, field)
-			case "friendGroup":
-				return ec.fieldContext_Viewer_friendGroup(ctx, field)
-			case "friendGroups":
-				return ec.fieldContext_Viewer_friendGroups(ctx, field)
-			case "sentInvitations":
-				return ec.fieldContext_Viewer_sentInvitations(ctx, field)
-			case "pendingInvitations":
-				return ec.fieldContext_Viewer_pendingInvitations(ctx, field)
-			case "acceptedInvitations":
-				return ec.fieldContext_Viewer_acceptedInvitations(ctx, field)
+			case "viewer":
+				return ec.fieldContext_SwitchUserPayload_viewer(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type Viewer", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type SwitchUserPayload", field.Name)
 		},
 	}
 	defer func() {
@@ -2662,249 +3188,6 @@ func (ec *executionContext) fieldContext_Mutation_switchUser(ctx context.Context
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_switchUser_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Mutation_sendInvitation(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_sendInvitation(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		directive0 := func(rctx context.Context) (interface{}, error) {
-			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().SendInvitation(rctx, fc.Args["input"].(*gqlmodel.SendInvitationInput))
-		}
-		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.AuthRequired == nil {
-				return nil, errors.New("directive authRequired is not implemented")
-			}
-			return ec.directives.AuthRequired(ctx, nil, directive0)
-		}
-
-		tmp, err := directive1(rctx)
-		if err != nil {
-			return nil, graphql.ErrorOnPath(ctx, err)
-		}
-		if tmp == nil {
-			return nil, nil
-		}
-		if data, ok := tmp.(*gqlmodel.Invitation); ok {
-			return data, nil
-		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/k-yomo/invy/invy_api/graph/gqlmodel.Invitation`, tmp)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*gqlmodel.Invitation)
-	fc.Result = res
-	return ec.marshalNInvitation2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐInvitation(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Mutation_sendInvitation(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Mutation",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_Invitation_id(ctx, field)
-			case "userId":
-				return ec.fieldContext_Invitation_userId(ctx, field)
-			case "user":
-				return ec.fieldContext_Invitation_user(ctx, field)
-			case "location":
-				return ec.fieldContext_Invitation_location(ctx, field)
-			case "comment":
-				return ec.fieldContext_Invitation_comment(ctx, field)
-			case "startsAt":
-				return ec.fieldContext_Invitation_startsAt(ctx, field)
-			case "expiresAt":
-				return ec.fieldContext_Invitation_expiresAt(ctx, field)
-			case "acceptedUsers":
-				return ec.fieldContext_Invitation_acceptedUsers(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Invitation", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_sendInvitation_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Mutation_acceptInvitation(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_acceptInvitation(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		directive0 := func(rctx context.Context) (interface{}, error) {
-			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().AcceptInvitation(rctx, fc.Args["invitationId"].(uuid.UUID))
-		}
-		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.AuthRequired == nil {
-				return nil, errors.New("directive authRequired is not implemented")
-			}
-			return ec.directives.AuthRequired(ctx, nil, directive0)
-		}
-
-		tmp, err := directive1(rctx)
-		if err != nil {
-			return nil, graphql.ErrorOnPath(ctx, err)
-		}
-		if tmp == nil {
-			return nil, nil
-		}
-		if data, ok := tmp.(bool); ok {
-			return data, nil
-		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be bool`, tmp)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(bool)
-	fc.Result = res
-	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Mutation_acceptInvitation(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Mutation",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Boolean does not have child fields")
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_acceptInvitation_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Mutation_denyInvitation(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_denyInvitation(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		directive0 := func(rctx context.Context) (interface{}, error) {
-			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().DenyInvitation(rctx, fc.Args["invitationId"].(uuid.UUID))
-		}
-		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.AuthRequired == nil {
-				return nil, errors.New("directive authRequired is not implemented")
-			}
-			return ec.directives.AuthRequired(ctx, nil, directive0)
-		}
-
-		tmp, err := directive1(rctx)
-		if err != nil {
-			return nil, graphql.ErrorOnPath(ctx, err)
-		}
-		if tmp == nil {
-			return nil, nil
-		}
-		if data, ok := tmp.(bool); ok {
-			return data, nil
-		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be bool`, tmp)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(bool)
-	fc.Result = res
-	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Mutation_denyInvitation(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Mutation",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Boolean does not have child fields")
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_denyInvitation_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return
 	}
@@ -2942,10 +3225,10 @@ func (ec *executionContext) _Mutation_requestFriendship(ctx context.Context, fie
 		if tmp == nil {
 			return nil, nil
 		}
-		if data, ok := tmp.(*gqlmodel.FriendshipRequest); ok {
+		if data, ok := tmp.(*gqlmodel.RequestFriendshipPayload); ok {
 			return data, nil
 		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/k-yomo/invy/invy_api/graph/gqlmodel.FriendshipRequest`, tmp)
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/k-yomo/invy/invy_api/graph/gqlmodel.RequestFriendshipPayload`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2957,9 +3240,9 @@ func (ec *executionContext) _Mutation_requestFriendship(ctx context.Context, fie
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*gqlmodel.FriendshipRequest)
+	res := resTmp.(*gqlmodel.RequestFriendshipPayload)
 	fc.Result = res
-	return ec.marshalNFriendshipRequest2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐFriendshipRequest(ctx, field.Selections, res)
+	return ec.marshalNRequestFriendshipPayload2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐRequestFriendshipPayload(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_requestFriendship(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -2970,20 +3253,10 @@ func (ec *executionContext) fieldContext_Mutation_requestFriendship(ctx context.
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "id":
-				return ec.fieldContext_FriendshipRequest_id(ctx, field)
-			case "fromUserId":
-				return ec.fieldContext_FriendshipRequest_fromUserId(ctx, field)
-			case "fromUser":
-				return ec.fieldContext_FriendshipRequest_fromUser(ctx, field)
-			case "toUserId":
-				return ec.fieldContext_FriendshipRequest_toUserId(ctx, field)
-			case "toUser":
-				return ec.fieldContext_FriendshipRequest_toUser(ctx, field)
-			case "createdAt":
-				return ec.fieldContext_FriendshipRequest_createdAt(ctx, field)
+			case "friendShipRequest":
+				return ec.fieldContext_RequestFriendshipPayload_friendShipRequest(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type FriendshipRequest", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type RequestFriendshipPayload", field.Name)
 		},
 	}
 	defer func() {
@@ -3031,10 +3304,10 @@ func (ec *executionContext) _Mutation_cancelFriendshipRequest(ctx context.Contex
 		if tmp == nil {
 			return nil, nil
 		}
-		if data, ok := tmp.(bool); ok {
+		if data, ok := tmp.(*gqlmodel.CancelFriendshipRequestPayload); ok {
 			return data, nil
 		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be bool`, tmp)
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/k-yomo/invy/invy_api/graph/gqlmodel.CancelFriendshipRequestPayload`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3046,9 +3319,9 @@ func (ec *executionContext) _Mutation_cancelFriendshipRequest(ctx context.Contex
 		}
 		return graphql.Null
 	}
-	res := resTmp.(bool)
+	res := resTmp.(*gqlmodel.CancelFriendshipRequestPayload)
 	fc.Result = res
-	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+	return ec.marshalNCancelFriendshipRequestPayload2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐCancelFriendshipRequestPayload(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_cancelFriendshipRequest(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -3058,7 +3331,11 @@ func (ec *executionContext) fieldContext_Mutation_cancelFriendshipRequest(ctx co
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Boolean does not have child fields")
+			switch field.Name {
+			case "canceledFriendshipRequestId":
+				return ec.fieldContext_CancelFriendshipRequestPayload_canceledFriendshipRequestId(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type CancelFriendshipRequestPayload", field.Name)
 		},
 	}
 	defer func() {
@@ -3069,81 +3346,6 @@ func (ec *executionContext) fieldContext_Mutation_cancelFriendshipRequest(ctx co
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_cancelFriendshipRequest_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Mutation_denyFriendshipRequest(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_denyFriendshipRequest(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		directive0 := func(rctx context.Context) (interface{}, error) {
-			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().DenyFriendshipRequest(rctx, fc.Args["friendshipRequestId"].(uuid.UUID))
-		}
-		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.AuthRequired == nil {
-				return nil, errors.New("directive authRequired is not implemented")
-			}
-			return ec.directives.AuthRequired(ctx, nil, directive0)
-		}
-
-		tmp, err := directive1(rctx)
-		if err != nil {
-			return nil, graphql.ErrorOnPath(ctx, err)
-		}
-		if tmp == nil {
-			return nil, nil
-		}
-		if data, ok := tmp.(bool); ok {
-			return data, nil
-		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be bool`, tmp)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(bool)
-	fc.Result = res
-	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Mutation_denyFriendshipRequest(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Mutation",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Boolean does not have child fields")
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_denyFriendshipRequest_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return
 	}
@@ -3181,10 +3383,10 @@ func (ec *executionContext) _Mutation_acceptFriendshipRequest(ctx context.Contex
 		if tmp == nil {
 			return nil, nil
 		}
-		if data, ok := tmp.(bool); ok {
+		if data, ok := tmp.(*gqlmodel.AcceptFriendshipRequestPayload); ok {
 			return data, nil
 		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be bool`, tmp)
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/k-yomo/invy/invy_api/graph/gqlmodel.AcceptFriendshipRequestPayload`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3196,9 +3398,9 @@ func (ec *executionContext) _Mutation_acceptFriendshipRequest(ctx context.Contex
 		}
 		return graphql.Null
 	}
-	res := resTmp.(bool)
+	res := resTmp.(*gqlmodel.AcceptFriendshipRequestPayload)
 	fc.Result = res
-	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+	return ec.marshalNAcceptFriendshipRequestPayload2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐAcceptFriendshipRequestPayload(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_acceptFriendshipRequest(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -3208,7 +3410,11 @@ func (ec *executionContext) fieldContext_Mutation_acceptFriendshipRequest(ctx co
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Boolean does not have child fields")
+			switch field.Name {
+			case "acceptedFriendshipRequestId":
+				return ec.fieldContext_AcceptFriendshipRequestPayload_acceptedFriendshipRequestId(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type AcceptFriendshipRequestPayload", field.Name)
 		},
 	}
 	defer func() {
@@ -3219,6 +3425,85 @@ func (ec *executionContext) fieldContext_Mutation_acceptFriendshipRequest(ctx co
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_acceptFriendshipRequest_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_denyFriendshipRequest(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_denyFriendshipRequest(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().DenyFriendshipRequest(rctx, fc.Args["friendshipRequestId"].(uuid.UUID))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.AuthRequired == nil {
+				return nil, errors.New("directive authRequired is not implemented")
+			}
+			return ec.directives.AuthRequired(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*gqlmodel.DenyFriendshipRequestPayload); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/k-yomo/invy/invy_api/graph/gqlmodel.DenyFriendshipRequestPayload`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.DenyFriendshipRequestPayload)
+	fc.Result = res
+	return ec.marshalNDenyFriendshipRequestPayload2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐDenyFriendshipRequestPayload(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_denyFriendshipRequest(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "deniedFriendshipRequestId":
+				return ec.fieldContext_DenyFriendshipRequestPayload_deniedFriendshipRequestId(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type DenyFriendshipRequestPayload", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_denyFriendshipRequest_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return
 	}
@@ -3256,10 +3541,10 @@ func (ec *executionContext) _Mutation_createFriendGroup(ctx context.Context, fie
 		if tmp == nil {
 			return nil, nil
 		}
-		if data, ok := tmp.(*gqlmodel.FriendGroup); ok {
+		if data, ok := tmp.(*gqlmodel.CreateFriendGroupPayload); ok {
 			return data, nil
 		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/k-yomo/invy/invy_api/graph/gqlmodel.FriendGroup`, tmp)
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/k-yomo/invy/invy_api/graph/gqlmodel.CreateFriendGroupPayload`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3271,9 +3556,9 @@ func (ec *executionContext) _Mutation_createFriendGroup(ctx context.Context, fie
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*gqlmodel.FriendGroup)
+	res := resTmp.(*gqlmodel.CreateFriendGroupPayload)
 	fc.Result = res
-	return ec.marshalNFriendGroup2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐFriendGroup(ctx, field.Selections, res)
+	return ec.marshalNCreateFriendGroupPayload2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐCreateFriendGroupPayload(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_createFriendGroup(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -3284,18 +3569,10 @@ func (ec *executionContext) fieldContext_Mutation_createFriendGroup(ctx context.
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "id":
-				return ec.fieldContext_FriendGroup_id(ctx, field)
-			case "userId":
-				return ec.fieldContext_FriendGroup_userId(ctx, field)
-			case "name":
-				return ec.fieldContext_FriendGroup_name(ctx, field)
-			case "totalCount":
-				return ec.fieldContext_FriendGroup_totalCount(ctx, field)
-			case "friendUsers":
-				return ec.fieldContext_FriendGroup_friendUsers(ctx, field)
+			case "friendGroup":
+				return ec.fieldContext_CreateFriendGroupPayload_friendGroup(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type FriendGroup", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type CreateFriendGroupPayload", field.Name)
 		},
 	}
 	defer func() {
@@ -3343,10 +3620,10 @@ func (ec *executionContext) _Mutation_updateFriendGroup(ctx context.Context, fie
 		if tmp == nil {
 			return nil, nil
 		}
-		if data, ok := tmp.(*gqlmodel.FriendGroup); ok {
+		if data, ok := tmp.(*gqlmodel.UpdateFriendGroupPayload); ok {
 			return data, nil
 		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/k-yomo/invy/invy_api/graph/gqlmodel.FriendGroup`, tmp)
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/k-yomo/invy/invy_api/graph/gqlmodel.UpdateFriendGroupPayload`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3358,9 +3635,9 @@ func (ec *executionContext) _Mutation_updateFriendGroup(ctx context.Context, fie
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*gqlmodel.FriendGroup)
+	res := resTmp.(*gqlmodel.UpdateFriendGroupPayload)
 	fc.Result = res
-	return ec.marshalNFriendGroup2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐFriendGroup(ctx, field.Selections, res)
+	return ec.marshalNUpdateFriendGroupPayload2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐUpdateFriendGroupPayload(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_updateFriendGroup(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -3371,18 +3648,10 @@ func (ec *executionContext) fieldContext_Mutation_updateFriendGroup(ctx context.
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "id":
-				return ec.fieldContext_FriendGroup_id(ctx, field)
-			case "userId":
-				return ec.fieldContext_FriendGroup_userId(ctx, field)
-			case "name":
-				return ec.fieldContext_FriendGroup_name(ctx, field)
-			case "totalCount":
-				return ec.fieldContext_FriendGroup_totalCount(ctx, field)
-			case "friendUsers":
-				return ec.fieldContext_FriendGroup_friendUsers(ctx, field)
+			case "friendGroup":
+				return ec.fieldContext_UpdateFriendGroupPayload_friendGroup(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type FriendGroup", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type UpdateFriendGroupPayload", field.Name)
 		},
 	}
 	defer func() {
@@ -3430,10 +3699,10 @@ func (ec *executionContext) _Mutation_deleteFriendGroup(ctx context.Context, fie
 		if tmp == nil {
 			return nil, nil
 		}
-		if data, ok := tmp.(bool); ok {
+		if data, ok := tmp.(*gqlmodel.DeleteFriendGroupPayload); ok {
 			return data, nil
 		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be bool`, tmp)
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/k-yomo/invy/invy_api/graph/gqlmodel.DeleteFriendGroupPayload`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3445,9 +3714,9 @@ func (ec *executionContext) _Mutation_deleteFriendGroup(ctx context.Context, fie
 		}
 		return graphql.Null
 	}
-	res := resTmp.(bool)
+	res := resTmp.(*gqlmodel.DeleteFriendGroupPayload)
 	fc.Result = res
-	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+	return ec.marshalNDeleteFriendGroupPayload2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐDeleteFriendGroupPayload(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_deleteFriendGroup(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -3457,7 +3726,11 @@ func (ec *executionContext) fieldContext_Mutation_deleteFriendGroup(ctx context.
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Boolean does not have child fields")
+			switch field.Name {
+			case "deletedFriendGroupId":
+				return ec.fieldContext_DeleteFriendGroupPayload_deletedFriendGroupId(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type DeleteFriendGroupPayload", field.Name)
 		},
 	}
 	defer func() {
@@ -3468,6 +3741,243 @@ func (ec *executionContext) fieldContext_Mutation_deleteFriendGroup(ctx context.
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_deleteFriendGroup_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_sendInvitation(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_sendInvitation(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().SendInvitation(rctx, fc.Args["input"].(*gqlmodel.SendInvitationInput))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.AuthRequired == nil {
+				return nil, errors.New("directive authRequired is not implemented")
+			}
+			return ec.directives.AuthRequired(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*gqlmodel.SendInvitationPayload); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/k-yomo/invy/invy_api/graph/gqlmodel.SendInvitationPayload`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.SendInvitationPayload)
+	fc.Result = res
+	return ec.marshalNSendInvitationPayload2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐSendInvitationPayload(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_sendInvitation(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "invitation":
+				return ec.fieldContext_SendInvitationPayload_invitation(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type SendInvitationPayload", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_sendInvitation_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_acceptInvitation(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_acceptInvitation(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().AcceptInvitation(rctx, fc.Args["invitationId"].(uuid.UUID))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.AuthRequired == nil {
+				return nil, errors.New("directive authRequired is not implemented")
+			}
+			return ec.directives.AuthRequired(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*gqlmodel.AcceptInvitationPayload); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/k-yomo/invy/invy_api/graph/gqlmodel.AcceptInvitationPayload`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.AcceptInvitationPayload)
+	fc.Result = res
+	return ec.marshalNAcceptInvitationPayload2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐAcceptInvitationPayload(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_acceptInvitation(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "invitation":
+				return ec.fieldContext_AcceptInvitationPayload_invitation(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type AcceptInvitationPayload", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_acceptInvitation_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_denyInvitation(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_denyInvitation(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().DenyInvitation(rctx, fc.Args["invitationId"].(uuid.UUID))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.AuthRequired == nil {
+				return nil, errors.New("directive authRequired is not implemented")
+			}
+			return ec.directives.AuthRequired(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*gqlmodel.DenyInvitationPayload); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/k-yomo/invy/invy_api/graph/gqlmodel.DenyInvitationPayload`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.DenyInvitationPayload)
+	fc.Result = res
+	return ec.marshalNDenyInvitationPayload2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐDenyInvitationPayload(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_denyInvitation(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "invitation":
+				return ec.fieldContext_DenyInvitationPayload_invitation(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type DenyInvitationPayload", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_denyInvitation_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return
 	}
@@ -3489,7 +3999,7 @@ func (ec *executionContext) _Mutation_muteUser(ctx context.Context, field graphq
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().MuteUser(rctx, fc.Args["muteUserId"].(uuid.UUID))
+			return ec.resolvers.Mutation().MuteUser(rctx, fc.Args["userId"].(uuid.UUID))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.AuthRequired == nil {
@@ -3505,10 +4015,10 @@ func (ec *executionContext) _Mutation_muteUser(ctx context.Context, field graphq
 		if tmp == nil {
 			return nil, nil
 		}
-		if data, ok := tmp.(bool); ok {
+		if data, ok := tmp.(*gqlmodel.MuteUserPayload); ok {
 			return data, nil
 		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be bool`, tmp)
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/k-yomo/invy/invy_api/graph/gqlmodel.MuteUserPayload`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3520,9 +4030,9 @@ func (ec *executionContext) _Mutation_muteUser(ctx context.Context, field graphq
 		}
 		return graphql.Null
 	}
-	res := resTmp.(bool)
+	res := resTmp.(*gqlmodel.MuteUserPayload)
 	fc.Result = res
-	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+	return ec.marshalNMuteUserPayload2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐMuteUserPayload(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_muteUser(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -3532,7 +4042,11 @@ func (ec *executionContext) fieldContext_Mutation_muteUser(ctx context.Context, 
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Boolean does not have child fields")
+			switch field.Name {
+			case "mutedUserId":
+				return ec.fieldContext_MuteUserPayload_mutedUserId(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type MuteUserPayload", field.Name)
 		},
 	}
 	defer func() {
@@ -3564,7 +4078,7 @@ func (ec *executionContext) _Mutation_unmuteUser(ctx context.Context, field grap
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().UnmuteUser(rctx, fc.Args["muteUserId"].(uuid.UUID))
+			return ec.resolvers.Mutation().UnmuteUser(rctx, fc.Args["userId"].(uuid.UUID))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.AuthRequired == nil {
@@ -3580,10 +4094,10 @@ func (ec *executionContext) _Mutation_unmuteUser(ctx context.Context, field grap
 		if tmp == nil {
 			return nil, nil
 		}
-		if data, ok := tmp.(bool); ok {
+		if data, ok := tmp.(*gqlmodel.UnmuteUserPayload); ok {
 			return data, nil
 		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be bool`, tmp)
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/k-yomo/invy/invy_api/graph/gqlmodel.UnmuteUserPayload`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3595,9 +4109,9 @@ func (ec *executionContext) _Mutation_unmuteUser(ctx context.Context, field grap
 		}
 		return graphql.Null
 	}
-	res := resTmp.(bool)
+	res := resTmp.(*gqlmodel.UnmuteUserPayload)
 	fc.Result = res
-	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+	return ec.marshalNUnmuteUserPayload2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐUnmuteUserPayload(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_unmuteUser(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -3607,7 +4121,11 @@ func (ec *executionContext) fieldContext_Mutation_unmuteUser(ctx context.Context
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Boolean does not have child fields")
+			switch field.Name {
+			case "unmutedUserId":
+				return ec.fieldContext_UnmuteUserPayload_unmutedUserId(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type UnmuteUserPayload", field.Name)
 		},
 	}
 	defer func() {
@@ -3620,6 +4138,50 @@ func (ec *executionContext) fieldContext_Mutation_unmuteUser(ctx context.Context
 	if fc.Args, err = ec.field_Mutation_unmuteUser_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _MuteUserPayload_mutedUserId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.MuteUserPayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_MuteUserPayload_mutedUserId(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.MutedUserID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(uuid.UUID)
+	fc.Result = res
+	return ec.marshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_MuteUserPayload_mutedUserId(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "MuteUserPayload",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type UUID does not have child fields")
+		},
 	}
 	return fc, nil
 }
@@ -4062,89 +4624,6 @@ func (ec *executionContext) fieldContext_Query_userByScreenId(ctx context.Contex
 	return fc, nil
 }
 
-func (ec *executionContext) _Query_friends(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_friends(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		directive0 := func(rctx context.Context) (interface{}, error) {
-			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Query().Friends(rctx, fc.Args["after"].(*ent.Cursor), fc.Args["first"].(*int), fc.Args["before"].(*ent.Cursor), fc.Args["last"].(*int))
-		}
-		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.AuthRequired == nil {
-				return nil, errors.New("directive authRequired is not implemented")
-			}
-			return ec.directives.AuthRequired(ctx, nil, directive0)
-		}
-
-		tmp, err := directive1(rctx)
-		if err != nil {
-			return nil, graphql.ErrorOnPath(ctx, err)
-		}
-		if tmp == nil {
-			return nil, nil
-		}
-		if data, ok := tmp.(*gqlmodel.UserConnection); ok {
-			return data, nil
-		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/k-yomo/invy/invy_api/graph/gqlmodel.UserConnection`, tmp)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*gqlmodel.UserConnection)
-	fc.Result = res
-	return ec.marshalNUserConnection2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐUserConnection(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Query_friends(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Query",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "edges":
-				return ec.fieldContext_UserConnection_edges(ctx, field)
-			case "pageInfo":
-				return ec.fieldContext_UserConnection_pageInfo(ctx, field)
-			case "totalCount":
-				return ec.fieldContext_UserConnection_totalCount(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type UserConnection", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Query_friends_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _Query___type(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Query___type(ctx, field)
 	if err != nil {
@@ -4269,6 +4748,366 @@ func (ec *executionContext) fieldContext_Query___schema(ctx context.Context, fie
 				return ec.fieldContext___Schema_directives(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type __Schema", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _RequestFriendshipPayload_friendShipRequest(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.RequestFriendshipPayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_RequestFriendshipPayload_friendShipRequest(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.FriendShipRequest, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.FriendshipRequest)
+	fc.Result = res
+	return ec.marshalNFriendshipRequest2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐFriendshipRequest(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_RequestFriendshipPayload_friendShipRequest(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "RequestFriendshipPayload",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_FriendshipRequest_id(ctx, field)
+			case "fromUserId":
+				return ec.fieldContext_FriendshipRequest_fromUserId(ctx, field)
+			case "fromUser":
+				return ec.fieldContext_FriendshipRequest_fromUser(ctx, field)
+			case "toUserId":
+				return ec.fieldContext_FriendshipRequest_toUserId(ctx, field)
+			case "toUser":
+				return ec.fieldContext_FriendshipRequest_toUser(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_FriendshipRequest_createdAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type FriendshipRequest", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _SendInvitationPayload_invitation(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.SendInvitationPayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SendInvitationPayload_invitation(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Invitation, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.Invitation)
+	fc.Result = res
+	return ec.marshalNInvitation2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐInvitation(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_SendInvitationPayload_invitation(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "SendInvitationPayload",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Invitation_id(ctx, field)
+			case "userId":
+				return ec.fieldContext_Invitation_userId(ctx, field)
+			case "user":
+				return ec.fieldContext_Invitation_user(ctx, field)
+			case "location":
+				return ec.fieldContext_Invitation_location(ctx, field)
+			case "comment":
+				return ec.fieldContext_Invitation_comment(ctx, field)
+			case "startsAt":
+				return ec.fieldContext_Invitation_startsAt(ctx, field)
+			case "expiresAt":
+				return ec.fieldContext_Invitation_expiresAt(ctx, field)
+			case "acceptedUsers":
+				return ec.fieldContext_Invitation_acceptedUsers(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Invitation", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _SignUpPayload_viewer(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.SignUpPayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SignUpPayload_viewer(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Viewer, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.Viewer)
+	fc.Result = res
+	return ec.marshalNViewer2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐViewer(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_SignUpPayload_viewer(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "SignUpPayload",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Viewer_id(ctx, field)
+			case "screenId":
+				return ec.fieldContext_Viewer_screenId(ctx, field)
+			case "nickname":
+				return ec.fieldContext_Viewer_nickname(ctx, field)
+			case "avatarUrl":
+				return ec.fieldContext_Viewer_avatarUrl(ctx, field)
+			case "friends":
+				return ec.fieldContext_Viewer_friends(ctx, field)
+			case "pendingFriendshipRequests":
+				return ec.fieldContext_Viewer_pendingFriendshipRequests(ctx, field)
+			case "requestingFriendshipRequests":
+				return ec.fieldContext_Viewer_requestingFriendshipRequests(ctx, field)
+			case "friendGroup":
+				return ec.fieldContext_Viewer_friendGroup(ctx, field)
+			case "friendGroups":
+				return ec.fieldContext_Viewer_friendGroups(ctx, field)
+			case "sentInvitations":
+				return ec.fieldContext_Viewer_sentInvitations(ctx, field)
+			case "pendingInvitations":
+				return ec.fieldContext_Viewer_pendingInvitations(ctx, field)
+			case "acceptedInvitations":
+				return ec.fieldContext_Viewer_acceptedInvitations(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Viewer", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _SwitchUserPayload_viewer(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.SwitchUserPayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SwitchUserPayload_viewer(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Viewer, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.Viewer)
+	fc.Result = res
+	return ec.marshalNViewer2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐViewer(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_SwitchUserPayload_viewer(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "SwitchUserPayload",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Viewer_id(ctx, field)
+			case "screenId":
+				return ec.fieldContext_Viewer_screenId(ctx, field)
+			case "nickname":
+				return ec.fieldContext_Viewer_nickname(ctx, field)
+			case "avatarUrl":
+				return ec.fieldContext_Viewer_avatarUrl(ctx, field)
+			case "friends":
+				return ec.fieldContext_Viewer_friends(ctx, field)
+			case "pendingFriendshipRequests":
+				return ec.fieldContext_Viewer_pendingFriendshipRequests(ctx, field)
+			case "requestingFriendshipRequests":
+				return ec.fieldContext_Viewer_requestingFriendshipRequests(ctx, field)
+			case "friendGroup":
+				return ec.fieldContext_Viewer_friendGroup(ctx, field)
+			case "friendGroups":
+				return ec.fieldContext_Viewer_friendGroups(ctx, field)
+			case "sentInvitations":
+				return ec.fieldContext_Viewer_sentInvitations(ctx, field)
+			case "pendingInvitations":
+				return ec.fieldContext_Viewer_pendingInvitations(ctx, field)
+			case "acceptedInvitations":
+				return ec.fieldContext_Viewer_acceptedInvitations(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Viewer", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _UnmuteUserPayload_unmutedUserId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.UnmuteUserPayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UnmuteUserPayload_unmutedUserId(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UnmutedUserID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(uuid.UUID)
+	fc.Result = res
+	return ec.marshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_UnmuteUserPayload_unmutedUserId(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "UnmuteUserPayload",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type UUID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _UpdateFriendGroupPayload_friendGroup(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.UpdateFriendGroupPayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UpdateFriendGroupPayload_friendGroup(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.FriendGroup, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.FriendGroup)
+	fc.Result = res
+	return ec.marshalNFriendGroup2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐFriendGroup(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_UpdateFriendGroupPayload_friendGroup(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "UpdateFriendGroupPayload",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_FriendGroup_id(ctx, field)
+			case "userId":
+				return ec.fieldContext_FriendGroup_userId(ctx, field)
+			case "name":
+				return ec.fieldContext_FriendGroup_name(ctx, field)
+			case "totalCount":
+				return ec.fieldContext_FriendGroup_totalCount(ctx, field)
+			case "friendUsers":
+				return ec.fieldContext_FriendGroup_friendUsers(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type FriendGroup", field.Name)
 		},
 	}
 	return fc, nil
@@ -7593,6 +8432,20 @@ func (ec *executionContext) _Node(ctx context.Context, sel ast.SelectionSet, obj
 	switch obj := (obj).(type) {
 	case nil:
 		return graphql.Null
+	case gqlmodel.FriendshipRequest:
+		return ec._FriendshipRequest(ctx, sel, &obj)
+	case *gqlmodel.FriendshipRequest:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._FriendshipRequest(ctx, sel, obj)
+	case gqlmodel.FriendGroup:
+		return ec._FriendGroup(ctx, sel, &obj)
+	case *gqlmodel.FriendGroup:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._FriendGroup(ctx, sel, obj)
 	case gqlmodel.Invitation:
 		return ec._Invitation(ctx, sel, &obj)
 	case *gqlmodel.Invitation:
@@ -7614,20 +8467,6 @@ func (ec *executionContext) _Node(ctx context.Context, sel ast.SelectionSet, obj
 			return graphql.Null
 		}
 		return ec._User(ctx, sel, obj)
-	case gqlmodel.FriendshipRequest:
-		return ec._FriendshipRequest(ctx, sel, &obj)
-	case *gqlmodel.FriendshipRequest:
-		if obj == nil {
-			return graphql.Null
-		}
-		return ec._FriendshipRequest(ctx, sel, obj)
-	case gqlmodel.FriendGroup:
-		return ec._FriendGroup(ctx, sel, &obj)
-	case *gqlmodel.FriendGroup:
-		if obj == nil {
-			return graphql.Null
-		}
-		return ec._FriendGroup(ctx, sel, obj)
 	default:
 		panic(fmt.Errorf("unexpected type %T", obj))
 	}
@@ -7636,6 +8475,230 @@ func (ec *executionContext) _Node(ctx context.Context, sel ast.SelectionSet, obj
 // endregion ************************** interface.gotpl ***************************
 
 // region    **************************** object.gotpl ****************************
+
+var acceptFriendshipRequestPayloadImplementors = []string{"AcceptFriendshipRequestPayload"}
+
+func (ec *executionContext) _AcceptFriendshipRequestPayload(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.AcceptFriendshipRequestPayload) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, acceptFriendshipRequestPayloadImplementors)
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("AcceptFriendshipRequestPayload")
+		case "acceptedFriendshipRequestId":
+
+			out.Values[i] = ec._AcceptFriendshipRequestPayload_acceptedFriendshipRequestId(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var acceptInvitationPayloadImplementors = []string{"AcceptInvitationPayload"}
+
+func (ec *executionContext) _AcceptInvitationPayload(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.AcceptInvitationPayload) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, acceptInvitationPayloadImplementors)
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("AcceptInvitationPayload")
+		case "invitation":
+
+			out.Values[i] = ec._AcceptInvitationPayload_invitation(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var cancelFriendshipRequestPayloadImplementors = []string{"CancelFriendshipRequestPayload"}
+
+func (ec *executionContext) _CancelFriendshipRequestPayload(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.CancelFriendshipRequestPayload) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, cancelFriendshipRequestPayloadImplementors)
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("CancelFriendshipRequestPayload")
+		case "canceledFriendshipRequestId":
+
+			out.Values[i] = ec._CancelFriendshipRequestPayload_canceledFriendshipRequestId(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var createFriendGroupPayloadImplementors = []string{"CreateFriendGroupPayload"}
+
+func (ec *executionContext) _CreateFriendGroupPayload(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.CreateFriendGroupPayload) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, createFriendGroupPayloadImplementors)
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("CreateFriendGroupPayload")
+		case "friendGroup":
+
+			out.Values[i] = ec._CreateFriendGroupPayload_friendGroup(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var createUserPayloadImplementors = []string{"CreateUserPayload"}
+
+func (ec *executionContext) _CreateUserPayload(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.CreateUserPayload) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, createUserPayloadImplementors)
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("CreateUserPayload")
+		case "viewer":
+
+			out.Values[i] = ec._CreateUserPayload_viewer(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var deleteFriendGroupPayloadImplementors = []string{"DeleteFriendGroupPayload"}
+
+func (ec *executionContext) _DeleteFriendGroupPayload(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.DeleteFriendGroupPayload) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, deleteFriendGroupPayloadImplementors)
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("DeleteFriendGroupPayload")
+		case "deletedFriendGroupId":
+
+			out.Values[i] = ec._DeleteFriendGroupPayload_deletedFriendGroupId(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var denyFriendshipRequestPayloadImplementors = []string{"DenyFriendshipRequestPayload"}
+
+func (ec *executionContext) _DenyFriendshipRequestPayload(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.DenyFriendshipRequestPayload) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, denyFriendshipRequestPayloadImplementors)
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("DenyFriendshipRequestPayload")
+		case "deniedFriendshipRequestId":
+
+			out.Values[i] = ec._DenyFriendshipRequestPayload_deniedFriendshipRequestId(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var denyInvitationPayloadImplementors = []string{"DenyInvitationPayload"}
+
+func (ec *executionContext) _DenyInvitationPayload(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.DenyInvitationPayload) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, denyInvitationPayloadImplementors)
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("DenyInvitationPayload")
+		case "invitation":
+
+			out.Values[i] = ec._DenyInvitationPayload_invitation(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
 
 var friendGroupImplementors = []string{"FriendGroup", "Node"}
 
@@ -7944,33 +9007,6 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "sendInvitation":
-
-			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_sendInvitation(ctx, field)
-			})
-
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "acceptInvitation":
-
-			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_acceptInvitation(ctx, field)
-			})
-
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "denyInvitation":
-
-			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_denyInvitation(ctx, field)
-			})
-
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
 		case "requestFriendship":
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
@@ -7989,19 +9025,19 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "denyFriendshipRequest":
+		case "acceptFriendshipRequest":
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_denyFriendshipRequest(ctx, field)
+				return ec._Mutation_acceptFriendshipRequest(ctx, field)
 			})
 
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "acceptFriendshipRequest":
+		case "denyFriendshipRequest":
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_acceptFriendshipRequest(ctx, field)
+				return ec._Mutation_denyFriendshipRequest(ctx, field)
 			})
 
 			if out.Values[i] == graphql.Null {
@@ -8034,6 +9070,33 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "sendInvitation":
+
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_sendInvitation(ctx, field)
+			})
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "acceptInvitation":
+
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_acceptInvitation(ctx, field)
+			})
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "denyInvitation":
+
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_denyInvitation(ctx, field)
+			})
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "muteUser":
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
@@ -8048,6 +9111,34 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_unmuteUser(ctx, field)
 			})
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var muteUserPayloadImplementors = []string{"MuteUserPayload"}
+
+func (ec *executionContext) _MuteUserPayload(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.MuteUserPayload) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, muteUserPayloadImplementors)
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("MuteUserPayload")
+		case "mutedUserId":
+
+			out.Values[i] = ec._MuteUserPayload_mutedUserId(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				invalids++
@@ -8194,29 +9285,6 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			out.Concurrently(i, func() graphql.Marshaler {
 				return rrm(innerCtx)
 			})
-		case "friends":
-			field := field
-
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_friends(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
-				return res
-			}
-
-			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
-			}
-
-			out.Concurrently(i, func() graphql.Marshaler {
-				return rrm(innerCtx)
-			})
 		case "__type":
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
@@ -8229,6 +9297,174 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				return ec._Query___schema(ctx, field)
 			})
 
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var requestFriendshipPayloadImplementors = []string{"RequestFriendshipPayload"}
+
+func (ec *executionContext) _RequestFriendshipPayload(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.RequestFriendshipPayload) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, requestFriendshipPayloadImplementors)
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("RequestFriendshipPayload")
+		case "friendShipRequest":
+
+			out.Values[i] = ec._RequestFriendshipPayload_friendShipRequest(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var sendInvitationPayloadImplementors = []string{"SendInvitationPayload"}
+
+func (ec *executionContext) _SendInvitationPayload(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.SendInvitationPayload) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, sendInvitationPayloadImplementors)
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("SendInvitationPayload")
+		case "invitation":
+
+			out.Values[i] = ec._SendInvitationPayload_invitation(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var signUpPayloadImplementors = []string{"SignUpPayload"}
+
+func (ec *executionContext) _SignUpPayload(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.SignUpPayload) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, signUpPayloadImplementors)
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("SignUpPayload")
+		case "viewer":
+
+			out.Values[i] = ec._SignUpPayload_viewer(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var switchUserPayloadImplementors = []string{"SwitchUserPayload"}
+
+func (ec *executionContext) _SwitchUserPayload(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.SwitchUserPayload) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, switchUserPayloadImplementors)
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("SwitchUserPayload")
+		case "viewer":
+
+			out.Values[i] = ec._SwitchUserPayload_viewer(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var unmuteUserPayloadImplementors = []string{"UnmuteUserPayload"}
+
+func (ec *executionContext) _UnmuteUserPayload(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.UnmuteUserPayload) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, unmuteUserPayloadImplementors)
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("UnmuteUserPayload")
+		case "unmutedUserId":
+
+			out.Values[i] = ec._UnmuteUserPayload_unmutedUserId(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var updateFriendGroupPayloadImplementors = []string{"UpdateFriendGroupPayload"}
+
+func (ec *executionContext) _UpdateFriendGroupPayload(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.UpdateFriendGroupPayload) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, updateFriendGroupPayloadImplementors)
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("UpdateFriendGroupPayload")
+		case "friendGroup":
+
+			out.Values[i] = ec._UpdateFriendGroupPayload_friendGroup(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -8946,6 +10182,34 @@ func (ec *executionContext) ___Type(ctx context.Context, sel ast.SelectionSet, o
 
 // region    ***************************** type.gotpl *****************************
 
+func (ec *executionContext) marshalNAcceptFriendshipRequestPayload2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐAcceptFriendshipRequestPayload(ctx context.Context, sel ast.SelectionSet, v gqlmodel.AcceptFriendshipRequestPayload) graphql.Marshaler {
+	return ec._AcceptFriendshipRequestPayload(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNAcceptFriendshipRequestPayload2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐAcceptFriendshipRequestPayload(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.AcceptFriendshipRequestPayload) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._AcceptFriendshipRequestPayload(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNAcceptInvitationPayload2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐAcceptInvitationPayload(ctx context.Context, sel ast.SelectionSet, v gqlmodel.AcceptInvitationPayload) graphql.Marshaler {
+	return ec._AcceptInvitationPayload(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNAcceptInvitationPayload2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐAcceptInvitationPayload(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.AcceptInvitationPayload) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._AcceptInvitationPayload(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalNBoolean2bool(ctx context.Context, v interface{}) (bool, error) {
 	res, err := graphql.UnmarshalBoolean(v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -8961,14 +10225,56 @@ func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.Se
 	return res
 }
 
+func (ec *executionContext) marshalNCancelFriendshipRequestPayload2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐCancelFriendshipRequestPayload(ctx context.Context, sel ast.SelectionSet, v gqlmodel.CancelFriendshipRequestPayload) graphql.Marshaler {
+	return ec._CancelFriendshipRequestPayload(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNCancelFriendshipRequestPayload2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐCancelFriendshipRequestPayload(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.CancelFriendshipRequestPayload) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._CancelFriendshipRequestPayload(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalNCreateFriendGroupInput2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐCreateFriendGroupInput(ctx context.Context, v interface{}) (gqlmodel.CreateFriendGroupInput, error) {
 	res, err := ec.unmarshalInputCreateFriendGroupInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) marshalNCreateFriendGroupPayload2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐCreateFriendGroupPayload(ctx context.Context, sel ast.SelectionSet, v gqlmodel.CreateFriendGroupPayload) graphql.Marshaler {
+	return ec._CreateFriendGroupPayload(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNCreateFriendGroupPayload2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐCreateFriendGroupPayload(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.CreateFriendGroupPayload) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._CreateFriendGroupPayload(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalNCreateUserInput2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐCreateUserInput(ctx context.Context, v interface{}) (gqlmodel.CreateUserInput, error) {
 	res, err := ec.unmarshalInputCreateUserInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNCreateUserPayload2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐCreateUserPayload(ctx context.Context, sel ast.SelectionSet, v gqlmodel.CreateUserPayload) graphql.Marshaler {
+	return ec._CreateUserPayload(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNCreateUserPayload2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐCreateUserPayload(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.CreateUserPayload) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._CreateUserPayload(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNCursor2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋentᚐCursor(ctx context.Context, v interface{}) (ent.Cursor, error) {
@@ -8979,6 +10285,48 @@ func (ec *executionContext) unmarshalNCursor2githubᚗcomᚋkᚑyomoᚋinvyᚋin
 
 func (ec *executionContext) marshalNCursor2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋentᚐCursor(ctx context.Context, sel ast.SelectionSet, v ent.Cursor) graphql.Marshaler {
 	return v
+}
+
+func (ec *executionContext) marshalNDeleteFriendGroupPayload2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐDeleteFriendGroupPayload(ctx context.Context, sel ast.SelectionSet, v gqlmodel.DeleteFriendGroupPayload) graphql.Marshaler {
+	return ec._DeleteFriendGroupPayload(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNDeleteFriendGroupPayload2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐDeleteFriendGroupPayload(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.DeleteFriendGroupPayload) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._DeleteFriendGroupPayload(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNDenyFriendshipRequestPayload2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐDenyFriendshipRequestPayload(ctx context.Context, sel ast.SelectionSet, v gqlmodel.DenyFriendshipRequestPayload) graphql.Marshaler {
+	return ec._DenyFriendshipRequestPayload(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNDenyFriendshipRequestPayload2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐDenyFriendshipRequestPayload(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.DenyFriendshipRequestPayload) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._DenyFriendshipRequestPayload(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNDenyInvitationPayload2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐDenyInvitationPayload(ctx context.Context, sel ast.SelectionSet, v gqlmodel.DenyInvitationPayload) graphql.Marshaler {
+	return ec._DenyInvitationPayload(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNDenyInvitationPayload2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐDenyInvitationPayload(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.DenyInvitationPayload) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._DenyInvitationPayload(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNFriendGroup2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐFriendGroup(ctx context.Context, sel ast.SelectionSet, v gqlmodel.FriendGroup) graphql.Marshaler {
@@ -9037,10 +10385,6 @@ func (ec *executionContext) marshalNFriendGroup2ᚖgithubᚗcomᚋkᚑyomoᚋinv
 		return graphql.Null
 	}
 	return ec._FriendGroup(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalNFriendshipRequest2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐFriendshipRequest(ctx context.Context, sel ast.SelectionSet, v gqlmodel.FriendshipRequest) graphql.Marshaler {
-	return ec._FriendshipRequest(ctx, sel, &v)
 }
 
 func (ec *executionContext) marshalNFriendshipRequest2ᚕᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐFriendshipRequestᚄ(ctx context.Context, sel ast.SelectionSet, v []*gqlmodel.FriendshipRequest) graphql.Marshaler {
@@ -9112,10 +10456,6 @@ func (ec *executionContext) marshalNInt2int(ctx context.Context, sel ast.Selecti
 	return res
 }
 
-func (ec *executionContext) marshalNInvitation2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐInvitation(ctx context.Context, sel ast.SelectionSet, v gqlmodel.Invitation) graphql.Marshaler {
-	return ec._Invitation(ctx, sel, &v)
-}
-
 func (ec *executionContext) marshalNInvitation2ᚕᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐInvitationᚄ(ctx context.Context, sel ast.SelectionSet, v []*gqlmodel.Invitation) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
@@ -9170,6 +10510,20 @@ func (ec *executionContext) marshalNInvitation2ᚖgithubᚗcomᚋkᚑyomoᚋinvy
 	return ec._Invitation(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalNMuteUserPayload2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐMuteUserPayload(ctx context.Context, sel ast.SelectionSet, v gqlmodel.MuteUserPayload) graphql.Marshaler {
+	return ec._MuteUserPayload(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNMuteUserPayload2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐMuteUserPayload(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.MuteUserPayload) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._MuteUserPayload(ctx, sel, v)
+}
+
 func (ec *executionContext) marshalNPageInfo2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐPageInfo(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.PageInfo) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -9180,9 +10534,51 @@ func (ec *executionContext) marshalNPageInfo2ᚖgithubᚗcomᚋkᚑyomoᚋinvy�
 	return ec._PageInfo(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalNRequestFriendshipPayload2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐRequestFriendshipPayload(ctx context.Context, sel ast.SelectionSet, v gqlmodel.RequestFriendshipPayload) graphql.Marshaler {
+	return ec._RequestFriendshipPayload(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNRequestFriendshipPayload2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐRequestFriendshipPayload(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.RequestFriendshipPayload) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._RequestFriendshipPayload(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNSendInvitationPayload2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐSendInvitationPayload(ctx context.Context, sel ast.SelectionSet, v gqlmodel.SendInvitationPayload) graphql.Marshaler {
+	return ec._SendInvitationPayload(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNSendInvitationPayload2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐSendInvitationPayload(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.SendInvitationPayload) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._SendInvitationPayload(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalNSignUpInput2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐSignUpInput(ctx context.Context, v interface{}) (gqlmodel.SignUpInput, error) {
 	res, err := ec.unmarshalInputSignUpInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNSignUpPayload2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐSignUpPayload(ctx context.Context, sel ast.SelectionSet, v gqlmodel.SignUpPayload) graphql.Marshaler {
+	return ec._SignUpPayload(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNSignUpPayload2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐSignUpPayload(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.SignUpPayload) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._SignUpPayload(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNString2string(ctx context.Context, v interface{}) (string, error) {
@@ -9198,6 +10594,20 @@ func (ec *executionContext) marshalNString2string(ctx context.Context, sel ast.S
 		}
 	}
 	return res
+}
+
+func (ec *executionContext) marshalNSwitchUserPayload2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐSwitchUserPayload(ctx context.Context, sel ast.SelectionSet, v gqlmodel.SwitchUserPayload) graphql.Marshaler {
+	return ec._SwitchUserPayload(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNSwitchUserPayload2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐSwitchUserPayload(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.SwitchUserPayload) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._SwitchUserPayload(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNTime2timeᚐTime(ctx context.Context, v interface{}) (time.Time, error) {
@@ -9262,9 +10672,37 @@ func (ec *executionContext) marshalNUUID2ᚕgithubᚗcomᚋgoogleᚋuuidᚐUUID�
 	return ret
 }
 
+func (ec *executionContext) marshalNUnmuteUserPayload2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐUnmuteUserPayload(ctx context.Context, sel ast.SelectionSet, v gqlmodel.UnmuteUserPayload) graphql.Marshaler {
+	return ec._UnmuteUserPayload(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNUnmuteUserPayload2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐUnmuteUserPayload(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.UnmuteUserPayload) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._UnmuteUserPayload(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalNUpdateFriendGroupInput2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐUpdateFriendGroupInput(ctx context.Context, v interface{}) (gqlmodel.UpdateFriendGroupInput, error) {
 	res, err := ec.unmarshalInputUpdateFriendGroupInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNUpdateFriendGroupPayload2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐUpdateFriendGroupPayload(ctx context.Context, sel ast.SelectionSet, v gqlmodel.UpdateFriendGroupPayload) graphql.Marshaler {
+	return ec._UpdateFriendGroupPayload(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNUpdateFriendGroupPayload2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐUpdateFriendGroupPayload(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.UpdateFriendGroupPayload) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._UpdateFriendGroupPayload(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNUser2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v gqlmodel.User) graphql.Marshaler {

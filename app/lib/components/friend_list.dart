@@ -41,18 +41,17 @@ class _FriendListItem extends HookConsumerWidget {
       if (friend.value.isMuted) {
         final result = await graphqlClient
             .mutate$unmuteFriend(Options$Mutation$unmuteFriend(
-          variables:
-              Variables$Mutation$unmuteFriend(muteUserId: friend.value.id),
+          variables: Variables$Mutation$unmuteFriend(userId: friend.value.id),
         ));
-        if (result.parsedData?.unmuteUser ?? false) {
+        if (result.parsedData?.unmuteUser != null) {
           friend.value = friend.value.copyWith(isMuted: false);
         }
       } else {
         final result =
             await graphqlClient.mutate$muteFriend(Options$Mutation$muteFriend(
-          variables: Variables$Mutation$muteFriend(muteUserId: friend.value.id),
+          variables: Variables$Mutation$muteFriend(userId: friend.value.id),
         ));
-        if (result.parsedData?.muteUser ?? false) {
+        if (result.parsedData?.muteUser != null) {
           friend.value = friend.value.copyWith(isMuted: true);
         }
       }

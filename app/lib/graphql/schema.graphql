@@ -9,6 +9,18 @@ directive @constraint(min: Int, max: Int, pattern: String, format: ConstraintFor
 
 directive @goField(forceResolver: Boolean, name: String) on INPUT_FIELD_DEFINITION | FIELD_DEFINITION
 
+type AcceptFriendshipRequestPayload {
+  acceptedFriendshipRequestId: UUID!
+}
+
+type AcceptInvitationPayload {
+  invitation: Invitation!
+}
+
+type CancelFriendshipRequestPayload {
+  canceledFriendshipRequestId: UUID!
+}
+
 enum ConstraintFormat {
   EMAIL
   URL
@@ -19,12 +31,32 @@ input CreateFriendGroupInput {
   friendUserIds: [UUID!]!
 }
 
+type CreateFriendGroupPayload {
+  friendGroup: FriendGroup!
+}
+
 input CreateUserInput {
   nickname: String!
   avatarUrl: String
 }
 
+type CreateUserPayload {
+  viewer: Viewer!
+}
+
 scalar Cursor
+
+type DeleteFriendGroupPayload {
+  deletedFriendGroupId: UUID!
+}
+
+type DenyFriendshipRequestPayload {
+  deniedFriendshipRequestId: UUID!
+}
+
+type DenyInvitationPayload {
+  invitation: Invitation!
+}
 
 type FriendGroup implements Node {
   id: UUID!
@@ -55,21 +87,25 @@ type Invitation implements Node {
 }
 
 type Mutation {
-  signUp(input: SignUpInput!): Viewer!
-  createUser(input: CreateUserInput!): Viewer!
-  switchUser(userId: UUID!): Viewer!
-  sendInvitation(input: SendInvitationInput): Invitation!
-  acceptInvitation(invitationId: UUID!): Boolean!
-  denyInvitation(invitationId: UUID!): Boolean!
-  requestFriendship(friendUserId: UUID!): FriendshipRequest!
-  cancelFriendshipRequest(friendshipRequestId: UUID!): Boolean!
-  denyFriendshipRequest(friendshipRequestId: UUID!): Boolean!
-  acceptFriendshipRequest(friendshipRequestId: UUID!): Boolean!
-  createFriendGroup(input: CreateFriendGroupInput!): FriendGroup!
-  updateFriendGroup(input: UpdateFriendGroupInput!): FriendGroup!
-  deleteFriendGroup(friendGroupId: UUID!): Boolean!
-  muteUser(muteUserId: UUID!): Boolean!
-  unmuteUser(muteUserId: UUID!): Boolean!
+  signUp(input: SignUpInput!): SignUpPayload!
+  createUser(input: CreateUserInput!): CreateUserPayload!
+  switchUser(userId: UUID!): SwitchUserPayload!
+  requestFriendship(friendUserId: UUID!): RequestFriendshipPayload!
+  cancelFriendshipRequest(friendshipRequestId: UUID!): CancelFriendshipRequestPayload!
+  acceptFriendshipRequest(friendshipRequestId: UUID!): AcceptFriendshipRequestPayload!
+  denyFriendshipRequest(friendshipRequestId: UUID!): DenyFriendshipRequestPayload!
+  createFriendGroup(input: CreateFriendGroupInput!): CreateFriendGroupPayload!
+  updateFriendGroup(input: UpdateFriendGroupInput!): UpdateFriendGroupPayload!
+  deleteFriendGroup(friendGroupId: UUID!): DeleteFriendGroupPayload!
+  sendInvitation(input: SendInvitationInput): SendInvitationPayload!
+  acceptInvitation(invitationId: UUID!): AcceptInvitationPayload!
+  denyInvitation(invitationId: UUID!): DenyInvitationPayload!
+  muteUser(userId: UUID!): MuteUserPayload!
+  unmuteUser(userId: UUID!): UnmuteUserPayload!
+}
+
+type MuteUserPayload {
+  mutedUserId: UUID!
 }
 
 interface Node {
@@ -89,9 +125,10 @@ type Query {
 
   """fetch user by screen id"""
   userByScreenId(screenId: String!): User!
+}
 
-  """fetch friends of the logged in user"""
-  friends(after: Cursor, first: Int, before: Cursor, last: Int): UserConnection!
+type RequestFriendshipPayload {
+  friendShipRequest: FriendshipRequest!
 }
 
 input SendInvitationInput {
@@ -103,18 +140,38 @@ input SendInvitationInput {
   comment: String!
 }
 
+type SendInvitationPayload {
+  invitation: Invitation!
+}
+
 input SignUpInput {
   email: String
   nickname: String!
   avatarUrl: String
 }
 
+type SignUpPayload {
+  viewer: Viewer!
+}
+
+type SwitchUserPayload {
+  viewer: Viewer!
+}
+
 scalar Time
+
+type UnmuteUserPayload {
+  unmutedUserId: UUID!
+}
 
 input UpdateFriendGroupInput {
   id: UUID!
   name: String!
   friendUserIds: [UUID!]!
+}
+
+type UpdateFriendGroupPayload {
+  friendGroup: FriendGroup!
 }
 
 """

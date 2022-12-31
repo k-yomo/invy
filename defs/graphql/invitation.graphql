@@ -1,7 +1,7 @@
 extend type Mutation {
-    sendInvitation(input: SendInvitationInput): Invitation! @authRequired
-    acceptInvitation(invitationId: UUID!): Boolean! @authRequired
-    denyInvitation(invitationId: UUID!): Boolean! @authRequired
+    sendInvitation(input: SendInvitationInput): SendInvitationPayload! @authRequired
+    acceptInvitation(invitationId: UUID!): AcceptInvitationPayload! @authRequired
+    denyInvitation(invitationId: UUID!): DenyInvitationPayload! @authRequired
 }
 
 type Invitation implements Node {
@@ -23,4 +23,15 @@ input SendInvitationInput {
     startsAt: Time!
     location: String!
     comment: String!
+}
+type SendInvitationPayload {
+    invitation: Invitation!
+}
+
+type AcceptInvitationPayload {
+    invitation: Invitation!
+}
+
+type DenyInvitationPayload {
+    invitation: Invitation!
 }

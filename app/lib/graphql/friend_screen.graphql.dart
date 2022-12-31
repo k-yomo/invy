@@ -1184,1060 +1184,6 @@ class _CopyWithStubImpl$Query$friendScreenViewer$viewer$friends$pageInfo<TRes>
       _res;
 }
 
-class Variables$Query$friendScreenFriends {
-  factory Variables$Query$friendScreenFriends({
-    String? after,
-    int? first,
-  }) =>
-      Variables$Query$friendScreenFriends._({
-        if (after != null) r'after': after,
-        if (first != null) r'first': first,
-      });
-
-  Variables$Query$friendScreenFriends._(this._$data);
-
-  factory Variables$Query$friendScreenFriends.fromJson(
-      Map<String, dynamic> data) {
-    final result$data = <String, dynamic>{};
-    if (data.containsKey('after')) {
-      final l$after = data['after'];
-      result$data['after'] = (l$after as String?);
-    }
-    if (data.containsKey('first')) {
-      final l$first = data['first'];
-      result$data['first'] = (l$first as int?);
-    }
-    return Variables$Query$friendScreenFriends._(result$data);
-  }
-
-  Map<String, dynamic> _$data;
-
-  String? get after => (_$data['after'] as String?);
-  int? get first => (_$data['first'] as int?);
-  Map<String, dynamic> toJson() {
-    final result$data = <String, dynamic>{};
-    if (_$data.containsKey('after')) {
-      final l$after = after;
-      result$data['after'] = l$after;
-    }
-    if (_$data.containsKey('first')) {
-      final l$first = first;
-      result$data['first'] = l$first;
-    }
-    return result$data;
-  }
-
-  CopyWith$Variables$Query$friendScreenFriends<
-          Variables$Query$friendScreenFriends>
-      get copyWith => CopyWith$Variables$Query$friendScreenFriends(
-            this,
-            (i) => i,
-          );
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) {
-      return true;
-    }
-    if (!(other is Variables$Query$friendScreenFriends) ||
-        runtimeType != other.runtimeType) {
-      return false;
-    }
-    final l$after = after;
-    final lOther$after = other.after;
-    if (_$data.containsKey('after') != other._$data.containsKey('after')) {
-      return false;
-    }
-    if (l$after != lOther$after) {
-      return false;
-    }
-    final l$first = first;
-    final lOther$first = other.first;
-    if (_$data.containsKey('first') != other._$data.containsKey('first')) {
-      return false;
-    }
-    if (l$first != lOther$first) {
-      return false;
-    }
-    return true;
-  }
-
-  @override
-  int get hashCode {
-    final l$after = after;
-    final l$first = first;
-    return Object.hashAll([
-      _$data.containsKey('after') ? l$after : const {},
-      _$data.containsKey('first') ? l$first : const {},
-    ]);
-  }
-}
-
-abstract class CopyWith$Variables$Query$friendScreenFriends<TRes> {
-  factory CopyWith$Variables$Query$friendScreenFriends(
-    Variables$Query$friendScreenFriends instance,
-    TRes Function(Variables$Query$friendScreenFriends) then,
-  ) = _CopyWithImpl$Variables$Query$friendScreenFriends;
-
-  factory CopyWith$Variables$Query$friendScreenFriends.stub(TRes res) =
-      _CopyWithStubImpl$Variables$Query$friendScreenFriends;
-
-  TRes call({
-    String? after,
-    int? first,
-  });
-}
-
-class _CopyWithImpl$Variables$Query$friendScreenFriends<TRes>
-    implements CopyWith$Variables$Query$friendScreenFriends<TRes> {
-  _CopyWithImpl$Variables$Query$friendScreenFriends(
-    this._instance,
-    this._then,
-  );
-
-  final Variables$Query$friendScreenFriends _instance;
-
-  final TRes Function(Variables$Query$friendScreenFriends) _then;
-
-  static const _undefined = {};
-
-  TRes call({
-    Object? after = _undefined,
-    Object? first = _undefined,
-  }) =>
-      _then(Variables$Query$friendScreenFriends._({
-        ..._instance._$data,
-        if (after != _undefined) 'after': (after as String?),
-        if (first != _undefined) 'first': (first as int?),
-      }));
-}
-
-class _CopyWithStubImpl$Variables$Query$friendScreenFriends<TRes>
-    implements CopyWith$Variables$Query$friendScreenFriends<TRes> {
-  _CopyWithStubImpl$Variables$Query$friendScreenFriends(this._res);
-
-  TRes _res;
-
-  call({
-    String? after,
-    int? first,
-  }) =>
-      _res;
-}
-
-class Query$friendScreenFriends {
-  Query$friendScreenFriends({
-    required this.friends,
-    required this.$__typename,
-  });
-
-  factory Query$friendScreenFriends.fromJson(Map<String, dynamic> json) {
-    final l$friends = json['friends'];
-    final l$$__typename = json['__typename'];
-    return Query$friendScreenFriends(
-      friends: Query$friendScreenFriends$friends.fromJson(
-          (l$friends as Map<String, dynamic>)),
-      $__typename: (l$$__typename as String),
-    );
-  }
-
-  final Query$friendScreenFriends$friends friends;
-
-  final String $__typename;
-
-  Map<String, dynamic> toJson() {
-    final _resultData = <String, dynamic>{};
-    final l$friends = friends;
-    _resultData['friends'] = l$friends.toJson();
-    final l$$__typename = $__typename;
-    _resultData['__typename'] = l$$__typename;
-    return _resultData;
-  }
-
-  @override
-  int get hashCode {
-    final l$friends = friends;
-    final l$$__typename = $__typename;
-    return Object.hashAll([
-      l$friends,
-      l$$__typename,
-    ]);
-  }
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) {
-      return true;
-    }
-    if (!(other is Query$friendScreenFriends) ||
-        runtimeType != other.runtimeType) {
-      return false;
-    }
-    final l$friends = friends;
-    final lOther$friends = other.friends;
-    if (l$friends != lOther$friends) {
-      return false;
-    }
-    final l$$__typename = $__typename;
-    final lOther$$__typename = other.$__typename;
-    if (l$$__typename != lOther$$__typename) {
-      return false;
-    }
-    return true;
-  }
-}
-
-extension UtilityExtension$Query$friendScreenFriends
-    on Query$friendScreenFriends {
-  CopyWith$Query$friendScreenFriends<Query$friendScreenFriends> get copyWith =>
-      CopyWith$Query$friendScreenFriends(
-        this,
-        (i) => i,
-      );
-}
-
-abstract class CopyWith$Query$friendScreenFriends<TRes> {
-  factory CopyWith$Query$friendScreenFriends(
-    Query$friendScreenFriends instance,
-    TRes Function(Query$friendScreenFriends) then,
-  ) = _CopyWithImpl$Query$friendScreenFriends;
-
-  factory CopyWith$Query$friendScreenFriends.stub(TRes res) =
-      _CopyWithStubImpl$Query$friendScreenFriends;
-
-  TRes call({
-    Query$friendScreenFriends$friends? friends,
-    String? $__typename,
-  });
-  CopyWith$Query$friendScreenFriends$friends<TRes> get friends;
-}
-
-class _CopyWithImpl$Query$friendScreenFriends<TRes>
-    implements CopyWith$Query$friendScreenFriends<TRes> {
-  _CopyWithImpl$Query$friendScreenFriends(
-    this._instance,
-    this._then,
-  );
-
-  final Query$friendScreenFriends _instance;
-
-  final TRes Function(Query$friendScreenFriends) _then;
-
-  static const _undefined = {};
-
-  TRes call({
-    Object? friends = _undefined,
-    Object? $__typename = _undefined,
-  }) =>
-      _then(Query$friendScreenFriends(
-        friends: friends == _undefined || friends == null
-            ? _instance.friends
-            : (friends as Query$friendScreenFriends$friends),
-        $__typename: $__typename == _undefined || $__typename == null
-            ? _instance.$__typename
-            : ($__typename as String),
-      ));
-  CopyWith$Query$friendScreenFriends$friends<TRes> get friends {
-    final local$friends = _instance.friends;
-    return CopyWith$Query$friendScreenFriends$friends(
-        local$friends, (e) => call(friends: e));
-  }
-}
-
-class _CopyWithStubImpl$Query$friendScreenFriends<TRes>
-    implements CopyWith$Query$friendScreenFriends<TRes> {
-  _CopyWithStubImpl$Query$friendScreenFriends(this._res);
-
-  TRes _res;
-
-  call({
-    Query$friendScreenFriends$friends? friends,
-    String? $__typename,
-  }) =>
-      _res;
-  CopyWith$Query$friendScreenFriends$friends<TRes> get friends =>
-      CopyWith$Query$friendScreenFriends$friends.stub(_res);
-}
-
-const documentNodeQueryfriendScreenFriends = DocumentNode(definitions: [
-  OperationDefinitionNode(
-    type: OperationType.query,
-    name: NameNode(value: 'friendScreenFriends'),
-    variableDefinitions: [
-      VariableDefinitionNode(
-        variable: VariableNode(name: NameNode(value: 'after')),
-        type: NamedTypeNode(
-          name: NameNode(value: 'Cursor'),
-          isNonNull: false,
-        ),
-        defaultValue: DefaultValueNode(value: null),
-        directives: [],
-      ),
-      VariableDefinitionNode(
-        variable: VariableNode(name: NameNode(value: 'first')),
-        type: NamedTypeNode(
-          name: NameNode(value: 'Int'),
-          isNonNull: false,
-        ),
-        defaultValue: DefaultValueNode(value: null),
-        directives: [],
-      ),
-    ],
-    directives: [],
-    selectionSet: SelectionSetNode(selections: [
-      FieldNode(
-        name: NameNode(value: 'friends'),
-        alias: null,
-        arguments: [
-          ArgumentNode(
-            name: NameNode(value: 'after'),
-            value: VariableNode(name: NameNode(value: 'after')),
-          ),
-          ArgumentNode(
-            name: NameNode(value: 'first'),
-            value: VariableNode(name: NameNode(value: 'first')),
-          ),
-        ],
-        directives: [],
-        selectionSet: SelectionSetNode(selections: [
-          FieldNode(
-            name: NameNode(value: 'edges'),
-            alias: null,
-            arguments: [],
-            directives: [],
-            selectionSet: SelectionSetNode(selections: [
-              FieldNode(
-                name: NameNode(value: 'node'),
-                alias: null,
-                arguments: [],
-                directives: [],
-                selectionSet: SelectionSetNode(selections: [
-                  FragmentSpreadNode(
-                    name: NameNode(value: 'friendListItemFragment'),
-                    directives: [],
-                  ),
-                  FieldNode(
-                    name: NameNode(value: '__typename'),
-                    alias: null,
-                    arguments: [],
-                    directives: [],
-                    selectionSet: null,
-                  ),
-                ]),
-              ),
-              FieldNode(
-                name: NameNode(value: '__typename'),
-                alias: null,
-                arguments: [],
-                directives: [],
-                selectionSet: null,
-              ),
-            ]),
-          ),
-          FieldNode(
-            name: NameNode(value: 'pageInfo'),
-            alias: null,
-            arguments: [],
-            directives: [],
-            selectionSet: SelectionSetNode(selections: [
-              FieldNode(
-                name: NameNode(value: 'startCursor'),
-                alias: null,
-                arguments: [],
-                directives: [],
-                selectionSet: null,
-              ),
-              FieldNode(
-                name: NameNode(value: 'endCursor'),
-                alias: null,
-                arguments: [],
-                directives: [],
-                selectionSet: null,
-              ),
-              FieldNode(
-                name: NameNode(value: 'hasNextPage'),
-                alias: null,
-                arguments: [],
-                directives: [],
-                selectionSet: null,
-              ),
-              FieldNode(
-                name: NameNode(value: 'hasPreviousPage'),
-                alias: null,
-                arguments: [],
-                directives: [],
-                selectionSet: null,
-              ),
-              FieldNode(
-                name: NameNode(value: '__typename'),
-                alias: null,
-                arguments: [],
-                directives: [],
-                selectionSet: null,
-              ),
-            ]),
-          ),
-          FieldNode(
-            name: NameNode(value: '__typename'),
-            alias: null,
-            arguments: [],
-            directives: [],
-            selectionSet: null,
-          ),
-        ]),
-      ),
-      FieldNode(
-        name: NameNode(value: '__typename'),
-        alias: null,
-        arguments: [],
-        directives: [],
-        selectionSet: null,
-      ),
-    ]),
-  ),
-  fragmentDefinitionfriendListItemFragment,
-]);
-Query$friendScreenFriends _parserFn$Query$friendScreenFriends(
-        Map<String, dynamic> data) =>
-    Query$friendScreenFriends.fromJson(data);
-
-class Options$Query$friendScreenFriends
-    extends graphql.QueryOptions<Query$friendScreenFriends> {
-  Options$Query$friendScreenFriends({
-    String? operationName,
-    Variables$Query$friendScreenFriends? variables,
-    graphql.FetchPolicy? fetchPolicy,
-    graphql.ErrorPolicy? errorPolicy,
-    graphql.CacheRereadPolicy? cacheRereadPolicy,
-    Object? optimisticResult,
-    Duration? pollInterval,
-    graphql.Context? context,
-  }) : super(
-          variables: variables?.toJson() ?? {},
-          operationName: operationName,
-          fetchPolicy: fetchPolicy,
-          errorPolicy: errorPolicy,
-          cacheRereadPolicy: cacheRereadPolicy,
-          optimisticResult: optimisticResult,
-          pollInterval: pollInterval,
-          context: context,
-          document: documentNodeQueryfriendScreenFriends,
-          parserFn: _parserFn$Query$friendScreenFriends,
-        );
-}
-
-class WatchOptions$Query$friendScreenFriends
-    extends graphql.WatchQueryOptions<Query$friendScreenFriends> {
-  WatchOptions$Query$friendScreenFriends({
-    String? operationName,
-    Variables$Query$friendScreenFriends? variables,
-    graphql.FetchPolicy? fetchPolicy,
-    graphql.ErrorPolicy? errorPolicy,
-    graphql.CacheRereadPolicy? cacheRereadPolicy,
-    Object? optimisticResult,
-    graphql.Context? context,
-    Duration? pollInterval,
-    bool? eagerlyFetchResults,
-    bool carryForwardDataOnException = true,
-    bool fetchResults = false,
-  }) : super(
-          variables: variables?.toJson() ?? {},
-          operationName: operationName,
-          fetchPolicy: fetchPolicy,
-          errorPolicy: errorPolicy,
-          cacheRereadPolicy: cacheRereadPolicy,
-          optimisticResult: optimisticResult,
-          context: context,
-          document: documentNodeQueryfriendScreenFriends,
-          pollInterval: pollInterval,
-          eagerlyFetchResults: eagerlyFetchResults,
-          carryForwardDataOnException: carryForwardDataOnException,
-          fetchResults: fetchResults,
-          parserFn: _parserFn$Query$friendScreenFriends,
-        );
-}
-
-class FetchMoreOptions$Query$friendScreenFriends
-    extends graphql.FetchMoreOptions {
-  FetchMoreOptions$Query$friendScreenFriends({
-    required graphql.UpdateQuery updateQuery,
-    Variables$Query$friendScreenFriends? variables,
-  }) : super(
-          updateQuery: updateQuery,
-          variables: variables?.toJson() ?? {},
-          document: documentNodeQueryfriendScreenFriends,
-        );
-}
-
-extension ClientExtension$Query$friendScreenFriends on graphql.GraphQLClient {
-  Future<graphql.QueryResult<Query$friendScreenFriends>>
-      query$friendScreenFriends(
-              [Options$Query$friendScreenFriends? options]) async =>
-          await this.query(options ?? Options$Query$friendScreenFriends());
-  graphql.ObservableQuery<Query$friendScreenFriends>
-      watchQuery$friendScreenFriends(
-              [WatchOptions$Query$friendScreenFriends? options]) =>
-          this.watchQuery(options ?? WatchOptions$Query$friendScreenFriends());
-  void writeQuery$friendScreenFriends({
-    required Query$friendScreenFriends data,
-    Variables$Query$friendScreenFriends? variables,
-    bool broadcast = true,
-  }) =>
-      this.writeQuery(
-        graphql.Request(
-          operation:
-              graphql.Operation(document: documentNodeQueryfriendScreenFriends),
-          variables: variables?.toJson() ?? const {},
-        ),
-        data: data.toJson(),
-        broadcast: broadcast,
-      );
-  Query$friendScreenFriends? readQuery$friendScreenFriends({
-    Variables$Query$friendScreenFriends? variables,
-    bool optimistic = true,
-  }) {
-    final result = this.readQuery(
-      graphql.Request(
-        operation:
-            graphql.Operation(document: documentNodeQueryfriendScreenFriends),
-        variables: variables?.toJson() ?? const {},
-      ),
-      optimistic: optimistic,
-    );
-    return result == null ? null : Query$friendScreenFriends.fromJson(result);
-  }
-}
-
-graphql_flutter
-    .QueryHookResult<Query$friendScreenFriends> useQuery$friendScreenFriends(
-        [Options$Query$friendScreenFriends? options]) =>
-    graphql_flutter.useQuery(options ?? Options$Query$friendScreenFriends());
-graphql.ObservableQuery<Query$friendScreenFriends>
-    useWatchQuery$friendScreenFriends(
-            [WatchOptions$Query$friendScreenFriends? options]) =>
-        graphql_flutter
-            .useWatchQuery(options ?? WatchOptions$Query$friendScreenFriends());
-
-class Query$friendScreenFriends$Widget
-    extends graphql_flutter.Query<Query$friendScreenFriends> {
-  Query$friendScreenFriends$Widget({
-    widgets.Key? key,
-    Options$Query$friendScreenFriends? options,
-    required graphql_flutter.QueryBuilder<Query$friendScreenFriends> builder,
-  }) : super(
-          key: key,
-          options: options ?? Options$Query$friendScreenFriends(),
-          builder: builder,
-        );
-}
-
-class Query$friendScreenFriends$friends {
-  Query$friendScreenFriends$friends({
-    required this.edges,
-    required this.pageInfo,
-    required this.$__typename,
-  });
-
-  factory Query$friendScreenFriends$friends.fromJson(
-      Map<String, dynamic> json) {
-    final l$edges = json['edges'];
-    final l$pageInfo = json['pageInfo'];
-    final l$$__typename = json['__typename'];
-    return Query$friendScreenFriends$friends(
-      edges: (l$edges as List<dynamic>)
-          .map((e) => Query$friendScreenFriends$friends$edges.fromJson(
-              (e as Map<String, dynamic>)))
-          .toList(),
-      pageInfo: Query$friendScreenFriends$friends$pageInfo.fromJson(
-          (l$pageInfo as Map<String, dynamic>)),
-      $__typename: (l$$__typename as String),
-    );
-  }
-
-  final List<Query$friendScreenFriends$friends$edges> edges;
-
-  final Query$friendScreenFriends$friends$pageInfo pageInfo;
-
-  final String $__typename;
-
-  Map<String, dynamic> toJson() {
-    final _resultData = <String, dynamic>{};
-    final l$edges = edges;
-    _resultData['edges'] = l$edges.map((e) => e.toJson()).toList();
-    final l$pageInfo = pageInfo;
-    _resultData['pageInfo'] = l$pageInfo.toJson();
-    final l$$__typename = $__typename;
-    _resultData['__typename'] = l$$__typename;
-    return _resultData;
-  }
-
-  @override
-  int get hashCode {
-    final l$edges = edges;
-    final l$pageInfo = pageInfo;
-    final l$$__typename = $__typename;
-    return Object.hashAll([
-      Object.hashAll(l$edges.map((v) => v)),
-      l$pageInfo,
-      l$$__typename,
-    ]);
-  }
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) {
-      return true;
-    }
-    if (!(other is Query$friendScreenFriends$friends) ||
-        runtimeType != other.runtimeType) {
-      return false;
-    }
-    final l$edges = edges;
-    final lOther$edges = other.edges;
-    if (l$edges.length != lOther$edges.length) {
-      return false;
-    }
-    for (int i = 0; i < l$edges.length; i++) {
-      final l$edges$entry = l$edges[i];
-      final lOther$edges$entry = lOther$edges[i];
-      if (l$edges$entry != lOther$edges$entry) {
-        return false;
-      }
-    }
-    final l$pageInfo = pageInfo;
-    final lOther$pageInfo = other.pageInfo;
-    if (l$pageInfo != lOther$pageInfo) {
-      return false;
-    }
-    final l$$__typename = $__typename;
-    final lOther$$__typename = other.$__typename;
-    if (l$$__typename != lOther$$__typename) {
-      return false;
-    }
-    return true;
-  }
-}
-
-extension UtilityExtension$Query$friendScreenFriends$friends
-    on Query$friendScreenFriends$friends {
-  CopyWith$Query$friendScreenFriends$friends<Query$friendScreenFriends$friends>
-      get copyWith => CopyWith$Query$friendScreenFriends$friends(
-            this,
-            (i) => i,
-          );
-}
-
-abstract class CopyWith$Query$friendScreenFriends$friends<TRes> {
-  factory CopyWith$Query$friendScreenFriends$friends(
-    Query$friendScreenFriends$friends instance,
-    TRes Function(Query$friendScreenFriends$friends) then,
-  ) = _CopyWithImpl$Query$friendScreenFriends$friends;
-
-  factory CopyWith$Query$friendScreenFriends$friends.stub(TRes res) =
-      _CopyWithStubImpl$Query$friendScreenFriends$friends;
-
-  TRes call({
-    List<Query$friendScreenFriends$friends$edges>? edges,
-    Query$friendScreenFriends$friends$pageInfo? pageInfo,
-    String? $__typename,
-  });
-  TRes edges(
-      Iterable<Query$friendScreenFriends$friends$edges> Function(
-              Iterable<
-                  CopyWith$Query$friendScreenFriends$friends$edges<
-                      Query$friendScreenFriends$friends$edges>>)
-          _fn);
-  CopyWith$Query$friendScreenFriends$friends$pageInfo<TRes> get pageInfo;
-}
-
-class _CopyWithImpl$Query$friendScreenFriends$friends<TRes>
-    implements CopyWith$Query$friendScreenFriends$friends<TRes> {
-  _CopyWithImpl$Query$friendScreenFriends$friends(
-    this._instance,
-    this._then,
-  );
-
-  final Query$friendScreenFriends$friends _instance;
-
-  final TRes Function(Query$friendScreenFriends$friends) _then;
-
-  static const _undefined = {};
-
-  TRes call({
-    Object? edges = _undefined,
-    Object? pageInfo = _undefined,
-    Object? $__typename = _undefined,
-  }) =>
-      _then(Query$friendScreenFriends$friends(
-        edges: edges == _undefined || edges == null
-            ? _instance.edges
-            : (edges as List<Query$friendScreenFriends$friends$edges>),
-        pageInfo: pageInfo == _undefined || pageInfo == null
-            ? _instance.pageInfo
-            : (pageInfo as Query$friendScreenFriends$friends$pageInfo),
-        $__typename: $__typename == _undefined || $__typename == null
-            ? _instance.$__typename
-            : ($__typename as String),
-      ));
-  TRes edges(
-          Iterable<Query$friendScreenFriends$friends$edges> Function(
-                  Iterable<
-                      CopyWith$Query$friendScreenFriends$friends$edges<
-                          Query$friendScreenFriends$friends$edges>>)
-              _fn) =>
-      call(
-          edges: _fn(_instance.edges
-              .map((e) => CopyWith$Query$friendScreenFriends$friends$edges(
-                    e,
-                    (i) => i,
-                  ))).toList());
-  CopyWith$Query$friendScreenFriends$friends$pageInfo<TRes> get pageInfo {
-    final local$pageInfo = _instance.pageInfo;
-    return CopyWith$Query$friendScreenFriends$friends$pageInfo(
-        local$pageInfo, (e) => call(pageInfo: e));
-  }
-}
-
-class _CopyWithStubImpl$Query$friendScreenFriends$friends<TRes>
-    implements CopyWith$Query$friendScreenFriends$friends<TRes> {
-  _CopyWithStubImpl$Query$friendScreenFriends$friends(this._res);
-
-  TRes _res;
-
-  call({
-    List<Query$friendScreenFriends$friends$edges>? edges,
-    Query$friendScreenFriends$friends$pageInfo? pageInfo,
-    String? $__typename,
-  }) =>
-      _res;
-  edges(_fn) => _res;
-  CopyWith$Query$friendScreenFriends$friends$pageInfo<TRes> get pageInfo =>
-      CopyWith$Query$friendScreenFriends$friends$pageInfo.stub(_res);
-}
-
-class Query$friendScreenFriends$friends$edges {
-  Query$friendScreenFriends$friends$edges({
-    required this.node,
-    required this.$__typename,
-  });
-
-  factory Query$friendScreenFriends$friends$edges.fromJson(
-      Map<String, dynamic> json) {
-    final l$node = json['node'];
-    final l$$__typename = json['__typename'];
-    return Query$friendScreenFriends$friends$edges(
-      node: Fragment$friendListItemFragment.fromJson(
-          (l$node as Map<String, dynamic>)),
-      $__typename: (l$$__typename as String),
-    );
-  }
-
-  final Fragment$friendListItemFragment node;
-
-  final String $__typename;
-
-  Map<String, dynamic> toJson() {
-    final _resultData = <String, dynamic>{};
-    final l$node = node;
-    _resultData['node'] = l$node.toJson();
-    final l$$__typename = $__typename;
-    _resultData['__typename'] = l$$__typename;
-    return _resultData;
-  }
-
-  @override
-  int get hashCode {
-    final l$node = node;
-    final l$$__typename = $__typename;
-    return Object.hashAll([
-      l$node,
-      l$$__typename,
-    ]);
-  }
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) {
-      return true;
-    }
-    if (!(other is Query$friendScreenFriends$friends$edges) ||
-        runtimeType != other.runtimeType) {
-      return false;
-    }
-    final l$node = node;
-    final lOther$node = other.node;
-    if (l$node != lOther$node) {
-      return false;
-    }
-    final l$$__typename = $__typename;
-    final lOther$$__typename = other.$__typename;
-    if (l$$__typename != lOther$$__typename) {
-      return false;
-    }
-    return true;
-  }
-}
-
-extension UtilityExtension$Query$friendScreenFriends$friends$edges
-    on Query$friendScreenFriends$friends$edges {
-  CopyWith$Query$friendScreenFriends$friends$edges<
-          Query$friendScreenFriends$friends$edges>
-      get copyWith => CopyWith$Query$friendScreenFriends$friends$edges(
-            this,
-            (i) => i,
-          );
-}
-
-abstract class CopyWith$Query$friendScreenFriends$friends$edges<TRes> {
-  factory CopyWith$Query$friendScreenFriends$friends$edges(
-    Query$friendScreenFriends$friends$edges instance,
-    TRes Function(Query$friendScreenFriends$friends$edges) then,
-  ) = _CopyWithImpl$Query$friendScreenFriends$friends$edges;
-
-  factory CopyWith$Query$friendScreenFriends$friends$edges.stub(TRes res) =
-      _CopyWithStubImpl$Query$friendScreenFriends$friends$edges;
-
-  TRes call({
-    Fragment$friendListItemFragment? node,
-    String? $__typename,
-  });
-  CopyWith$Fragment$friendListItemFragment<TRes> get node;
-}
-
-class _CopyWithImpl$Query$friendScreenFriends$friends$edges<TRes>
-    implements CopyWith$Query$friendScreenFriends$friends$edges<TRes> {
-  _CopyWithImpl$Query$friendScreenFriends$friends$edges(
-    this._instance,
-    this._then,
-  );
-
-  final Query$friendScreenFriends$friends$edges _instance;
-
-  final TRes Function(Query$friendScreenFriends$friends$edges) _then;
-
-  static const _undefined = {};
-
-  TRes call({
-    Object? node = _undefined,
-    Object? $__typename = _undefined,
-  }) =>
-      _then(Query$friendScreenFriends$friends$edges(
-        node: node == _undefined || node == null
-            ? _instance.node
-            : (node as Fragment$friendListItemFragment),
-        $__typename: $__typename == _undefined || $__typename == null
-            ? _instance.$__typename
-            : ($__typename as String),
-      ));
-  CopyWith$Fragment$friendListItemFragment<TRes> get node {
-    final local$node = _instance.node;
-    return CopyWith$Fragment$friendListItemFragment(
-        local$node, (e) => call(node: e));
-  }
-}
-
-class _CopyWithStubImpl$Query$friendScreenFriends$friends$edges<TRes>
-    implements CopyWith$Query$friendScreenFriends$friends$edges<TRes> {
-  _CopyWithStubImpl$Query$friendScreenFriends$friends$edges(this._res);
-
-  TRes _res;
-
-  call({
-    Fragment$friendListItemFragment? node,
-    String? $__typename,
-  }) =>
-      _res;
-  CopyWith$Fragment$friendListItemFragment<TRes> get node =>
-      CopyWith$Fragment$friendListItemFragment.stub(_res);
-}
-
-class Query$friendScreenFriends$friends$pageInfo {
-  Query$friendScreenFriends$friends$pageInfo({
-    this.startCursor,
-    this.endCursor,
-    required this.hasNextPage,
-    required this.hasPreviousPage,
-    required this.$__typename,
-  });
-
-  factory Query$friendScreenFriends$friends$pageInfo.fromJson(
-      Map<String, dynamic> json) {
-    final l$startCursor = json['startCursor'];
-    final l$endCursor = json['endCursor'];
-    final l$hasNextPage = json['hasNextPage'];
-    final l$hasPreviousPage = json['hasPreviousPage'];
-    final l$$__typename = json['__typename'];
-    return Query$friendScreenFriends$friends$pageInfo(
-      startCursor: (l$startCursor as String?),
-      endCursor: (l$endCursor as String?),
-      hasNextPage: (l$hasNextPage as bool),
-      hasPreviousPage: (l$hasPreviousPage as bool),
-      $__typename: (l$$__typename as String),
-    );
-  }
-
-  final String? startCursor;
-
-  final String? endCursor;
-
-  final bool hasNextPage;
-
-  final bool hasPreviousPage;
-
-  final String $__typename;
-
-  Map<String, dynamic> toJson() {
-    final _resultData = <String, dynamic>{};
-    final l$startCursor = startCursor;
-    _resultData['startCursor'] = l$startCursor;
-    final l$endCursor = endCursor;
-    _resultData['endCursor'] = l$endCursor;
-    final l$hasNextPage = hasNextPage;
-    _resultData['hasNextPage'] = l$hasNextPage;
-    final l$hasPreviousPage = hasPreviousPage;
-    _resultData['hasPreviousPage'] = l$hasPreviousPage;
-    final l$$__typename = $__typename;
-    _resultData['__typename'] = l$$__typename;
-    return _resultData;
-  }
-
-  @override
-  int get hashCode {
-    final l$startCursor = startCursor;
-    final l$endCursor = endCursor;
-    final l$hasNextPage = hasNextPage;
-    final l$hasPreviousPage = hasPreviousPage;
-    final l$$__typename = $__typename;
-    return Object.hashAll([
-      l$startCursor,
-      l$endCursor,
-      l$hasNextPage,
-      l$hasPreviousPage,
-      l$$__typename,
-    ]);
-  }
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) {
-      return true;
-    }
-    if (!(other is Query$friendScreenFriends$friends$pageInfo) ||
-        runtimeType != other.runtimeType) {
-      return false;
-    }
-    final l$startCursor = startCursor;
-    final lOther$startCursor = other.startCursor;
-    if (l$startCursor != lOther$startCursor) {
-      return false;
-    }
-    final l$endCursor = endCursor;
-    final lOther$endCursor = other.endCursor;
-    if (l$endCursor != lOther$endCursor) {
-      return false;
-    }
-    final l$hasNextPage = hasNextPage;
-    final lOther$hasNextPage = other.hasNextPage;
-    if (l$hasNextPage != lOther$hasNextPage) {
-      return false;
-    }
-    final l$hasPreviousPage = hasPreviousPage;
-    final lOther$hasPreviousPage = other.hasPreviousPage;
-    if (l$hasPreviousPage != lOther$hasPreviousPage) {
-      return false;
-    }
-    final l$$__typename = $__typename;
-    final lOther$$__typename = other.$__typename;
-    if (l$$__typename != lOther$$__typename) {
-      return false;
-    }
-    return true;
-  }
-}
-
-extension UtilityExtension$Query$friendScreenFriends$friends$pageInfo
-    on Query$friendScreenFriends$friends$pageInfo {
-  CopyWith$Query$friendScreenFriends$friends$pageInfo<
-          Query$friendScreenFriends$friends$pageInfo>
-      get copyWith => CopyWith$Query$friendScreenFriends$friends$pageInfo(
-            this,
-            (i) => i,
-          );
-}
-
-abstract class CopyWith$Query$friendScreenFriends$friends$pageInfo<TRes> {
-  factory CopyWith$Query$friendScreenFriends$friends$pageInfo(
-    Query$friendScreenFriends$friends$pageInfo instance,
-    TRes Function(Query$friendScreenFriends$friends$pageInfo) then,
-  ) = _CopyWithImpl$Query$friendScreenFriends$friends$pageInfo;
-
-  factory CopyWith$Query$friendScreenFriends$friends$pageInfo.stub(TRes res) =
-      _CopyWithStubImpl$Query$friendScreenFriends$friends$pageInfo;
-
-  TRes call({
-    String? startCursor,
-    String? endCursor,
-    bool? hasNextPage,
-    bool? hasPreviousPage,
-    String? $__typename,
-  });
-}
-
-class _CopyWithImpl$Query$friendScreenFriends$friends$pageInfo<TRes>
-    implements CopyWith$Query$friendScreenFriends$friends$pageInfo<TRes> {
-  _CopyWithImpl$Query$friendScreenFriends$friends$pageInfo(
-    this._instance,
-    this._then,
-  );
-
-  final Query$friendScreenFriends$friends$pageInfo _instance;
-
-  final TRes Function(Query$friendScreenFriends$friends$pageInfo) _then;
-
-  static const _undefined = {};
-
-  TRes call({
-    Object? startCursor = _undefined,
-    Object? endCursor = _undefined,
-    Object? hasNextPage = _undefined,
-    Object? hasPreviousPage = _undefined,
-    Object? $__typename = _undefined,
-  }) =>
-      _then(Query$friendScreenFriends$friends$pageInfo(
-        startCursor: startCursor == _undefined
-            ? _instance.startCursor
-            : (startCursor as String?),
-        endCursor: endCursor == _undefined
-            ? _instance.endCursor
-            : (endCursor as String?),
-        hasNextPage: hasNextPage == _undefined || hasNextPage == null
-            ? _instance.hasNextPage
-            : (hasNextPage as bool),
-        hasPreviousPage:
-            hasPreviousPage == _undefined || hasPreviousPage == null
-                ? _instance.hasPreviousPage
-                : (hasPreviousPage as bool),
-        $__typename: $__typename == _undefined || $__typename == null
-            ? _instance.$__typename
-            : ($__typename as String),
-      ));
-}
-
-class _CopyWithStubImpl$Query$friendScreenFriends$friends$pageInfo<TRes>
-    implements CopyWith$Query$friendScreenFriends$friends$pageInfo<TRes> {
-  _CopyWithStubImpl$Query$friendScreenFriends$friends$pageInfo(this._res);
-
-  TRes _res;
-
-  call({
-    String? startCursor,
-    String? endCursor,
-    bool? hasNextPage,
-    bool? hasPreviousPage,
-    String? $__typename,
-  }) =>
-      _res;
-}
-
 class Variables$Mutation$acceptFriendshipRequest {
   factory Variables$Mutation$acceptFriendshipRequest(
           {required String friendshipRequestId}) =>
@@ -2347,19 +1293,22 @@ class Mutation$acceptFriendshipRequest {
     final l$acceptFriendshipRequest = json['acceptFriendshipRequest'];
     final l$$__typename = json['__typename'];
     return Mutation$acceptFriendshipRequest(
-      acceptFriendshipRequest: (l$acceptFriendshipRequest as bool),
+      acceptFriendshipRequest:
+          Mutation$acceptFriendshipRequest$acceptFriendshipRequest.fromJson(
+              (l$acceptFriendshipRequest as Map<String, dynamic>)),
       $__typename: (l$$__typename as String),
     );
   }
 
-  final bool acceptFriendshipRequest;
+  final Mutation$acceptFriendshipRequest$acceptFriendshipRequest
+      acceptFriendshipRequest;
 
   final String $__typename;
 
   Map<String, dynamic> toJson() {
     final _resultData = <String, dynamic>{};
     final l$acceptFriendshipRequest = acceptFriendshipRequest;
-    _resultData['acceptFriendshipRequest'] = l$acceptFriendshipRequest;
+    _resultData['acceptFriendshipRequest'] = l$acceptFriendshipRequest.toJson();
     final l$$__typename = $__typename;
     _resultData['__typename'] = l$$__typename;
     return _resultData;
@@ -2417,9 +1366,12 @@ abstract class CopyWith$Mutation$acceptFriendshipRequest<TRes> {
       _CopyWithStubImpl$Mutation$acceptFriendshipRequest;
 
   TRes call({
-    bool? acceptFriendshipRequest,
+    Mutation$acceptFriendshipRequest$acceptFriendshipRequest?
+        acceptFriendshipRequest,
     String? $__typename,
   });
+  CopyWith$Mutation$acceptFriendshipRequest$acceptFriendshipRequest<TRes>
+      get acceptFriendshipRequest;
 }
 
 class _CopyWithImpl$Mutation$acceptFriendshipRequest<TRes>
@@ -2443,11 +1395,18 @@ class _CopyWithImpl$Mutation$acceptFriendshipRequest<TRes>
         acceptFriendshipRequest: acceptFriendshipRequest == _undefined ||
                 acceptFriendshipRequest == null
             ? _instance.acceptFriendshipRequest
-            : (acceptFriendshipRequest as bool),
+            : (acceptFriendshipRequest
+                as Mutation$acceptFriendshipRequest$acceptFriendshipRequest),
         $__typename: $__typename == _undefined || $__typename == null
             ? _instance.$__typename
             : ($__typename as String),
       ));
+  CopyWith$Mutation$acceptFriendshipRequest$acceptFriendshipRequest<TRes>
+      get acceptFriendshipRequest {
+    final local$acceptFriendshipRequest = _instance.acceptFriendshipRequest;
+    return CopyWith$Mutation$acceptFriendshipRequest$acceptFriendshipRequest(
+        local$acceptFriendshipRequest, (e) => call(acceptFriendshipRequest: e));
+  }
 }
 
 class _CopyWithStubImpl$Mutation$acceptFriendshipRequest<TRes>
@@ -2457,10 +1416,15 @@ class _CopyWithStubImpl$Mutation$acceptFriendshipRequest<TRes>
   TRes _res;
 
   call({
-    bool? acceptFriendshipRequest,
+    Mutation$acceptFriendshipRequest$acceptFriendshipRequest?
+        acceptFriendshipRequest,
     String? $__typename,
   }) =>
       _res;
+  CopyWith$Mutation$acceptFriendshipRequest$acceptFriendshipRequest<TRes>
+      get acceptFriendshipRequest =>
+          CopyWith$Mutation$acceptFriendshipRequest$acceptFriendshipRequest
+              .stub(_res);
 }
 
 const documentNodeMutationacceptFriendshipRequest = DocumentNode(definitions: [
@@ -2714,6 +1678,97 @@ class Mutation$acceptFriendshipRequest$Widget
         );
 }
 
+class Mutation$acceptFriendshipRequest$acceptFriendshipRequest {
+  Mutation$acceptFriendshipRequest$acceptFriendshipRequest();
+
+  factory Mutation$acceptFriendshipRequest$acceptFriendshipRequest.fromJson(
+      Map<String, dynamic> json) {
+    return Mutation$acceptFriendshipRequest$acceptFriendshipRequest();
+  }
+
+  Map<String, dynamic> toJson() {
+    final _resultData = <String, dynamic>{};
+    return _resultData;
+  }
+
+  @override
+  int get hashCode {
+    return Object.hashAll([]);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    if (!(other is Mutation$acceptFriendshipRequest$acceptFriendshipRequest) ||
+        runtimeType != other.runtimeType) {
+      return false;
+    }
+    return true;
+  }
+}
+
+extension UtilityExtension$Mutation$acceptFriendshipRequest$acceptFriendshipRequest
+    on Mutation$acceptFriendshipRequest$acceptFriendshipRequest {
+  CopyWith$Mutation$acceptFriendshipRequest$acceptFriendshipRequest<
+          Mutation$acceptFriendshipRequest$acceptFriendshipRequest>
+      get copyWith =>
+          CopyWith$Mutation$acceptFriendshipRequest$acceptFriendshipRequest(
+            this,
+            (i) => i,
+          );
+}
+
+abstract class CopyWith$Mutation$acceptFriendshipRequest$acceptFriendshipRequest<
+    TRes> {
+  factory CopyWith$Mutation$acceptFriendshipRequest$acceptFriendshipRequest(
+    Mutation$acceptFriendshipRequest$acceptFriendshipRequest instance,
+    TRes Function(Mutation$acceptFriendshipRequest$acceptFriendshipRequest)
+        then,
+  ) = _CopyWithImpl$Mutation$acceptFriendshipRequest$acceptFriendshipRequest;
+
+  factory CopyWith$Mutation$acceptFriendshipRequest$acceptFriendshipRequest.stub(
+          TRes res) =
+      _CopyWithStubImpl$Mutation$acceptFriendshipRequest$acceptFriendshipRequest;
+
+  TRes call();
+}
+
+class _CopyWithImpl$Mutation$acceptFriendshipRequest$acceptFriendshipRequest<
+        TRes>
+    implements
+        CopyWith$Mutation$acceptFriendshipRequest$acceptFriendshipRequest<
+            TRes> {
+  _CopyWithImpl$Mutation$acceptFriendshipRequest$acceptFriendshipRequest(
+    this._instance,
+    this._then,
+  );
+
+  final Mutation$acceptFriendshipRequest$acceptFriendshipRequest _instance;
+
+  final TRes Function(Mutation$acceptFriendshipRequest$acceptFriendshipRequest)
+      _then;
+
+  static const _undefined = {};
+
+  TRes call() =>
+      _then(Mutation$acceptFriendshipRequest$acceptFriendshipRequest());
+}
+
+class _CopyWithStubImpl$Mutation$acceptFriendshipRequest$acceptFriendshipRequest<
+        TRes>
+    implements
+        CopyWith$Mutation$acceptFriendshipRequest$acceptFriendshipRequest<
+            TRes> {
+  _CopyWithStubImpl$Mutation$acceptFriendshipRequest$acceptFriendshipRequest(
+      this._res);
+
+  TRes _res;
+
+  call() => _res;
+}
+
 class Variables$Mutation$denyFriendshipRequest {
   factory Variables$Mutation$denyFriendshipRequest(
           {required String friendshipRequestId}) =>
@@ -2823,19 +1878,22 @@ class Mutation$denyFriendshipRequest {
     final l$denyFriendshipRequest = json['denyFriendshipRequest'];
     final l$$__typename = json['__typename'];
     return Mutation$denyFriendshipRequest(
-      denyFriendshipRequest: (l$denyFriendshipRequest as bool),
+      denyFriendshipRequest:
+          Mutation$denyFriendshipRequest$denyFriendshipRequest.fromJson(
+              (l$denyFriendshipRequest as Map<String, dynamic>)),
       $__typename: (l$$__typename as String),
     );
   }
 
-  final bool denyFriendshipRequest;
+  final Mutation$denyFriendshipRequest$denyFriendshipRequest
+      denyFriendshipRequest;
 
   final String $__typename;
 
   Map<String, dynamic> toJson() {
     final _resultData = <String, dynamic>{};
     final l$denyFriendshipRequest = denyFriendshipRequest;
-    _resultData['denyFriendshipRequest'] = l$denyFriendshipRequest;
+    _resultData['denyFriendshipRequest'] = l$denyFriendshipRequest.toJson();
     final l$$__typename = $__typename;
     _resultData['__typename'] = l$$__typename;
     return _resultData;
@@ -2893,9 +1951,11 @@ abstract class CopyWith$Mutation$denyFriendshipRequest<TRes> {
       _CopyWithStubImpl$Mutation$denyFriendshipRequest;
 
   TRes call({
-    bool? denyFriendshipRequest,
+    Mutation$denyFriendshipRequest$denyFriendshipRequest? denyFriendshipRequest,
     String? $__typename,
   });
+  CopyWith$Mutation$denyFriendshipRequest$denyFriendshipRequest<TRes>
+      get denyFriendshipRequest;
 }
 
 class _CopyWithImpl$Mutation$denyFriendshipRequest<TRes>
@@ -2919,11 +1979,18 @@ class _CopyWithImpl$Mutation$denyFriendshipRequest<TRes>
         denyFriendshipRequest:
             denyFriendshipRequest == _undefined || denyFriendshipRequest == null
                 ? _instance.denyFriendshipRequest
-                : (denyFriendshipRequest as bool),
+                : (denyFriendshipRequest
+                    as Mutation$denyFriendshipRequest$denyFriendshipRequest),
         $__typename: $__typename == _undefined || $__typename == null
             ? _instance.$__typename
             : ($__typename as String),
       ));
+  CopyWith$Mutation$denyFriendshipRequest$denyFriendshipRequest<TRes>
+      get denyFriendshipRequest {
+    final local$denyFriendshipRequest = _instance.denyFriendshipRequest;
+    return CopyWith$Mutation$denyFriendshipRequest$denyFriendshipRequest(
+        local$denyFriendshipRequest, (e) => call(denyFriendshipRequest: e));
+  }
 }
 
 class _CopyWithStubImpl$Mutation$denyFriendshipRequest<TRes>
@@ -2933,10 +2000,14 @@ class _CopyWithStubImpl$Mutation$denyFriendshipRequest<TRes>
   TRes _res;
 
   call({
-    bool? denyFriendshipRequest,
+    Mutation$denyFriendshipRequest$denyFriendshipRequest? denyFriendshipRequest,
     String? $__typename,
   }) =>
       _res;
+  CopyWith$Mutation$denyFriendshipRequest$denyFriendshipRequest<TRes>
+      get denyFriendshipRequest =>
+          CopyWith$Mutation$denyFriendshipRequest$denyFriendshipRequest.stub(
+              _res);
 }
 
 const documentNodeMutationdenyFriendshipRequest = DocumentNode(definitions: [
@@ -3188,4 +2259,90 @@ class Mutation$denyFriendshipRequest$Widget
             result,
           ),
         );
+}
+
+class Mutation$denyFriendshipRequest$denyFriendshipRequest {
+  Mutation$denyFriendshipRequest$denyFriendshipRequest();
+
+  factory Mutation$denyFriendshipRequest$denyFriendshipRequest.fromJson(
+      Map<String, dynamic> json) {
+    return Mutation$denyFriendshipRequest$denyFriendshipRequest();
+  }
+
+  Map<String, dynamic> toJson() {
+    final _resultData = <String, dynamic>{};
+    return _resultData;
+  }
+
+  @override
+  int get hashCode {
+    return Object.hashAll([]);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    if (!(other is Mutation$denyFriendshipRequest$denyFriendshipRequest) ||
+        runtimeType != other.runtimeType) {
+      return false;
+    }
+    return true;
+  }
+}
+
+extension UtilityExtension$Mutation$denyFriendshipRequest$denyFriendshipRequest
+    on Mutation$denyFriendshipRequest$denyFriendshipRequest {
+  CopyWith$Mutation$denyFriendshipRequest$denyFriendshipRequest<
+          Mutation$denyFriendshipRequest$denyFriendshipRequest>
+      get copyWith =>
+          CopyWith$Mutation$denyFriendshipRequest$denyFriendshipRequest(
+            this,
+            (i) => i,
+          );
+}
+
+abstract class CopyWith$Mutation$denyFriendshipRequest$denyFriendshipRequest<
+    TRes> {
+  factory CopyWith$Mutation$denyFriendshipRequest$denyFriendshipRequest(
+    Mutation$denyFriendshipRequest$denyFriendshipRequest instance,
+    TRes Function(Mutation$denyFriendshipRequest$denyFriendshipRequest) then,
+  ) = _CopyWithImpl$Mutation$denyFriendshipRequest$denyFriendshipRequest;
+
+  factory CopyWith$Mutation$denyFriendshipRequest$denyFriendshipRequest.stub(
+          TRes res) =
+      _CopyWithStubImpl$Mutation$denyFriendshipRequest$denyFriendshipRequest;
+
+  TRes call();
+}
+
+class _CopyWithImpl$Mutation$denyFriendshipRequest$denyFriendshipRequest<TRes>
+    implements
+        CopyWith$Mutation$denyFriendshipRequest$denyFriendshipRequest<TRes> {
+  _CopyWithImpl$Mutation$denyFriendshipRequest$denyFriendshipRequest(
+    this._instance,
+    this._then,
+  );
+
+  final Mutation$denyFriendshipRequest$denyFriendshipRequest _instance;
+
+  final TRes Function(Mutation$denyFriendshipRequest$denyFriendshipRequest)
+      _then;
+
+  static const _undefined = {};
+
+  TRes call() => _then(Mutation$denyFriendshipRequest$denyFriendshipRequest());
+}
+
+class _CopyWithStubImpl$Mutation$denyFriendshipRequest$denyFriendshipRequest<
+        TRes>
+    implements
+        CopyWith$Mutation$denyFriendshipRequest$denyFriendshipRequest<TRes> {
+  _CopyWithStubImpl$Mutation$denyFriendshipRequest$denyFriendshipRequest(
+      this._res);
+
+  TRes _res;
+
+  call() => _res;
 }

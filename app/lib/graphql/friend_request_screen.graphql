@@ -12,6 +12,8 @@ query searchUser($userScreenId: String!) {
 
 mutation requestFriendship($userId: UUID!) {
     requestFriendship(friendUserId: $userId) {
-        id
+        friendShipRequest {
+            id
+        }
     }
 }

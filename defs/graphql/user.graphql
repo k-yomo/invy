@@ -4,22 +4,11 @@ extend type Query {
     user(userId: UUID!): User! @authRequired
     # fetch user by screen id
     userByScreenId(screenId: String!): User! @authRequired
-    # fetch friends of the logged in user
-    friends(after: Cursor, first: Int, before: Cursor, last: Int): UserConnection! @authRequired
 }
 
 extend type Mutation {
-    requestFriendship(friendUserId: UUID!): FriendshipRequest! @authRequired
-    cancelFriendshipRequest(friendshipRequestId: UUID!): Boolean! @authRequired
-    denyFriendshipRequest(friendshipRequestId: UUID!): Boolean! @authRequired
-    acceptFriendshipRequest(friendshipRequestId: UUID!): Boolean! @authRequired
-
-    createFriendGroup(input: CreateFriendGroupInput!): FriendGroup! @authRequired
-    updateFriendGroup(input: UpdateFriendGroupInput!): FriendGroup! @authRequired
-    deleteFriendGroup(friendGroupId: UUID!): Boolean! @authRequired
-
-    muteUser(muteUserId: UUID!): Boolean! @authRequired
-    unmuteUser(muteUserId: UUID!): Boolean! @authRequired
+    muteUser(userId: UUID!): MuteUserPayload! @authRequired
+    unmuteUser(userId: UUID!): UnmuteUserPayload! @authRequired
 }
 
 # Currently logged in user
@@ -68,30 +57,10 @@ type UserConnection {
     totalCount: Int!
 }
 
-type FriendshipRequest implements Node {
-    id: UUID!
-    fromUserId: UUID!
-    fromUser: User! @goField(forceResolver: true)
-    toUserId: UUID!
-    toUser: User! @goField(forceResolver: true)
-    createdAt: Time!
+type MuteUserPayload {
+    mutedUserId: UUID!
 }
 
-type FriendGroup implements Node {
-    id: UUID!
-    userId: UUID!
-    name: String!
-    totalCount: Int!
-    friendUsers: [User!]! @goField(forceResolver: true)
-}
-
-input CreateFriendGroupInput {
-    name: String! @constraint(max: 100)
-    friendUserIds: [UUID!]!
-}
-
-input UpdateFriendGroupInput {
-    id: UUID!
-    name: String! @constraint(max: 100)
-    friendUserIds: [UUID!]!
+type UnmuteUserPayload {
+    unmutedUserId: UUID!
 }

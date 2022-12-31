@@ -17,14 +17,46 @@ type Node interface {
 	GetID() uuid.UUID
 }
 
+type AcceptFriendshipRequestPayload struct {
+	AcceptedFriendshipRequestID uuid.UUID `json:"acceptedFriendshipRequestId"`
+}
+
+type AcceptInvitationPayload struct {
+	Invitation *Invitation `json:"invitation"`
+}
+
+type CancelFriendshipRequestPayload struct {
+	CanceledFriendshipRequestID uuid.UUID `json:"canceledFriendshipRequestId"`
+}
+
 type CreateFriendGroupInput struct {
 	Name          string      `json:"name"`
 	FriendUserIds []uuid.UUID `json:"friendUserIds"`
 }
 
+type CreateFriendGroupPayload struct {
+	FriendGroup *FriendGroup `json:"friendGroup"`
+}
+
 type CreateUserInput struct {
 	Nickname  string  `json:"nickname"`
 	AvatarURL *string `json:"avatarUrl"`
+}
+
+type CreateUserPayload struct {
+	Viewer *Viewer `json:"viewer"`
+}
+
+type DeleteFriendGroupPayload struct {
+	DeletedFriendGroupID uuid.UUID `json:"deletedFriendGroupId"`
+}
+
+type DenyFriendshipRequestPayload struct {
+	DeniedFriendshipRequestID uuid.UUID `json:"deniedFriendshipRequestId"`
+}
+
+type DenyInvitationPayload struct {
+	Invitation *Invitation `json:"invitation"`
 }
 
 type FriendGroup struct {
@@ -64,11 +96,19 @@ type Invitation struct {
 func (Invitation) IsNode()               {}
 func (this Invitation) GetID() uuid.UUID { return this.ID }
 
+type MuteUserPayload struct {
+	MutedUserID uuid.UUID `json:"mutedUserId"`
+}
+
 type PageInfo struct {
 	StartCursor     *ent.Cursor `json:"startCursor"`
 	EndCursor       *ent.Cursor `json:"endCursor"`
 	HasNextPage     bool        `json:"hasNextPage"`
 	HasPreviousPage bool        `json:"hasPreviousPage"`
+}
+
+type RequestFriendshipPayload struct {
+	FriendShipRequest *FriendshipRequest `json:"friendShipRequest"`
 }
 
 type SendInvitationInput struct {
@@ -80,16 +120,36 @@ type SendInvitationInput struct {
 	Comment              string      `json:"comment"`
 }
 
+type SendInvitationPayload struct {
+	Invitation *Invitation `json:"invitation"`
+}
+
 type SignUpInput struct {
 	Email     *string `json:"email"`
 	Nickname  string  `json:"nickname"`
 	AvatarURL *string `json:"avatarUrl"`
 }
 
+type SignUpPayload struct {
+	Viewer *Viewer `json:"viewer"`
+}
+
+type SwitchUserPayload struct {
+	Viewer *Viewer `json:"viewer"`
+}
+
+type UnmuteUserPayload struct {
+	UnmutedUserID uuid.UUID `json:"unmutedUserId"`
+}
+
 type UpdateFriendGroupInput struct {
 	ID            uuid.UUID   `json:"id"`
 	Name          string      `json:"name"`
 	FriendUserIds []uuid.UUID `json:"friendUserIds"`
+}
+
+type UpdateFriendGroupPayload struct {
+	FriendGroup *FriendGroup `json:"friendGroup"`
 }
 
 type User struct {

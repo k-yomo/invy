@@ -1394,32 +1394,47 @@ const documentNodeMutationsendInvitation = DocumentNode(definitions: [
         directives: [],
         selectionSet: SelectionSetNode(selections: [
           FieldNode(
-            name: NameNode(value: 'id'),
+            name: NameNode(value: 'invitation'),
             alias: null,
             arguments: [],
             directives: [],
-            selectionSet: null,
-          ),
-          FieldNode(
-            name: NameNode(value: 'location'),
-            alias: null,
-            arguments: [],
-            directives: [],
-            selectionSet: null,
-          ),
-          FieldNode(
-            name: NameNode(value: 'startsAt'),
-            alias: null,
-            arguments: [],
-            directives: [],
-            selectionSet: null,
-          ),
-          FieldNode(
-            name: NameNode(value: 'expiresAt'),
-            alias: null,
-            arguments: [],
-            directives: [],
-            selectionSet: null,
+            selectionSet: SelectionSetNode(selections: [
+              FieldNode(
+                name: NameNode(value: 'id'),
+                alias: null,
+                arguments: [],
+                directives: [],
+                selectionSet: null,
+              ),
+              FieldNode(
+                name: NameNode(value: 'location'),
+                alias: null,
+                arguments: [],
+                directives: [],
+                selectionSet: null,
+              ),
+              FieldNode(
+                name: NameNode(value: 'startsAt'),
+                alias: null,
+                arguments: [],
+                directives: [],
+                selectionSet: null,
+              ),
+              FieldNode(
+                name: NameNode(value: 'expiresAt'),
+                alias: null,
+                arguments: [],
+                directives: [],
+                selectionSet: null,
+              ),
+              FieldNode(
+                name: NameNode(value: '__typename'),
+                alias: null,
+                arguments: [],
+                directives: [],
+                selectionSet: null,
+              ),
+            ]),
           ),
           FieldNode(
             name: NameNode(value: '__typename'),
@@ -1648,6 +1663,145 @@ class Mutation$sendInvitation$Widget
 
 class Mutation$sendInvitation$sendInvitation {
   Mutation$sendInvitation$sendInvitation({
+    required this.invitation,
+    required this.$__typename,
+  });
+
+  factory Mutation$sendInvitation$sendInvitation.fromJson(
+      Map<String, dynamic> json) {
+    final l$invitation = json['invitation'];
+    final l$$__typename = json['__typename'];
+    return Mutation$sendInvitation$sendInvitation(
+      invitation: Mutation$sendInvitation$sendInvitation$invitation.fromJson(
+          (l$invitation as Map<String, dynamic>)),
+      $__typename: (l$$__typename as String),
+    );
+  }
+
+  final Mutation$sendInvitation$sendInvitation$invitation invitation;
+
+  final String $__typename;
+
+  Map<String, dynamic> toJson() {
+    final _resultData = <String, dynamic>{};
+    final l$invitation = invitation;
+    _resultData['invitation'] = l$invitation.toJson();
+    final l$$__typename = $__typename;
+    _resultData['__typename'] = l$$__typename;
+    return _resultData;
+  }
+
+  @override
+  int get hashCode {
+    final l$invitation = invitation;
+    final l$$__typename = $__typename;
+    return Object.hashAll([
+      l$invitation,
+      l$$__typename,
+    ]);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    if (!(other is Mutation$sendInvitation$sendInvitation) ||
+        runtimeType != other.runtimeType) {
+      return false;
+    }
+    final l$invitation = invitation;
+    final lOther$invitation = other.invitation;
+    if (l$invitation != lOther$invitation) {
+      return false;
+    }
+    final l$$__typename = $__typename;
+    final lOther$$__typename = other.$__typename;
+    if (l$$__typename != lOther$$__typename) {
+      return false;
+    }
+    return true;
+  }
+}
+
+extension UtilityExtension$Mutation$sendInvitation$sendInvitation
+    on Mutation$sendInvitation$sendInvitation {
+  CopyWith$Mutation$sendInvitation$sendInvitation<
+          Mutation$sendInvitation$sendInvitation>
+      get copyWith => CopyWith$Mutation$sendInvitation$sendInvitation(
+            this,
+            (i) => i,
+          );
+}
+
+abstract class CopyWith$Mutation$sendInvitation$sendInvitation<TRes> {
+  factory CopyWith$Mutation$sendInvitation$sendInvitation(
+    Mutation$sendInvitation$sendInvitation instance,
+    TRes Function(Mutation$sendInvitation$sendInvitation) then,
+  ) = _CopyWithImpl$Mutation$sendInvitation$sendInvitation;
+
+  factory CopyWith$Mutation$sendInvitation$sendInvitation.stub(TRes res) =
+      _CopyWithStubImpl$Mutation$sendInvitation$sendInvitation;
+
+  TRes call({
+    Mutation$sendInvitation$sendInvitation$invitation? invitation,
+    String? $__typename,
+  });
+  CopyWith$Mutation$sendInvitation$sendInvitation$invitation<TRes>
+      get invitation;
+}
+
+class _CopyWithImpl$Mutation$sendInvitation$sendInvitation<TRes>
+    implements CopyWith$Mutation$sendInvitation$sendInvitation<TRes> {
+  _CopyWithImpl$Mutation$sendInvitation$sendInvitation(
+    this._instance,
+    this._then,
+  );
+
+  final Mutation$sendInvitation$sendInvitation _instance;
+
+  final TRes Function(Mutation$sendInvitation$sendInvitation) _then;
+
+  static const _undefined = {};
+
+  TRes call({
+    Object? invitation = _undefined,
+    Object? $__typename = _undefined,
+  }) =>
+      _then(Mutation$sendInvitation$sendInvitation(
+        invitation: invitation == _undefined || invitation == null
+            ? _instance.invitation
+            : (invitation as Mutation$sendInvitation$sendInvitation$invitation),
+        $__typename: $__typename == _undefined || $__typename == null
+            ? _instance.$__typename
+            : ($__typename as String),
+      ));
+  CopyWith$Mutation$sendInvitation$sendInvitation$invitation<TRes>
+      get invitation {
+    final local$invitation = _instance.invitation;
+    return CopyWith$Mutation$sendInvitation$sendInvitation$invitation(
+        local$invitation, (e) => call(invitation: e));
+  }
+}
+
+class _CopyWithStubImpl$Mutation$sendInvitation$sendInvitation<TRes>
+    implements CopyWith$Mutation$sendInvitation$sendInvitation<TRes> {
+  _CopyWithStubImpl$Mutation$sendInvitation$sendInvitation(this._res);
+
+  TRes _res;
+
+  call({
+    Mutation$sendInvitation$sendInvitation$invitation? invitation,
+    String? $__typename,
+  }) =>
+      _res;
+  CopyWith$Mutation$sendInvitation$sendInvitation$invitation<TRes>
+      get invitation =>
+          CopyWith$Mutation$sendInvitation$sendInvitation$invitation.stub(_res);
+}
+
+class Mutation$sendInvitation$sendInvitation$invitation {
+  Mutation$sendInvitation$sendInvitation$invitation({
     required this.id,
     required this.location,
     required this.startsAt,
@@ -1655,14 +1809,14 @@ class Mutation$sendInvitation$sendInvitation {
     required this.$__typename,
   });
 
-  factory Mutation$sendInvitation$sendInvitation.fromJson(
+  factory Mutation$sendInvitation$sendInvitation$invitation.fromJson(
       Map<String, dynamic> json) {
     final l$id = json['id'];
     final l$location = json['location'];
     final l$startsAt = json['startsAt'];
     final l$expiresAt = json['expiresAt'];
     final l$$__typename = json['__typename'];
-    return Mutation$sendInvitation$sendInvitation(
+    return Mutation$sendInvitation$sendInvitation$invitation(
       id: (l$id as String),
       location: (l$location as String),
       startsAt: (l$startsAt as String),
@@ -1717,7 +1871,7 @@ class Mutation$sendInvitation$sendInvitation {
     if (identical(this, other)) {
       return true;
     }
-    if (!(other is Mutation$sendInvitation$sendInvitation) ||
+    if (!(other is Mutation$sendInvitation$sendInvitation$invitation) ||
         runtimeType != other.runtimeType) {
       return false;
     }
@@ -1750,24 +1904,27 @@ class Mutation$sendInvitation$sendInvitation {
   }
 }
 
-extension UtilityExtension$Mutation$sendInvitation$sendInvitation
-    on Mutation$sendInvitation$sendInvitation {
-  CopyWith$Mutation$sendInvitation$sendInvitation<
-          Mutation$sendInvitation$sendInvitation>
-      get copyWith => CopyWith$Mutation$sendInvitation$sendInvitation(
+extension UtilityExtension$Mutation$sendInvitation$sendInvitation$invitation
+    on Mutation$sendInvitation$sendInvitation$invitation {
+  CopyWith$Mutation$sendInvitation$sendInvitation$invitation<
+          Mutation$sendInvitation$sendInvitation$invitation>
+      get copyWith =>
+          CopyWith$Mutation$sendInvitation$sendInvitation$invitation(
             this,
             (i) => i,
           );
 }
 
-abstract class CopyWith$Mutation$sendInvitation$sendInvitation<TRes> {
-  factory CopyWith$Mutation$sendInvitation$sendInvitation(
-    Mutation$sendInvitation$sendInvitation instance,
-    TRes Function(Mutation$sendInvitation$sendInvitation) then,
-  ) = _CopyWithImpl$Mutation$sendInvitation$sendInvitation;
+abstract class CopyWith$Mutation$sendInvitation$sendInvitation$invitation<
+    TRes> {
+  factory CopyWith$Mutation$sendInvitation$sendInvitation$invitation(
+    Mutation$sendInvitation$sendInvitation$invitation instance,
+    TRes Function(Mutation$sendInvitation$sendInvitation$invitation) then,
+  ) = _CopyWithImpl$Mutation$sendInvitation$sendInvitation$invitation;
 
-  factory CopyWith$Mutation$sendInvitation$sendInvitation.stub(TRes res) =
-      _CopyWithStubImpl$Mutation$sendInvitation$sendInvitation;
+  factory CopyWith$Mutation$sendInvitation$sendInvitation$invitation.stub(
+          TRes res) =
+      _CopyWithStubImpl$Mutation$sendInvitation$sendInvitation$invitation;
 
   TRes call({
     String? id,
@@ -1778,16 +1935,17 @@ abstract class CopyWith$Mutation$sendInvitation$sendInvitation<TRes> {
   });
 }
 
-class _CopyWithImpl$Mutation$sendInvitation$sendInvitation<TRes>
-    implements CopyWith$Mutation$sendInvitation$sendInvitation<TRes> {
-  _CopyWithImpl$Mutation$sendInvitation$sendInvitation(
+class _CopyWithImpl$Mutation$sendInvitation$sendInvitation$invitation<TRes>
+    implements
+        CopyWith$Mutation$sendInvitation$sendInvitation$invitation<TRes> {
+  _CopyWithImpl$Mutation$sendInvitation$sendInvitation$invitation(
     this._instance,
     this._then,
   );
 
-  final Mutation$sendInvitation$sendInvitation _instance;
+  final Mutation$sendInvitation$sendInvitation$invitation _instance;
 
-  final TRes Function(Mutation$sendInvitation$sendInvitation) _then;
+  final TRes Function(Mutation$sendInvitation$sendInvitation$invitation) _then;
 
   static const _undefined = {};
 
@@ -1798,7 +1956,7 @@ class _CopyWithImpl$Mutation$sendInvitation$sendInvitation<TRes>
     Object? expiresAt = _undefined,
     Object? $__typename = _undefined,
   }) =>
-      _then(Mutation$sendInvitation$sendInvitation(
+      _then(Mutation$sendInvitation$sendInvitation$invitation(
         id: id == _undefined || id == null ? _instance.id : (id as String),
         location: location == _undefined || location == null
             ? _instance.location
@@ -1815,9 +1973,11 @@ class _CopyWithImpl$Mutation$sendInvitation$sendInvitation<TRes>
       ));
 }
 
-class _CopyWithStubImpl$Mutation$sendInvitation$sendInvitation<TRes>
-    implements CopyWith$Mutation$sendInvitation$sendInvitation<TRes> {
-  _CopyWithStubImpl$Mutation$sendInvitation$sendInvitation(this._res);
+class _CopyWithStubImpl$Mutation$sendInvitation$sendInvitation$invitation<TRes>
+    implements
+        CopyWith$Mutation$sendInvitation$sendInvitation$invitation<TRes> {
+  _CopyWithStubImpl$Mutation$sendInvitation$sendInvitation$invitation(
+      this._res);
 
   TRes _res;
 

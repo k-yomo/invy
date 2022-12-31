@@ -21,7 +21,7 @@ import (
 )
 
 // SignUp is the resolver for the signUp field.
-func (r *mutationResolver) SignUp(ctx context.Context, input gqlmodel.SignUpInput) (*gqlmodel.Viewer, error) {
+func (r *mutationResolver) SignUp(ctx context.Context, input gqlmodel.SignUpInput) (*gqlmodel.SignUpPayload, error) {
 	header := requestutil.GetRequestHeader(ctx)
 	authHeader := header.Get("Authorization")
 	if authHeader == "" {
@@ -115,11 +115,11 @@ func (r *mutationResolver) SignUp(ctx context.Context, input gqlmodel.SignUpInpu
 		return nil, err
 	}
 
-	return conv.ConvertFromDBUserProfileToViewer(dbUserProfile), nil
+	return &gqlmodel.SignUpPayload{Viewer: conv.ConvertFromDBUserProfileToViewer(dbUserProfile)}, nil
 }
 
 // CreateUser is the resolver for the createUser field.
-func (r *mutationResolver) CreateUser(ctx context.Context, input gqlmodel.CreateUserInput) (*gqlmodel.Viewer, error) {
+func (r *mutationResolver) CreateUser(ctx context.Context, input gqlmodel.CreateUserInput) (*gqlmodel.CreateUserPayload, error) {
 	accountID := auth.GetAccountID(ctx)
 	userCount, err := r.DB.User.Query().
 		Where(user.AccountID(accountID)).
@@ -172,11 +172,11 @@ func (r *mutationResolver) CreateUser(ctx context.Context, input gqlmodel.Create
 		return nil
 	})
 
-	return conv.ConvertFromDBUserProfileToViewer(dbUserProfile), nil
+	return &gqlmodel.CreateUserPayload{Viewer: conv.ConvertFromDBUserProfileToViewer(dbUserProfile)}, nil
 }
 
 // SwitchUser is the resolver for the switchUser field.
-func (r *mutationResolver) SwitchUser(ctx context.Context, userID uuid.UUID) (*gqlmodel.Viewer, error) {
+func (r *mutationResolver) SwitchUser(ctx context.Context, userID uuid.UUID) (*gqlmodel.SwitchUserPayload, error) {
 	accountID := auth.GetAccountID(ctx)
 	dbUser, err := r.DB.User.Query().
 		Where(
@@ -198,5 +198,5 @@ func (r *mutationResolver) SwitchUser(ctx context.Context, userID uuid.UUID) (*g
 		return nil, err
 	}
 
-	return conv.ConvertFromDBUserProfileToViewer(dbUser.Edges.UserProfile), nil
+	return &gqlmodel.SwitchUserPayload{Viewer: conv.ConvertFromDBUserProfileToViewer(dbUser.Edges.UserProfile)}, nil
 }
