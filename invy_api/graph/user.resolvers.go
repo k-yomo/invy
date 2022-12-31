@@ -9,6 +9,7 @@ import (
 	"sort"
 	"time"
 
+	"entgo.io/ent/dialect/sql"
 	"github.com/google/uuid"
 	"github.com/k-yomo/invy/invy_api/auth"
 	"github.com/k-yomo/invy/invy_api/ent"
@@ -17,6 +18,7 @@ import (
 	"github.com/k-yomo/invy/invy_api/ent/friendshiprequest"
 	"github.com/k-yomo/invy/invy_api/ent/invitation"
 	"github.com/k-yomo/invy/invy_api/ent/invitationacceptance"
+	"github.com/k-yomo/invy/invy_api/ent/invitationdenial"
 	"github.com/k-yomo/invy/invy_api/ent/invitationuser"
 	"github.com/k-yomo/invy/invy_api/ent/userfriendgroup"
 	"github.com/k-yomo/invy/invy_api/ent/usermute"
@@ -225,7 +227,39 @@ func (r *viewerResolver) PendingInvitations(ctx context.Context, obj *gqlmodel.V
 	dbInvitationsToUser, err := r.DB.InvitationUser.Query().
 		Where(invitationuser.UserID(authUserID)).
 		QueryInvitation().
-		Where(invitation.ExpiresAtGTE(now)).
+		Where(
+			invitation.ExpiresAtGTE(now),
+			func(s *sql.Selector) {
+				invitationAcceptanceTable := sql.Table(invitationacceptance.Table)
+				s.Where(
+					sql.NotExists(
+						sql.Select().
+							From(invitationAcceptanceTable).
+							Where(
+								sql.And(
+									sql.EQ(invitationAcceptanceTable.C(invitationacceptance.FieldUserID), authUserID),
+									sql.ColumnsEQ(invitationAcceptanceTable.C(invitationacceptance.FieldInvitationID), s.C(invitation.FieldID)),
+								),
+							),
+					),
+				)
+			},
+			func(s *sql.Selector) {
+				invitationDenialTable := sql.Table(invitationdenial.Table)
+				s.Where(
+					sql.NotExists(
+						sql.Select().
+							From(invitationDenialTable).
+							Where(
+								sql.And(
+									sql.EQ(invitationDenialTable.C(invitationdenial.FieldUserID), authUserID),
+									sql.ColumnsEQ(invitationDenialTable.C(invitationdenial.FieldInvitationID), s.C(invitation.FieldID)),
+								),
+							),
+					),
+				)
+			},
+		).
 		All(ctx)
 	if err != nil {
 		return nil, err
