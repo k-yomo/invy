@@ -52,6 +52,7 @@ func ConvertFromDBFriendGroup(friendGroup *ent.FriendGroup) *gqlmodel.FriendGrou
 func ConvertFromDBInvitation(invitation *ent.Invitation) *gqlmodel.Invitation {
 	return &gqlmodel.Invitation{
 		ID:        invitation.ID,
+		UserID:    invitation.UserID,
 		Location:  invitation.Location,
 		Comment:   invitation.Comment,
 		StartsAt:  invitation.StartsAt,

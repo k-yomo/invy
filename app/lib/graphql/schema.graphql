@@ -165,6 +165,7 @@ type Viewer implements Node {
 
   """fetch friend groups of the logged in user"""
   friendGroups: [FriendGroup!]!
+  sentInvitations: [Invitation!]!
   pendingInvitations: [Invitation!]!
   acceptedInvitations: [Invitation!]!
 }

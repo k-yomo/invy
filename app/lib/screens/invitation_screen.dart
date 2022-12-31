@@ -46,10 +46,9 @@ class InvitationScreen extends HookConsumerWidget {
               actions: <Widget>[
                 TextButton(
                   onPressed: () {
-                    // TODO: uncomment
-                    // if (selectedCount == 0) {
-                    //   return;
-                    // }
+                    if (selectedCount == 0) {
+                      return;
+                    }
                     showModalBottomSheet(
                         backgroundColor: Colors.transparent,
                         isScrollControlled: true,
@@ -67,7 +66,7 @@ class InvitationScreen extends HookConsumerWidget {
                         fontSize: 16,
                         color: selectedCount == 0
                             ? Colors.grey.shade600
-                            : Colors.blue,
+                            : Colors.blue.shade600,
                         fontWeight: FontWeight.bold),
                   ),
                 ),
@@ -247,10 +246,10 @@ class InvitationDetailFormModal extends HookConsumerWidget {
                         // TODO: Show error
                         return;
                       }
-                      Navigator.pushReplacement(context,
+                      Navigator.pushAndRemoveUntil(context,
                           MaterialPageRoute(builder: (BuildContext context) {
                         return HomeScreen();
-                      }));
+                      }), (r) => false);
                     },
                   )
                 ],
@@ -300,7 +299,7 @@ class InvitationDetailFormState extends State<InvitationDetailForm> {
         margin: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
         child: Column(children: [
           TextFormField(
-            // controller: emailController,
+            cursorColor: Colors.grey.shade600,
             decoration: InputDecoration(
               labelText: '開催地',
               labelStyle: TextStyle(color: Colors.grey.shade600),
@@ -412,6 +411,7 @@ class InvitationDetailFormState extends State<InvitationDetailForm> {
             keyboardType: TextInputType.multiline,
             minLines: 2,
             maxLines: null,
+            cursorColor: Colors.grey.shade600,
             decoration: InputDecoration(
               labelText: 'コメント',
               labelStyle: TextStyle(color: Colors.grey.shade600),
@@ -446,7 +446,7 @@ class InvitationDetailFormState extends State<InvitationDetailForm> {
               child: Text(
                 '招待を送信する',
                 style: TextStyle(
-                    fontSize: 20,
+                    fontSize: 18,
                     color: Colors.black,
                     fontWeight: FontWeight.bold),
               ),

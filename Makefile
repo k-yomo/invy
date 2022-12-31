@@ -1,6 +1,6 @@
 .DEFAULT_GOAL := help
 
-.PHONY: generate
+.PHONY: setup
 setup: ## Setup project
 	npm install -g graphql-cli graphql-schema-utilities
 	go install gotest.tools/gotestsum

@@ -1,0 +1,141 @@
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:invy/components/invitation_card_fragment.graphql.dart';
+
+final dateTimeFormat = 'MM月dd日 HH時mm分';
+
+class ReceivedInvitationCard extends StatelessWidget {
+  ReceivedInvitationCard({
+    Key? key,
+    required this.invitation,
+    this.accepted = false,
+  }) : super(key: key);
+
+  final Fragment$invitationCardFragment invitation;
+  bool accepted;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(15),
+        border: Border.all(color: Colors.grey.shade300),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              CircleAvatar(
+                backgroundImage: NetworkImage(invitation.user.avatarUrl),
+              ),
+              Container(
+                margin: const EdgeInsets.only(left: 10, right: 5),
+                child: Text(
+                  invitation.user.nickname,
+                  style: const TextStyle(
+                      fontSize: 14, fontWeight: FontWeight.bold),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Container(
+                margin: const EdgeInsets.only(top: 5, left: 4, bottom: 5),
+                child: Row(children: [
+                  Icon(Icons.location_pin, size: 25),
+                  Text(invitation.location),
+                ]),
+              ),
+              Container(
+                margin: const EdgeInsets.only(top: 5, left: 6, bottom: 5),
+                child: Row(
+                  children: [
+                    Icon(Icons.today, size: 25),
+                    Container(
+                      margin: const EdgeInsets.only(left: 5),
+                      child: Text(DateFormat(dateTimeFormat)
+                          .format(DateTime.parse(invitation.startsAt))),
+                    )
+                  ],
+                ),
+              ),
+            ],
+          ),
+          Container(
+            margin: const EdgeInsets.only(left: 8, bottom: 5),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Icon(Icons.notes, size: 20),
+                Container(
+                  margin: const EdgeInsets.only(left: 5),
+                  child: Text(invitation.comment),
+                )
+              ],
+            ),
+          ),
+          ...(accepted
+              ? []
+              : [
+                  Container(
+                    margin: EdgeInsets.symmetric(vertical: 5),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text("回答期限: ",
+                            style: TextStyle(fontWeight: FontWeight.bold)),
+                        Text(
+                            DateFormat(dateTimeFormat)
+                                .format(DateTime.parse(invitation.expiresAt)),
+                            style: TextStyle(fontWeight: FontWeight.bold)),
+                      ],
+                    ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Expanded(
+                        child: OutlinedButton(
+                          onPressed: () {},
+                          child: Text(
+                            '断る',
+                            style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.grey.shade600,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            side: BorderSide(color: Colors.grey.shade600),
+                          ),
+                        ),
+                      ),
+                      Container(margin: EdgeInsets.symmetric(horizontal: 5)),
+                      Expanded(
+                        child: TextButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.black,
+                          ),
+                          onPressed: () {},
+                          child: Text(
+                            '参加する',
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  )
+                ]),
+        ],
+      ),
+    );
+  }
+}

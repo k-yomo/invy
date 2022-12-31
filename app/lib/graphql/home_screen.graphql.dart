@@ -1,25 +1,27 @@
+import '../components/invitation_card_fragment.graphql.dart';
+import 'dart:async';
 import 'package:flutter/widgets.dart' as widgets;
 import 'package:gql/ast.dart';
 import 'package:graphql/client.dart' as graphql;
 import 'package:graphql_flutter/graphql_flutter.dart' as graphql_flutter;
 
-class Query$pendingInvitations {
-  Query$pendingInvitations({
+class Query$homeScreenViewer {
+  Query$homeScreenViewer({
     required this.viewer,
     required this.$__typename,
   });
 
-  factory Query$pendingInvitations.fromJson(Map<String, dynamic> json) {
+  factory Query$homeScreenViewer.fromJson(Map<String, dynamic> json) {
     final l$viewer = json['viewer'];
     final l$$__typename = json['__typename'];
-    return Query$pendingInvitations(
-      viewer: Query$pendingInvitations$viewer.fromJson(
+    return Query$homeScreenViewer(
+      viewer: Query$homeScreenViewer$viewer.fromJson(
           (l$viewer as Map<String, dynamic>)),
       $__typename: (l$$__typename as String),
     );
   }
 
-  final Query$pendingInvitations$viewer viewer;
+  final Query$homeScreenViewer$viewer viewer;
 
   final String $__typename;
 
@@ -47,7 +49,7 @@ class Query$pendingInvitations {
     if (identical(this, other)) {
       return true;
     }
-    if (!(other is Query$pendingInvitations) ||
+    if (!(other is Query$homeScreenViewer) ||
         runtimeType != other.runtimeType) {
       return false;
     }
@@ -65,41 +67,40 @@ class Query$pendingInvitations {
   }
 }
 
-extension UtilityExtension$Query$pendingInvitations
-    on Query$pendingInvitations {
-  CopyWith$Query$pendingInvitations<Query$pendingInvitations> get copyWith =>
-      CopyWith$Query$pendingInvitations(
+extension UtilityExtension$Query$homeScreenViewer on Query$homeScreenViewer {
+  CopyWith$Query$homeScreenViewer<Query$homeScreenViewer> get copyWith =>
+      CopyWith$Query$homeScreenViewer(
         this,
         (i) => i,
       );
 }
 
-abstract class CopyWith$Query$pendingInvitations<TRes> {
-  factory CopyWith$Query$pendingInvitations(
-    Query$pendingInvitations instance,
-    TRes Function(Query$pendingInvitations) then,
-  ) = _CopyWithImpl$Query$pendingInvitations;
+abstract class CopyWith$Query$homeScreenViewer<TRes> {
+  factory CopyWith$Query$homeScreenViewer(
+    Query$homeScreenViewer instance,
+    TRes Function(Query$homeScreenViewer) then,
+  ) = _CopyWithImpl$Query$homeScreenViewer;
 
-  factory CopyWith$Query$pendingInvitations.stub(TRes res) =
-      _CopyWithStubImpl$Query$pendingInvitations;
+  factory CopyWith$Query$homeScreenViewer.stub(TRes res) =
+      _CopyWithStubImpl$Query$homeScreenViewer;
 
   TRes call({
-    Query$pendingInvitations$viewer? viewer,
+    Query$homeScreenViewer$viewer? viewer,
     String? $__typename,
   });
-  CopyWith$Query$pendingInvitations$viewer<TRes> get viewer;
+  CopyWith$Query$homeScreenViewer$viewer<TRes> get viewer;
 }
 
-class _CopyWithImpl$Query$pendingInvitations<TRes>
-    implements CopyWith$Query$pendingInvitations<TRes> {
-  _CopyWithImpl$Query$pendingInvitations(
+class _CopyWithImpl$Query$homeScreenViewer<TRes>
+    implements CopyWith$Query$homeScreenViewer<TRes> {
+  _CopyWithImpl$Query$homeScreenViewer(
     this._instance,
     this._then,
   );
 
-  final Query$pendingInvitations _instance;
+  final Query$homeScreenViewer _instance;
 
-  final TRes Function(Query$pendingInvitations) _then;
+  final TRes Function(Query$homeScreenViewer) _then;
 
   static const _undefined = {};
 
@@ -107,40 +108,40 @@ class _CopyWithImpl$Query$pendingInvitations<TRes>
     Object? viewer = _undefined,
     Object? $__typename = _undefined,
   }) =>
-      _then(Query$pendingInvitations(
+      _then(Query$homeScreenViewer(
         viewer: viewer == _undefined || viewer == null
             ? _instance.viewer
-            : (viewer as Query$pendingInvitations$viewer),
+            : (viewer as Query$homeScreenViewer$viewer),
         $__typename: $__typename == _undefined || $__typename == null
             ? _instance.$__typename
             : ($__typename as String),
       ));
-  CopyWith$Query$pendingInvitations$viewer<TRes> get viewer {
+  CopyWith$Query$homeScreenViewer$viewer<TRes> get viewer {
     final local$viewer = _instance.viewer;
-    return CopyWith$Query$pendingInvitations$viewer(
+    return CopyWith$Query$homeScreenViewer$viewer(
         local$viewer, (e) => call(viewer: e));
   }
 }
 
-class _CopyWithStubImpl$Query$pendingInvitations<TRes>
-    implements CopyWith$Query$pendingInvitations<TRes> {
-  _CopyWithStubImpl$Query$pendingInvitations(this._res);
+class _CopyWithStubImpl$Query$homeScreenViewer<TRes>
+    implements CopyWith$Query$homeScreenViewer<TRes> {
+  _CopyWithStubImpl$Query$homeScreenViewer(this._res);
 
   TRes _res;
 
   call({
-    Query$pendingInvitations$viewer? viewer,
+    Query$homeScreenViewer$viewer? viewer,
     String? $__typename,
   }) =>
       _res;
-  CopyWith$Query$pendingInvitations$viewer<TRes> get viewer =>
-      CopyWith$Query$pendingInvitations$viewer.stub(_res);
+  CopyWith$Query$homeScreenViewer$viewer<TRes> get viewer =>
+      CopyWith$Query$homeScreenViewer$viewer.stub(_res);
 }
 
-const documentNodeQuerypendingInvitations = DocumentNode(definitions: [
+const documentNodeQueryhomeScreenViewer = DocumentNode(definitions: [
   OperationDefinitionNode(
     type: OperationType.query,
-    name: NameNode(value: 'pendingInvitations'),
+    name: NameNode(value: 'homeScreenViewer'),
     variableDefinitions: [],
     directives: [],
     selectionSet: SelectionSetNode(selections: [
@@ -151,89 +152,33 @@ const documentNodeQuerypendingInvitations = DocumentNode(definitions: [
         directives: [],
         selectionSet: SelectionSetNode(selections: [
           FieldNode(
-            name: NameNode(value: 'pendingInvitations'),
+            name: NameNode(value: 'sentInvitations'),
             alias: null,
             arguments: [],
             directives: [],
             selectionSet: SelectionSetNode(selections: [
+              FragmentSpreadNode(
+                name: NameNode(value: 'invitationCardFragment'),
+                directives: [],
+              ),
               FieldNode(
-                name: NameNode(value: 'id'),
+                name: NameNode(value: '__typename'),
                 alias: null,
                 arguments: [],
                 directives: [],
                 selectionSet: null,
               ),
-              FieldNode(
-                name: NameNode(value: 'user'),
-                alias: null,
-                arguments: [],
+            ]),
+          ),
+          FieldNode(
+            name: NameNode(value: 'pendingInvitations'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: SelectionSetNode(selections: [
+              FragmentSpreadNode(
+                name: NameNode(value: 'invitationCardFragment'),
                 directives: [],
-                selectionSet: SelectionSetNode(selections: [
-                  FieldNode(
-                    name: NameNode(value: 'id'),
-                    alias: null,
-                    arguments: [],
-                    directives: [],
-                    selectionSet: null,
-                  ),
-                  FieldNode(
-                    name: NameNode(value: 'nickname'),
-                    alias: null,
-                    arguments: [],
-                    directives: [],
-                    selectionSet: null,
-                  ),
-                  FieldNode(
-                    name: NameNode(value: 'avatarUrl'),
-                    alias: null,
-                    arguments: [],
-                    directives: [],
-                    selectionSet: null,
-                  ),
-                  FieldNode(
-                    name: NameNode(value: '__typename'),
-                    alias: null,
-                    arguments: [],
-                    directives: [],
-                    selectionSet: null,
-                  ),
-                ]),
-              ),
-              FieldNode(
-                name: NameNode(value: 'acceptedUsers'),
-                alias: null,
-                arguments: [],
-                directives: [],
-                selectionSet: SelectionSetNode(selections: [
-                  FieldNode(
-                    name: NameNode(value: 'id'),
-                    alias: null,
-                    arguments: [],
-                    directives: [],
-                    selectionSet: null,
-                  ),
-                  FieldNode(
-                    name: NameNode(value: 'nickname'),
-                    alias: null,
-                    arguments: [],
-                    directives: [],
-                    selectionSet: null,
-                  ),
-                  FieldNode(
-                    name: NameNode(value: 'avatarUrl'),
-                    alias: null,
-                    arguments: [],
-                    directives: [],
-                    selectionSet: null,
-                  ),
-                  FieldNode(
-                    name: NameNode(value: '__typename'),
-                    alias: null,
-                    arguments: [],
-                    directives: [],
-                    selectionSet: null,
-                  ),
-                ]),
               ),
               FieldNode(
                 name: NameNode(value: '__typename'),
@@ -250,98 +195,9 @@ const documentNodeQuerypendingInvitations = DocumentNode(definitions: [
             arguments: [],
             directives: [],
             selectionSet: SelectionSetNode(selections: [
-              FieldNode(
-                name: NameNode(value: 'id'),
-                alias: null,
-                arguments: [],
+              FragmentSpreadNode(
+                name: NameNode(value: 'invitationCardFragment'),
                 directives: [],
-                selectionSet: null,
-              ),
-              FieldNode(
-                name: NameNode(value: 'user'),
-                alias: null,
-                arguments: [],
-                directives: [],
-                selectionSet: SelectionSetNode(selections: [
-                  FieldNode(
-                    name: NameNode(value: 'id'),
-                    alias: null,
-                    arguments: [],
-                    directives: [],
-                    selectionSet: null,
-                  ),
-                  FieldNode(
-                    name: NameNode(value: 'nickname'),
-                    alias: null,
-                    arguments: [],
-                    directives: [],
-                    selectionSet: null,
-                  ),
-                  FieldNode(
-                    name: NameNode(value: 'avatarUrl'),
-                    alias: null,
-                    arguments: [],
-                    directives: [],
-                    selectionSet: null,
-                  ),
-                  FieldNode(
-                    name: NameNode(value: '__typename'),
-                    alias: null,
-                    arguments: [],
-                    directives: [],
-                    selectionSet: null,
-                  ),
-                ]),
-              ),
-              FieldNode(
-                name: NameNode(value: 'location'),
-                alias: null,
-                arguments: [],
-                directives: [],
-                selectionSet: null,
-              ),
-              FieldNode(
-                name: NameNode(value: 'startsAt'),
-                alias: null,
-                arguments: [],
-                directives: [],
-                selectionSet: null,
-              ),
-              FieldNode(
-                name: NameNode(value: 'acceptedUsers'),
-                alias: null,
-                arguments: [],
-                directives: [],
-                selectionSet: SelectionSetNode(selections: [
-                  FieldNode(
-                    name: NameNode(value: 'id'),
-                    alias: null,
-                    arguments: [],
-                    directives: [],
-                    selectionSet: null,
-                  ),
-                  FieldNode(
-                    name: NameNode(value: 'nickname'),
-                    alias: null,
-                    arguments: [],
-                    directives: [],
-                    selectionSet: null,
-                  ),
-                  FieldNode(
-                    name: NameNode(value: 'avatarUrl'),
-                    alias: null,
-                    arguments: [],
-                    directives: [],
-                    selectionSet: null,
-                  ),
-                  FieldNode(
-                    name: NameNode(value: '__typename'),
-                    alias: null,
-                    arguments: [],
-                    directives: [],
-                    selectionSet: null,
-                  ),
-                ]),
               ),
               FieldNode(
                 name: NameNode(value: '__typename'),
@@ -370,14 +226,15 @@ const documentNodeQuerypendingInvitations = DocumentNode(definitions: [
       ),
     ]),
   ),
+  fragmentDefinitioninvitationCardFragment,
 ]);
-Query$pendingInvitations _parserFn$Query$pendingInvitations(
+Query$homeScreenViewer _parserFn$Query$homeScreenViewer(
         Map<String, dynamic> data) =>
-    Query$pendingInvitations.fromJson(data);
+    Query$homeScreenViewer.fromJson(data);
 
-class Options$Query$pendingInvitations
-    extends graphql.QueryOptions<Query$pendingInvitations> {
-  Options$Query$pendingInvitations({
+class Options$Query$homeScreenViewer
+    extends graphql.QueryOptions<Query$homeScreenViewer> {
+  Options$Query$homeScreenViewer({
     String? operationName,
     graphql.FetchPolicy? fetchPolicy,
     graphql.ErrorPolicy? errorPolicy,
@@ -393,14 +250,14 @@ class Options$Query$pendingInvitations
           optimisticResult: optimisticResult,
           pollInterval: pollInterval,
           context: context,
-          document: documentNodeQuerypendingInvitations,
-          parserFn: _parserFn$Query$pendingInvitations,
+          document: documentNodeQueryhomeScreenViewer,
+          parserFn: _parserFn$Query$homeScreenViewer,
         );
 }
 
-class WatchOptions$Query$pendingInvitations
-    extends graphql.WatchQueryOptions<Query$pendingInvitations> {
-  WatchOptions$Query$pendingInvitations({
+class WatchOptions$Query$homeScreenViewer
+    extends graphql.WatchQueryOptions<Query$homeScreenViewer> {
+  WatchOptions$Query$homeScreenViewer({
     String? operationName,
     graphql.FetchPolicy? fetchPolicy,
     graphql.ErrorPolicy? errorPolicy,
@@ -418,115 +275,117 @@ class WatchOptions$Query$pendingInvitations
           cacheRereadPolicy: cacheRereadPolicy,
           optimisticResult: optimisticResult,
           context: context,
-          document: documentNodeQuerypendingInvitations,
+          document: documentNodeQueryhomeScreenViewer,
           pollInterval: pollInterval,
           eagerlyFetchResults: eagerlyFetchResults,
           carryForwardDataOnException: carryForwardDataOnException,
           fetchResults: fetchResults,
-          parserFn: _parserFn$Query$pendingInvitations,
+          parserFn: _parserFn$Query$homeScreenViewer,
         );
 }
 
-class FetchMoreOptions$Query$pendingInvitations
-    extends graphql.FetchMoreOptions {
-  FetchMoreOptions$Query$pendingInvitations(
+class FetchMoreOptions$Query$homeScreenViewer extends graphql.FetchMoreOptions {
+  FetchMoreOptions$Query$homeScreenViewer(
       {required graphql.UpdateQuery updateQuery})
       : super(
           updateQuery: updateQuery,
-          document: documentNodeQuerypendingInvitations,
+          document: documentNodeQueryhomeScreenViewer,
         );
 }
 
-extension ClientExtension$Query$pendingInvitations on graphql.GraphQLClient {
-  Future<graphql.QueryResult<Query$pendingInvitations>>
-      query$pendingInvitations(
-              [Options$Query$pendingInvitations? options]) async =>
-          await this.query(options ?? Options$Query$pendingInvitations());
-  graphql.ObservableQuery<Query$pendingInvitations>
-      watchQuery$pendingInvitations(
-              [WatchOptions$Query$pendingInvitations? options]) =>
-          this.watchQuery(options ?? WatchOptions$Query$pendingInvitations());
-  void writeQuery$pendingInvitations({
-    required Query$pendingInvitations data,
+extension ClientExtension$Query$homeScreenViewer on graphql.GraphQLClient {
+  Future<graphql.QueryResult<Query$homeScreenViewer>> query$homeScreenViewer(
+          [Options$Query$homeScreenViewer? options]) async =>
+      await this.query(options ?? Options$Query$homeScreenViewer());
+  graphql.ObservableQuery<Query$homeScreenViewer> watchQuery$homeScreenViewer(
+          [WatchOptions$Query$homeScreenViewer? options]) =>
+      this.watchQuery(options ?? WatchOptions$Query$homeScreenViewer());
+  void writeQuery$homeScreenViewer({
+    required Query$homeScreenViewer data,
     bool broadcast = true,
   }) =>
       this.writeQuery(
         graphql.Request(
-            operation: graphql.Operation(
-                document: documentNodeQuerypendingInvitations)),
+            operation:
+                graphql.Operation(document: documentNodeQueryhomeScreenViewer)),
         data: data.toJson(),
         broadcast: broadcast,
       );
-  Query$pendingInvitations? readQuery$pendingInvitations(
-      {bool optimistic = true}) {
+  Query$homeScreenViewer? readQuery$homeScreenViewer({bool optimistic = true}) {
     final result = this.readQuery(
       graphql.Request(
           operation:
-              graphql.Operation(document: documentNodeQuerypendingInvitations)),
+              graphql.Operation(document: documentNodeQueryhomeScreenViewer)),
       optimistic: optimistic,
     );
-    return result == null ? null : Query$pendingInvitations.fromJson(result);
+    return result == null ? null : Query$homeScreenViewer.fromJson(result);
   }
 }
 
-graphql_flutter.QueryHookResult<Query$pendingInvitations>
-    useQuery$pendingInvitations([Options$Query$pendingInvitations? options]) =>
-        graphql_flutter.useQuery(options ?? Options$Query$pendingInvitations());
-graphql.ObservableQuery<Query$pendingInvitations>
-    useWatchQuery$pendingInvitations(
-            [WatchOptions$Query$pendingInvitations? options]) =>
-        graphql_flutter
-            .useWatchQuery(options ?? WatchOptions$Query$pendingInvitations());
+graphql_flutter.QueryHookResult<Query$homeScreenViewer>
+    useQuery$homeScreenViewer([Options$Query$homeScreenViewer? options]) =>
+        graphql_flutter.useQuery(options ?? Options$Query$homeScreenViewer());
+graphql.ObservableQuery<Query$homeScreenViewer> useWatchQuery$homeScreenViewer(
+        [WatchOptions$Query$homeScreenViewer? options]) =>
+    graphql_flutter
+        .useWatchQuery(options ?? WatchOptions$Query$homeScreenViewer());
 
-class Query$pendingInvitations$Widget
-    extends graphql_flutter.Query<Query$pendingInvitations> {
-  Query$pendingInvitations$Widget({
+class Query$homeScreenViewer$Widget
+    extends graphql_flutter.Query<Query$homeScreenViewer> {
+  Query$homeScreenViewer$Widget({
     widgets.Key? key,
-    Options$Query$pendingInvitations? options,
-    required graphql_flutter.QueryBuilder<Query$pendingInvitations> builder,
+    Options$Query$homeScreenViewer? options,
+    required graphql_flutter.QueryBuilder<Query$homeScreenViewer> builder,
   }) : super(
           key: key,
-          options: options ?? Options$Query$pendingInvitations(),
+          options: options ?? Options$Query$homeScreenViewer(),
           builder: builder,
         );
 }
 
-class Query$pendingInvitations$viewer {
-  Query$pendingInvitations$viewer({
+class Query$homeScreenViewer$viewer {
+  Query$homeScreenViewer$viewer({
+    required this.sentInvitations,
     required this.pendingInvitations,
     required this.acceptedInvitations,
     required this.$__typename,
   });
 
-  factory Query$pendingInvitations$viewer.fromJson(Map<String, dynamic> json) {
+  factory Query$homeScreenViewer$viewer.fromJson(Map<String, dynamic> json) {
+    final l$sentInvitations = json['sentInvitations'];
     final l$pendingInvitations = json['pendingInvitations'];
     final l$acceptedInvitations = json['acceptedInvitations'];
     final l$$__typename = json['__typename'];
-    return Query$pendingInvitations$viewer(
+    return Query$homeScreenViewer$viewer(
+      sentInvitations: (l$sentInvitations as List<dynamic>)
+          .map((e) => Fragment$invitationCardFragment.fromJson(
+              (e as Map<String, dynamic>)))
+          .toList(),
       pendingInvitations: (l$pendingInvitations as List<dynamic>)
-          .map((e) =>
-              Query$pendingInvitations$viewer$pendingInvitations.fromJson(
-                  (e as Map<String, dynamic>)))
+          .map((e) => Fragment$invitationCardFragment.fromJson(
+              (e as Map<String, dynamic>)))
           .toList(),
       acceptedInvitations: (l$acceptedInvitations as List<dynamic>)
-          .map((e) =>
-              Query$pendingInvitations$viewer$acceptedInvitations.fromJson(
-                  (e as Map<String, dynamic>)))
+          .map((e) => Fragment$invitationCardFragment.fromJson(
+              (e as Map<String, dynamic>)))
           .toList(),
       $__typename: (l$$__typename as String),
     );
   }
 
-  final List<Query$pendingInvitations$viewer$pendingInvitations>
-      pendingInvitations;
+  final List<Fragment$invitationCardFragment> sentInvitations;
 
-  final List<Query$pendingInvitations$viewer$acceptedInvitations>
-      acceptedInvitations;
+  final List<Fragment$invitationCardFragment> pendingInvitations;
+
+  final List<Fragment$invitationCardFragment> acceptedInvitations;
 
   final String $__typename;
 
   Map<String, dynamic> toJson() {
     final _resultData = <String, dynamic>{};
+    final l$sentInvitations = sentInvitations;
+    _resultData['sentInvitations'] =
+        l$sentInvitations.map((e) => e.toJson()).toList();
     final l$pendingInvitations = pendingInvitations;
     _resultData['pendingInvitations'] =
         l$pendingInvitations.map((e) => e.toJson()).toList();
@@ -540,10 +399,12 @@ class Query$pendingInvitations$viewer {
 
   @override
   int get hashCode {
+    final l$sentInvitations = sentInvitations;
     final l$pendingInvitations = pendingInvitations;
     final l$acceptedInvitations = acceptedInvitations;
     final l$$__typename = $__typename;
     return Object.hashAll([
+      Object.hashAll(l$sentInvitations.map((v) => v)),
       Object.hashAll(l$pendingInvitations.map((v) => v)),
       Object.hashAll(l$acceptedInvitations.map((v) => v)),
       l$$__typename,
@@ -555,9 +416,21 @@ class Query$pendingInvitations$viewer {
     if (identical(this, other)) {
       return true;
     }
-    if (!(other is Query$pendingInvitations$viewer) ||
+    if (!(other is Query$homeScreenViewer$viewer) ||
         runtimeType != other.runtimeType) {
       return false;
+    }
+    final l$sentInvitations = sentInvitations;
+    final lOther$sentInvitations = other.sentInvitations;
+    if (l$sentInvitations.length != lOther$sentInvitations.length) {
+      return false;
+    }
+    for (int i = 0; i < l$sentInvitations.length; i++) {
+      final l$sentInvitations$entry = l$sentInvitations[i];
+      final lOther$sentInvitations$entry = lOther$sentInvitations[i];
+      if (l$sentInvitations$entry != lOther$sentInvitations$entry) {
+        return false;
+      }
     }
     final l$pendingInvitations = pendingInvitations;
     final lOther$pendingInvitations = other.pendingInvitations;
@@ -592,380 +465,263 @@ class Query$pendingInvitations$viewer {
   }
 }
 
-extension UtilityExtension$Query$pendingInvitations$viewer
-    on Query$pendingInvitations$viewer {
-  CopyWith$Query$pendingInvitations$viewer<Query$pendingInvitations$viewer>
-      get copyWith => CopyWith$Query$pendingInvitations$viewer(
+extension UtilityExtension$Query$homeScreenViewer$viewer
+    on Query$homeScreenViewer$viewer {
+  CopyWith$Query$homeScreenViewer$viewer<Query$homeScreenViewer$viewer>
+      get copyWith => CopyWith$Query$homeScreenViewer$viewer(
             this,
             (i) => i,
           );
 }
 
-abstract class CopyWith$Query$pendingInvitations$viewer<TRes> {
-  factory CopyWith$Query$pendingInvitations$viewer(
-    Query$pendingInvitations$viewer instance,
-    TRes Function(Query$pendingInvitations$viewer) then,
-  ) = _CopyWithImpl$Query$pendingInvitations$viewer;
+abstract class CopyWith$Query$homeScreenViewer$viewer<TRes> {
+  factory CopyWith$Query$homeScreenViewer$viewer(
+    Query$homeScreenViewer$viewer instance,
+    TRes Function(Query$homeScreenViewer$viewer) then,
+  ) = _CopyWithImpl$Query$homeScreenViewer$viewer;
 
-  factory CopyWith$Query$pendingInvitations$viewer.stub(TRes res) =
-      _CopyWithStubImpl$Query$pendingInvitations$viewer;
+  factory CopyWith$Query$homeScreenViewer$viewer.stub(TRes res) =
+      _CopyWithStubImpl$Query$homeScreenViewer$viewer;
 
   TRes call({
-    List<Query$pendingInvitations$viewer$pendingInvitations>?
-        pendingInvitations,
-    List<Query$pendingInvitations$viewer$acceptedInvitations>?
-        acceptedInvitations,
+    List<Fragment$invitationCardFragment>? sentInvitations,
+    List<Fragment$invitationCardFragment>? pendingInvitations,
+    List<Fragment$invitationCardFragment>? acceptedInvitations,
     String? $__typename,
   });
-  TRes pendingInvitations(
-      Iterable<Query$pendingInvitations$viewer$pendingInvitations> Function(
+  TRes sentInvitations(
+      Iterable<Fragment$invitationCardFragment> Function(
               Iterable<
-                  CopyWith$Query$pendingInvitations$viewer$pendingInvitations<
-                      Query$pendingInvitations$viewer$pendingInvitations>>)
+                  CopyWith$Fragment$invitationCardFragment<
+                      Fragment$invitationCardFragment>>)
+          _fn);
+  TRes pendingInvitations(
+      Iterable<Fragment$invitationCardFragment> Function(
+              Iterable<
+                  CopyWith$Fragment$invitationCardFragment<
+                      Fragment$invitationCardFragment>>)
           _fn);
   TRes acceptedInvitations(
-      Iterable<Query$pendingInvitations$viewer$acceptedInvitations> Function(
+      Iterable<Fragment$invitationCardFragment> Function(
               Iterable<
-                  CopyWith$Query$pendingInvitations$viewer$acceptedInvitations<
-                      Query$pendingInvitations$viewer$acceptedInvitations>>)
+                  CopyWith$Fragment$invitationCardFragment<
+                      Fragment$invitationCardFragment>>)
           _fn);
 }
 
-class _CopyWithImpl$Query$pendingInvitations$viewer<TRes>
-    implements CopyWith$Query$pendingInvitations$viewer<TRes> {
-  _CopyWithImpl$Query$pendingInvitations$viewer(
+class _CopyWithImpl$Query$homeScreenViewer$viewer<TRes>
+    implements CopyWith$Query$homeScreenViewer$viewer<TRes> {
+  _CopyWithImpl$Query$homeScreenViewer$viewer(
     this._instance,
     this._then,
   );
 
-  final Query$pendingInvitations$viewer _instance;
+  final Query$homeScreenViewer$viewer _instance;
 
-  final TRes Function(Query$pendingInvitations$viewer) _then;
+  final TRes Function(Query$homeScreenViewer$viewer) _then;
 
   static const _undefined = {};
 
   TRes call({
+    Object? sentInvitations = _undefined,
     Object? pendingInvitations = _undefined,
     Object? acceptedInvitations = _undefined,
     Object? $__typename = _undefined,
   }) =>
-      _then(Query$pendingInvitations$viewer(
-        pendingInvitations: pendingInvitations == _undefined ||
-                pendingInvitations == null
-            ? _instance.pendingInvitations
-            : (pendingInvitations
-                as List<Query$pendingInvitations$viewer$pendingInvitations>),
+      _then(Query$homeScreenViewer$viewer(
+        sentInvitations:
+            sentInvitations == _undefined || sentInvitations == null
+                ? _instance.sentInvitations
+                : (sentInvitations as List<Fragment$invitationCardFragment>),
+        pendingInvitations:
+            pendingInvitations == _undefined || pendingInvitations == null
+                ? _instance.pendingInvitations
+                : (pendingInvitations as List<Fragment$invitationCardFragment>),
         acceptedInvitations: acceptedInvitations == _undefined ||
                 acceptedInvitations == null
             ? _instance.acceptedInvitations
-            : (acceptedInvitations
-                as List<Query$pendingInvitations$viewer$acceptedInvitations>),
+            : (acceptedInvitations as List<Fragment$invitationCardFragment>),
         $__typename: $__typename == _undefined || $__typename == null
             ? _instance.$__typename
             : ($__typename as String),
       ));
+  TRes sentInvitations(
+          Iterable<Fragment$invitationCardFragment> Function(
+                  Iterable<
+                      CopyWith$Fragment$invitationCardFragment<
+                          Fragment$invitationCardFragment>>)
+              _fn) =>
+      call(
+          sentInvitations: _fn(_instance.sentInvitations
+              .map((e) => CopyWith$Fragment$invitationCardFragment(
+                    e,
+                    (i) => i,
+                  ))).toList());
   TRes pendingInvitations(
-          Iterable<Query$pendingInvitations$viewer$pendingInvitations> Function(
+          Iterable<Fragment$invitationCardFragment> Function(
                   Iterable<
-                      CopyWith$Query$pendingInvitations$viewer$pendingInvitations<
-                          Query$pendingInvitations$viewer$pendingInvitations>>)
+                      CopyWith$Fragment$invitationCardFragment<
+                          Fragment$invitationCardFragment>>)
               _fn) =>
       call(
-          pendingInvitations: _fn(_instance.pendingInvitations.map((e) =>
-              CopyWith$Query$pendingInvitations$viewer$pendingInvitations(
-                e,
-                (i) => i,
-              ))).toList());
+          pendingInvitations: _fn(_instance.pendingInvitations
+              .map((e) => CopyWith$Fragment$invitationCardFragment(
+                    e,
+                    (i) => i,
+                  ))).toList());
   TRes acceptedInvitations(
-          Iterable<Query$pendingInvitations$viewer$acceptedInvitations> Function(
+          Iterable<Fragment$invitationCardFragment> Function(
                   Iterable<
-                      CopyWith$Query$pendingInvitations$viewer$acceptedInvitations<
-                          Query$pendingInvitations$viewer$acceptedInvitations>>)
+                      CopyWith$Fragment$invitationCardFragment<
+                          Fragment$invitationCardFragment>>)
               _fn) =>
       call(
-          acceptedInvitations: _fn(_instance.acceptedInvitations.map((e) =>
-              CopyWith$Query$pendingInvitations$viewer$acceptedInvitations(
-                e,
-                (i) => i,
-              ))).toList());
+          acceptedInvitations: _fn(_instance.acceptedInvitations
+              .map((e) => CopyWith$Fragment$invitationCardFragment(
+                    e,
+                    (i) => i,
+                  ))).toList());
 }
 
-class _CopyWithStubImpl$Query$pendingInvitations$viewer<TRes>
-    implements CopyWith$Query$pendingInvitations$viewer<TRes> {
-  _CopyWithStubImpl$Query$pendingInvitations$viewer(this._res);
+class _CopyWithStubImpl$Query$homeScreenViewer$viewer<TRes>
+    implements CopyWith$Query$homeScreenViewer$viewer<TRes> {
+  _CopyWithStubImpl$Query$homeScreenViewer$viewer(this._res);
 
   TRes _res;
 
   call({
-    List<Query$pendingInvitations$viewer$pendingInvitations>?
-        pendingInvitations,
-    List<Query$pendingInvitations$viewer$acceptedInvitations>?
-        acceptedInvitations,
+    List<Fragment$invitationCardFragment>? sentInvitations,
+    List<Fragment$invitationCardFragment>? pendingInvitations,
+    List<Fragment$invitationCardFragment>? acceptedInvitations,
     String? $__typename,
   }) =>
       _res;
+  sentInvitations(_fn) => _res;
   pendingInvitations(_fn) => _res;
   acceptedInvitations(_fn) => _res;
 }
 
-class Query$pendingInvitations$viewer$pendingInvitations {
-  Query$pendingInvitations$viewer$pendingInvitations({
-    required this.id,
-    required this.user,
-    required this.acceptedUsers,
-    required this.$__typename,
-  });
+class Variables$Mutation$acceptInvitation {
+  factory Variables$Mutation$acceptInvitation({required String invitationId}) =>
+      Variables$Mutation$acceptInvitation._({
+        r'invitationId': invitationId,
+      });
 
-  factory Query$pendingInvitations$viewer$pendingInvitations.fromJson(
-      Map<String, dynamic> json) {
-    final l$id = json['id'];
-    final l$user = json['user'];
-    final l$acceptedUsers = json['acceptedUsers'];
-    final l$$__typename = json['__typename'];
-    return Query$pendingInvitations$viewer$pendingInvitations(
-      id: (l$id as String),
-      user: Query$pendingInvitations$viewer$pendingInvitations$user.fromJson(
-          (l$user as Map<String, dynamic>)),
-      acceptedUsers: (l$acceptedUsers as List<dynamic>)
-          .map((e) =>
-              Query$pendingInvitations$viewer$pendingInvitations$acceptedUsers
-                  .fromJson((e as Map<String, dynamic>)))
-          .toList(),
-      $__typename: (l$$__typename as String),
-    );
+  Variables$Mutation$acceptInvitation._(this._$data);
+
+  factory Variables$Mutation$acceptInvitation.fromJson(
+      Map<String, dynamic> data) {
+    final result$data = <String, dynamic>{};
+    final l$invitationId = data['invitationId'];
+    result$data['invitationId'] = (l$invitationId as String);
+    return Variables$Mutation$acceptInvitation._(result$data);
   }
 
-  final String id;
+  Map<String, dynamic> _$data;
 
-  final Query$pendingInvitations$viewer$pendingInvitations$user user;
-
-  final List<Query$pendingInvitations$viewer$pendingInvitations$acceptedUsers>
-      acceptedUsers;
-
-  final String $__typename;
-
+  String get invitationId => (_$data['invitationId'] as String);
   Map<String, dynamic> toJson() {
-    final _resultData = <String, dynamic>{};
-    final l$id = id;
-    _resultData['id'] = l$id;
-    final l$user = user;
-    _resultData['user'] = l$user.toJson();
-    final l$acceptedUsers = acceptedUsers;
-    _resultData['acceptedUsers'] =
-        l$acceptedUsers.map((e) => e.toJson()).toList();
-    final l$$__typename = $__typename;
-    _resultData['__typename'] = l$$__typename;
-    return _resultData;
+    final result$data = <String, dynamic>{};
+    final l$invitationId = invitationId;
+    result$data['invitationId'] = l$invitationId;
+    return result$data;
   }
 
-  @override
-  int get hashCode {
-    final l$id = id;
-    final l$user = user;
-    final l$acceptedUsers = acceptedUsers;
-    final l$$__typename = $__typename;
-    return Object.hashAll([
-      l$id,
-      l$user,
-      Object.hashAll(l$acceptedUsers.map((v) => v)),
-      l$$__typename,
-    ]);
-  }
-
+  CopyWith$Variables$Mutation$acceptInvitation<
+          Variables$Mutation$acceptInvitation>
+      get copyWith => CopyWith$Variables$Mutation$acceptInvitation(
+            this,
+            (i) => i,
+          );
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) {
       return true;
     }
-    if (!(other is Query$pendingInvitations$viewer$pendingInvitations) ||
+    if (!(other is Variables$Mutation$acceptInvitation) ||
         runtimeType != other.runtimeType) {
       return false;
     }
-    final l$id = id;
-    final lOther$id = other.id;
-    if (l$id != lOther$id) {
-      return false;
-    }
-    final l$user = user;
-    final lOther$user = other.user;
-    if (l$user != lOther$user) {
-      return false;
-    }
-    final l$acceptedUsers = acceptedUsers;
-    final lOther$acceptedUsers = other.acceptedUsers;
-    if (l$acceptedUsers.length != lOther$acceptedUsers.length) {
-      return false;
-    }
-    for (int i = 0; i < l$acceptedUsers.length; i++) {
-      final l$acceptedUsers$entry = l$acceptedUsers[i];
-      final lOther$acceptedUsers$entry = lOther$acceptedUsers[i];
-      if (l$acceptedUsers$entry != lOther$acceptedUsers$entry) {
-        return false;
-      }
-    }
-    final l$$__typename = $__typename;
-    final lOther$$__typename = other.$__typename;
-    if (l$$__typename != lOther$$__typename) {
+    final l$invitationId = invitationId;
+    final lOther$invitationId = other.invitationId;
+    if (l$invitationId != lOther$invitationId) {
       return false;
     }
     return true;
   }
+
+  @override
+  int get hashCode {
+    final l$invitationId = invitationId;
+    return Object.hashAll([l$invitationId]);
+  }
 }
 
-extension UtilityExtension$Query$pendingInvitations$viewer$pendingInvitations
-    on Query$pendingInvitations$viewer$pendingInvitations {
-  CopyWith$Query$pendingInvitations$viewer$pendingInvitations<
-          Query$pendingInvitations$viewer$pendingInvitations>
-      get copyWith =>
-          CopyWith$Query$pendingInvitations$viewer$pendingInvitations(
-            this,
-            (i) => i,
-          );
+abstract class CopyWith$Variables$Mutation$acceptInvitation<TRes> {
+  factory CopyWith$Variables$Mutation$acceptInvitation(
+    Variables$Mutation$acceptInvitation instance,
+    TRes Function(Variables$Mutation$acceptInvitation) then,
+  ) = _CopyWithImpl$Variables$Mutation$acceptInvitation;
+
+  factory CopyWith$Variables$Mutation$acceptInvitation.stub(TRes res) =
+      _CopyWithStubImpl$Variables$Mutation$acceptInvitation;
+
+  TRes call({String? invitationId});
 }
 
-abstract class CopyWith$Query$pendingInvitations$viewer$pendingInvitations<
-    TRes> {
-  factory CopyWith$Query$pendingInvitations$viewer$pendingInvitations(
-    Query$pendingInvitations$viewer$pendingInvitations instance,
-    TRes Function(Query$pendingInvitations$viewer$pendingInvitations) then,
-  ) = _CopyWithImpl$Query$pendingInvitations$viewer$pendingInvitations;
-
-  factory CopyWith$Query$pendingInvitations$viewer$pendingInvitations.stub(
-          TRes res) =
-      _CopyWithStubImpl$Query$pendingInvitations$viewer$pendingInvitations;
-
-  TRes call({
-    String? id,
-    Query$pendingInvitations$viewer$pendingInvitations$user? user,
-    List<Query$pendingInvitations$viewer$pendingInvitations$acceptedUsers>?
-        acceptedUsers,
-    String? $__typename,
-  });
-  CopyWith$Query$pendingInvitations$viewer$pendingInvitations$user<TRes>
-      get user;
-  TRes acceptedUsers(
-      Iterable<Query$pendingInvitations$viewer$pendingInvitations$acceptedUsers> Function(
-              Iterable<
-                  CopyWith$Query$pendingInvitations$viewer$pendingInvitations$acceptedUsers<
-                      Query$pendingInvitations$viewer$pendingInvitations$acceptedUsers>>)
-          _fn);
-}
-
-class _CopyWithImpl$Query$pendingInvitations$viewer$pendingInvitations<TRes>
-    implements
-        CopyWith$Query$pendingInvitations$viewer$pendingInvitations<TRes> {
-  _CopyWithImpl$Query$pendingInvitations$viewer$pendingInvitations(
+class _CopyWithImpl$Variables$Mutation$acceptInvitation<TRes>
+    implements CopyWith$Variables$Mutation$acceptInvitation<TRes> {
+  _CopyWithImpl$Variables$Mutation$acceptInvitation(
     this._instance,
     this._then,
   );
 
-  final Query$pendingInvitations$viewer$pendingInvitations _instance;
+  final Variables$Mutation$acceptInvitation _instance;
 
-  final TRes Function(Query$pendingInvitations$viewer$pendingInvitations) _then;
+  final TRes Function(Variables$Mutation$acceptInvitation) _then;
 
   static const _undefined = {};
 
-  TRes call({
-    Object? id = _undefined,
-    Object? user = _undefined,
-    Object? acceptedUsers = _undefined,
-    Object? $__typename = _undefined,
-  }) =>
-      _then(Query$pendingInvitations$viewer$pendingInvitations(
-        id: id == _undefined || id == null ? _instance.id : (id as String),
-        user: user == _undefined || user == null
-            ? _instance.user
-            : (user as Query$pendingInvitations$viewer$pendingInvitations$user),
-        acceptedUsers: acceptedUsers == _undefined || acceptedUsers == null
-            ? _instance.acceptedUsers
-            : (acceptedUsers as List<
-                Query$pendingInvitations$viewer$pendingInvitations$acceptedUsers>),
-        $__typename: $__typename == _undefined || $__typename == null
-            ? _instance.$__typename
-            : ($__typename as String),
-      ));
-  CopyWith$Query$pendingInvitations$viewer$pendingInvitations$user<TRes>
-      get user {
-    final local$user = _instance.user;
-    return CopyWith$Query$pendingInvitations$viewer$pendingInvitations$user(
-        local$user, (e) => call(user: e));
-  }
-
-  TRes acceptedUsers(
-          Iterable<Query$pendingInvitations$viewer$pendingInvitations$acceptedUsers> Function(
-                  Iterable<
-                      CopyWith$Query$pendingInvitations$viewer$pendingInvitations$acceptedUsers<
-                          Query$pendingInvitations$viewer$pendingInvitations$acceptedUsers>>)
-              _fn) =>
-      call(
-          acceptedUsers: _fn(_instance.acceptedUsers.map((e) =>
-              CopyWith$Query$pendingInvitations$viewer$pendingInvitations$acceptedUsers(
-                e,
-                (i) => i,
-              ))).toList());
+  TRes call({Object? invitationId = _undefined}) =>
+      _then(Variables$Mutation$acceptInvitation._({
+        ..._instance._$data,
+        if (invitationId != _undefined && invitationId != null)
+          'invitationId': (invitationId as String),
+      }));
 }
 
-class _CopyWithStubImpl$Query$pendingInvitations$viewer$pendingInvitations<TRes>
-    implements
-        CopyWith$Query$pendingInvitations$viewer$pendingInvitations<TRes> {
-  _CopyWithStubImpl$Query$pendingInvitations$viewer$pendingInvitations(
-      this._res);
+class _CopyWithStubImpl$Variables$Mutation$acceptInvitation<TRes>
+    implements CopyWith$Variables$Mutation$acceptInvitation<TRes> {
+  _CopyWithStubImpl$Variables$Mutation$acceptInvitation(this._res);
 
   TRes _res;
 
-  call({
-    String? id,
-    Query$pendingInvitations$viewer$pendingInvitations$user? user,
-    List<Query$pendingInvitations$viewer$pendingInvitations$acceptedUsers>?
-        acceptedUsers,
-    String? $__typename,
-  }) =>
-      _res;
-  CopyWith$Query$pendingInvitations$viewer$pendingInvitations$user<TRes>
-      get user =>
-          CopyWith$Query$pendingInvitations$viewer$pendingInvitations$user.stub(
-              _res);
-  acceptedUsers(_fn) => _res;
+  call({String? invitationId}) => _res;
 }
 
-class Query$pendingInvitations$viewer$pendingInvitations$user {
-  Query$pendingInvitations$viewer$pendingInvitations$user({
-    required this.id,
-    required this.nickname,
-    required this.avatarUrl,
+class Mutation$acceptInvitation {
+  Mutation$acceptInvitation({
+    required this.acceptInvitation,
     required this.$__typename,
   });
 
-  factory Query$pendingInvitations$viewer$pendingInvitations$user.fromJson(
-      Map<String, dynamic> json) {
-    final l$id = json['id'];
-    final l$nickname = json['nickname'];
-    final l$avatarUrl = json['avatarUrl'];
+  factory Mutation$acceptInvitation.fromJson(Map<String, dynamic> json) {
+    final l$acceptInvitation = json['acceptInvitation'];
     final l$$__typename = json['__typename'];
-    return Query$pendingInvitations$viewer$pendingInvitations$user(
-      id: (l$id as String),
-      nickname: (l$nickname as String),
-      avatarUrl: (l$avatarUrl as String),
+    return Mutation$acceptInvitation(
+      acceptInvitation: (l$acceptInvitation as bool),
       $__typename: (l$$__typename as String),
     );
   }
 
-  final String id;
-
-  final String nickname;
-
-  final String avatarUrl;
+  final bool acceptInvitation;
 
   final String $__typename;
 
   Map<String, dynamic> toJson() {
     final _resultData = <String, dynamic>{};
-    final l$id = id;
-    _resultData['id'] = l$id;
-    final l$nickname = nickname;
-    _resultData['nickname'] = l$nickname;
-    final l$avatarUrl = avatarUrl;
-    _resultData['avatarUrl'] = l$avatarUrl;
+    final l$acceptInvitation = acceptInvitation;
+    _resultData['acceptInvitation'] = l$acceptInvitation;
     final l$$__typename = $__typename;
     _resultData['__typename'] = l$$__typename;
     return _resultData;
@@ -973,14 +729,10 @@ class Query$pendingInvitations$viewer$pendingInvitations$user {
 
   @override
   int get hashCode {
-    final l$id = id;
-    final l$nickname = nickname;
-    final l$avatarUrl = avatarUrl;
+    final l$acceptInvitation = acceptInvitation;
     final l$$__typename = $__typename;
     return Object.hashAll([
-      l$id,
-      l$nickname,
-      l$avatarUrl,
+      l$acceptInvitation,
       l$$__typename,
     ]);
   }
@@ -990,23 +742,13 @@ class Query$pendingInvitations$viewer$pendingInvitations$user {
     if (identical(this, other)) {
       return true;
     }
-    if (!(other is Query$pendingInvitations$viewer$pendingInvitations$user) ||
+    if (!(other is Mutation$acceptInvitation) ||
         runtimeType != other.runtimeType) {
       return false;
     }
-    final l$id = id;
-    final lOther$id = other.id;
-    if (l$id != lOther$id) {
-      return false;
-    }
-    final l$nickname = nickname;
-    final lOther$nickname = other.nickname;
-    if (l$nickname != lOther$nickname) {
-      return false;
-    }
-    final l$avatarUrl = avatarUrl;
-    final lOther$avatarUrl = other.avatarUrl;
-    if (l$avatarUrl != lOther$avatarUrl) {
+    final l$acceptInvitation = acceptInvitation;
+    final lOther$acceptInvitation = other.acceptInvitation;
+    if (l$acceptInvitation != lOther$acceptInvitation) {
       return false;
     }
     final l$$__typename = $__typename;
@@ -1018,128 +760,438 @@ class Query$pendingInvitations$viewer$pendingInvitations$user {
   }
 }
 
-extension UtilityExtension$Query$pendingInvitations$viewer$pendingInvitations$user
-    on Query$pendingInvitations$viewer$pendingInvitations$user {
-  CopyWith$Query$pendingInvitations$viewer$pendingInvitations$user<
-          Query$pendingInvitations$viewer$pendingInvitations$user>
-      get copyWith =>
-          CopyWith$Query$pendingInvitations$viewer$pendingInvitations$user(
-            this,
-            (i) => i,
-          );
+extension UtilityExtension$Mutation$acceptInvitation
+    on Mutation$acceptInvitation {
+  CopyWith$Mutation$acceptInvitation<Mutation$acceptInvitation> get copyWith =>
+      CopyWith$Mutation$acceptInvitation(
+        this,
+        (i) => i,
+      );
 }
 
-abstract class CopyWith$Query$pendingInvitations$viewer$pendingInvitations$user<
-    TRes> {
-  factory CopyWith$Query$pendingInvitations$viewer$pendingInvitations$user(
-    Query$pendingInvitations$viewer$pendingInvitations$user instance,
-    TRes Function(Query$pendingInvitations$viewer$pendingInvitations$user) then,
-  ) = _CopyWithImpl$Query$pendingInvitations$viewer$pendingInvitations$user;
+abstract class CopyWith$Mutation$acceptInvitation<TRes> {
+  factory CopyWith$Mutation$acceptInvitation(
+    Mutation$acceptInvitation instance,
+    TRes Function(Mutation$acceptInvitation) then,
+  ) = _CopyWithImpl$Mutation$acceptInvitation;
 
-  factory CopyWith$Query$pendingInvitations$viewer$pendingInvitations$user.stub(
-          TRes res) =
-      _CopyWithStubImpl$Query$pendingInvitations$viewer$pendingInvitations$user;
+  factory CopyWith$Mutation$acceptInvitation.stub(TRes res) =
+      _CopyWithStubImpl$Mutation$acceptInvitation;
 
   TRes call({
-    String? id,
-    String? nickname,
-    String? avatarUrl,
+    bool? acceptInvitation,
     String? $__typename,
   });
 }
 
-class _CopyWithImpl$Query$pendingInvitations$viewer$pendingInvitations$user<
-        TRes>
-    implements
-        CopyWith$Query$pendingInvitations$viewer$pendingInvitations$user<TRes> {
-  _CopyWithImpl$Query$pendingInvitations$viewer$pendingInvitations$user(
+class _CopyWithImpl$Mutation$acceptInvitation<TRes>
+    implements CopyWith$Mutation$acceptInvitation<TRes> {
+  _CopyWithImpl$Mutation$acceptInvitation(
     this._instance,
     this._then,
   );
 
-  final Query$pendingInvitations$viewer$pendingInvitations$user _instance;
+  final Mutation$acceptInvitation _instance;
 
-  final TRes Function(Query$pendingInvitations$viewer$pendingInvitations$user)
-      _then;
+  final TRes Function(Mutation$acceptInvitation) _then;
 
   static const _undefined = {};
 
   TRes call({
-    Object? id = _undefined,
-    Object? nickname = _undefined,
-    Object? avatarUrl = _undefined,
+    Object? acceptInvitation = _undefined,
     Object? $__typename = _undefined,
   }) =>
-      _then(Query$pendingInvitations$viewer$pendingInvitations$user(
-        id: id == _undefined || id == null ? _instance.id : (id as String),
-        nickname: nickname == _undefined || nickname == null
-            ? _instance.nickname
-            : (nickname as String),
-        avatarUrl: avatarUrl == _undefined || avatarUrl == null
-            ? _instance.avatarUrl
-            : (avatarUrl as String),
+      _then(Mutation$acceptInvitation(
+        acceptInvitation:
+            acceptInvitation == _undefined || acceptInvitation == null
+                ? _instance.acceptInvitation
+                : (acceptInvitation as bool),
         $__typename: $__typename == _undefined || $__typename == null
             ? _instance.$__typename
             : ($__typename as String),
       ));
 }
 
-class _CopyWithStubImpl$Query$pendingInvitations$viewer$pendingInvitations$user<
-        TRes>
-    implements
-        CopyWith$Query$pendingInvitations$viewer$pendingInvitations$user<TRes> {
-  _CopyWithStubImpl$Query$pendingInvitations$viewer$pendingInvitations$user(
-      this._res);
+class _CopyWithStubImpl$Mutation$acceptInvitation<TRes>
+    implements CopyWith$Mutation$acceptInvitation<TRes> {
+  _CopyWithStubImpl$Mutation$acceptInvitation(this._res);
 
   TRes _res;
 
   call({
-    String? id,
-    String? nickname,
-    String? avatarUrl,
+    bool? acceptInvitation,
     String? $__typename,
   }) =>
       _res;
 }
 
-class Query$pendingInvitations$viewer$pendingInvitations$acceptedUsers {
-  Query$pendingInvitations$viewer$pendingInvitations$acceptedUsers({
-    required this.id,
-    required this.nickname,
-    required this.avatarUrl,
+const documentNodeMutationacceptInvitation = DocumentNode(definitions: [
+  OperationDefinitionNode(
+    type: OperationType.mutation,
+    name: NameNode(value: 'acceptInvitation'),
+    variableDefinitions: [
+      VariableDefinitionNode(
+        variable: VariableNode(name: NameNode(value: 'invitationId')),
+        type: NamedTypeNode(
+          name: NameNode(value: 'UUID'),
+          isNonNull: true,
+        ),
+        defaultValue: DefaultValueNode(value: null),
+        directives: [],
+      )
+    ],
+    directives: [],
+    selectionSet: SelectionSetNode(selections: [
+      FieldNode(
+        name: NameNode(value: 'acceptInvitation'),
+        alias: null,
+        arguments: [
+          ArgumentNode(
+            name: NameNode(value: 'invitationId'),
+            value: VariableNode(name: NameNode(value: 'invitationId')),
+          )
+        ],
+        directives: [],
+        selectionSet: null,
+      ),
+      FieldNode(
+        name: NameNode(value: '__typename'),
+        alias: null,
+        arguments: [],
+        directives: [],
+        selectionSet: null,
+      ),
+    ]),
+  ),
+]);
+Mutation$acceptInvitation _parserFn$Mutation$acceptInvitation(
+        Map<String, dynamic> data) =>
+    Mutation$acceptInvitation.fromJson(data);
+typedef OnMutationCompleted$Mutation$acceptInvitation = FutureOr<void> Function(
+  dynamic,
+  Mutation$acceptInvitation?,
+);
+
+class Options$Mutation$acceptInvitation
+    extends graphql.MutationOptions<Mutation$acceptInvitation> {
+  Options$Mutation$acceptInvitation({
+    String? operationName,
+    required Variables$Mutation$acceptInvitation variables,
+    graphql.FetchPolicy? fetchPolicy,
+    graphql.ErrorPolicy? errorPolicy,
+    graphql.CacheRereadPolicy? cacheRereadPolicy,
+    Object? optimisticResult,
+    graphql.Context? context,
+    OnMutationCompleted$Mutation$acceptInvitation? onCompleted,
+    graphql.OnMutationUpdate<Mutation$acceptInvitation>? update,
+    graphql.OnError? onError,
+  })  : onCompletedWithParsed = onCompleted,
+        super(
+          variables: variables.toJson(),
+          operationName: operationName,
+          fetchPolicy: fetchPolicy,
+          errorPolicy: errorPolicy,
+          cacheRereadPolicy: cacheRereadPolicy,
+          optimisticResult: optimisticResult,
+          context: context,
+          onCompleted: onCompleted == null
+              ? null
+              : (data) => onCompleted(
+                    data,
+                    data == null
+                        ? null
+                        : _parserFn$Mutation$acceptInvitation(data),
+                  ),
+          update: update,
+          onError: onError,
+          document: documentNodeMutationacceptInvitation,
+          parserFn: _parserFn$Mutation$acceptInvitation,
+        );
+
+  final OnMutationCompleted$Mutation$acceptInvitation? onCompletedWithParsed;
+
+  @override
+  List<Object?> get properties => [
+        ...super.onCompleted == null
+            ? super.properties
+            : super.properties.where((property) => property != onCompleted),
+        onCompletedWithParsed,
+      ];
+}
+
+class WatchOptions$Mutation$acceptInvitation
+    extends graphql.WatchQueryOptions<Mutation$acceptInvitation> {
+  WatchOptions$Mutation$acceptInvitation({
+    String? operationName,
+    required Variables$Mutation$acceptInvitation variables,
+    graphql.FetchPolicy? fetchPolicy,
+    graphql.ErrorPolicy? errorPolicy,
+    graphql.CacheRereadPolicy? cacheRereadPolicy,
+    Object? optimisticResult,
+    graphql.Context? context,
+    Duration? pollInterval,
+    bool? eagerlyFetchResults,
+    bool carryForwardDataOnException = true,
+    bool fetchResults = false,
+  }) : super(
+          variables: variables.toJson(),
+          operationName: operationName,
+          fetchPolicy: fetchPolicy,
+          errorPolicy: errorPolicy,
+          cacheRereadPolicy: cacheRereadPolicy,
+          optimisticResult: optimisticResult,
+          context: context,
+          document: documentNodeMutationacceptInvitation,
+          pollInterval: pollInterval,
+          eagerlyFetchResults: eagerlyFetchResults,
+          carryForwardDataOnException: carryForwardDataOnException,
+          fetchResults: fetchResults,
+          parserFn: _parserFn$Mutation$acceptInvitation,
+        );
+}
+
+extension ClientExtension$Mutation$acceptInvitation on graphql.GraphQLClient {
+  Future<graphql.QueryResult<Mutation$acceptInvitation>>
+      mutate$acceptInvitation(
+              Options$Mutation$acceptInvitation options) async =>
+          await this.mutate(options);
+  graphql.ObservableQuery<Mutation$acceptInvitation>
+      watchMutation$acceptInvitation(
+              WatchOptions$Mutation$acceptInvitation options) =>
+          this.watchMutation(options);
+}
+
+class Mutation$acceptInvitation$HookResult {
+  Mutation$acceptInvitation$HookResult(
+    this.runMutation,
+    this.result,
+  );
+
+  final RunMutation$Mutation$acceptInvitation runMutation;
+
+  final graphql.QueryResult<Mutation$acceptInvitation> result;
+}
+
+Mutation$acceptInvitation$HookResult useMutation$acceptInvitation(
+    [WidgetOptions$Mutation$acceptInvitation? options]) {
+  final result = graphql_flutter
+      .useMutation(options ?? WidgetOptions$Mutation$acceptInvitation());
+  return Mutation$acceptInvitation$HookResult(
+    (variables, {optimisticResult}) => result.runMutation(
+      variables.toJson(),
+      optimisticResult: optimisticResult,
+    ),
+    result.result,
+  );
+}
+
+graphql.ObservableQuery<Mutation$acceptInvitation>
+    useWatchMutation$acceptInvitation(
+            WatchOptions$Mutation$acceptInvitation options) =>
+        graphql_flutter.useWatchMutation(options);
+
+class WidgetOptions$Mutation$acceptInvitation
+    extends graphql.MutationOptions<Mutation$acceptInvitation> {
+  WidgetOptions$Mutation$acceptInvitation({
+    String? operationName,
+    graphql.FetchPolicy? fetchPolicy,
+    graphql.ErrorPolicy? errorPolicy,
+    graphql.CacheRereadPolicy? cacheRereadPolicy,
+    Object? optimisticResult,
+    graphql.Context? context,
+    OnMutationCompleted$Mutation$acceptInvitation? onCompleted,
+    graphql.OnMutationUpdate<Mutation$acceptInvitation>? update,
+    graphql.OnError? onError,
+  })  : onCompletedWithParsed = onCompleted,
+        super(
+          operationName: operationName,
+          fetchPolicy: fetchPolicy,
+          errorPolicy: errorPolicy,
+          cacheRereadPolicy: cacheRereadPolicy,
+          optimisticResult: optimisticResult,
+          context: context,
+          onCompleted: onCompleted == null
+              ? null
+              : (data) => onCompleted(
+                    data,
+                    data == null
+                        ? null
+                        : _parserFn$Mutation$acceptInvitation(data),
+                  ),
+          update: update,
+          onError: onError,
+          document: documentNodeMutationacceptInvitation,
+          parserFn: _parserFn$Mutation$acceptInvitation,
+        );
+
+  final OnMutationCompleted$Mutation$acceptInvitation? onCompletedWithParsed;
+
+  @override
+  List<Object?> get properties => [
+        ...super.onCompleted == null
+            ? super.properties
+            : super.properties.where((property) => property != onCompleted),
+        onCompletedWithParsed,
+      ];
+}
+
+typedef RunMutation$Mutation$acceptInvitation
+    = graphql.MultiSourceResult<Mutation$acceptInvitation> Function(
+  Variables$Mutation$acceptInvitation, {
+  Object? optimisticResult,
+});
+typedef Builder$Mutation$acceptInvitation = widgets.Widget Function(
+  RunMutation$Mutation$acceptInvitation,
+  graphql.QueryResult<Mutation$acceptInvitation>?,
+);
+
+class Mutation$acceptInvitation$Widget
+    extends graphql_flutter.Mutation<Mutation$acceptInvitation> {
+  Mutation$acceptInvitation$Widget({
+    widgets.Key? key,
+    WidgetOptions$Mutation$acceptInvitation? options,
+    required Builder$Mutation$acceptInvitation builder,
+  }) : super(
+          key: key,
+          options: options ?? WidgetOptions$Mutation$acceptInvitation(),
+          builder: (
+            run,
+            result,
+          ) =>
+              builder(
+            (
+              variables, {
+              optimisticResult,
+            }) =>
+                run(
+              variables.toJson(),
+              optimisticResult: optimisticResult,
+            ),
+            result,
+          ),
+        );
+}
+
+class Variables$Mutation$denyInvitation {
+  factory Variables$Mutation$denyInvitation({required String invitationId}) =>
+      Variables$Mutation$denyInvitation._({
+        r'invitationId': invitationId,
+      });
+
+  Variables$Mutation$denyInvitation._(this._$data);
+
+  factory Variables$Mutation$denyInvitation.fromJson(
+      Map<String, dynamic> data) {
+    final result$data = <String, dynamic>{};
+    final l$invitationId = data['invitationId'];
+    result$data['invitationId'] = (l$invitationId as String);
+    return Variables$Mutation$denyInvitation._(result$data);
+  }
+
+  Map<String, dynamic> _$data;
+
+  String get invitationId => (_$data['invitationId'] as String);
+  Map<String, dynamic> toJson() {
+    final result$data = <String, dynamic>{};
+    final l$invitationId = invitationId;
+    result$data['invitationId'] = l$invitationId;
+    return result$data;
+  }
+
+  CopyWith$Variables$Mutation$denyInvitation<Variables$Mutation$denyInvitation>
+      get copyWith => CopyWith$Variables$Mutation$denyInvitation(
+            this,
+            (i) => i,
+          );
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    if (!(other is Variables$Mutation$denyInvitation) ||
+        runtimeType != other.runtimeType) {
+      return false;
+    }
+    final l$invitationId = invitationId;
+    final lOther$invitationId = other.invitationId;
+    if (l$invitationId != lOther$invitationId) {
+      return false;
+    }
+    return true;
+  }
+
+  @override
+  int get hashCode {
+    final l$invitationId = invitationId;
+    return Object.hashAll([l$invitationId]);
+  }
+}
+
+abstract class CopyWith$Variables$Mutation$denyInvitation<TRes> {
+  factory CopyWith$Variables$Mutation$denyInvitation(
+    Variables$Mutation$denyInvitation instance,
+    TRes Function(Variables$Mutation$denyInvitation) then,
+  ) = _CopyWithImpl$Variables$Mutation$denyInvitation;
+
+  factory CopyWith$Variables$Mutation$denyInvitation.stub(TRes res) =
+      _CopyWithStubImpl$Variables$Mutation$denyInvitation;
+
+  TRes call({String? invitationId});
+}
+
+class _CopyWithImpl$Variables$Mutation$denyInvitation<TRes>
+    implements CopyWith$Variables$Mutation$denyInvitation<TRes> {
+  _CopyWithImpl$Variables$Mutation$denyInvitation(
+    this._instance,
+    this._then,
+  );
+
+  final Variables$Mutation$denyInvitation _instance;
+
+  final TRes Function(Variables$Mutation$denyInvitation) _then;
+
+  static const _undefined = {};
+
+  TRes call({Object? invitationId = _undefined}) =>
+      _then(Variables$Mutation$denyInvitation._({
+        ..._instance._$data,
+        if (invitationId != _undefined && invitationId != null)
+          'invitationId': (invitationId as String),
+      }));
+}
+
+class _CopyWithStubImpl$Variables$Mutation$denyInvitation<TRes>
+    implements CopyWith$Variables$Mutation$denyInvitation<TRes> {
+  _CopyWithStubImpl$Variables$Mutation$denyInvitation(this._res);
+
+  TRes _res;
+
+  call({String? invitationId}) => _res;
+}
+
+class Mutation$denyInvitation {
+  Mutation$denyInvitation({
+    required this.denyInvitation,
     required this.$__typename,
   });
 
-  factory Query$pendingInvitations$viewer$pendingInvitations$acceptedUsers.fromJson(
-      Map<String, dynamic> json) {
-    final l$id = json['id'];
-    final l$nickname = json['nickname'];
-    final l$avatarUrl = json['avatarUrl'];
+  factory Mutation$denyInvitation.fromJson(Map<String, dynamic> json) {
+    final l$denyInvitation = json['denyInvitation'];
     final l$$__typename = json['__typename'];
-    return Query$pendingInvitations$viewer$pendingInvitations$acceptedUsers(
-      id: (l$id as String),
-      nickname: (l$nickname as String),
-      avatarUrl: (l$avatarUrl as String),
+    return Mutation$denyInvitation(
+      denyInvitation: (l$denyInvitation as bool),
       $__typename: (l$$__typename as String),
     );
   }
 
-  final String id;
-
-  final String nickname;
-
-  final String avatarUrl;
+  final bool denyInvitation;
 
   final String $__typename;
 
   Map<String, dynamic> toJson() {
     final _resultData = <String, dynamic>{};
-    final l$id = id;
-    _resultData['id'] = l$id;
-    final l$nickname = nickname;
-    _resultData['nickname'] = l$nickname;
-    final l$avatarUrl = avatarUrl;
-    _resultData['avatarUrl'] = l$avatarUrl;
+    final l$denyInvitation = denyInvitation;
+    _resultData['denyInvitation'] = l$denyInvitation;
     final l$$__typename = $__typename;
     _resultData['__typename'] = l$$__typename;
     return _resultData;
@@ -1147,14 +1199,10 @@ class Query$pendingInvitations$viewer$pendingInvitations$acceptedUsers {
 
   @override
   int get hashCode {
-    final l$id = id;
-    final l$nickname = nickname;
-    final l$avatarUrl = avatarUrl;
+    final l$denyInvitation = denyInvitation;
     final l$$__typename = $__typename;
     return Object.hashAll([
-      l$id,
-      l$nickname,
-      l$avatarUrl,
+      l$denyInvitation,
       l$$__typename,
     ]);
   }
@@ -1164,24 +1212,13 @@ class Query$pendingInvitations$viewer$pendingInvitations$acceptedUsers {
     if (identical(this, other)) {
       return true;
     }
-    if (!(other
-            is Query$pendingInvitations$viewer$pendingInvitations$acceptedUsers) ||
+    if (!(other is Mutation$denyInvitation) ||
         runtimeType != other.runtimeType) {
       return false;
     }
-    final l$id = id;
-    final lOther$id = other.id;
-    if (l$id != lOther$id) {
-      return false;
-    }
-    final l$nickname = nickname;
-    final lOther$nickname = other.nickname;
-    if (l$nickname != lOther$nickname) {
-      return false;
-    }
-    final l$avatarUrl = avatarUrl;
-    final lOther$avatarUrl = other.avatarUrl;
-    if (l$avatarUrl != lOther$avatarUrl) {
+    final l$denyInvitation = denyInvitation;
+    final lOther$denyInvitation = other.denyInvitation;
+    if (l$denyInvitation != lOther$denyInvitation) {
       return false;
     }
     final l$$__typename = $__typename;
@@ -1193,711 +1230,310 @@ class Query$pendingInvitations$viewer$pendingInvitations$acceptedUsers {
   }
 }
 
-extension UtilityExtension$Query$pendingInvitations$viewer$pendingInvitations$acceptedUsers
-    on Query$pendingInvitations$viewer$pendingInvitations$acceptedUsers {
-  CopyWith$Query$pendingInvitations$viewer$pendingInvitations$acceptedUsers<
-          Query$pendingInvitations$viewer$pendingInvitations$acceptedUsers>
-      get copyWith =>
-          CopyWith$Query$pendingInvitations$viewer$pendingInvitations$acceptedUsers(
-            this,
-            (i) => i,
-          );
+extension UtilityExtension$Mutation$denyInvitation on Mutation$denyInvitation {
+  CopyWith$Mutation$denyInvitation<Mutation$denyInvitation> get copyWith =>
+      CopyWith$Mutation$denyInvitation(
+        this,
+        (i) => i,
+      );
 }
 
-abstract class CopyWith$Query$pendingInvitations$viewer$pendingInvitations$acceptedUsers<
-    TRes> {
-  factory CopyWith$Query$pendingInvitations$viewer$pendingInvitations$acceptedUsers(
-    Query$pendingInvitations$viewer$pendingInvitations$acceptedUsers instance,
-    TRes Function(
-            Query$pendingInvitations$viewer$pendingInvitations$acceptedUsers)
-        then,
-  ) = _CopyWithImpl$Query$pendingInvitations$viewer$pendingInvitations$acceptedUsers;
+abstract class CopyWith$Mutation$denyInvitation<TRes> {
+  factory CopyWith$Mutation$denyInvitation(
+    Mutation$denyInvitation instance,
+    TRes Function(Mutation$denyInvitation) then,
+  ) = _CopyWithImpl$Mutation$denyInvitation;
 
-  factory CopyWith$Query$pendingInvitations$viewer$pendingInvitations$acceptedUsers.stub(
-          TRes res) =
-      _CopyWithStubImpl$Query$pendingInvitations$viewer$pendingInvitations$acceptedUsers;
+  factory CopyWith$Mutation$denyInvitation.stub(TRes res) =
+      _CopyWithStubImpl$Mutation$denyInvitation;
 
   TRes call({
-    String? id,
-    String? nickname,
-    String? avatarUrl,
+    bool? denyInvitation,
     String? $__typename,
   });
 }
 
-class _CopyWithImpl$Query$pendingInvitations$viewer$pendingInvitations$acceptedUsers<
-        TRes>
-    implements
-        CopyWith$Query$pendingInvitations$viewer$pendingInvitations$acceptedUsers<
-            TRes> {
-  _CopyWithImpl$Query$pendingInvitations$viewer$pendingInvitations$acceptedUsers(
+class _CopyWithImpl$Mutation$denyInvitation<TRes>
+    implements CopyWith$Mutation$denyInvitation<TRes> {
+  _CopyWithImpl$Mutation$denyInvitation(
     this._instance,
     this._then,
   );
 
-  final Query$pendingInvitations$viewer$pendingInvitations$acceptedUsers
-      _instance;
+  final Mutation$denyInvitation _instance;
 
-  final TRes Function(
-      Query$pendingInvitations$viewer$pendingInvitations$acceptedUsers) _then;
+  final TRes Function(Mutation$denyInvitation) _then;
 
   static const _undefined = {};
 
   TRes call({
-    Object? id = _undefined,
-    Object? nickname = _undefined,
-    Object? avatarUrl = _undefined,
+    Object? denyInvitation = _undefined,
     Object? $__typename = _undefined,
   }) =>
-      _then(Query$pendingInvitations$viewer$pendingInvitations$acceptedUsers(
-        id: id == _undefined || id == null ? _instance.id : (id as String),
-        nickname: nickname == _undefined || nickname == null
-            ? _instance.nickname
-            : (nickname as String),
-        avatarUrl: avatarUrl == _undefined || avatarUrl == null
-            ? _instance.avatarUrl
-            : (avatarUrl as String),
+      _then(Mutation$denyInvitation(
+        denyInvitation: denyInvitation == _undefined || denyInvitation == null
+            ? _instance.denyInvitation
+            : (denyInvitation as bool),
         $__typename: $__typename == _undefined || $__typename == null
             ? _instance.$__typename
             : ($__typename as String),
       ));
 }
 
-class _CopyWithStubImpl$Query$pendingInvitations$viewer$pendingInvitations$acceptedUsers<
-        TRes>
-    implements
-        CopyWith$Query$pendingInvitations$viewer$pendingInvitations$acceptedUsers<
-            TRes> {
-  _CopyWithStubImpl$Query$pendingInvitations$viewer$pendingInvitations$acceptedUsers(
-      this._res);
+class _CopyWithStubImpl$Mutation$denyInvitation<TRes>
+    implements CopyWith$Mutation$denyInvitation<TRes> {
+  _CopyWithStubImpl$Mutation$denyInvitation(this._res);
 
   TRes _res;
 
   call({
-    String? id,
-    String? nickname,
-    String? avatarUrl,
+    bool? denyInvitation,
     String? $__typename,
   }) =>
       _res;
 }
 
-class Query$pendingInvitations$viewer$acceptedInvitations {
-  Query$pendingInvitations$viewer$acceptedInvitations({
-    required this.id,
-    required this.user,
-    required this.location,
-    required this.startsAt,
-    required this.acceptedUsers,
-    required this.$__typename,
-  });
+const documentNodeMutationdenyInvitation = DocumentNode(definitions: [
+  OperationDefinitionNode(
+    type: OperationType.mutation,
+    name: NameNode(value: 'denyInvitation'),
+    variableDefinitions: [
+      VariableDefinitionNode(
+        variable: VariableNode(name: NameNode(value: 'invitationId')),
+        type: NamedTypeNode(
+          name: NameNode(value: 'UUID'),
+          isNonNull: true,
+        ),
+        defaultValue: DefaultValueNode(value: null),
+        directives: [],
+      )
+    ],
+    directives: [],
+    selectionSet: SelectionSetNode(selections: [
+      FieldNode(
+        name: NameNode(value: 'denyInvitation'),
+        alias: null,
+        arguments: [
+          ArgumentNode(
+            name: NameNode(value: 'invitationId'),
+            value: VariableNode(name: NameNode(value: 'invitationId')),
+          )
+        ],
+        directives: [],
+        selectionSet: null,
+      ),
+      FieldNode(
+        name: NameNode(value: '__typename'),
+        alias: null,
+        arguments: [],
+        directives: [],
+        selectionSet: null,
+      ),
+    ]),
+  ),
+]);
+Mutation$denyInvitation _parserFn$Mutation$denyInvitation(
+        Map<String, dynamic> data) =>
+    Mutation$denyInvitation.fromJson(data);
+typedef OnMutationCompleted$Mutation$denyInvitation = FutureOr<void> Function(
+  dynamic,
+  Mutation$denyInvitation?,
+);
 
-  factory Query$pendingInvitations$viewer$acceptedInvitations.fromJson(
-      Map<String, dynamic> json) {
-    final l$id = json['id'];
-    final l$user = json['user'];
-    final l$location = json['location'];
-    final l$startsAt = json['startsAt'];
-    final l$acceptedUsers = json['acceptedUsers'];
-    final l$$__typename = json['__typename'];
-    return Query$pendingInvitations$viewer$acceptedInvitations(
-      id: (l$id as String),
-      user: Query$pendingInvitations$viewer$acceptedInvitations$user.fromJson(
-          (l$user as Map<String, dynamic>)),
-      location: (l$location as String),
-      startsAt: (l$startsAt as String),
-      acceptedUsers: (l$acceptedUsers as List<dynamic>)
-          .map((e) =>
-              Query$pendingInvitations$viewer$acceptedInvitations$acceptedUsers
-                  .fromJson((e as Map<String, dynamic>)))
-          .toList(),
-      $__typename: (l$$__typename as String),
-    );
-  }
+class Options$Mutation$denyInvitation
+    extends graphql.MutationOptions<Mutation$denyInvitation> {
+  Options$Mutation$denyInvitation({
+    String? operationName,
+    required Variables$Mutation$denyInvitation variables,
+    graphql.FetchPolicy? fetchPolicy,
+    graphql.ErrorPolicy? errorPolicy,
+    graphql.CacheRereadPolicy? cacheRereadPolicy,
+    Object? optimisticResult,
+    graphql.Context? context,
+    OnMutationCompleted$Mutation$denyInvitation? onCompleted,
+    graphql.OnMutationUpdate<Mutation$denyInvitation>? update,
+    graphql.OnError? onError,
+  })  : onCompletedWithParsed = onCompleted,
+        super(
+          variables: variables.toJson(),
+          operationName: operationName,
+          fetchPolicy: fetchPolicy,
+          errorPolicy: errorPolicy,
+          cacheRereadPolicy: cacheRereadPolicy,
+          optimisticResult: optimisticResult,
+          context: context,
+          onCompleted: onCompleted == null
+              ? null
+              : (data) => onCompleted(
+                    data,
+                    data == null
+                        ? null
+                        : _parserFn$Mutation$denyInvitation(data),
+                  ),
+          update: update,
+          onError: onError,
+          document: documentNodeMutationdenyInvitation,
+          parserFn: _parserFn$Mutation$denyInvitation,
+        );
 
-  final String id;
-
-  final Query$pendingInvitations$viewer$acceptedInvitations$user user;
-
-  final String location;
-
-  final String startsAt;
-
-  final List<Query$pendingInvitations$viewer$acceptedInvitations$acceptedUsers>
-      acceptedUsers;
-
-  final String $__typename;
-
-  Map<String, dynamic> toJson() {
-    final _resultData = <String, dynamic>{};
-    final l$id = id;
-    _resultData['id'] = l$id;
-    final l$user = user;
-    _resultData['user'] = l$user.toJson();
-    final l$location = location;
-    _resultData['location'] = l$location;
-    final l$startsAt = startsAt;
-    _resultData['startsAt'] = l$startsAt;
-    final l$acceptedUsers = acceptedUsers;
-    _resultData['acceptedUsers'] =
-        l$acceptedUsers.map((e) => e.toJson()).toList();
-    final l$$__typename = $__typename;
-    _resultData['__typename'] = l$$__typename;
-    return _resultData;
-  }
+  final OnMutationCompleted$Mutation$denyInvitation? onCompletedWithParsed;
 
   @override
-  int get hashCode {
-    final l$id = id;
-    final l$user = user;
-    final l$location = location;
-    final l$startsAt = startsAt;
-    final l$acceptedUsers = acceptedUsers;
-    final l$$__typename = $__typename;
-    return Object.hashAll([
-      l$id,
-      l$user,
-      l$location,
-      l$startsAt,
-      Object.hashAll(l$acceptedUsers.map((v) => v)),
-      l$$__typename,
-    ]);
-  }
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) {
-      return true;
-    }
-    if (!(other is Query$pendingInvitations$viewer$acceptedInvitations) ||
-        runtimeType != other.runtimeType) {
-      return false;
-    }
-    final l$id = id;
-    final lOther$id = other.id;
-    if (l$id != lOther$id) {
-      return false;
-    }
-    final l$user = user;
-    final lOther$user = other.user;
-    if (l$user != lOther$user) {
-      return false;
-    }
-    final l$location = location;
-    final lOther$location = other.location;
-    if (l$location != lOther$location) {
-      return false;
-    }
-    final l$startsAt = startsAt;
-    final lOther$startsAt = other.startsAt;
-    if (l$startsAt != lOther$startsAt) {
-      return false;
-    }
-    final l$acceptedUsers = acceptedUsers;
-    final lOther$acceptedUsers = other.acceptedUsers;
-    if (l$acceptedUsers.length != lOther$acceptedUsers.length) {
-      return false;
-    }
-    for (int i = 0; i < l$acceptedUsers.length; i++) {
-      final l$acceptedUsers$entry = l$acceptedUsers[i];
-      final lOther$acceptedUsers$entry = lOther$acceptedUsers[i];
-      if (l$acceptedUsers$entry != lOther$acceptedUsers$entry) {
-        return false;
-      }
-    }
-    final l$$__typename = $__typename;
-    final lOther$$__typename = other.$__typename;
-    if (l$$__typename != lOther$$__typename) {
-      return false;
-    }
-    return true;
-  }
+  List<Object?> get properties => [
+        ...super.onCompleted == null
+            ? super.properties
+            : super.properties.where((property) => property != onCompleted),
+        onCompletedWithParsed,
+      ];
 }
 
-extension UtilityExtension$Query$pendingInvitations$viewer$acceptedInvitations
-    on Query$pendingInvitations$viewer$acceptedInvitations {
-  CopyWith$Query$pendingInvitations$viewer$acceptedInvitations<
-          Query$pendingInvitations$viewer$acceptedInvitations>
-      get copyWith =>
-          CopyWith$Query$pendingInvitations$viewer$acceptedInvitations(
-            this,
-            (i) => i,
-          );
+class WatchOptions$Mutation$denyInvitation
+    extends graphql.WatchQueryOptions<Mutation$denyInvitation> {
+  WatchOptions$Mutation$denyInvitation({
+    String? operationName,
+    required Variables$Mutation$denyInvitation variables,
+    graphql.FetchPolicy? fetchPolicy,
+    graphql.ErrorPolicy? errorPolicy,
+    graphql.CacheRereadPolicy? cacheRereadPolicy,
+    Object? optimisticResult,
+    graphql.Context? context,
+    Duration? pollInterval,
+    bool? eagerlyFetchResults,
+    bool carryForwardDataOnException = true,
+    bool fetchResults = false,
+  }) : super(
+          variables: variables.toJson(),
+          operationName: operationName,
+          fetchPolicy: fetchPolicy,
+          errorPolicy: errorPolicy,
+          cacheRereadPolicy: cacheRereadPolicy,
+          optimisticResult: optimisticResult,
+          context: context,
+          document: documentNodeMutationdenyInvitation,
+          pollInterval: pollInterval,
+          eagerlyFetchResults: eagerlyFetchResults,
+          carryForwardDataOnException: carryForwardDataOnException,
+          fetchResults: fetchResults,
+          parserFn: _parserFn$Mutation$denyInvitation,
+        );
 }
 
-abstract class CopyWith$Query$pendingInvitations$viewer$acceptedInvitations<
-    TRes> {
-  factory CopyWith$Query$pendingInvitations$viewer$acceptedInvitations(
-    Query$pendingInvitations$viewer$acceptedInvitations instance,
-    TRes Function(Query$pendingInvitations$viewer$acceptedInvitations) then,
-  ) = _CopyWithImpl$Query$pendingInvitations$viewer$acceptedInvitations;
-
-  factory CopyWith$Query$pendingInvitations$viewer$acceptedInvitations.stub(
-          TRes res) =
-      _CopyWithStubImpl$Query$pendingInvitations$viewer$acceptedInvitations;
-
-  TRes call({
-    String? id,
-    Query$pendingInvitations$viewer$acceptedInvitations$user? user,
-    String? location,
-    String? startsAt,
-    List<Query$pendingInvitations$viewer$acceptedInvitations$acceptedUsers>?
-        acceptedUsers,
-    String? $__typename,
-  });
-  CopyWith$Query$pendingInvitations$viewer$acceptedInvitations$user<TRes>
-      get user;
-  TRes acceptedUsers(
-      Iterable<Query$pendingInvitations$viewer$acceptedInvitations$acceptedUsers> Function(
-              Iterable<
-                  CopyWith$Query$pendingInvitations$viewer$acceptedInvitations$acceptedUsers<
-                      Query$pendingInvitations$viewer$acceptedInvitations$acceptedUsers>>)
-          _fn);
+extension ClientExtension$Mutation$denyInvitation on graphql.GraphQLClient {
+  Future<graphql.QueryResult<Mutation$denyInvitation>> mutate$denyInvitation(
+          Options$Mutation$denyInvitation options) async =>
+      await this.mutate(options);
+  graphql.ObservableQuery<Mutation$denyInvitation> watchMutation$denyInvitation(
+          WatchOptions$Mutation$denyInvitation options) =>
+      this.watchMutation(options);
 }
 
-class _CopyWithImpl$Query$pendingInvitations$viewer$acceptedInvitations<TRes>
-    implements
-        CopyWith$Query$pendingInvitations$viewer$acceptedInvitations<TRes> {
-  _CopyWithImpl$Query$pendingInvitations$viewer$acceptedInvitations(
-    this._instance,
-    this._then,
+class Mutation$denyInvitation$HookResult {
+  Mutation$denyInvitation$HookResult(
+    this.runMutation,
+    this.result,
   );
 
-  final Query$pendingInvitations$viewer$acceptedInvitations _instance;
+  final RunMutation$Mutation$denyInvitation runMutation;
 
-  final TRes Function(Query$pendingInvitations$viewer$acceptedInvitations)
-      _then;
-
-  static const _undefined = {};
-
-  TRes call({
-    Object? id = _undefined,
-    Object? user = _undefined,
-    Object? location = _undefined,
-    Object? startsAt = _undefined,
-    Object? acceptedUsers = _undefined,
-    Object? $__typename = _undefined,
-  }) =>
-      _then(Query$pendingInvitations$viewer$acceptedInvitations(
-        id: id == _undefined || id == null ? _instance.id : (id as String),
-        user: user == _undefined || user == null
-            ? _instance.user
-            : (user
-                as Query$pendingInvitations$viewer$acceptedInvitations$user),
-        location: location == _undefined || location == null
-            ? _instance.location
-            : (location as String),
-        startsAt: startsAt == _undefined || startsAt == null
-            ? _instance.startsAt
-            : (startsAt as String),
-        acceptedUsers: acceptedUsers == _undefined || acceptedUsers == null
-            ? _instance.acceptedUsers
-            : (acceptedUsers as List<
-                Query$pendingInvitations$viewer$acceptedInvitations$acceptedUsers>),
-        $__typename: $__typename == _undefined || $__typename == null
-            ? _instance.$__typename
-            : ($__typename as String),
-      ));
-  CopyWith$Query$pendingInvitations$viewer$acceptedInvitations$user<TRes>
-      get user {
-    final local$user = _instance.user;
-    return CopyWith$Query$pendingInvitations$viewer$acceptedInvitations$user(
-        local$user, (e) => call(user: e));
-  }
-
-  TRes acceptedUsers(
-          Iterable<Query$pendingInvitations$viewer$acceptedInvitations$acceptedUsers> Function(
-                  Iterable<
-                      CopyWith$Query$pendingInvitations$viewer$acceptedInvitations$acceptedUsers<
-                          Query$pendingInvitations$viewer$acceptedInvitations$acceptedUsers>>)
-              _fn) =>
-      call(
-          acceptedUsers: _fn(_instance.acceptedUsers.map((e) =>
-              CopyWith$Query$pendingInvitations$viewer$acceptedInvitations$acceptedUsers(
-                e,
-                (i) => i,
-              ))).toList());
+  final graphql.QueryResult<Mutation$denyInvitation> result;
 }
 
-class _CopyWithStubImpl$Query$pendingInvitations$viewer$acceptedInvitations<
-        TRes>
-    implements
-        CopyWith$Query$pendingInvitations$viewer$acceptedInvitations<TRes> {
-  _CopyWithStubImpl$Query$pendingInvitations$viewer$acceptedInvitations(
-      this._res);
-
-  TRes _res;
-
-  call({
-    String? id,
-    Query$pendingInvitations$viewer$acceptedInvitations$user? user,
-    String? location,
-    String? startsAt,
-    List<Query$pendingInvitations$viewer$acceptedInvitations$acceptedUsers>?
-        acceptedUsers,
-    String? $__typename,
-  }) =>
-      _res;
-  CopyWith$Query$pendingInvitations$viewer$acceptedInvitations$user<TRes>
-      get user =>
-          CopyWith$Query$pendingInvitations$viewer$acceptedInvitations$user
-              .stub(_res);
-  acceptedUsers(_fn) => _res;
-}
-
-class Query$pendingInvitations$viewer$acceptedInvitations$user {
-  Query$pendingInvitations$viewer$acceptedInvitations$user({
-    required this.id,
-    required this.nickname,
-    required this.avatarUrl,
-    required this.$__typename,
-  });
-
-  factory Query$pendingInvitations$viewer$acceptedInvitations$user.fromJson(
-      Map<String, dynamic> json) {
-    final l$id = json['id'];
-    final l$nickname = json['nickname'];
-    final l$avatarUrl = json['avatarUrl'];
-    final l$$__typename = json['__typename'];
-    return Query$pendingInvitations$viewer$acceptedInvitations$user(
-      id: (l$id as String),
-      nickname: (l$nickname as String),
-      avatarUrl: (l$avatarUrl as String),
-      $__typename: (l$$__typename as String),
-    );
-  }
-
-  final String id;
-
-  final String nickname;
-
-  final String avatarUrl;
-
-  final String $__typename;
-
-  Map<String, dynamic> toJson() {
-    final _resultData = <String, dynamic>{};
-    final l$id = id;
-    _resultData['id'] = l$id;
-    final l$nickname = nickname;
-    _resultData['nickname'] = l$nickname;
-    final l$avatarUrl = avatarUrl;
-    _resultData['avatarUrl'] = l$avatarUrl;
-    final l$$__typename = $__typename;
-    _resultData['__typename'] = l$$__typename;
-    return _resultData;
-  }
-
-  @override
-  int get hashCode {
-    final l$id = id;
-    final l$nickname = nickname;
-    final l$avatarUrl = avatarUrl;
-    final l$$__typename = $__typename;
-    return Object.hashAll([
-      l$id,
-      l$nickname,
-      l$avatarUrl,
-      l$$__typename,
-    ]);
-  }
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) {
-      return true;
-    }
-    if (!(other is Query$pendingInvitations$viewer$acceptedInvitations$user) ||
-        runtimeType != other.runtimeType) {
-      return false;
-    }
-    final l$id = id;
-    final lOther$id = other.id;
-    if (l$id != lOther$id) {
-      return false;
-    }
-    final l$nickname = nickname;
-    final lOther$nickname = other.nickname;
-    if (l$nickname != lOther$nickname) {
-      return false;
-    }
-    final l$avatarUrl = avatarUrl;
-    final lOther$avatarUrl = other.avatarUrl;
-    if (l$avatarUrl != lOther$avatarUrl) {
-      return false;
-    }
-    final l$$__typename = $__typename;
-    final lOther$$__typename = other.$__typename;
-    if (l$$__typename != lOther$$__typename) {
-      return false;
-    }
-    return true;
-  }
-}
-
-extension UtilityExtension$Query$pendingInvitations$viewer$acceptedInvitations$user
-    on Query$pendingInvitations$viewer$acceptedInvitations$user {
-  CopyWith$Query$pendingInvitations$viewer$acceptedInvitations$user<
-          Query$pendingInvitations$viewer$acceptedInvitations$user>
-      get copyWith =>
-          CopyWith$Query$pendingInvitations$viewer$acceptedInvitations$user(
-            this,
-            (i) => i,
-          );
-}
-
-abstract class CopyWith$Query$pendingInvitations$viewer$acceptedInvitations$user<
-    TRes> {
-  factory CopyWith$Query$pendingInvitations$viewer$acceptedInvitations$user(
-    Query$pendingInvitations$viewer$acceptedInvitations$user instance,
-    TRes Function(Query$pendingInvitations$viewer$acceptedInvitations$user)
-        then,
-  ) = _CopyWithImpl$Query$pendingInvitations$viewer$acceptedInvitations$user;
-
-  factory CopyWith$Query$pendingInvitations$viewer$acceptedInvitations$user.stub(
-          TRes res) =
-      _CopyWithStubImpl$Query$pendingInvitations$viewer$acceptedInvitations$user;
-
-  TRes call({
-    String? id,
-    String? nickname,
-    String? avatarUrl,
-    String? $__typename,
-  });
-}
-
-class _CopyWithImpl$Query$pendingInvitations$viewer$acceptedInvitations$user<
-        TRes>
-    implements
-        CopyWith$Query$pendingInvitations$viewer$acceptedInvitations$user<
-            TRes> {
-  _CopyWithImpl$Query$pendingInvitations$viewer$acceptedInvitations$user(
-    this._instance,
-    this._then,
+Mutation$denyInvitation$HookResult useMutation$denyInvitation(
+    [WidgetOptions$Mutation$denyInvitation? options]) {
+  final result = graphql_flutter
+      .useMutation(options ?? WidgetOptions$Mutation$denyInvitation());
+  return Mutation$denyInvitation$HookResult(
+    (variables, {optimisticResult}) => result.runMutation(
+      variables.toJson(),
+      optimisticResult: optimisticResult,
+    ),
+    result.result,
   );
-
-  final Query$pendingInvitations$viewer$acceptedInvitations$user _instance;
-
-  final TRes Function(Query$pendingInvitations$viewer$acceptedInvitations$user)
-      _then;
-
-  static const _undefined = {};
-
-  TRes call({
-    Object? id = _undefined,
-    Object? nickname = _undefined,
-    Object? avatarUrl = _undefined,
-    Object? $__typename = _undefined,
-  }) =>
-      _then(Query$pendingInvitations$viewer$acceptedInvitations$user(
-        id: id == _undefined || id == null ? _instance.id : (id as String),
-        nickname: nickname == _undefined || nickname == null
-            ? _instance.nickname
-            : (nickname as String),
-        avatarUrl: avatarUrl == _undefined || avatarUrl == null
-            ? _instance.avatarUrl
-            : (avatarUrl as String),
-        $__typename: $__typename == _undefined || $__typename == null
-            ? _instance.$__typename
-            : ($__typename as String),
-      ));
 }
 
-class _CopyWithStubImpl$Query$pendingInvitations$viewer$acceptedInvitations$user<
-        TRes>
-    implements
-        CopyWith$Query$pendingInvitations$viewer$acceptedInvitations$user<
-            TRes> {
-  _CopyWithStubImpl$Query$pendingInvitations$viewer$acceptedInvitations$user(
-      this._res);
+graphql.ObservableQuery<Mutation$denyInvitation>
+    useWatchMutation$denyInvitation(
+            WatchOptions$Mutation$denyInvitation options) =>
+        graphql_flutter.useWatchMutation(options);
 
-  TRes _res;
+class WidgetOptions$Mutation$denyInvitation
+    extends graphql.MutationOptions<Mutation$denyInvitation> {
+  WidgetOptions$Mutation$denyInvitation({
+    String? operationName,
+    graphql.FetchPolicy? fetchPolicy,
+    graphql.ErrorPolicy? errorPolicy,
+    graphql.CacheRereadPolicy? cacheRereadPolicy,
+    Object? optimisticResult,
+    graphql.Context? context,
+    OnMutationCompleted$Mutation$denyInvitation? onCompleted,
+    graphql.OnMutationUpdate<Mutation$denyInvitation>? update,
+    graphql.OnError? onError,
+  })  : onCompletedWithParsed = onCompleted,
+        super(
+          operationName: operationName,
+          fetchPolicy: fetchPolicy,
+          errorPolicy: errorPolicy,
+          cacheRereadPolicy: cacheRereadPolicy,
+          optimisticResult: optimisticResult,
+          context: context,
+          onCompleted: onCompleted == null
+              ? null
+              : (data) => onCompleted(
+                    data,
+                    data == null
+                        ? null
+                        : _parserFn$Mutation$denyInvitation(data),
+                  ),
+          update: update,
+          onError: onError,
+          document: documentNodeMutationdenyInvitation,
+          parserFn: _parserFn$Mutation$denyInvitation,
+        );
 
-  call({
-    String? id,
-    String? nickname,
-    String? avatarUrl,
-    String? $__typename,
-  }) =>
-      _res;
-}
-
-class Query$pendingInvitations$viewer$acceptedInvitations$acceptedUsers {
-  Query$pendingInvitations$viewer$acceptedInvitations$acceptedUsers({
-    required this.id,
-    required this.nickname,
-    required this.avatarUrl,
-    required this.$__typename,
-  });
-
-  factory Query$pendingInvitations$viewer$acceptedInvitations$acceptedUsers.fromJson(
-      Map<String, dynamic> json) {
-    final l$id = json['id'];
-    final l$nickname = json['nickname'];
-    final l$avatarUrl = json['avatarUrl'];
-    final l$$__typename = json['__typename'];
-    return Query$pendingInvitations$viewer$acceptedInvitations$acceptedUsers(
-      id: (l$id as String),
-      nickname: (l$nickname as String),
-      avatarUrl: (l$avatarUrl as String),
-      $__typename: (l$$__typename as String),
-    );
-  }
-
-  final String id;
-
-  final String nickname;
-
-  final String avatarUrl;
-
-  final String $__typename;
-
-  Map<String, dynamic> toJson() {
-    final _resultData = <String, dynamic>{};
-    final l$id = id;
-    _resultData['id'] = l$id;
-    final l$nickname = nickname;
-    _resultData['nickname'] = l$nickname;
-    final l$avatarUrl = avatarUrl;
-    _resultData['avatarUrl'] = l$avatarUrl;
-    final l$$__typename = $__typename;
-    _resultData['__typename'] = l$$__typename;
-    return _resultData;
-  }
+  final OnMutationCompleted$Mutation$denyInvitation? onCompletedWithParsed;
 
   @override
-  int get hashCode {
-    final l$id = id;
-    final l$nickname = nickname;
-    final l$avatarUrl = avatarUrl;
-    final l$$__typename = $__typename;
-    return Object.hashAll([
-      l$id,
-      l$nickname,
-      l$avatarUrl,
-      l$$__typename,
-    ]);
-  }
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) {
-      return true;
-    }
-    if (!(other
-            is Query$pendingInvitations$viewer$acceptedInvitations$acceptedUsers) ||
-        runtimeType != other.runtimeType) {
-      return false;
-    }
-    final l$id = id;
-    final lOther$id = other.id;
-    if (l$id != lOther$id) {
-      return false;
-    }
-    final l$nickname = nickname;
-    final lOther$nickname = other.nickname;
-    if (l$nickname != lOther$nickname) {
-      return false;
-    }
-    final l$avatarUrl = avatarUrl;
-    final lOther$avatarUrl = other.avatarUrl;
-    if (l$avatarUrl != lOther$avatarUrl) {
-      return false;
-    }
-    final l$$__typename = $__typename;
-    final lOther$$__typename = other.$__typename;
-    if (l$$__typename != lOther$$__typename) {
-      return false;
-    }
-    return true;
-  }
+  List<Object?> get properties => [
+        ...super.onCompleted == null
+            ? super.properties
+            : super.properties.where((property) => property != onCompleted),
+        onCompletedWithParsed,
+      ];
 }
 
-extension UtilityExtension$Query$pendingInvitations$viewer$acceptedInvitations$acceptedUsers
-    on Query$pendingInvitations$viewer$acceptedInvitations$acceptedUsers {
-  CopyWith$Query$pendingInvitations$viewer$acceptedInvitations$acceptedUsers<
-          Query$pendingInvitations$viewer$acceptedInvitations$acceptedUsers>
-      get copyWith =>
-          CopyWith$Query$pendingInvitations$viewer$acceptedInvitations$acceptedUsers(
-            this,
-            (i) => i,
-          );
-}
+typedef RunMutation$Mutation$denyInvitation
+    = graphql.MultiSourceResult<Mutation$denyInvitation> Function(
+  Variables$Mutation$denyInvitation, {
+  Object? optimisticResult,
+});
+typedef Builder$Mutation$denyInvitation = widgets.Widget Function(
+  RunMutation$Mutation$denyInvitation,
+  graphql.QueryResult<Mutation$denyInvitation>?,
+);
 
-abstract class CopyWith$Query$pendingInvitations$viewer$acceptedInvitations$acceptedUsers<
-    TRes> {
-  factory CopyWith$Query$pendingInvitations$viewer$acceptedInvitations$acceptedUsers(
-    Query$pendingInvitations$viewer$acceptedInvitations$acceptedUsers instance,
-    TRes Function(
-            Query$pendingInvitations$viewer$acceptedInvitations$acceptedUsers)
-        then,
-  ) = _CopyWithImpl$Query$pendingInvitations$viewer$acceptedInvitations$acceptedUsers;
-
-  factory CopyWith$Query$pendingInvitations$viewer$acceptedInvitations$acceptedUsers.stub(
-          TRes res) =
-      _CopyWithStubImpl$Query$pendingInvitations$viewer$acceptedInvitations$acceptedUsers;
-
-  TRes call({
-    String? id,
-    String? nickname,
-    String? avatarUrl,
-    String? $__typename,
-  });
-}
-
-class _CopyWithImpl$Query$pendingInvitations$viewer$acceptedInvitations$acceptedUsers<
-        TRes>
-    implements
-        CopyWith$Query$pendingInvitations$viewer$acceptedInvitations$acceptedUsers<
-            TRes> {
-  _CopyWithImpl$Query$pendingInvitations$viewer$acceptedInvitations$acceptedUsers(
-    this._instance,
-    this._then,
-  );
-
-  final Query$pendingInvitations$viewer$acceptedInvitations$acceptedUsers
-      _instance;
-
-  final TRes Function(
-      Query$pendingInvitations$viewer$acceptedInvitations$acceptedUsers) _then;
-
-  static const _undefined = {};
-
-  TRes call({
-    Object? id = _undefined,
-    Object? nickname = _undefined,
-    Object? avatarUrl = _undefined,
-    Object? $__typename = _undefined,
-  }) =>
-      _then(Query$pendingInvitations$viewer$acceptedInvitations$acceptedUsers(
-        id: id == _undefined || id == null ? _instance.id : (id as String),
-        nickname: nickname == _undefined || nickname == null
-            ? _instance.nickname
-            : (nickname as String),
-        avatarUrl: avatarUrl == _undefined || avatarUrl == null
-            ? _instance.avatarUrl
-            : (avatarUrl as String),
-        $__typename: $__typename == _undefined || $__typename == null
-            ? _instance.$__typename
-            : ($__typename as String),
-      ));
-}
-
-class _CopyWithStubImpl$Query$pendingInvitations$viewer$acceptedInvitations$acceptedUsers<
-        TRes>
-    implements
-        CopyWith$Query$pendingInvitations$viewer$acceptedInvitations$acceptedUsers<
-            TRes> {
-  _CopyWithStubImpl$Query$pendingInvitations$viewer$acceptedInvitations$acceptedUsers(
-      this._res);
-
-  TRes _res;
-
-  call({
-    String? id,
-    String? nickname,
-    String? avatarUrl,
-    String? $__typename,
-  }) =>
-      _res;
+class Mutation$denyInvitation$Widget
+    extends graphql_flutter.Mutation<Mutation$denyInvitation> {
+  Mutation$denyInvitation$Widget({
+    widgets.Key? key,
+    WidgetOptions$Mutation$denyInvitation? options,
+    required Builder$Mutation$denyInvitation builder,
+  }) : super(
+          key: key,
+          options: options ?? WidgetOptions$Mutation$denyInvitation(),
+          builder: (
+            run,
+            result,
+          ) =>
+              builder(
+            (
+              variables, {
+              optimisticResult,
+            }) =>
+                run(
+              variables.toJson(),
+              optimisticResult: optimisticResult,
+            ),
+            result,
+          ),
+        );
 }

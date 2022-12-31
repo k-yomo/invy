@@ -1,0 +1,18 @@
+
+fragment invitationCardFragment on Invitation {
+    id
+    location
+    comment
+    startsAt
+    expiresAt
+    user {
+        id
+        nickname
+        avatarUrl
+    }
+    acceptedUsers {
+        id
+        nickname
+        avatarUrl
+    }
+}

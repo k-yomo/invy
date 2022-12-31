@@ -3,6 +3,7 @@ import 'package:graphql/client.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:invy/components/friend_group_list.dart';
 import 'package:invy/components/friend_list.dart';
+import 'package:invy/components/sub_title.dart';
 import 'package:invy/graphql/friend_screen.graphql.dart';
 import 'package:invy/services/graphql_client.dart';
 
@@ -38,90 +39,68 @@ class FriendScreen extends HookConsumerWidget {
             ),
             backgroundColor: Colors.white,
             body: SingleChildScrollView(
-              child: Column(
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const _Title(text: "グループ"),
-                      InkWell(
-                        onTap: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              fullscreenDialog: true,
-                              builder: (context) => FriendGroupCreateScreen(),
-                            ),
-                          );
-                        },
-                        child: _AddFriendGroup(),
-                      ),
-                      FriendGroupList(
-                          friendGroups: viewer?.friendGroups.toList() ?? [])
-                    ],
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const _Title(text: "友だち"),
-                      InkWell(
-                        onTap: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              fullscreenDialog: true,
-                              builder: (context) => FriendshipRequestScreen(),
-                            ),
-                          );
-                        },
-                        child: _AddFriend(),
-                      ),
-                      PendingFriendshipRequestList(
-                        pendingFriendshipRequests:
-                            viewer?.pendingFriendshipRequests ?? [],
-                        onClick: (String requestId) async {
-                          print("onClick called");
-                          final result = await viewerQuery.refetch();
-                          if (result?.hasException ?? true) {
-                            return;
-                          }
-                        },
-                      ),
-                      FriendList(
-                          friends: viewer?.friends.edges
-                                  .map((e) => e.node)
-                                  .toList() ??
-                              [])
-                    ],
-                  ),
-                ],
+              child: Container(
+                margin: const EdgeInsets.symmetric(horizontal: 10),
+                child: Column(
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SubTitle(text: "グループ"),
+                        InkWell(
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                fullscreenDialog: true,
+                                builder: (context) => FriendGroupCreateScreen(),
+                              ),
+                            );
+                          },
+                          child: _AddFriendGroup(),
+                        ),
+                        FriendGroupList(
+                            friendGroups: viewer?.friendGroups.toList() ?? [])
+                      ],
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SubTitle(text: "友だち"),
+                        InkWell(
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                fullscreenDialog: true,
+                                builder: (context) => FriendshipRequestScreen(),
+                              ),
+                            );
+                          },
+                          child: _AddFriend(),
+                        ),
+                        PendingFriendshipRequestList(
+                          pendingFriendshipRequests:
+                              viewer?.pendingFriendshipRequests ?? [],
+                          onClick: (String requestId) async {
+                            print("onClick called");
+                            final result = await viewerQuery.refetch();
+                            if (result?.hasException ?? true) {
+                              return;
+                            }
+                          },
+                        ),
+                        FriendList(
+                            friends: viewer?.friends.edges
+                                    .map((e) => e.node)
+                                    .toList() ??
+                                [])
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           );
         });
-  }
-}
-
-class _Title extends StatelessWidget {
-  const _Title({
-    Key? key,
-    required this.text,
-  }) : super(key: key);
-
-  final String text;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(top: 30, left: 10, right: 10),
-      padding: const EdgeInsets.only(bottom: 3),
-      decoration: const BoxDecoration(
-        border: Border(
-          bottom: BorderSide(width: 3, color: Colors.black),
-        ),
-        color: Colors.white,
-      ),
-      child: Text(text,
-          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-    );
   }
 }
 
@@ -133,7 +112,7 @@ class _AddFriendGroup extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+      margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
       child: Row(
         children: [
           Container(

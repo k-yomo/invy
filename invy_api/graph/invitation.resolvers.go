@@ -19,9 +19,21 @@ import (
 	"github.com/k-yomo/invy/pkg/convutil"
 )
 
+// User is the resolver for the user field.
+func (r *invitationResolver) User(ctx context.Context, obj *gqlmodel.Invitation) (*gqlmodel.User, error) {
+	dbUserProfile, err := loader.Get(ctx).UserProfile.Load(ctx, obj.UserID)()
+	if err != nil {
+		return nil, err
+	}
+	return conv.ConvertFromDBUserProfile(dbUserProfile), nil
+}
+
 // AcceptedUsers is the resolver for the acceptedUsers field.
 func (r *invitationResolver) AcceptedUsers(ctx context.Context, obj *gqlmodel.Invitation) ([]*gqlmodel.User, error) {
 	dbAcceptedUserProfiles, err := loader.Get(ctx).InvitationAcceptedUserProfiles.Load(ctx, obj.ID)()
+	if errors.Is(err, loader.ErrNotFound) {
+		return nil, nil
+	}
 	if err != nil {
 		return nil, err
 	}

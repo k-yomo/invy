@@ -1,34 +1,25 @@
 
-query pendingInvitations {
+query homeScreenViewer {
     viewer {
+        sentInvitations {
+            ...invitationCardFragment
+        }
+
         pendingInvitations {
-            id
-            user {
-                id
-                nickname
-                avatarUrl
-            }
-            acceptedUsers {
-                id
-                nickname
-                avatarUrl
-            }
+            ...invitationCardFragment
         }
 
         acceptedInvitations {
-            id
-            user {
-                id
-                nickname
-                avatarUrl
-            }
-            location
-            startsAt
-            acceptedUsers {
-                id
-                nickname
-                avatarUrl
-            }
+            ...invitationCardFragment
         }
     }
 }
+
+mutation acceptInvitation($invitationId: UUID!) {
+    acceptInvitation(invitationId: $invitationId)
+}
+
+mutation denyInvitation($invitationId: UUID!) {
+    denyInvitation(invitationId: $invitationId)
+}
+

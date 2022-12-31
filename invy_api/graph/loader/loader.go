@@ -2,6 +2,7 @@ package loader
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/google/uuid"
 	"github.com/graph-gophers/dataloader/v7"
@@ -56,7 +57,7 @@ func NewUserProfileLoader(db *ent.Client) func(context.Context, []uuid.UUID) []*
 			Where(userprofile.UserIDIn(userIDs...)).
 			All(ctx)
 		if err != nil {
-			return convertToErrorResults[*ent.UserProfile](err, len(userIDs))
+			return convertToErrorResults[*ent.UserProfile](fmt.Errorf("load user profile: %w", err), len(userIDs))
 		}
 		userIDProfileMap := map[uuid.UUID]*ent.UserProfile{}
 		for _, up := range userProfiles {
@@ -84,7 +85,7 @@ func NewFriendshipLoader(db *ent.Client) func(context.Context, []FriendshipKey) 
 			Where(friendship.UserID(userID), friendship.FriendUserIDIn(friendUserIDs...)).
 			All(ctx)
 		if err != nil {
-			return convertToErrorResults[*ent.Friendship](err, len(friendUserIDs))
+			return convertToErrorResults[*ent.Friendship](fmt.Errorf("load friendship: %w", err), len(friendUserIDs))
 		}
 		friendUserIDFriendshipMap := map[uuid.UUID]*ent.Friendship{}
 		for _, f := range dbFriendships {
@@ -112,7 +113,7 @@ func NewFriendshipRequestLoader(db *ent.Client) func(context.Context, []Friendsh
 			Where(friendshiprequest.FromUserID(fromUserID), friendshiprequest.ToUserIDIn(toUserIDs...)).
 			All(ctx)
 		if err != nil {
-			return convertToErrorResults[*ent.FriendshipRequest](err, len(toUserIDs))
+			return convertToErrorResults[*ent.FriendshipRequest](fmt.Errorf("load friendship request: %w", err), len(toUserIDs))
 		}
 		toUserIDFriendshipRequestMap := map[uuid.UUID]*ent.FriendshipRequest{}
 		for _, f := range dbFriendships {
@@ -140,7 +141,7 @@ func NewUserMuteLoader(db *ent.Client) func(context.Context, []UserMuteKey) []*d
 			Where(usermute.UserID(userID), usermute.MuteUserIDIn(muteUserIDs...)).
 			All(ctx)
 		if err != nil {
-			return convertToErrorResults[*ent.UserMute](err, len(muteUserIDs))
+			return convertToErrorResults[*ent.UserMute](fmt.Errorf("load user mute: %w", err), len(muteUserIDs))
 		}
 		muteUserIDMuteMap := map[uuid.UUID]*ent.UserMute{}
 		for _, um := range userMutes {
@@ -162,7 +163,7 @@ func NewInvitationAcceptedUserProfileLoader(db *ent.Client) func(context.Context
 			}).
 			All(ctx)
 		if err != nil {
-			return convertToErrorResults[[]*ent.UserProfile](err, len(invitationIDs))
+			return convertToErrorResults[[]*ent.UserProfile](fmt.Errorf("load accepted user: %w", err), len(invitationIDs))
 		}
 		invitationIDProfileMap := map[uuid.UUID][]*ent.UserProfile{}
 		for _, ia := range invitationAcceptances {

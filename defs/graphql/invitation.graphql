@@ -7,7 +7,7 @@ extend type Mutation {
 type Invitation implements Node {
     id: UUID!
     userId: UUID!
-    user: User!
+    user: User! @goField(forceResolver: true)
     location: String!
     comment: String!
     startsAt: Time!

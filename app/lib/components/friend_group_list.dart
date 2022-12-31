@@ -47,7 +47,7 @@ class _FriendGroupListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+      margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
       child: Row(
         children: [
           FriendGroupIcon(friendGroup.name),

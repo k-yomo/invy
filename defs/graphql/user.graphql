@@ -41,7 +41,7 @@ type Viewer implements Node {
     # fetch friend groups of the logged in user
     friendGroups: [FriendGroup!]! @goField(forceResolver: true)
 
-    sendingInvitations: [Invitation!]!  @goField(forceResolver: true)
+    sentInvitations: [Invitation!]!  @goField(forceResolver: true)
     pendingInvitations: [Invitation!]!  @goField(forceResolver: true)
     acceptedInvitations: [Invitation!]! @goField(forceResolver: true)
 }

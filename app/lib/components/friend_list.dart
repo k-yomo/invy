@@ -68,14 +68,14 @@ class _FriendListItem extends HookConsumerWidget {
             backgroundColor: Color(0xFFFE4A49),
             foregroundColor: Colors.white,
             icon: friend.value.isMuted ? Icons.volume_off : Icons.volume_up,
-            label: friend.value.isMuted ? 'Mute' : 'Unmute',
+            label: friend.value.isMuted ? 'Unmute' : 'mute',
           ),
         ],
       ),
       child: Column(
         children: [
           Container(
-            margin: const EdgeInsets.all(15),
+            margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
             child: Row(
               children: [
                 CircleAvatar(

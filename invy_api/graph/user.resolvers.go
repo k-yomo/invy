@@ -430,8 +430,8 @@ func (r *viewerResolver) FriendGroups(ctx context.Context, obj *gqlmodel.Viewer)
 	return convutil.ConvertToList(dbFriendGroups, conv.ConvertFromDBFriendGroup), nil
 }
 
-// SendingInvitations is the resolver for the sendingInvitations field.
-func (r *viewerResolver) SendingInvitations(ctx context.Context, obj *gqlmodel.Viewer) ([]*gqlmodel.Invitation, error) {
+// SentInvitations is the resolver for the sentInvitations field.
+func (r *viewerResolver) SentInvitations(ctx context.Context, obj *gqlmodel.Viewer) ([]*gqlmodel.Invitation, error) {
 	authUserID := auth.GetCurrentUserID(ctx)
 	dbInvitations, err := r.DB.Invitation.Query().
 		Where(invitation.UserID(authUserID)).

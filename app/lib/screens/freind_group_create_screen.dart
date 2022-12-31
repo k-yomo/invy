@@ -55,8 +55,7 @@ class FriendGroupCreateScreen extends HookConsumerWidget {
                         // TODO: show error
                         return;
                       }
-                      Navigator.of(context).pushReplacement(MaterialPageRoute(
-                          builder: (context) => FriendScreen()));
+                      Navigator.of(context).pop();
                     },
                     child: Text(
                       "作成する",
