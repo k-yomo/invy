@@ -26,14 +26,17 @@ class InvitationScreen extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final graphqlClient = ref.read(graphqlClientProvider);
+    final viewerQuery = graphqlClient.watchQuery$invitationScreenViewer();
+    viewerQuery.fetchResults();
+
     final selectedFriendGroups =
         useState<List<Fragment$friendGroupListItemFragment>>([]);
     final selectedFriends = useState<List<Fragment$friendListItemFragment>>([]);
     final selectedCount =
         selectedFriendGroups.value.length + selectedFriends.value.length;
 
-    return FutureBuilder<QueryResult<Query$invitationScreenViewer>>(
-        future: graphqlClient.query$invitationScreenViewer(),
+    return StreamBuilder<QueryResult<Query$invitationScreenViewer>>(
+        stream: viewerQuery.stream,
         builder: (context, snapshot) {
           final viewer = snapshot.data?.parsedData?.viewer;
           return Scaffold(
@@ -224,7 +227,6 @@ class InvitationDetailFormModal extends HookConsumerWidget {
                       required DateTime expiresAt,
                       String? comment,
                     }) async {
-                      print(startsAt.toUtc().toIso8601String());
                       final result = await graphqlClient.mutate$sendInvitation(
                           Options$Mutation$sendInvitation(
                         variables: Variables$Mutation$sendInvitation(

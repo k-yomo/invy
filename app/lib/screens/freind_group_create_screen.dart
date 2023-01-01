@@ -5,7 +5,6 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:invy/components/friend_selection_list.dart';
 import 'package:invy/graphql/friend_group_create_screen.graphql.dart';
 import 'package:invy/graphql/schema.graphql.dart';
-import 'package:invy/screens/friend_screen.dart';
 
 import '../components/app_bar_leading.dart';
 import '../components/friend_list_item_fragment.graphql.dart';

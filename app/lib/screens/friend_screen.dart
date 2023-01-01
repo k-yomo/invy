@@ -18,10 +18,7 @@ class FriendScreen extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final graphqlClient = ref.read(graphqlClientProvider);
-    final viewerQuery = graphqlClient
-        .watchQuery$friendScreenViewer(WatchOptions$Query$friendScreenViewer(
-      fetchPolicy: FetchPolicy.cacheFirst,
-    ));
+    final viewerQuery = graphqlClient.watchQuery$friendScreenViewer();
     viewerQuery.fetchResults();
 
     return StreamBuilder<QueryResult<Query$friendScreenViewer>>(
@@ -81,7 +78,6 @@ class FriendScreen extends HookConsumerWidget {
                           pendingFriendshipRequests:
                               viewer?.pendingFriendshipRequests ?? [],
                           onClick: (String requestId) async {
-                            print("onClick called");
                             final result = await viewerQuery.refetch();
                             if (result?.hasException ?? true) {
                               return;

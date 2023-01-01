@@ -51,17 +51,62 @@ class SentInvitationCard extends StatelessWidget {
             ],
           ),
           Container(
-            margin: const EdgeInsets.only(left: 8, bottom: 5),
+            margin: const EdgeInsets.only(left: 5, bottom: 5),
             child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Icon(Icons.notes, size: 20),
-                Container(
+                Flexible(
+                    child: Container(
                   margin: const EdgeInsets.only(left: 5),
                   child: Text(invitation.comment),
-                )
+                ))
               ],
             ),
+          ),
+          Column(
+            children: invitation.acceptedUsers.length > 0
+                ? [
+                    Container(
+                      width: double.infinity,
+                      margin: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+                      child: Text("参加者",
+                          style: TextStyle(
+                              fontSize: 12, fontWeight: FontWeight.bold)),
+                    ),
+                    Container(
+                      width: double.infinity,
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        padding: EdgeInsets.symmetric(horizontal: 10),
+                        child: Row(
+                          children: [
+                            Row(
+                              children: invitation.acceptedUsers
+                                  .map((acceptedUser) => Container(
+                                        width: 50,
+                                        child: Column(
+                                          children: [
+                                            CircleAvatar(
+                                              backgroundImage: NetworkImage(
+                                                  acceptedUser.avatarUrl),
+                                            ),
+                                            Text(
+                                              acceptedUser.nickname,
+                                              style: TextStyle(fontSize: 12),
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ],
+                                        ),
+                                      ))
+                                  .toList(),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ]
+                : [],
           ),
         ],
       ),

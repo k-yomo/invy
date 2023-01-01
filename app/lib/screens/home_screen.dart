@@ -16,10 +16,7 @@ class HomeScreen extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final graphqlClient = ref.read(graphqlClientProvider);
-    final viewerQuery = graphqlClient
-        .watchQuery$homeScreenViewer(WatchOptions$Query$homeScreenViewer(
-      fetchPolicy: FetchPolicy.networkOnly,
-    ));
+    final viewerQuery = graphqlClient.watchQuery$homeScreenViewer();
     viewerQuery.fetchResults();
 
     return StreamBuilder<QueryResult<Query$homeScreenViewer>>(
@@ -150,7 +147,9 @@ class HomeScreen extends HookConsumerWidget {
                                           ));
                                           if (result.parsedData
                                                   ?.acceptInvitation !=
-                                              null) {}
+                                              null) {
+                                            viewerQuery.refetch();
+                                          }
                                         },
                                         onDenied: (invitationId) async {
                                           final result = await graphqlClient
@@ -162,7 +161,9 @@ class HomeScreen extends HookConsumerWidget {
                                           ));
                                           if (result
                                                   .parsedData?.denyInvitation !=
-                                              null) {}
+                                              null) {
+                                            viewerQuery.refetch();
+                                          }
                                         },
                                       ),
                                     ))) ??

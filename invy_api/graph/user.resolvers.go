@@ -20,6 +20,7 @@ import (
 	"github.com/k-yomo/invy/invy_api/ent/invitationacceptance"
 	"github.com/k-yomo/invy/invy_api/ent/invitationdenial"
 	"github.com/k-yomo/invy/invy_api/ent/invitationuser"
+	"github.com/k-yomo/invy/invy_api/ent/predicate"
 	"github.com/k-yomo/invy/invy_api/ent/userfriendgroup"
 	"github.com/k-yomo/invy/invy_api/ent/usermute"
 	"github.com/k-yomo/invy/invy_api/ent/userprofile"
@@ -224,42 +225,43 @@ func (r *viewerResolver) SentInvitations(ctx context.Context, obj *gqlmodel.View
 func (r *viewerResolver) PendingInvitations(ctx context.Context, obj *gqlmodel.Viewer) ([]*gqlmodel.Invitation, error) {
 	authUserID := auth.GetCurrentUserID(ctx)
 	now := time.Now()
+	invitationWhereClauses := []predicate.Invitation{
+		invitation.ExpiresAtGTE(now),
+		func(s *sql.Selector) {
+			invitationAcceptanceTable := sql.Table(invitationacceptance.Table)
+			s.Where(
+				sql.NotExists(
+					sql.Select().
+						From(invitationAcceptanceTable).
+						Where(
+							sql.And(
+								sql.EQ(invitationAcceptanceTable.C(invitationacceptance.FieldUserID), authUserID),
+								sql.ColumnsEQ(invitationAcceptanceTable.C(invitationacceptance.FieldInvitationID), s.C(invitation.FieldID)),
+							),
+						),
+				),
+			)
+		},
+		func(s *sql.Selector) {
+			invitationDenialTable := sql.Table(invitationdenial.Table)
+			s.Where(
+				sql.NotExists(
+					sql.Select().
+						From(invitationDenialTable).
+						Where(
+							sql.And(
+								sql.EQ(invitationDenialTable.C(invitationdenial.FieldUserID), authUserID),
+								sql.ColumnsEQ(invitationDenialTable.C(invitationdenial.FieldInvitationID), s.C(invitation.FieldID)),
+							),
+						),
+				),
+			)
+		},
+	}
 	dbInvitationsToUser, err := r.DB.InvitationUser.Query().
 		Where(invitationuser.UserID(authUserID)).
 		QueryInvitation().
-		Where(
-			invitation.ExpiresAtGTE(now),
-			func(s *sql.Selector) {
-				invitationAcceptanceTable := sql.Table(invitationacceptance.Table)
-				s.Where(
-					sql.NotExists(
-						sql.Select().
-							From(invitationAcceptanceTable).
-							Where(
-								sql.And(
-									sql.EQ(invitationAcceptanceTable.C(invitationacceptance.FieldUserID), authUserID),
-									sql.ColumnsEQ(invitationAcceptanceTable.C(invitationacceptance.FieldInvitationID), s.C(invitation.FieldID)),
-								),
-							),
-					),
-				)
-			},
-			func(s *sql.Selector) {
-				invitationDenialTable := sql.Table(invitationdenial.Table)
-				s.Where(
-					sql.NotExists(
-						sql.Select().
-							From(invitationDenialTable).
-							Where(
-								sql.And(
-									sql.EQ(invitationDenialTable.C(invitationdenial.FieldUserID), authUserID),
-									sql.ColumnsEQ(invitationDenialTable.C(invitationdenial.FieldInvitationID), s.C(invitation.FieldID)),
-								),
-							),
-					),
-				)
-			},
-		).
+		Where(invitationWhereClauses...).
 		All(ctx)
 	if err != nil {
 		return nil, err
@@ -270,7 +272,7 @@ func (r *viewerResolver) PendingInvitations(ctx context.Context, obj *gqlmodel.V
 		QueryFriendGroup().
 		QueryInvitationFriendGroups().
 		QueryInvitation().
-		Where(invitation.ExpiresAtGTE(now)).
+		Where(invitationWhereClauses...).
 		All(ctx)
 	if err != nil {
 		return nil, err
