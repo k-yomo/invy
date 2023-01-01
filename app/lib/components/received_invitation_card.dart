@@ -9,10 +9,14 @@ class ReceivedInvitationCard extends StatelessWidget {
     Key? key,
     required this.invitation,
     this.accepted = false,
+    this.onAccepted,
+    this.onDenied,
   }) : super(key: key);
 
   final Fragment$invitationCardFragment invitation;
   bool accepted;
+  ValueSetter<String>? onAccepted;
+  ValueSetter<String>? onDenied;
 
   @override
   Widget build(BuildContext context) {
@@ -101,7 +105,9 @@ class ReceivedInvitationCard extends StatelessWidget {
                     children: [
                       Expanded(
                         child: OutlinedButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            onDenied?.call(invitation.id);
+                          },
                           child: Text(
                             '断る',
                             style: TextStyle(
@@ -120,7 +126,9 @@ class ReceivedInvitationCard extends StatelessWidget {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.black,
                           ),
-                          onPressed: () {},
+                          onPressed: () {
+                            onAccepted?.call(invitation.id);
+                          },
                           child: Text(
                             '参加する',
                             style: TextStyle(

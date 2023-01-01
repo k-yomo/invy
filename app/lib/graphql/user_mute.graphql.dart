@@ -259,7 +259,22 @@ const documentNodeMutationmuteFriend = DocumentNode(definitions: [
           )
         ],
         directives: [],
-        selectionSet: null,
+        selectionSet: SelectionSetNode(selections: [
+          FieldNode(
+            name: NameNode(value: 'mutedUserId'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: null,
+          ),
+          FieldNode(
+            name: NameNode(value: '__typename'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: null,
+          ),
+        ]),
       ),
       FieldNode(
         name: NameNode(value: '__typename'),
@@ -472,20 +487,41 @@ class Mutation$muteFriend$Widget
 }
 
 class Mutation$muteFriend$muteUser {
-  Mutation$muteFriend$muteUser();
+  Mutation$muteFriend$muteUser({
+    required this.mutedUserId,
+    required this.$__typename,
+  });
 
   factory Mutation$muteFriend$muteUser.fromJson(Map<String, dynamic> json) {
-    return Mutation$muteFriend$muteUser();
+    final l$mutedUserId = json['mutedUserId'];
+    final l$$__typename = json['__typename'];
+    return Mutation$muteFriend$muteUser(
+      mutedUserId: (l$mutedUserId as String),
+      $__typename: (l$$__typename as String),
+    );
   }
+
+  final String mutedUserId;
+
+  final String $__typename;
 
   Map<String, dynamic> toJson() {
     final _resultData = <String, dynamic>{};
+    final l$mutedUserId = mutedUserId;
+    _resultData['mutedUserId'] = l$mutedUserId;
+    final l$$__typename = $__typename;
+    _resultData['__typename'] = l$$__typename;
     return _resultData;
   }
 
   @override
   int get hashCode {
-    return Object.hashAll([]);
+    final l$mutedUserId = mutedUserId;
+    final l$$__typename = $__typename;
+    return Object.hashAll([
+      l$mutedUserId,
+      l$$__typename,
+    ]);
   }
 
   @override
@@ -495,6 +531,16 @@ class Mutation$muteFriend$muteUser {
     }
     if (!(other is Mutation$muteFriend$muteUser) ||
         runtimeType != other.runtimeType) {
+      return false;
+    }
+    final l$mutedUserId = mutedUserId;
+    final lOther$mutedUserId = other.mutedUserId;
+    if (l$mutedUserId != lOther$mutedUserId) {
+      return false;
+    }
+    final l$$__typename = $__typename;
+    final lOther$$__typename = other.$__typename;
+    if (l$$__typename != lOther$$__typename) {
       return false;
     }
     return true;
@@ -519,7 +565,10 @@ abstract class CopyWith$Mutation$muteFriend$muteUser<TRes> {
   factory CopyWith$Mutation$muteFriend$muteUser.stub(TRes res) =
       _CopyWithStubImpl$Mutation$muteFriend$muteUser;
 
-  TRes call();
+  TRes call({
+    String? mutedUserId,
+    String? $__typename,
+  });
 }
 
 class _CopyWithImpl$Mutation$muteFriend$muteUser<TRes>
@@ -535,7 +584,18 @@ class _CopyWithImpl$Mutation$muteFriend$muteUser<TRes>
 
   static const _undefined = {};
 
-  TRes call() => _then(Mutation$muteFriend$muteUser());
+  TRes call({
+    Object? mutedUserId = _undefined,
+    Object? $__typename = _undefined,
+  }) =>
+      _then(Mutation$muteFriend$muteUser(
+        mutedUserId: mutedUserId == _undefined || mutedUserId == null
+            ? _instance.mutedUserId
+            : (mutedUserId as String),
+        $__typename: $__typename == _undefined || $__typename == null
+            ? _instance.$__typename
+            : ($__typename as String),
+      ));
 }
 
 class _CopyWithStubImpl$Mutation$muteFriend$muteUser<TRes>
@@ -544,7 +604,11 @@ class _CopyWithStubImpl$Mutation$muteFriend$muteUser<TRes>
 
   TRes _res;
 
-  call() => _res;
+  call({
+    String? mutedUserId,
+    String? $__typename,
+  }) =>
+      _res;
 }
 
 class Variables$Mutation$unmuteFriend {
@@ -802,7 +866,22 @@ const documentNodeMutationunmuteFriend = DocumentNode(definitions: [
           )
         ],
         directives: [],
-        selectionSet: null,
+        selectionSet: SelectionSetNode(selections: [
+          FieldNode(
+            name: NameNode(value: 'unmutedUserId'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: null,
+          ),
+          FieldNode(
+            name: NameNode(value: '__typename'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: null,
+          ),
+        ]),
       ),
       FieldNode(
         name: NameNode(value: '__typename'),
@@ -1016,20 +1095,41 @@ class Mutation$unmuteFriend$Widget
 }
 
 class Mutation$unmuteFriend$unmuteUser {
-  Mutation$unmuteFriend$unmuteUser();
+  Mutation$unmuteFriend$unmuteUser({
+    required this.unmutedUserId,
+    required this.$__typename,
+  });
 
   factory Mutation$unmuteFriend$unmuteUser.fromJson(Map<String, dynamic> json) {
-    return Mutation$unmuteFriend$unmuteUser();
+    final l$unmutedUserId = json['unmutedUserId'];
+    final l$$__typename = json['__typename'];
+    return Mutation$unmuteFriend$unmuteUser(
+      unmutedUserId: (l$unmutedUserId as String),
+      $__typename: (l$$__typename as String),
+    );
   }
+
+  final String unmutedUserId;
+
+  final String $__typename;
 
   Map<String, dynamic> toJson() {
     final _resultData = <String, dynamic>{};
+    final l$unmutedUserId = unmutedUserId;
+    _resultData['unmutedUserId'] = l$unmutedUserId;
+    final l$$__typename = $__typename;
+    _resultData['__typename'] = l$$__typename;
     return _resultData;
   }
 
   @override
   int get hashCode {
-    return Object.hashAll([]);
+    final l$unmutedUserId = unmutedUserId;
+    final l$$__typename = $__typename;
+    return Object.hashAll([
+      l$unmutedUserId,
+      l$$__typename,
+    ]);
   }
 
   @override
@@ -1039,6 +1139,16 @@ class Mutation$unmuteFriend$unmuteUser {
     }
     if (!(other is Mutation$unmuteFriend$unmuteUser) ||
         runtimeType != other.runtimeType) {
+      return false;
+    }
+    final l$unmutedUserId = unmutedUserId;
+    final lOther$unmutedUserId = other.unmutedUserId;
+    if (l$unmutedUserId != lOther$unmutedUserId) {
+      return false;
+    }
+    final l$$__typename = $__typename;
+    final lOther$$__typename = other.$__typename;
+    if (l$$__typename != lOther$$__typename) {
       return false;
     }
     return true;
@@ -1063,7 +1173,10 @@ abstract class CopyWith$Mutation$unmuteFriend$unmuteUser<TRes> {
   factory CopyWith$Mutation$unmuteFriend$unmuteUser.stub(TRes res) =
       _CopyWithStubImpl$Mutation$unmuteFriend$unmuteUser;
 
-  TRes call();
+  TRes call({
+    String? unmutedUserId,
+    String? $__typename,
+  });
 }
 
 class _CopyWithImpl$Mutation$unmuteFriend$unmuteUser<TRes>
@@ -1079,7 +1192,18 @@ class _CopyWithImpl$Mutation$unmuteFriend$unmuteUser<TRes>
 
   static const _undefined = {};
 
-  TRes call() => _then(Mutation$unmuteFriend$unmuteUser());
+  TRes call({
+    Object? unmutedUserId = _undefined,
+    Object? $__typename = _undefined,
+  }) =>
+      _then(Mutation$unmuteFriend$unmuteUser(
+        unmutedUserId: unmutedUserId == _undefined || unmutedUserId == null
+            ? _instance.unmutedUserId
+            : (unmutedUserId as String),
+        $__typename: $__typename == _undefined || $__typename == null
+            ? _instance.$__typename
+            : ($__typename as String),
+      ));
 }
 
 class _CopyWithStubImpl$Mutation$unmuteFriend$unmuteUser<TRes>
@@ -1088,5 +1212,9 @@ class _CopyWithStubImpl$Mutation$unmuteFriend$unmuteUser<TRes>
 
   TRes _res;
 
-  call() => _res;
+  call({
+    String? unmutedUserId,
+    String? $__typename,
+  }) =>
+      _res;
 }

@@ -134,14 +134,38 @@ class HomeScreen extends HookConsumerWidget {
                         margin: const EdgeInsets.symmetric(horizontal: 5),
                         child: Column(
                           children: [
-                            ...viewer?.pendingInvitations
-                                    .map((invitation) => (Container(
-                                          margin: const EdgeInsets.symmetric(
-                                              vertical: 5),
-                                          child: ReceivedInvitationCard(
-                                            invitation: invitation,
-                                          ),
-                                        ))) ??
+                            ...viewer?.pendingInvitations.map((invitation) =>
+                                    (Container(
+                                      margin: const EdgeInsets.symmetric(
+                                          vertical: 5),
+                                      child: ReceivedInvitationCard(
+                                        invitation: invitation,
+                                        onAccepted: (invitationId) async {
+                                          final result = await graphqlClient
+                                              .mutate$acceptInvitation(
+                                                  Options$Mutation$acceptInvitation(
+                                            variables:
+                                                Variables$Mutation$acceptInvitation(
+                                                    invitationId: invitationId),
+                                          ));
+                                          if (result.parsedData
+                                                  ?.acceptInvitation !=
+                                              null) {}
+                                        },
+                                        onDenied: (invitationId) async {
+                                          final result = await graphqlClient
+                                              .mutate$denyInvitation(
+                                                  Options$Mutation$denyInvitation(
+                                            variables:
+                                                Variables$Mutation$denyInvitation(
+                                                    invitationId: invitationId),
+                                          ));
+                                          if (result
+                                                  .parsedData?.denyInvitation !=
+                                              null) {}
+                                        },
+                                      ),
+                                    ))) ??
                                 []
                           ],
                         ),

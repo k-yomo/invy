@@ -16,10 +16,18 @@ query homeScreenViewer {
 }
 
 mutation acceptInvitation($invitationId: UUID!) {
-    acceptInvitation(invitationId: $invitationId)
+    acceptInvitation(invitationId: $invitationId) {
+        invitation {
+            ...invitationCardFragment
+        }
+    }
 }
 
 mutation denyInvitation($invitationId: UUID!) {
-    denyInvitation(invitationId: $invitationId)
+    denyInvitation(invitationId: $invitationId) {
+        invitation {
+            id
+        }
+    }
 }
 

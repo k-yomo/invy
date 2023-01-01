@@ -864,7 +864,34 @@ const documentNodeMutationacceptInvitation = DocumentNode(definitions: [
           )
         ],
         directives: [],
-        selectionSet: null,
+        selectionSet: SelectionSetNode(selections: [
+          FieldNode(
+            name: NameNode(value: 'invitation'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: SelectionSetNode(selections: [
+              FragmentSpreadNode(
+                name: NameNode(value: 'invitationCardFragment'),
+                directives: [],
+              ),
+              FieldNode(
+                name: NameNode(value: '__typename'),
+                alias: null,
+                arguments: [],
+                directives: [],
+                selectionSet: null,
+              ),
+            ]),
+          ),
+          FieldNode(
+            name: NameNode(value: '__typename'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: null,
+          ),
+        ]),
       ),
       FieldNode(
         name: NameNode(value: '__typename'),
@@ -875,6 +902,7 @@ const documentNodeMutationacceptInvitation = DocumentNode(definitions: [
       ),
     ]),
   ),
+  fragmentDefinitioninvitationCardFragment,
 ]);
 Mutation$acceptInvitation _parserFn$Mutation$acceptInvitation(
         Map<String, dynamic> data) =>
@@ -1085,21 +1113,43 @@ class Mutation$acceptInvitation$Widget
 }
 
 class Mutation$acceptInvitation$acceptInvitation {
-  Mutation$acceptInvitation$acceptInvitation();
+  Mutation$acceptInvitation$acceptInvitation({
+    required this.invitation,
+    required this.$__typename,
+  });
 
   factory Mutation$acceptInvitation$acceptInvitation.fromJson(
       Map<String, dynamic> json) {
-    return Mutation$acceptInvitation$acceptInvitation();
+    final l$invitation = json['invitation'];
+    final l$$__typename = json['__typename'];
+    return Mutation$acceptInvitation$acceptInvitation(
+      invitation: Fragment$invitationCardFragment.fromJson(
+          (l$invitation as Map<String, dynamic>)),
+      $__typename: (l$$__typename as String),
+    );
   }
+
+  final Fragment$invitationCardFragment invitation;
+
+  final String $__typename;
 
   Map<String, dynamic> toJson() {
     final _resultData = <String, dynamic>{};
+    final l$invitation = invitation;
+    _resultData['invitation'] = l$invitation.toJson();
+    final l$$__typename = $__typename;
+    _resultData['__typename'] = l$$__typename;
     return _resultData;
   }
 
   @override
   int get hashCode {
-    return Object.hashAll([]);
+    final l$invitation = invitation;
+    final l$$__typename = $__typename;
+    return Object.hashAll([
+      l$invitation,
+      l$$__typename,
+    ]);
   }
 
   @override
@@ -1109,6 +1159,16 @@ class Mutation$acceptInvitation$acceptInvitation {
     }
     if (!(other is Mutation$acceptInvitation$acceptInvitation) ||
         runtimeType != other.runtimeType) {
+      return false;
+    }
+    final l$invitation = invitation;
+    final lOther$invitation = other.invitation;
+    if (l$invitation != lOther$invitation) {
+      return false;
+    }
+    final l$$__typename = $__typename;
+    final lOther$$__typename = other.$__typename;
+    if (l$$__typename != lOther$$__typename) {
       return false;
     }
     return true;
@@ -1134,7 +1194,11 @@ abstract class CopyWith$Mutation$acceptInvitation$acceptInvitation<TRes> {
   factory CopyWith$Mutation$acceptInvitation$acceptInvitation.stub(TRes res) =
       _CopyWithStubImpl$Mutation$acceptInvitation$acceptInvitation;
 
-  TRes call();
+  TRes call({
+    Fragment$invitationCardFragment? invitation,
+    String? $__typename,
+  });
+  CopyWith$Fragment$invitationCardFragment<TRes> get invitation;
 }
 
 class _CopyWithImpl$Mutation$acceptInvitation$acceptInvitation<TRes>
@@ -1150,7 +1214,23 @@ class _CopyWithImpl$Mutation$acceptInvitation$acceptInvitation<TRes>
 
   static const _undefined = {};
 
-  TRes call() => _then(Mutation$acceptInvitation$acceptInvitation());
+  TRes call({
+    Object? invitation = _undefined,
+    Object? $__typename = _undefined,
+  }) =>
+      _then(Mutation$acceptInvitation$acceptInvitation(
+        invitation: invitation == _undefined || invitation == null
+            ? _instance.invitation
+            : (invitation as Fragment$invitationCardFragment),
+        $__typename: $__typename == _undefined || $__typename == null
+            ? _instance.$__typename
+            : ($__typename as String),
+      ));
+  CopyWith$Fragment$invitationCardFragment<TRes> get invitation {
+    final local$invitation = _instance.invitation;
+    return CopyWith$Fragment$invitationCardFragment(
+        local$invitation, (e) => call(invitation: e));
+  }
 }
 
 class _CopyWithStubImpl$Mutation$acceptInvitation$acceptInvitation<TRes>
@@ -1159,7 +1239,13 @@ class _CopyWithStubImpl$Mutation$acceptInvitation$acceptInvitation<TRes>
 
   TRes _res;
 
-  call() => _res;
+  call({
+    Fragment$invitationCardFragment? invitation,
+    String? $__typename,
+  }) =>
+      _res;
+  CopyWith$Fragment$invitationCardFragment<TRes> get invitation =>
+      CopyWith$Fragment$invitationCardFragment.stub(_res);
 }
 
 class Variables$Mutation$denyInvitation {
@@ -1419,7 +1505,37 @@ const documentNodeMutationdenyInvitation = DocumentNode(definitions: [
           )
         ],
         directives: [],
-        selectionSet: null,
+        selectionSet: SelectionSetNode(selections: [
+          FieldNode(
+            name: NameNode(value: 'invitation'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: SelectionSetNode(selections: [
+              FieldNode(
+                name: NameNode(value: 'id'),
+                alias: null,
+                arguments: [],
+                directives: [],
+                selectionSet: null,
+              ),
+              FieldNode(
+                name: NameNode(value: '__typename'),
+                alias: null,
+                arguments: [],
+                directives: [],
+                selectionSet: null,
+              ),
+            ]),
+          ),
+          FieldNode(
+            name: NameNode(value: '__typename'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: null,
+          ),
+        ]),
       ),
       FieldNode(
         name: NameNode(value: '__typename'),
@@ -1638,21 +1754,43 @@ class Mutation$denyInvitation$Widget
 }
 
 class Mutation$denyInvitation$denyInvitation {
-  Mutation$denyInvitation$denyInvitation();
+  Mutation$denyInvitation$denyInvitation({
+    required this.invitation,
+    required this.$__typename,
+  });
 
   factory Mutation$denyInvitation$denyInvitation.fromJson(
       Map<String, dynamic> json) {
-    return Mutation$denyInvitation$denyInvitation();
+    final l$invitation = json['invitation'];
+    final l$$__typename = json['__typename'];
+    return Mutation$denyInvitation$denyInvitation(
+      invitation: Mutation$denyInvitation$denyInvitation$invitation.fromJson(
+          (l$invitation as Map<String, dynamic>)),
+      $__typename: (l$$__typename as String),
+    );
   }
+
+  final Mutation$denyInvitation$denyInvitation$invitation invitation;
+
+  final String $__typename;
 
   Map<String, dynamic> toJson() {
     final _resultData = <String, dynamic>{};
+    final l$invitation = invitation;
+    _resultData['invitation'] = l$invitation.toJson();
+    final l$$__typename = $__typename;
+    _resultData['__typename'] = l$$__typename;
     return _resultData;
   }
 
   @override
   int get hashCode {
-    return Object.hashAll([]);
+    final l$invitation = invitation;
+    final l$$__typename = $__typename;
+    return Object.hashAll([
+      l$invitation,
+      l$$__typename,
+    ]);
   }
 
   @override
@@ -1662,6 +1800,16 @@ class Mutation$denyInvitation$denyInvitation {
     }
     if (!(other is Mutation$denyInvitation$denyInvitation) ||
         runtimeType != other.runtimeType) {
+      return false;
+    }
+    final l$invitation = invitation;
+    final lOther$invitation = other.invitation;
+    if (l$invitation != lOther$invitation) {
+      return false;
+    }
+    final l$$__typename = $__typename;
+    final lOther$$__typename = other.$__typename;
+    if (l$$__typename != lOther$$__typename) {
       return false;
     }
     return true;
@@ -1687,7 +1835,12 @@ abstract class CopyWith$Mutation$denyInvitation$denyInvitation<TRes> {
   factory CopyWith$Mutation$denyInvitation$denyInvitation.stub(TRes res) =
       _CopyWithStubImpl$Mutation$denyInvitation$denyInvitation;
 
-  TRes call();
+  TRes call({
+    Mutation$denyInvitation$denyInvitation$invitation? invitation,
+    String? $__typename,
+  });
+  CopyWith$Mutation$denyInvitation$denyInvitation$invitation<TRes>
+      get invitation;
 }
 
 class _CopyWithImpl$Mutation$denyInvitation$denyInvitation<TRes>
@@ -1703,7 +1856,24 @@ class _CopyWithImpl$Mutation$denyInvitation$denyInvitation<TRes>
 
   static const _undefined = {};
 
-  TRes call() => _then(Mutation$denyInvitation$denyInvitation());
+  TRes call({
+    Object? invitation = _undefined,
+    Object? $__typename = _undefined,
+  }) =>
+      _then(Mutation$denyInvitation$denyInvitation(
+        invitation: invitation == _undefined || invitation == null
+            ? _instance.invitation
+            : (invitation as Mutation$denyInvitation$denyInvitation$invitation),
+        $__typename: $__typename == _undefined || $__typename == null
+            ? _instance.$__typename
+            : ($__typename as String),
+      ));
+  CopyWith$Mutation$denyInvitation$denyInvitation$invitation<TRes>
+      get invitation {
+    final local$invitation = _instance.invitation;
+    return CopyWith$Mutation$denyInvitation$denyInvitation$invitation(
+        local$invitation, (e) => call(invitation: e));
+  }
 }
 
 class _CopyWithStubImpl$Mutation$denyInvitation$denyInvitation<TRes>
@@ -1712,5 +1882,143 @@ class _CopyWithStubImpl$Mutation$denyInvitation$denyInvitation<TRes>
 
   TRes _res;
 
-  call() => _res;
+  call({
+    Mutation$denyInvitation$denyInvitation$invitation? invitation,
+    String? $__typename,
+  }) =>
+      _res;
+  CopyWith$Mutation$denyInvitation$denyInvitation$invitation<TRes>
+      get invitation =>
+          CopyWith$Mutation$denyInvitation$denyInvitation$invitation.stub(_res);
+}
+
+class Mutation$denyInvitation$denyInvitation$invitation {
+  Mutation$denyInvitation$denyInvitation$invitation({
+    required this.id,
+    required this.$__typename,
+  });
+
+  factory Mutation$denyInvitation$denyInvitation$invitation.fromJson(
+      Map<String, dynamic> json) {
+    final l$id = json['id'];
+    final l$$__typename = json['__typename'];
+    return Mutation$denyInvitation$denyInvitation$invitation(
+      id: (l$id as String),
+      $__typename: (l$$__typename as String),
+    );
+  }
+
+  final String id;
+
+  final String $__typename;
+
+  Map<String, dynamic> toJson() {
+    final _resultData = <String, dynamic>{};
+    final l$id = id;
+    _resultData['id'] = l$id;
+    final l$$__typename = $__typename;
+    _resultData['__typename'] = l$$__typename;
+    return _resultData;
+  }
+
+  @override
+  int get hashCode {
+    final l$id = id;
+    final l$$__typename = $__typename;
+    return Object.hashAll([
+      l$id,
+      l$$__typename,
+    ]);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    if (!(other is Mutation$denyInvitation$denyInvitation$invitation) ||
+        runtimeType != other.runtimeType) {
+      return false;
+    }
+    final l$id = id;
+    final lOther$id = other.id;
+    if (l$id != lOther$id) {
+      return false;
+    }
+    final l$$__typename = $__typename;
+    final lOther$$__typename = other.$__typename;
+    if (l$$__typename != lOther$$__typename) {
+      return false;
+    }
+    return true;
+  }
+}
+
+extension UtilityExtension$Mutation$denyInvitation$denyInvitation$invitation
+    on Mutation$denyInvitation$denyInvitation$invitation {
+  CopyWith$Mutation$denyInvitation$denyInvitation$invitation<
+          Mutation$denyInvitation$denyInvitation$invitation>
+      get copyWith =>
+          CopyWith$Mutation$denyInvitation$denyInvitation$invitation(
+            this,
+            (i) => i,
+          );
+}
+
+abstract class CopyWith$Mutation$denyInvitation$denyInvitation$invitation<
+    TRes> {
+  factory CopyWith$Mutation$denyInvitation$denyInvitation$invitation(
+    Mutation$denyInvitation$denyInvitation$invitation instance,
+    TRes Function(Mutation$denyInvitation$denyInvitation$invitation) then,
+  ) = _CopyWithImpl$Mutation$denyInvitation$denyInvitation$invitation;
+
+  factory CopyWith$Mutation$denyInvitation$denyInvitation$invitation.stub(
+          TRes res) =
+      _CopyWithStubImpl$Mutation$denyInvitation$denyInvitation$invitation;
+
+  TRes call({
+    String? id,
+    String? $__typename,
+  });
+}
+
+class _CopyWithImpl$Mutation$denyInvitation$denyInvitation$invitation<TRes>
+    implements
+        CopyWith$Mutation$denyInvitation$denyInvitation$invitation<TRes> {
+  _CopyWithImpl$Mutation$denyInvitation$denyInvitation$invitation(
+    this._instance,
+    this._then,
+  );
+
+  final Mutation$denyInvitation$denyInvitation$invitation _instance;
+
+  final TRes Function(Mutation$denyInvitation$denyInvitation$invitation) _then;
+
+  static const _undefined = {};
+
+  TRes call({
+    Object? id = _undefined,
+    Object? $__typename = _undefined,
+  }) =>
+      _then(Mutation$denyInvitation$denyInvitation$invitation(
+        id: id == _undefined || id == null ? _instance.id : (id as String),
+        $__typename: $__typename == _undefined || $__typename == null
+            ? _instance.$__typename
+            : ($__typename as String),
+      ));
+}
+
+class _CopyWithStubImpl$Mutation$denyInvitation$denyInvitation$invitation<TRes>
+    implements
+        CopyWith$Mutation$denyInvitation$denyInvitation$invitation<TRes> {
+  _CopyWithStubImpl$Mutation$denyInvitation$denyInvitation$invitation(
+      this._res);
+
+  TRes _res;
+
+  call({
+    String? id,
+    String? $__typename,
+  }) =>
+      _res;
 }

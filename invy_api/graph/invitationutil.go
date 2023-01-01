@@ -13,26 +13,22 @@ import (
 
 func IsAuthUserIncludedInTheInvitation(ctx context.Context, dbClient *ent.Client, invitationID uuid.UUID) (bool, error) {
 	authUserID := auth.GetCurrentUserID(ctx)
-	_, invitationUserErr := dbClient.InvitationUser.Query().
-		Where(invitationuser.ID(invitationID), invitationuser.UserID(authUserID)).
-		Only(ctx)
-	if invitationUserErr != nil && !ent.IsNotFound(invitationUserErr) {
-		return false, invitationUserErr
+	invitationUserExists, err := dbClient.InvitationUser.Query().
+		Where(invitationuser.InvitationID(invitationID), invitationuser.UserID(authUserID)).
+		Exist(ctx)
+	if err != nil {
+		return false, err
 	}
-	_, invitationFriendGroupErr := dbClient.InvitationFriendGroup.Query().
+	invitationFriendGroupExists, err := dbClient.InvitationFriendGroup.Query().
 		Where(invitationfriendgroup.InvitationID(invitationID)).
 		QueryFriendGroup().
 		QueryUserFriendGroups().
 		Where(userfriendgroup.UserID(authUserID)).
-		Only(ctx)
-	if invitationFriendGroupErr != nil && !ent.IsNotFound(invitationFriendGroupErr) {
-		return false, invitationFriendGroupErr
+		Exist(ctx)
+	if err != nil {
+		return false, err
 	}
 
-	// user is not included in the invitation list
-	if ent.IsNotFound(invitationUserErr) && ent.IsNotFound(invitationFriendGroupErr) {
-		return false, nil
-	}
-
-	return true, nil
+	invited := invitationUserExists || invitationFriendGroupExists
+	return invited, nil
 }

@@ -1,8 +1,12 @@
 
 mutation muteFriend($userId: UUID!) {
-    muteUser(userId: $userId)
+    muteUser(userId: $userId) {
+        mutedUserId
+    }
 }
 
 mutation unmuteFriend($userId: UUID!) {
-    unmuteUser(userId:  $userId)
+    unmuteUser(userId:  $userId) {
+        unmutedUserId
+    }
 }

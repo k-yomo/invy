@@ -25,25 +25,30 @@ class SentInvitationCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            margin: const EdgeInsets.only(top: 5, left: 4, bottom: 5),
-            child: Row(children: [
-              Icon(Icons.location_pin, size: 30),
-              Text(invitation.location),
-            ]),
-          ),
-          Container(
-            margin: const EdgeInsets.only(left: 6, bottom: 5),
-            child: Row(
-              children: [
-                Icon(Icons.today, size: 25),
-                Container(
-                  margin: const EdgeInsets.only(left: 5),
-                  child: Text(DateFormat(dateTimeFormat)
-                      .format(DateTime.parse(invitation.startsAt))),
-                )
-              ],
-            ),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Container(
+                margin: const EdgeInsets.only(top: 5, left: 4, bottom: 5),
+                child: Row(children: [
+                  Icon(Icons.location_pin, size: 25),
+                  Text(invitation.location),
+                ]),
+              ),
+              Container(
+                margin: const EdgeInsets.only(top: 5, left: 6, bottom: 5),
+                child: Row(
+                  children: [
+                    Icon(Icons.today, size: 25),
+                    Container(
+                      margin: const EdgeInsets.only(left: 5),
+                      child: Text(DateFormat(dateTimeFormat)
+                          .format(DateTime.parse(invitation.startsAt))),
+                    )
+                  ],
+                ),
+              ),
+            ],
           ),
           Container(
             margin: const EdgeInsets.only(left: 8, bottom: 5),
