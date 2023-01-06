@@ -14,7 +14,7 @@ Future main() async {
 
   final config = getConfig();
 
-  await Firebase.initializeApp(options: config.firebaseOptions);
+  await Firebase.initializeApp(name: 'Invy', options: config.firebaseOptions);
 
   /// 縦固定
   SystemChrome.setPreferredOrientations([

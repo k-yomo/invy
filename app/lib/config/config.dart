@@ -1,4 +1,5 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:invy/services/firebase_options_local.dart' as local;
 import 'package:invy/services/firebase_options_dev.dart' as dev;
 import 'package:invy/services/firebase_options_prod.dart' as prod;
 import 'package:universal_platform/universal_platform.dart';
@@ -47,7 +48,7 @@ class LocalConfig implements AppConfig {
 
   @override
   FirebaseOptions get firebaseOptions =>
-      dev.DefaultFirebaseOptions.currentPlatform;
+      local.DefaultFirebaseOptions.currentPlatform;
 
   String get _host {
 // https://github.com/flutter/flutter/issues/36126#issuecomment-596215587

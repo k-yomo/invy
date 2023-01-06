@@ -8,7 +8,7 @@ import 'package:flutter/foundation.dart'
 ///
 /// Example:
 /// ```dart
-/// import 'firebase_options_prod.dart';
+/// import 'firebase_options.dart';
 /// // ...
 /// await Firebase.initializeApp(
 ///   options: DefaultFirebaseOptions.currentPlatform,
@@ -25,7 +25,10 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
-        return macos;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for macos - '
+              'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.windows:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for windows - '
@@ -55,7 +58,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyA00U2AzPNFCNnqjmEFBcrOe4A0xpl6WxE',
-    appId: '1:936800855868:android:244cfd4a925c0cd1372039',
+    appId: '1:936800855868:android:2480a3c9bd3cf800372039',
     messagingSenderId: '936800855868',
     projectId: 'invy-prod',
     storageBucket: 'invy-prod.appspot.com',
@@ -63,23 +66,11 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyCV5O5yVDXflbvQitfo1lG_rtaAPAkZVWk',
-    appId: '1:936800855868:ios:f9307aa120d6c703372039',
+    appId: '1:936800855868:ios:767b1adde5683b31372039',
     messagingSenderId: '936800855868',
     projectId: 'invy-prod',
     storageBucket: 'invy-prod.appspot.com',
-    iosClientId:
-        '936800855868-026sf7rmspjb9lq1ggpnpnqb8uhukli1.apps.googleusercontent.com',
-    iosBundleId: 'com.invy-app.invy',
-  );
-
-  static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyCV5O5yVDXflbvQitfo1lG_rtaAPAkZVWk',
-    appId: '1:936800855868:ios:f9307aa120d6c703372039',
-    messagingSenderId: '936800855868',
-    projectId: 'invy-prod',
-    storageBucket: 'invy-prod.appspot.com',
-    iosClientId:
-        '936800855868-026sf7rmspjb9lq1ggpnpnqb8uhukli1.apps.googleusercontent.com',
-    iosBundleId: 'com.invy-app.invy',
+    iosClientId: '936800855868-c9u7m25gi0vgk0naf990iqpoidgkt6ns.apps.googleusercontent.com',
+    iosBundleId: 'com.invy-app',
   );
 }
