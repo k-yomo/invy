@@ -34,4 +34,5 @@ Runner/GeneratedPluginRegistrant.*
 !default.perspectivev3
 
 Flutter/DartDefines.xcconfig
-GoogleService-Info.plist
+./GoogleService-Info.plist
+./firebase_app_id_file.json

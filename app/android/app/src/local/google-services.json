@@ -29,6 +29,13 @@
             {
               "client_id": "760736711248-vh3fjo1vnnfko9a3n82utaobse38ascq.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "760736711248-6mlhjrmj44poitvqemoj0raab2bg206f.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.invy-app.invy"
+              }
             }
           ]
         }
