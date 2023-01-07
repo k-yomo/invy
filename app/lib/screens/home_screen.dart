@@ -17,6 +17,7 @@ class HomeScreen extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final graphqlClient = ref.read(graphqlClientProvider);
     final viewerQuery = graphqlClient.watchQuery$homeScreenViewer();
+    viewerQuery.fetchResults();
     viewerQuery.startPolling(Duration(seconds: 30));
 
     return StreamBuilder<QueryResult<Query$homeScreenViewer>>(
