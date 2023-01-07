@@ -70,7 +70,8 @@ class App extends HookConsumerWidget {
                 primarySwatch: materialWhite,
                 useMaterial3: true,
               ),
-              darkTheme: ThemeData.dark(),
+              // TODO: support dark mode
+              // darkTheme: ThemeData.dark(),
               themeMode: ThemeMode.system,
               home: (loggedInUser != null)
                   ? const RootWidget()
