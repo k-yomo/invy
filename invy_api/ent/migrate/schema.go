@@ -163,6 +163,13 @@ var (
 				OnDelete:   schema.NoAction,
 			},
 		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "invitationacceptance_user_id_invitation_id",
+				Unique:  true,
+				Columns: []*schema.Column{InvitationAcceptancesColumns[2], InvitationAcceptancesColumns[3]},
+			},
+		},
 	}
 	// InvitationDenialsColumns holds the columns for the "invitation_denials" table.
 	InvitationDenialsColumns = []*schema.Column{
@@ -188,6 +195,13 @@ var (
 				Columns:    []*schema.Column{InvitationDenialsColumns[3]},
 				RefColumns: []*schema.Column{InvitationsColumns[0]},
 				OnDelete:   schema.NoAction,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "invitationdenial_user_id_invitation_id",
+				Unique:  true,
+				Columns: []*schema.Column{InvitationDenialsColumns[2], InvitationDenialsColumns[3]},
 			},
 		},
 	}

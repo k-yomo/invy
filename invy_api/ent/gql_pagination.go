@@ -421,7 +421,7 @@ func (a *AccountQuery) Paginate(
 	if hasCollectedField(ctx, totalCountField) || hasCollectedField(ctx, pageInfoField) {
 		hasPagination := after != nil || first != nil || before != nil || last != nil
 		if hasPagination || ignoredEdges {
-			if conn.TotalCount, err = a.Count(ctx); err != nil {
+			if conn.TotalCount, err = a.Clone().Count(ctx); err != nil {
 				return nil, err
 			}
 			conn.PageInfo.HasNextPage = first != nil && conn.TotalCount > 0
@@ -652,7 +652,7 @@ func (fg *FriendGroupQuery) Paginate(
 	if hasCollectedField(ctx, totalCountField) || hasCollectedField(ctx, pageInfoField) {
 		hasPagination := after != nil || first != nil || before != nil || last != nil
 		if hasPagination || ignoredEdges {
-			if conn.TotalCount, err = fg.Count(ctx); err != nil {
+			if conn.TotalCount, err = fg.Clone().Count(ctx); err != nil {
 				return nil, err
 			}
 			conn.PageInfo.HasNextPage = first != nil && conn.TotalCount > 0
@@ -883,7 +883,7 @@ func (f *FriendshipQuery) Paginate(
 	if hasCollectedField(ctx, totalCountField) || hasCollectedField(ctx, pageInfoField) {
 		hasPagination := after != nil || first != nil || before != nil || last != nil
 		if hasPagination || ignoredEdges {
-			if conn.TotalCount, err = f.Count(ctx); err != nil {
+			if conn.TotalCount, err = f.Clone().Count(ctx); err != nil {
 				return nil, err
 			}
 			conn.PageInfo.HasNextPage = first != nil && conn.TotalCount > 0
@@ -1157,7 +1157,7 @@ func (fr *FriendshipRequestQuery) Paginate(
 	if hasCollectedField(ctx, totalCountField) || hasCollectedField(ctx, pageInfoField) {
 		hasPagination := after != nil || first != nil || before != nil || last != nil
 		if hasPagination || ignoredEdges {
-			if conn.TotalCount, err = fr.Count(ctx); err != nil {
+			if conn.TotalCount, err = fr.Clone().Count(ctx); err != nil {
 				return nil, err
 			}
 			conn.PageInfo.HasNextPage = first != nil && conn.TotalCount > 0
@@ -1388,7 +1388,7 @@ func (i *InvitationQuery) Paginate(
 	if hasCollectedField(ctx, totalCountField) || hasCollectedField(ctx, pageInfoField) {
 		hasPagination := after != nil || first != nil || before != nil || last != nil
 		if hasPagination || ignoredEdges {
-			if conn.TotalCount, err = i.Count(ctx); err != nil {
+			if conn.TotalCount, err = i.Clone().Count(ctx); err != nil {
 				return nil, err
 			}
 			conn.PageInfo.HasNextPage = first != nil && conn.TotalCount > 0
@@ -1619,7 +1619,7 @@ func (ia *InvitationAcceptanceQuery) Paginate(
 	if hasCollectedField(ctx, totalCountField) || hasCollectedField(ctx, pageInfoField) {
 		hasPagination := after != nil || first != nil || before != nil || last != nil
 		if hasPagination || ignoredEdges {
-			if conn.TotalCount, err = ia.Count(ctx); err != nil {
+			if conn.TotalCount, err = ia.Clone().Count(ctx); err != nil {
 				return nil, err
 			}
 			conn.PageInfo.HasNextPage = first != nil && conn.TotalCount > 0
@@ -1850,7 +1850,7 @@ func (id *InvitationDenialQuery) Paginate(
 	if hasCollectedField(ctx, totalCountField) || hasCollectedField(ctx, pageInfoField) {
 		hasPagination := after != nil || first != nil || before != nil || last != nil
 		if hasPagination || ignoredEdges {
-			if conn.TotalCount, err = id.Count(ctx); err != nil {
+			if conn.TotalCount, err = id.Clone().Count(ctx); err != nil {
 				return nil, err
 			}
 			conn.PageInfo.HasNextPage = first != nil && conn.TotalCount > 0
@@ -2081,7 +2081,7 @@ func (ifg *InvitationFriendGroupQuery) Paginate(
 	if hasCollectedField(ctx, totalCountField) || hasCollectedField(ctx, pageInfoField) {
 		hasPagination := after != nil || first != nil || before != nil || last != nil
 		if hasPagination || ignoredEdges {
-			if conn.TotalCount, err = ifg.Count(ctx); err != nil {
+			if conn.TotalCount, err = ifg.Clone().Count(ctx); err != nil {
 				return nil, err
 			}
 			conn.PageInfo.HasNextPage = first != nil && conn.TotalCount > 0
@@ -2312,7 +2312,7 @@ func (iu *InvitationUserQuery) Paginate(
 	if hasCollectedField(ctx, totalCountField) || hasCollectedField(ctx, pageInfoField) {
 		hasPagination := after != nil || first != nil || before != nil || last != nil
 		if hasPagination || ignoredEdges {
-			if conn.TotalCount, err = iu.Count(ctx); err != nil {
+			if conn.TotalCount, err = iu.Clone().Count(ctx); err != nil {
 				return nil, err
 			}
 			conn.PageInfo.HasNextPage = first != nil && conn.TotalCount > 0
@@ -2543,7 +2543,7 @@ func (u *UserQuery) Paginate(
 	if hasCollectedField(ctx, totalCountField) || hasCollectedField(ctx, pageInfoField) {
 		hasPagination := after != nil || first != nil || before != nil || last != nil
 		if hasPagination || ignoredEdges {
-			if conn.TotalCount, err = u.Count(ctx); err != nil {
+			if conn.TotalCount, err = u.Clone().Count(ctx); err != nil {
 				return nil, err
 			}
 			conn.PageInfo.HasNextPage = first != nil && conn.TotalCount > 0
@@ -2774,7 +2774,7 @@ func (ufg *UserFriendGroupQuery) Paginate(
 	if hasCollectedField(ctx, totalCountField) || hasCollectedField(ctx, pageInfoField) {
 		hasPagination := after != nil || first != nil || before != nil || last != nil
 		if hasPagination || ignoredEdges {
-			if conn.TotalCount, err = ufg.Count(ctx); err != nil {
+			if conn.TotalCount, err = ufg.Clone().Count(ctx); err != nil {
 				return nil, err
 			}
 			conn.PageInfo.HasNextPage = first != nil && conn.TotalCount > 0
@@ -3005,7 +3005,7 @@ func (um *UserMuteQuery) Paginate(
 	if hasCollectedField(ctx, totalCountField) || hasCollectedField(ctx, pageInfoField) {
 		hasPagination := after != nil || first != nil || before != nil || last != nil
 		if hasPagination || ignoredEdges {
-			if conn.TotalCount, err = um.Count(ctx); err != nil {
+			if conn.TotalCount, err = um.Clone().Count(ctx); err != nil {
 				return nil, err
 			}
 			conn.PageInfo.HasNextPage = first != nil && conn.TotalCount > 0
@@ -3236,7 +3236,7 @@ func (up *UserProfileQuery) Paginate(
 	if hasCollectedField(ctx, totalCountField) || hasCollectedField(ctx, pageInfoField) {
 		hasPagination := after != nil || first != nil || before != nil || last != nil
 		if hasPagination || ignoredEdges {
-			if conn.TotalCount, err = up.Count(ctx); err != nil {
+			if conn.TotalCount, err = up.Clone().Count(ctx); err != nil {
 				return nil, err
 			}
 			conn.PageInfo.HasNextPage = first != nil && conn.TotalCount > 0

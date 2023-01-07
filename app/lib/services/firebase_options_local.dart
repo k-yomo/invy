@@ -70,7 +70,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '760736711248',
     projectId: 'invy-local',
     storageBucket: 'invy-local.appspot.com',
-    iosClientId: '760736711248-q1n3u320uobcrdc9paqup78p2pjpqlsl.apps.googleusercontent.com',
+    iosClientId:
+        '760736711248-q1n3u320uobcrdc9paqup78p2pjpqlsl.apps.googleusercontent.com',
     iosBundleId: 'com.invy-app.local',
   );
 }

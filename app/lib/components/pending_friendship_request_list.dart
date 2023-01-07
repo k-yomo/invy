@@ -46,6 +46,7 @@ class PendingFriendshipRequestList extends HookConsumerWidget {
       );
       if (result.hasException) {
         // TODO: show error;
+        print(result.exception);
         return;
       }
       onClick(requestId);

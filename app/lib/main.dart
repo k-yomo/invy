@@ -13,8 +13,7 @@ Future main() async {
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
   final config = getConfig();
-
-  await Firebase.initializeApp(name: 'Invy', options: config.firebaseOptions);
+  await Firebase.initializeApp(options: config.firebaseOptions);
 
   /// 縦固定
   SystemChrome.setPreferredOrientations([

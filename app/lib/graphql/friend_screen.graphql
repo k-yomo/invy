@@ -24,9 +24,13 @@ query friendScreenViewer {
 }
 
 mutation acceptFriendshipRequest($friendshipRequestId: UUID!) {
-    acceptFriendshipRequest(friendshipRequestId: $friendshipRequestId)
+    acceptFriendshipRequest(friendshipRequestId: $friendshipRequestId) {
+        acceptedFriendshipRequestId
+    }
 }
 
 mutation denyFriendshipRequest($friendshipRequestId: UUID!) {
-    denyFriendshipRequest(friendshipRequestId: $friendshipRequestId)
+    denyFriendshipRequest(friendshipRequestId: $friendshipRequestId) {
+        deniedFriendshipRequestId
+    }
 }

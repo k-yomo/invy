@@ -9,7 +9,7 @@ setup: ## Setup project
 generate: ## Generate graphql code / ent code from schema
 	cd invy_api && go generate ./...
 	graphql-schema-utilities -s "defs/graphql/*" -o app/lib/graphql/schema.graphql
-	cd app && flutter pub run build_runner build
+	cd app && flutter pub run build_runner build --delete-conflicting-outputs
 	make fmt
 
 .PHONY: run-dbs

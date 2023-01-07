@@ -1454,7 +1454,22 @@ const documentNodeMutationacceptFriendshipRequest = DocumentNode(definitions: [
           )
         ],
         directives: [],
-        selectionSet: null,
+        selectionSet: SelectionSetNode(selections: [
+          FieldNode(
+            name: NameNode(value: 'acceptedFriendshipRequestId'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: null,
+          ),
+          FieldNode(
+            name: NameNode(value: '__typename'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: null,
+          ),
+        ]),
       ),
       FieldNode(
         name: NameNode(value: '__typename'),
@@ -1679,21 +1694,42 @@ class Mutation$acceptFriendshipRequest$Widget
 }
 
 class Mutation$acceptFriendshipRequest$acceptFriendshipRequest {
-  Mutation$acceptFriendshipRequest$acceptFriendshipRequest();
+  Mutation$acceptFriendshipRequest$acceptFriendshipRequest({
+    required this.acceptedFriendshipRequestId,
+    required this.$__typename,
+  });
 
   factory Mutation$acceptFriendshipRequest$acceptFriendshipRequest.fromJson(
       Map<String, dynamic> json) {
-    return Mutation$acceptFriendshipRequest$acceptFriendshipRequest();
+    final l$acceptedFriendshipRequestId = json['acceptedFriendshipRequestId'];
+    final l$$__typename = json['__typename'];
+    return Mutation$acceptFriendshipRequest$acceptFriendshipRequest(
+      acceptedFriendshipRequestId: (l$acceptedFriendshipRequestId as String),
+      $__typename: (l$$__typename as String),
+    );
   }
+
+  final String acceptedFriendshipRequestId;
+
+  final String $__typename;
 
   Map<String, dynamic> toJson() {
     final _resultData = <String, dynamic>{};
+    final l$acceptedFriendshipRequestId = acceptedFriendshipRequestId;
+    _resultData['acceptedFriendshipRequestId'] = l$acceptedFriendshipRequestId;
+    final l$$__typename = $__typename;
+    _resultData['__typename'] = l$$__typename;
     return _resultData;
   }
 
   @override
   int get hashCode {
-    return Object.hashAll([]);
+    final l$acceptedFriendshipRequestId = acceptedFriendshipRequestId;
+    final l$$__typename = $__typename;
+    return Object.hashAll([
+      l$acceptedFriendshipRequestId,
+      l$$__typename,
+    ]);
   }
 
   @override
@@ -1703,6 +1739,17 @@ class Mutation$acceptFriendshipRequest$acceptFriendshipRequest {
     }
     if (!(other is Mutation$acceptFriendshipRequest$acceptFriendshipRequest) ||
         runtimeType != other.runtimeType) {
+      return false;
+    }
+    final l$acceptedFriendshipRequestId = acceptedFriendshipRequestId;
+    final lOther$acceptedFriendshipRequestId =
+        other.acceptedFriendshipRequestId;
+    if (l$acceptedFriendshipRequestId != lOther$acceptedFriendshipRequestId) {
+      return false;
+    }
+    final l$$__typename = $__typename;
+    final lOther$$__typename = other.$__typename;
+    if (l$$__typename != lOther$$__typename) {
       return false;
     }
     return true;
@@ -1732,7 +1779,10 @@ abstract class CopyWith$Mutation$acceptFriendshipRequest$acceptFriendshipRequest
           TRes res) =
       _CopyWithStubImpl$Mutation$acceptFriendshipRequest$acceptFriendshipRequest;
 
-  TRes call();
+  TRes call({
+    String? acceptedFriendshipRequestId,
+    String? $__typename,
+  });
 }
 
 class _CopyWithImpl$Mutation$acceptFriendshipRequest$acceptFriendshipRequest<
@@ -1752,8 +1802,20 @@ class _CopyWithImpl$Mutation$acceptFriendshipRequest$acceptFriendshipRequest<
 
   static const _undefined = {};
 
-  TRes call() =>
-      _then(Mutation$acceptFriendshipRequest$acceptFriendshipRequest());
+  TRes call({
+    Object? acceptedFriendshipRequestId = _undefined,
+    Object? $__typename = _undefined,
+  }) =>
+      _then(Mutation$acceptFriendshipRequest$acceptFriendshipRequest(
+        acceptedFriendshipRequestId:
+            acceptedFriendshipRequestId == _undefined ||
+                    acceptedFriendshipRequestId == null
+                ? _instance.acceptedFriendshipRequestId
+                : (acceptedFriendshipRequestId as String),
+        $__typename: $__typename == _undefined || $__typename == null
+            ? _instance.$__typename
+            : ($__typename as String),
+      ));
 }
 
 class _CopyWithStubImpl$Mutation$acceptFriendshipRequest$acceptFriendshipRequest<
@@ -1766,7 +1828,11 @@ class _CopyWithStubImpl$Mutation$acceptFriendshipRequest$acceptFriendshipRequest
 
   TRes _res;
 
-  call() => _res;
+  call({
+    String? acceptedFriendshipRequestId,
+    String? $__typename,
+  }) =>
+      _res;
 }
 
 class Variables$Mutation$denyFriendshipRequest {
@@ -2037,7 +2103,22 @@ const documentNodeMutationdenyFriendshipRequest = DocumentNode(definitions: [
           )
         ],
         directives: [],
-        selectionSet: null,
+        selectionSet: SelectionSetNode(selections: [
+          FieldNode(
+            name: NameNode(value: 'deniedFriendshipRequestId'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: null,
+          ),
+          FieldNode(
+            name: NameNode(value: '__typename'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: null,
+          ),
+        ]),
       ),
       FieldNode(
         name: NameNode(value: '__typename'),
@@ -2262,21 +2343,42 @@ class Mutation$denyFriendshipRequest$Widget
 }
 
 class Mutation$denyFriendshipRequest$denyFriendshipRequest {
-  Mutation$denyFriendshipRequest$denyFriendshipRequest();
+  Mutation$denyFriendshipRequest$denyFriendshipRequest({
+    required this.deniedFriendshipRequestId,
+    required this.$__typename,
+  });
 
   factory Mutation$denyFriendshipRequest$denyFriendshipRequest.fromJson(
       Map<String, dynamic> json) {
-    return Mutation$denyFriendshipRequest$denyFriendshipRequest();
+    final l$deniedFriendshipRequestId = json['deniedFriendshipRequestId'];
+    final l$$__typename = json['__typename'];
+    return Mutation$denyFriendshipRequest$denyFriendshipRequest(
+      deniedFriendshipRequestId: (l$deniedFriendshipRequestId as String),
+      $__typename: (l$$__typename as String),
+    );
   }
+
+  final String deniedFriendshipRequestId;
+
+  final String $__typename;
 
   Map<String, dynamic> toJson() {
     final _resultData = <String, dynamic>{};
+    final l$deniedFriendshipRequestId = deniedFriendshipRequestId;
+    _resultData['deniedFriendshipRequestId'] = l$deniedFriendshipRequestId;
+    final l$$__typename = $__typename;
+    _resultData['__typename'] = l$$__typename;
     return _resultData;
   }
 
   @override
   int get hashCode {
-    return Object.hashAll([]);
+    final l$deniedFriendshipRequestId = deniedFriendshipRequestId;
+    final l$$__typename = $__typename;
+    return Object.hashAll([
+      l$deniedFriendshipRequestId,
+      l$$__typename,
+    ]);
   }
 
   @override
@@ -2286,6 +2388,16 @@ class Mutation$denyFriendshipRequest$denyFriendshipRequest {
     }
     if (!(other is Mutation$denyFriendshipRequest$denyFriendshipRequest) ||
         runtimeType != other.runtimeType) {
+      return false;
+    }
+    final l$deniedFriendshipRequestId = deniedFriendshipRequestId;
+    final lOther$deniedFriendshipRequestId = other.deniedFriendshipRequestId;
+    if (l$deniedFriendshipRequestId != lOther$deniedFriendshipRequestId) {
+      return false;
+    }
+    final l$$__typename = $__typename;
+    final lOther$$__typename = other.$__typename;
+    if (l$$__typename != lOther$$__typename) {
       return false;
     }
     return true;
@@ -2314,7 +2426,10 @@ abstract class CopyWith$Mutation$denyFriendshipRequest$denyFriendshipRequest<
           TRes res) =
       _CopyWithStubImpl$Mutation$denyFriendshipRequest$denyFriendshipRequest;
 
-  TRes call();
+  TRes call({
+    String? deniedFriendshipRequestId,
+    String? $__typename,
+  });
 }
 
 class _CopyWithImpl$Mutation$denyFriendshipRequest$denyFriendshipRequest<TRes>
@@ -2332,7 +2447,19 @@ class _CopyWithImpl$Mutation$denyFriendshipRequest$denyFriendshipRequest<TRes>
 
   static const _undefined = {};
 
-  TRes call() => _then(Mutation$denyFriendshipRequest$denyFriendshipRequest());
+  TRes call({
+    Object? deniedFriendshipRequestId = _undefined,
+    Object? $__typename = _undefined,
+  }) =>
+      _then(Mutation$denyFriendshipRequest$denyFriendshipRequest(
+        deniedFriendshipRequestId: deniedFriendshipRequestId == _undefined ||
+                deniedFriendshipRequestId == null
+            ? _instance.deniedFriendshipRequestId
+            : (deniedFriendshipRequestId as String),
+        $__typename: $__typename == _undefined || $__typename == null
+            ? _instance.$__typename
+            : ($__typename as String),
+      ));
 }
 
 class _CopyWithStubImpl$Mutation$denyFriendshipRequest$denyFriendshipRequest<
@@ -2344,5 +2471,9 @@ class _CopyWithStubImpl$Mutation$denyFriendshipRequest$denyFriendshipRequest<
 
   TRes _res;
 
-  call() => _res;
+  call({
+    String? deniedFriendshipRequestId,
+    String? $__typename,
+  }) =>
+      _res;
 }
