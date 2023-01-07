@@ -41,7 +41,7 @@
 			<string>Firebase Prod</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>com.googleusercontent.apps.936800855868-026sf7rmspjb9lq1ggpnpnqb8uhukli1</string>
+				<string>com.googleusercontent.apps.936800855868-c9u7m25gi0vgk0naf990iqpoidgkt6ns</string>
 			</array>
 		</dict>
 		<dict>
@@ -51,7 +51,7 @@
 			<string>Firebase Local</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>com.googleusercontent.apps.936800855868-c9u7m25gi0vgk0naf990iqpoidgkt6ns</string>
+				<string>com.googleusercontent.apps.760736711248-q1n3u320uobcrdc9paqup78p2pjpqlsl</string>
 			</array>
 		</dict>
 	</array>
