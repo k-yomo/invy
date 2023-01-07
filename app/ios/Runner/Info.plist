@@ -6,16 +6,16 @@
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
-	<key>CFBundleName</key>
-    <string>Invy$(APP_ID_SUFFIX)</string>
-    <key>CFBundleDisplayName</key>
-    <string>Invy$(APP_ID_SUFFIX)</string>
-    <key>CFBundleExecutable</key>
+	<key>CFBundleDisplayName</key>
+	<string>Invy$(APP_ID_SUFFIX)</string>
+	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>Invy$(APP_ID_SUFFIX)</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -42,6 +42,16 @@
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>com.googleusercontent.apps.936800855868-026sf7rmspjb9lq1ggpnpnqb8uhukli1</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>Firebase Local</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.936800855868-c9u7m25gi0vgk0naf990iqpoidgkt6ns</string>
 			</array>
 		</dict>
 	</array>
