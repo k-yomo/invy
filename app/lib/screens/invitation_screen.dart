@@ -136,7 +136,6 @@ class InvitationScreen extends HookConsumerWidget {
 class InvitationDetailFormModal extends HookConsumerWidget {
   const InvitationDetailFormModal({
     Key? key,
-    required BuildContext context,
     required this.selectedFriendGroups,
     required this.selectedFriends,
   }) : super(key: key);
