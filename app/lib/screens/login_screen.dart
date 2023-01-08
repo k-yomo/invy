@@ -19,62 +19,79 @@ class LoginScreen extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final graphqlClient = ref.read(graphqlClientProvider);
 
-    onGoogleLoginPressed() async {
+    signInToInvy() async {
+      final firebaseUser = FirebaseAuth.instance.currentUser;
+      if (firebaseUser == null) {
+        // TODO: show error
+        return;
+      }
+
+      final result = await firebaseUser.getIdTokenResult();
+      if (result.claims?.containsKey("currentUserId") ?? false) {
+        final viewerQueryResult =
+            await graphqlClient.query$viewer(Options$Query$viewer(
+          fetchPolicy: FetchPolicy.networkOnly,
+        ));
+        // TODO: if not found, then make signUp mutation.
+        if (viewerQueryResult.hasException) {
+          // TODO: logging and show error
+          print(viewerQueryResult.exception);
+          return;
+        }
+        final user = viewerQueryResult.parsedData!.viewer;
+        ref.read(loggedInUserProvider.notifier).state = LoggedInUser(
+          id: user.id,
+          screenId: user.screenId,
+          nickname: user.nickname,
+          avatarUrl: user.avatarUrl,
+        );
+        print("logged in successfully");
+        return;
+      } else {
+        final res = await graphqlClient.mutate(Options$Mutation$signUp(
+            variables: Variables$Mutation$signUp(
+          input: Input$SignUpInput(
+            email: firebaseUser.email,
+            nickname: firebaseUser.displayName!,
+            avatarUrl: firebaseUser.photoURL,
+          ),
+        )));
+        if (res.hasException) {
+          print(res.exception);
+          return;
+        }
+        // Refresh id token to get new token containing user id in claims.
+        await firebaseUser.getIdToken(true);
+        if (res.parsedData != null) {
+          final user = res.parsedData!.signUp.viewer;
+          ref.read(loggedInUserProvider.notifier).state = LoggedInUser(
+              id: user.id,
+              screenId: user.screenId,
+              nickname: user.nickname,
+              avatarUrl: user.avatarUrl);
+          print("signed up in successfully");
+          // TODO: redirect to user profile update page?
+        }
+      }
+    }
+
+    onGoogleSignInPressed() async {
       try {
         await signInWithGoogle();
-        final firebaseUser = FirebaseAuth.instance.currentUser;
-        if (firebaseUser == null) {
-          // TODO: show error
-          return;
-        }
+        await signInToInvy();
+      } on FirebaseAuthException catch (e) {
+        print('FirebaseAuthException');
+        print('${e.code}');
+      } on Exception catch (e) {
+        print('Other Exception');
+        print('${e.toString()}');
+      }
+    }
 
-        final result = await firebaseUser.getIdTokenResult();
-        if (result.claims?.containsKey("currentUserId") ?? false) {
-          final viewerQueryResult =
-              await graphqlClient.query$viewer(Options$Query$viewer(
-            fetchPolicy: FetchPolicy.networkOnly,
-          ));
-          // TODO: if not found, then make signUp mutation.
-          if (viewerQueryResult.hasException) {
-            // TODO: logging and show error
-            print(viewerQueryResult.exception);
-            return;
-          }
-          final user = viewerQueryResult.parsedData!.viewer;
-          ref.read(loggedInUserProvider.notifier).state = LoggedInUser(
-            id: user.id,
-            screenId: user.screenId,
-            nickname: user.nickname,
-            avatarUrl: user.avatarUrl,
-          );
-          print("logged in successfully");
-          return;
-        } else {
-          final res = await graphqlClient.mutate(Options$Mutation$signUp(
-              variables: Variables$Mutation$signUp(
-            input: Input$SignUpInput(
-              email: firebaseUser.email,
-              nickname: firebaseUser.displayName!,
-              avatarUrl: firebaseUser.photoURL,
-            ),
-          )));
-          if (res.hasException) {
-            print(res.exception);
-            return;
-          }
-          // Refresh id token to get new token containing user id in claims.
-          await firebaseUser.getIdToken(true);
-          if (res.parsedData != null) {
-            final user = res.parsedData!.signUp.viewer;
-            ref.read(loggedInUserProvider.notifier).state = LoggedInUser(
-                id: user.id,
-                screenId: user.screenId,
-                nickname: user.nickname,
-                avatarUrl: user.avatarUrl);
-            print("signed up in successfully");
-            // TODO: redirect to user profile update page?
-          }
-        }
+    onAppleSignInPressed() async {
+      try {
+        await signInWithApple();
+        await signInToInvy();
       } on FirebaseAuthException catch (e) {
         print('FirebaseAuthException');
         print('${e.code}');
@@ -108,7 +125,7 @@ class LoginScreen extends HookConsumerWidget {
                         child: SignInButton(
                           Buttons.Google,
                           text: 'Google サインイン',
-                          onPressed: onGoogleLoginPressed,
+                          onPressed: onGoogleSignInPressed,
                           padding:
                               EdgeInsets.symmetric(vertical: 8, horizontal: 25),
                           shape: RoundedRectangleBorder(
@@ -117,13 +134,13 @@ class LoginScreen extends HookConsumerWidget {
                           elevation: 0,
                         ),
                       ),
-                      Gap(10),
+                      Gap(15),
                       SizedBox(
                         width: double.infinity,
                         child: SignInButton(
                           Buttons.Apple,
                           text: 'Apple サインイン',
-                          onPressed: () {},
+                          onPressed: onAppleSignInPressed,
                           padding: EdgeInsets.symmetric(
                               vertical: 15, horizontal: 25),
                           shape: RoundedRectangleBorder(
@@ -132,21 +149,6 @@ class LoginScreen extends HookConsumerWidget {
                           elevation: 0,
                         ),
                       ),
-                      Gap(10),
-                      SizedBox(
-                        width: double.infinity,
-                        child: SignInButton(
-                          Buttons.Facebook,
-                          text: 'Facebook サインイン',
-                          onPressed: () {},
-                          padding: EdgeInsets.symmetric(
-                              vertical: 15, horizontal: 25),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                          elevation: 0,
-                        ),
-                      )
                     ],
                   ),
                 )),
@@ -160,16 +162,16 @@ class LoginScreen extends HookConsumerWidget {
     final googleUser = await GoogleSignIn(scopes: [
       'email',
     ]).signIn();
-    if (googleUser == null) {
-      throw Exception("sign in failed");
-    }
-    final googleAuth = await googleUser.authentication;
+    final googleAuth = await googleUser?.authentication;
     final credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
+      accessToken: googleAuth?.accessToken,
+      idToken: googleAuth?.idToken,
     );
-    UserCredential userCredential =
-        await FirebaseAuth.instance.signInWithCredential(credential);
-    return userCredential;
+    return await FirebaseAuth.instance.signInWithCredential(credential);
+  }
+
+  Future<UserCredential> signInWithApple() async {
+    final appleProvider = AppleAuthProvider();
+    return await FirebaseAuth.instance.signInWithProvider(appleProvider);
   }
 }

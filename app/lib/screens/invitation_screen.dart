@@ -478,7 +478,7 @@ class InvitationDetailFormState extends State<InvitationDetailForm> {
           focusNode: commentFocusNode,
           displayArrows: false,
           toolbarButtons: [
-                (node) {
+            (node) {
               return GestureDetector(
                 onTap: () => node.unfocus(),
                 child: Container(
