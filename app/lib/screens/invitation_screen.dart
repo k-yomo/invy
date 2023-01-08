@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:keyboard_actions/keyboard_actions.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
@@ -135,6 +136,7 @@ class InvitationScreen extends HookConsumerWidget {
 class InvitationDetailFormModal extends HookConsumerWidget {
   const InvitationDetailFormModal({
     Key? key,
+    required BuildContext context,
     required this.selectedFriendGroups,
     required this.selectedFriends,
   }) : super(key: key);
@@ -282,11 +284,12 @@ class InvitationDetailForm extends StatefulWidget {
 
 class InvitationDetailFormState extends State<InvitationDetailForm> {
   final _formKey = GlobalKey<FormState>();
+  final startsAtController = TextEditingController();
+  final expiresAtController = TextEditingController();
+  final commentFocusNode = FocusNode();
 
   @override
   Widget build(BuildContext context) {
-    final startsAtController = TextEditingController();
-    final expiresAtController = TextEditingController();
     final now = DateTime.now();
 
     // form values
@@ -295,51 +298,19 @@ class InvitationDetailFormState extends State<InvitationDetailForm> {
     DateTime expiresAt = now;
     String? comment;
 
-    return Form(
-      key: _formKey,
-      child: Container(
-        margin: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-        child: Column(children: [
-          TextFormField(
-            cursorColor: Colors.grey.shade600,
-            decoration: InputDecoration(
-              labelText: '開催地',
-              labelStyle: TextStyle(color: Colors.grey.shade600),
-              filled: true,
-              fillColor: Colors.grey.shade100,
-              border: InputBorder.none,
-            ),
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return '開催地を入力してください';
-              }
-              return null;
-            },
-            onSaved: (value) {
-              location = value!;
-            },
-          ),
-          Gap(10),
-          Container(
-            width: double.infinity,
-            child: TextFormField(
-              controller: startsAtController,
-              onTap: () {
-                DatePicker.showDateTimePicker(
-                  context,
-                  showTitleActions: true,
-                  minTime: now,
-                  maxTime: now.add(Duration(days: 7)),
-                  onConfirm: (date) {
-                    startsAtController.text =
-                        DateFormat(dateTimeFormat).format(date);
-                  },
-                  currentTime: now,
-                  locale: LocaleType.jp,
-                );
-              },
+    return KeyboardActions(
+      // isDialog: true,
+      disableScroll: true,
+      config: buildKeyboardActionsConfig(context),
+      child: Form(
+        key: _formKey,
+        child: Container(
+          margin: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+          child: Column(children: [
+            TextFormField(
+              cursorColor: Colors.grey.shade600,
               decoration: InputDecoration(
-                labelText: '開始日時',
+                labelText: '開催地',
                 labelStyle: TextStyle(color: Colors.grey.shade600),
                 filled: true,
                 fillColor: Colors.grey.shade100,
@@ -347,115 +318,181 @@ class InvitationDetailFormState extends State<InvitationDetailForm> {
               ),
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return '開始日時を入力してください';
-                }
-                try {
-                  DateFormat(dateTimeFormat).parse(value);
-                } catch (e) {
-                  return '不正なフォーマットです。日時を選択し直して下さい';
+                  return '開催地を入力してください';
                 }
                 return null;
               },
               onSaved: (value) {
-                // TODO: adding 9 hour to get the JST time, but there must be smarter way to store
-                // time with timezone;
-                startsAt = DateFormat(dateTimeFormat).parse(value!).toUtc();
+                location = value!;
               },
             ),
-          ),
-          Gap(10),
-          Container(
-            width: double.infinity,
-            child: TextFormField(
-              controller: expiresAtController,
-              onTap: () {
-                DatePicker.showDateTimePicker(
-                  context,
-                  showTitleActions: true,
-                  minTime: now.add(Duration(minutes: 30)),
-                  maxTime: now.add(Duration(days: 7)),
-                  onConfirm: (date) {
-                    expiresAtController.text =
-                        DateFormat(dateTimeFormat).format(date);
-                  },
-                  currentTime: now.add(Duration(minutes: 30)),
-                  locale: LocaleType.jp,
-                );
-              },
-              decoration: InputDecoration(
-                labelText: '返答期限',
-                labelStyle: TextStyle(color: Colors.grey.shade600),
-                filled: true,
-                fillColor: Colors.grey.shade100,
-                border: InputBorder.none,
-              ),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return '返答期限を設定してください';
-                }
-                try {
-                  DateFormat(dateTimeFormat).parse(value);
-                } catch (e) {
-                  return '不正なフォーマットです。日時を選択し直して下さい';
-                }
-                return null;
-              },
-              onSaved: (value) {
-                // TODO: adding 9 hour to get the JST time, but there must be smarter way to store
-                // time with timezone;
-                expiresAt = DateFormat(dateTimeFormat).parse(value!).toUtc();
-              },
-            ),
-          ),
-          Gap(10),
-          TextFormField(
-            // controller: emailController,
-            keyboardType: TextInputType.multiline,
-            minLines: 2,
-            maxLines: null,
-            cursorColor: Colors.grey.shade600,
-            decoration: InputDecoration(
-              labelText: 'コメント',
-              labelStyle: TextStyle(color: Colors.grey.shade600),
-              filled: true,
-              fillColor: Colors.grey.shade100,
-              border: InputBorder.none,
-            ),
-            onSaved: (value) {
-              comment = value;
-            },
-          ),
-          Gap(20),
-          Container(
-            width: double.infinity,
-            child: OutlinedButton(
-              style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.symmetric(vertical: 15),
-                backgroundColor: Colors.white,
-                foregroundColor: Colors.black,
-              ),
-              onPressed: () {
-                if (_formKey.currentState!.validate()) {
-                  _formKey.currentState!.save();
-                  widget.onSubmitted(
-                    location: location,
-                    startsAt: startsAt,
-                    expiresAt: expiresAt,
-                    comment: comment,
+            Gap(10),
+            Container(
+              width: double.infinity,
+              child: TextFormField(
+                controller: startsAtController,
+                readOnly: true,
+                onTap: () {
+                  DatePicker.showDateTimePicker(
+                    context,
+                    showTitleActions: true,
+                    minTime: now,
+                    maxTime: now.add(Duration(days: 7)),
+                    onConfirm: (date) {
+                      startsAtController.text =
+                          DateFormat(dateTimeFormat).format(date);
+                    },
+                    currentTime: now,
+                    locale: LocaleType.jp,
                   );
-                }
-              },
-              child: Text(
-                '招待を送信する',
-                style: TextStyle(
-                    fontSize: 18,
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold),
+                },
+                decoration: InputDecoration(
+                  labelText: '開始日時',
+                  labelStyle: TextStyle(color: Colors.grey.shade600),
+                  filled: true,
+                  fillColor: Colors.grey.shade100,
+                  border: InputBorder.none,
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return '開始日時を入力してください';
+                  }
+                  try {
+                    DateFormat(dateTimeFormat).parse(value);
+                  } catch (e) {
+                    return '不正なフォーマットです。日時を選択し直して下さい';
+                  }
+                  return null;
+                },
+                onSaved: (value) {
+                  // TODO: adding 9 hour to get the JST time, but there must be smarter way to store
+                  // time with timezone;
+                  startsAt = DateFormat(dateTimeFormat).parse(value!).toUtc();
+                },
               ),
             ),
-          ),
-        ]),
+            Gap(10),
+            Container(
+              width: double.infinity,
+              child: TextFormField(
+                controller: expiresAtController,
+                readOnly: true,
+                onTap: () {
+                  DatePicker.showDateTimePicker(
+                    context,
+                    showTitleActions: true,
+                    minTime: now.add(Duration(minutes: 30)),
+                    maxTime: now.add(Duration(days: 7)),
+                    onConfirm: (date) {
+                      expiresAtController.text =
+                          DateFormat(dateTimeFormat).format(date);
+                    },
+                    currentTime: now.add(Duration(minutes: 30)),
+                    locale: LocaleType.jp,
+                  );
+                },
+                decoration: InputDecoration(
+                  labelText: '返答期限',
+                  labelStyle: TextStyle(color: Colors.grey.shade600),
+                  filled: true,
+                  fillColor: Colors.grey.shade100,
+                  border: InputBorder.none,
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return '返答期限を設定してください';
+                  }
+                  try {
+                    DateFormat(dateTimeFormat).parse(value);
+                  } catch (e) {
+                    return '不正なフォーマットです。日時を選択し直して下さい';
+                  }
+                  return null;
+                },
+                onSaved: (value) {
+                  // TODO: adding 9 hour to get the JST time, but there must be smarter way to store
+                  // time with timezone;
+                  expiresAt = DateFormat(dateTimeFormat).parse(value!).toUtc();
+                },
+              ),
+            ),
+            Gap(10),
+            TextFormField(
+              keyboardType: TextInputType.multiline,
+              focusNode: commentFocusNode,
+              minLines: 2,
+              maxLines: null,
+              cursorColor: Colors.grey.shade600,
+              decoration: InputDecoration(
+                labelText: 'コメント',
+                labelStyle: TextStyle(color: Colors.grey.shade600),
+                filled: true,
+                fillColor: Colors.grey.shade100,
+                border: InputBorder.none,
+              ),
+              onSaved: (value) {
+                comment = value;
+              },
+            ),
+            Gap(20),
+            Container(
+              width: double.infinity,
+              child: OutlinedButton(
+                style: ElevatedButton.styleFrom(
+                  padding: EdgeInsets.symmetric(vertical: 15),
+                  backgroundColor: Colors.white,
+                  foregroundColor: Colors.black,
+                ),
+                onPressed: () {
+                  if (_formKey.currentState!.validate()) {
+                    _formKey.currentState!.save();
+                    widget.onSubmitted(
+                      location: location,
+                      startsAt: startsAt,
+                      expiresAt: expiresAt,
+                      comment: comment,
+                    );
+                  }
+                },
+                child: Text(
+                  '招待を送信する',
+                  style: TextStyle(
+                      fontSize: 18,
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
+          ]),
+        ),
       ),
+    );
+  }
+
+  KeyboardActionsConfig buildKeyboardActionsConfig(BuildContext context) {
+    return KeyboardActionsConfig(
+      keyboardActionsPlatform: KeyboardActionsPlatform.ALL,
+      keyboardBarColor: Colors.grey[200],
+      nextFocus: true,
+      actions: [
+        KeyboardActionsItem(
+          focusNode: commentFocusNode,
+          displayArrows: false,
+          toolbarButtons: [
+                (node) {
+              return GestureDetector(
+                onTap: () => node.unfocus(),
+                child: Container(
+                  padding: EdgeInsets.all(8.0),
+                  child: Text(
+                    "完了",
+                  ),
+                ),
+              );
+            }
+          ],
+        ),
+      ],
     );
   }
 }

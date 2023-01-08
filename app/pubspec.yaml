@@ -59,6 +59,7 @@ dependencies:
   gap: ^2.0.1
   flutter_datetime_picker: ^1.5.1
   intl: ^0.17.0
+  keyboard_actions: ^4.1.0
 
 dev_dependencies:
   flutter_test:
