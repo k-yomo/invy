@@ -131,9 +131,9 @@ func newBaseRouter(appConfig *config.AppConfig, logger *zap.Logger, firebaseAuth
 
 	r.Use(c.Handler)
 	r.Use(
+		middleware.Recoverer,
 		requestutil.Middleware,
 		middleware.RealIP,
-		middleware.Recoverer,
 		logging.NewMiddleware(appConfig.GCPProjectID, logger),
 		auth.Middleware(firebaseAuthClient),
 		device.Middleware,
