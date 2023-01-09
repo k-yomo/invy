@@ -43,7 +43,7 @@ class SentInvitationCard extends StatelessWidget {
                     Container(
                       margin: const EdgeInsets.only(left: 5),
                       child: Text(DateFormat(dateTimeFormat)
-                          .format(DateTime.parse(invitation.startsAt))),
+                          .format(DateTime.parse(invitation.startsAt).toLocal())),
                     )
                   ],
                 ),

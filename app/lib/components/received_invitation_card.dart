@@ -63,7 +63,7 @@ class ReceivedInvitationCard extends StatelessWidget {
                     Container(
                       margin: const EdgeInsets.only(left: 5),
                       child: Text(DateFormat(dateTimeFormat)
-                          .format(DateTime.parse(invitation.startsAt))),
+                          .format(DateTime.parse(invitation.startsAt).toLocal())),
                     )
                   ],
                 ),
@@ -139,7 +139,7 @@ class ReceivedInvitationCard extends StatelessWidget {
                             style: TextStyle(fontWeight: FontWeight.bold)),
                         Text(
                             DateFormat(dateTimeFormat)
-                                .format(DateTime.parse(invitation.expiresAt)),
+                                .format(DateTime.parse(invitation.expiresAt).toLocal()),
                             style: TextStyle(fontWeight: FontWeight.bold)),
                       ],
                     ),
