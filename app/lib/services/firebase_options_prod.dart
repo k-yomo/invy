@@ -70,8 +70,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '936800855868',
     projectId: 'invy-prod',
     storageBucket: 'invy-prod.appspot.com',
-    iosClientId:
-        '936800855868-c9u7m25gi0vgk0naf990iqpoidgkt6ns.apps.googleusercontent.com',
+    iosClientId: '936800855868-c9u7m25gi0vgk0naf990iqpoidgkt6ns.apps.googleusercontent.com',
     iosBundleId: 'com.invy-app',
   );
 }

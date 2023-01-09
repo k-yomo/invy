@@ -41,6 +41,13 @@ class ProfileScreen extends HookConsumerWidget {
                   radius: 60.0,
                   backgroundImage: NetworkImage(user.avatarUrl),
                 ),
+                // TODO: Remove after test
+                TextButton(
+                  onPressed: () => throw Exception(),
+                  child: const Text("[TODO: テスト後削除] 例外発生用のボタン",
+                      style: TextStyle(
+                          color: Colors.black, fontSize: 12)),
+                ),
                 Container(
                   margin: EdgeInsets.symmetric(vertical: 15),
                   child: Text(
