@@ -8,7 +8,6 @@ import 'package:invy/graphql/friend_screen.graphql.dart';
 import 'package:invy/services/graphql_client.dart';
 
 import '../components/pending_friendship_request_list.dart';
-import '../components/pending_friendship_request_list_fragment.graphql.dart';
 import 'freind_group_create_screen.dart';
 import 'friendship_request_screen.dart';
 

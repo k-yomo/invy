@@ -6,6 +6,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:invy/graphql/viewer.graphql.dart';
 import 'package:invy/screens/invitation_screen.dart';
 import 'package:invy/services/graphql_client.dart';
+import 'package:invy/state/bottom_navigation.dart';
 
 import 'screens/friend_screen.dart';
 import 'screens/home_screen.dart';
@@ -84,14 +85,9 @@ class App extends HookConsumerWidget {
   }
 }
 
-class RootWidget extends StatefulWidget {
+class RootWidget extends HookConsumerWidget {
   const RootWidget({super.key});
-
-  @override
-  State<RootWidget> createState() => _RootWidgetState();
-}
-
-class _RootWidgetState extends State<RootWidget> {
+  // The order must be same BottomNavigationTab
   static const screens = [
     HomeScreen(),
     InvitationScreen(),
@@ -99,21 +95,16 @@ class _RootWidgetState extends State<RootWidget> {
     ProfileScreen(),
   ];
 
-  int _selectedIndex = 0;
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
-
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final currentTab = ref.watch(bottomNavigationTabProvider);
     return Scaffold(
-        body: screens[_selectedIndex],
+        body: screens[currentTab.index],
         bottomNavigationBar: BottomNavigationBar(
-          currentIndex: _selectedIndex,
-          onTap: _onItemTapped,
+          currentIndex: currentTab.index,
+          onTap: (index) {
+            ref.read(bottomNavigationTabProvider.notifier).state = BottomNavigationTab.values[index];
+          },
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(
                 icon: Icon(Icons.home_outlined), label: 'ホーム'),

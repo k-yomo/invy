@@ -18,6 +18,7 @@ import '../components/friend_group_fragment.graphql.dart';
 import '../components/friend_group_icon.dart';
 import '../components/friend_group_selection_list.dart';
 import '../services/graphql_client.dart';
+import '../state/bottom_navigation.dart';
 
 final dateTimeFormat = 'yyyy年MM月dd日 HH時mm分';
 
@@ -249,10 +250,8 @@ class InvitationDetailFormModal extends HookConsumerWidget {
                         // TODO: Show error
                         return;
                       }
-                      Navigator.pushAndRemoveUntil(context,
-                          MaterialPageRoute(builder: (BuildContext context) {
-                        return HomeScreen();
-                      }), (r) => false);
+                      ref.read(bottomNavigationTabProvider.notifier).state = BottomNavigationTab.home;
+                      Navigator.popUntil(context, (route) => route.isFirst);
                     },
                   )
                 ],
@@ -423,7 +422,7 @@ class InvitationDetailFormState extends State<InvitationDetailForm> {
               maxLines: null,
               cursorColor: Colors.grey.shade600,
               decoration: InputDecoration(
-                labelText: 'コメント',
+                labelText: 'コメント(任意)',
                 labelStyle: TextStyle(color: Colors.grey.shade600),
                 filled: true,
                 fillColor: Colors.grey.shade100,
