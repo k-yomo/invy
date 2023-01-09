@@ -2,14 +2,18 @@ package logging
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/blendle/zapdriver"
 	"github.com/grpc-ecosystem/go-grpc-middleware/logging/zap/ctxzap"
 	"github.com/k-yomo/invy/pkg/requestutil"
+	"github.com/pkg/errors"
 	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 )
 
 // NewMiddleware returns middleware to set logger to context
@@ -63,6 +67,58 @@ func (g GraphQLResponseInterceptor) Validate(schema graphql.ExecutableSchema) er
 
 func (g GraphQLResponseInterceptor) InterceptResponse(ctx context.Context, next graphql.ResponseHandler) *graphql.Response {
 	oc := graphql.GetOperationContext(ctx)
-	Logger(ctx).Info(oc.OperationName)
-	return next(ctx)
+	resp := next(ctx)
+
+	latency := time.Since(oc.Stats.OperationStart)
+	reqLog := requestLog{
+		GraphqlOperation:    oc.Operation.Name,
+		Latency:             newCloudLoggingDuration(latency),
+		LatencyMilliseconds: latency.Milliseconds(),
+		ResponseSize:        int64(len(resp.Data)),
+	}
+	Logger(ctx).Info(
+		fmt.Sprintf("graphql operation: %s", oc.Operation.Name),
+		zap.Bool("isError", resp.Errors != nil),
+		zap.Object("httpRequest", &reqLog),
+	)
+	return resp
+}
+
+type requestLog struct {
+	GraphqlOperation    string
+	Latency             cloudLoggingDuration
+	LatencyMilliseconds int64
+	ResponseSize        int64
+}
+
+func (r *requestLog) MarshalLogObject(enc zapcore.ObjectEncoder) error {
+	enc.AddString("graphqlOperation", r.GraphqlOperation)
+	enc.AddInt64("latencyMs", r.LatencyMilliseconds)
+	err := enc.AddObject("latency", r.Latency)
+	if err != nil {
+		return errors.WithStack(err)
+	}
+	enc.AddInt64("responseSize", r.ResponseSize)
+	return nil
+}
+
+type cloudLoggingDuration struct {
+	Seconds int64
+	Nanos   int32
+}
+
+func newCloudLoggingDuration(d time.Duration) cloudLoggingDuration {
+	nanos := d.Nanoseconds()
+	secs := nanos / 1e9
+	nanos -= secs * 1e9
+	return cloudLoggingDuration{
+		Nanos:   int32(nanos),
+		Seconds: secs,
+	}
+}
+
+func (c cloudLoggingDuration) MarshalLogObject(enc zapcore.ObjectEncoder) error {
+	enc.AddInt64("seconds", c.Seconds)
+	enc.AddInt32("nanos", c.Nanos)
+	return nil
 }
