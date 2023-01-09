@@ -139,7 +139,7 @@ func (r *viewerResolver) Friends(ctx context.Context, obj *gqlmodel.Viewer, afte
 		Direction: ent.OrderDirectionDesc,
 		Field:     ent.FriendshipOrderFieldCreatedAt,
 	}
-	dbFriendshipConnection, err := r.DB.Debug().Friendship.Query().
+	dbFriendshipConnection, err := r.DB.Friendship.Query().
 		WithFriendUser(func(q *ent.UserQuery) {
 			q.WithUserProfile()
 		}).
