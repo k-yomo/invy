@@ -28,6 +28,7 @@ class HomeScreen extends HookConsumerWidget {
           return Scaffold(body: SingleChildScrollView(child: Container()));
         }
         return Scaffold(
+          backgroundColor: Colors.grey.shade100,
           body: SingleChildScrollView(
             child: Container(
               margin: const EdgeInsets.only(
