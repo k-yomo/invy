@@ -250,7 +250,8 @@ class InvitationDetailFormModal extends HookConsumerWidget {
                         // TODO: Show error
                         return;
                       }
-                      ref.read(bottomNavigationTabProvider.notifier).state = BottomNavigationTab.home;
+                      ref.read(bottomNavigationTabProvider.notifier).state =
+                          BottomNavigationTab.home;
                       Navigator.popUntil(context, (route) => route.isFirst);
                     },
                   )

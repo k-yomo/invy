@@ -18,6 +18,7 @@ import (
 	"github.com/go-chi/chi/middleware"
 	"github.com/k-yomo/invy/invy_api/auth"
 	"github.com/k-yomo/invy/invy_api/config"
+	"github.com/k-yomo/invy/invy_api/device"
 	"github.com/k-yomo/invy/invy_api/ent"
 	"github.com/k-yomo/invy/invy_api/graph"
 	"github.com/k-yomo/invy/invy_api/graph/directive"
@@ -135,6 +136,7 @@ func newBaseRouter(appConfig *config.AppConfig, logger *zap.Logger, firebaseAuth
 		middleware.Recoverer,
 		logging.NewMiddleware(appConfig.GCPProjectID, logger),
 		auth.Middleware(firebaseAuthClient),
+		device.Middleware,
 	)
 	return r
 }

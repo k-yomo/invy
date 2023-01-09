@@ -103,7 +103,8 @@ class RootWidget extends HookConsumerWidget {
         bottomNavigationBar: BottomNavigationBar(
           currentIndex: currentTab.index,
           onTap: (index) {
-            ref.read(bottomNavigationTabProvider.notifier).state = BottomNavigationTab.values[index];
+            ref.read(bottomNavigationTabProvider.notifier).state =
+                BottomNavigationTab.values[index];
           },
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(

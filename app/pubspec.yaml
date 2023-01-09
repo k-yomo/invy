@@ -61,6 +61,8 @@ dependencies:
   intl: ^0.17.0
   keyboard_actions: ^4.1.0
   firebase_crashlytics: ^3.0.9
+  device_info_plus: ^8.0.0
+  package_info_plus: ^3.0.2
 
 dev_dependencies:
   flutter_test:

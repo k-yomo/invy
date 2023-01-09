@@ -42,8 +42,8 @@ class SentInvitationCard extends StatelessWidget {
                     Icon(Icons.today, size: 25),
                     Container(
                       margin: const EdgeInsets.only(left: 5),
-                      child: Text(DateFormat(dateTimeFormat)
-                          .format(DateTime.parse(invitation.startsAt).toLocal())),
+                      child: Text(DateFormat(dateTimeFormat).format(
+                          DateTime.parse(invitation.startsAt).toLocal())),
                     )
                   ],
                 ),
