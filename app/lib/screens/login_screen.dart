@@ -162,10 +162,12 @@ class LoginScreen extends HookConsumerWidget {
     final googleUser = await GoogleSignIn(scopes: [
       'email',
     ]).signIn();
-    final googleAuth = await googleUser?.authentication;
+    if (googleUser == null) throw Exception("Not logged in");
+
+    final googleAuth = await googleUser.authentication;
     final credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth?.accessToken,
-      idToken: googleAuth?.idToken,
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
     );
     return await FirebaseAuth.instance.signInWithCredential(credential);
   }
