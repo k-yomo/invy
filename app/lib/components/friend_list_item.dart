@@ -5,10 +5,10 @@ import 'friend_list_item_fragment.graphql.dart';
 
 class FriendListItem extends StatelessWidget {
   const FriendListItem({
-    Key? key,
+    super.key,
     required this.friend,
     this.rightWidget,
-  }) : super(key: key);
+  });
 
   final Fragment$friendListItemFragment friend;
   final Widget? rightWidget;

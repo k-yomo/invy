@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 
 class FriendGroupSelectionList extends StatelessWidget {
   const FriendGroupSelectionList({
-    Key? key,
+    super.key,
     required this.friendGroups,
     required this.selectedFriendGroups,
     required this.onChange,
-  }) : super(key: key);
+  });
 
   final List<Fragment$friendGroupListItemFragment> friendGroups;
   final List<Fragment$friendGroupListItemFragment> selectedFriendGroups;
@@ -44,10 +44,10 @@ class FriendGroupSelectionList extends StatelessWidget {
 
 class _FriendGroupListItem extends StatelessWidget {
   const _FriendGroupListItem({
-    Key? key,
+    super.key,
     required this.friendGroup,
     required this.isSelected,
-  }) : super(key: key);
+  });
 
   final Fragment$friendGroupListItemFragment friendGroup;
   final bool isSelected;

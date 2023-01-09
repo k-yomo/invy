@@ -5,9 +5,9 @@ import 'package:flutter/material.dart';
 
 class FriendGroupList extends StatelessWidget {
   const FriendGroupList({
-    Key? key,
+    super.key,
     required this.friendGroups,
-  }) : super(key: key);
+  });
 
   final List<Fragment$friendGroupListItemFragment> friendGroups;
 
@@ -38,9 +38,9 @@ class FriendGroupList extends StatelessWidget {
 
 class _FriendGroupListItem extends StatelessWidget {
   const _FriendGroupListItem({
-    Key? key,
+    super.key,
     required this.friendGroup,
-  }) : super(key: key);
+  });
 
   final Fragment$friendGroupListItemFragment friendGroup;
 

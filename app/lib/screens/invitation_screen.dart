@@ -22,7 +22,7 @@ import '../services/graphql_client.dart';
 final dateTimeFormat = 'yyyy年MM月dd日 HH時mm分';
 
 class InvitationScreen extends HookConsumerWidget {
-  const InvitationScreen({Key? key}) : super(key: key);
+  const InvitationScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -135,10 +135,10 @@ class InvitationScreen extends HookConsumerWidget {
 
 class InvitationDetailFormModal extends HookConsumerWidget {
   const InvitationDetailFormModal({
-    Key? key,
+    super.key,
     required this.selectedFriendGroups,
     required this.selectedFriends,
-  }) : super(key: key);
+  });
 
   final List<Fragment$friendGroupListItemFragment> selectedFriendGroups;
   final List<Fragment$friendListItemFragment> selectedFriends;

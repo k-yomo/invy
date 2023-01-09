@@ -13,7 +13,7 @@ import 'freind_group_create_screen.dart';
 import 'friendship_request_screen.dart';
 
 class FriendScreen extends HookConsumerWidget {
-  const FriendScreen({Key? key}) : super(key: key);
+  const FriendScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -101,9 +101,7 @@ class FriendScreen extends HookConsumerWidget {
 }
 
 class _AddFriendGroup extends StatelessWidget {
-  const _AddFriendGroup({
-    Key? key,
-  }) : super(key: key);
+  const _AddFriendGroup({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -135,9 +133,7 @@ class _AddFriendGroup extends StatelessWidget {
 }
 
 class _AddFriend extends StatelessWidget {
-  const _AddFriend({
-    Key? key,
-  }) : super(key: key);
+  const _AddFriend({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -6,12 +6,12 @@ final dateTimeFormat = 'MM月dd日 HH時mm分';
 
 class ReceivedInvitationCard extends StatelessWidget {
   ReceivedInvitationCard({
-    Key? key,
+    super.key,
     required this.invitation,
     this.accepted = false,
     this.onAccepted,
     this.onDenied,
-  }) : super(key: key);
+  });
 
   final Fragment$invitationCardFragment invitation;
   bool accepted;

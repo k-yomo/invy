@@ -9,8 +9,7 @@ import '../services/graphql_client.dart';
 class FriendGroupDetailScreen extends HookConsumerWidget {
   final String friendGroupId;
 
-  const FriendGroupDetailScreen({Key? key, required this.friendGroupId})
-      : super(key: key);
+  const FriendGroupDetailScreen({super.key, required this.friendGroupId});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

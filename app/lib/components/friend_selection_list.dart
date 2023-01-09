@@ -4,11 +4,11 @@ import 'friend_list_item.dart';
 
 class FriendSelectionList extends StatelessWidget {
   const FriendSelectionList({
-    Key? key,
+    super.key,
     required this.friends,
     required this.selectedFriends,
     required this.onChange,
-  }) : super(key: key);
+  });
 
   final List<Fragment$friendListItemFragment> friends;
   final List<Fragment$friendListItemFragment> selectedFriends;

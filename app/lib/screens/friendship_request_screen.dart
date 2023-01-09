@@ -9,7 +9,7 @@ import '../components/app_bar_leading.dart';
 import '../state/auth.dart';
 
 class FriendshipRequestScreen extends HookConsumerWidget {
-  const FriendshipRequestScreen({Key? key}) : super(key: key);
+  const FriendshipRequestScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -76,7 +76,7 @@ class FriendshipRequestScreen extends HookConsumerWidget {
 }
 
 class _FriendSearchResult extends HookConsumerWidget {
-  const _FriendSearchResult(this.searchResult, {Key? key}) : super(key: key);
+  const _FriendSearchResult(this.searchResult, {super.key});
 
   final QueryResult<Query$searchUser> searchResult;
 

@@ -9,9 +9,9 @@ import 'friend_list_item_fragment.graphql.dart';
 
 class FriendList extends HookConsumerWidget {
   const FriendList({
-    Key? key,
+    super.key,
     required this.friends,
-  }) : super(key: key);
+  });
 
   final List<Fragment$friendListItemFragment> friends;
 
@@ -26,9 +26,9 @@ class FriendList extends HookConsumerWidget {
 
 class _FriendListItem extends HookConsumerWidget {
   const _FriendListItem({
-    Key? key,
+    super.key,
     required this.friend,
-  }) : super(key: key);
+  });
 
   final Fragment$friendListItemFragment friend;
 

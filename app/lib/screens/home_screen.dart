@@ -11,7 +11,7 @@ import 'package:invy/services/graphql_client.dart';
 import '../components/sub_title.dart';
 
 class HomeScreen extends HookConsumerWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+  const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

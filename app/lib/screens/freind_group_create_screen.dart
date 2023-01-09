@@ -11,7 +11,7 @@ import '../components/friend_list_item_fragment.graphql.dart';
 import '../services/graphql_client.dart';
 
 class FriendGroupCreateScreen extends HookConsumerWidget {
-  const FriendGroupCreateScreen({Key? key}) : super(key: key);
+  const FriendGroupCreateScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

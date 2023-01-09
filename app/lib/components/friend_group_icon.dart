@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 class FriendGroupIcon extends StatelessWidget {
   const FriendGroupIcon(
     this.groupName, {
-    Key? key,
+    super.key,
     this.size,
-  }) : super(key: key);
+  });
 
   final String groupName;
   final double? size;

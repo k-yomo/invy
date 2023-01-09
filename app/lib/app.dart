@@ -14,7 +14,7 @@ import 'screens/profile_screen.dart';
 import 'state/auth.dart';
 
 class App extends HookConsumerWidget {
-  const App({Key? key}) : super(key: key);
+  const App({super.key});
 
   final MaterialColor materialWhite = const MaterialColor(
     0xFFFFFFFF,
@@ -85,7 +85,7 @@ class App extends HookConsumerWidget {
 }
 
 class RootWidget extends StatefulWidget {
-  const RootWidget({Key? key}) : super(key: key);
+  const RootWidget({super.key});
 
   @override
   State<RootWidget> createState() => _RootWidgetState();

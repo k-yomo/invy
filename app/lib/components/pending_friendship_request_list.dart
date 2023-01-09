@@ -10,10 +10,10 @@ import 'friend_list_item.dart';
 
 class PendingFriendshipRequestList extends HookConsumerWidget {
   const PendingFriendshipRequestList({
-    Key? key,
+    super.key,
     required this.pendingFriendshipRequests,
     required this.onClick,
-  }) : super(key: key);
+  });
 
   final List<Fragment$pendingFriendRequestItemFragment>
       pendingFriendshipRequests;
