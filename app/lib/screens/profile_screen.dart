@@ -99,6 +99,7 @@ class ProfileScreen extends HookConsumerWidget {
                   onPressed: () async {
                     await graphqlClient.mutate$signOut();
                     await FirebaseAuth.instance.signOut();
+                    graphqlClient.cache.store.reset();
                     ref.invalidate(loggedInUserProvider);
                   },
                   child: const Text('ログアウト',
