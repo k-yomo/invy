@@ -20,6 +20,7 @@ import (
 	"github.com/k-yomo/invy/invy_api/ent/invitationfriendgroup"
 	"github.com/k-yomo/invy/invy_api/ent/invitationuser"
 	"github.com/k-yomo/invy/invy_api/ent/predicate"
+	"github.com/k-yomo/invy/invy_api/ent/pushnotificationtoken"
 	"github.com/k-yomo/invy/invy_api/ent/user"
 	"github.com/k-yomo/invy/invy_api/ent/userfriendgroup"
 	"github.com/k-yomo/invy/invy_api/ent/usermute"
@@ -46,6 +47,7 @@ const (
 	TypeInvitationDenial      = "InvitationDenial"
 	TypeInvitationFriendGroup = "InvitationFriendGroup"
 	TypeInvitationUser        = "InvitationUser"
+	TypePushNotificationToken = "PushNotificationToken"
 	TypeUser                  = "User"
 	TypeUserFriendGroup       = "UserFriendGroup"
 	TypeUserMute              = "UserMute"
@@ -5657,42 +5659,631 @@ func (m *InvitationUserMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown InvitationUser edge %s", name)
 }
 
+// PushNotificationTokenMutation represents an operation that mutates the PushNotificationToken nodes in the graph.
+type PushNotificationTokenMutation struct {
+	config
+	op            Op
+	typ           string
+	id            *uuid.UUID
+	device_id     *string
+	fcm_token     *string
+	created_at    *time.Time
+	updated_at    *time.Time
+	clearedFields map[string]struct{}
+	user          *uuid.UUID
+	cleareduser   bool
+	done          bool
+	oldValue      func(context.Context) (*PushNotificationToken, error)
+	predicates    []predicate.PushNotificationToken
+}
+
+var _ ent.Mutation = (*PushNotificationTokenMutation)(nil)
+
+// pushnotificationtokenOption allows management of the mutation configuration using functional options.
+type pushnotificationtokenOption func(*PushNotificationTokenMutation)
+
+// newPushNotificationTokenMutation creates new mutation for the PushNotificationToken entity.
+func newPushNotificationTokenMutation(c config, op Op, opts ...pushnotificationtokenOption) *PushNotificationTokenMutation {
+	m := &PushNotificationTokenMutation{
+		config:        c,
+		op:            op,
+		typ:           TypePushNotificationToken,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withPushNotificationTokenID sets the ID field of the mutation.
+func withPushNotificationTokenID(id uuid.UUID) pushnotificationtokenOption {
+	return func(m *PushNotificationTokenMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *PushNotificationToken
+		)
+		m.oldValue = func(ctx context.Context) (*PushNotificationToken, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().PushNotificationToken.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withPushNotificationToken sets the old PushNotificationToken of the mutation.
+func withPushNotificationToken(node *PushNotificationToken) pushnotificationtokenOption {
+	return func(m *PushNotificationTokenMutation) {
+		m.oldValue = func(context.Context) (*PushNotificationToken, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m PushNotificationTokenMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m PushNotificationTokenMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of PushNotificationToken entities.
+func (m *PushNotificationTokenMutation) SetID(id uuid.UUID) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *PushNotificationTokenMutation) ID() (id uuid.UUID, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *PushNotificationTokenMutation) IDs(ctx context.Context) ([]uuid.UUID, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []uuid.UUID{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().PushNotificationToken.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetUserID sets the "user_id" field.
+func (m *PushNotificationTokenMutation) SetUserID(u uuid.UUID) {
+	m.user = &u
+}
+
+// UserID returns the value of the "user_id" field in the mutation.
+func (m *PushNotificationTokenMutation) UserID() (r uuid.UUID, exists bool) {
+	v := m.user
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUserID returns the old "user_id" field's value of the PushNotificationToken entity.
+// If the PushNotificationToken object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PushNotificationTokenMutation) OldUserID(ctx context.Context) (v uuid.UUID, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUserID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUserID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUserID: %w", err)
+	}
+	return oldValue.UserID, nil
+}
+
+// ResetUserID resets all changes to the "user_id" field.
+func (m *PushNotificationTokenMutation) ResetUserID() {
+	m.user = nil
+}
+
+// SetDeviceID sets the "device_id" field.
+func (m *PushNotificationTokenMutation) SetDeviceID(s string) {
+	m.device_id = &s
+}
+
+// DeviceID returns the value of the "device_id" field in the mutation.
+func (m *PushNotificationTokenMutation) DeviceID() (r string, exists bool) {
+	v := m.device_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeviceID returns the old "device_id" field's value of the PushNotificationToken entity.
+// If the PushNotificationToken object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PushNotificationTokenMutation) OldDeviceID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeviceID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeviceID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeviceID: %w", err)
+	}
+	return oldValue.DeviceID, nil
+}
+
+// ResetDeviceID resets all changes to the "device_id" field.
+func (m *PushNotificationTokenMutation) ResetDeviceID() {
+	m.device_id = nil
+}
+
+// SetFcmToken sets the "fcm_token" field.
+func (m *PushNotificationTokenMutation) SetFcmToken(s string) {
+	m.fcm_token = &s
+}
+
+// FcmToken returns the value of the "fcm_token" field in the mutation.
+func (m *PushNotificationTokenMutation) FcmToken() (r string, exists bool) {
+	v := m.fcm_token
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldFcmToken returns the old "fcm_token" field's value of the PushNotificationToken entity.
+// If the PushNotificationToken object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PushNotificationTokenMutation) OldFcmToken(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldFcmToken is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldFcmToken requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldFcmToken: %w", err)
+	}
+	return oldValue.FcmToken, nil
+}
+
+// ResetFcmToken resets all changes to the "fcm_token" field.
+func (m *PushNotificationTokenMutation) ResetFcmToken() {
+	m.fcm_token = nil
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *PushNotificationTokenMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *PushNotificationTokenMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the PushNotificationToken entity.
+// If the PushNotificationToken object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PushNotificationTokenMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *PushNotificationTokenMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *PushNotificationTokenMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *PushNotificationTokenMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the PushNotificationToken entity.
+// If the PushNotificationToken object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PushNotificationTokenMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *PushNotificationTokenMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+}
+
+// ClearUser clears the "user" edge to the User entity.
+func (m *PushNotificationTokenMutation) ClearUser() {
+	m.cleareduser = true
+}
+
+// UserCleared reports if the "user" edge to the User entity was cleared.
+func (m *PushNotificationTokenMutation) UserCleared() bool {
+	return m.cleareduser
+}
+
+// UserIDs returns the "user" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// UserID instead. It exists only for internal usage by the builders.
+func (m *PushNotificationTokenMutation) UserIDs() (ids []uuid.UUID) {
+	if id := m.user; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetUser resets all changes to the "user" edge.
+func (m *PushNotificationTokenMutation) ResetUser() {
+	m.user = nil
+	m.cleareduser = false
+}
+
+// Where appends a list predicates to the PushNotificationTokenMutation builder.
+func (m *PushNotificationTokenMutation) Where(ps ...predicate.PushNotificationToken) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// Op returns the operation name.
+func (m *PushNotificationTokenMutation) Op() Op {
+	return m.op
+}
+
+// Type returns the node type of this mutation (PushNotificationToken).
+func (m *PushNotificationTokenMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *PushNotificationTokenMutation) Fields() []string {
+	fields := make([]string, 0, 5)
+	if m.user != nil {
+		fields = append(fields, pushnotificationtoken.FieldUserID)
+	}
+	if m.device_id != nil {
+		fields = append(fields, pushnotificationtoken.FieldDeviceID)
+	}
+	if m.fcm_token != nil {
+		fields = append(fields, pushnotificationtoken.FieldFcmToken)
+	}
+	if m.created_at != nil {
+		fields = append(fields, pushnotificationtoken.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, pushnotificationtoken.FieldUpdatedAt)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *PushNotificationTokenMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case pushnotificationtoken.FieldUserID:
+		return m.UserID()
+	case pushnotificationtoken.FieldDeviceID:
+		return m.DeviceID()
+	case pushnotificationtoken.FieldFcmToken:
+		return m.FcmToken()
+	case pushnotificationtoken.FieldCreatedAt:
+		return m.CreatedAt()
+	case pushnotificationtoken.FieldUpdatedAt:
+		return m.UpdatedAt()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *PushNotificationTokenMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case pushnotificationtoken.FieldUserID:
+		return m.OldUserID(ctx)
+	case pushnotificationtoken.FieldDeviceID:
+		return m.OldDeviceID(ctx)
+	case pushnotificationtoken.FieldFcmToken:
+		return m.OldFcmToken(ctx)
+	case pushnotificationtoken.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case pushnotificationtoken.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	}
+	return nil, fmt.Errorf("unknown PushNotificationToken field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *PushNotificationTokenMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case pushnotificationtoken.FieldUserID:
+		v, ok := value.(uuid.UUID)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUserID(v)
+		return nil
+	case pushnotificationtoken.FieldDeviceID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeviceID(v)
+		return nil
+	case pushnotificationtoken.FieldFcmToken:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetFcmToken(v)
+		return nil
+	case pushnotificationtoken.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case pushnotificationtoken.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	}
+	return fmt.Errorf("unknown PushNotificationToken field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *PushNotificationTokenMutation) AddedFields() []string {
+	return nil
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *PushNotificationTokenMutation) AddedField(name string) (ent.Value, bool) {
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *PushNotificationTokenMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown PushNotificationToken numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *PushNotificationTokenMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *PushNotificationTokenMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *PushNotificationTokenMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown PushNotificationToken nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *PushNotificationTokenMutation) ResetField(name string) error {
+	switch name {
+	case pushnotificationtoken.FieldUserID:
+		m.ResetUserID()
+		return nil
+	case pushnotificationtoken.FieldDeviceID:
+		m.ResetDeviceID()
+		return nil
+	case pushnotificationtoken.FieldFcmToken:
+		m.ResetFcmToken()
+		return nil
+	case pushnotificationtoken.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case pushnotificationtoken.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	}
+	return fmt.Errorf("unknown PushNotificationToken field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *PushNotificationTokenMutation) AddedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.user != nil {
+		edges = append(edges, pushnotificationtoken.EdgeUser)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *PushNotificationTokenMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case pushnotificationtoken.EdgeUser:
+		if id := m.user; id != nil {
+			return []ent.Value{*id}
+		}
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *PushNotificationTokenMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 1)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *PushNotificationTokenMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *PushNotificationTokenMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.cleareduser {
+		edges = append(edges, pushnotificationtoken.EdgeUser)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *PushNotificationTokenMutation) EdgeCleared(name string) bool {
+	switch name {
+	case pushnotificationtoken.EdgeUser:
+		return m.cleareduser
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *PushNotificationTokenMutation) ClearEdge(name string) error {
+	switch name {
+	case pushnotificationtoken.EdgeUser:
+		m.ClearUser()
+		return nil
+	}
+	return fmt.Errorf("unknown PushNotificationToken unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *PushNotificationTokenMutation) ResetEdge(name string) error {
+	switch name {
+	case pushnotificationtoken.EdgeUser:
+		m.ResetUser()
+		return nil
+	}
+	return fmt.Errorf("unknown PushNotificationToken edge %s", name)
+}
+
 // UserMutation represents an operation that mutates the User nodes in the graph.
 type UserMutation struct {
 	config
-	op                             Op
-	typ                            string
-	id                             *uuid.UUID
-	created_at                     *time.Time
-	clearedFields                  map[string]struct{}
-	account                        *uuid.UUID
-	clearedaccount                 bool
-	user_profile                   *uuid.UUID
-	cleareduser_profile            bool
-	friend_users                   map[uuid.UUID]struct{}
-	removedfriend_users            map[uuid.UUID]struct{}
-	clearedfriend_users            bool
-	friend_groups                  map[uuid.UUID]struct{}
-	removedfriend_groups           map[uuid.UUID]struct{}
-	clearedfriend_groups           bool
-	belonging_friend_groups        map[uuid.UUID]struct{}
-	removedbelonging_friend_groups map[uuid.UUID]struct{}
-	clearedbelonging_friend_groups bool
-	invitation_acceptances         map[uuid.UUID]struct{}
-	removedinvitation_acceptances  map[uuid.UUID]struct{}
-	clearedinvitation_acceptances  bool
-	invitation_denials             map[uuid.UUID]struct{}
-	removedinvitation_denials      map[uuid.UUID]struct{}
-	clearedinvitation_denials      bool
-	friendships                    map[uuid.UUID]struct{}
-	removedfriendships             map[uuid.UUID]struct{}
-	clearedfriendships             bool
-	user_friend_groups             map[uuid.UUID]struct{}
-	removeduser_friend_groups      map[uuid.UUID]struct{}
-	cleareduser_friend_groups      bool
-	done                           bool
-	oldValue                       func(context.Context) (*User, error)
-	predicates                     []predicate.User
+	op                              Op
+	typ                             string
+	id                              *uuid.UUID
+	created_at                      *time.Time
+	clearedFields                   map[string]struct{}
+	account                         *uuid.UUID
+	clearedaccount                  bool
+	user_profile                    *uuid.UUID
+	cleareduser_profile             bool
+	friend_users                    map[uuid.UUID]struct{}
+	removedfriend_users             map[uuid.UUID]struct{}
+	clearedfriend_users             bool
+	push_notification_tokens        map[uuid.UUID]struct{}
+	removedpush_notification_tokens map[uuid.UUID]struct{}
+	clearedpush_notification_tokens bool
+	friend_groups                   map[uuid.UUID]struct{}
+	removedfriend_groups            map[uuid.UUID]struct{}
+	clearedfriend_groups            bool
+	belonging_friend_groups         map[uuid.UUID]struct{}
+	removedbelonging_friend_groups  map[uuid.UUID]struct{}
+	clearedbelonging_friend_groups  bool
+	invitation_acceptances          map[uuid.UUID]struct{}
+	removedinvitation_acceptances   map[uuid.UUID]struct{}
+	clearedinvitation_acceptances   bool
+	invitation_denials              map[uuid.UUID]struct{}
+	removedinvitation_denials       map[uuid.UUID]struct{}
+	clearedinvitation_denials       bool
+	friendships                     map[uuid.UUID]struct{}
+	removedfriendships              map[uuid.UUID]struct{}
+	clearedfriendships              bool
+	user_friend_groups              map[uuid.UUID]struct{}
+	removeduser_friend_groups       map[uuid.UUID]struct{}
+	cleareduser_friend_groups       bool
+	done                            bool
+	oldValue                        func(context.Context) (*User, error)
+	predicates                      []predicate.User
 }
 
 var _ ent.Mutation = (*UserMutation)(nil)
@@ -5988,6 +6579,60 @@ func (m *UserMutation) ResetFriendUsers() {
 	m.friend_users = nil
 	m.clearedfriend_users = false
 	m.removedfriend_users = nil
+}
+
+// AddPushNotificationTokenIDs adds the "push_notification_tokens" edge to the PushNotificationToken entity by ids.
+func (m *UserMutation) AddPushNotificationTokenIDs(ids ...uuid.UUID) {
+	if m.push_notification_tokens == nil {
+		m.push_notification_tokens = make(map[uuid.UUID]struct{})
+	}
+	for i := range ids {
+		m.push_notification_tokens[ids[i]] = struct{}{}
+	}
+}
+
+// ClearPushNotificationTokens clears the "push_notification_tokens" edge to the PushNotificationToken entity.
+func (m *UserMutation) ClearPushNotificationTokens() {
+	m.clearedpush_notification_tokens = true
+}
+
+// PushNotificationTokensCleared reports if the "push_notification_tokens" edge to the PushNotificationToken entity was cleared.
+func (m *UserMutation) PushNotificationTokensCleared() bool {
+	return m.clearedpush_notification_tokens
+}
+
+// RemovePushNotificationTokenIDs removes the "push_notification_tokens" edge to the PushNotificationToken entity by IDs.
+func (m *UserMutation) RemovePushNotificationTokenIDs(ids ...uuid.UUID) {
+	if m.removedpush_notification_tokens == nil {
+		m.removedpush_notification_tokens = make(map[uuid.UUID]struct{})
+	}
+	for i := range ids {
+		delete(m.push_notification_tokens, ids[i])
+		m.removedpush_notification_tokens[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedPushNotificationTokens returns the removed IDs of the "push_notification_tokens" edge to the PushNotificationToken entity.
+func (m *UserMutation) RemovedPushNotificationTokensIDs() (ids []uuid.UUID) {
+	for id := range m.removedpush_notification_tokens {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// PushNotificationTokensIDs returns the "push_notification_tokens" edge IDs in the mutation.
+func (m *UserMutation) PushNotificationTokensIDs() (ids []uuid.UUID) {
+	for id := range m.push_notification_tokens {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetPushNotificationTokens resets all changes to the "push_notification_tokens" edge.
+func (m *UserMutation) ResetPushNotificationTokens() {
+	m.push_notification_tokens = nil
+	m.clearedpush_notification_tokens = false
+	m.removedpush_notification_tokens = nil
 }
 
 // AddFriendGroupIDs adds the "friend_groups" edge to the FriendGroup entity by ids.
@@ -6449,7 +7094,7 @@ func (m *UserMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *UserMutation) AddedEdges() []string {
-	edges := make([]string, 0, 9)
+	edges := make([]string, 0, 10)
 	if m.account != nil {
 		edges = append(edges, user.EdgeAccount)
 	}
@@ -6458,6 +7103,9 @@ func (m *UserMutation) AddedEdges() []string {
 	}
 	if m.friend_users != nil {
 		edges = append(edges, user.EdgeFriendUsers)
+	}
+	if m.push_notification_tokens != nil {
+		edges = append(edges, user.EdgePushNotificationTokens)
 	}
 	if m.friend_groups != nil {
 		edges = append(edges, user.EdgeFriendGroups)
@@ -6495,6 +7143,12 @@ func (m *UserMutation) AddedIDs(name string) []ent.Value {
 	case user.EdgeFriendUsers:
 		ids := make([]ent.Value, 0, len(m.friend_users))
 		for id := range m.friend_users {
+			ids = append(ids, id)
+		}
+		return ids
+	case user.EdgePushNotificationTokens:
+		ids := make([]ent.Value, 0, len(m.push_notification_tokens))
+		for id := range m.push_notification_tokens {
 			ids = append(ids, id)
 		}
 		return ids
@@ -6540,9 +7194,12 @@ func (m *UserMutation) AddedIDs(name string) []ent.Value {
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *UserMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 9)
+	edges := make([]string, 0, 10)
 	if m.removedfriend_users != nil {
 		edges = append(edges, user.EdgeFriendUsers)
+	}
+	if m.removedpush_notification_tokens != nil {
+		edges = append(edges, user.EdgePushNotificationTokens)
 	}
 	if m.removedfriend_groups != nil {
 		edges = append(edges, user.EdgeFriendGroups)
@@ -6572,6 +7229,12 @@ func (m *UserMutation) RemovedIDs(name string) []ent.Value {
 	case user.EdgeFriendUsers:
 		ids := make([]ent.Value, 0, len(m.removedfriend_users))
 		for id := range m.removedfriend_users {
+			ids = append(ids, id)
+		}
+		return ids
+	case user.EdgePushNotificationTokens:
+		ids := make([]ent.Value, 0, len(m.removedpush_notification_tokens))
+		for id := range m.removedpush_notification_tokens {
 			ids = append(ids, id)
 		}
 		return ids
@@ -6617,7 +7280,7 @@ func (m *UserMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *UserMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 9)
+	edges := make([]string, 0, 10)
 	if m.clearedaccount {
 		edges = append(edges, user.EdgeAccount)
 	}
@@ -6626,6 +7289,9 @@ func (m *UserMutation) ClearedEdges() []string {
 	}
 	if m.clearedfriend_users {
 		edges = append(edges, user.EdgeFriendUsers)
+	}
+	if m.clearedpush_notification_tokens {
+		edges = append(edges, user.EdgePushNotificationTokens)
 	}
 	if m.clearedfriend_groups {
 		edges = append(edges, user.EdgeFriendGroups)
@@ -6658,6 +7324,8 @@ func (m *UserMutation) EdgeCleared(name string) bool {
 		return m.cleareduser_profile
 	case user.EdgeFriendUsers:
 		return m.clearedfriend_users
+	case user.EdgePushNotificationTokens:
+		return m.clearedpush_notification_tokens
 	case user.EdgeFriendGroups:
 		return m.clearedfriend_groups
 	case user.EdgeBelongingFriendGroups:
@@ -6700,6 +7368,9 @@ func (m *UserMutation) ResetEdge(name string) error {
 		return nil
 	case user.EdgeFriendUsers:
 		m.ResetFriendUsers()
+		return nil
+	case user.EdgePushNotificationTokens:
+		m.ResetPushNotificationTokens()
 		return nil
 	case user.EdgeFriendGroups:
 		m.ResetFriendGroups()

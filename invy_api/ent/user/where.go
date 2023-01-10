@@ -280,6 +280,34 @@ func HasFriendUsersWith(preds ...predicate.User) predicate.User {
 	})
 }
 
+// HasPushNotificationTokens applies the HasEdge predicate on the "push_notification_tokens" edge.
+func HasPushNotificationTokens() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(PushNotificationTokensTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, true, PushNotificationTokensTable, PushNotificationTokensColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasPushNotificationTokensWith applies the HasEdge predicate on the "push_notification_tokens" edge with a given conditions (other predicates).
+func HasPushNotificationTokensWith(preds ...predicate.PushNotificationToken) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(PushNotificationTokensInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, true, PushNotificationTokensTable, PushNotificationTokensColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // HasFriendGroups applies the HasEdge predicate on the "friend_groups" edge.
 func HasFriendGroups() predicate.User {
 	return predicate.User(func(s *sql.Selector) {

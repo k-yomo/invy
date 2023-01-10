@@ -18,6 +18,7 @@ import (
 	"github.com/k-yomo/invy/invy_api/ent/invitationacceptance"
 	"github.com/k-yomo/invy/invy_api/ent/invitationdenial"
 	"github.com/k-yomo/invy/invy_api/ent/predicate"
+	"github.com/k-yomo/invy/invy_api/ent/pushnotificationtoken"
 	"github.com/k-yomo/invy/invy_api/ent/user"
 	"github.com/k-yomo/invy/invy_api/ent/userfriendgroup"
 	"github.com/k-yomo/invy/invy_api/ent/userprofile"
@@ -26,30 +27,32 @@ import (
 // UserQuery is the builder for querying User entities.
 type UserQuery struct {
 	config
-	limit                          *int
-	offset                         *int
-	unique                         *bool
-	order                          []OrderFunc
-	fields                         []string
-	predicates                     []predicate.User
-	withAccount                    *AccountQuery
-	withUserProfile                *UserProfileQuery
-	withFriendUsers                *UserQuery
-	withFriendGroups               *FriendGroupQuery
-	withBelongingFriendGroups      *FriendGroupQuery
-	withInvitationAcceptances      *InvitationAcceptanceQuery
-	withInvitationDenials          *InvitationDenialQuery
-	withFriendships                *FriendshipQuery
-	withUserFriendGroups           *UserFriendGroupQuery
-	modifiers                      []func(*sql.Selector)
-	loadTotal                      []func(context.Context, []*User) error
-	withNamedFriendUsers           map[string]*UserQuery
-	withNamedFriendGroups          map[string]*FriendGroupQuery
-	withNamedBelongingFriendGroups map[string]*FriendGroupQuery
-	withNamedInvitationAcceptances map[string]*InvitationAcceptanceQuery
-	withNamedInvitationDenials     map[string]*InvitationDenialQuery
-	withNamedFriendships           map[string]*FriendshipQuery
-	withNamedUserFriendGroups      map[string]*UserFriendGroupQuery
+	limit                           *int
+	offset                          *int
+	unique                          *bool
+	order                           []OrderFunc
+	fields                          []string
+	predicates                      []predicate.User
+	withAccount                     *AccountQuery
+	withUserProfile                 *UserProfileQuery
+	withFriendUsers                 *UserQuery
+	withPushNotificationTokens      *PushNotificationTokenQuery
+	withFriendGroups                *FriendGroupQuery
+	withBelongingFriendGroups       *FriendGroupQuery
+	withInvitationAcceptances       *InvitationAcceptanceQuery
+	withInvitationDenials           *InvitationDenialQuery
+	withFriendships                 *FriendshipQuery
+	withUserFriendGroups            *UserFriendGroupQuery
+	modifiers                       []func(*sql.Selector)
+	loadTotal                       []func(context.Context, []*User) error
+	withNamedFriendUsers            map[string]*UserQuery
+	withNamedPushNotificationTokens map[string]*PushNotificationTokenQuery
+	withNamedFriendGroups           map[string]*FriendGroupQuery
+	withNamedBelongingFriendGroups  map[string]*FriendGroupQuery
+	withNamedInvitationAcceptances  map[string]*InvitationAcceptanceQuery
+	withNamedInvitationDenials      map[string]*InvitationDenialQuery
+	withNamedFriendships            map[string]*FriendshipQuery
+	withNamedUserFriendGroups       map[string]*UserFriendGroupQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -145,6 +148,28 @@ func (uq *UserQuery) QueryFriendUsers() *UserQuery {
 			sqlgraph.From(user.Table, user.FieldID, selector),
 			sqlgraph.To(user.Table, user.FieldID),
 			sqlgraph.Edge(sqlgraph.M2M, false, user.FriendUsersTable, user.FriendUsersPrimaryKey...),
+		)
+		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryPushNotificationTokens chains the current query on the "push_notification_tokens" edge.
+func (uq *UserQuery) QueryPushNotificationTokens() *PushNotificationTokenQuery {
+	query := &PushNotificationTokenQuery{config: uq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := uq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := uq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(pushnotificationtoken.Table, pushnotificationtoken.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, true, user.PushNotificationTokensTable, user.PushNotificationTokensColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
 		return fromU, nil
@@ -460,20 +485,21 @@ func (uq *UserQuery) Clone() *UserQuery {
 		return nil
 	}
 	return &UserQuery{
-		config:                    uq.config,
-		limit:                     uq.limit,
-		offset:                    uq.offset,
-		order:                     append([]OrderFunc{}, uq.order...),
-		predicates:                append([]predicate.User{}, uq.predicates...),
-		withAccount:               uq.withAccount.Clone(),
-		withUserProfile:           uq.withUserProfile.Clone(),
-		withFriendUsers:           uq.withFriendUsers.Clone(),
-		withFriendGroups:          uq.withFriendGroups.Clone(),
-		withBelongingFriendGroups: uq.withBelongingFriendGroups.Clone(),
-		withInvitationAcceptances: uq.withInvitationAcceptances.Clone(),
-		withInvitationDenials:     uq.withInvitationDenials.Clone(),
-		withFriendships:           uq.withFriendships.Clone(),
-		withUserFriendGroups:      uq.withUserFriendGroups.Clone(),
+		config:                     uq.config,
+		limit:                      uq.limit,
+		offset:                     uq.offset,
+		order:                      append([]OrderFunc{}, uq.order...),
+		predicates:                 append([]predicate.User{}, uq.predicates...),
+		withAccount:                uq.withAccount.Clone(),
+		withUserProfile:            uq.withUserProfile.Clone(),
+		withFriendUsers:            uq.withFriendUsers.Clone(),
+		withPushNotificationTokens: uq.withPushNotificationTokens.Clone(),
+		withFriendGroups:           uq.withFriendGroups.Clone(),
+		withBelongingFriendGroups:  uq.withBelongingFriendGroups.Clone(),
+		withInvitationAcceptances:  uq.withInvitationAcceptances.Clone(),
+		withInvitationDenials:      uq.withInvitationDenials.Clone(),
+		withFriendships:            uq.withFriendships.Clone(),
+		withUserFriendGroups:       uq.withUserFriendGroups.Clone(),
 		// clone intermediate query.
 		sql:    uq.sql.Clone(),
 		path:   uq.path,
@@ -511,6 +537,17 @@ func (uq *UserQuery) WithFriendUsers(opts ...func(*UserQuery)) *UserQuery {
 		opt(query)
 	}
 	uq.withFriendUsers = query
+	return uq
+}
+
+// WithPushNotificationTokens tells the query-builder to eager-load the nodes that are connected to
+// the "push_notification_tokens" edge. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithPushNotificationTokens(opts ...func(*PushNotificationTokenQuery)) *UserQuery {
+	query := &PushNotificationTokenQuery{config: uq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	uq.withPushNotificationTokens = query
 	return uq
 }
 
@@ -653,10 +690,11 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 	var (
 		nodes       = []*User{}
 		_spec       = uq.querySpec()
-		loadedTypes = [9]bool{
+		loadedTypes = [10]bool{
 			uq.withAccount != nil,
 			uq.withUserProfile != nil,
 			uq.withFriendUsers != nil,
+			uq.withPushNotificationTokens != nil,
 			uq.withFriendGroups != nil,
 			uq.withBelongingFriendGroups != nil,
 			uq.withInvitationAcceptances != nil,
@@ -702,6 +740,15 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 		if err := uq.loadFriendUsers(ctx, query, nodes,
 			func(n *User) { n.Edges.FriendUsers = []*User{} },
 			func(n *User, e *User) { n.Edges.FriendUsers = append(n.Edges.FriendUsers, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := uq.withPushNotificationTokens; query != nil {
+		if err := uq.loadPushNotificationTokens(ctx, query, nodes,
+			func(n *User) { n.Edges.PushNotificationTokens = []*PushNotificationToken{} },
+			func(n *User, e *PushNotificationToken) {
+				n.Edges.PushNotificationTokens = append(n.Edges.PushNotificationTokens, e)
+			}); err != nil {
 			return nil, err
 		}
 	}
@@ -755,6 +802,13 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 		if err := uq.loadFriendUsers(ctx, query, nodes,
 			func(n *User) { n.appendNamedFriendUsers(name) },
 			func(n *User, e *User) { n.appendNamedFriendUsers(name, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for name, query := range uq.withNamedPushNotificationTokens {
+		if err := uq.loadPushNotificationTokens(ctx, query, nodes,
+			func(n *User) { n.appendNamedPushNotificationTokens(name) },
+			func(n *User, e *PushNotificationToken) { n.appendNamedPushNotificationTokens(name, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -913,6 +967,33 @@ func (uq *UserQuery) loadFriendUsers(ctx context.Context, query *UserQuery, node
 		for kn := range nodes {
 			assign(kn, n)
 		}
+	}
+	return nil
+}
+func (uq *UserQuery) loadPushNotificationTokens(ctx context.Context, query *PushNotificationTokenQuery, nodes []*User, init func(*User), assign func(*User, *PushNotificationToken)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[uuid.UUID]*User)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	query.Where(predicate.PushNotificationToken(func(s *sql.Selector) {
+		s.Where(sql.InValues(user.PushNotificationTokensColumn, fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.UserID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected foreign-key "user_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
 	}
 	return nil
 }
@@ -1224,6 +1305,20 @@ func (uq *UserQuery) WithNamedFriendUsers(name string, opts ...func(*UserQuery))
 		uq.withNamedFriendUsers = make(map[string]*UserQuery)
 	}
 	uq.withNamedFriendUsers[name] = query
+	return uq
+}
+
+// WithNamedPushNotificationTokens tells the query-builder to eager-load the nodes that are connected to the "push_notification_tokens"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithNamedPushNotificationTokens(name string, opts ...func(*PushNotificationTokenQuery)) *UserQuery {
+	query := &PushNotificationTokenQuery{config: uq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	if uq.withNamedPushNotificationTokens == nil {
+		uq.withNamedPushNotificationTokens = make(map[string]*PushNotificationTokenQuery)
+	}
+	uq.withNamedPushNotificationTokens[name] = query
 	return uq
 }
 

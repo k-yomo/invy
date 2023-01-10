@@ -107,6 +107,15 @@ type PageInfo struct {
 	HasPreviousPage bool        `json:"hasPreviousPage"`
 }
 
+type RegisterPushNotificationTokenInput struct {
+	DeviceID string `json:"deviceId"`
+	FcmToken string `json:"fcmToken"`
+}
+
+type RegisterPushNotificationTokenPayload struct {
+	RegisteredPushNotificationTokenID uuid.UUID `json:"registeredPushNotificationTokenId"`
+}
+
 type RequestFriendshipPayload struct {
 	FriendShipRequest *FriendshipRequest `json:"friendShipRequest"`
 }
@@ -122,6 +131,10 @@ type SendInvitationInput struct {
 
 type SendInvitationPayload struct {
 	Invitation *Invitation `json:"invitation"`
+}
+
+type SignOutPayload struct {
+	SignedOutUserID uuid.UUID `json:"signedOutUserId"`
 }
 
 type SignUpInput struct {

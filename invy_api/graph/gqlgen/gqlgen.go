@@ -116,21 +116,23 @@ type ComplexityRoot struct {
 	}
 
 	Mutation struct {
-		AcceptFriendshipRequest func(childComplexity int, friendshipRequestID uuid.UUID) int
-		AcceptInvitation        func(childComplexity int, invitationID uuid.UUID) int
-		CancelFriendshipRequest func(childComplexity int, friendshipRequestID uuid.UUID) int
-		CreateFriendGroup       func(childComplexity int, input gqlmodel.CreateFriendGroupInput) int
-		CreateUser              func(childComplexity int, input gqlmodel.CreateUserInput) int
-		DeleteFriendGroup       func(childComplexity int, friendGroupID uuid.UUID) int
-		DenyFriendshipRequest   func(childComplexity int, friendshipRequestID uuid.UUID) int
-		DenyInvitation          func(childComplexity int, invitationID uuid.UUID) int
-		MuteUser                func(childComplexity int, userID uuid.UUID) int
-		RequestFriendship       func(childComplexity int, friendUserID uuid.UUID) int
-		SendInvitation          func(childComplexity int, input *gqlmodel.SendInvitationInput) int
-		SignUp                  func(childComplexity int, input gqlmodel.SignUpInput) int
-		SwitchUser              func(childComplexity int, userID uuid.UUID) int
-		UnmuteUser              func(childComplexity int, userID uuid.UUID) int
-		UpdateFriendGroup       func(childComplexity int, input gqlmodel.UpdateFriendGroupInput) int
+		AcceptFriendshipRequest       func(childComplexity int, friendshipRequestID uuid.UUID) int
+		AcceptInvitation              func(childComplexity int, invitationID uuid.UUID) int
+		CancelFriendshipRequest       func(childComplexity int, friendshipRequestID uuid.UUID) int
+		CreateFriendGroup             func(childComplexity int, input gqlmodel.CreateFriendGroupInput) int
+		CreateUser                    func(childComplexity int, input gqlmodel.CreateUserInput) int
+		DeleteFriendGroup             func(childComplexity int, friendGroupID uuid.UUID) int
+		DenyFriendshipRequest         func(childComplexity int, friendshipRequestID uuid.UUID) int
+		DenyInvitation                func(childComplexity int, invitationID uuid.UUID) int
+		MuteUser                      func(childComplexity int, userID uuid.UUID) int
+		RegisterPushNotificationToken func(childComplexity int, input *gqlmodel.RegisterPushNotificationTokenInput) int
+		RequestFriendship             func(childComplexity int, friendUserID uuid.UUID) int
+		SendInvitation                func(childComplexity int, input *gqlmodel.SendInvitationInput) int
+		SignOut                       func(childComplexity int) int
+		SignUp                        func(childComplexity int, input gqlmodel.SignUpInput) int
+		SwitchUser                    func(childComplexity int, userID uuid.UUID) int
+		UnmuteUser                    func(childComplexity int, userID uuid.UUID) int
+		UpdateFriendGroup             func(childComplexity int, input gqlmodel.UpdateFriendGroupInput) int
 	}
 
 	MuteUserPayload struct {
@@ -150,12 +152,20 @@ type ComplexityRoot struct {
 		Viewer         func(childComplexity int) int
 	}
 
+	RegisterPushNotificationTokenPayload struct {
+		RegisteredPushNotificationTokenID func(childComplexity int) int
+	}
+
 	RequestFriendshipPayload struct {
 		FriendShipRequest func(childComplexity int) int
 	}
 
 	SendInvitationPayload struct {
 		Invitation func(childComplexity int) int
+	}
+
+	SignOutPayload struct {
+		SignedOutUserID func(childComplexity int) int
 	}
 
 	SignUpPayload struct {
@@ -225,6 +235,7 @@ type InvitationResolver interface {
 }
 type MutationResolver interface {
 	SignUp(ctx context.Context, input gqlmodel.SignUpInput) (*gqlmodel.SignUpPayload, error)
+	SignOut(ctx context.Context) (*gqlmodel.SignOutPayload, error)
 	CreateUser(ctx context.Context, input gqlmodel.CreateUserInput) (*gqlmodel.CreateUserPayload, error)
 	SwitchUser(ctx context.Context, userID uuid.UUID) (*gqlmodel.SwitchUserPayload, error)
 	RequestFriendship(ctx context.Context, friendUserID uuid.UUID) (*gqlmodel.RequestFriendshipPayload, error)
@@ -237,6 +248,7 @@ type MutationResolver interface {
 	SendInvitation(ctx context.Context, input *gqlmodel.SendInvitationInput) (*gqlmodel.SendInvitationPayload, error)
 	AcceptInvitation(ctx context.Context, invitationID uuid.UUID) (*gqlmodel.AcceptInvitationPayload, error)
 	DenyInvitation(ctx context.Context, invitationID uuid.UUID) (*gqlmodel.DenyInvitationPayload, error)
+	RegisterPushNotificationToken(ctx context.Context, input *gqlmodel.RegisterPushNotificationTokenInput) (*gqlmodel.RegisterPushNotificationTokenPayload, error)
 	MuteUser(ctx context.Context, userID uuid.UUID) (*gqlmodel.MuteUserPayload, error)
 	UnmuteUser(ctx context.Context, userID uuid.UUID) (*gqlmodel.UnmuteUserPayload, error)
 }
@@ -573,6 +585,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.MuteUser(childComplexity, args["userId"].(uuid.UUID)), true
 
+	case "Mutation.registerPushNotificationToken":
+		if e.complexity.Mutation.RegisterPushNotificationToken == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_registerPushNotificationToken_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.RegisterPushNotificationToken(childComplexity, args["input"].(*gqlmodel.RegisterPushNotificationTokenInput)), true
+
 	case "Mutation.requestFriendship":
 		if e.complexity.Mutation.RequestFriendship == nil {
 			break
@@ -596,6 +620,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.SendInvitation(childComplexity, args["input"].(*gqlmodel.SendInvitationInput)), true
+
+	case "Mutation.signOut":
+		if e.complexity.Mutation.SignOut == nil {
+			break
+		}
+
+		return e.complexity.Mutation.SignOut(childComplexity), true
 
 	case "Mutation.signUp":
 		if e.complexity.Mutation.SignUp == nil {
@@ -711,6 +742,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.Viewer(childComplexity), true
 
+	case "RegisterPushNotificationTokenPayload.registeredPushNotificationTokenId":
+		if e.complexity.RegisterPushNotificationTokenPayload.RegisteredPushNotificationTokenID == nil {
+			break
+		}
+
+		return e.complexity.RegisterPushNotificationTokenPayload.RegisteredPushNotificationTokenID(childComplexity), true
+
 	case "RequestFriendshipPayload.friendShipRequest":
 		if e.complexity.RequestFriendshipPayload.FriendShipRequest == nil {
 			break
@@ -724,6 +762,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.SendInvitationPayload.Invitation(childComplexity), true
+
+	case "SignOutPayload.signedOutUserId":
+		if e.complexity.SignOutPayload.SignedOutUserID == nil {
+			break
+		}
+
+		return e.complexity.SignOutPayload.SignedOutUserID(childComplexity), true
 
 	case "SignUpPayload.viewer":
 		if e.complexity.SignUpPayload.Viewer == nil {
@@ -934,6 +979,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	inputUnmarshalMap := graphql.BuildUnmarshalerMap(
 		ec.unmarshalInputCreateFriendGroupInput,
 		ec.unmarshalInputCreateUserInput,
+		ec.unmarshalInputRegisterPushNotificationTokenInput,
 		ec.unmarshalInputSendInvitationInput,
 		ec.unmarshalInputSignUpInput,
 		ec.unmarshalInputUpdateFriendGroupInput,
@@ -999,6 +1045,7 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 var sources = []*ast.Source{
 	{Name: "../../../defs/graphql/auth.graphql", Input: `extend type Mutation {
     signUp(input: SignUpInput!): SignUpPayload!
+    signOut: SignOutPayload! @authRequired
     createUser(input: CreateUserInput!): CreateUserPayload! @authRequired
     switchUser(userId: UUID!): SwitchUserPayload! @authRequired
 }
@@ -1011,6 +1058,10 @@ input SignUpInput {
 }
 type SignUpPayload {
     viewer: Viewer!
+}
+
+type SignOutPayload {
+    signedOutUserId: UUID!
 }
 
 input CreateUserInput {
@@ -1127,6 +1178,18 @@ type AcceptInvitationPayload {
 
 type DenyInvitationPayload {
     invitation: Invitation!
+}
+`, BuiltIn: false},
+	{Name: "../../../defs/graphql/push_notification.graphql", Input: `extend type Mutation {
+    registerPushNotificationToken(input: RegisterPushNotificationTokenInput): RegisterPushNotificationTokenPayload! @authRequired
+}
+
+input RegisterPushNotificationTokenInput {
+    deviceId: String!
+    fcmToken: String!
+}
+type RegisterPushNotificationTokenPayload {
+    registeredPushNotificationTokenId: UUID!
 }
 `, BuiltIn: false},
 	{Name: "../../../defs/graphql/schema.graphql", Input: `scalar Time
@@ -1412,6 +1475,21 @@ func (ec *executionContext) field_Mutation_muteUser_args(ctx context.Context, ra
 		}
 	}
 	args["userId"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_registerPushNotificationToken_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *gqlmodel.RegisterPushNotificationTokenInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalORegisterPushNotificationTokenInput2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐRegisterPushNotificationTokenInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
 	return args, nil
 }
 
@@ -3036,6 +3114,74 @@ func (ec *executionContext) fieldContext_Mutation_signUp(ctx context.Context, fi
 	return fc, nil
 }
 
+func (ec *executionContext) _Mutation_signOut(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_signOut(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().SignOut(rctx)
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.AuthRequired == nil {
+				return nil, errors.New("directive authRequired is not implemented")
+			}
+			return ec.directives.AuthRequired(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*gqlmodel.SignOutPayload); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/k-yomo/invy/invy_api/graph/gqlmodel.SignOutPayload`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.SignOutPayload)
+	fc.Result = res
+	return ec.marshalNSignOutPayload2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐSignOutPayload(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_signOut(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "signedOutUserId":
+				return ec.fieldContext_SignOutPayload_signedOutUserId(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type SignOutPayload", field.Name)
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Mutation_createUser(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Mutation_createUser(ctx, field)
 	if err != nil {
@@ -3984,6 +4130,85 @@ func (ec *executionContext) fieldContext_Mutation_denyInvitation(ctx context.Con
 	return fc, nil
 }
 
+func (ec *executionContext) _Mutation_registerPushNotificationToken(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_registerPushNotificationToken(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().RegisterPushNotificationToken(rctx, fc.Args["input"].(*gqlmodel.RegisterPushNotificationTokenInput))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.AuthRequired == nil {
+				return nil, errors.New("directive authRequired is not implemented")
+			}
+			return ec.directives.AuthRequired(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*gqlmodel.RegisterPushNotificationTokenPayload); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/k-yomo/invy/invy_api/graph/gqlmodel.RegisterPushNotificationTokenPayload`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.RegisterPushNotificationTokenPayload)
+	fc.Result = res
+	return ec.marshalNRegisterPushNotificationTokenPayload2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐRegisterPushNotificationTokenPayload(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_registerPushNotificationToken(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "registeredPushNotificationTokenId":
+				return ec.fieldContext_RegisterPushNotificationTokenPayload_registeredPushNotificationTokenId(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type RegisterPushNotificationTokenPayload", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_registerPushNotificationToken_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Mutation_muteUser(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Mutation_muteUser(ctx, field)
 	if err != nil {
@@ -4753,6 +4978,50 @@ func (ec *executionContext) fieldContext_Query___schema(ctx context.Context, fie
 	return fc, nil
 }
 
+func (ec *executionContext) _RegisterPushNotificationTokenPayload_registeredPushNotificationTokenId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.RegisterPushNotificationTokenPayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_RegisterPushNotificationTokenPayload_registeredPushNotificationTokenId(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.RegisteredPushNotificationTokenID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(uuid.UUID)
+	fc.Result = res
+	return ec.marshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_RegisterPushNotificationTokenPayload_registeredPushNotificationTokenId(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "RegisterPushNotificationTokenPayload",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type UUID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _RequestFriendshipPayload_friendShipRequest(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.RequestFriendshipPayload) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_RequestFriendshipPayload_friendShipRequest(ctx, field)
 	if err != nil {
@@ -4868,6 +5137,50 @@ func (ec *executionContext) fieldContext_SendInvitationPayload_invitation(ctx co
 				return ec.fieldContext_Invitation_acceptedUsers(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Invitation", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _SignOutPayload_signedOutUserId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.SignOutPayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SignOutPayload_signedOutUserId(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.SignedOutUserID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(uuid.UUID)
+	fc.Result = res
+	return ec.marshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_SignOutPayload_signedOutUserId(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "SignOutPayload",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type UUID does not have child fields")
 		},
 	}
 	return fc, nil
@@ -8192,6 +8505,42 @@ func (ec *executionContext) unmarshalInputCreateUserInput(ctx context.Context, o
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputRegisterPushNotificationTokenInput(ctx context.Context, obj interface{}) (gqlmodel.RegisterPushNotificationTokenInput, error) {
+	var it gqlmodel.RegisterPushNotificationTokenInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"deviceId", "fcmToken"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "deviceId":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deviceId"))
+			it.DeviceID, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "fcmToken":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("fcmToken"))
+			it.FcmToken, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputSendInvitationInput(ctx context.Context, obj interface{}) (gqlmodel.SendInvitationInput, error) {
 	var it gqlmodel.SendInvitationInput
 	asMap := map[string]interface{}{}
@@ -8989,6 +9338,15 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "signOut":
+
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_signOut(ctx, field)
+			})
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "createUser":
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
@@ -9092,6 +9450,15 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_denyInvitation(ctx, field)
+			})
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "registerPushNotificationToken":
+
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_registerPushNotificationToken(ctx, field)
 			})
 
 			if out.Values[i] == graphql.Null {
@@ -9308,6 +9675,34 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 	return out
 }
 
+var registerPushNotificationTokenPayloadImplementors = []string{"RegisterPushNotificationTokenPayload"}
+
+func (ec *executionContext) _RegisterPushNotificationTokenPayload(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.RegisterPushNotificationTokenPayload) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, registerPushNotificationTokenPayloadImplementors)
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("RegisterPushNotificationTokenPayload")
+		case "registeredPushNotificationTokenId":
+
+			out.Values[i] = ec._RegisterPushNotificationTokenPayload_registeredPushNotificationTokenId(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var requestFriendshipPayloadImplementors = []string{"RequestFriendshipPayload"}
 
 func (ec *executionContext) _RequestFriendshipPayload(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.RequestFriendshipPayload) graphql.Marshaler {
@@ -9349,6 +9744,34 @@ func (ec *executionContext) _SendInvitationPayload(ctx context.Context, sel ast.
 		case "invitation":
 
 			out.Values[i] = ec._SendInvitationPayload_invitation(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var signOutPayloadImplementors = []string{"SignOutPayload"}
+
+func (ec *executionContext) _SignOutPayload(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.SignOutPayload) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, signOutPayloadImplementors)
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("SignOutPayload")
+		case "signedOutUserId":
+
+			out.Values[i] = ec._SignOutPayload_signedOutUserId(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				invalids++
@@ -10534,6 +10957,20 @@ func (ec *executionContext) marshalNPageInfo2ᚖgithubᚗcomᚋkᚑyomoᚋinvy�
 	return ec._PageInfo(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalNRegisterPushNotificationTokenPayload2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐRegisterPushNotificationTokenPayload(ctx context.Context, sel ast.SelectionSet, v gqlmodel.RegisterPushNotificationTokenPayload) graphql.Marshaler {
+	return ec._RegisterPushNotificationTokenPayload(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNRegisterPushNotificationTokenPayload2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐRegisterPushNotificationTokenPayload(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.RegisterPushNotificationTokenPayload) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._RegisterPushNotificationTokenPayload(ctx, sel, v)
+}
+
 func (ec *executionContext) marshalNRequestFriendshipPayload2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐRequestFriendshipPayload(ctx context.Context, sel ast.SelectionSet, v gqlmodel.RequestFriendshipPayload) graphql.Marshaler {
 	return ec._RequestFriendshipPayload(ctx, sel, &v)
 }
@@ -10560,6 +10997,20 @@ func (ec *executionContext) marshalNSendInvitationPayload2ᚖgithubᚗcomᚋkᚑ
 		return graphql.Null
 	}
 	return ec._SendInvitationPayload(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNSignOutPayload2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐSignOutPayload(ctx context.Context, sel ast.SelectionSet, v gqlmodel.SignOutPayload) graphql.Marshaler {
+	return ec._SignOutPayload(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNSignOutPayload2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐSignOutPayload(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.SignOutPayload) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._SignOutPayload(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNSignUpInput2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐSignUpInput(ctx context.Context, v interface{}) (gqlmodel.SignUpInput, error) {
@@ -11170,6 +11621,14 @@ func (ec *executionContext) marshalOInt2ᚖint(ctx context.Context, sel ast.Sele
 	}
 	res := graphql.MarshalInt(*v)
 	return res
+}
+
+func (ec *executionContext) unmarshalORegisterPushNotificationTokenInput2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐRegisterPushNotificationTokenInput(ctx context.Context, v interface{}) (*gqlmodel.RegisterPushNotificationTokenInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputRegisterPushNotificationTokenInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalOSendInvitationInput2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐSendInvitationInput(ctx context.Context, v interface{}) (*gqlmodel.SendInvitationInput, error) {

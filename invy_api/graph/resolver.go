@@ -2,6 +2,7 @@ package graph
 
 import (
 	firebaseAuth "firebase.google.com/go/v4/auth"
+	fcm "firebase.google.com/go/v4/messaging"
 	"github.com/k-yomo/invy/invy_api/ent"
 )
 
@@ -13,4 +14,5 @@ import (
 type Resolver struct {
 	DB                 *ent.Client
 	FirebaseAuthClient *firebaseAuth.Client
+	FCMClient          *fcm.Client
 }

@@ -6,12 +6,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:invy/services/graphql_client.dart';
+import 'package:invy/graphql/profile_screen.graphql.dart';
 
 class ProfileScreen extends HookConsumerWidget {
   const ProfileScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final graphqlClient = ref.read(graphqlClientProvider);
     final user = ref.read(loggedInUserProvider)!;
 
     return Scaffold(
@@ -94,6 +97,7 @@ class ProfileScreen extends HookConsumerWidget {
                 margin: EdgeInsets.symmetric(vertical: 50),
                 child: OutlinedButton(
                   onPressed: () async {
+                    await graphqlClient.mutate$signOut();
                     await FirebaseAuth.instance.signOut();
                     ref.invalidate(loggedInUserProvider);
                   },

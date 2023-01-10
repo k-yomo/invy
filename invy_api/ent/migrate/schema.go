@@ -259,6 +259,29 @@ var (
 			},
 		},
 	}
+	// PushNotificationTokensColumns holds the columns for the "push_notification_tokens" table.
+	PushNotificationTokensColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID},
+		{Name: "device_id", Type: field.TypeString, Unique: true},
+		{Name: "fcm_token", Type: field.TypeString, Unique: true},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "user_id", Type: field.TypeUUID},
+	}
+	// PushNotificationTokensTable holds the schema information for the "push_notification_tokens" table.
+	PushNotificationTokensTable = &schema.Table{
+		Name:       "push_notification_tokens",
+		Columns:    PushNotificationTokensColumns,
+		PrimaryKey: []*schema.Column{PushNotificationTokensColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "push_notification_tokens_users_user",
+				Columns:    []*schema.Column{PushNotificationTokensColumns[5]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+	}
 	// UsersColumns holds the columns for the "users" table.
 	UsersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUUID},
@@ -382,6 +405,7 @@ var (
 		InvitationDenialsTable,
 		InvitationFriendGroupsTable,
 		InvitationUsersTable,
+		PushNotificationTokensTable,
 		UsersTable,
 		UserFriendGroupsTable,
 		UserMutesTable,
@@ -404,6 +428,7 @@ func init() {
 	InvitationFriendGroupsTable.ForeignKeys[1].RefTable = FriendGroupsTable
 	InvitationUsersTable.ForeignKeys[0].RefTable = InvitationsTable
 	InvitationUsersTable.ForeignKeys[1].RefTable = UsersTable
+	PushNotificationTokensTable.ForeignKeys[0].RefTable = UsersTable
 	UsersTable.ForeignKeys[0].RefTable = AccountsTable
 	UserFriendGroupsTable.ForeignKeys[0].RefTable = FriendGroupsTable
 	UserFriendGroupsTable.ForeignKeys[1].RefTable = UsersTable

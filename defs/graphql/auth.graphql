@@ -1,5 +1,6 @@
 extend type Mutation {
     signUp(input: SignUpInput!): SignUpPayload!
+    signOut: SignOutPayload! @authRequired
     createUser(input: CreateUserInput!): CreateUserPayload! @authRequired
     switchUser(userId: UUID!): SwitchUserPayload! @authRequired
 }
@@ -12,6 +13,10 @@ input SignUpInput {
 }
 type SignUpPayload {
     viewer: Viewer!
+}
+
+type SignOutPayload {
+    signedOutUserId: UUID!
 }
 
 input CreateUserInput {

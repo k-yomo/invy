@@ -216,6 +216,14 @@ func (iu *InvitationUser) User(ctx context.Context) (*User, error) {
 	return result, err
 }
 
+func (pnt *PushNotificationToken) User(ctx context.Context) (*User, error) {
+	result, err := pnt.Edges.UserOrErr()
+	if IsNotLoaded(err) {
+		result, err = pnt.QueryUser().Only(ctx)
+	}
+	return result, err
+}
+
 func (u *User) Account(ctx context.Context) (*Account, error) {
 	result, err := u.Edges.AccountOrErr()
 	if IsNotLoaded(err) {
@@ -240,6 +248,18 @@ func (u *User) FriendUsers(ctx context.Context) (result []*User, err error) {
 	}
 	if IsNotLoaded(err) {
 		result, err = u.QueryFriendUsers().All(ctx)
+	}
+	return result, err
+}
+
+func (u *User) PushNotificationTokens(ctx context.Context) (result []*PushNotificationToken, err error) {
+	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
+		result, err = u.NamedPushNotificationTokens(graphql.GetFieldContext(ctx).Field.Alias)
+	} else {
+		result, err = u.Edges.PushNotificationTokensOrErr()
+	}
+	if IsNotLoaded(err) {
+		result, err = u.QueryPushNotificationTokens().All(ctx)
 	}
 	return result, err
 }

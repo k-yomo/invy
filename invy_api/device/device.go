@@ -9,4 +9,5 @@ type Device struct {
 	Platform       string           // e.g. ios
 	OSVersion      string           // e.g. 16.2
 	Model          string           // e.g. iPhone 14
+	DeviceID       string
 }

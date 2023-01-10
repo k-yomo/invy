@@ -33,6 +33,7 @@ type hooks struct {
 	InvitationDenial      []ent.Hook
 	InvitationFriendGroup []ent.Hook
 	InvitationUser        []ent.Hook
+	PushNotificationToken []ent.Hook
 	User                  []ent.Hook
 	UserFriendGroup       []ent.Hook
 	UserMute              []ent.Hook

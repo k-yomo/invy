@@ -20,6 +20,7 @@ import (
 	"github.com/k-yomo/invy/invy_api/ent/invitationdenial"
 	"github.com/k-yomo/invy/invy_api/ent/invitationfriendgroup"
 	"github.com/k-yomo/invy/invy_api/ent/invitationuser"
+	"github.com/k-yomo/invy/invy_api/ent/pushnotificationtoken"
 	"github.com/k-yomo/invy/invy_api/ent/user"
 	"github.com/k-yomo/invy/invy_api/ent/userfriendgroup"
 	"github.com/k-yomo/invy/invy_api/ent/usermute"
@@ -53,6 +54,8 @@ type Client struct {
 	InvitationFriendGroup *InvitationFriendGroupClient
 	// InvitationUser is the client for interacting with the InvitationUser builders.
 	InvitationUser *InvitationUserClient
+	// PushNotificationToken is the client for interacting with the PushNotificationToken builders.
+	PushNotificationToken *PushNotificationTokenClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
 	// UserFriendGroup is the client for interacting with the UserFriendGroup builders.
@@ -83,6 +86,7 @@ func (c *Client) init() {
 	c.InvitationDenial = NewInvitationDenialClient(c.config)
 	c.InvitationFriendGroup = NewInvitationFriendGroupClient(c.config)
 	c.InvitationUser = NewInvitationUserClient(c.config)
+	c.PushNotificationToken = NewPushNotificationTokenClient(c.config)
 	c.User = NewUserClient(c.config)
 	c.UserFriendGroup = NewUserFriendGroupClient(c.config)
 	c.UserMute = NewUserMuteClient(c.config)
@@ -129,6 +133,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		InvitationDenial:      NewInvitationDenialClient(cfg),
 		InvitationFriendGroup: NewInvitationFriendGroupClient(cfg),
 		InvitationUser:        NewInvitationUserClient(cfg),
+		PushNotificationToken: NewPushNotificationTokenClient(cfg),
 		User:                  NewUserClient(cfg),
 		UserFriendGroup:       NewUserFriendGroupClient(cfg),
 		UserMute:              NewUserMuteClient(cfg),
@@ -161,6 +166,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		InvitationDenial:      NewInvitationDenialClient(cfg),
 		InvitationFriendGroup: NewInvitationFriendGroupClient(cfg),
 		InvitationUser:        NewInvitationUserClient(cfg),
+		PushNotificationToken: NewPushNotificationTokenClient(cfg),
 		User:                  NewUserClient(cfg),
 		UserFriendGroup:       NewUserFriendGroupClient(cfg),
 		UserMute:              NewUserMuteClient(cfg),
@@ -202,6 +208,7 @@ func (c *Client) Use(hooks ...Hook) {
 	c.InvitationDenial.Use(hooks...)
 	c.InvitationFriendGroup.Use(hooks...)
 	c.InvitationUser.Use(hooks...)
+	c.PushNotificationToken.Use(hooks...)
 	c.User.Use(hooks...)
 	c.UserFriendGroup.Use(hooks...)
 	c.UserMute.Use(hooks...)
@@ -1370,6 +1377,112 @@ func (c *InvitationUserClient) Hooks() []Hook {
 	return c.hooks.InvitationUser
 }
 
+// PushNotificationTokenClient is a client for the PushNotificationToken schema.
+type PushNotificationTokenClient struct {
+	config
+}
+
+// NewPushNotificationTokenClient returns a client for the PushNotificationToken from the given config.
+func NewPushNotificationTokenClient(c config) *PushNotificationTokenClient {
+	return &PushNotificationTokenClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `pushnotificationtoken.Hooks(f(g(h())))`.
+func (c *PushNotificationTokenClient) Use(hooks ...Hook) {
+	c.hooks.PushNotificationToken = append(c.hooks.PushNotificationToken, hooks...)
+}
+
+// Create returns a builder for creating a PushNotificationToken entity.
+func (c *PushNotificationTokenClient) Create() *PushNotificationTokenCreate {
+	mutation := newPushNotificationTokenMutation(c.config, OpCreate)
+	return &PushNotificationTokenCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of PushNotificationToken entities.
+func (c *PushNotificationTokenClient) CreateBulk(builders ...*PushNotificationTokenCreate) *PushNotificationTokenCreateBulk {
+	return &PushNotificationTokenCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for PushNotificationToken.
+func (c *PushNotificationTokenClient) Update() *PushNotificationTokenUpdate {
+	mutation := newPushNotificationTokenMutation(c.config, OpUpdate)
+	return &PushNotificationTokenUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *PushNotificationTokenClient) UpdateOne(pnt *PushNotificationToken) *PushNotificationTokenUpdateOne {
+	mutation := newPushNotificationTokenMutation(c.config, OpUpdateOne, withPushNotificationToken(pnt))
+	return &PushNotificationTokenUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *PushNotificationTokenClient) UpdateOneID(id uuid.UUID) *PushNotificationTokenUpdateOne {
+	mutation := newPushNotificationTokenMutation(c.config, OpUpdateOne, withPushNotificationTokenID(id))
+	return &PushNotificationTokenUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for PushNotificationToken.
+func (c *PushNotificationTokenClient) Delete() *PushNotificationTokenDelete {
+	mutation := newPushNotificationTokenMutation(c.config, OpDelete)
+	return &PushNotificationTokenDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *PushNotificationTokenClient) DeleteOne(pnt *PushNotificationToken) *PushNotificationTokenDeleteOne {
+	return c.DeleteOneID(pnt.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *PushNotificationTokenClient) DeleteOneID(id uuid.UUID) *PushNotificationTokenDeleteOne {
+	builder := c.Delete().Where(pushnotificationtoken.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &PushNotificationTokenDeleteOne{builder}
+}
+
+// Query returns a query builder for PushNotificationToken.
+func (c *PushNotificationTokenClient) Query() *PushNotificationTokenQuery {
+	return &PushNotificationTokenQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a PushNotificationToken entity by its id.
+func (c *PushNotificationTokenClient) Get(ctx context.Context, id uuid.UUID) (*PushNotificationToken, error) {
+	return c.Query().Where(pushnotificationtoken.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *PushNotificationTokenClient) GetX(ctx context.Context, id uuid.UUID) *PushNotificationToken {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryUser queries the user edge of a PushNotificationToken.
+func (c *PushNotificationTokenClient) QueryUser(pnt *PushNotificationToken) *UserQuery {
+	query := &UserQuery{config: c.config}
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := pnt.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(pushnotificationtoken.Table, pushnotificationtoken.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, pushnotificationtoken.UserTable, pushnotificationtoken.UserColumn),
+		)
+		fromV = sqlgraph.Neighbors(pnt.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *PushNotificationTokenClient) Hooks() []Hook {
+	return c.hooks.PushNotificationToken
+}
+
 // UserClient is a client for the User schema.
 type UserClient struct {
 	config
@@ -1496,6 +1609,22 @@ func (c *UserClient) QueryFriendUsers(u *User) *UserQuery {
 			sqlgraph.From(user.Table, user.FieldID, id),
 			sqlgraph.To(user.Table, user.FieldID),
 			sqlgraph.Edge(sqlgraph.M2M, false, user.FriendUsersTable, user.FriendUsersPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryPushNotificationTokens queries the push_notification_tokens edge of a User.
+func (c *UserClient) QueryPushNotificationTokens(u *User) *PushNotificationTokenQuery {
+	query := &PushNotificationTokenQuery{config: c.config}
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := u.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(pushnotificationtoken.Table, pushnotificationtoken.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, true, user.PushNotificationTokensTable, user.PushNotificationTokensColumn),
 		)
 		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
 		return fromV, nil

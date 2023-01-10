@@ -23,6 +23,8 @@ const (
 	EdgeUserProfile = "user_profile"
 	// EdgeFriendUsers holds the string denoting the friend_users edge name in mutations.
 	EdgeFriendUsers = "friend_users"
+	// EdgePushNotificationTokens holds the string denoting the push_notification_tokens edge name in mutations.
+	EdgePushNotificationTokens = "push_notification_tokens"
 	// EdgeFriendGroups holds the string denoting the friend_groups edge name in mutations.
 	EdgeFriendGroups = "friend_groups"
 	// EdgeBelongingFriendGroups holds the string denoting the belonging_friend_groups edge name in mutations.
@@ -53,6 +55,13 @@ const (
 	UserProfileColumn = "user_id"
 	// FriendUsersTable is the table that holds the friend_users relation/edge. The primary key declared below.
 	FriendUsersTable = "friendships"
+	// PushNotificationTokensTable is the table that holds the push_notification_tokens relation/edge.
+	PushNotificationTokensTable = "push_notification_tokens"
+	// PushNotificationTokensInverseTable is the table name for the PushNotificationToken entity.
+	// It exists in this package in order to avoid circular dependency with the "pushnotificationtoken" package.
+	PushNotificationTokensInverseTable = "push_notification_tokens"
+	// PushNotificationTokensColumn is the table column denoting the push_notification_tokens relation/edge.
+	PushNotificationTokensColumn = "user_id"
 	// FriendGroupsTable is the table that holds the friend_groups relation/edge.
 	FriendGroupsTable = "friend_groups"
 	// FriendGroupsInverseTable is the table name for the FriendGroup entity.

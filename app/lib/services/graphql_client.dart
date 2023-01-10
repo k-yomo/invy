@@ -2,7 +2,6 @@ import 'dart:io' show Platform;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:device_info_plus/device_info_plus.dart';
 import 'package:invy/util/device.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
@@ -37,6 +36,7 @@ Future<GraphQLClient> initGraphQLClient({
     "X-Device-Platform": Platform.operatingSystem,
     "X-Device-OS-Version": deviceInfo.osVersion,
     "X-Device-Model": deviceInfo.model,
+    "X-Device-Id": deviceInfo.deviceId,
   });
   Link authLink = AuthLink(getToken: () async {
     final currentUser = FirebaseAuth.instance.currentUser;

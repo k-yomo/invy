@@ -76,15 +76,20 @@ func main() {
 		logger.Fatal("initializing firebase app failed", zap.Error(err))
 	}
 
-	firebaseAuthClient, err := firebaseApp.Auth(context.Background())
+	firebaseAuthClient, err := firebaseApp.Auth(ctx)
 	if err != nil {
 		logger.Fatal("initializing firebase auth client failed", zap.Error(err))
+	}
+	fcmClient, err := firebaseApp.Messaging(ctx)
+	if err != nil {
+		logger.Fatal("initializing FCM client failed", zap.Error(err))
 	}
 
 	gqlConfig := gqlgen.Config{
 		Resolvers: &graph.Resolver{
 			DB:                 db,
 			FirebaseAuthClient: firebaseAuthClient,
+			FCMClient:          fcmClient,
 		},
 		Directives: gqlgen.DirectiveRoot{
 			AuthRequired: directive.AuthRequired,

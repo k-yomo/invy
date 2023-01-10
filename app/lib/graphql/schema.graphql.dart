@@ -263,6 +263,134 @@ class _CopyWithStubImpl$Input$CreateUserInput<TRes>
       _res;
 }
 
+class Input$RegisterPushNotificationTokenInput {
+  factory Input$RegisterPushNotificationTokenInput({
+    required String deviceId,
+    required String fcmToken,
+  }) =>
+      Input$RegisterPushNotificationTokenInput._({
+        r'deviceId': deviceId,
+        r'fcmToken': fcmToken,
+      });
+
+  Input$RegisterPushNotificationTokenInput._(this._$data);
+
+  factory Input$RegisterPushNotificationTokenInput.fromJson(
+      Map<String, dynamic> data) {
+    final result$data = <String, dynamic>{};
+    final l$deviceId = data['deviceId'];
+    result$data['deviceId'] = (l$deviceId as String);
+    final l$fcmToken = data['fcmToken'];
+    result$data['fcmToken'] = (l$fcmToken as String);
+    return Input$RegisterPushNotificationTokenInput._(result$data);
+  }
+
+  Map<String, dynamic> _$data;
+
+  String get deviceId => (_$data['deviceId'] as String);
+  String get fcmToken => (_$data['fcmToken'] as String);
+  Map<String, dynamic> toJson() {
+    final result$data = <String, dynamic>{};
+    final l$deviceId = deviceId;
+    result$data['deviceId'] = l$deviceId;
+    final l$fcmToken = fcmToken;
+    result$data['fcmToken'] = l$fcmToken;
+    return result$data;
+  }
+
+  CopyWith$Input$RegisterPushNotificationTokenInput<
+          Input$RegisterPushNotificationTokenInput>
+      get copyWith => CopyWith$Input$RegisterPushNotificationTokenInput(
+            this,
+            (i) => i,
+          );
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    if (!(other is Input$RegisterPushNotificationTokenInput) ||
+        runtimeType != other.runtimeType) {
+      return false;
+    }
+    final l$deviceId = deviceId;
+    final lOther$deviceId = other.deviceId;
+    if (l$deviceId != lOther$deviceId) {
+      return false;
+    }
+    final l$fcmToken = fcmToken;
+    final lOther$fcmToken = other.fcmToken;
+    if (l$fcmToken != lOther$fcmToken) {
+      return false;
+    }
+    return true;
+  }
+
+  @override
+  int get hashCode {
+    final l$deviceId = deviceId;
+    final l$fcmToken = fcmToken;
+    return Object.hashAll([
+      l$deviceId,
+      l$fcmToken,
+    ]);
+  }
+}
+
+abstract class CopyWith$Input$RegisterPushNotificationTokenInput<TRes> {
+  factory CopyWith$Input$RegisterPushNotificationTokenInput(
+    Input$RegisterPushNotificationTokenInput instance,
+    TRes Function(Input$RegisterPushNotificationTokenInput) then,
+  ) = _CopyWithImpl$Input$RegisterPushNotificationTokenInput;
+
+  factory CopyWith$Input$RegisterPushNotificationTokenInput.stub(TRes res) =
+      _CopyWithStubImpl$Input$RegisterPushNotificationTokenInput;
+
+  TRes call({
+    String? deviceId,
+    String? fcmToken,
+  });
+}
+
+class _CopyWithImpl$Input$RegisterPushNotificationTokenInput<TRes>
+    implements CopyWith$Input$RegisterPushNotificationTokenInput<TRes> {
+  _CopyWithImpl$Input$RegisterPushNotificationTokenInput(
+    this._instance,
+    this._then,
+  );
+
+  final Input$RegisterPushNotificationTokenInput _instance;
+
+  final TRes Function(Input$RegisterPushNotificationTokenInput) _then;
+
+  static const _undefined = {};
+
+  TRes call({
+    Object? deviceId = _undefined,
+    Object? fcmToken = _undefined,
+  }) =>
+      _then(Input$RegisterPushNotificationTokenInput._({
+        ..._instance._$data,
+        if (deviceId != _undefined && deviceId != null)
+          'deviceId': (deviceId as String),
+        if (fcmToken != _undefined && fcmToken != null)
+          'fcmToken': (fcmToken as String),
+      }));
+}
+
+class _CopyWithStubImpl$Input$RegisterPushNotificationTokenInput<TRes>
+    implements CopyWith$Input$RegisterPushNotificationTokenInput<TRes> {
+  _CopyWithStubImpl$Input$RegisterPushNotificationTokenInput(this._res);
+
+  TRes _res;
+
+  call({
+    String? deviceId,
+    String? fcmToken,
+  }) =>
+      _res;
+}
+
 class Input$SendInvitationInput {
   factory Input$SendInvitationInput({
     required List<String> targetFriendGroupIds,

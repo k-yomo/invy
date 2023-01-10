@@ -39,6 +39,7 @@ func (User) Edges() []ent.Edge {
 			Unique(),
 		edge.To("friend_users", User.Type).
 			Through("friendships", Friendship.Type),
+		edge.From("push_notification_tokens", PushNotificationToken.Type).Ref("user"),
 		edge.From("friend_groups", FriendGroup.Type).Ref("user"),
 		edge.From("belonging_friend_groups", FriendGroup.Type).
 			Ref("friend_users").

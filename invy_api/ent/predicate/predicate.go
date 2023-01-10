@@ -33,6 +33,9 @@ type InvitationFriendGroup func(*sql.Selector)
 // InvitationUser is the predicate function for invitationuser builders.
 type InvitationUser func(*sql.Selector)
 
+// PushNotificationToken is the predicate function for pushnotificationtoken builders.
+type PushNotificationToken func(*sql.Selector)
+
 // User is the predicate function for user builders.
 type User func(*sql.Selector)
 

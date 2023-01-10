@@ -1,15 +1,21 @@
 import 'dart:async';
-import 'package:flutter/foundation.dart';
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:invy/config/config.dart';
+import 'package:invy/graphql/push_notification.graphql.dart';
 import 'package:invy/services/graphql_client.dart';
+import 'package:invy/util/device.dart';
 
 import 'app.dart';
+import 'graphql/schema.graphql.dart';
 
 Future main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
@@ -37,6 +43,24 @@ Future main() async {
     uri: '${config.apiBaseUrl}/query',
     subscriptionUri: '${config.apiBaseUrl}/subscriptions',
   );
+
+  final deviceInfo = await getDeviceInfo();
+  FirebaseMessaging.instance.onTokenRefresh.listen((fcmToken) {
+    final mutateOptions = Options$Mutation$registerPushNotificationToken(
+      variables: Variables$Mutation$registerPushNotificationToken(
+          input: Input$RegisterPushNotificationTokenInput(
+        deviceId: deviceInfo.deviceId,
+        fcmToken: fcmToken,
+      )),
+    );
+    if (FirebaseAuth.instance.currentUser != null) {
+      graphqlClient.mutate$registerPushNotificationToken(mutateOptions);
+    } else {
+      FirebaseAuth.instance.authStateChanges().take(1).listen((user) {
+        graphqlClient.mutate$registerPushNotificationToken(mutateOptions);
+      });
+    }
+  });
 
   runApp(
     ProviderScope(

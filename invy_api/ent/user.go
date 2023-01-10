@@ -36,6 +36,8 @@ type UserEdges struct {
 	UserProfile *UserProfile `json:"user_profile,omitempty"`
 	// FriendUsers holds the value of the friend_users edge.
 	FriendUsers []*User `json:"friend_users,omitempty"`
+	// PushNotificationTokens holds the value of the push_notification_tokens edge.
+	PushNotificationTokens []*PushNotificationToken `json:"push_notification_tokens,omitempty"`
 	// FriendGroups holds the value of the friend_groups edge.
 	FriendGroups []*FriendGroup `json:"friend_groups,omitempty"`
 	// BelongingFriendGroups holds the value of the belonging_friend_groups edge.
@@ -50,17 +52,18 @@ type UserEdges struct {
 	UserFriendGroups []*UserFriendGroup `json:"user_friend_groups,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [9]bool
+	loadedTypes [10]bool
 	// totalCount holds the count of the edges above.
-	totalCount [9]map[string]int
+	totalCount [10]map[string]int
 
-	namedFriendUsers           map[string][]*User
-	namedFriendGroups          map[string][]*FriendGroup
-	namedBelongingFriendGroups map[string][]*FriendGroup
-	namedInvitationAcceptances map[string][]*InvitationAcceptance
-	namedInvitationDenials     map[string][]*InvitationDenial
-	namedFriendships           map[string][]*Friendship
-	namedUserFriendGroups      map[string][]*UserFriendGroup
+	namedFriendUsers            map[string][]*User
+	namedPushNotificationTokens map[string][]*PushNotificationToken
+	namedFriendGroups           map[string][]*FriendGroup
+	namedBelongingFriendGroups  map[string][]*FriendGroup
+	namedInvitationAcceptances  map[string][]*InvitationAcceptance
+	namedInvitationDenials      map[string][]*InvitationDenial
+	namedFriendships            map[string][]*Friendship
+	namedUserFriendGroups       map[string][]*UserFriendGroup
 }
 
 // AccountOrErr returns the Account value or an error if the edge
@@ -98,10 +101,19 @@ func (e UserEdges) FriendUsersOrErr() ([]*User, error) {
 	return nil, &NotLoadedError{edge: "friend_users"}
 }
 
+// PushNotificationTokensOrErr returns the PushNotificationTokens value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) PushNotificationTokensOrErr() ([]*PushNotificationToken, error) {
+	if e.loadedTypes[3] {
+		return e.PushNotificationTokens, nil
+	}
+	return nil, &NotLoadedError{edge: "push_notification_tokens"}
+}
+
 // FriendGroupsOrErr returns the FriendGroups value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) FriendGroupsOrErr() ([]*FriendGroup, error) {
-	if e.loadedTypes[3] {
+	if e.loadedTypes[4] {
 		return e.FriendGroups, nil
 	}
 	return nil, &NotLoadedError{edge: "friend_groups"}
@@ -110,7 +122,7 @@ func (e UserEdges) FriendGroupsOrErr() ([]*FriendGroup, error) {
 // BelongingFriendGroupsOrErr returns the BelongingFriendGroups value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) BelongingFriendGroupsOrErr() ([]*FriendGroup, error) {
-	if e.loadedTypes[4] {
+	if e.loadedTypes[5] {
 		return e.BelongingFriendGroups, nil
 	}
 	return nil, &NotLoadedError{edge: "belonging_friend_groups"}
@@ -119,7 +131,7 @@ func (e UserEdges) BelongingFriendGroupsOrErr() ([]*FriendGroup, error) {
 // InvitationAcceptancesOrErr returns the InvitationAcceptances value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) InvitationAcceptancesOrErr() ([]*InvitationAcceptance, error) {
-	if e.loadedTypes[5] {
+	if e.loadedTypes[6] {
 		return e.InvitationAcceptances, nil
 	}
 	return nil, &NotLoadedError{edge: "invitation_acceptances"}
@@ -128,7 +140,7 @@ func (e UserEdges) InvitationAcceptancesOrErr() ([]*InvitationAcceptance, error)
 // InvitationDenialsOrErr returns the InvitationDenials value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) InvitationDenialsOrErr() ([]*InvitationDenial, error) {
-	if e.loadedTypes[6] {
+	if e.loadedTypes[7] {
 		return e.InvitationDenials, nil
 	}
 	return nil, &NotLoadedError{edge: "invitation_denials"}
@@ -137,7 +149,7 @@ func (e UserEdges) InvitationDenialsOrErr() ([]*InvitationDenial, error) {
 // FriendshipsOrErr returns the Friendships value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) FriendshipsOrErr() ([]*Friendship, error) {
-	if e.loadedTypes[7] {
+	if e.loadedTypes[8] {
 		return e.Friendships, nil
 	}
 	return nil, &NotLoadedError{edge: "friendships"}
@@ -146,7 +158,7 @@ func (e UserEdges) FriendshipsOrErr() ([]*Friendship, error) {
 // UserFriendGroupsOrErr returns the UserFriendGroups value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) UserFriendGroupsOrErr() ([]*UserFriendGroup, error) {
-	if e.loadedTypes[8] {
+	if e.loadedTypes[9] {
 		return e.UserFriendGroups, nil
 	}
 	return nil, &NotLoadedError{edge: "user_friend_groups"}
@@ -212,6 +224,11 @@ func (u *User) QueryUserProfile() *UserProfileQuery {
 // QueryFriendUsers queries the "friend_users" edge of the User entity.
 func (u *User) QueryFriendUsers() *UserQuery {
 	return (&UserClient{config: u.config}).QueryFriendUsers(u)
+}
+
+// QueryPushNotificationTokens queries the "push_notification_tokens" edge of the User entity.
+func (u *User) QueryPushNotificationTokens() *PushNotificationTokenQuery {
+	return (&UserClient{config: u.config}).QueryPushNotificationTokens(u)
 }
 
 // QueryFriendGroups queries the "friend_groups" edge of the User entity.
@@ -297,6 +314,30 @@ func (u *User) appendNamedFriendUsers(name string, edges ...*User) {
 		u.Edges.namedFriendUsers[name] = []*User{}
 	} else {
 		u.Edges.namedFriendUsers[name] = append(u.Edges.namedFriendUsers[name], edges...)
+	}
+}
+
+// NamedPushNotificationTokens returns the PushNotificationTokens named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (u *User) NamedPushNotificationTokens(name string) ([]*PushNotificationToken, error) {
+	if u.Edges.namedPushNotificationTokens == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := u.Edges.namedPushNotificationTokens[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (u *User) appendNamedPushNotificationTokens(name string, edges ...*PushNotificationToken) {
+	if u.Edges.namedPushNotificationTokens == nil {
+		u.Edges.namedPushNotificationTokens = make(map[string][]*PushNotificationToken)
+	}
+	if len(edges) == 0 {
+		u.Edges.namedPushNotificationTokens[name] = []*PushNotificationToken{}
+	} else {
+		u.Edges.namedPushNotificationTokens[name] = append(u.Edges.namedPushNotificationTokens[name], edges...)
 	}
 }
 

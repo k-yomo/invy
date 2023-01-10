@@ -20,3 +20,17 @@ func MergeNodes[V gqlmodel.Node](a []V, b []V) []V {
 	}
 	return merged
 }
+
+// Dedup removes duplicated values from given slice
+// WARNING: The returned slice doesn't preserve the original order.
+func Dedup[T comparable](list []T) []T {
+	dedupedMap := map[T]struct{}{}
+	for _, v := range list {
+		dedupedMap[v] = struct{}{}
+	}
+	dedupedSlice := make([]T, 0, len(dedupedMap))
+	for v := range dedupedMap {
+		dedupedSlice = append(dedupedSlice, v)
+	}
+	return dedupedSlice
+}

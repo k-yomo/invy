@@ -30,6 +30,8 @@ type Tx struct {
 	InvitationFriendGroup *InvitationFriendGroupClient
 	// InvitationUser is the client for interacting with the InvitationUser builders.
 	InvitationUser *InvitationUserClient
+	// PushNotificationToken is the client for interacting with the PushNotificationToken builders.
+	PushNotificationToken *PushNotificationTokenClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
 	// UserFriendGroup is the client for interacting with the UserFriendGroup builders.
@@ -178,6 +180,7 @@ func (tx *Tx) init() {
 	tx.InvitationDenial = NewInvitationDenialClient(tx.config)
 	tx.InvitationFriendGroup = NewInvitationFriendGroupClient(tx.config)
 	tx.InvitationUser = NewInvitationUserClient(tx.config)
+	tx.PushNotificationToken = NewPushNotificationTokenClient(tx.config)
 	tx.User = NewUserClient(tx.config)
 	tx.UserFriendGroup = NewUserFriendGroupClient(tx.config)
 	tx.UserMute = NewUserMuteClient(tx.config)

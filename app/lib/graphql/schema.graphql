@@ -88,6 +88,7 @@ type Invitation implements Node {
 
 type Mutation {
   signUp(input: SignUpInput!): SignUpPayload!
+  signOut: SignOutPayload!
   createUser(input: CreateUserInput!): CreateUserPayload!
   switchUser(userId: UUID!): SwitchUserPayload!
   requestFriendship(friendUserId: UUID!): RequestFriendshipPayload!
@@ -100,6 +101,7 @@ type Mutation {
   sendInvitation(input: SendInvitationInput): SendInvitationPayload!
   acceptInvitation(invitationId: UUID!): AcceptInvitationPayload!
   denyInvitation(invitationId: UUID!): DenyInvitationPayload!
+  registerPushNotificationToken(input: RegisterPushNotificationTokenInput): RegisterPushNotificationTokenPayload!
   muteUser(userId: UUID!): MuteUserPayload!
   unmuteUser(userId: UUID!): UnmuteUserPayload!
 }
@@ -127,6 +129,15 @@ type Query {
   userByScreenId(screenId: String!): User!
 }
 
+input RegisterPushNotificationTokenInput {
+  deviceId: String!
+  fcmToken: String!
+}
+
+type RegisterPushNotificationTokenPayload {
+  registeredPushNotificationTokenId: UUID!
+}
+
 type RequestFriendshipPayload {
   friendShipRequest: FriendshipRequest!
 }
@@ -142,6 +153,10 @@ input SendInvitationInput {
 
 type SendInvitationPayload {
   invitation: Invitation!
+}
+
+type SignOutPayload {
+  signedOutUserId: UUID!
 }
 
 input SignUpInput {

@@ -691,6 +691,63 @@ func newInvitationUserPaginateArgs(rv map[string]interface{}) *invitationuserPag
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (pnt *PushNotificationTokenQuery) CollectFields(ctx context.Context, satisfies ...string) (*PushNotificationTokenQuery, error) {
+	fc := graphql.GetFieldContext(ctx)
+	if fc == nil {
+		return pnt, nil
+	}
+	if err := pnt.collectField(ctx, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+		return nil, err
+	}
+	return pnt, nil
+}
+
+func (pnt *PushNotificationTokenQuery) collectField(ctx context.Context, op *graphql.OperationContext, field graphql.CollectedField, path []string, satisfies ...string) error {
+	path = append([]string(nil), path...)
+	for _, field := range graphql.CollectFields(op, field.Selections, satisfies) {
+		switch field.Name {
+		case "user":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = &UserQuery{config: pnt.config}
+			)
+			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
+				return err
+			}
+			pnt.withUser = query
+		}
+	}
+	return nil
+}
+
+type pushnotificationtokenPaginateArgs struct {
+	first, last   *int
+	after, before *Cursor
+	opts          []PushNotificationTokenPaginateOption
+}
+
+func newPushNotificationTokenPaginateArgs(rv map[string]interface{}) *pushnotificationtokenPaginateArgs {
+	args := &pushnotificationtokenPaginateArgs{}
+	if rv == nil {
+		return args
+	}
+	if v := rv[firstField]; v != nil {
+		args.first = v.(*int)
+	}
+	if v := rv[lastField]; v != nil {
+		args.last = v.(*int)
+	}
+	if v := rv[afterField]; v != nil {
+		args.after = v.(*Cursor)
+	}
+	if v := rv[beforeField]; v != nil {
+		args.before = v.(*Cursor)
+	}
+	return args
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
 func (u *UserQuery) CollectFields(ctx context.Context, satisfies ...string) (*UserQuery, error) {
 	fc := graphql.GetFieldContext(ctx)
 	if fc == nil {
@@ -736,6 +793,18 @@ func (u *UserQuery) collectField(ctx context.Context, op *graphql.OperationConte
 				return err
 			}
 			u.WithNamedFriendUsers(alias, func(wq *UserQuery) {
+				*wq = *query
+			})
+		case "pushNotificationTokens":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = &PushNotificationTokenQuery{config: u.config}
+			)
+			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
+				return err
+			}
+			u.WithNamedPushNotificationTokens(alias, func(wq *PushNotificationTokenQuery) {
 				*wq = *query
 			})
 		case "friendGroups":

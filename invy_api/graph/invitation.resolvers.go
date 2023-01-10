@@ -10,14 +10,18 @@ import (
 	"fmt"
 	"time"
 
+	fcm "firebase.google.com/go/v4/messaging"
 	"github.com/google/uuid"
 	"github.com/k-yomo/invy/invy_api/auth"
 	"github.com/k-yomo/invy/invy_api/ent"
+	"github.com/k-yomo/invy/invy_api/ent/invitationfriendgroup"
+	"github.com/k-yomo/invy/invy_api/ent/user"
 	"github.com/k-yomo/invy/invy_api/graph/conv"
 	"github.com/k-yomo/invy/invy_api/graph/gqlgen"
 	"github.com/k-yomo/invy/invy_api/graph/gqlmodel"
 	"github.com/k-yomo/invy/invy_api/graph/loader"
 	"github.com/k-yomo/invy/pkg/convutil"
+	"github.com/k-yomo/invy/pkg/sliceutil"
 )
 
 // User is the resolver for the user field.
@@ -74,6 +78,7 @@ func (r *mutationResolver) SendInvitation(ctx context.Context, input *gqlmodel.S
 		if err != nil {
 			return err
 		}
+		// TODO: We may need to check if they are friends
 		invitationUserCreates := make([]*ent.InvitationUserCreate, 0, len(input.TargetFriendUserIds))
 		for _, targetUserID := range input.TargetFriendUserIds {
 			invitationUserCreates = append(
@@ -92,7 +97,42 @@ func (r *mutationResolver) SendInvitation(ctx context.Context, input *gqlmodel.S
 	if err != nil {
 		return nil, err
 	}
-	// TODO: Notification to invited users
+
+	// TODO: Send notification async
+	inviterProflie, err := r.DB.UserProfile.Get(ctx, dbInvitation.UserID)
+	if err != nil {
+		return nil, err
+	}
+	targetGroupUserPushNotificationTokens, err := r.DB.InvitationFriendGroup.Query().
+		Where(invitationfriendgroup.FriendGroupIDIn(input.TargetFriendGroupIds...)).
+		QueryFriendGroup().
+		QueryUserFriendGroups().
+		QueryUser().
+		QueryPushNotificationTokens().
+		All(ctx)
+	if err != nil {
+		return nil, err
+	}
+	targetUserPushNotificationTokens, err := r.DB.User.Query().
+		Where(user.IDIn(input.TargetFriendUserIds...)).
+		QueryPushNotificationTokens().
+		All(ctx)
+	if err != nil {
+		return nil, err
+	}
+	dedupedPushNotificationTokens := sliceutil.Dedup(append(targetGroupUserPushNotificationTokens, targetUserPushNotificationTokens...))
+	fcmTokens := convutil.ConvertToList(dedupedPushNotificationTokens, func(from *ent.PushNotificationToken) string {
+		return from.FcmToken
+	})
+	// TODO: Chunk tokens by 500 (max tokens per multicast)
+	r.FCMClient.SendMulticast(ctx, &fcm.MulticastMessage{
+		Tokens: fcmTokens,
+		Data:   nil,
+		Notification: &fcm.Notification{
+			Title: inviterProflie.Nickname,
+			Body:  fmt.Sprintf("%sさんから、%s開催のさそいが届きました。", inviterProflie.Nickname, dbInvitation.Location),
+		},
+	})
 	return &gqlmodel.SendInvitationPayload{Invitation: conv.ConvertFromDBInvitation(dbInvitation)}, nil
 }
 

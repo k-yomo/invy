@@ -1,0 +1,11 @@
+extend type Mutation {
+    registerPushNotificationToken(input: RegisterPushNotificationTokenInput): RegisterPushNotificationTokenPayload! @authRequired
+}
+
+input RegisterPushNotificationTokenInput {
+    deviceId: String!
+    fcmToken: String!
+}
+type RegisterPushNotificationTokenPayload {
+    registeredPushNotificationTokenId: UUID!
+}

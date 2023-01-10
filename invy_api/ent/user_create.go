@@ -18,6 +18,7 @@ import (
 	"github.com/k-yomo/invy/invy_api/ent/friendship"
 	"github.com/k-yomo/invy/invy_api/ent/invitationacceptance"
 	"github.com/k-yomo/invy/invy_api/ent/invitationdenial"
+	"github.com/k-yomo/invy/invy_api/ent/pushnotificationtoken"
 	"github.com/k-yomo/invy/invy_api/ent/user"
 	"github.com/k-yomo/invy/invy_api/ent/userfriendgroup"
 	"github.com/k-yomo/invy/invy_api/ent/userprofile"
@@ -102,6 +103,21 @@ func (uc *UserCreate) AddFriendUsers(u ...*User) *UserCreate {
 		ids[i] = u[i].ID
 	}
 	return uc.AddFriendUserIDs(ids...)
+}
+
+// AddPushNotificationTokenIDs adds the "push_notification_tokens" edge to the PushNotificationToken entity by IDs.
+func (uc *UserCreate) AddPushNotificationTokenIDs(ids ...uuid.UUID) *UserCreate {
+	uc.mutation.AddPushNotificationTokenIDs(ids...)
+	return uc
+}
+
+// AddPushNotificationTokens adds the "push_notification_tokens" edges to the PushNotificationToken entity.
+func (uc *UserCreate) AddPushNotificationTokens(p ...*PushNotificationToken) *UserCreate {
+	ids := make([]uuid.UUID, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return uc.AddPushNotificationTokenIDs(ids...)
 }
 
 // AddFriendGroupIDs adds the "friend_groups" edge to the FriendGroup entity by IDs.
@@ -395,6 +411,25 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		edge.Target.Fields = specE.Fields
 		if specE.ID.Value != nil {
 			edge.Target.Fields = append(edge.Target.Fields, specE.ID)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.PushNotificationTokensIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.PushNotificationTokensTable,
+			Columns: []string{user.PushNotificationTokensColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeUUID,
+					Column: pushnotificationtoken.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}

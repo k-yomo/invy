@@ -16,6 +16,7 @@ import (
 	"github.com/k-yomo/invy/invy_api/ent/invitationacceptance"
 	"github.com/k-yomo/invy/invy_api/ent/invitationdenial"
 	"github.com/k-yomo/invy/invy_api/ent/predicate"
+	"github.com/k-yomo/invy/invy_api/ent/pushnotificationtoken"
 	"github.com/k-yomo/invy/invy_api/ent/user"
 	"github.com/k-yomo/invy/invy_api/ent/userfriendgroup"
 	"github.com/k-yomo/invy/invy_api/ent/userprofile"
@@ -66,6 +67,21 @@ func (uu *UserUpdate) AddFriendUsers(u ...*User) *UserUpdate {
 		ids[i] = u[i].ID
 	}
 	return uu.AddFriendUserIDs(ids...)
+}
+
+// AddPushNotificationTokenIDs adds the "push_notification_tokens" edge to the PushNotificationToken entity by IDs.
+func (uu *UserUpdate) AddPushNotificationTokenIDs(ids ...uuid.UUID) *UserUpdate {
+	uu.mutation.AddPushNotificationTokenIDs(ids...)
+	return uu
+}
+
+// AddPushNotificationTokens adds the "push_notification_tokens" edges to the PushNotificationToken entity.
+func (uu *UserUpdate) AddPushNotificationTokens(p ...*PushNotificationToken) *UserUpdate {
+	ids := make([]uuid.UUID, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return uu.AddPushNotificationTokenIDs(ids...)
 }
 
 // AddFriendGroupIDs adds the "friend_groups" edge to the FriendGroup entity by IDs.
@@ -188,6 +204,27 @@ func (uu *UserUpdate) RemoveFriendUsers(u ...*User) *UserUpdate {
 		ids[i] = u[i].ID
 	}
 	return uu.RemoveFriendUserIDs(ids...)
+}
+
+// ClearPushNotificationTokens clears all "push_notification_tokens" edges to the PushNotificationToken entity.
+func (uu *UserUpdate) ClearPushNotificationTokens() *UserUpdate {
+	uu.mutation.ClearPushNotificationTokens()
+	return uu
+}
+
+// RemovePushNotificationTokenIDs removes the "push_notification_tokens" edge to PushNotificationToken entities by IDs.
+func (uu *UserUpdate) RemovePushNotificationTokenIDs(ids ...uuid.UUID) *UserUpdate {
+	uu.mutation.RemovePushNotificationTokenIDs(ids...)
+	return uu
+}
+
+// RemovePushNotificationTokens removes "push_notification_tokens" edges to PushNotificationToken entities.
+func (uu *UserUpdate) RemovePushNotificationTokens(p ...*PushNotificationToken) *UserUpdate {
+	ids := make([]uuid.UUID, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return uu.RemovePushNotificationTokenIDs(ids...)
 }
 
 // ClearFriendGroups clears all "friend_groups" edges to the FriendGroup entity.
@@ -509,6 +546,60 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		edge.Target.Fields = specE.Fields
 		if specE.ID.Value != nil {
 			edge.Target.Fields = append(edge.Target.Fields, specE.ID)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uu.mutation.PushNotificationTokensCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.PushNotificationTokensTable,
+			Columns: []string{user.PushNotificationTokensColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeUUID,
+					Column: pushnotificationtoken.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RemovedPushNotificationTokensIDs(); len(nodes) > 0 && !uu.mutation.PushNotificationTokensCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.PushNotificationTokensTable,
+			Columns: []string{user.PushNotificationTokensColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeUUID,
+					Column: pushnotificationtoken.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.PushNotificationTokensIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.PushNotificationTokensTable,
+			Columns: []string{user.PushNotificationTokensColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeUUID,
+					Column: pushnotificationtoken.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
@@ -910,6 +1001,21 @@ func (uuo *UserUpdateOne) AddFriendUsers(u ...*User) *UserUpdateOne {
 	return uuo.AddFriendUserIDs(ids...)
 }
 
+// AddPushNotificationTokenIDs adds the "push_notification_tokens" edge to the PushNotificationToken entity by IDs.
+func (uuo *UserUpdateOne) AddPushNotificationTokenIDs(ids ...uuid.UUID) *UserUpdateOne {
+	uuo.mutation.AddPushNotificationTokenIDs(ids...)
+	return uuo
+}
+
+// AddPushNotificationTokens adds the "push_notification_tokens" edges to the PushNotificationToken entity.
+func (uuo *UserUpdateOne) AddPushNotificationTokens(p ...*PushNotificationToken) *UserUpdateOne {
+	ids := make([]uuid.UUID, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return uuo.AddPushNotificationTokenIDs(ids...)
+}
+
 // AddFriendGroupIDs adds the "friend_groups" edge to the FriendGroup entity by IDs.
 func (uuo *UserUpdateOne) AddFriendGroupIDs(ids ...uuid.UUID) *UserUpdateOne {
 	uuo.mutation.AddFriendGroupIDs(ids...)
@@ -1030,6 +1136,27 @@ func (uuo *UserUpdateOne) RemoveFriendUsers(u ...*User) *UserUpdateOne {
 		ids[i] = u[i].ID
 	}
 	return uuo.RemoveFriendUserIDs(ids...)
+}
+
+// ClearPushNotificationTokens clears all "push_notification_tokens" edges to the PushNotificationToken entity.
+func (uuo *UserUpdateOne) ClearPushNotificationTokens() *UserUpdateOne {
+	uuo.mutation.ClearPushNotificationTokens()
+	return uuo
+}
+
+// RemovePushNotificationTokenIDs removes the "push_notification_tokens" edge to PushNotificationToken entities by IDs.
+func (uuo *UserUpdateOne) RemovePushNotificationTokenIDs(ids ...uuid.UUID) *UserUpdateOne {
+	uuo.mutation.RemovePushNotificationTokenIDs(ids...)
+	return uuo
+}
+
+// RemovePushNotificationTokens removes "push_notification_tokens" edges to PushNotificationToken entities.
+func (uuo *UserUpdateOne) RemovePushNotificationTokens(p ...*PushNotificationToken) *UserUpdateOne {
+	ids := make([]uuid.UUID, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return uuo.RemovePushNotificationTokenIDs(ids...)
 }
 
 // ClearFriendGroups clears all "friend_groups" edges to the FriendGroup entity.
@@ -1381,6 +1508,60 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 		edge.Target.Fields = specE.Fields
 		if specE.ID.Value != nil {
 			edge.Target.Fields = append(edge.Target.Fields, specE.ID)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uuo.mutation.PushNotificationTokensCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.PushNotificationTokensTable,
+			Columns: []string{user.PushNotificationTokensColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeUUID,
+					Column: pushnotificationtoken.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RemovedPushNotificationTokensIDs(); len(nodes) > 0 && !uuo.mutation.PushNotificationTokensCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.PushNotificationTokensTable,
+			Columns: []string{user.PushNotificationTokensColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeUUID,
+					Column: pushnotificationtoken.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.PushNotificationTokensIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.PushNotificationTokensTable,
+			Columns: []string{user.PushNotificationTokensColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeUUID,
+					Column: pushnotificationtoken.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}

@@ -13,6 +13,7 @@ import (
 	"github.com/k-yomo/invy/invy_api/auth"
 	"github.com/k-yomo/invy/invy_api/ent"
 	"github.com/k-yomo/invy/invy_api/ent/account"
+	"github.com/k-yomo/invy/invy_api/ent/pushnotificationtoken"
 	"github.com/k-yomo/invy/invy_api/ent/user"
 	"github.com/k-yomo/invy/invy_api/ent/userprofile"
 	"github.com/k-yomo/invy/invy_api/graph/conv"
@@ -117,6 +118,19 @@ func (r *mutationResolver) SignUp(ctx context.Context, input gqlmodel.SignUpInpu
 	}
 
 	return &gqlmodel.SignUpPayload{Viewer: conv.ConvertFromDBUserProfileToViewer(dbUserProfile)}, nil
+}
+
+// SignOut is the resolver for the signOut field.
+func (r *mutationResolver) SignOut(ctx context.Context) (*gqlmodel.SignOutPayload, error) {
+	authUserID := auth.GetCurrentUserID(ctx)
+	// Not to send push notifications to signed out user
+	_, err := r.DB.PushNotificationToken.Delete().
+		Where(pushnotificationtoken.UserID(authUserID)).
+		Exec(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return &gqlmodel.SignOutPayload{SignedOutUserID: authUserID}, nil
 }
 
 // CreateUser is the resolver for the createUser field.

@@ -12,7 +12,6 @@ import 'package:invy/components/friend_list_item_fragment.graphql.dart';
 import 'package:invy/components/friend_selection_list.dart';
 import 'package:invy/graphql/invitation_screen.graphql.dart';
 import 'package:invy/graphql/schema.graphql.dart';
-import 'package:invy/screens/home_screen.dart';
 
 import '../components/friend_group_fragment.graphql.dart';
 import '../components/friend_group_icon.dart';

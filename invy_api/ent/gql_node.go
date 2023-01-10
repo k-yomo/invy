@@ -20,6 +20,7 @@ import (
 	"github.com/k-yomo/invy/invy_api/ent/invitationdenial"
 	"github.com/k-yomo/invy/invy_api/ent/invitationfriendgroup"
 	"github.com/k-yomo/invy/invy_api/ent/invitationuser"
+	"github.com/k-yomo/invy/invy_api/ent/pushnotificationtoken"
 	"github.com/k-yomo/invy/invy_api/ent/user"
 	"github.com/k-yomo/invy/invy_api/ent/userfriendgroup"
 	"github.com/k-yomo/invy/invy_api/ent/usermute"
@@ -636,12 +637,73 @@ func (iu *InvitationUser) Node(ctx context.Context) (node *Node, err error) {
 	return node, nil
 }
 
+func (pnt *PushNotificationToken) Node(ctx context.Context) (node *Node, err error) {
+	node = &Node{
+		ID:     pnt.ID,
+		Type:   "PushNotificationToken",
+		Fields: make([]*Field, 5),
+		Edges:  make([]*Edge, 1),
+	}
+	var buf []byte
+	if buf, err = json.Marshal(pnt.UserID); err != nil {
+		return nil, err
+	}
+	node.Fields[0] = &Field{
+		Type:  "uuid.UUID",
+		Name:  "user_id",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(pnt.DeviceID); err != nil {
+		return nil, err
+	}
+	node.Fields[1] = &Field{
+		Type:  "string",
+		Name:  "device_id",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(pnt.FcmToken); err != nil {
+		return nil, err
+	}
+	node.Fields[2] = &Field{
+		Type:  "string",
+		Name:  "fcm_token",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(pnt.CreatedAt); err != nil {
+		return nil, err
+	}
+	node.Fields[3] = &Field{
+		Type:  "time.Time",
+		Name:  "created_at",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(pnt.UpdatedAt); err != nil {
+		return nil, err
+	}
+	node.Fields[4] = &Field{
+		Type:  "time.Time",
+		Name:  "updated_at",
+		Value: string(buf),
+	}
+	node.Edges[0] = &Edge{
+		Type: "User",
+		Name: "user",
+	}
+	err = pnt.QueryUser().
+		Select(user.FieldID).
+		Scan(ctx, &node.Edges[0].IDs)
+	if err != nil {
+		return nil, err
+	}
+	return node, nil
+}
+
 func (u *User) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     u.ID,
 		Type:   "User",
 		Fields: make([]*Field, 2),
-		Edges:  make([]*Edge, 9),
+		Edges:  make([]*Edge, 10),
 	}
 	var buf []byte
 	if buf, err = json.Marshal(u.AccountID); err != nil {
@@ -691,62 +753,72 @@ func (u *User) Node(ctx context.Context) (node *Node, err error) {
 		return nil, err
 	}
 	node.Edges[3] = &Edge{
-		Type: "FriendGroup",
-		Name: "friend_groups",
+		Type: "PushNotificationToken",
+		Name: "push_notification_tokens",
 	}
-	err = u.QueryFriendGroups().
-		Select(friendgroup.FieldID).
+	err = u.QueryPushNotificationTokens().
+		Select(pushnotificationtoken.FieldID).
 		Scan(ctx, &node.Edges[3].IDs)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[4] = &Edge{
 		Type: "FriendGroup",
-		Name: "belonging_friend_groups",
+		Name: "friend_groups",
 	}
-	err = u.QueryBelongingFriendGroups().
+	err = u.QueryFriendGroups().
 		Select(friendgroup.FieldID).
 		Scan(ctx, &node.Edges[4].IDs)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[5] = &Edge{
-		Type: "InvitationAcceptance",
-		Name: "invitation_acceptances",
+		Type: "FriendGroup",
+		Name: "belonging_friend_groups",
 	}
-	err = u.QueryInvitationAcceptances().
-		Select(invitationacceptance.FieldID).
+	err = u.QueryBelongingFriendGroups().
+		Select(friendgroup.FieldID).
 		Scan(ctx, &node.Edges[5].IDs)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[6] = &Edge{
-		Type: "InvitationDenial",
-		Name: "invitation_denials",
+		Type: "InvitationAcceptance",
+		Name: "invitation_acceptances",
 	}
-	err = u.QueryInvitationDenials().
-		Select(invitationdenial.FieldID).
+	err = u.QueryInvitationAcceptances().
+		Select(invitationacceptance.FieldID).
 		Scan(ctx, &node.Edges[6].IDs)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[7] = &Edge{
-		Type: "Friendship",
-		Name: "friendships",
+		Type: "InvitationDenial",
+		Name: "invitation_denials",
 	}
-	err = u.QueryFriendships().
-		Select(friendship.FieldID).
+	err = u.QueryInvitationDenials().
+		Select(invitationdenial.FieldID).
 		Scan(ctx, &node.Edges[7].IDs)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[8] = &Edge{
+		Type: "Friendship",
+		Name: "friendships",
+	}
+	err = u.QueryFriendships().
+		Select(friendship.FieldID).
+		Scan(ctx, &node.Edges[8].IDs)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[9] = &Edge{
 		Type: "UserFriendGroup",
 		Name: "user_friend_groups",
 	}
 	err = u.QueryUserFriendGroups().
 		Select(userfriendgroup.FieldID).
-		Scan(ctx, &node.Edges[8].IDs)
+		Scan(ctx, &node.Edges[9].IDs)
 	if err != nil {
 		return nil, err
 	}
@@ -1106,6 +1178,18 @@ func (c *Client) noder(ctx context.Context, table string, id uuid.UUID) (Noder, 
 			return nil, err
 		}
 		return n, nil
+	case pushnotificationtoken.Table:
+		query := c.PushNotificationToken.Query().
+			Where(pushnotificationtoken.ID(id))
+		query, err := query.CollectFields(ctx, "PushNotificationToken")
+		if err != nil {
+			return nil, err
+		}
+		n, err := query.Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
 	case user.Table:
 		query := c.User.Query().
 			Where(user.ID(id))
@@ -1359,6 +1443,22 @@ func (c *Client) noders(ctx context.Context, table string, ids []uuid.UUID) ([]N
 		query := c.InvitationUser.Query().
 			Where(invitationuser.IDIn(ids...))
 		query, err := query.CollectFields(ctx, "InvitationUser")
+		if err != nil {
+			return nil, err
+		}
+		nodes, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, node := range nodes {
+			for _, noder := range idmap[node.ID] {
+				*noder = node
+			}
+		}
+	case pushnotificationtoken.Table:
+		query := c.PushNotificationToken.Query().
+			Where(pushnotificationtoken.IDIn(ids...))
+		query, err := query.CollectFields(ctx, "PushNotificationToken")
 		if err != nil {
 			return nil, err
 		}

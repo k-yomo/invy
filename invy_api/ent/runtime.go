@@ -15,6 +15,7 @@ import (
 	"github.com/k-yomo/invy/invy_api/ent/invitationdenial"
 	"github.com/k-yomo/invy/invy_api/ent/invitationfriendgroup"
 	"github.com/k-yomo/invy/invy_api/ent/invitationuser"
+	"github.com/k-yomo/invy/invy_api/ent/pushnotificationtoken"
 	"github.com/k-yomo/invy/invy_api/ent/schema"
 	"github.com/k-yomo/invy/invy_api/ent/user"
 	"github.com/k-yomo/invy/invy_api/ent/userfriendgroup"
@@ -132,6 +133,22 @@ func init() {
 	invitationuserDescID := invitationuserFields[0].Descriptor()
 	// invitationuser.DefaultID holds the default value on creation for the id field.
 	invitationuser.DefaultID = invitationuserDescID.Default.(func() uuid.UUID)
+	pushnotificationtokenFields := schema.PushNotificationToken{}.Fields()
+	_ = pushnotificationtokenFields
+	// pushnotificationtokenDescCreatedAt is the schema descriptor for created_at field.
+	pushnotificationtokenDescCreatedAt := pushnotificationtokenFields[4].Descriptor()
+	// pushnotificationtoken.DefaultCreatedAt holds the default value on creation for the created_at field.
+	pushnotificationtoken.DefaultCreatedAt = pushnotificationtokenDescCreatedAt.Default.(func() time.Time)
+	// pushnotificationtokenDescUpdatedAt is the schema descriptor for updated_at field.
+	pushnotificationtokenDescUpdatedAt := pushnotificationtokenFields[5].Descriptor()
+	// pushnotificationtoken.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	pushnotificationtoken.DefaultUpdatedAt = pushnotificationtokenDescUpdatedAt.Default.(func() time.Time)
+	// pushnotificationtoken.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	pushnotificationtoken.UpdateDefaultUpdatedAt = pushnotificationtokenDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// pushnotificationtokenDescID is the schema descriptor for id field.
+	pushnotificationtokenDescID := pushnotificationtokenFields[0].Descriptor()
+	// pushnotificationtoken.DefaultID holds the default value on creation for the id field.
+	pushnotificationtoken.DefaultID = pushnotificationtokenDescID.Default.(func() uuid.UUID)
 	userFields := schema.User{}.Fields()
 	_ = userFields
 	// userDescCreatedAt is the schema descriptor for created_at field.

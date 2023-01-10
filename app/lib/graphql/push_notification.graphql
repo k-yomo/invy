@@ -1,0 +1,6 @@
+
+mutation registerPushNotificationToken($input: RegisterPushNotificationTokenInput!) {
+    registerPushNotificationToken(input: $input) {
+        registeredPushNotificationTokenId
+    }
+}

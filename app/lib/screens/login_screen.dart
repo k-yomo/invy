@@ -1,6 +1,8 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_signin_button/button_list.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:gap/gap.dart';
+import 'package:invy/graphql/push_notification.graphql.dart';
 import 'package:invy/graphql/schema.graphql.dart';
 import 'package:invy/services/graphql_client.dart';
 import 'package:invy/state/auth.dart';
@@ -11,6 +13,8 @@ import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+
+import '../util/device.dart';
 
 class LoginScreen extends HookConsumerWidget {
   const LoginScreen({super.key});
@@ -25,6 +29,17 @@ class LoginScreen extends HookConsumerWidget {
         // TODO: show error
         return;
       }
+
+      // Ask notification permission
+      await FirebaseMessaging.instance.requestPermission(
+        alert: true,
+        announcement: false,
+        badge: true,
+        carPlay: false,
+        criticalAlert: false,
+        provisional: false,
+        sound: true,
+      );
 
       final result = await firebaseUser.getIdTokenResult();
       if (result.claims?.containsKey("currentUserId") ?? false) {
@@ -45,10 +60,8 @@ class LoginScreen extends HookConsumerWidget {
           nickname: user.nickname,
           avatarUrl: user.avatarUrl,
         );
-        print("logged in successfully");
-        return;
       } else {
-        final res = await graphqlClient.mutate(Options$Mutation$signUp(
+        final res = await graphqlClient.mutate$signUp(Options$Mutation$signUp(
             variables: Variables$Mutation$signUp(
           input: Input$SignUpInput(
             email: firebaseUser.email,
@@ -69,8 +82,23 @@ class LoginScreen extends HookConsumerWidget {
               screenId: user.screenId,
               nickname: user.nickname,
               avatarUrl: user.avatarUrl);
-          print("signed up in successfully");
           // TODO: redirect to user profile update page?
+        }
+      }
+
+      final fcmToken = await FirebaseMessaging.instance.getToken();
+      if (fcmToken != null) {
+        final deviceInfo = await getDeviceInfo();
+        final result = await graphqlClient.mutate$registerPushNotificationToken(
+            Options$Mutation$registerPushNotificationToken(
+          variables: Variables$Mutation$registerPushNotificationToken(
+              input: Input$RegisterPushNotificationTokenInput(
+            deviceId: deviceInfo.deviceId,
+            fcmToken: fcmToken,
+          )),
+        ));
+        if (result.hasException) {
+          print(result.exception);
         }
       }
     }

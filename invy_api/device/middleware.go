@@ -18,6 +18,7 @@ const (
 	headerDevicePlatform     = "X-Device-Platform"
 	headerDeviceOSVersion    = "X-Device-OS-Version"
 	headerDeviceModel        = "X-Device-Model"
+	headerDeviceID           = "X-Device-Id"
 )
 
 type ctxKeyDevice struct{}
@@ -58,6 +59,7 @@ func Middleware(next http.Handler) http.Handler {
 			Platform:       r.Header.Get(headerDevicePlatform),
 			OSVersion:      r.Header.Get(headerDeviceOSVersion),
 			Model:          r.Header.Get(headerDeviceModel),
+			DeviceID:       r.Header.Get(headerDeviceID),
 		}
 		ctx = setDevice(ctx, &device)
 		logging.AddFields(ctx, zap.Any("device", device))
