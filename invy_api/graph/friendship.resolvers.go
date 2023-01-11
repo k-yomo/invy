@@ -7,13 +7,17 @@ package graph
 import (
 	"context"
 	"errors"
+	"fmt"
 
+	fcm "firebase.google.com/go/v4/messaging"
 	"github.com/google/uuid"
 	"github.com/k-yomo/invy/invy_api/auth"
 	"github.com/k-yomo/invy/invy_api/ent"
 	"github.com/k-yomo/invy/invy_api/ent/friendgroup"
 	"github.com/k-yomo/invy/invy_api/ent/friendship"
 	"github.com/k-yomo/invy/invy_api/ent/friendshiprequest"
+	"github.com/k-yomo/invy/invy_api/ent/pushnotificationtoken"
+	"github.com/k-yomo/invy/invy_api/ent/userprofile"
 	"github.com/k-yomo/invy/invy_api/graph/conv"
 	"github.com/k-yomo/invy/invy_api/graph/gqlgen"
 	"github.com/k-yomo/invy/invy_api/graph/gqlmodel"
@@ -78,7 +82,33 @@ func (r *mutationResolver) RequestFriendship(ctx context.Context, friendUserID u
 	if err != nil {
 		return nil, err
 	}
-	// TODO: notification
+
+	// TODO: Send notification async
+	requesterProfile, err := r.DB.UserProfile.Query().
+		Where(userprofile.UserID(authUserID)).
+		Only(ctx)
+	if err != nil {
+		return nil, err
+	}
+	friendUserPushNotificationTokens, err := r.DB.PushNotificationToken.Query().
+		Where(pushnotificationtoken.UserID(friendUserID)).
+		All(ctx)
+	if err != nil {
+		return nil, err
+	}
+	fcmTokens := convutil.ConvertToList(friendUserPushNotificationTokens, func(from *ent.PushNotificationToken) string {
+		return from.FcmToken
+	})
+	r.FCMClient.SendMulticast(ctx, &fcm.MulticastMessage{
+		Tokens: fcmTokens,
+		Data:   nil,
+		Notification: &fcm.Notification{
+			Body: fmt.Sprintf("%sさんから友達申請が届きました。", requesterProfile.Nickname),
+		},
+		Android: &fcm.AndroidConfig{
+			Priority: "high",
+		},
+	})
 	return &gqlmodel.RequestFriendshipPayload{FriendShipRequest: conv.ConvertFromDBFriendshipRequest(dbFriendshipRequest)}, nil
 }
 
@@ -100,6 +130,7 @@ func (r *mutationResolver) CancelFriendshipRequest(ctx context.Context, friendsh
 // AcceptFriendshipRequest is the resolver for the acceptFriendshipRequest field.
 func (r *mutationResolver) AcceptFriendshipRequest(ctx context.Context, friendshipRequestID uuid.UUID) (*gqlmodel.AcceptFriendshipRequestPayload, error) {
 	authUserID := auth.GetCurrentUserID(ctx)
+	var requestedUserID uuid.UUID
 	err := ent.RunInTx(ctx, r.DB, func(tx *ent.Tx) error {
 		friendshipRequest, err := tx.FriendshipRequest.Query().
 			Where(
@@ -109,6 +140,7 @@ func (r *mutationResolver) AcceptFriendshipRequest(ctx context.Context, friendsh
 		if err != nil {
 			return err
 		}
+		requestedUserID = friendshipRequest.FromUserID
 		if err := tx.FriendshipRequest.DeleteOne(friendshipRequest).Exec(ctx); err != nil {
 			return err
 		}
@@ -131,7 +163,33 @@ func (r *mutationResolver) AcceptFriendshipRequest(ctx context.Context, friendsh
 	if err != nil {
 		return nil, err
 	}
-	// TODO: notification
+
+	// TODO: Send notification async
+	acceptedUserProfile, err := r.DB.UserProfile.Query().
+		Where(userprofile.UserID(authUserID)).
+		Only(ctx)
+	if err != nil {
+		return nil, err
+	}
+	requestedUserPushNotificationTokens, err := r.DB.PushNotificationToken.Query().
+		Where(pushnotificationtoken.UserID(requestedUserID)).
+		All(ctx)
+	if err != nil {
+		return nil, err
+	}
+	fcmTokens := convutil.ConvertToList(requestedUserPushNotificationTokens, func(from *ent.PushNotificationToken) string {
+		return from.FcmToken
+	})
+	r.FCMClient.SendMulticast(ctx, &fcm.MulticastMessage{
+		Tokens: fcmTokens,
+		Data:   nil,
+		Notification: &fcm.Notification{
+			Body: fmt.Sprintf("%sさんが友達申請を承諾しました。", acceptedUserProfile.Nickname),
+		},
+		Android: &fcm.AndroidConfig{
+			Priority: "high",
+		},
+	})
 	return &gqlmodel.AcceptFriendshipRequestPayload{AcceptedFriendshipRequestID: friendshipRequestID}, nil
 }
 
