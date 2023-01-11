@@ -108,6 +108,7 @@ func (r *mutationResolver) SendInvitation(ctx context.Context, input *gqlmodel.S
 	if err != nil {
 		return nil, err
 	}
+	// TODO: Remove muted users
 	targetGroupUserPushNotificationTokens, err := r.DB.InvitationFriendGroup.Query().
 		Where(invitationfriendgroup.FriendGroupIDIn(input.TargetFriendGroupIds...)).
 		QueryFriendGroup().
