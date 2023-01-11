@@ -220,7 +220,21 @@ func (r *mutationResolver) CreateFriendGroup(ctx context.Context, input gqlmodel
 			SetTotalCount(len(input.FriendUserIds)).
 			AddFriendUserIDs(input.FriendUserIds...).
 			Save(ctx)
-		return err
+		if err != nil {
+			return err
+		}
+
+		dbUserFriendGroupCreates := make([]*ent.UserFriendGroupCreate, 0, len(input.FriendUserIds))
+		for _, friendUserID := range input.FriendUserIds {
+			userFriendGroupCreate := tx.UserFriendGroup.Create().
+				SetUserID(friendUserID).
+				SetFriendGroupID(dbFriendGroup.ID)
+			dbUserFriendGroupCreates = append(dbUserFriendGroupCreates, userFriendGroupCreate)
+		}
+		if err := tx.UserFriendGroup.CreateBulk(dbUserFriendGroupCreates...).Exec(ctx); err != nil {
+			return err
+		}
+		return nil
 	})
 	if err != nil {
 		return nil, err
@@ -232,20 +246,29 @@ func (r *mutationResolver) CreateFriendGroup(ctx context.Context, input gqlmodel
 func (r *mutationResolver) UpdateFriendGroup(ctx context.Context, input gqlmodel.UpdateFriendGroupInput) (*gqlmodel.UpdateFriendGroupPayload, error) {
 	authUserID := auth.GetCurrentUserID(ctx)
 	err := ent.RunInTx(ctx, r.DB, func(tx *ent.Tx) error {
-		// FIXME: remove -diff & add +diff might be better than clear then add
-		err := tx.FriendGroup.Update().
-			Where(friendgroup.ID(input.ID), friendgroup.UserID(authUserID)).
-			ClearFriendUsers().
-			Exec(ctx)
-		if err != nil {
-			return err
-		}
-		err = tx.FriendGroup.Update().
+		// FIXME: remove -diff & add +diff would be better than clear then add
+		updatedNum, err := tx.FriendGroup.Update().
 			Where(friendgroup.ID(input.ID), friendgroup.UserID(authUserID)).
 			SetName(input.Name).
 			SetTotalCount(len(input.FriendUserIds)).
-			AddFriendUserIDs(input.FriendUserIds...).Exec(ctx)
+			ClearFriendUsers().
+			Save(ctx)
 		if err != nil {
+			return err
+		}
+		// no update means the group does not exist or not belonging to the logged in user
+		if updatedNum == 0 {
+			return nil
+		}
+
+		dbUserFriendGroupCreates := make([]*ent.UserFriendGroupCreate, 0, len(input.FriendUserIds))
+		for _, friendUserID := range input.FriendUserIds {
+			userFriendGroupCreate := tx.UserFriendGroup.Create().
+				SetUserID(friendUserID).
+				SetFriendGroupID(input.ID)
+			dbUserFriendGroupCreates = append(dbUserFriendGroupCreates, userFriendGroupCreate)
+		}
+		if err := tx.UserFriendGroup.CreateBulk(dbUserFriendGroupCreates...).Exec(ctx); err != nil {
 			return err
 		}
 		return nil
