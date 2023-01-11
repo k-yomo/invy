@@ -14,6 +14,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/k-yomo/invy/invy_api/auth"
 	"github.com/k-yomo/invy/invy_api/ent"
+	"github.com/k-yomo/invy/invy_api/ent/invitation"
 	"github.com/k-yomo/invy/invy_api/ent/invitationacceptance"
 	"github.com/k-yomo/invy/invy_api/ent/invitationfriendgroup"
 	"github.com/k-yomo/invy/invy_api/ent/user"
@@ -169,6 +170,14 @@ func (r *mutationResolver) AcceptInvitation(ctx context.Context, invitationID uu
 		return nil, err
 	}
 
+	inviterPushNotificationTokens, err := r.DB.Invitation.Query().
+		Where(invitation.ID(invitationID)).
+		QueryUser().
+		QueryPushNotificationTokens().
+		All(ctx)
+	if err != nil {
+		return nil, err
+	}
 	acceptedUserPushNotificationTokens, err := r.DB.InvitationAcceptance.Query().
 		Where(
 			invitationacceptance.And(
@@ -183,7 +192,7 @@ func (r *mutationResolver) AcceptInvitation(ctx context.Context, invitationID uu
 	if err != nil {
 		return nil, err
 	}
-	fcmTokens := convutil.ConvertToList(acceptedUserPushNotificationTokens, func(from *ent.PushNotificationToken) string {
+	fcmTokens := convutil.ConvertToList(append(inviterPushNotificationTokens, acceptedUserPushNotificationTokens...), func(from *ent.PushNotificationToken) string {
 		return from.FcmToken
 	})
 	// TODO: Chunk tokens by 500 (max tokens per multicast)
