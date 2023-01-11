@@ -137,6 +137,9 @@ func (r *mutationResolver) SendInvitation(ctx context.Context, input *gqlmodel.S
 			Title: inviterProfile.Nickname,
 			Body:  fmt.Sprintf("%sさんから、%s開催のさそいが届きました。", inviterProfile.Nickname, dbInvitation.Location),
 		},
+		Android: &fcm.AndroidConfig{
+			Priority: "high",
+		},
 	})
 	return &gqlmodel.SendInvitationPayload{Invitation: conv.ConvertFromDBInvitation(dbInvitation)}, nil
 }
@@ -202,6 +205,9 @@ func (r *mutationResolver) AcceptInvitation(ctx context.Context, invitationID uu
 		Notification: &fcm.Notification{
 			Title: acceptedUserProfile.Nickname,
 			Body:  fmt.Sprintf("%sさんがさそいを承諾しました。", acceptedUserProfile.Nickname),
+		},
+		Android: &fcm.AndroidConfig{
+			Priority: "high",
 		},
 	})
 
