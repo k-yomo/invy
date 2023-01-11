@@ -14,6 +14,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/k-yomo/invy/invy_api/auth"
 	"github.com/k-yomo/invy/invy_api/ent"
+	"github.com/k-yomo/invy/invy_api/ent/invitationacceptance"
 	"github.com/k-yomo/invy/invy_api/ent/invitationfriendgroup"
 	"github.com/k-yomo/invy/invy_api/ent/user"
 	"github.com/k-yomo/invy/invy_api/ent/userprofile"
@@ -159,7 +160,41 @@ func (r *mutationResolver) AcceptInvitation(ctx context.Context, invitationID uu
 	if err != nil {
 		return nil, err
 	}
-	// TODO: notification
+
+	// TODO: Send notification async
+	acceptedUserProfile, err := r.DB.UserProfile.Query().
+		Where(userprofile.UserID(authUserID)).
+		Only(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	acceptedUserPushNotificationTokens, err := r.DB.InvitationAcceptance.Query().
+		Where(
+			invitationacceptance.And(
+				invitationacceptance.InvitationID(invitationID),
+				// do not send notification to just accepted user
+				invitationacceptance.UserIDNEQ(authUserID),
+			),
+		).
+		QueryUser().
+		QueryPushNotificationTokens().
+		All(ctx)
+	if err != nil {
+		return nil, err
+	}
+	fcmTokens := convutil.ConvertToList(acceptedUserPushNotificationTokens, func(from *ent.PushNotificationToken) string {
+		return from.FcmToken
+	})
+	// TODO: Chunk tokens by 500 (max tokens per multicast)
+	r.FCMClient.SendMulticast(ctx, &fcm.MulticastMessage{
+		Tokens: fcmTokens,
+		Data:   nil,
+		Notification: &fcm.Notification{
+			Title: acceptedUserProfile.Nickname,
+			Body:  fmt.Sprintf("%sさんがさそいを承諾しました。", acceptedUserProfile.Nickname),
+		},
+	})
 
 	dbInvitation, err := r.DB.Invitation.Get(ctx, invitationID)
 	if err != nil {
