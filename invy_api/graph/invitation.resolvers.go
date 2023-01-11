@@ -16,6 +16,7 @@ import (
 	"github.com/k-yomo/invy/invy_api/ent"
 	"github.com/k-yomo/invy/invy_api/ent/invitationfriendgroup"
 	"github.com/k-yomo/invy/invy_api/ent/user"
+	"github.com/k-yomo/invy/invy_api/ent/userprofile"
 	"github.com/k-yomo/invy/invy_api/graph/conv"
 	"github.com/k-yomo/invy/invy_api/graph/gqlgen"
 	"github.com/k-yomo/invy/invy_api/graph/gqlmodel"
@@ -99,7 +100,9 @@ func (r *mutationResolver) SendInvitation(ctx context.Context, input *gqlmodel.S
 	}
 
 	// TODO: Send notification async
-	inviterProflie, err := r.DB.UserProfile.Get(ctx, dbInvitation.UserID)
+	inviterProfile, err := r.DB.UserProfile.Query().
+		Where(userprofile.UserID(dbInvitation.UserID)).
+		Only(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -129,8 +132,8 @@ func (r *mutationResolver) SendInvitation(ctx context.Context, input *gqlmodel.S
 		Tokens: fcmTokens,
 		Data:   nil,
 		Notification: &fcm.Notification{
-			Title: inviterProflie.Nickname,
-			Body:  fmt.Sprintf("%sさんから、%s開催のさそいが届きました。", inviterProflie.Nickname, dbInvitation.Location),
+			Title: inviterProfile.Nickname,
+			Body:  fmt.Sprintf("%sさんから、%s開催のさそいが届きました。", inviterProfile.Nickname, dbInvitation.Location),
 		},
 	})
 	return &gqlmodel.SendInvitationPayload{Invitation: conv.ConvertFromDBInvitation(dbInvitation)}, nil
