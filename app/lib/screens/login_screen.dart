@@ -7,6 +7,7 @@ import 'package:flutter_signin_button/button_list.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:gap/gap.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:googleapis/calendar/v3.dart' show CalendarApi;
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:invy/graphql/login_screen.graphql.dart';
@@ -191,7 +192,8 @@ class LoginScreen extends HookConsumerWidget {
 
   Future<UserCredential> signInWithGoogle() async {
     final googleUser = await GoogleSignIn(scopes: [
-      'email',
+      "email",
+      CalendarApi.calendarScope
     ]).signIn();
     if (googleUser == null) throw Exception("Not logged in");
 
