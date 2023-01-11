@@ -218,7 +218,6 @@ func (r *mutationResolver) CreateFriendGroup(ctx context.Context, input gqlmodel
 			SetName(input.Name).
 			SetUserID(authUserID).
 			SetTotalCount(len(input.FriendUserIds)).
-			AddFriendUserIDs(input.FriendUserIds...).
 			Save(ctx)
 		if err != nil {
 			return err
