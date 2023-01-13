@@ -102,6 +102,8 @@ type Mutation {
   acceptInvitation(invitationId: UUID!): AcceptInvitationPayload!
   denyInvitation(invitationId: UUID!): DenyInvitationPayload!
   registerPushNotificationToken(input: RegisterPushNotificationTokenInput): RegisterPushNotificationTokenPayload!
+  updateAvatar(avatar: Upload!): UpdateAvatarPayload!
+  updateNickname(nickname: String!): UpdateNicknamePayload!
   muteUser(userId: UUID!): MuteUserPayload!
   unmuteUser(userId: UUID!): UnmuteUserPayload!
 }
@@ -179,6 +181,10 @@ type UnmuteUserPayload {
   unmutedUserId: UUID!
 }
 
+type UpdateAvatarPayload {
+  viewer: Viewer!
+}
+
 input UpdateFriendGroupInput {
   id: UUID!
   name: String!
@@ -188,6 +194,12 @@ input UpdateFriendGroupInput {
 type UpdateFriendGroupPayload {
   friendGroup: FriendGroup!
 }
+
+type UpdateNicknamePayload {
+  viewer: Viewer!
+}
+
+scalar Upload
 
 """
 User is a public interface for a user

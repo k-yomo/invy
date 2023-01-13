@@ -156,7 +156,7 @@ type UnmuteUserPayload struct {
 }
 
 type UpdateAvatarPayload struct {
-	User *User `json:"user"`
+	Viewer *Viewer `json:"viewer"`
 }
 
 type UpdateFriendGroupInput struct {
@@ -170,7 +170,7 @@ type UpdateFriendGroupPayload struct {
 }
 
 type UpdateNicknamePayload struct {
-	User *User `json:"user"`
+	Viewer *Viewer `json:"viewer"`
 }
 
 type User struct {

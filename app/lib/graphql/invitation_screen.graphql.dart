@@ -1819,8 +1819,8 @@ class Mutation$sendInvitation$sendInvitation$invitation {
     return Mutation$sendInvitation$sendInvitation$invitation(
       id: (l$id as String),
       location: (l$location as String),
-      startsAt: (l$startsAt as String),
-      expiresAt: (l$expiresAt as String),
+      startsAt: DateTime.parse((l$startsAt as String)),
+      expiresAt: DateTime.parse((l$expiresAt as String)),
       $__typename: (l$$__typename as String),
     );
   }
@@ -1829,9 +1829,9 @@ class Mutation$sendInvitation$sendInvitation$invitation {
 
   final String location;
 
-  final String startsAt;
+  final DateTime startsAt;
 
-  final String expiresAt;
+  final DateTime expiresAt;
 
   final String $__typename;
 
@@ -1842,9 +1842,9 @@ class Mutation$sendInvitation$sendInvitation$invitation {
     final l$location = location;
     _resultData['location'] = l$location;
     final l$startsAt = startsAt;
-    _resultData['startsAt'] = l$startsAt;
+    _resultData['startsAt'] = l$startsAt.toIso8601String();
     final l$expiresAt = expiresAt;
-    _resultData['expiresAt'] = l$expiresAt;
+    _resultData['expiresAt'] = l$expiresAt.toIso8601String();
     final l$$__typename = $__typename;
     _resultData['__typename'] = l$$__typename;
     return _resultData;
@@ -1929,8 +1929,8 @@ abstract class CopyWith$Mutation$sendInvitation$sendInvitation$invitation<
   TRes call({
     String? id,
     String? location,
-    String? startsAt,
-    String? expiresAt,
+    DateTime? startsAt,
+    DateTime? expiresAt,
     String? $__typename,
   });
 }
@@ -1963,10 +1963,10 @@ class _CopyWithImpl$Mutation$sendInvitation$sendInvitation$invitation<TRes>
             : (location as String),
         startsAt: startsAt == _undefined || startsAt == null
             ? _instance.startsAt
-            : (startsAt as String),
+            : (startsAt as DateTime),
         expiresAt: expiresAt == _undefined || expiresAt == null
             ? _instance.expiresAt
-            : (expiresAt as String),
+            : (expiresAt as DateTime),
         $__typename: $__typename == _undefined || $__typename == null
             ? _instance.$__typename
             : ($__typename as String),
@@ -1984,8 +1984,8 @@ class _CopyWithStubImpl$Mutation$sendInvitation$sendInvitation$invitation<TRes>
   call({
     String? id,
     String? location,
-    String? startsAt,
-    String? expiresAt,
+    DateTime? startsAt,
+    DateTime? expiresAt,
     String? $__typename,
   }) =>
       _res;

@@ -183,7 +183,7 @@ type ComplexityRoot struct {
 	}
 
 	UpdateAvatarPayload struct {
-		User func(childComplexity int) int
+		Viewer func(childComplexity int) int
 	}
 
 	UpdateFriendGroupPayload struct {
@@ -191,7 +191,7 @@ type ComplexityRoot struct {
 	}
 
 	UpdateNicknamePayload struct {
-		User func(childComplexity int) int
+		Viewer func(childComplexity int) int
 	}
 
 	User struct {
@@ -827,12 +827,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.UnmuteUserPayload.UnmutedUserID(childComplexity), true
 
-	case "UpdateAvatarPayload.user":
-		if e.complexity.UpdateAvatarPayload.User == nil {
+	case "UpdateAvatarPayload.viewer":
+		if e.complexity.UpdateAvatarPayload.Viewer == nil {
 			break
 		}
 
-		return e.complexity.UpdateAvatarPayload.User(childComplexity), true
+		return e.complexity.UpdateAvatarPayload.Viewer(childComplexity), true
 
 	case "UpdateFriendGroupPayload.friendGroup":
 		if e.complexity.UpdateFriendGroupPayload.FriendGroup == nil {
@@ -841,12 +841,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.UpdateFriendGroupPayload.FriendGroup(childComplexity), true
 
-	case "UpdateNicknamePayload.user":
-		if e.complexity.UpdateNicknamePayload.User == nil {
+	case "UpdateNicknamePayload.viewer":
+		if e.complexity.UpdateNicknamePayload.Viewer == nil {
 			break
 		}
 
-		return e.complexity.UpdateNicknamePayload.User(childComplexity), true
+		return e.complexity.UpdateNicknamePayload.Viewer(childComplexity), true
 
 	case "User.avatarUrl":
 		if e.complexity.User.AvatarURL == nil {
@@ -1340,11 +1340,11 @@ type UserConnection {
 }
 
 type UpdateAvatarPayload {
-    user: User!
+    viewer: Viewer!
 }
 
 type UpdateNicknamePayload {
-    user: User!
+    viewer: Viewer!
 }
 
 type MuteUserPayload {
@@ -4359,8 +4359,8 @@ func (ec *executionContext) fieldContext_Mutation_updateAvatar(ctx context.Conte
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "user":
-				return ec.fieldContext_UpdateAvatarPayload_user(ctx, field)
+			case "viewer":
+				return ec.fieldContext_UpdateAvatarPayload_viewer(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type UpdateAvatarPayload", field.Name)
 		},
@@ -4438,8 +4438,8 @@ func (ec *executionContext) fieldContext_Mutation_updateNickname(ctx context.Con
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "user":
-				return ec.fieldContext_UpdateNicknamePayload_user(ctx, field)
+			case "viewer":
+				return ec.fieldContext_UpdateNicknamePayload_viewer(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type UpdateNicknamePayload", field.Name)
 		},
@@ -5619,8 +5619,8 @@ func (ec *executionContext) fieldContext_UnmuteUserPayload_unmutedUserId(ctx con
 	return fc, nil
 }
 
-func (ec *executionContext) _UpdateAvatarPayload_user(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.UpdateAvatarPayload) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_UpdateAvatarPayload_user(ctx, field)
+func (ec *executionContext) _UpdateAvatarPayload_viewer(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.UpdateAvatarPayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UpdateAvatarPayload_viewer(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -5633,7 +5633,7 @@ func (ec *executionContext) _UpdateAvatarPayload_user(ctx context.Context, field
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.User, nil
+		return obj.Viewer, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -5645,12 +5645,12 @@ func (ec *executionContext) _UpdateAvatarPayload_user(ctx context.Context, field
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*gqlmodel.User)
+	res := resTmp.(*gqlmodel.Viewer)
 	fc.Result = res
-	return ec.marshalNUser2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐUser(ctx, field.Selections, res)
+	return ec.marshalNViewer2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐViewer(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_UpdateAvatarPayload_user(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_UpdateAvatarPayload_viewer(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "UpdateAvatarPayload",
 		Field:      field,
@@ -5659,19 +5659,31 @@ func (ec *executionContext) fieldContext_UpdateAvatarPayload_user(ctx context.Co
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
-				return ec.fieldContext_User_id(ctx, field)
+				return ec.fieldContext_Viewer_id(ctx, field)
+			case "screenId":
+				return ec.fieldContext_Viewer_screenId(ctx, field)
 			case "nickname":
-				return ec.fieldContext_User_nickname(ctx, field)
+				return ec.fieldContext_Viewer_nickname(ctx, field)
 			case "avatarUrl":
-				return ec.fieldContext_User_avatarUrl(ctx, field)
-			case "isMuted":
-				return ec.fieldContext_User_isMuted(ctx, field)
-			case "isFriend":
-				return ec.fieldContext_User_isFriend(ctx, field)
-			case "isRequestingFriendship":
-				return ec.fieldContext_User_isRequestingFriendship(ctx, field)
+				return ec.fieldContext_Viewer_avatarUrl(ctx, field)
+			case "friends":
+				return ec.fieldContext_Viewer_friends(ctx, field)
+			case "pendingFriendshipRequests":
+				return ec.fieldContext_Viewer_pendingFriendshipRequests(ctx, field)
+			case "requestingFriendshipRequests":
+				return ec.fieldContext_Viewer_requestingFriendshipRequests(ctx, field)
+			case "friendGroup":
+				return ec.fieldContext_Viewer_friendGroup(ctx, field)
+			case "friendGroups":
+				return ec.fieldContext_Viewer_friendGroups(ctx, field)
+			case "sentInvitations":
+				return ec.fieldContext_Viewer_sentInvitations(ctx, field)
+			case "pendingInvitations":
+				return ec.fieldContext_Viewer_pendingInvitations(ctx, field)
+			case "acceptedInvitations":
+				return ec.fieldContext_Viewer_acceptedInvitations(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type Viewer", field.Name)
 		},
 	}
 	return fc, nil
@@ -5733,8 +5745,8 @@ func (ec *executionContext) fieldContext_UpdateFriendGroupPayload_friendGroup(ct
 	return fc, nil
 }
 
-func (ec *executionContext) _UpdateNicknamePayload_user(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.UpdateNicknamePayload) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_UpdateNicknamePayload_user(ctx, field)
+func (ec *executionContext) _UpdateNicknamePayload_viewer(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.UpdateNicknamePayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UpdateNicknamePayload_viewer(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -5747,7 +5759,7 @@ func (ec *executionContext) _UpdateNicknamePayload_user(ctx context.Context, fie
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.User, nil
+		return obj.Viewer, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -5759,12 +5771,12 @@ func (ec *executionContext) _UpdateNicknamePayload_user(ctx context.Context, fie
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*gqlmodel.User)
+	res := resTmp.(*gqlmodel.Viewer)
 	fc.Result = res
-	return ec.marshalNUser2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐUser(ctx, field.Selections, res)
+	return ec.marshalNViewer2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐViewer(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_UpdateNicknamePayload_user(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_UpdateNicknamePayload_viewer(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "UpdateNicknamePayload",
 		Field:      field,
@@ -5773,19 +5785,31 @@ func (ec *executionContext) fieldContext_UpdateNicknamePayload_user(ctx context.
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
-				return ec.fieldContext_User_id(ctx, field)
+				return ec.fieldContext_Viewer_id(ctx, field)
+			case "screenId":
+				return ec.fieldContext_Viewer_screenId(ctx, field)
 			case "nickname":
-				return ec.fieldContext_User_nickname(ctx, field)
+				return ec.fieldContext_Viewer_nickname(ctx, field)
 			case "avatarUrl":
-				return ec.fieldContext_User_avatarUrl(ctx, field)
-			case "isMuted":
-				return ec.fieldContext_User_isMuted(ctx, field)
-			case "isFriend":
-				return ec.fieldContext_User_isFriend(ctx, field)
-			case "isRequestingFriendship":
-				return ec.fieldContext_User_isRequestingFriendship(ctx, field)
+				return ec.fieldContext_Viewer_avatarUrl(ctx, field)
+			case "friends":
+				return ec.fieldContext_Viewer_friends(ctx, field)
+			case "pendingFriendshipRequests":
+				return ec.fieldContext_Viewer_pendingFriendshipRequests(ctx, field)
+			case "requestingFriendshipRequests":
+				return ec.fieldContext_Viewer_requestingFriendshipRequests(ctx, field)
+			case "friendGroup":
+				return ec.fieldContext_Viewer_friendGroup(ctx, field)
+			case "friendGroups":
+				return ec.fieldContext_Viewer_friendGroups(ctx, field)
+			case "sentInvitations":
+				return ec.fieldContext_Viewer_sentInvitations(ctx, field)
+			case "pendingInvitations":
+				return ec.fieldContext_Viewer_pendingInvitations(ctx, field)
+			case "acceptedInvitations":
+				return ec.fieldContext_Viewer_acceptedInvitations(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type Viewer", field.Name)
 		},
 	}
 	return fc, nil
@@ -10264,9 +10288,9 @@ func (ec *executionContext) _UpdateAvatarPayload(ctx context.Context, sel ast.Se
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("UpdateAvatarPayload")
-		case "user":
+		case "viewer":
 
-			out.Values[i] = ec._UpdateAvatarPayload_user(ctx, field, obj)
+			out.Values[i] = ec._UpdateAvatarPayload_viewer(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				invalids++
@@ -10320,9 +10344,9 @@ func (ec *executionContext) _UpdateNicknamePayload(ctx context.Context, sel ast.
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("UpdateNicknamePayload")
-		case "user":
+		case "viewer":
 
-			out.Values[i] = ec._UpdateNicknamePayload_user(ctx, field, obj)
+			out.Values[i] = ec._UpdateNicknamePayload_viewer(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				invalids++

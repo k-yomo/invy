@@ -8,3 +8,10 @@ targets:
           clients:
             - graphql
             - graphql_flutter
+          scalars:
+            Time:
+              type: DateTime
+            UUID:
+              type: String
+            Cursor:
+              type: String

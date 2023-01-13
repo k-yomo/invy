@@ -395,8 +395,8 @@ class Input$SendInvitationInput {
   factory Input$SendInvitationInput({
     required List<String> targetFriendGroupIds,
     required List<String> targetFriendUserIds,
-    required String expiresAt,
-    required String startsAt,
+    required DateTime expiresAt,
+    required DateTime startsAt,
     required String location,
     required String comment,
   }) =>
@@ -424,9 +424,9 @@ class Input$SendInvitationInput {
             .map((e) => (e as String))
             .toList();
     final l$expiresAt = data['expiresAt'];
-    result$data['expiresAt'] = (l$expiresAt as String);
+    result$data['expiresAt'] = DateTime.parse((l$expiresAt as String));
     final l$startsAt = data['startsAt'];
-    result$data['startsAt'] = (l$startsAt as String);
+    result$data['startsAt'] = DateTime.parse((l$startsAt as String));
     final l$location = data['location'];
     result$data['location'] = (l$location as String);
     final l$comment = data['comment'];
@@ -440,8 +440,8 @@ class Input$SendInvitationInput {
       (_$data['targetFriendGroupIds'] as List<String>);
   List<String> get targetFriendUserIds =>
       (_$data['targetFriendUserIds'] as List<String>);
-  String get expiresAt => (_$data['expiresAt'] as String);
-  String get startsAt => (_$data['startsAt'] as String);
+  DateTime get expiresAt => (_$data['expiresAt'] as DateTime);
+  DateTime get startsAt => (_$data['startsAt'] as DateTime);
   String get location => (_$data['location'] as String);
   String get comment => (_$data['comment'] as String);
   Map<String, dynamic> toJson() {
@@ -453,9 +453,9 @@ class Input$SendInvitationInput {
     result$data['targetFriendUserIds'] =
         l$targetFriendUserIds.map((e) => e).toList();
     final l$expiresAt = expiresAt;
-    result$data['expiresAt'] = l$expiresAt;
+    result$data['expiresAt'] = l$expiresAt.toIso8601String();
     final l$startsAt = startsAt;
-    result$data['startsAt'] = l$startsAt;
+    result$data['startsAt'] = l$startsAt.toIso8601String();
     final l$location = location;
     result$data['location'] = l$location;
     final l$comment = comment;
@@ -555,8 +555,8 @@ abstract class CopyWith$Input$SendInvitationInput<TRes> {
   TRes call({
     List<String>? targetFriendGroupIds,
     List<String>? targetFriendUserIds,
-    String? expiresAt,
-    String? startsAt,
+    DateTime? expiresAt,
+    DateTime? startsAt,
     String? location,
     String? comment,
   });
@@ -590,9 +590,9 @@ class _CopyWithImpl$Input$SendInvitationInput<TRes>
         if (targetFriendUserIds != _undefined && targetFriendUserIds != null)
           'targetFriendUserIds': (targetFriendUserIds as List<String>),
         if (expiresAt != _undefined && expiresAt != null)
-          'expiresAt': (expiresAt as String),
+          'expiresAt': (expiresAt as DateTime),
         if (startsAt != _undefined && startsAt != null)
-          'startsAt': (startsAt as String),
+          'startsAt': (startsAt as DateTime),
         if (location != _undefined && location != null)
           'location': (location as String),
         if (comment != _undefined && comment != null)
@@ -609,8 +609,8 @@ class _CopyWithStubImpl$Input$SendInvitationInput<TRes>
   call({
     List<String>? targetFriendGroupIds,
     List<String>? targetFriendUserIds,
-    String? expiresAt,
-    String? startsAt,
+    DateTime? expiresAt,
+    DateTime? startsAt,
     String? location,
     String? comment,
   }) =>

@@ -26,8 +26,8 @@ class Fragment$invitationCardFragment {
       id: (l$id as String),
       location: (l$location as String),
       comment: (l$comment as String),
-      startsAt: (l$startsAt as String),
-      expiresAt: (l$expiresAt as String),
+      startsAt: DateTime.parse((l$startsAt as String)),
+      expiresAt: DateTime.parse((l$expiresAt as String)),
       user: Fragment$invitationCardFragment$user.fromJson(
           (l$user as Map<String, dynamic>)),
       acceptedUsers: (l$acceptedUsers as List<dynamic>)
@@ -44,9 +44,9 @@ class Fragment$invitationCardFragment {
 
   final String comment;
 
-  final String startsAt;
+  final DateTime startsAt;
 
-  final String expiresAt;
+  final DateTime expiresAt;
 
   final Fragment$invitationCardFragment$user user;
 
@@ -63,9 +63,9 @@ class Fragment$invitationCardFragment {
     final l$comment = comment;
     _resultData['comment'] = l$comment;
     final l$startsAt = startsAt;
-    _resultData['startsAt'] = l$startsAt;
+    _resultData['startsAt'] = l$startsAt.toIso8601String();
     final l$expiresAt = expiresAt;
-    _resultData['expiresAt'] = l$expiresAt;
+    _resultData['expiresAt'] = l$expiresAt.toIso8601String();
     final l$user = user;
     _resultData['user'] = l$user.toJson();
     final l$acceptedUsers = acceptedUsers;
@@ -180,8 +180,8 @@ abstract class CopyWith$Fragment$invitationCardFragment<TRes> {
     String? id,
     String? location,
     String? comment,
-    String? startsAt,
-    String? expiresAt,
+    DateTime? startsAt,
+    DateTime? expiresAt,
     Fragment$invitationCardFragment$user? user,
     List<Fragment$invitationCardFragment$acceptedUsers>? acceptedUsers,
     String? $__typename,
@@ -228,10 +228,10 @@ class _CopyWithImpl$Fragment$invitationCardFragment<TRes>
             : (comment as String),
         startsAt: startsAt == _undefined || startsAt == null
             ? _instance.startsAt
-            : (startsAt as String),
+            : (startsAt as DateTime),
         expiresAt: expiresAt == _undefined || expiresAt == null
             ? _instance.expiresAt
-            : (expiresAt as String),
+            : (expiresAt as DateTime),
         user: user == _undefined || user == null
             ? _instance.user
             : (user as Fragment$invitationCardFragment$user),
@@ -273,8 +273,8 @@ class _CopyWithStubImpl$Fragment$invitationCardFragment<TRes>
     String? id,
     String? location,
     String? comment,
-    String? startsAt,
-    String? expiresAt,
+    DateTime? startsAt,
+    DateTime? expiresAt,
     Fragment$invitationCardFragment$user? user,
     List<Fragment$invitationCardFragment$acceptedUsers>? acceptedUsers,
     String? $__typename,

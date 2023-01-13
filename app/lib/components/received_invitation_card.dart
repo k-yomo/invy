@@ -62,8 +62,8 @@ class ReceivedInvitationCard extends StatelessWidget {
                     Icon(Icons.today, size: 25),
                     Container(
                       margin: const EdgeInsets.only(left: 5),
-                      child: Text(DateFormat(dateTimeFormat).format(
-                          DateTime.parse(invitation.startsAt).toLocal())),
+                      child: Text(DateFormat(dateTimeFormat)
+                          .format(invitation.startsAt.toLocal())),
                     )
                   ],
                 ),
@@ -138,8 +138,8 @@ class ReceivedInvitationCard extends StatelessWidget {
                         Text("回答期限: ",
                             style: TextStyle(fontWeight: FontWeight.bold)),
                         Text(
-                            DateFormat(dateTimeFormat).format(
-                                DateTime.parse(invitation.expiresAt).toLocal()),
+                            DateFormat(dateTimeFormat)
+                                .format(invitation.expiresAt.toLocal()),
                             style: TextStyle(fontWeight: FontWeight.bold)),
                       ],
                     ),

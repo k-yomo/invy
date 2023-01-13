@@ -56,7 +56,7 @@ func (r *mutationResolver) UpdateAvatar(ctx context.Context, avatar graphql.Uplo
 	if err != nil {
 		return nil, err
 	}
-	return &gqlmodel.UpdateAvatarPayload{User: conv.ConvertFromDBUserProfile(dbUserProfile)}, nil
+	return &gqlmodel.UpdateAvatarPayload{Viewer: conv.ConvertFromDBUserProfileToViewer(dbUserProfile)}, nil
 }
 
 // UpdateNickname is the resolver for the updateNickname field.
@@ -75,7 +75,7 @@ func (r *mutationResolver) UpdateNickname(ctx context.Context, nickname string) 
 	if err != nil {
 		return nil, err
 	}
-	return &gqlmodel.UpdateNicknamePayload{User: conv.ConvertFromDBUserProfile(dbUserProfile)}, nil
+	return &gqlmodel.UpdateNicknamePayload{Viewer: conv.ConvertFromDBUserProfileToViewer(dbUserProfile)}, nil
 }
 
 // MuteUser is the resolver for the muteUser field.

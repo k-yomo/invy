@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -42,8 +41,8 @@ class InvitationDetailFormScreen extends HookConsumerWidget {
         variables: Variables$Mutation$sendInvitation(
           input: Input$SendInvitationInput(
             location: location,
-            startsAt: startsAt.toIso8601String(),
-            expiresAt: expiresAt.toIso8601String(),
+            startsAt: startsAt,
+            expiresAt: expiresAt,
             comment: comment ?? '',
             targetFriendGroupIds:
                 selectedFriendGroups.map((fg) => fg.id).toList(),

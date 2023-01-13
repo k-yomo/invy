@@ -60,11 +60,11 @@ type UserConnection {
 }
 
 type UpdateAvatarPayload {
-    user: User!
+    viewer: Viewer!
 }
 
 type UpdateNicknamePayload {
-    user: User!
+    viewer: Viewer!
 }
 
 type MuteUserPayload {
