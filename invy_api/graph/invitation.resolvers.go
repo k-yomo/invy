@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"time"
 
+	"entgo.io/ent/dialect/sql"
 	fcm "firebase.google.com/go/v4/messaging"
 	"github.com/google/uuid"
 	"github.com/k-yomo/invy/invy_api/auth"
@@ -18,6 +19,7 @@ import (
 	"github.com/k-yomo/invy/invy_api/ent/invitationacceptance"
 	"github.com/k-yomo/invy/invy_api/ent/invitationfriendgroup"
 	"github.com/k-yomo/invy/invy_api/ent/user"
+	"github.com/k-yomo/invy/invy_api/ent/usermute"
 	"github.com/k-yomo/invy/invy_api/ent/userprofile"
 	"github.com/k-yomo/invy/invy_api/graph/conv"
 	"github.com/k-yomo/invy/invy_api/graph/gqlgen"
@@ -108,19 +110,37 @@ func (r *mutationResolver) SendInvitation(ctx context.Context, input *gqlmodel.S
 	if err != nil {
 		return nil, err
 	}
-	// TODO: Remove muted users
+	whereNotMutedUser := func(s *sql.Selector) {
+		userMuteTable := sql.Table(usermute.Table)
+		s.Where(
+			sql.NotExists(
+				sql.Select().
+					From(userMuteTable).
+					Where(
+						sql.And(
+							sql.ColumnsEQ(userMuteTable.C(usermute.FieldUserID), s.C(user.FieldID)),
+							sql.EQ(userMuteTable.C(usermute.FieldMuteUserID), authUserID),
+						),
+					),
+			),
+		)
+	}
 	targetGroupUserPushNotificationTokens, err := r.DB.InvitationFriendGroup.Query().
 		Where(invitationfriendgroup.FriendGroupIDIn(input.TargetFriendGroupIds...)).
 		QueryFriendGroup().
 		QueryUserFriendGroups().
 		QueryUser().
+		Where(whereNotMutedUser).
 		QueryPushNotificationTokens().
 		All(ctx)
 	if err != nil {
 		return nil, err
 	}
 	targetUserPushNotificationTokens, err := r.DB.User.Query().
-		Where(user.IDIn(input.TargetFriendUserIds...)).
+		Where(
+			user.IDIn(input.TargetFriendUserIds...),
+			whereNotMutedUser,
+		).
 		QueryPushNotificationTokens().
 		All(ctx)
 	if err != nil {
