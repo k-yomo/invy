@@ -4,6 +4,8 @@ import 'package:graphql/client.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:invy/components/friend_selection_list.dart';
 import 'package:invy/graphql/friend_group_create_screen.graphql.dart';
+import 'package:invy/graphql/friend_screen.graphql.dart';
+import 'package:invy/graphql/invitation_screen.graphql.dart';
 import 'package:invy/graphql/schema.graphql.dart';
 
 import '../components/app_bar_leading.dart';
@@ -25,6 +27,37 @@ class FriendGroupCreateScreen extends HookConsumerWidget {
         builder: (context, snapshot) {
           final viewer = snapshot.data?.parsedData?.viewer;
 
+          onGroupCreateButtonPressed() async {
+            if (groupName.value.isEmpty) {
+              return;
+            }
+            final result =
+            await graphqlClient.mutate$createFriendGroup(
+                Options$Mutation$createFriendGroup(
+                    variables:
+                    Variables$Mutation$createFriendGroup(
+                      input: Input$CreateFriendGroupInput(
+                        name: groupName.value,
+                        friendUserIds: selectedFriends.value
+                            .map((friend) => friend.id)
+                            .toList(),
+                      ),
+                    ),
+                  update: (cache, result) async {
+                    final friendScreenViewerRequest = const  Operation(document: documentNodeQueryfriendScreenViewer).asRequest();
+                    final resp = cache.readQuery(friendScreenViewerRequest);
+                    print(resp);
+                      // cache.writeQuery(friendScreenViewerRequest, data: data)
+                  }
+                ),
+            );
+            if (result.hasException) {
+              // TODO: show error
+              return;
+            }
+            Navigator.of(context).pop();
+          }
+
           return Scaffold(
               appBar: AppBar(
                 leading: AppBarLeading(),
@@ -34,34 +67,13 @@ class FriendGroupCreateScreen extends HookConsumerWidget {
                 ),
                 actions: <Widget>[
                   TextButton(
-                    onPressed: () async {
-                      if (groupName.value.isEmpty) {
-                        return;
-                      }
-                      final result =
-                          await graphqlClient.mutate$createFriendGroup(
-                              Options$Mutation$createFriendGroup(
-                                  variables:
-                                      Variables$Mutation$createFriendGroup(
-                        input: Input$CreateFriendGroupInput(
-                          name: groupName.value,
-                          friendUserIds: selectedFriends.value
-                              .map((friend) => friend.id)
-                              .toList(),
-                        ),
-                      )));
-                      if (result.hasException) {
-                        // TODO: show error
-                        return;
-                      }
-                      Navigator.of(context).pop();
-                    },
+                    onPressed: onGroupCreateButtonPressed,
                     child: Text(
                       "作成する",
                       style: TextStyle(
                         fontSize: 16,
                         color:
-                            groupName.value.isEmpty ? Colors.grey : Colors.blue,
+                        groupName.value.isEmpty ? Colors.grey : Colors.blue,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -100,8 +112,8 @@ class FriendGroupCreateScreen extends HookConsumerWidget {
                     ),
                     FriendSelectionList(
                       friends:
-                          viewer?.friends.edges.map((f) => f.node).toList() ??
-                              [],
+                      viewer?.friends.edges.map((f) => f.node).toList() ??
+                          [],
                       selectedFriends: selectedFriends.value,
                       onChange: (list) {
                         selectedFriends.value = list;
