@@ -83,50 +83,8 @@ func (iac *InvitationAcceptanceCreate) Mutation() *InvitationAcceptanceMutation 
 
 // Save creates the InvitationAcceptance in the database.
 func (iac *InvitationAcceptanceCreate) Save(ctx context.Context) (*InvitationAcceptance, error) {
-	var (
-		err  error
-		node *InvitationAcceptance
-	)
 	iac.defaults()
-	if len(iac.hooks) == 0 {
-		if err = iac.check(); err != nil {
-			return nil, err
-		}
-		node, err = iac.sqlSave(ctx)
-	} else {
-		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-			mutation, ok := m.(*InvitationAcceptanceMutation)
-			if !ok {
-				return nil, fmt.Errorf("unexpected mutation type %T", m)
-			}
-			if err = iac.check(); err != nil {
-				return nil, err
-			}
-			iac.mutation = mutation
-			if node, err = iac.sqlSave(ctx); err != nil {
-				return nil, err
-			}
-			mutation.id = &node.ID
-			mutation.done = true
-			return node, err
-		})
-		for i := len(iac.hooks) - 1; i >= 0; i-- {
-			if iac.hooks[i] == nil {
-				return nil, fmt.Errorf("ent: uninitialized hook (forgotten import ent/runtime?)")
-			}
-			mut = iac.hooks[i](mut)
-		}
-		v, err := mut.Mutate(ctx, iac.mutation)
-		if err != nil {
-			return nil, err
-		}
-		nv, ok := v.(*InvitationAcceptance)
-		if !ok {
-			return nil, fmt.Errorf("unexpected node type %T returned from InvitationAcceptanceMutation", v)
-		}
-		node = nv
-	}
-	return node, err
+	return withHooks[*InvitationAcceptance, InvitationAcceptanceMutation](ctx, iac.sqlSave, iac.mutation, iac.hooks)
 }
 
 // SaveX calls Save and panics if Save returns an error.
@@ -184,6 +142,9 @@ func (iac *InvitationAcceptanceCreate) check() error {
 }
 
 func (iac *InvitationAcceptanceCreate) sqlSave(ctx context.Context) (*InvitationAcceptance, error) {
+	if err := iac.check(); err != nil {
+		return nil, err
+	}
 	_node, _spec := iac.createSpec()
 	if err := sqlgraph.CreateNode(ctx, iac.driver, _spec); err != nil {
 		if sqlgraph.IsConstraintError(err) {
@@ -198,6 +159,8 @@ func (iac *InvitationAcceptanceCreate) sqlSave(ctx context.Context) (*Invitation
 			return nil, err
 		}
 	}
+	iac.mutation.id = &_node.ID
+	iac.mutation.done = true
 	return _node, nil
 }
 

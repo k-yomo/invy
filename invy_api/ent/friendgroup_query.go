@@ -27,6 +27,7 @@ type FriendGroupQuery struct {
 	unique                          *bool
 	order                           []OrderFunc
 	fields                          []string
+	inters                          []Interceptor
 	predicates                      []predicate.FriendGroup
 	withUser                        *UserQuery
 	withFriendUsers                 *UserQuery
@@ -48,13 +49,13 @@ func (fgq *FriendGroupQuery) Where(ps ...predicate.FriendGroup) *FriendGroupQuer
 	return fgq
 }
 
-// Limit adds a limit step to the query.
+// Limit the number of records to be returned by this query.
 func (fgq *FriendGroupQuery) Limit(limit int) *FriendGroupQuery {
 	fgq.limit = &limit
 	return fgq
 }
 
-// Offset adds an offset step to the query.
+// Offset to start from.
 func (fgq *FriendGroupQuery) Offset(offset int) *FriendGroupQuery {
 	fgq.offset = &offset
 	return fgq
@@ -67,7 +68,7 @@ func (fgq *FriendGroupQuery) Unique(unique bool) *FriendGroupQuery {
 	return fgq
 }
 
-// Order adds an order step to the query.
+// Order specifies how the records should be ordered.
 func (fgq *FriendGroupQuery) Order(o ...OrderFunc) *FriendGroupQuery {
 	fgq.order = append(fgq.order, o...)
 	return fgq
@@ -75,7 +76,7 @@ func (fgq *FriendGroupQuery) Order(o ...OrderFunc) *FriendGroupQuery {
 
 // QueryUser chains the current query on the "user" edge.
 func (fgq *FriendGroupQuery) QueryUser() *UserQuery {
-	query := &UserQuery{config: fgq.config}
+	query := (&UserClient{config: fgq.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := fgq.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -97,7 +98,7 @@ func (fgq *FriendGroupQuery) QueryUser() *UserQuery {
 
 // QueryFriendUsers chains the current query on the "friend_users" edge.
 func (fgq *FriendGroupQuery) QueryFriendUsers() *UserQuery {
-	query := &UserQuery{config: fgq.config}
+	query := (&UserClient{config: fgq.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := fgq.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -119,7 +120,7 @@ func (fgq *FriendGroupQuery) QueryFriendUsers() *UserQuery {
 
 // QueryInvitationFriendGroups chains the current query on the "invitation_friend_groups" edge.
 func (fgq *FriendGroupQuery) QueryInvitationFriendGroups() *InvitationFriendGroupQuery {
-	query := &InvitationFriendGroupQuery{config: fgq.config}
+	query := (&InvitationFriendGroupClient{config: fgq.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := fgq.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -141,7 +142,7 @@ func (fgq *FriendGroupQuery) QueryInvitationFriendGroups() *InvitationFriendGrou
 
 // QueryUserFriendGroups chains the current query on the "user_friend_groups" edge.
 func (fgq *FriendGroupQuery) QueryUserFriendGroups() *UserFriendGroupQuery {
-	query := &UserFriendGroupQuery{config: fgq.config}
+	query := (&UserFriendGroupClient{config: fgq.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := fgq.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -164,7 +165,7 @@ func (fgq *FriendGroupQuery) QueryUserFriendGroups() *UserFriendGroupQuery {
 // First returns the first FriendGroup entity from the query.
 // Returns a *NotFoundError when no FriendGroup was found.
 func (fgq *FriendGroupQuery) First(ctx context.Context) (*FriendGroup, error) {
-	nodes, err := fgq.Limit(1).All(ctx)
+	nodes, err := fgq.Limit(1).All(newQueryContext(ctx, TypeFriendGroup, "First"))
 	if err != nil {
 		return nil, err
 	}
@@ -187,7 +188,7 @@ func (fgq *FriendGroupQuery) FirstX(ctx context.Context) *FriendGroup {
 // Returns a *NotFoundError when no FriendGroup ID was found.
 func (fgq *FriendGroupQuery) FirstID(ctx context.Context) (id uuid.UUID, err error) {
 	var ids []uuid.UUID
-	if ids, err = fgq.Limit(1).IDs(ctx); err != nil {
+	if ids, err = fgq.Limit(1).IDs(newQueryContext(ctx, TypeFriendGroup, "FirstID")); err != nil {
 		return
 	}
 	if len(ids) == 0 {
@@ -210,7 +211,7 @@ func (fgq *FriendGroupQuery) FirstIDX(ctx context.Context) uuid.UUID {
 // Returns a *NotSingularError when more than one FriendGroup entity is found.
 // Returns a *NotFoundError when no FriendGroup entities are found.
 func (fgq *FriendGroupQuery) Only(ctx context.Context) (*FriendGroup, error) {
-	nodes, err := fgq.Limit(2).All(ctx)
+	nodes, err := fgq.Limit(2).All(newQueryContext(ctx, TypeFriendGroup, "Only"))
 	if err != nil {
 		return nil, err
 	}
@@ -238,7 +239,7 @@ func (fgq *FriendGroupQuery) OnlyX(ctx context.Context) *FriendGroup {
 // Returns a *NotFoundError when no entities are found.
 func (fgq *FriendGroupQuery) OnlyID(ctx context.Context) (id uuid.UUID, err error) {
 	var ids []uuid.UUID
-	if ids, err = fgq.Limit(2).IDs(ctx); err != nil {
+	if ids, err = fgq.Limit(2).IDs(newQueryContext(ctx, TypeFriendGroup, "OnlyID")); err != nil {
 		return
 	}
 	switch len(ids) {
@@ -263,10 +264,12 @@ func (fgq *FriendGroupQuery) OnlyIDX(ctx context.Context) uuid.UUID {
 
 // All executes the query and returns a list of FriendGroups.
 func (fgq *FriendGroupQuery) All(ctx context.Context) ([]*FriendGroup, error) {
+	ctx = newQueryContext(ctx, TypeFriendGroup, "All")
 	if err := fgq.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
-	return fgq.sqlAll(ctx)
+	qr := querierAll[[]*FriendGroup, *FriendGroupQuery]()
+	return withInterceptors[[]*FriendGroup](ctx, fgq, qr, fgq.inters)
 }
 
 // AllX is like All, but panics if an error occurs.
@@ -281,6 +284,7 @@ func (fgq *FriendGroupQuery) AllX(ctx context.Context) []*FriendGroup {
 // IDs executes the query and returns a list of FriendGroup IDs.
 func (fgq *FriendGroupQuery) IDs(ctx context.Context) ([]uuid.UUID, error) {
 	var ids []uuid.UUID
+	ctx = newQueryContext(ctx, TypeFriendGroup, "IDs")
 	if err := fgq.Select(friendgroup.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
@@ -298,10 +302,11 @@ func (fgq *FriendGroupQuery) IDsX(ctx context.Context) []uuid.UUID {
 
 // Count returns the count of the given query.
 func (fgq *FriendGroupQuery) Count(ctx context.Context) (int, error) {
+	ctx = newQueryContext(ctx, TypeFriendGroup, "Count")
 	if err := fgq.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
-	return fgq.sqlCount(ctx)
+	return withInterceptors[int](ctx, fgq, querierCount[*FriendGroupQuery](), fgq.inters)
 }
 
 // CountX is like Count, but panics if an error occurs.
@@ -315,10 +320,15 @@ func (fgq *FriendGroupQuery) CountX(ctx context.Context) int {
 
 // Exist returns true if the query has elements in the graph.
 func (fgq *FriendGroupQuery) Exist(ctx context.Context) (bool, error) {
-	if err := fgq.prepareQuery(ctx); err != nil {
-		return false, err
+	ctx = newQueryContext(ctx, TypeFriendGroup, "Exist")
+	switch _, err := fgq.FirstID(ctx); {
+	case IsNotFound(err):
+		return false, nil
+	case err != nil:
+		return false, fmt.Errorf("ent: check existence: %w", err)
+	default:
+		return true, nil
 	}
-	return fgq.sqlExist(ctx)
 }
 
 // ExistX is like Exist, but panics if an error occurs.
@@ -341,6 +351,7 @@ func (fgq *FriendGroupQuery) Clone() *FriendGroupQuery {
 		limit:                      fgq.limit,
 		offset:                     fgq.offset,
 		order:                      append([]OrderFunc{}, fgq.order...),
+		inters:                     append([]Interceptor{}, fgq.inters...),
 		predicates:                 append([]predicate.FriendGroup{}, fgq.predicates...),
 		withUser:                   fgq.withUser.Clone(),
 		withFriendUsers:            fgq.withFriendUsers.Clone(),
@@ -356,7 +367,7 @@ func (fgq *FriendGroupQuery) Clone() *FriendGroupQuery {
 // WithUser tells the query-builder to eager-load the nodes that are connected to
 // the "user" edge. The optional arguments are used to configure the query builder of the edge.
 func (fgq *FriendGroupQuery) WithUser(opts ...func(*UserQuery)) *FriendGroupQuery {
-	query := &UserQuery{config: fgq.config}
+	query := (&UserClient{config: fgq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
@@ -367,7 +378,7 @@ func (fgq *FriendGroupQuery) WithUser(opts ...func(*UserQuery)) *FriendGroupQuer
 // WithFriendUsers tells the query-builder to eager-load the nodes that are connected to
 // the "friend_users" edge. The optional arguments are used to configure the query builder of the edge.
 func (fgq *FriendGroupQuery) WithFriendUsers(opts ...func(*UserQuery)) *FriendGroupQuery {
-	query := &UserQuery{config: fgq.config}
+	query := (&UserClient{config: fgq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
@@ -378,7 +389,7 @@ func (fgq *FriendGroupQuery) WithFriendUsers(opts ...func(*UserQuery)) *FriendGr
 // WithInvitationFriendGroups tells the query-builder to eager-load the nodes that are connected to
 // the "invitation_friend_groups" edge. The optional arguments are used to configure the query builder of the edge.
 func (fgq *FriendGroupQuery) WithInvitationFriendGroups(opts ...func(*InvitationFriendGroupQuery)) *FriendGroupQuery {
-	query := &InvitationFriendGroupQuery{config: fgq.config}
+	query := (&InvitationFriendGroupClient{config: fgq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
@@ -389,7 +400,7 @@ func (fgq *FriendGroupQuery) WithInvitationFriendGroups(opts ...func(*Invitation
 // WithUserFriendGroups tells the query-builder to eager-load the nodes that are connected to
 // the "user_friend_groups" edge. The optional arguments are used to configure the query builder of the edge.
 func (fgq *FriendGroupQuery) WithUserFriendGroups(opts ...func(*UserFriendGroupQuery)) *FriendGroupQuery {
-	query := &UserFriendGroupQuery{config: fgq.config}
+	query := (&UserFriendGroupClient{config: fgq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
@@ -412,16 +423,11 @@ func (fgq *FriendGroupQuery) WithUserFriendGroups(opts ...func(*UserFriendGroupQ
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (fgq *FriendGroupQuery) GroupBy(field string, fields ...string) *FriendGroupGroupBy {
-	grbuild := &FriendGroupGroupBy{config: fgq.config}
-	grbuild.fields = append([]string{field}, fields...)
-	grbuild.path = func(ctx context.Context) (prev *sql.Selector, err error) {
-		if err := fgq.prepareQuery(ctx); err != nil {
-			return nil, err
-		}
-		return fgq.sqlQuery(ctx), nil
-	}
+	fgq.fields = append([]string{field}, fields...)
+	grbuild := &FriendGroupGroupBy{build: fgq}
+	grbuild.flds = &fgq.fields
 	grbuild.label = friendgroup.Label
-	grbuild.flds, grbuild.scan = &grbuild.fields, grbuild.Scan
+	grbuild.scan = grbuild.Scan
 	return grbuild
 }
 
@@ -439,10 +445,10 @@ func (fgq *FriendGroupQuery) GroupBy(field string, fields ...string) *FriendGrou
 //		Scan(ctx, &v)
 func (fgq *FriendGroupQuery) Select(fields ...string) *FriendGroupSelect {
 	fgq.fields = append(fgq.fields, fields...)
-	selbuild := &FriendGroupSelect{FriendGroupQuery: fgq}
-	selbuild.label = friendgroup.Label
-	selbuild.flds, selbuild.scan = &fgq.fields, selbuild.Scan
-	return selbuild
+	sbuild := &FriendGroupSelect{FriendGroupQuery: fgq}
+	sbuild.label = friendgroup.Label
+	sbuild.flds, sbuild.scan = &fgq.fields, sbuild.Scan
+	return sbuild
 }
 
 // Aggregate returns a FriendGroupSelect configured with the given aggregations.
@@ -451,6 +457,16 @@ func (fgq *FriendGroupQuery) Aggregate(fns ...AggregateFunc) *FriendGroupSelect 
 }
 
 func (fgq *FriendGroupQuery) prepareQuery(ctx context.Context) error {
+	for _, inter := range fgq.inters {
+		if inter == nil {
+			return fmt.Errorf("ent: uninitialized interceptor (forgotten import ent/runtime?)")
+		}
+		if trv, ok := inter.(Traverser); ok {
+			if err := trv.Traverse(ctx, fgq); err != nil {
+				return err
+			}
+		}
+	}
 	for _, f := range fgq.fields {
 		if !friendgroup.ValidColumn(f) {
 			return &ValidationError{Name: f, err: fmt.Errorf("ent: invalid field %q for query", f)}
@@ -709,17 +725,6 @@ func (fgq *FriendGroupQuery) sqlCount(ctx context.Context) (int, error) {
 	return sqlgraph.CountNodes(ctx, fgq.driver, _spec)
 }
 
-func (fgq *FriendGroupQuery) sqlExist(ctx context.Context) (bool, error) {
-	switch _, err := fgq.FirstID(ctx); {
-	case IsNotFound(err):
-		return false, nil
-	case err != nil:
-		return false, fmt.Errorf("ent: check existence: %w", err)
-	default:
-		return true, nil
-	}
-}
-
 func (fgq *FriendGroupQuery) querySpec() *sqlgraph.QuerySpec {
 	_spec := &sqlgraph.QuerySpec{
 		Node: &sqlgraph.NodeSpec{
@@ -803,7 +808,7 @@ func (fgq *FriendGroupQuery) sqlQuery(ctx context.Context) *sql.Selector {
 // WithNamedFriendUsers tells the query-builder to eager-load the nodes that are connected to the "friend_users"
 // edge with the given name. The optional arguments are used to configure the query builder of the edge.
 func (fgq *FriendGroupQuery) WithNamedFriendUsers(name string, opts ...func(*UserQuery)) *FriendGroupQuery {
-	query := &UserQuery{config: fgq.config}
+	query := (&UserClient{config: fgq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
@@ -817,7 +822,7 @@ func (fgq *FriendGroupQuery) WithNamedFriendUsers(name string, opts ...func(*Use
 // WithNamedInvitationFriendGroups tells the query-builder to eager-load the nodes that are connected to the "invitation_friend_groups"
 // edge with the given name. The optional arguments are used to configure the query builder of the edge.
 func (fgq *FriendGroupQuery) WithNamedInvitationFriendGroups(name string, opts ...func(*InvitationFriendGroupQuery)) *FriendGroupQuery {
-	query := &InvitationFriendGroupQuery{config: fgq.config}
+	query := (&InvitationFriendGroupClient{config: fgq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
@@ -831,7 +836,7 @@ func (fgq *FriendGroupQuery) WithNamedInvitationFriendGroups(name string, opts .
 // WithNamedUserFriendGroups tells the query-builder to eager-load the nodes that are connected to the "user_friend_groups"
 // edge with the given name. The optional arguments are used to configure the query builder of the edge.
 func (fgq *FriendGroupQuery) WithNamedUserFriendGroups(name string, opts ...func(*UserFriendGroupQuery)) *FriendGroupQuery {
-	query := &UserFriendGroupQuery{config: fgq.config}
+	query := (&UserFriendGroupClient{config: fgq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
@@ -844,13 +849,8 @@ func (fgq *FriendGroupQuery) WithNamedUserFriendGroups(name string, opts ...func
 
 // FriendGroupGroupBy is the group-by builder for FriendGroup entities.
 type FriendGroupGroupBy struct {
-	config
 	selector
-	fields []string
-	fns    []AggregateFunc
-	// intermediate query (i.e. traversal path).
-	sql  *sql.Selector
-	path func(context.Context) (*sql.Selector, error)
+	build *FriendGroupQuery
 }
 
 // Aggregate adds the given aggregation functions to the group-by query.
@@ -859,58 +859,46 @@ func (fggb *FriendGroupGroupBy) Aggregate(fns ...AggregateFunc) *FriendGroupGrou
 	return fggb
 }
 
-// Scan applies the group-by query and scans the result into the given value.
+// Scan applies the selector query and scans the result into the given value.
 func (fggb *FriendGroupGroupBy) Scan(ctx context.Context, v any) error {
-	query, err := fggb.path(ctx)
-	if err != nil {
+	ctx = newQueryContext(ctx, TypeFriendGroup, "GroupBy")
+	if err := fggb.build.prepareQuery(ctx); err != nil {
 		return err
 	}
-	fggb.sql = query
-	return fggb.sqlScan(ctx, v)
+	return scanWithInterceptors[*FriendGroupQuery, *FriendGroupGroupBy](ctx, fggb.build, fggb, fggb.build.inters, v)
 }
 
-func (fggb *FriendGroupGroupBy) sqlScan(ctx context.Context, v any) error {
-	for _, f := range fggb.fields {
-		if !friendgroup.ValidColumn(f) {
-			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for group-by", f)}
-		}
+func (fggb *FriendGroupGroupBy) sqlScan(ctx context.Context, root *FriendGroupQuery, v any) error {
+	selector := root.sqlQuery(ctx).Select()
+	aggregation := make([]string, 0, len(fggb.fns))
+	for _, fn := range fggb.fns {
+		aggregation = append(aggregation, fn(selector))
 	}
-	selector := fggb.sqlQuery()
+	if len(selector.SelectedColumns()) == 0 {
+		columns := make([]string, 0, len(*fggb.flds)+len(fggb.fns))
+		for _, f := range *fggb.flds {
+			columns = append(columns, selector.C(f))
+		}
+		columns = append(columns, aggregation...)
+		selector.Select(columns...)
+	}
+	selector.GroupBy(selector.Columns(*fggb.flds...)...)
 	if err := selector.Err(); err != nil {
 		return err
 	}
 	rows := &sql.Rows{}
 	query, args := selector.Query()
-	if err := fggb.driver.Query(ctx, query, args, rows); err != nil {
+	if err := fggb.build.driver.Query(ctx, query, args, rows); err != nil {
 		return err
 	}
 	defer rows.Close()
 	return sql.ScanSlice(rows, v)
 }
 
-func (fggb *FriendGroupGroupBy) sqlQuery() *sql.Selector {
-	selector := fggb.sql.Select()
-	aggregation := make([]string, 0, len(fggb.fns))
-	for _, fn := range fggb.fns {
-		aggregation = append(aggregation, fn(selector))
-	}
-	if len(selector.SelectedColumns()) == 0 {
-		columns := make([]string, 0, len(fggb.fields)+len(fggb.fns))
-		for _, f := range fggb.fields {
-			columns = append(columns, selector.C(f))
-		}
-		columns = append(columns, aggregation...)
-		selector.Select(columns...)
-	}
-	return selector.GroupBy(selector.Columns(fggb.fields...)...)
-}
-
 // FriendGroupSelect is the builder for selecting fields of FriendGroup entities.
 type FriendGroupSelect struct {
 	*FriendGroupQuery
 	selector
-	// intermediate query (i.e. traversal path).
-	sql *sql.Selector
 }
 
 // Aggregate adds the given aggregation functions to the selector query.
@@ -921,26 +909,27 @@ func (fgs *FriendGroupSelect) Aggregate(fns ...AggregateFunc) *FriendGroupSelect
 
 // Scan applies the selector query and scans the result into the given value.
 func (fgs *FriendGroupSelect) Scan(ctx context.Context, v any) error {
+	ctx = newQueryContext(ctx, TypeFriendGroup, "Select")
 	if err := fgs.prepareQuery(ctx); err != nil {
 		return err
 	}
-	fgs.sql = fgs.FriendGroupQuery.sqlQuery(ctx)
-	return fgs.sqlScan(ctx, v)
+	return scanWithInterceptors[*FriendGroupQuery, *FriendGroupSelect](ctx, fgs.FriendGroupQuery, fgs, fgs.inters, v)
 }
 
-func (fgs *FriendGroupSelect) sqlScan(ctx context.Context, v any) error {
+func (fgs *FriendGroupSelect) sqlScan(ctx context.Context, root *FriendGroupQuery, v any) error {
+	selector := root.sqlQuery(ctx)
 	aggregation := make([]string, 0, len(fgs.fns))
 	for _, fn := range fgs.fns {
-		aggregation = append(aggregation, fn(fgs.sql))
+		aggregation = append(aggregation, fn(selector))
 	}
 	switch n := len(*fgs.selector.flds); {
 	case n == 0 && len(aggregation) > 0:
-		fgs.sql.Select(aggregation...)
+		selector.Select(aggregation...)
 	case n != 0 && len(aggregation) > 0:
-		fgs.sql.AppendSelect(aggregation...)
+		selector.AppendSelect(aggregation...)
 	}
 	rows := &sql.Rows{}
-	query, args := fgs.sql.Query()
+	query, args := selector.Query()
 	if err := fgs.driver.Query(ctx, query, args, rows); err != nil {
 		return err
 	}

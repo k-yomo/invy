@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"cloud.google.com/go/profiler"
+	gcs "cloud.google.com/go/storage"
 	firebase "firebase.google.com/go/v4"
 	firebaseAuth "firebase.google.com/go/v4/auth"
 	"github.com/99designs/gqlgen/graphql/handler"
@@ -26,6 +27,7 @@ import (
 	"github.com/k-yomo/invy/invy_api/graph/loader"
 	"github.com/k-yomo/invy/pkg/logging"
 	"github.com/k-yomo/invy/pkg/requestutil"
+	"github.com/k-yomo/invy/pkg/storage"
 	"github.com/k-yomo/invy/pkg/tracing"
 	_ "github.com/lib/pq"
 	"github.com/rs/cors"
@@ -85,11 +87,26 @@ func main() {
 		logger.Fatal("initializing FCM client failed", zap.Error(err))
 	}
 
+	var avatarUploader storage.FileUploader
+	if appConfig.Env.IsDeployed() {
+		gcsClient, err := gcs.NewClient(context.Background())
+		if err != nil {
+			logger.Fatal("initialize gcs client failed", zap.Error(err))
+		}
+		defer gcsClient.Close()
+
+		avatarUploader = storage.NewGCSFileUploader(gcsClient, appConfig.GCPProjectID)
+	} else {
+		// TODO: Don't use mock and use GCS for local development.
+		avatarUploader = storage.NewMockFileUploader()
+	}
+
 	gqlConfig := gqlgen.Config{
 		Resolvers: &graph.Resolver{
 			DB:                 db,
 			FirebaseAuthClient: firebaseAuthClient,
 			FCMClient:          fcmClient,
+			AvatarUploader:     avatarUploader,
 		},
 		Directives: gqlgen.DirectiveRoot{
 			AuthRequired: directive.AuthRequired,

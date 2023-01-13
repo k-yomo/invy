@@ -4,7 +4,6 @@ package ent
 
 import (
 	"context"
-	"fmt"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -28,34 +27,7 @@ func (iad *InvitationAcceptanceDelete) Where(ps ...predicate.InvitationAcceptanc
 
 // Exec executes the deletion query and returns how many vertices were deleted.
 func (iad *InvitationAcceptanceDelete) Exec(ctx context.Context) (int, error) {
-	var (
-		err      error
-		affected int
-	)
-	if len(iad.hooks) == 0 {
-		affected, err = iad.sqlExec(ctx)
-	} else {
-		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-			mutation, ok := m.(*InvitationAcceptanceMutation)
-			if !ok {
-				return nil, fmt.Errorf("unexpected mutation type %T", m)
-			}
-			iad.mutation = mutation
-			affected, err = iad.sqlExec(ctx)
-			mutation.done = true
-			return affected, err
-		})
-		for i := len(iad.hooks) - 1; i >= 0; i-- {
-			if iad.hooks[i] == nil {
-				return 0, fmt.Errorf("ent: uninitialized hook (forgotten import ent/runtime?)")
-			}
-			mut = iad.hooks[i](mut)
-		}
-		if _, err := mut.Mutate(ctx, iad.mutation); err != nil {
-			return 0, err
-		}
-	}
-	return affected, err
+	return withHooks[int, InvitationAcceptanceMutation](ctx, iad.sqlExec, iad.mutation, iad.hooks)
 }
 
 // ExecX is like Exec, but panics if an error occurs.
@@ -88,6 +60,7 @@ func (iad *InvitationAcceptanceDelete) sqlExec(ctx context.Context) (int, error)
 	if err != nil && sqlgraph.IsConstraintError(err) {
 		err = &ConstraintError{msg: err.Error(), wrap: err}
 	}
+	iad.mutation.done = true
 	return affected, err
 }
 

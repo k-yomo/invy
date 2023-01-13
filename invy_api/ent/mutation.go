@@ -27,6 +27,7 @@ import (
 	"github.com/k-yomo/invy/invy_api/ent/userprofile"
 
 	"entgo.io/ent"
+	"entgo.io/ent/dialect/sql"
 )
 
 const (
@@ -356,9 +357,24 @@ func (m *AccountMutation) Where(ps ...predicate.Account) {
 	m.predicates = append(m.predicates, ps...)
 }
 
+// WhereP appends storage-level predicates to the AccountMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *AccountMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.Account, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
 // Op returns the operation name.
 func (m *AccountMutation) Op() Op {
 	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *AccountMutation) SetOp(op Op) {
+	m.op = op
 }
 
 // Type returns the node type of this mutation (Account).
@@ -1119,9 +1135,24 @@ func (m *FriendGroupMutation) Where(ps ...predicate.FriendGroup) {
 	m.predicates = append(m.predicates, ps...)
 }
 
+// WhereP appends storage-level predicates to the FriendGroupMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *FriendGroupMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.FriendGroup, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
 // Op returns the operation name.
 func (m *FriendGroupMutation) Op() Op {
 	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *FriendGroupMutation) SetOp(op Op) {
+	m.op = op
 }
 
 // Type returns the node type of this mutation (FriendGroup).
@@ -1753,9 +1784,24 @@ func (m *FriendshipMutation) Where(ps ...predicate.Friendship) {
 	m.predicates = append(m.predicates, ps...)
 }
 
+// WhereP appends storage-level predicates to the FriendshipMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *FriendshipMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.Friendship, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
 // Op returns the operation name.
 func (m *FriendshipMutation) Op() Op {
 	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *FriendshipMutation) SetOp(op Op) {
+	m.op = op
 }
 
 // Type returns the node type of this mutation (Friendship).
@@ -2302,9 +2348,24 @@ func (m *FriendshipRequestMutation) Where(ps ...predicate.FriendshipRequest) {
 	m.predicates = append(m.predicates, ps...)
 }
 
+// WhereP appends storage-level predicates to the FriendshipRequestMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *FriendshipRequestMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.FriendshipRequest, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
 // Op returns the operation name.
 func (m *FriendshipRequestMutation) Op() Op {
 	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *FriendshipRequestMutation) SetOp(op Op) {
+	m.op = op
 }
 
 // Type returns the node type of this mutation (FriendshipRequest).
@@ -3174,9 +3235,24 @@ func (m *InvitationMutation) Where(ps ...predicate.Invitation) {
 	m.predicates = append(m.predicates, ps...)
 }
 
+// WhereP appends storage-level predicates to the InvitationMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *InvitationMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.Invitation, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
 // Op returns the operation name.
 func (m *InvitationMutation) Op() Op {
 	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *InvitationMutation) SetOp(op Op) {
+	m.op = op
 }
 
 // Type returns the node type of this mutation (Invitation).
@@ -3853,9 +3929,24 @@ func (m *InvitationAcceptanceMutation) Where(ps ...predicate.InvitationAcceptanc
 	m.predicates = append(m.predicates, ps...)
 }
 
+// WhereP appends storage-level predicates to the InvitationAcceptanceMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *InvitationAcceptanceMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.InvitationAcceptance, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
 // Op returns the operation name.
 func (m *InvitationAcceptanceMutation) Op() Op {
 	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *InvitationAcceptanceMutation) SetOp(op Op) {
+	m.op = op
 }
 
 // Type returns the node type of this mutation (InvitationAcceptance).
@@ -4376,9 +4467,24 @@ func (m *InvitationDenialMutation) Where(ps ...predicate.InvitationDenial) {
 	m.predicates = append(m.predicates, ps...)
 }
 
+// WhereP appends storage-level predicates to the InvitationDenialMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *InvitationDenialMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.InvitationDenial, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
 // Op returns the operation name.
 func (m *InvitationDenialMutation) Op() Op {
 	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *InvitationDenialMutation) SetOp(op Op) {
+	m.op = op
 }
 
 // Type returns the node type of this mutation (InvitationDenial).
@@ -4899,9 +5005,24 @@ func (m *InvitationFriendGroupMutation) Where(ps ...predicate.InvitationFriendGr
 	m.predicates = append(m.predicates, ps...)
 }
 
+// WhereP appends storage-level predicates to the InvitationFriendGroupMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *InvitationFriendGroupMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.InvitationFriendGroup, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
 // Op returns the operation name.
 func (m *InvitationFriendGroupMutation) Op() Op {
 	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *InvitationFriendGroupMutation) SetOp(op Op) {
+	m.op = op
 }
 
 // Type returns the node type of this mutation (InvitationFriendGroup).
@@ -5422,9 +5543,24 @@ func (m *InvitationUserMutation) Where(ps ...predicate.InvitationUser) {
 	m.predicates = append(m.predicates, ps...)
 }
 
+// WhereP appends storage-level predicates to the InvitationUserMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *InvitationUserMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.InvitationUser, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
 // Op returns the operation name.
 func (m *InvitationUserMutation) Op() Op {
 	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *InvitationUserMutation) SetOp(op Op) {
+	m.op = op
 }
 
 // Type returns the node type of this mutation (InvitationUser).
@@ -5992,9 +6128,24 @@ func (m *PushNotificationTokenMutation) Where(ps ...predicate.PushNotificationTo
 	m.predicates = append(m.predicates, ps...)
 }
 
+// WhereP appends storage-level predicates to the PushNotificationTokenMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *PushNotificationTokenMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.PushNotificationToken, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
 // Op returns the operation name.
 func (m *PushNotificationTokenMutation) Op() Op {
 	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *PushNotificationTokenMutation) SetOp(op Op) {
+	m.op = op
 }
 
 // Type returns the node type of this mutation (PushNotificationToken).
@@ -6964,9 +7115,24 @@ func (m *UserMutation) Where(ps ...predicate.User) {
 	m.predicates = append(m.predicates, ps...)
 }
 
+// WhereP appends storage-level predicates to the UserMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *UserMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.User, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
 // Op returns the operation name.
 func (m *UserMutation) Op() Op {
 	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *UserMutation) SetOp(op Op) {
+	m.op = op
 }
 
 // Type returns the node type of this mutation (User).
@@ -7680,9 +7846,24 @@ func (m *UserFriendGroupMutation) Where(ps ...predicate.UserFriendGroup) {
 	m.predicates = append(m.predicates, ps...)
 }
 
+// WhereP appends storage-level predicates to the UserFriendGroupMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *UserFriendGroupMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.UserFriendGroup, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
 // Op returns the operation name.
 func (m *UserFriendGroupMutation) Op() Op {
 	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *UserFriendGroupMutation) SetOp(op Op) {
+	m.op = op
 }
 
 // Type returns the node type of this mutation (UserFriendGroup).
@@ -8203,9 +8384,24 @@ func (m *UserMuteMutation) Where(ps ...predicate.UserMute) {
 	m.predicates = append(m.predicates, ps...)
 }
 
+// WhereP appends storage-level predicates to the UserMuteMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *UserMuteMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.UserMute, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
 // Op returns the operation name.
 func (m *UserMuteMutation) Op() Op {
 	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *UserMuteMutation) SetOp(op Op) {
+	m.op = op
 }
 
 // Type returns the node type of this mutation (UserMute).
@@ -8810,9 +9006,24 @@ func (m *UserProfileMutation) Where(ps ...predicate.UserProfile) {
 	m.predicates = append(m.predicates, ps...)
 }
 
+// WhereP appends storage-level predicates to the UserProfileMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *UserProfileMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.UserProfile, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
 // Op returns the operation name.
 func (m *UserProfileMutation) Op() Op {
 	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *UserProfileMutation) SetOp(op Op) {
+	m.op = op
 }
 
 // Type returns the node type of this mutation (UserProfile).

@@ -94,50 +94,8 @@ func (frc *FriendshipRequestCreate) Mutation() *FriendshipRequestMutation {
 
 // Save creates the FriendshipRequest in the database.
 func (frc *FriendshipRequestCreate) Save(ctx context.Context) (*FriendshipRequest, error) {
-	var (
-		err  error
-		node *FriendshipRequest
-	)
 	frc.defaults()
-	if len(frc.hooks) == 0 {
-		if err = frc.check(); err != nil {
-			return nil, err
-		}
-		node, err = frc.sqlSave(ctx)
-	} else {
-		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-			mutation, ok := m.(*FriendshipRequestMutation)
-			if !ok {
-				return nil, fmt.Errorf("unexpected mutation type %T", m)
-			}
-			if err = frc.check(); err != nil {
-				return nil, err
-			}
-			frc.mutation = mutation
-			if node, err = frc.sqlSave(ctx); err != nil {
-				return nil, err
-			}
-			mutation.id = &node.ID
-			mutation.done = true
-			return node, err
-		})
-		for i := len(frc.hooks) - 1; i >= 0; i-- {
-			if frc.hooks[i] == nil {
-				return nil, fmt.Errorf("ent: uninitialized hook (forgotten import ent/runtime?)")
-			}
-			mut = frc.hooks[i](mut)
-		}
-		v, err := mut.Mutate(ctx, frc.mutation)
-		if err != nil {
-			return nil, err
-		}
-		nv, ok := v.(*FriendshipRequest)
-		if !ok {
-			return nil, fmt.Errorf("unexpected node type %T returned from FriendshipRequestMutation", v)
-		}
-		node = nv
-	}
-	return node, err
+	return withHooks[*FriendshipRequest, FriendshipRequestMutation](ctx, frc.sqlSave, frc.mutation, frc.hooks)
 }
 
 // SaveX calls Save and panics if Save returns an error.
@@ -195,6 +153,9 @@ func (frc *FriendshipRequestCreate) check() error {
 }
 
 func (frc *FriendshipRequestCreate) sqlSave(ctx context.Context) (*FriendshipRequest, error) {
+	if err := frc.check(); err != nil {
+		return nil, err
+	}
 	_node, _spec := frc.createSpec()
 	if err := sqlgraph.CreateNode(ctx, frc.driver, _spec); err != nil {
 		if sqlgraph.IsConstraintError(err) {
@@ -209,6 +170,8 @@ func (frc *FriendshipRequestCreate) sqlSave(ctx context.Context) (*FriendshipReq
 			return nil, err
 		}
 	}
+	frc.mutation.id = &_node.ID
+	frc.mutation.done = true
 	return _node, nil
 }
 

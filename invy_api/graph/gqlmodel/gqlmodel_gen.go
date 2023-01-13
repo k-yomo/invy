@@ -155,6 +155,10 @@ type UnmuteUserPayload struct {
 	UnmutedUserID uuid.UUID `json:"unmutedUserId"`
 }
 
+type UpdateAvatarPayload struct {
+	User *User `json:"user"`
+}
+
 type UpdateFriendGroupInput struct {
 	ID            uuid.UUID   `json:"id"`
 	Name          string      `json:"name"`
@@ -163,6 +167,10 @@ type UpdateFriendGroupInput struct {
 
 type UpdateFriendGroupPayload struct {
 	FriendGroup *FriendGroup `json:"friendGroup"`
+}
+
+type UpdateNicknamePayload struct {
+	User *User `json:"user"`
 }
 
 type User struct {

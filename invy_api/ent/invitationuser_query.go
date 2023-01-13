@@ -25,6 +25,7 @@ type InvitationUserQuery struct {
 	unique         *bool
 	order          []OrderFunc
 	fields         []string
+	inters         []Interceptor
 	predicates     []predicate.InvitationUser
 	withInvitation *InvitationQuery
 	withUser       *UserQuery
@@ -41,13 +42,13 @@ func (iuq *InvitationUserQuery) Where(ps ...predicate.InvitationUser) *Invitatio
 	return iuq
 }
 
-// Limit adds a limit step to the query.
+// Limit the number of records to be returned by this query.
 func (iuq *InvitationUserQuery) Limit(limit int) *InvitationUserQuery {
 	iuq.limit = &limit
 	return iuq
 }
 
-// Offset adds an offset step to the query.
+// Offset to start from.
 func (iuq *InvitationUserQuery) Offset(offset int) *InvitationUserQuery {
 	iuq.offset = &offset
 	return iuq
@@ -60,7 +61,7 @@ func (iuq *InvitationUserQuery) Unique(unique bool) *InvitationUserQuery {
 	return iuq
 }
 
-// Order adds an order step to the query.
+// Order specifies how the records should be ordered.
 func (iuq *InvitationUserQuery) Order(o ...OrderFunc) *InvitationUserQuery {
 	iuq.order = append(iuq.order, o...)
 	return iuq
@@ -68,7 +69,7 @@ func (iuq *InvitationUserQuery) Order(o ...OrderFunc) *InvitationUserQuery {
 
 // QueryInvitation chains the current query on the "invitation" edge.
 func (iuq *InvitationUserQuery) QueryInvitation() *InvitationQuery {
-	query := &InvitationQuery{config: iuq.config}
+	query := (&InvitationClient{config: iuq.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := iuq.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -90,7 +91,7 @@ func (iuq *InvitationUserQuery) QueryInvitation() *InvitationQuery {
 
 // QueryUser chains the current query on the "user" edge.
 func (iuq *InvitationUserQuery) QueryUser() *UserQuery {
-	query := &UserQuery{config: iuq.config}
+	query := (&UserClient{config: iuq.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := iuq.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -113,7 +114,7 @@ func (iuq *InvitationUserQuery) QueryUser() *UserQuery {
 // First returns the first InvitationUser entity from the query.
 // Returns a *NotFoundError when no InvitationUser was found.
 func (iuq *InvitationUserQuery) First(ctx context.Context) (*InvitationUser, error) {
-	nodes, err := iuq.Limit(1).All(ctx)
+	nodes, err := iuq.Limit(1).All(newQueryContext(ctx, TypeInvitationUser, "First"))
 	if err != nil {
 		return nil, err
 	}
@@ -136,7 +137,7 @@ func (iuq *InvitationUserQuery) FirstX(ctx context.Context) *InvitationUser {
 // Returns a *NotFoundError when no InvitationUser ID was found.
 func (iuq *InvitationUserQuery) FirstID(ctx context.Context) (id uuid.UUID, err error) {
 	var ids []uuid.UUID
-	if ids, err = iuq.Limit(1).IDs(ctx); err != nil {
+	if ids, err = iuq.Limit(1).IDs(newQueryContext(ctx, TypeInvitationUser, "FirstID")); err != nil {
 		return
 	}
 	if len(ids) == 0 {
@@ -159,7 +160,7 @@ func (iuq *InvitationUserQuery) FirstIDX(ctx context.Context) uuid.UUID {
 // Returns a *NotSingularError when more than one InvitationUser entity is found.
 // Returns a *NotFoundError when no InvitationUser entities are found.
 func (iuq *InvitationUserQuery) Only(ctx context.Context) (*InvitationUser, error) {
-	nodes, err := iuq.Limit(2).All(ctx)
+	nodes, err := iuq.Limit(2).All(newQueryContext(ctx, TypeInvitationUser, "Only"))
 	if err != nil {
 		return nil, err
 	}
@@ -187,7 +188,7 @@ func (iuq *InvitationUserQuery) OnlyX(ctx context.Context) *InvitationUser {
 // Returns a *NotFoundError when no entities are found.
 func (iuq *InvitationUserQuery) OnlyID(ctx context.Context) (id uuid.UUID, err error) {
 	var ids []uuid.UUID
-	if ids, err = iuq.Limit(2).IDs(ctx); err != nil {
+	if ids, err = iuq.Limit(2).IDs(newQueryContext(ctx, TypeInvitationUser, "OnlyID")); err != nil {
 		return
 	}
 	switch len(ids) {
@@ -212,10 +213,12 @@ func (iuq *InvitationUserQuery) OnlyIDX(ctx context.Context) uuid.UUID {
 
 // All executes the query and returns a list of InvitationUsers.
 func (iuq *InvitationUserQuery) All(ctx context.Context) ([]*InvitationUser, error) {
+	ctx = newQueryContext(ctx, TypeInvitationUser, "All")
 	if err := iuq.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
-	return iuq.sqlAll(ctx)
+	qr := querierAll[[]*InvitationUser, *InvitationUserQuery]()
+	return withInterceptors[[]*InvitationUser](ctx, iuq, qr, iuq.inters)
 }
 
 // AllX is like All, but panics if an error occurs.
@@ -230,6 +233,7 @@ func (iuq *InvitationUserQuery) AllX(ctx context.Context) []*InvitationUser {
 // IDs executes the query and returns a list of InvitationUser IDs.
 func (iuq *InvitationUserQuery) IDs(ctx context.Context) ([]uuid.UUID, error) {
 	var ids []uuid.UUID
+	ctx = newQueryContext(ctx, TypeInvitationUser, "IDs")
 	if err := iuq.Select(invitationuser.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
@@ -247,10 +251,11 @@ func (iuq *InvitationUserQuery) IDsX(ctx context.Context) []uuid.UUID {
 
 // Count returns the count of the given query.
 func (iuq *InvitationUserQuery) Count(ctx context.Context) (int, error) {
+	ctx = newQueryContext(ctx, TypeInvitationUser, "Count")
 	if err := iuq.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
-	return iuq.sqlCount(ctx)
+	return withInterceptors[int](ctx, iuq, querierCount[*InvitationUserQuery](), iuq.inters)
 }
 
 // CountX is like Count, but panics if an error occurs.
@@ -264,10 +269,15 @@ func (iuq *InvitationUserQuery) CountX(ctx context.Context) int {
 
 // Exist returns true if the query has elements in the graph.
 func (iuq *InvitationUserQuery) Exist(ctx context.Context) (bool, error) {
-	if err := iuq.prepareQuery(ctx); err != nil {
-		return false, err
+	ctx = newQueryContext(ctx, TypeInvitationUser, "Exist")
+	switch _, err := iuq.FirstID(ctx); {
+	case IsNotFound(err):
+		return false, nil
+	case err != nil:
+		return false, fmt.Errorf("ent: check existence: %w", err)
+	default:
+		return true, nil
 	}
-	return iuq.sqlExist(ctx)
 }
 
 // ExistX is like Exist, but panics if an error occurs.
@@ -290,6 +300,7 @@ func (iuq *InvitationUserQuery) Clone() *InvitationUserQuery {
 		limit:          iuq.limit,
 		offset:         iuq.offset,
 		order:          append([]OrderFunc{}, iuq.order...),
+		inters:         append([]Interceptor{}, iuq.inters...),
 		predicates:     append([]predicate.InvitationUser{}, iuq.predicates...),
 		withInvitation: iuq.withInvitation.Clone(),
 		withUser:       iuq.withUser.Clone(),
@@ -303,7 +314,7 @@ func (iuq *InvitationUserQuery) Clone() *InvitationUserQuery {
 // WithInvitation tells the query-builder to eager-load the nodes that are connected to
 // the "invitation" edge. The optional arguments are used to configure the query builder of the edge.
 func (iuq *InvitationUserQuery) WithInvitation(opts ...func(*InvitationQuery)) *InvitationUserQuery {
-	query := &InvitationQuery{config: iuq.config}
+	query := (&InvitationClient{config: iuq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
@@ -314,7 +325,7 @@ func (iuq *InvitationUserQuery) WithInvitation(opts ...func(*InvitationQuery)) *
 // WithUser tells the query-builder to eager-load the nodes that are connected to
 // the "user" edge. The optional arguments are used to configure the query builder of the edge.
 func (iuq *InvitationUserQuery) WithUser(opts ...func(*UserQuery)) *InvitationUserQuery {
-	query := &UserQuery{config: iuq.config}
+	query := (&UserClient{config: iuq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
@@ -337,16 +348,11 @@ func (iuq *InvitationUserQuery) WithUser(opts ...func(*UserQuery)) *InvitationUs
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (iuq *InvitationUserQuery) GroupBy(field string, fields ...string) *InvitationUserGroupBy {
-	grbuild := &InvitationUserGroupBy{config: iuq.config}
-	grbuild.fields = append([]string{field}, fields...)
-	grbuild.path = func(ctx context.Context) (prev *sql.Selector, err error) {
-		if err := iuq.prepareQuery(ctx); err != nil {
-			return nil, err
-		}
-		return iuq.sqlQuery(ctx), nil
-	}
+	iuq.fields = append([]string{field}, fields...)
+	grbuild := &InvitationUserGroupBy{build: iuq}
+	grbuild.flds = &iuq.fields
 	grbuild.label = invitationuser.Label
-	grbuild.flds, grbuild.scan = &grbuild.fields, grbuild.Scan
+	grbuild.scan = grbuild.Scan
 	return grbuild
 }
 
@@ -364,10 +370,10 @@ func (iuq *InvitationUserQuery) GroupBy(field string, fields ...string) *Invitat
 //		Scan(ctx, &v)
 func (iuq *InvitationUserQuery) Select(fields ...string) *InvitationUserSelect {
 	iuq.fields = append(iuq.fields, fields...)
-	selbuild := &InvitationUserSelect{InvitationUserQuery: iuq}
-	selbuild.label = invitationuser.Label
-	selbuild.flds, selbuild.scan = &iuq.fields, selbuild.Scan
-	return selbuild
+	sbuild := &InvitationUserSelect{InvitationUserQuery: iuq}
+	sbuild.label = invitationuser.Label
+	sbuild.flds, sbuild.scan = &iuq.fields, sbuild.Scan
+	return sbuild
 }
 
 // Aggregate returns a InvitationUserSelect configured with the given aggregations.
@@ -376,6 +382,16 @@ func (iuq *InvitationUserQuery) Aggregate(fns ...AggregateFunc) *InvitationUserS
 }
 
 func (iuq *InvitationUserQuery) prepareQuery(ctx context.Context) error {
+	for _, inter := range iuq.inters {
+		if inter == nil {
+			return fmt.Errorf("ent: uninitialized interceptor (forgotten import ent/runtime?)")
+		}
+		if trv, ok := inter.(Traverser); ok {
+			if err := trv.Traverse(ctx, iuq); err != nil {
+				return err
+			}
+		}
+	}
 	for _, f := range iuq.fields {
 		if !invitationuser.ValidColumn(f) {
 			return &ValidationError{Name: f, err: fmt.Errorf("ent: invalid field %q for query", f)}
@@ -506,17 +522,6 @@ func (iuq *InvitationUserQuery) sqlCount(ctx context.Context) (int, error) {
 	return sqlgraph.CountNodes(ctx, iuq.driver, _spec)
 }
 
-func (iuq *InvitationUserQuery) sqlExist(ctx context.Context) (bool, error) {
-	switch _, err := iuq.FirstID(ctx); {
-	case IsNotFound(err):
-		return false, nil
-	case err != nil:
-		return false, fmt.Errorf("ent: check existence: %w", err)
-	default:
-		return true, nil
-	}
-}
-
 func (iuq *InvitationUserQuery) querySpec() *sqlgraph.QuerySpec {
 	_spec := &sqlgraph.QuerySpec{
 		Node: &sqlgraph.NodeSpec{
@@ -599,13 +604,8 @@ func (iuq *InvitationUserQuery) sqlQuery(ctx context.Context) *sql.Selector {
 
 // InvitationUserGroupBy is the group-by builder for InvitationUser entities.
 type InvitationUserGroupBy struct {
-	config
 	selector
-	fields []string
-	fns    []AggregateFunc
-	// intermediate query (i.e. traversal path).
-	sql  *sql.Selector
-	path func(context.Context) (*sql.Selector, error)
+	build *InvitationUserQuery
 }
 
 // Aggregate adds the given aggregation functions to the group-by query.
@@ -614,58 +614,46 @@ func (iugb *InvitationUserGroupBy) Aggregate(fns ...AggregateFunc) *InvitationUs
 	return iugb
 }
 
-// Scan applies the group-by query and scans the result into the given value.
+// Scan applies the selector query and scans the result into the given value.
 func (iugb *InvitationUserGroupBy) Scan(ctx context.Context, v any) error {
-	query, err := iugb.path(ctx)
-	if err != nil {
+	ctx = newQueryContext(ctx, TypeInvitationUser, "GroupBy")
+	if err := iugb.build.prepareQuery(ctx); err != nil {
 		return err
 	}
-	iugb.sql = query
-	return iugb.sqlScan(ctx, v)
+	return scanWithInterceptors[*InvitationUserQuery, *InvitationUserGroupBy](ctx, iugb.build, iugb, iugb.build.inters, v)
 }
 
-func (iugb *InvitationUserGroupBy) sqlScan(ctx context.Context, v any) error {
-	for _, f := range iugb.fields {
-		if !invitationuser.ValidColumn(f) {
-			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for group-by", f)}
-		}
+func (iugb *InvitationUserGroupBy) sqlScan(ctx context.Context, root *InvitationUserQuery, v any) error {
+	selector := root.sqlQuery(ctx).Select()
+	aggregation := make([]string, 0, len(iugb.fns))
+	for _, fn := range iugb.fns {
+		aggregation = append(aggregation, fn(selector))
 	}
-	selector := iugb.sqlQuery()
+	if len(selector.SelectedColumns()) == 0 {
+		columns := make([]string, 0, len(*iugb.flds)+len(iugb.fns))
+		for _, f := range *iugb.flds {
+			columns = append(columns, selector.C(f))
+		}
+		columns = append(columns, aggregation...)
+		selector.Select(columns...)
+	}
+	selector.GroupBy(selector.Columns(*iugb.flds...)...)
 	if err := selector.Err(); err != nil {
 		return err
 	}
 	rows := &sql.Rows{}
 	query, args := selector.Query()
-	if err := iugb.driver.Query(ctx, query, args, rows); err != nil {
+	if err := iugb.build.driver.Query(ctx, query, args, rows); err != nil {
 		return err
 	}
 	defer rows.Close()
 	return sql.ScanSlice(rows, v)
 }
 
-func (iugb *InvitationUserGroupBy) sqlQuery() *sql.Selector {
-	selector := iugb.sql.Select()
-	aggregation := make([]string, 0, len(iugb.fns))
-	for _, fn := range iugb.fns {
-		aggregation = append(aggregation, fn(selector))
-	}
-	if len(selector.SelectedColumns()) == 0 {
-		columns := make([]string, 0, len(iugb.fields)+len(iugb.fns))
-		for _, f := range iugb.fields {
-			columns = append(columns, selector.C(f))
-		}
-		columns = append(columns, aggregation...)
-		selector.Select(columns...)
-	}
-	return selector.GroupBy(selector.Columns(iugb.fields...)...)
-}
-
 // InvitationUserSelect is the builder for selecting fields of InvitationUser entities.
 type InvitationUserSelect struct {
 	*InvitationUserQuery
 	selector
-	// intermediate query (i.e. traversal path).
-	sql *sql.Selector
 }
 
 // Aggregate adds the given aggregation functions to the selector query.
@@ -676,26 +664,27 @@ func (ius *InvitationUserSelect) Aggregate(fns ...AggregateFunc) *InvitationUser
 
 // Scan applies the selector query and scans the result into the given value.
 func (ius *InvitationUserSelect) Scan(ctx context.Context, v any) error {
+	ctx = newQueryContext(ctx, TypeInvitationUser, "Select")
 	if err := ius.prepareQuery(ctx); err != nil {
 		return err
 	}
-	ius.sql = ius.InvitationUserQuery.sqlQuery(ctx)
-	return ius.sqlScan(ctx, v)
+	return scanWithInterceptors[*InvitationUserQuery, *InvitationUserSelect](ctx, ius.InvitationUserQuery, ius, ius.inters, v)
 }
 
-func (ius *InvitationUserSelect) sqlScan(ctx context.Context, v any) error {
+func (ius *InvitationUserSelect) sqlScan(ctx context.Context, root *InvitationUserQuery, v any) error {
+	selector := root.sqlQuery(ctx)
 	aggregation := make([]string, 0, len(ius.fns))
 	for _, fn := range ius.fns {
-		aggregation = append(aggregation, fn(ius.sql))
+		aggregation = append(aggregation, fn(selector))
 	}
 	switch n := len(*ius.selector.flds); {
 	case n == 0 && len(aggregation) > 0:
-		ius.sql.Select(aggregation...)
+		selector.Select(aggregation...)
 	case n != 0 && len(aggregation) > 0:
-		ius.sql.AppendSelect(aggregation...)
+		selector.AppendSelect(aggregation...)
 	}
 	rows := &sql.Rows{}
-	query, args := ius.sql.Query()
+	query, args := selector.Query()
 	if err := ius.driver.Query(ctx, query, args, rows); err != nil {
 		return err
 	}

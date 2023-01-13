@@ -82,50 +82,8 @@ func (umc *UserMuteCreate) Mutation() *UserMuteMutation {
 
 // Save creates the UserMute in the database.
 func (umc *UserMuteCreate) Save(ctx context.Context) (*UserMute, error) {
-	var (
-		err  error
-		node *UserMute
-	)
 	umc.defaults()
-	if len(umc.hooks) == 0 {
-		if err = umc.check(); err != nil {
-			return nil, err
-		}
-		node, err = umc.sqlSave(ctx)
-	} else {
-		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-			mutation, ok := m.(*UserMuteMutation)
-			if !ok {
-				return nil, fmt.Errorf("unexpected mutation type %T", m)
-			}
-			if err = umc.check(); err != nil {
-				return nil, err
-			}
-			umc.mutation = mutation
-			if node, err = umc.sqlSave(ctx); err != nil {
-				return nil, err
-			}
-			mutation.id = &node.ID
-			mutation.done = true
-			return node, err
-		})
-		for i := len(umc.hooks) - 1; i >= 0; i-- {
-			if umc.hooks[i] == nil {
-				return nil, fmt.Errorf("ent: uninitialized hook (forgotten import ent/runtime?)")
-			}
-			mut = umc.hooks[i](mut)
-		}
-		v, err := mut.Mutate(ctx, umc.mutation)
-		if err != nil {
-			return nil, err
-		}
-		nv, ok := v.(*UserMute)
-		if !ok {
-			return nil, fmt.Errorf("unexpected node type %T returned from UserMuteMutation", v)
-		}
-		node = nv
-	}
-	return node, err
+	return withHooks[*UserMute, UserMuteMutation](ctx, umc.sqlSave, umc.mutation, umc.hooks)
 }
 
 // SaveX calls Save and panics if Save returns an error.
@@ -183,6 +141,9 @@ func (umc *UserMuteCreate) check() error {
 }
 
 func (umc *UserMuteCreate) sqlSave(ctx context.Context) (*UserMute, error) {
+	if err := umc.check(); err != nil {
+		return nil, err
+	}
 	_node, _spec := umc.createSpec()
 	if err := sqlgraph.CreateNode(ctx, umc.driver, _spec); err != nil {
 		if sqlgraph.IsConstraintError(err) {
@@ -197,6 +158,8 @@ func (umc *UserMuteCreate) sqlSave(ctx context.Context) (*UserMute, error) {
 			return nil, err
 		}
 	}
+	umc.mutation.id = &_node.ID
+	umc.mutation.done = true
 	return _node, nil
 }
 

@@ -173,50 +173,8 @@ func (ic *InvitationCreate) Mutation() *InvitationMutation {
 
 // Save creates the Invitation in the database.
 func (ic *InvitationCreate) Save(ctx context.Context) (*Invitation, error) {
-	var (
-		err  error
-		node *Invitation
-	)
 	ic.defaults()
-	if len(ic.hooks) == 0 {
-		if err = ic.check(); err != nil {
-			return nil, err
-		}
-		node, err = ic.sqlSave(ctx)
-	} else {
-		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-			mutation, ok := m.(*InvitationMutation)
-			if !ok {
-				return nil, fmt.Errorf("unexpected mutation type %T", m)
-			}
-			if err = ic.check(); err != nil {
-				return nil, err
-			}
-			ic.mutation = mutation
-			if node, err = ic.sqlSave(ctx); err != nil {
-				return nil, err
-			}
-			mutation.id = &node.ID
-			mutation.done = true
-			return node, err
-		})
-		for i := len(ic.hooks) - 1; i >= 0; i-- {
-			if ic.hooks[i] == nil {
-				return nil, fmt.Errorf("ent: uninitialized hook (forgotten import ent/runtime?)")
-			}
-			mut = ic.hooks[i](mut)
-		}
-		v, err := mut.Mutate(ctx, ic.mutation)
-		if err != nil {
-			return nil, err
-		}
-		nv, ok := v.(*Invitation)
-		if !ok {
-			return nil, fmt.Errorf("unexpected node type %T returned from InvitationMutation", v)
-		}
-		node = nv
-	}
-	return node, err
+	return withHooks[*Invitation, InvitationMutation](ctx, ic.sqlSave, ic.mutation, ic.hooks)
 }
 
 // SaveX calls Save and panics if Save returns an error.
@@ -287,6 +245,9 @@ func (ic *InvitationCreate) check() error {
 }
 
 func (ic *InvitationCreate) sqlSave(ctx context.Context) (*Invitation, error) {
+	if err := ic.check(); err != nil {
+		return nil, err
+	}
 	_node, _spec := ic.createSpec()
 	if err := sqlgraph.CreateNode(ctx, ic.driver, _spec); err != nil {
 		if sqlgraph.IsConstraintError(err) {
@@ -301,6 +262,8 @@ func (ic *InvitationCreate) sqlSave(ctx context.Context) (*Invitation, error) {
 			return nil, err
 		}
 	}
+	ic.mutation.id = &_node.ID
+	ic.mutation.done = true
 	return _node, nil
 }
 

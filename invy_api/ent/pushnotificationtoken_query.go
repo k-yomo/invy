@@ -24,6 +24,7 @@ type PushNotificationTokenQuery struct {
 	unique     *bool
 	order      []OrderFunc
 	fields     []string
+	inters     []Interceptor
 	predicates []predicate.PushNotificationToken
 	withUser   *UserQuery
 	modifiers  []func(*sql.Selector)
@@ -39,13 +40,13 @@ func (pntq *PushNotificationTokenQuery) Where(ps ...predicate.PushNotificationTo
 	return pntq
 }
 
-// Limit adds a limit step to the query.
+// Limit the number of records to be returned by this query.
 func (pntq *PushNotificationTokenQuery) Limit(limit int) *PushNotificationTokenQuery {
 	pntq.limit = &limit
 	return pntq
 }
 
-// Offset adds an offset step to the query.
+// Offset to start from.
 func (pntq *PushNotificationTokenQuery) Offset(offset int) *PushNotificationTokenQuery {
 	pntq.offset = &offset
 	return pntq
@@ -58,7 +59,7 @@ func (pntq *PushNotificationTokenQuery) Unique(unique bool) *PushNotificationTok
 	return pntq
 }
 
-// Order adds an order step to the query.
+// Order specifies how the records should be ordered.
 func (pntq *PushNotificationTokenQuery) Order(o ...OrderFunc) *PushNotificationTokenQuery {
 	pntq.order = append(pntq.order, o...)
 	return pntq
@@ -66,7 +67,7 @@ func (pntq *PushNotificationTokenQuery) Order(o ...OrderFunc) *PushNotificationT
 
 // QueryUser chains the current query on the "user" edge.
 func (pntq *PushNotificationTokenQuery) QueryUser() *UserQuery {
-	query := &UserQuery{config: pntq.config}
+	query := (&UserClient{config: pntq.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := pntq.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -89,7 +90,7 @@ func (pntq *PushNotificationTokenQuery) QueryUser() *UserQuery {
 // First returns the first PushNotificationToken entity from the query.
 // Returns a *NotFoundError when no PushNotificationToken was found.
 func (pntq *PushNotificationTokenQuery) First(ctx context.Context) (*PushNotificationToken, error) {
-	nodes, err := pntq.Limit(1).All(ctx)
+	nodes, err := pntq.Limit(1).All(newQueryContext(ctx, TypePushNotificationToken, "First"))
 	if err != nil {
 		return nil, err
 	}
@@ -112,7 +113,7 @@ func (pntq *PushNotificationTokenQuery) FirstX(ctx context.Context) *PushNotific
 // Returns a *NotFoundError when no PushNotificationToken ID was found.
 func (pntq *PushNotificationTokenQuery) FirstID(ctx context.Context) (id uuid.UUID, err error) {
 	var ids []uuid.UUID
-	if ids, err = pntq.Limit(1).IDs(ctx); err != nil {
+	if ids, err = pntq.Limit(1).IDs(newQueryContext(ctx, TypePushNotificationToken, "FirstID")); err != nil {
 		return
 	}
 	if len(ids) == 0 {
@@ -135,7 +136,7 @@ func (pntq *PushNotificationTokenQuery) FirstIDX(ctx context.Context) uuid.UUID 
 // Returns a *NotSingularError when more than one PushNotificationToken entity is found.
 // Returns a *NotFoundError when no PushNotificationToken entities are found.
 func (pntq *PushNotificationTokenQuery) Only(ctx context.Context) (*PushNotificationToken, error) {
-	nodes, err := pntq.Limit(2).All(ctx)
+	nodes, err := pntq.Limit(2).All(newQueryContext(ctx, TypePushNotificationToken, "Only"))
 	if err != nil {
 		return nil, err
 	}
@@ -163,7 +164,7 @@ func (pntq *PushNotificationTokenQuery) OnlyX(ctx context.Context) *PushNotifica
 // Returns a *NotFoundError when no entities are found.
 func (pntq *PushNotificationTokenQuery) OnlyID(ctx context.Context) (id uuid.UUID, err error) {
 	var ids []uuid.UUID
-	if ids, err = pntq.Limit(2).IDs(ctx); err != nil {
+	if ids, err = pntq.Limit(2).IDs(newQueryContext(ctx, TypePushNotificationToken, "OnlyID")); err != nil {
 		return
 	}
 	switch len(ids) {
@@ -188,10 +189,12 @@ func (pntq *PushNotificationTokenQuery) OnlyIDX(ctx context.Context) uuid.UUID {
 
 // All executes the query and returns a list of PushNotificationTokens.
 func (pntq *PushNotificationTokenQuery) All(ctx context.Context) ([]*PushNotificationToken, error) {
+	ctx = newQueryContext(ctx, TypePushNotificationToken, "All")
 	if err := pntq.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
-	return pntq.sqlAll(ctx)
+	qr := querierAll[[]*PushNotificationToken, *PushNotificationTokenQuery]()
+	return withInterceptors[[]*PushNotificationToken](ctx, pntq, qr, pntq.inters)
 }
 
 // AllX is like All, but panics if an error occurs.
@@ -206,6 +209,7 @@ func (pntq *PushNotificationTokenQuery) AllX(ctx context.Context) []*PushNotific
 // IDs executes the query and returns a list of PushNotificationToken IDs.
 func (pntq *PushNotificationTokenQuery) IDs(ctx context.Context) ([]uuid.UUID, error) {
 	var ids []uuid.UUID
+	ctx = newQueryContext(ctx, TypePushNotificationToken, "IDs")
 	if err := pntq.Select(pushnotificationtoken.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
@@ -223,10 +227,11 @@ func (pntq *PushNotificationTokenQuery) IDsX(ctx context.Context) []uuid.UUID {
 
 // Count returns the count of the given query.
 func (pntq *PushNotificationTokenQuery) Count(ctx context.Context) (int, error) {
+	ctx = newQueryContext(ctx, TypePushNotificationToken, "Count")
 	if err := pntq.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
-	return pntq.sqlCount(ctx)
+	return withInterceptors[int](ctx, pntq, querierCount[*PushNotificationTokenQuery](), pntq.inters)
 }
 
 // CountX is like Count, but panics if an error occurs.
@@ -240,10 +245,15 @@ func (pntq *PushNotificationTokenQuery) CountX(ctx context.Context) int {
 
 // Exist returns true if the query has elements in the graph.
 func (pntq *PushNotificationTokenQuery) Exist(ctx context.Context) (bool, error) {
-	if err := pntq.prepareQuery(ctx); err != nil {
-		return false, err
+	ctx = newQueryContext(ctx, TypePushNotificationToken, "Exist")
+	switch _, err := pntq.FirstID(ctx); {
+	case IsNotFound(err):
+		return false, nil
+	case err != nil:
+		return false, fmt.Errorf("ent: check existence: %w", err)
+	default:
+		return true, nil
 	}
-	return pntq.sqlExist(ctx)
 }
 
 // ExistX is like Exist, but panics if an error occurs.
@@ -266,6 +276,7 @@ func (pntq *PushNotificationTokenQuery) Clone() *PushNotificationTokenQuery {
 		limit:      pntq.limit,
 		offset:     pntq.offset,
 		order:      append([]OrderFunc{}, pntq.order...),
+		inters:     append([]Interceptor{}, pntq.inters...),
 		predicates: append([]predicate.PushNotificationToken{}, pntq.predicates...),
 		withUser:   pntq.withUser.Clone(),
 		// clone intermediate query.
@@ -278,7 +289,7 @@ func (pntq *PushNotificationTokenQuery) Clone() *PushNotificationTokenQuery {
 // WithUser tells the query-builder to eager-load the nodes that are connected to
 // the "user" edge. The optional arguments are used to configure the query builder of the edge.
 func (pntq *PushNotificationTokenQuery) WithUser(opts ...func(*UserQuery)) *PushNotificationTokenQuery {
-	query := &UserQuery{config: pntq.config}
+	query := (&UserClient{config: pntq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
@@ -301,16 +312,11 @@ func (pntq *PushNotificationTokenQuery) WithUser(opts ...func(*UserQuery)) *Push
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (pntq *PushNotificationTokenQuery) GroupBy(field string, fields ...string) *PushNotificationTokenGroupBy {
-	grbuild := &PushNotificationTokenGroupBy{config: pntq.config}
-	grbuild.fields = append([]string{field}, fields...)
-	grbuild.path = func(ctx context.Context) (prev *sql.Selector, err error) {
-		if err := pntq.prepareQuery(ctx); err != nil {
-			return nil, err
-		}
-		return pntq.sqlQuery(ctx), nil
-	}
+	pntq.fields = append([]string{field}, fields...)
+	grbuild := &PushNotificationTokenGroupBy{build: pntq}
+	grbuild.flds = &pntq.fields
 	grbuild.label = pushnotificationtoken.Label
-	grbuild.flds, grbuild.scan = &grbuild.fields, grbuild.Scan
+	grbuild.scan = grbuild.Scan
 	return grbuild
 }
 
@@ -328,10 +334,10 @@ func (pntq *PushNotificationTokenQuery) GroupBy(field string, fields ...string) 
 //		Scan(ctx, &v)
 func (pntq *PushNotificationTokenQuery) Select(fields ...string) *PushNotificationTokenSelect {
 	pntq.fields = append(pntq.fields, fields...)
-	selbuild := &PushNotificationTokenSelect{PushNotificationTokenQuery: pntq}
-	selbuild.label = pushnotificationtoken.Label
-	selbuild.flds, selbuild.scan = &pntq.fields, selbuild.Scan
-	return selbuild
+	sbuild := &PushNotificationTokenSelect{PushNotificationTokenQuery: pntq}
+	sbuild.label = pushnotificationtoken.Label
+	sbuild.flds, sbuild.scan = &pntq.fields, sbuild.Scan
+	return sbuild
 }
 
 // Aggregate returns a PushNotificationTokenSelect configured with the given aggregations.
@@ -340,6 +346,16 @@ func (pntq *PushNotificationTokenQuery) Aggregate(fns ...AggregateFunc) *PushNot
 }
 
 func (pntq *PushNotificationTokenQuery) prepareQuery(ctx context.Context) error {
+	for _, inter := range pntq.inters {
+		if inter == nil {
+			return fmt.Errorf("ent: uninitialized interceptor (forgotten import ent/runtime?)")
+		}
+		if trv, ok := inter.(Traverser); ok {
+			if err := trv.Traverse(ctx, pntq); err != nil {
+				return err
+			}
+		}
+	}
 	for _, f := range pntq.fields {
 		if !pushnotificationtoken.ValidColumn(f) {
 			return &ValidationError{Name: f, err: fmt.Errorf("ent: invalid field %q for query", f)}
@@ -437,17 +453,6 @@ func (pntq *PushNotificationTokenQuery) sqlCount(ctx context.Context) (int, erro
 	return sqlgraph.CountNodes(ctx, pntq.driver, _spec)
 }
 
-func (pntq *PushNotificationTokenQuery) sqlExist(ctx context.Context) (bool, error) {
-	switch _, err := pntq.FirstID(ctx); {
-	case IsNotFound(err):
-		return false, nil
-	case err != nil:
-		return false, fmt.Errorf("ent: check existence: %w", err)
-	default:
-		return true, nil
-	}
-}
-
 func (pntq *PushNotificationTokenQuery) querySpec() *sqlgraph.QuerySpec {
 	_spec := &sqlgraph.QuerySpec{
 		Node: &sqlgraph.NodeSpec{
@@ -530,13 +535,8 @@ func (pntq *PushNotificationTokenQuery) sqlQuery(ctx context.Context) *sql.Selec
 
 // PushNotificationTokenGroupBy is the group-by builder for PushNotificationToken entities.
 type PushNotificationTokenGroupBy struct {
-	config
 	selector
-	fields []string
-	fns    []AggregateFunc
-	// intermediate query (i.e. traversal path).
-	sql  *sql.Selector
-	path func(context.Context) (*sql.Selector, error)
+	build *PushNotificationTokenQuery
 }
 
 // Aggregate adds the given aggregation functions to the group-by query.
@@ -545,58 +545,46 @@ func (pntgb *PushNotificationTokenGroupBy) Aggregate(fns ...AggregateFunc) *Push
 	return pntgb
 }
 
-// Scan applies the group-by query and scans the result into the given value.
+// Scan applies the selector query and scans the result into the given value.
 func (pntgb *PushNotificationTokenGroupBy) Scan(ctx context.Context, v any) error {
-	query, err := pntgb.path(ctx)
-	if err != nil {
+	ctx = newQueryContext(ctx, TypePushNotificationToken, "GroupBy")
+	if err := pntgb.build.prepareQuery(ctx); err != nil {
 		return err
 	}
-	pntgb.sql = query
-	return pntgb.sqlScan(ctx, v)
+	return scanWithInterceptors[*PushNotificationTokenQuery, *PushNotificationTokenGroupBy](ctx, pntgb.build, pntgb, pntgb.build.inters, v)
 }
 
-func (pntgb *PushNotificationTokenGroupBy) sqlScan(ctx context.Context, v any) error {
-	for _, f := range pntgb.fields {
-		if !pushnotificationtoken.ValidColumn(f) {
-			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for group-by", f)}
-		}
+func (pntgb *PushNotificationTokenGroupBy) sqlScan(ctx context.Context, root *PushNotificationTokenQuery, v any) error {
+	selector := root.sqlQuery(ctx).Select()
+	aggregation := make([]string, 0, len(pntgb.fns))
+	for _, fn := range pntgb.fns {
+		aggregation = append(aggregation, fn(selector))
 	}
-	selector := pntgb.sqlQuery()
+	if len(selector.SelectedColumns()) == 0 {
+		columns := make([]string, 0, len(*pntgb.flds)+len(pntgb.fns))
+		for _, f := range *pntgb.flds {
+			columns = append(columns, selector.C(f))
+		}
+		columns = append(columns, aggregation...)
+		selector.Select(columns...)
+	}
+	selector.GroupBy(selector.Columns(*pntgb.flds...)...)
 	if err := selector.Err(); err != nil {
 		return err
 	}
 	rows := &sql.Rows{}
 	query, args := selector.Query()
-	if err := pntgb.driver.Query(ctx, query, args, rows); err != nil {
+	if err := pntgb.build.driver.Query(ctx, query, args, rows); err != nil {
 		return err
 	}
 	defer rows.Close()
 	return sql.ScanSlice(rows, v)
 }
 
-func (pntgb *PushNotificationTokenGroupBy) sqlQuery() *sql.Selector {
-	selector := pntgb.sql.Select()
-	aggregation := make([]string, 0, len(pntgb.fns))
-	for _, fn := range pntgb.fns {
-		aggregation = append(aggregation, fn(selector))
-	}
-	if len(selector.SelectedColumns()) == 0 {
-		columns := make([]string, 0, len(pntgb.fields)+len(pntgb.fns))
-		for _, f := range pntgb.fields {
-			columns = append(columns, selector.C(f))
-		}
-		columns = append(columns, aggregation...)
-		selector.Select(columns...)
-	}
-	return selector.GroupBy(selector.Columns(pntgb.fields...)...)
-}
-
 // PushNotificationTokenSelect is the builder for selecting fields of PushNotificationToken entities.
 type PushNotificationTokenSelect struct {
 	*PushNotificationTokenQuery
 	selector
-	// intermediate query (i.e. traversal path).
-	sql *sql.Selector
 }
 
 // Aggregate adds the given aggregation functions to the selector query.
@@ -607,26 +595,27 @@ func (pnts *PushNotificationTokenSelect) Aggregate(fns ...AggregateFunc) *PushNo
 
 // Scan applies the selector query and scans the result into the given value.
 func (pnts *PushNotificationTokenSelect) Scan(ctx context.Context, v any) error {
+	ctx = newQueryContext(ctx, TypePushNotificationToken, "Select")
 	if err := pnts.prepareQuery(ctx); err != nil {
 		return err
 	}
-	pnts.sql = pnts.PushNotificationTokenQuery.sqlQuery(ctx)
-	return pnts.sqlScan(ctx, v)
+	return scanWithInterceptors[*PushNotificationTokenQuery, *PushNotificationTokenSelect](ctx, pnts.PushNotificationTokenQuery, pnts, pnts.inters, v)
 }
 
-func (pnts *PushNotificationTokenSelect) sqlScan(ctx context.Context, v any) error {
+func (pnts *PushNotificationTokenSelect) sqlScan(ctx context.Context, root *PushNotificationTokenQuery, v any) error {
+	selector := root.sqlQuery(ctx)
 	aggregation := make([]string, 0, len(pnts.fns))
 	for _, fn := range pnts.fns {
-		aggregation = append(aggregation, fn(pnts.sql))
+		aggregation = append(aggregation, fn(selector))
 	}
 	switch n := len(*pnts.selector.flds); {
 	case n == 0 && len(aggregation) > 0:
-		pnts.sql.Select(aggregation...)
+		selector.Select(aggregation...)
 	case n != 0 && len(aggregation) > 0:
-		pnts.sql.AppendSelect(aggregation...)
+		selector.AppendSelect(aggregation...)
 	}
 	rows := &sql.Rows{}
-	query, args := pnts.sql.Query()
+	query, args := selector.Query()
 	if err := pnts.driver.Query(ctx, query, args, rows); err != nil {
 		return err
 	}

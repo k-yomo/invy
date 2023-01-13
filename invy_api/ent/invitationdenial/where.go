@@ -13,230 +13,142 @@ import (
 
 // ID filters vertices based on their ID field.
 func ID(id uuid.UUID) predicate.InvitationDenial {
-	return predicate.InvitationDenial(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldID), id))
-	})
+	return predicate.InvitationDenial(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
 func IDEQ(id uuid.UUID) predicate.InvitationDenial {
-	return predicate.InvitationDenial(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldID), id))
-	})
+	return predicate.InvitationDenial(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
 func IDNEQ(id uuid.UUID) predicate.InvitationDenial {
-	return predicate.InvitationDenial(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldID), id))
-	})
+	return predicate.InvitationDenial(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
 func IDIn(ids ...uuid.UUID) predicate.InvitationDenial {
-	return predicate.InvitationDenial(func(s *sql.Selector) {
-		v := make([]any, len(ids))
-		for i := range v {
-			v[i] = ids[i]
-		}
-		s.Where(sql.In(s.C(FieldID), v...))
-	})
+	return predicate.InvitationDenial(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
 func IDNotIn(ids ...uuid.UUID) predicate.InvitationDenial {
-	return predicate.InvitationDenial(func(s *sql.Selector) {
-		v := make([]any, len(ids))
-		for i := range v {
-			v[i] = ids[i]
-		}
-		s.Where(sql.NotIn(s.C(FieldID), v...))
-	})
+	return predicate.InvitationDenial(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
 func IDGT(id uuid.UUID) predicate.InvitationDenial {
-	return predicate.InvitationDenial(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldID), id))
-	})
+	return predicate.InvitationDenial(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
 func IDGTE(id uuid.UUID) predicate.InvitationDenial {
-	return predicate.InvitationDenial(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldID), id))
-	})
+	return predicate.InvitationDenial(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
 func IDLT(id uuid.UUID) predicate.InvitationDenial {
-	return predicate.InvitationDenial(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldID), id))
-	})
+	return predicate.InvitationDenial(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
 func IDLTE(id uuid.UUID) predicate.InvitationDenial {
-	return predicate.InvitationDenial(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldID), id))
-	})
+	return predicate.InvitationDenial(sql.FieldLTE(FieldID, id))
 }
 
 // UserID applies equality check predicate on the "user_id" field. It's identical to UserIDEQ.
 func UserID(v uuid.UUID) predicate.InvitationDenial {
-	return predicate.InvitationDenial(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldUserID), v))
-	})
+	return predicate.InvitationDenial(sql.FieldEQ(FieldUserID, v))
 }
 
 // InvitationID applies equality check predicate on the "invitation_id" field. It's identical to InvitationIDEQ.
 func InvitationID(v uuid.UUID) predicate.InvitationDenial {
-	return predicate.InvitationDenial(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldInvitationID), v))
-	})
+	return predicate.InvitationDenial(sql.FieldEQ(FieldInvitationID, v))
 }
 
 // CreatedAt applies equality check predicate on the "created_at" field. It's identical to CreatedAtEQ.
 func CreatedAt(v time.Time) predicate.InvitationDenial {
-	return predicate.InvitationDenial(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldCreatedAt), v))
-	})
+	return predicate.InvitationDenial(sql.FieldEQ(FieldCreatedAt, v))
 }
 
 // UserIDEQ applies the EQ predicate on the "user_id" field.
 func UserIDEQ(v uuid.UUID) predicate.InvitationDenial {
-	return predicate.InvitationDenial(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldUserID), v))
-	})
+	return predicate.InvitationDenial(sql.FieldEQ(FieldUserID, v))
 }
 
 // UserIDNEQ applies the NEQ predicate on the "user_id" field.
 func UserIDNEQ(v uuid.UUID) predicate.InvitationDenial {
-	return predicate.InvitationDenial(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldUserID), v))
-	})
+	return predicate.InvitationDenial(sql.FieldNEQ(FieldUserID, v))
 }
 
 // UserIDIn applies the In predicate on the "user_id" field.
 func UserIDIn(vs ...uuid.UUID) predicate.InvitationDenial {
-	v := make([]any, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.InvitationDenial(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldUserID), v...))
-	})
+	return predicate.InvitationDenial(sql.FieldIn(FieldUserID, vs...))
 }
 
 // UserIDNotIn applies the NotIn predicate on the "user_id" field.
 func UserIDNotIn(vs ...uuid.UUID) predicate.InvitationDenial {
-	v := make([]any, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.InvitationDenial(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldUserID), v...))
-	})
+	return predicate.InvitationDenial(sql.FieldNotIn(FieldUserID, vs...))
 }
 
 // InvitationIDEQ applies the EQ predicate on the "invitation_id" field.
 func InvitationIDEQ(v uuid.UUID) predicate.InvitationDenial {
-	return predicate.InvitationDenial(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldInvitationID), v))
-	})
+	return predicate.InvitationDenial(sql.FieldEQ(FieldInvitationID, v))
 }
 
 // InvitationIDNEQ applies the NEQ predicate on the "invitation_id" field.
 func InvitationIDNEQ(v uuid.UUID) predicate.InvitationDenial {
-	return predicate.InvitationDenial(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldInvitationID), v))
-	})
+	return predicate.InvitationDenial(sql.FieldNEQ(FieldInvitationID, v))
 }
 
 // InvitationIDIn applies the In predicate on the "invitation_id" field.
 func InvitationIDIn(vs ...uuid.UUID) predicate.InvitationDenial {
-	v := make([]any, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.InvitationDenial(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldInvitationID), v...))
-	})
+	return predicate.InvitationDenial(sql.FieldIn(FieldInvitationID, vs...))
 }
 
 // InvitationIDNotIn applies the NotIn predicate on the "invitation_id" field.
 func InvitationIDNotIn(vs ...uuid.UUID) predicate.InvitationDenial {
-	v := make([]any, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.InvitationDenial(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldInvitationID), v...))
-	})
+	return predicate.InvitationDenial(sql.FieldNotIn(FieldInvitationID, vs...))
 }
 
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v time.Time) predicate.InvitationDenial {
-	return predicate.InvitationDenial(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldCreatedAt), v))
-	})
+	return predicate.InvitationDenial(sql.FieldEQ(FieldCreatedAt, v))
 }
 
 // CreatedAtNEQ applies the NEQ predicate on the "created_at" field.
 func CreatedAtNEQ(v time.Time) predicate.InvitationDenial {
-	return predicate.InvitationDenial(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldCreatedAt), v))
-	})
+	return predicate.InvitationDenial(sql.FieldNEQ(FieldCreatedAt, v))
 }
 
 // CreatedAtIn applies the In predicate on the "created_at" field.
 func CreatedAtIn(vs ...time.Time) predicate.InvitationDenial {
-	v := make([]any, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.InvitationDenial(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldCreatedAt), v...))
-	})
+	return predicate.InvitationDenial(sql.FieldIn(FieldCreatedAt, vs...))
 }
 
 // CreatedAtNotIn applies the NotIn predicate on the "created_at" field.
 func CreatedAtNotIn(vs ...time.Time) predicate.InvitationDenial {
-	v := make([]any, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.InvitationDenial(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldCreatedAt), v...))
-	})
+	return predicate.InvitationDenial(sql.FieldNotIn(FieldCreatedAt, vs...))
 }
 
 // CreatedAtGT applies the GT predicate on the "created_at" field.
 func CreatedAtGT(v time.Time) predicate.InvitationDenial {
-	return predicate.InvitationDenial(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldCreatedAt), v))
-	})
+	return predicate.InvitationDenial(sql.FieldGT(FieldCreatedAt, v))
 }
 
 // CreatedAtGTE applies the GTE predicate on the "created_at" field.
 func CreatedAtGTE(v time.Time) predicate.InvitationDenial {
-	return predicate.InvitationDenial(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldCreatedAt), v))
-	})
+	return predicate.InvitationDenial(sql.FieldGTE(FieldCreatedAt, v))
 }
 
 // CreatedAtLT applies the LT predicate on the "created_at" field.
 func CreatedAtLT(v time.Time) predicate.InvitationDenial {
-	return predicate.InvitationDenial(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldCreatedAt), v))
-	})
+	return predicate.InvitationDenial(sql.FieldLT(FieldCreatedAt, v))
 }
 
 // CreatedAtLTE applies the LTE predicate on the "created_at" field.
 func CreatedAtLTE(v time.Time) predicate.InvitationDenial {
-	return predicate.InvitationDenial(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldCreatedAt), v))
-	})
+	return predicate.InvitationDenial(sql.FieldLTE(FieldCreatedAt, v))
 }
 
 // HasUser applies the HasEdge predicate on the "user" edge.
@@ -244,7 +156,6 @@ func HasUser() predicate.InvitationDenial {
 	return predicate.InvitationDenial(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(UserTable, FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, false, UserTable, UserColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
@@ -272,7 +183,6 @@ func HasInvitation() predicate.InvitationDenial {
 	return predicate.InvitationDenial(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(InvitationTable, FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, false, InvitationTable, InvitationColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)

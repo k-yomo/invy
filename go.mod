@@ -4,6 +4,7 @@ go 1.19
 
 require (
 	cloud.google.com/go/profiler v0.3.1
+	cloud.google.com/go/storage v1.28.0
 	entgo.io/contrib v0.3.4
 	entgo.io/ent v0.11.5
 	firebase.google.com/go/v4 v4.10.0
@@ -41,7 +42,6 @@ require (
 	cloud.google.com/go/firestore v1.9.0 // indirect
 	cloud.google.com/go/iam v0.8.0 // indirect
 	cloud.google.com/go/longrunning v0.3.0 // indirect
-	cloud.google.com/go/storage v1.28.0 // indirect
 	cloud.google.com/go/trace v1.4.0 // indirect
 	github.com/GoogleCloudPlatform/opentelemetry-operations-go/internal/resourcemapping v0.34.2 // indirect
 	github.com/MicahParks/keyfunc v1.5.3 // indirect

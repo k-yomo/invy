@@ -7,6 +7,8 @@ extend type Query {
 }
 
 extend type Mutation {
+    updateAvatar(avatar: Upload!): UpdateAvatarPayload! @authRequired
+    updateNickname(nickname: String!): UpdateNicknamePayload! @authRequired
     muteUser(userId: UUID!): MuteUserPayload! @authRequired
     unmuteUser(userId: UUID!): UnmuteUserPayload! @authRequired
 }
@@ -55,6 +57,14 @@ type UserConnection {
     edges: [UserEdge!]!
     pageInfo: PageInfo!
     totalCount: Int!
+}
+
+type UpdateAvatarPayload {
+    user: User!
+}
+
+type UpdateNicknamePayload {
+    user: User!
 }
 
 type MuteUserPayload {

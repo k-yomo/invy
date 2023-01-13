@@ -13,612 +13,392 @@ import (
 
 // ID filters vertices based on their ID field.
 func ID(id uuid.UUID) predicate.Invitation {
-	return predicate.Invitation(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldID), id))
-	})
+	return predicate.Invitation(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
 func IDEQ(id uuid.UUID) predicate.Invitation {
-	return predicate.Invitation(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldID), id))
-	})
+	return predicate.Invitation(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
 func IDNEQ(id uuid.UUID) predicate.Invitation {
-	return predicate.Invitation(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldID), id))
-	})
+	return predicate.Invitation(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
 func IDIn(ids ...uuid.UUID) predicate.Invitation {
-	return predicate.Invitation(func(s *sql.Selector) {
-		v := make([]any, len(ids))
-		for i := range v {
-			v[i] = ids[i]
-		}
-		s.Where(sql.In(s.C(FieldID), v...))
-	})
+	return predicate.Invitation(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
 func IDNotIn(ids ...uuid.UUID) predicate.Invitation {
-	return predicate.Invitation(func(s *sql.Selector) {
-		v := make([]any, len(ids))
-		for i := range v {
-			v[i] = ids[i]
-		}
-		s.Where(sql.NotIn(s.C(FieldID), v...))
-	})
+	return predicate.Invitation(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
 func IDGT(id uuid.UUID) predicate.Invitation {
-	return predicate.Invitation(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldID), id))
-	})
+	return predicate.Invitation(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
 func IDGTE(id uuid.UUID) predicate.Invitation {
-	return predicate.Invitation(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldID), id))
-	})
+	return predicate.Invitation(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
 func IDLT(id uuid.UUID) predicate.Invitation {
-	return predicate.Invitation(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldID), id))
-	})
+	return predicate.Invitation(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
 func IDLTE(id uuid.UUID) predicate.Invitation {
-	return predicate.Invitation(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldID), id))
-	})
+	return predicate.Invitation(sql.FieldLTE(FieldID, id))
 }
 
 // UserID applies equality check predicate on the "user_id" field. It's identical to UserIDEQ.
 func UserID(v uuid.UUID) predicate.Invitation {
-	return predicate.Invitation(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldUserID), v))
-	})
+	return predicate.Invitation(sql.FieldEQ(FieldUserID, v))
 }
 
 // Location applies equality check predicate on the "location" field. It's identical to LocationEQ.
 func Location(v string) predicate.Invitation {
-	return predicate.Invitation(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldLocation), v))
-	})
+	return predicate.Invitation(sql.FieldEQ(FieldLocation, v))
 }
 
 // Comment applies equality check predicate on the "comment" field. It's identical to CommentEQ.
 func Comment(v string) predicate.Invitation {
-	return predicate.Invitation(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldComment), v))
-	})
+	return predicate.Invitation(sql.FieldEQ(FieldComment, v))
 }
 
 // StartsAt applies equality check predicate on the "starts_at" field. It's identical to StartsAtEQ.
 func StartsAt(v time.Time) predicate.Invitation {
-	return predicate.Invitation(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldStartsAt), v))
-	})
+	return predicate.Invitation(sql.FieldEQ(FieldStartsAt, v))
 }
 
 // ExpiresAt applies equality check predicate on the "expires_at" field. It's identical to ExpiresAtEQ.
 func ExpiresAt(v time.Time) predicate.Invitation {
-	return predicate.Invitation(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldExpiresAt), v))
-	})
+	return predicate.Invitation(sql.FieldEQ(FieldExpiresAt, v))
 }
 
 // CreatedAt applies equality check predicate on the "created_at" field. It's identical to CreatedAtEQ.
 func CreatedAt(v time.Time) predicate.Invitation {
-	return predicate.Invitation(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldCreatedAt), v))
-	})
+	return predicate.Invitation(sql.FieldEQ(FieldCreatedAt, v))
 }
 
 // UpdatedAt applies equality check predicate on the "updated_at" field. It's identical to UpdatedAtEQ.
 func UpdatedAt(v time.Time) predicate.Invitation {
-	return predicate.Invitation(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldUpdatedAt), v))
-	})
+	return predicate.Invitation(sql.FieldEQ(FieldUpdatedAt, v))
 }
 
 // UserIDEQ applies the EQ predicate on the "user_id" field.
 func UserIDEQ(v uuid.UUID) predicate.Invitation {
-	return predicate.Invitation(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldUserID), v))
-	})
+	return predicate.Invitation(sql.FieldEQ(FieldUserID, v))
 }
 
 // UserIDNEQ applies the NEQ predicate on the "user_id" field.
 func UserIDNEQ(v uuid.UUID) predicate.Invitation {
-	return predicate.Invitation(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldUserID), v))
-	})
+	return predicate.Invitation(sql.FieldNEQ(FieldUserID, v))
 }
 
 // UserIDIn applies the In predicate on the "user_id" field.
 func UserIDIn(vs ...uuid.UUID) predicate.Invitation {
-	v := make([]any, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.Invitation(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldUserID), v...))
-	})
+	return predicate.Invitation(sql.FieldIn(FieldUserID, vs...))
 }
 
 // UserIDNotIn applies the NotIn predicate on the "user_id" field.
 func UserIDNotIn(vs ...uuid.UUID) predicate.Invitation {
-	v := make([]any, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.Invitation(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldUserID), v...))
-	})
+	return predicate.Invitation(sql.FieldNotIn(FieldUserID, vs...))
 }
 
 // LocationEQ applies the EQ predicate on the "location" field.
 func LocationEQ(v string) predicate.Invitation {
-	return predicate.Invitation(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldLocation), v))
-	})
+	return predicate.Invitation(sql.FieldEQ(FieldLocation, v))
 }
 
 // LocationNEQ applies the NEQ predicate on the "location" field.
 func LocationNEQ(v string) predicate.Invitation {
-	return predicate.Invitation(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldLocation), v))
-	})
+	return predicate.Invitation(sql.FieldNEQ(FieldLocation, v))
 }
 
 // LocationIn applies the In predicate on the "location" field.
 func LocationIn(vs ...string) predicate.Invitation {
-	v := make([]any, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.Invitation(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldLocation), v...))
-	})
+	return predicate.Invitation(sql.FieldIn(FieldLocation, vs...))
 }
 
 // LocationNotIn applies the NotIn predicate on the "location" field.
 func LocationNotIn(vs ...string) predicate.Invitation {
-	v := make([]any, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.Invitation(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldLocation), v...))
-	})
+	return predicate.Invitation(sql.FieldNotIn(FieldLocation, vs...))
 }
 
 // LocationGT applies the GT predicate on the "location" field.
 func LocationGT(v string) predicate.Invitation {
-	return predicate.Invitation(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldLocation), v))
-	})
+	return predicate.Invitation(sql.FieldGT(FieldLocation, v))
 }
 
 // LocationGTE applies the GTE predicate on the "location" field.
 func LocationGTE(v string) predicate.Invitation {
-	return predicate.Invitation(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldLocation), v))
-	})
+	return predicate.Invitation(sql.FieldGTE(FieldLocation, v))
 }
 
 // LocationLT applies the LT predicate on the "location" field.
 func LocationLT(v string) predicate.Invitation {
-	return predicate.Invitation(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldLocation), v))
-	})
+	return predicate.Invitation(sql.FieldLT(FieldLocation, v))
 }
 
 // LocationLTE applies the LTE predicate on the "location" field.
 func LocationLTE(v string) predicate.Invitation {
-	return predicate.Invitation(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldLocation), v))
-	})
+	return predicate.Invitation(sql.FieldLTE(FieldLocation, v))
 }
 
 // LocationContains applies the Contains predicate on the "location" field.
 func LocationContains(v string) predicate.Invitation {
-	return predicate.Invitation(func(s *sql.Selector) {
-		s.Where(sql.Contains(s.C(FieldLocation), v))
-	})
+	return predicate.Invitation(sql.FieldContains(FieldLocation, v))
 }
 
 // LocationHasPrefix applies the HasPrefix predicate on the "location" field.
 func LocationHasPrefix(v string) predicate.Invitation {
-	return predicate.Invitation(func(s *sql.Selector) {
-		s.Where(sql.HasPrefix(s.C(FieldLocation), v))
-	})
+	return predicate.Invitation(sql.FieldHasPrefix(FieldLocation, v))
 }
 
 // LocationHasSuffix applies the HasSuffix predicate on the "location" field.
 func LocationHasSuffix(v string) predicate.Invitation {
-	return predicate.Invitation(func(s *sql.Selector) {
-		s.Where(sql.HasSuffix(s.C(FieldLocation), v))
-	})
+	return predicate.Invitation(sql.FieldHasSuffix(FieldLocation, v))
 }
 
 // LocationEqualFold applies the EqualFold predicate on the "location" field.
 func LocationEqualFold(v string) predicate.Invitation {
-	return predicate.Invitation(func(s *sql.Selector) {
-		s.Where(sql.EqualFold(s.C(FieldLocation), v))
-	})
+	return predicate.Invitation(sql.FieldEqualFold(FieldLocation, v))
 }
 
 // LocationContainsFold applies the ContainsFold predicate on the "location" field.
 func LocationContainsFold(v string) predicate.Invitation {
-	return predicate.Invitation(func(s *sql.Selector) {
-		s.Where(sql.ContainsFold(s.C(FieldLocation), v))
-	})
+	return predicate.Invitation(sql.FieldContainsFold(FieldLocation, v))
 }
 
 // CommentEQ applies the EQ predicate on the "comment" field.
 func CommentEQ(v string) predicate.Invitation {
-	return predicate.Invitation(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldComment), v))
-	})
+	return predicate.Invitation(sql.FieldEQ(FieldComment, v))
 }
 
 // CommentNEQ applies the NEQ predicate on the "comment" field.
 func CommentNEQ(v string) predicate.Invitation {
-	return predicate.Invitation(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldComment), v))
-	})
+	return predicate.Invitation(sql.FieldNEQ(FieldComment, v))
 }
 
 // CommentIn applies the In predicate on the "comment" field.
 func CommentIn(vs ...string) predicate.Invitation {
-	v := make([]any, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.Invitation(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldComment), v...))
-	})
+	return predicate.Invitation(sql.FieldIn(FieldComment, vs...))
 }
 
 // CommentNotIn applies the NotIn predicate on the "comment" field.
 func CommentNotIn(vs ...string) predicate.Invitation {
-	v := make([]any, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.Invitation(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldComment), v...))
-	})
+	return predicate.Invitation(sql.FieldNotIn(FieldComment, vs...))
 }
 
 // CommentGT applies the GT predicate on the "comment" field.
 func CommentGT(v string) predicate.Invitation {
-	return predicate.Invitation(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldComment), v))
-	})
+	return predicate.Invitation(sql.FieldGT(FieldComment, v))
 }
 
 // CommentGTE applies the GTE predicate on the "comment" field.
 func CommentGTE(v string) predicate.Invitation {
-	return predicate.Invitation(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldComment), v))
-	})
+	return predicate.Invitation(sql.FieldGTE(FieldComment, v))
 }
 
 // CommentLT applies the LT predicate on the "comment" field.
 func CommentLT(v string) predicate.Invitation {
-	return predicate.Invitation(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldComment), v))
-	})
+	return predicate.Invitation(sql.FieldLT(FieldComment, v))
 }
 
 // CommentLTE applies the LTE predicate on the "comment" field.
 func CommentLTE(v string) predicate.Invitation {
-	return predicate.Invitation(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldComment), v))
-	})
+	return predicate.Invitation(sql.FieldLTE(FieldComment, v))
 }
 
 // CommentContains applies the Contains predicate on the "comment" field.
 func CommentContains(v string) predicate.Invitation {
-	return predicate.Invitation(func(s *sql.Selector) {
-		s.Where(sql.Contains(s.C(FieldComment), v))
-	})
+	return predicate.Invitation(sql.FieldContains(FieldComment, v))
 }
 
 // CommentHasPrefix applies the HasPrefix predicate on the "comment" field.
 func CommentHasPrefix(v string) predicate.Invitation {
-	return predicate.Invitation(func(s *sql.Selector) {
-		s.Where(sql.HasPrefix(s.C(FieldComment), v))
-	})
+	return predicate.Invitation(sql.FieldHasPrefix(FieldComment, v))
 }
 
 // CommentHasSuffix applies the HasSuffix predicate on the "comment" field.
 func CommentHasSuffix(v string) predicate.Invitation {
-	return predicate.Invitation(func(s *sql.Selector) {
-		s.Where(sql.HasSuffix(s.C(FieldComment), v))
-	})
+	return predicate.Invitation(sql.FieldHasSuffix(FieldComment, v))
 }
 
 // CommentEqualFold applies the EqualFold predicate on the "comment" field.
 func CommentEqualFold(v string) predicate.Invitation {
-	return predicate.Invitation(func(s *sql.Selector) {
-		s.Where(sql.EqualFold(s.C(FieldComment), v))
-	})
+	return predicate.Invitation(sql.FieldEqualFold(FieldComment, v))
 }
 
 // CommentContainsFold applies the ContainsFold predicate on the "comment" field.
 func CommentContainsFold(v string) predicate.Invitation {
-	return predicate.Invitation(func(s *sql.Selector) {
-		s.Where(sql.ContainsFold(s.C(FieldComment), v))
-	})
+	return predicate.Invitation(sql.FieldContainsFold(FieldComment, v))
 }
 
 // StartsAtEQ applies the EQ predicate on the "starts_at" field.
 func StartsAtEQ(v time.Time) predicate.Invitation {
-	return predicate.Invitation(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldStartsAt), v))
-	})
+	return predicate.Invitation(sql.FieldEQ(FieldStartsAt, v))
 }
 
 // StartsAtNEQ applies the NEQ predicate on the "starts_at" field.
 func StartsAtNEQ(v time.Time) predicate.Invitation {
-	return predicate.Invitation(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldStartsAt), v))
-	})
+	return predicate.Invitation(sql.FieldNEQ(FieldStartsAt, v))
 }
 
 // StartsAtIn applies the In predicate on the "starts_at" field.
 func StartsAtIn(vs ...time.Time) predicate.Invitation {
-	v := make([]any, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.Invitation(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldStartsAt), v...))
-	})
+	return predicate.Invitation(sql.FieldIn(FieldStartsAt, vs...))
 }
 
 // StartsAtNotIn applies the NotIn predicate on the "starts_at" field.
 func StartsAtNotIn(vs ...time.Time) predicate.Invitation {
-	v := make([]any, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.Invitation(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldStartsAt), v...))
-	})
+	return predicate.Invitation(sql.FieldNotIn(FieldStartsAt, vs...))
 }
 
 // StartsAtGT applies the GT predicate on the "starts_at" field.
 func StartsAtGT(v time.Time) predicate.Invitation {
-	return predicate.Invitation(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldStartsAt), v))
-	})
+	return predicate.Invitation(sql.FieldGT(FieldStartsAt, v))
 }
 
 // StartsAtGTE applies the GTE predicate on the "starts_at" field.
 func StartsAtGTE(v time.Time) predicate.Invitation {
-	return predicate.Invitation(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldStartsAt), v))
-	})
+	return predicate.Invitation(sql.FieldGTE(FieldStartsAt, v))
 }
 
 // StartsAtLT applies the LT predicate on the "starts_at" field.
 func StartsAtLT(v time.Time) predicate.Invitation {
-	return predicate.Invitation(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldStartsAt), v))
-	})
+	return predicate.Invitation(sql.FieldLT(FieldStartsAt, v))
 }
 
 // StartsAtLTE applies the LTE predicate on the "starts_at" field.
 func StartsAtLTE(v time.Time) predicate.Invitation {
-	return predicate.Invitation(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldStartsAt), v))
-	})
+	return predicate.Invitation(sql.FieldLTE(FieldStartsAt, v))
 }
 
 // ExpiresAtEQ applies the EQ predicate on the "expires_at" field.
 func ExpiresAtEQ(v time.Time) predicate.Invitation {
-	return predicate.Invitation(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldExpiresAt), v))
-	})
+	return predicate.Invitation(sql.FieldEQ(FieldExpiresAt, v))
 }
 
 // ExpiresAtNEQ applies the NEQ predicate on the "expires_at" field.
 func ExpiresAtNEQ(v time.Time) predicate.Invitation {
-	return predicate.Invitation(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldExpiresAt), v))
-	})
+	return predicate.Invitation(sql.FieldNEQ(FieldExpiresAt, v))
 }
 
 // ExpiresAtIn applies the In predicate on the "expires_at" field.
 func ExpiresAtIn(vs ...time.Time) predicate.Invitation {
-	v := make([]any, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.Invitation(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldExpiresAt), v...))
-	})
+	return predicate.Invitation(sql.FieldIn(FieldExpiresAt, vs...))
 }
 
 // ExpiresAtNotIn applies the NotIn predicate on the "expires_at" field.
 func ExpiresAtNotIn(vs ...time.Time) predicate.Invitation {
-	v := make([]any, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.Invitation(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldExpiresAt), v...))
-	})
+	return predicate.Invitation(sql.FieldNotIn(FieldExpiresAt, vs...))
 }
 
 // ExpiresAtGT applies the GT predicate on the "expires_at" field.
 func ExpiresAtGT(v time.Time) predicate.Invitation {
-	return predicate.Invitation(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldExpiresAt), v))
-	})
+	return predicate.Invitation(sql.FieldGT(FieldExpiresAt, v))
 }
 
 // ExpiresAtGTE applies the GTE predicate on the "expires_at" field.
 func ExpiresAtGTE(v time.Time) predicate.Invitation {
-	return predicate.Invitation(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldExpiresAt), v))
-	})
+	return predicate.Invitation(sql.FieldGTE(FieldExpiresAt, v))
 }
 
 // ExpiresAtLT applies the LT predicate on the "expires_at" field.
 func ExpiresAtLT(v time.Time) predicate.Invitation {
-	return predicate.Invitation(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldExpiresAt), v))
-	})
+	return predicate.Invitation(sql.FieldLT(FieldExpiresAt, v))
 }
 
 // ExpiresAtLTE applies the LTE predicate on the "expires_at" field.
 func ExpiresAtLTE(v time.Time) predicate.Invitation {
-	return predicate.Invitation(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldExpiresAt), v))
-	})
+	return predicate.Invitation(sql.FieldLTE(FieldExpiresAt, v))
 }
 
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v time.Time) predicate.Invitation {
-	return predicate.Invitation(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldCreatedAt), v))
-	})
+	return predicate.Invitation(sql.FieldEQ(FieldCreatedAt, v))
 }
 
 // CreatedAtNEQ applies the NEQ predicate on the "created_at" field.
 func CreatedAtNEQ(v time.Time) predicate.Invitation {
-	return predicate.Invitation(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldCreatedAt), v))
-	})
+	return predicate.Invitation(sql.FieldNEQ(FieldCreatedAt, v))
 }
 
 // CreatedAtIn applies the In predicate on the "created_at" field.
 func CreatedAtIn(vs ...time.Time) predicate.Invitation {
-	v := make([]any, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.Invitation(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldCreatedAt), v...))
-	})
+	return predicate.Invitation(sql.FieldIn(FieldCreatedAt, vs...))
 }
 
 // CreatedAtNotIn applies the NotIn predicate on the "created_at" field.
 func CreatedAtNotIn(vs ...time.Time) predicate.Invitation {
-	v := make([]any, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.Invitation(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldCreatedAt), v...))
-	})
+	return predicate.Invitation(sql.FieldNotIn(FieldCreatedAt, vs...))
 }
 
 // CreatedAtGT applies the GT predicate on the "created_at" field.
 func CreatedAtGT(v time.Time) predicate.Invitation {
-	return predicate.Invitation(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldCreatedAt), v))
-	})
+	return predicate.Invitation(sql.FieldGT(FieldCreatedAt, v))
 }
 
 // CreatedAtGTE applies the GTE predicate on the "created_at" field.
 func CreatedAtGTE(v time.Time) predicate.Invitation {
-	return predicate.Invitation(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldCreatedAt), v))
-	})
+	return predicate.Invitation(sql.FieldGTE(FieldCreatedAt, v))
 }
 
 // CreatedAtLT applies the LT predicate on the "created_at" field.
 func CreatedAtLT(v time.Time) predicate.Invitation {
-	return predicate.Invitation(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldCreatedAt), v))
-	})
+	return predicate.Invitation(sql.FieldLT(FieldCreatedAt, v))
 }
 
 // CreatedAtLTE applies the LTE predicate on the "created_at" field.
 func CreatedAtLTE(v time.Time) predicate.Invitation {
-	return predicate.Invitation(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldCreatedAt), v))
-	})
+	return predicate.Invitation(sql.FieldLTE(FieldCreatedAt, v))
 }
 
 // UpdatedAtEQ applies the EQ predicate on the "updated_at" field.
 func UpdatedAtEQ(v time.Time) predicate.Invitation {
-	return predicate.Invitation(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldUpdatedAt), v))
-	})
+	return predicate.Invitation(sql.FieldEQ(FieldUpdatedAt, v))
 }
 
 // UpdatedAtNEQ applies the NEQ predicate on the "updated_at" field.
 func UpdatedAtNEQ(v time.Time) predicate.Invitation {
-	return predicate.Invitation(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldUpdatedAt), v))
-	})
+	return predicate.Invitation(sql.FieldNEQ(FieldUpdatedAt, v))
 }
 
 // UpdatedAtIn applies the In predicate on the "updated_at" field.
 func UpdatedAtIn(vs ...time.Time) predicate.Invitation {
-	v := make([]any, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.Invitation(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldUpdatedAt), v...))
-	})
+	return predicate.Invitation(sql.FieldIn(FieldUpdatedAt, vs...))
 }
 
 // UpdatedAtNotIn applies the NotIn predicate on the "updated_at" field.
 func UpdatedAtNotIn(vs ...time.Time) predicate.Invitation {
-	v := make([]any, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.Invitation(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldUpdatedAt), v...))
-	})
+	return predicate.Invitation(sql.FieldNotIn(FieldUpdatedAt, vs...))
 }
 
 // UpdatedAtGT applies the GT predicate on the "updated_at" field.
 func UpdatedAtGT(v time.Time) predicate.Invitation {
-	return predicate.Invitation(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldUpdatedAt), v))
-	})
+	return predicate.Invitation(sql.FieldGT(FieldUpdatedAt, v))
 }
 
 // UpdatedAtGTE applies the GTE predicate on the "updated_at" field.
 func UpdatedAtGTE(v time.Time) predicate.Invitation {
-	return predicate.Invitation(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldUpdatedAt), v))
-	})
+	return predicate.Invitation(sql.FieldGTE(FieldUpdatedAt, v))
 }
 
 // UpdatedAtLT applies the LT predicate on the "updated_at" field.
 func UpdatedAtLT(v time.Time) predicate.Invitation {
-	return predicate.Invitation(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldUpdatedAt), v))
-	})
+	return predicate.Invitation(sql.FieldLT(FieldUpdatedAt, v))
 }
 
 // UpdatedAtLTE applies the LTE predicate on the "updated_at" field.
 func UpdatedAtLTE(v time.Time) predicate.Invitation {
-	return predicate.Invitation(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldUpdatedAt), v))
-	})
+	return predicate.Invitation(sql.FieldLTE(FieldUpdatedAt, v))
 }
 
 // HasUser applies the HasEdge predicate on the "user" edge.
@@ -626,7 +406,6 @@ func HasUser() predicate.Invitation {
 	return predicate.Invitation(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(UserTable, FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, false, UserTable, UserColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
@@ -654,7 +433,6 @@ func HasInvitationUsers() predicate.Invitation {
 	return predicate.Invitation(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(InvitationUsersTable, FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, true, InvitationUsersTable, InvitationUsersColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
@@ -682,7 +460,6 @@ func HasInvitationFriendGroups() predicate.Invitation {
 	return predicate.Invitation(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(InvitationFriendGroupsTable, FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, true, InvitationFriendGroupsTable, InvitationFriendGroupsColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
@@ -710,7 +487,6 @@ func HasInvitationAcceptances() predicate.Invitation {
 	return predicate.Invitation(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(InvitationAcceptancesTable, FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, true, InvitationAcceptancesTable, InvitationAcceptancesColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
@@ -738,7 +514,6 @@ func HasInvitationDenials() predicate.Invitation {
 	return predicate.Invitation(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(InvitationDenialsTable, FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, true, InvitationDenialsTable, InvitationDenialsColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)

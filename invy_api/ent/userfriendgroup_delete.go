@@ -4,7 +4,6 @@ package ent
 
 import (
 	"context"
-	"fmt"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -28,34 +27,7 @@ func (ufgd *UserFriendGroupDelete) Where(ps ...predicate.UserFriendGroup) *UserF
 
 // Exec executes the deletion query and returns how many vertices were deleted.
 func (ufgd *UserFriendGroupDelete) Exec(ctx context.Context) (int, error) {
-	var (
-		err      error
-		affected int
-	)
-	if len(ufgd.hooks) == 0 {
-		affected, err = ufgd.sqlExec(ctx)
-	} else {
-		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-			mutation, ok := m.(*UserFriendGroupMutation)
-			if !ok {
-				return nil, fmt.Errorf("unexpected mutation type %T", m)
-			}
-			ufgd.mutation = mutation
-			affected, err = ufgd.sqlExec(ctx)
-			mutation.done = true
-			return affected, err
-		})
-		for i := len(ufgd.hooks) - 1; i >= 0; i-- {
-			if ufgd.hooks[i] == nil {
-				return 0, fmt.Errorf("ent: uninitialized hook (forgotten import ent/runtime?)")
-			}
-			mut = ufgd.hooks[i](mut)
-		}
-		if _, err := mut.Mutate(ctx, ufgd.mutation); err != nil {
-			return 0, err
-		}
-	}
-	return affected, err
+	return withHooks[int, UserFriendGroupMutation](ctx, ufgd.sqlExec, ufgd.mutation, ufgd.hooks)
 }
 
 // ExecX is like Exec, but panics if an error occurs.
@@ -88,6 +60,7 @@ func (ufgd *UserFriendGroupDelete) sqlExec(ctx context.Context) (int, error) {
 	if err != nil && sqlgraph.IsConstraintError(err) {
 		err = &ConstraintError{msg: err.Error(), wrap: err}
 	}
+	ufgd.mutation.done = true
 	return affected, err
 }
 

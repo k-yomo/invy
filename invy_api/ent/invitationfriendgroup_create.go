@@ -83,50 +83,8 @@ func (ifgc *InvitationFriendGroupCreate) Mutation() *InvitationFriendGroupMutati
 
 // Save creates the InvitationFriendGroup in the database.
 func (ifgc *InvitationFriendGroupCreate) Save(ctx context.Context) (*InvitationFriendGroup, error) {
-	var (
-		err  error
-		node *InvitationFriendGroup
-	)
 	ifgc.defaults()
-	if len(ifgc.hooks) == 0 {
-		if err = ifgc.check(); err != nil {
-			return nil, err
-		}
-		node, err = ifgc.sqlSave(ctx)
-	} else {
-		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-			mutation, ok := m.(*InvitationFriendGroupMutation)
-			if !ok {
-				return nil, fmt.Errorf("unexpected mutation type %T", m)
-			}
-			if err = ifgc.check(); err != nil {
-				return nil, err
-			}
-			ifgc.mutation = mutation
-			if node, err = ifgc.sqlSave(ctx); err != nil {
-				return nil, err
-			}
-			mutation.id = &node.ID
-			mutation.done = true
-			return node, err
-		})
-		for i := len(ifgc.hooks) - 1; i >= 0; i-- {
-			if ifgc.hooks[i] == nil {
-				return nil, fmt.Errorf("ent: uninitialized hook (forgotten import ent/runtime?)")
-			}
-			mut = ifgc.hooks[i](mut)
-		}
-		v, err := mut.Mutate(ctx, ifgc.mutation)
-		if err != nil {
-			return nil, err
-		}
-		nv, ok := v.(*InvitationFriendGroup)
-		if !ok {
-			return nil, fmt.Errorf("unexpected node type %T returned from InvitationFriendGroupMutation", v)
-		}
-		node = nv
-	}
-	return node, err
+	return withHooks[*InvitationFriendGroup, InvitationFriendGroupMutation](ctx, ifgc.sqlSave, ifgc.mutation, ifgc.hooks)
 }
 
 // SaveX calls Save and panics if Save returns an error.
@@ -184,6 +142,9 @@ func (ifgc *InvitationFriendGroupCreate) check() error {
 }
 
 func (ifgc *InvitationFriendGroupCreate) sqlSave(ctx context.Context) (*InvitationFriendGroup, error) {
+	if err := ifgc.check(); err != nil {
+		return nil, err
+	}
 	_node, _spec := ifgc.createSpec()
 	if err := sqlgraph.CreateNode(ctx, ifgc.driver, _spec); err != nil {
 		if sqlgraph.IsConstraintError(err) {
@@ -198,6 +159,8 @@ func (ifgc *InvitationFriendGroupCreate) sqlSave(ctx context.Context) (*Invitati
 			return nil, err
 		}
 	}
+	ifgc.mutation.id = &_node.ID
+	ifgc.mutation.done = true
 	return _node, nil
 }
 

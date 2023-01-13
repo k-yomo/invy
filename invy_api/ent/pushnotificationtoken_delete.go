@@ -4,7 +4,6 @@ package ent
 
 import (
 	"context"
-	"fmt"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -28,34 +27,7 @@ func (pntd *PushNotificationTokenDelete) Where(ps ...predicate.PushNotificationT
 
 // Exec executes the deletion query and returns how many vertices were deleted.
 func (pntd *PushNotificationTokenDelete) Exec(ctx context.Context) (int, error) {
-	var (
-		err      error
-		affected int
-	)
-	if len(pntd.hooks) == 0 {
-		affected, err = pntd.sqlExec(ctx)
-	} else {
-		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-			mutation, ok := m.(*PushNotificationTokenMutation)
-			if !ok {
-				return nil, fmt.Errorf("unexpected mutation type %T", m)
-			}
-			pntd.mutation = mutation
-			affected, err = pntd.sqlExec(ctx)
-			mutation.done = true
-			return affected, err
-		})
-		for i := len(pntd.hooks) - 1; i >= 0; i-- {
-			if pntd.hooks[i] == nil {
-				return 0, fmt.Errorf("ent: uninitialized hook (forgotten import ent/runtime?)")
-			}
-			mut = pntd.hooks[i](mut)
-		}
-		if _, err := mut.Mutate(ctx, pntd.mutation); err != nil {
-			return 0, err
-		}
-	}
-	return affected, err
+	return withHooks[int, PushNotificationTokenMutation](ctx, pntd.sqlExec, pntd.mutation, pntd.hooks)
 }
 
 // ExecX is like Exec, but panics if an error occurs.
@@ -88,6 +60,7 @@ func (pntd *PushNotificationTokenDelete) sqlExec(ctx context.Context) (int, erro
 	if err != nil && sqlgraph.IsConstraintError(err) {
 		err = &ConstraintError{msg: err.Error(), wrap: err}
 	}
+	pntd.mutation.done = true
 	return affected, err
 }
 

@@ -7,10 +7,12 @@ package graph
 import (
 	"context"
 	"errors"
+	"fmt"
 	"sort"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
+	"github.com/99designs/gqlgen/graphql"
 	"github.com/google/uuid"
 	"github.com/k-yomo/invy/invy_api/auth"
 	"github.com/k-yomo/invy/invy_api/ent"
@@ -32,6 +34,49 @@ import (
 	"github.com/k-yomo/invy/pkg/convutil"
 	"github.com/k-yomo/invy/pkg/sliceutil"
 )
+
+// UpdateAvatar is the resolver for the updateAvatar field.
+func (r *mutationResolver) UpdateAvatar(ctx context.Context, avatar graphql.Upload) (*gqlmodel.UpdateAvatarPayload, error) {
+	authUserID := auth.GetCurrentUserID(ctx)
+	fileName := fmt.Sprintf("%s-%d", authUserID, time.Now().Unix())
+	avatarURL, err := r.AvatarUploader.Upload(ctx, fileName, avatar.File)
+	if err != nil {
+		return nil, err
+	}
+	err = r.DB.UserProfile.Update().
+		Where(userprofile.UserID(authUserID)).
+		SetAvatarURL(avatarURL).
+		Exec(ctx)
+	if err != nil {
+		return nil, err
+	}
+	dbUserProfile, err := r.DB.UserProfile.Query().
+		Where(userprofile.UserID(authUserID)).
+		Only(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return &gqlmodel.UpdateAvatarPayload{User: conv.ConvertFromDBUserProfile(dbUserProfile)}, nil
+}
+
+// UpdateNickname is the resolver for the updateNickname field.
+func (r *mutationResolver) UpdateNickname(ctx context.Context, nickname string) (*gqlmodel.UpdateNicknamePayload, error) {
+	authUserID := auth.GetCurrentUserID(ctx)
+	err := r.DB.UserProfile.Update().
+		Where(userprofile.UserID(authUserID)).
+		SetNickname(nickname).
+		Exec(ctx)
+	if err != nil {
+		return nil, err
+	}
+	dbUserProfile, err := r.DB.UserProfile.Query().
+		Where(userprofile.UserID(authUserID)).
+		Only(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return &gqlmodel.UpdateNicknamePayload{User: conv.ConvertFromDBUserProfile(dbUserProfile)}, nil
+}
 
 // MuteUser is the resolver for the muteUser field.
 func (r *mutationResolver) MuteUser(ctx context.Context, userID uuid.UUID) (*gqlmodel.MuteUserPayload, error) {

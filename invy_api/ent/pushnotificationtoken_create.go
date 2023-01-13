@@ -97,50 +97,8 @@ func (pntc *PushNotificationTokenCreate) Mutation() *PushNotificationTokenMutati
 
 // Save creates the PushNotificationToken in the database.
 func (pntc *PushNotificationTokenCreate) Save(ctx context.Context) (*PushNotificationToken, error) {
-	var (
-		err  error
-		node *PushNotificationToken
-	)
 	pntc.defaults()
-	if len(pntc.hooks) == 0 {
-		if err = pntc.check(); err != nil {
-			return nil, err
-		}
-		node, err = pntc.sqlSave(ctx)
-	} else {
-		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-			mutation, ok := m.(*PushNotificationTokenMutation)
-			if !ok {
-				return nil, fmt.Errorf("unexpected mutation type %T", m)
-			}
-			if err = pntc.check(); err != nil {
-				return nil, err
-			}
-			pntc.mutation = mutation
-			if node, err = pntc.sqlSave(ctx); err != nil {
-				return nil, err
-			}
-			mutation.id = &node.ID
-			mutation.done = true
-			return node, err
-		})
-		for i := len(pntc.hooks) - 1; i >= 0; i-- {
-			if pntc.hooks[i] == nil {
-				return nil, fmt.Errorf("ent: uninitialized hook (forgotten import ent/runtime?)")
-			}
-			mut = pntc.hooks[i](mut)
-		}
-		v, err := mut.Mutate(ctx, pntc.mutation)
-		if err != nil {
-			return nil, err
-		}
-		nv, ok := v.(*PushNotificationToken)
-		if !ok {
-			return nil, fmt.Errorf("unexpected node type %T returned from PushNotificationTokenMutation", v)
-		}
-		node = nv
-	}
-	return node, err
+	return withHooks[*PushNotificationToken, PushNotificationTokenMutation](ctx, pntc.sqlSave, pntc.mutation, pntc.hooks)
 }
 
 // SaveX calls Save and panics if Save returns an error.
@@ -205,6 +163,9 @@ func (pntc *PushNotificationTokenCreate) check() error {
 }
 
 func (pntc *PushNotificationTokenCreate) sqlSave(ctx context.Context) (*PushNotificationToken, error) {
+	if err := pntc.check(); err != nil {
+		return nil, err
+	}
 	_node, _spec := pntc.createSpec()
 	if err := sqlgraph.CreateNode(ctx, pntc.driver, _spec); err != nil {
 		if sqlgraph.IsConstraintError(err) {
@@ -219,6 +180,8 @@ func (pntc *PushNotificationTokenCreate) sqlSave(ctx context.Context) (*PushNoti
 			return nil, err
 		}
 	}
+	pntc.mutation.id = &_node.ID
+	pntc.mutation.done = true
 	return _node, nil
 }
 

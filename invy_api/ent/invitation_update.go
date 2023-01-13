@@ -214,41 +214,8 @@ func (iu *InvitationUpdate) RemoveInvitationDenials(i ...*InvitationDenial) *Inv
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (iu *InvitationUpdate) Save(ctx context.Context) (int, error) {
-	var (
-		err      error
-		affected int
-	)
 	iu.defaults()
-	if len(iu.hooks) == 0 {
-		if err = iu.check(); err != nil {
-			return 0, err
-		}
-		affected, err = iu.sqlSave(ctx)
-	} else {
-		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-			mutation, ok := m.(*InvitationMutation)
-			if !ok {
-				return nil, fmt.Errorf("unexpected mutation type %T", m)
-			}
-			if err = iu.check(); err != nil {
-				return 0, err
-			}
-			iu.mutation = mutation
-			affected, err = iu.sqlSave(ctx)
-			mutation.done = true
-			return affected, err
-		})
-		for i := len(iu.hooks) - 1; i >= 0; i-- {
-			if iu.hooks[i] == nil {
-				return 0, fmt.Errorf("ent: uninitialized hook (forgotten import ent/runtime?)")
-			}
-			mut = iu.hooks[i](mut)
-		}
-		if _, err := mut.Mutate(ctx, iu.mutation); err != nil {
-			return 0, err
-		}
-	}
-	return affected, err
+	return withHooks[int, InvitationMutation](ctx, iu.sqlSave, iu.mutation, iu.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
@@ -290,6 +257,9 @@ func (iu *InvitationUpdate) check() error {
 }
 
 func (iu *InvitationUpdate) sqlSave(ctx context.Context) (n int, err error) {
+	if err := iu.check(); err != nil {
+		return n, err
+	}
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
 			Table:   invitation.Table,
@@ -546,6 +516,7 @@ func (iu *InvitationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		return 0, err
 	}
+	iu.mutation.done = true
 	return n, nil
 }
 
@@ -745,47 +716,8 @@ func (iuo *InvitationUpdateOne) Select(field string, fields ...string) *Invitati
 
 // Save executes the query and returns the updated Invitation entity.
 func (iuo *InvitationUpdateOne) Save(ctx context.Context) (*Invitation, error) {
-	var (
-		err  error
-		node *Invitation
-	)
 	iuo.defaults()
-	if len(iuo.hooks) == 0 {
-		if err = iuo.check(); err != nil {
-			return nil, err
-		}
-		node, err = iuo.sqlSave(ctx)
-	} else {
-		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-			mutation, ok := m.(*InvitationMutation)
-			if !ok {
-				return nil, fmt.Errorf("unexpected mutation type %T", m)
-			}
-			if err = iuo.check(); err != nil {
-				return nil, err
-			}
-			iuo.mutation = mutation
-			node, err = iuo.sqlSave(ctx)
-			mutation.done = true
-			return node, err
-		})
-		for i := len(iuo.hooks) - 1; i >= 0; i-- {
-			if iuo.hooks[i] == nil {
-				return nil, fmt.Errorf("ent: uninitialized hook (forgotten import ent/runtime?)")
-			}
-			mut = iuo.hooks[i](mut)
-		}
-		v, err := mut.Mutate(ctx, iuo.mutation)
-		if err != nil {
-			return nil, err
-		}
-		nv, ok := v.(*Invitation)
-		if !ok {
-			return nil, fmt.Errorf("unexpected node type %T returned from InvitationMutation", v)
-		}
-		node = nv
-	}
-	return node, err
+	return withHooks[*Invitation, InvitationMutation](ctx, iuo.sqlSave, iuo.mutation, iuo.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
@@ -827,6 +759,9 @@ func (iuo *InvitationUpdateOne) check() error {
 }
 
 func (iuo *InvitationUpdateOne) sqlSave(ctx context.Context) (_node *Invitation, err error) {
+	if err := iuo.check(); err != nil {
+		return _node, err
+	}
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
 			Table:   invitation.Table,
@@ -1103,5 +1038,6 @@ func (iuo *InvitationUpdateOne) sqlSave(ctx context.Context) (_node *Invitation,
 		}
 		return nil, err
 	}
+	iuo.mutation.done = true
 	return _node, nil
 }

@@ -132,7 +132,9 @@ type ComplexityRoot struct {
 		SignUp                        func(childComplexity int, input gqlmodel.SignUpInput) int
 		SwitchUser                    func(childComplexity int, userID uuid.UUID) int
 		UnmuteUser                    func(childComplexity int, userID uuid.UUID) int
+		UpdateAvatar                  func(childComplexity int, avatar graphql.Upload) int
 		UpdateFriendGroup             func(childComplexity int, input gqlmodel.UpdateFriendGroupInput) int
+		UpdateNickname                func(childComplexity int, nickname string) int
 	}
 
 	MuteUserPayload struct {
@@ -180,8 +182,16 @@ type ComplexityRoot struct {
 		UnmutedUserID func(childComplexity int) int
 	}
 
+	UpdateAvatarPayload struct {
+		User func(childComplexity int) int
+	}
+
 	UpdateFriendGroupPayload struct {
 		FriendGroup func(childComplexity int) int
+	}
+
+	UpdateNicknamePayload struct {
+		User func(childComplexity int) int
 	}
 
 	User struct {
@@ -249,6 +259,8 @@ type MutationResolver interface {
 	AcceptInvitation(ctx context.Context, invitationID uuid.UUID) (*gqlmodel.AcceptInvitationPayload, error)
 	DenyInvitation(ctx context.Context, invitationID uuid.UUID) (*gqlmodel.DenyInvitationPayload, error)
 	RegisterPushNotificationToken(ctx context.Context, input *gqlmodel.RegisterPushNotificationTokenInput) (*gqlmodel.RegisterPushNotificationTokenPayload, error)
+	UpdateAvatar(ctx context.Context, avatar graphql.Upload) (*gqlmodel.UpdateAvatarPayload, error)
+	UpdateNickname(ctx context.Context, nickname string) (*gqlmodel.UpdateNicknamePayload, error)
 	MuteUser(ctx context.Context, userID uuid.UUID) (*gqlmodel.MuteUserPayload, error)
 	UnmuteUser(ctx context.Context, userID uuid.UUID) (*gqlmodel.UnmuteUserPayload, error)
 }
@@ -664,6 +676,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.UnmuteUser(childComplexity, args["userId"].(uuid.UUID)), true
 
+	case "Mutation.updateAvatar":
+		if e.complexity.Mutation.UpdateAvatar == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updateAvatar_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdateAvatar(childComplexity, args["avatar"].(graphql.Upload)), true
+
 	case "Mutation.updateFriendGroup":
 		if e.complexity.Mutation.UpdateFriendGroup == nil {
 			break
@@ -675,6 +699,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.UpdateFriendGroup(childComplexity, args["input"].(gqlmodel.UpdateFriendGroupInput)), true
+
+	case "Mutation.updateNickname":
+		if e.complexity.Mutation.UpdateNickname == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updateNickname_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdateNickname(childComplexity, args["nickname"].(string)), true
 
 	case "MuteUserPayload.mutedUserId":
 		if e.complexity.MuteUserPayload.MutedUserID == nil {
@@ -791,12 +827,26 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.UnmuteUserPayload.UnmutedUserID(childComplexity), true
 
+	case "UpdateAvatarPayload.user":
+		if e.complexity.UpdateAvatarPayload.User == nil {
+			break
+		}
+
+		return e.complexity.UpdateAvatarPayload.User(childComplexity), true
+
 	case "UpdateFriendGroupPayload.friendGroup":
 		if e.complexity.UpdateFriendGroupPayload.FriendGroup == nil {
 			break
 		}
 
 		return e.complexity.UpdateFriendGroupPayload.FriendGroup(childComplexity), true
+
+	case "UpdateNicknamePayload.user":
+		if e.complexity.UpdateNicknamePayload.User == nil {
+			break
+		}
+
+		return e.complexity.UpdateNicknamePayload.User(childComplexity), true
 
 	case "User.avatarUrl":
 		if e.complexity.User.AvatarURL == nil {
@@ -1195,6 +1245,7 @@ type RegisterPushNotificationTokenPayload {
 	{Name: "../../../defs/graphql/schema.graphql", Input: `scalar Time
 scalar UUID
 scalar Cursor
+scalar Upload
 
 type Query
 type Mutation
@@ -1236,6 +1287,8 @@ extend type Query {
 }
 
 extend type Mutation {
+    updateAvatar(avatar: Upload!): UpdateAvatarPayload! @authRequired
+    updateNickname(nickname: String!): UpdateNicknamePayload! @authRequired
     muteUser(userId: UUID!): MuteUserPayload! @authRequired
     unmuteUser(userId: UUID!): UnmuteUserPayload! @authRequired
 }
@@ -1284,6 +1337,14 @@ type UserConnection {
     edges: [UserEdge!]!
     pageInfo: PageInfo!
     totalCount: Int!
+}
+
+type UpdateAvatarPayload {
+    user: User!
+}
+
+type UpdateNicknamePayload {
+    user: User!
 }
 
 type MuteUserPayload {
@@ -1568,6 +1629,21 @@ func (ec *executionContext) field_Mutation_unmuteUser_args(ctx context.Context, 
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_updateAvatar_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 graphql.Upload
+	if tmp, ok := rawArgs["avatar"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("avatar"))
+		arg0, err = ec.unmarshalNUpload2githubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚐUpload(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["avatar"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_updateFriendGroup_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -1580,6 +1656,21 @@ func (ec *executionContext) field_Mutation_updateFriendGroup_args(ctx context.Co
 		}
 	}
 	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_updateNickname_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["nickname"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nickname"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["nickname"] = arg0
 	return args, nil
 }
 
@@ -4209,6 +4300,164 @@ func (ec *executionContext) fieldContext_Mutation_registerPushNotificationToken(
 	return fc, nil
 }
 
+func (ec *executionContext) _Mutation_updateAvatar(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_updateAvatar(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().UpdateAvatar(rctx, fc.Args["avatar"].(graphql.Upload))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.AuthRequired == nil {
+				return nil, errors.New("directive authRequired is not implemented")
+			}
+			return ec.directives.AuthRequired(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*gqlmodel.UpdateAvatarPayload); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/k-yomo/invy/invy_api/graph/gqlmodel.UpdateAvatarPayload`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.UpdateAvatarPayload)
+	fc.Result = res
+	return ec.marshalNUpdateAvatarPayload2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐUpdateAvatarPayload(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_updateAvatar(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "user":
+				return ec.fieldContext_UpdateAvatarPayload_user(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type UpdateAvatarPayload", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_updateAvatar_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_updateNickname(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_updateNickname(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().UpdateNickname(rctx, fc.Args["nickname"].(string))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.AuthRequired == nil {
+				return nil, errors.New("directive authRequired is not implemented")
+			}
+			return ec.directives.AuthRequired(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*gqlmodel.UpdateNicknamePayload); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/k-yomo/invy/invy_api/graph/gqlmodel.UpdateNicknamePayload`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.UpdateNicknamePayload)
+	fc.Result = res
+	return ec.marshalNUpdateNicknamePayload2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐUpdateNicknamePayload(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_updateNickname(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "user":
+				return ec.fieldContext_UpdateNicknamePayload_user(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type UpdateNicknamePayload", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_updateNickname_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Mutation_muteUser(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Mutation_muteUser(ctx, field)
 	if err != nil {
@@ -5370,6 +5619,64 @@ func (ec *executionContext) fieldContext_UnmuteUserPayload_unmutedUserId(ctx con
 	return fc, nil
 }
 
+func (ec *executionContext) _UpdateAvatarPayload_user(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.UpdateAvatarPayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UpdateAvatarPayload_user(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.User, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.User)
+	fc.Result = res
+	return ec.marshalNUser2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐUser(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_UpdateAvatarPayload_user(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "UpdateAvatarPayload",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_User_id(ctx, field)
+			case "nickname":
+				return ec.fieldContext_User_nickname(ctx, field)
+			case "avatarUrl":
+				return ec.fieldContext_User_avatarUrl(ctx, field)
+			case "isMuted":
+				return ec.fieldContext_User_isMuted(ctx, field)
+			case "isFriend":
+				return ec.fieldContext_User_isFriend(ctx, field)
+			case "isRequestingFriendship":
+				return ec.fieldContext_User_isRequestingFriendship(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _UpdateFriendGroupPayload_friendGroup(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.UpdateFriendGroupPayload) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_UpdateFriendGroupPayload_friendGroup(ctx, field)
 	if err != nil {
@@ -5421,6 +5728,64 @@ func (ec *executionContext) fieldContext_UpdateFriendGroupPayload_friendGroup(ct
 				return ec.fieldContext_FriendGroup_friendUsers(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type FriendGroup", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _UpdateNicknamePayload_user(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.UpdateNicknamePayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UpdateNicknamePayload_user(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.User, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.User)
+	fc.Result = res
+	return ec.marshalNUser2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐUser(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_UpdateNicknamePayload_user(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "UpdateNicknamePayload",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_User_id(ctx, field)
+			case "nickname":
+				return ec.fieldContext_User_nickname(ctx, field)
+			case "avatarUrl":
+				return ec.fieldContext_User_avatarUrl(ctx, field)
+			case "isMuted":
+				return ec.fieldContext_User_isMuted(ctx, field)
+			case "isFriend":
+				return ec.fieldContext_User_isFriend(ctx, field)
+			case "isRequestingFriendship":
+				return ec.fieldContext_User_isRequestingFriendship(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
 	}
 	return fc, nil
@@ -9464,6 +9829,24 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "updateAvatar":
+
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_updateAvatar(ctx, field)
+			})
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "updateNickname":
+
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_updateNickname(ctx, field)
+			})
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "muteUser":
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
@@ -9871,6 +10254,34 @@ func (ec *executionContext) _UnmuteUserPayload(ctx context.Context, sel ast.Sele
 	return out
 }
 
+var updateAvatarPayloadImplementors = []string{"UpdateAvatarPayload"}
+
+func (ec *executionContext) _UpdateAvatarPayload(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.UpdateAvatarPayload) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, updateAvatarPayloadImplementors)
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("UpdateAvatarPayload")
+		case "user":
+
+			out.Values[i] = ec._UpdateAvatarPayload_user(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var updateFriendGroupPayloadImplementors = []string{"UpdateFriendGroupPayload"}
 
 func (ec *executionContext) _UpdateFriendGroupPayload(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.UpdateFriendGroupPayload) graphql.Marshaler {
@@ -9884,6 +10295,34 @@ func (ec *executionContext) _UpdateFriendGroupPayload(ctx context.Context, sel a
 		case "friendGroup":
 
 			out.Values[i] = ec._UpdateFriendGroupPayload_friendGroup(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var updateNicknamePayloadImplementors = []string{"UpdateNicknamePayload"}
+
+func (ec *executionContext) _UpdateNicknamePayload(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.UpdateNicknamePayload) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, updateNicknamePayloadImplementors)
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("UpdateNicknamePayload")
+		case "user":
+
+			out.Values[i] = ec._UpdateNicknamePayload_user(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				invalids++
@@ -11137,6 +11576,20 @@ func (ec *executionContext) marshalNUnmuteUserPayload2ᚖgithubᚗcomᚋkᚑyomo
 	return ec._UnmuteUserPayload(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalNUpdateAvatarPayload2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐUpdateAvatarPayload(ctx context.Context, sel ast.SelectionSet, v gqlmodel.UpdateAvatarPayload) graphql.Marshaler {
+	return ec._UpdateAvatarPayload(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNUpdateAvatarPayload2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐUpdateAvatarPayload(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.UpdateAvatarPayload) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._UpdateAvatarPayload(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalNUpdateFriendGroupInput2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐUpdateFriendGroupInput(ctx context.Context, v interface{}) (gqlmodel.UpdateFriendGroupInput, error) {
 	res, err := ec.unmarshalInputUpdateFriendGroupInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -11154,6 +11607,35 @@ func (ec *executionContext) marshalNUpdateFriendGroupPayload2ᚖgithubᚗcomᚋk
 		return graphql.Null
 	}
 	return ec._UpdateFriendGroupPayload(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNUpdateNicknamePayload2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐUpdateNicknamePayload(ctx context.Context, sel ast.SelectionSet, v gqlmodel.UpdateNicknamePayload) graphql.Marshaler {
+	return ec._UpdateNicknamePayload(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNUpdateNicknamePayload2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐUpdateNicknamePayload(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.UpdateNicknamePayload) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._UpdateNicknamePayload(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNUpload2githubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚐUpload(ctx context.Context, v interface{}) (graphql.Upload, error) {
+	res, err := graphql.UnmarshalUpload(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNUpload2githubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚐUpload(ctx context.Context, sel ast.SelectionSet, v graphql.Upload) graphql.Marshaler {
+	res := graphql.MarshalUpload(v)
+	if res == graphql.Null {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+	}
+	return res
 }
 
 func (ec *executionContext) marshalNUser2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v gqlmodel.User) graphql.Marshaler {

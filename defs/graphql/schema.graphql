@@ -1,6 +1,7 @@
 scalar Time
 scalar UUID
 scalar Cursor
+scalar Upload
 
 type Query
 type Mutation

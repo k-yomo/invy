@@ -66,41 +66,8 @@ func (pntu *PushNotificationTokenUpdate) ClearUser() *PushNotificationTokenUpdat
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (pntu *PushNotificationTokenUpdate) Save(ctx context.Context) (int, error) {
-	var (
-		err      error
-		affected int
-	)
 	pntu.defaults()
-	if len(pntu.hooks) == 0 {
-		if err = pntu.check(); err != nil {
-			return 0, err
-		}
-		affected, err = pntu.sqlSave(ctx)
-	} else {
-		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-			mutation, ok := m.(*PushNotificationTokenMutation)
-			if !ok {
-				return nil, fmt.Errorf("unexpected mutation type %T", m)
-			}
-			if err = pntu.check(); err != nil {
-				return 0, err
-			}
-			pntu.mutation = mutation
-			affected, err = pntu.sqlSave(ctx)
-			mutation.done = true
-			return affected, err
-		})
-		for i := len(pntu.hooks) - 1; i >= 0; i-- {
-			if pntu.hooks[i] == nil {
-				return 0, fmt.Errorf("ent: uninitialized hook (forgotten import ent/runtime?)")
-			}
-			mut = pntu.hooks[i](mut)
-		}
-		if _, err := mut.Mutate(ctx, pntu.mutation); err != nil {
-			return 0, err
-		}
-	}
-	return affected, err
+	return withHooks[int, PushNotificationTokenMutation](ctx, pntu.sqlSave, pntu.mutation, pntu.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
@@ -142,6 +109,9 @@ func (pntu *PushNotificationTokenUpdate) check() error {
 }
 
 func (pntu *PushNotificationTokenUpdate) sqlSave(ctx context.Context) (n int, err error) {
+	if err := pntu.check(); err != nil {
+		return n, err
+	}
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
 			Table:   pushnotificationtoken.Table,
@@ -208,6 +178,7 @@ func (pntu *PushNotificationTokenUpdate) sqlSave(ctx context.Context) (n int, er
 		}
 		return 0, err
 	}
+	pntu.mutation.done = true
 	return n, nil
 }
 
@@ -262,47 +233,8 @@ func (pntuo *PushNotificationTokenUpdateOne) Select(field string, fields ...stri
 
 // Save executes the query and returns the updated PushNotificationToken entity.
 func (pntuo *PushNotificationTokenUpdateOne) Save(ctx context.Context) (*PushNotificationToken, error) {
-	var (
-		err  error
-		node *PushNotificationToken
-	)
 	pntuo.defaults()
-	if len(pntuo.hooks) == 0 {
-		if err = pntuo.check(); err != nil {
-			return nil, err
-		}
-		node, err = pntuo.sqlSave(ctx)
-	} else {
-		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-			mutation, ok := m.(*PushNotificationTokenMutation)
-			if !ok {
-				return nil, fmt.Errorf("unexpected mutation type %T", m)
-			}
-			if err = pntuo.check(); err != nil {
-				return nil, err
-			}
-			pntuo.mutation = mutation
-			node, err = pntuo.sqlSave(ctx)
-			mutation.done = true
-			return node, err
-		})
-		for i := len(pntuo.hooks) - 1; i >= 0; i-- {
-			if pntuo.hooks[i] == nil {
-				return nil, fmt.Errorf("ent: uninitialized hook (forgotten import ent/runtime?)")
-			}
-			mut = pntuo.hooks[i](mut)
-		}
-		v, err := mut.Mutate(ctx, pntuo.mutation)
-		if err != nil {
-			return nil, err
-		}
-		nv, ok := v.(*PushNotificationToken)
-		if !ok {
-			return nil, fmt.Errorf("unexpected node type %T returned from PushNotificationTokenMutation", v)
-		}
-		node = nv
-	}
-	return node, err
+	return withHooks[*PushNotificationToken, PushNotificationTokenMutation](ctx, pntuo.sqlSave, pntuo.mutation, pntuo.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
@@ -344,6 +276,9 @@ func (pntuo *PushNotificationTokenUpdateOne) check() error {
 }
 
 func (pntuo *PushNotificationTokenUpdateOne) sqlSave(ctx context.Context) (_node *PushNotificationToken, err error) {
+	if err := pntuo.check(); err != nil {
+		return _node, err
+	}
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
 			Table:   pushnotificationtoken.Table,
@@ -430,5 +365,6 @@ func (pntuo *PushNotificationTokenUpdateOne) sqlSave(ctx context.Context) (_node
 		}
 		return nil, err
 	}
+	pntuo.mutation.done = true
 	return _node, nil
 }

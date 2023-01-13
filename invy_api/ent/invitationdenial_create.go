@@ -83,50 +83,8 @@ func (idc *InvitationDenialCreate) Mutation() *InvitationDenialMutation {
 
 // Save creates the InvitationDenial in the database.
 func (idc *InvitationDenialCreate) Save(ctx context.Context) (*InvitationDenial, error) {
-	var (
-		err  error
-		node *InvitationDenial
-	)
 	idc.defaults()
-	if len(idc.hooks) == 0 {
-		if err = idc.check(); err != nil {
-			return nil, err
-		}
-		node, err = idc.sqlSave(ctx)
-	} else {
-		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-			mutation, ok := m.(*InvitationDenialMutation)
-			if !ok {
-				return nil, fmt.Errorf("unexpected mutation type %T", m)
-			}
-			if err = idc.check(); err != nil {
-				return nil, err
-			}
-			idc.mutation = mutation
-			if node, err = idc.sqlSave(ctx); err != nil {
-				return nil, err
-			}
-			mutation.id = &node.ID
-			mutation.done = true
-			return node, err
-		})
-		for i := len(idc.hooks) - 1; i >= 0; i-- {
-			if idc.hooks[i] == nil {
-				return nil, fmt.Errorf("ent: uninitialized hook (forgotten import ent/runtime?)")
-			}
-			mut = idc.hooks[i](mut)
-		}
-		v, err := mut.Mutate(ctx, idc.mutation)
-		if err != nil {
-			return nil, err
-		}
-		nv, ok := v.(*InvitationDenial)
-		if !ok {
-			return nil, fmt.Errorf("unexpected node type %T returned from InvitationDenialMutation", v)
-		}
-		node = nv
-	}
-	return node, err
+	return withHooks[*InvitationDenial, InvitationDenialMutation](ctx, idc.sqlSave, idc.mutation, idc.hooks)
 }
 
 // SaveX calls Save and panics if Save returns an error.
@@ -184,6 +142,9 @@ func (idc *InvitationDenialCreate) check() error {
 }
 
 func (idc *InvitationDenialCreate) sqlSave(ctx context.Context) (*InvitationDenial, error) {
+	if err := idc.check(); err != nil {
+		return nil, err
+	}
 	_node, _spec := idc.createSpec()
 	if err := sqlgraph.CreateNode(ctx, idc.driver, _spec); err != nil {
 		if sqlgraph.IsConstraintError(err) {
@@ -198,6 +159,8 @@ func (idc *InvitationDenialCreate) sqlSave(ctx context.Context) (*InvitationDeni
 			return nil, err
 		}
 	}
+	idc.mutation.id = &_node.ID
+	idc.mutation.done = true
 	return _node, nil
 }
 

@@ -83,50 +83,8 @@ func (ufgc *UserFriendGroupCreate) Mutation() *UserFriendGroupMutation {
 
 // Save creates the UserFriendGroup in the database.
 func (ufgc *UserFriendGroupCreate) Save(ctx context.Context) (*UserFriendGroup, error) {
-	var (
-		err  error
-		node *UserFriendGroup
-	)
 	ufgc.defaults()
-	if len(ufgc.hooks) == 0 {
-		if err = ufgc.check(); err != nil {
-			return nil, err
-		}
-		node, err = ufgc.sqlSave(ctx)
-	} else {
-		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-			mutation, ok := m.(*UserFriendGroupMutation)
-			if !ok {
-				return nil, fmt.Errorf("unexpected mutation type %T", m)
-			}
-			if err = ufgc.check(); err != nil {
-				return nil, err
-			}
-			ufgc.mutation = mutation
-			if node, err = ufgc.sqlSave(ctx); err != nil {
-				return nil, err
-			}
-			mutation.id = &node.ID
-			mutation.done = true
-			return node, err
-		})
-		for i := len(ufgc.hooks) - 1; i >= 0; i-- {
-			if ufgc.hooks[i] == nil {
-				return nil, fmt.Errorf("ent: uninitialized hook (forgotten import ent/runtime?)")
-			}
-			mut = ufgc.hooks[i](mut)
-		}
-		v, err := mut.Mutate(ctx, ufgc.mutation)
-		if err != nil {
-			return nil, err
-		}
-		nv, ok := v.(*UserFriendGroup)
-		if !ok {
-			return nil, fmt.Errorf("unexpected node type %T returned from UserFriendGroupMutation", v)
-		}
-		node = nv
-	}
-	return node, err
+	return withHooks[*UserFriendGroup, UserFriendGroupMutation](ctx, ufgc.sqlSave, ufgc.mutation, ufgc.hooks)
 }
 
 // SaveX calls Save and panics if Save returns an error.
@@ -184,6 +142,9 @@ func (ufgc *UserFriendGroupCreate) check() error {
 }
 
 func (ufgc *UserFriendGroupCreate) sqlSave(ctx context.Context) (*UserFriendGroup, error) {
+	if err := ufgc.check(); err != nil {
+		return nil, err
+	}
 	_node, _spec := ufgc.createSpec()
 	if err := sqlgraph.CreateNode(ctx, ufgc.driver, _spec); err != nil {
 		if sqlgraph.IsConstraintError(err) {
@@ -198,6 +159,8 @@ func (ufgc *UserFriendGroupCreate) sqlSave(ctx context.Context) (*UserFriendGrou
 			return nil, err
 		}
 	}
+	ufgc.mutation.id = &_node.ID
+	ufgc.mutation.done = true
 	return _node, nil
 }
 

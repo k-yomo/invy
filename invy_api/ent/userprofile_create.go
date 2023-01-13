@@ -103,50 +103,8 @@ func (upc *UserProfileCreate) Mutation() *UserProfileMutation {
 
 // Save creates the UserProfile in the database.
 func (upc *UserProfileCreate) Save(ctx context.Context) (*UserProfile, error) {
-	var (
-		err  error
-		node *UserProfile
-	)
 	upc.defaults()
-	if len(upc.hooks) == 0 {
-		if err = upc.check(); err != nil {
-			return nil, err
-		}
-		node, err = upc.sqlSave(ctx)
-	} else {
-		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-			mutation, ok := m.(*UserProfileMutation)
-			if !ok {
-				return nil, fmt.Errorf("unexpected mutation type %T", m)
-			}
-			if err = upc.check(); err != nil {
-				return nil, err
-			}
-			upc.mutation = mutation
-			if node, err = upc.sqlSave(ctx); err != nil {
-				return nil, err
-			}
-			mutation.id = &node.ID
-			mutation.done = true
-			return node, err
-		})
-		for i := len(upc.hooks) - 1; i >= 0; i-- {
-			if upc.hooks[i] == nil {
-				return nil, fmt.Errorf("ent: uninitialized hook (forgotten import ent/runtime?)")
-			}
-			mut = upc.hooks[i](mut)
-		}
-		v, err := mut.Mutate(ctx, upc.mutation)
-		if err != nil {
-			return nil, err
-		}
-		nv, ok := v.(*UserProfile)
-		if !ok {
-			return nil, fmt.Errorf("unexpected node type %T returned from UserProfileMutation", v)
-		}
-		node = nv
-	}
-	return node, err
+	return withHooks[*UserProfile, UserProfileMutation](ctx, upc.sqlSave, upc.mutation, upc.hooks)
 }
 
 // SaveX calls Save and panics if Save returns an error.
@@ -214,6 +172,9 @@ func (upc *UserProfileCreate) check() error {
 }
 
 func (upc *UserProfileCreate) sqlSave(ctx context.Context) (*UserProfile, error) {
+	if err := upc.check(); err != nil {
+		return nil, err
+	}
 	_node, _spec := upc.createSpec()
 	if err := sqlgraph.CreateNode(ctx, upc.driver, _spec); err != nil {
 		if sqlgraph.IsConstraintError(err) {
@@ -228,6 +189,8 @@ func (upc *UserProfileCreate) sqlSave(ctx context.Context) (*UserProfile, error)
 			return nil, err
 		}
 	}
+	upc.mutation.id = &_node.ID
+	upc.mutation.done = true
 	return _node, nil
 }
 

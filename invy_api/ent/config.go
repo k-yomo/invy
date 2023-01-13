@@ -20,25 +20,45 @@ type config struct {
 	log func(...any)
 	// hooks to execute on mutations.
 	hooks *hooks
+	// interceptors to execute on queries.
+	inters *inters
 }
 
-// hooks per client, for fast access.
-type hooks struct {
-	Account               []ent.Hook
-	FriendGroup           []ent.Hook
-	Friendship            []ent.Hook
-	FriendshipRequest     []ent.Hook
-	Invitation            []ent.Hook
-	InvitationAcceptance  []ent.Hook
-	InvitationDenial      []ent.Hook
-	InvitationFriendGroup []ent.Hook
-	InvitationUser        []ent.Hook
-	PushNotificationToken []ent.Hook
-	User                  []ent.Hook
-	UserFriendGroup       []ent.Hook
-	UserMute              []ent.Hook
-	UserProfile           []ent.Hook
-}
+// hooks and interceptors per client, for fast access.
+type (
+	hooks struct {
+		Account               []ent.Hook
+		FriendGroup           []ent.Hook
+		Friendship            []ent.Hook
+		FriendshipRequest     []ent.Hook
+		Invitation            []ent.Hook
+		InvitationAcceptance  []ent.Hook
+		InvitationDenial      []ent.Hook
+		InvitationFriendGroup []ent.Hook
+		InvitationUser        []ent.Hook
+		PushNotificationToken []ent.Hook
+		User                  []ent.Hook
+		UserFriendGroup       []ent.Hook
+		UserMute              []ent.Hook
+		UserProfile           []ent.Hook
+	}
+	inters struct {
+		Account               []ent.Interceptor
+		FriendGroup           []ent.Interceptor
+		Friendship            []ent.Interceptor
+		FriendshipRequest     []ent.Interceptor
+		Invitation            []ent.Interceptor
+		InvitationAcceptance  []ent.Interceptor
+		InvitationDenial      []ent.Interceptor
+		InvitationFriendGroup []ent.Interceptor
+		InvitationUser        []ent.Interceptor
+		PushNotificationToken []ent.Interceptor
+		User                  []ent.Interceptor
+		UserFriendGroup       []ent.Interceptor
+		UserMute              []ent.Interceptor
+		UserProfile           []ent.Interceptor
+	}
+)
 
 // Options applies the options on the config object.
 func (c *config) options(opts ...Option) {

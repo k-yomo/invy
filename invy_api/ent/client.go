@@ -68,7 +68,7 @@ type Client struct {
 
 // NewClient creates a new client configured with the given options.
 func NewClient(opts ...Option) *Client {
-	cfg := config{log: log.Println, hooks: &hooks{}}
+	cfg := config{log: log.Println, hooks: &hooks{}, inters: &inters{}}
 	cfg.options(opts...)
 	client := &Client{config: cfg}
 	client.init()
@@ -215,6 +215,61 @@ func (c *Client) Use(hooks ...Hook) {
 	c.UserProfile.Use(hooks...)
 }
 
+// Intercept adds the query interceptors to all the entity clients.
+// In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
+func (c *Client) Intercept(interceptors ...Interceptor) {
+	c.Account.Intercept(interceptors...)
+	c.FriendGroup.Intercept(interceptors...)
+	c.Friendship.Intercept(interceptors...)
+	c.FriendshipRequest.Intercept(interceptors...)
+	c.Invitation.Intercept(interceptors...)
+	c.InvitationAcceptance.Intercept(interceptors...)
+	c.InvitationDenial.Intercept(interceptors...)
+	c.InvitationFriendGroup.Intercept(interceptors...)
+	c.InvitationUser.Intercept(interceptors...)
+	c.PushNotificationToken.Intercept(interceptors...)
+	c.User.Intercept(interceptors...)
+	c.UserFriendGroup.Intercept(interceptors...)
+	c.UserMute.Intercept(interceptors...)
+	c.UserProfile.Intercept(interceptors...)
+}
+
+// Mutate implements the ent.Mutator interface.
+func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
+	switch m := m.(type) {
+	case *AccountMutation:
+		return c.Account.mutate(ctx, m)
+	case *FriendGroupMutation:
+		return c.FriendGroup.mutate(ctx, m)
+	case *FriendshipMutation:
+		return c.Friendship.mutate(ctx, m)
+	case *FriendshipRequestMutation:
+		return c.FriendshipRequest.mutate(ctx, m)
+	case *InvitationMutation:
+		return c.Invitation.mutate(ctx, m)
+	case *InvitationAcceptanceMutation:
+		return c.InvitationAcceptance.mutate(ctx, m)
+	case *InvitationDenialMutation:
+		return c.InvitationDenial.mutate(ctx, m)
+	case *InvitationFriendGroupMutation:
+		return c.InvitationFriendGroup.mutate(ctx, m)
+	case *InvitationUserMutation:
+		return c.InvitationUser.mutate(ctx, m)
+	case *PushNotificationTokenMutation:
+		return c.PushNotificationToken.mutate(ctx, m)
+	case *UserMutation:
+		return c.User.mutate(ctx, m)
+	case *UserFriendGroupMutation:
+		return c.UserFriendGroup.mutate(ctx, m)
+	case *UserMuteMutation:
+		return c.UserMute.mutate(ctx, m)
+	case *UserProfileMutation:
+		return c.UserProfile.mutate(ctx, m)
+	default:
+		return nil, fmt.Errorf("ent: unknown mutation type %T", m)
+	}
+}
+
 // AccountClient is a client for the Account schema.
 type AccountClient struct {
 	config
@@ -229,6 +284,12 @@ func NewAccountClient(c config) *AccountClient {
 // A call to `Use(f, g, h)` equals to `account.Hooks(f(g(h())))`.
 func (c *AccountClient) Use(hooks ...Hook) {
 	c.hooks.Account = append(c.hooks.Account, hooks...)
+}
+
+// Use adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `account.Intercept(f(g(h())))`.
+func (c *AccountClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Account = append(c.inters.Account, interceptors...)
 }
 
 // Create returns a builder for creating a Account entity.
@@ -283,6 +344,7 @@ func (c *AccountClient) DeleteOneID(id uuid.UUID) *AccountDeleteOne {
 func (c *AccountClient) Query() *AccountQuery {
 	return &AccountQuery{
 		config: c.config,
+		inters: c.Interceptors(),
 	}
 }
 
@@ -302,7 +364,7 @@ func (c *AccountClient) GetX(ctx context.Context, id uuid.UUID) *Account {
 
 // QueryUsers queries the users edge of a Account.
 func (c *AccountClient) QueryUsers(a *Account) *UserQuery {
-	query := &UserQuery{config: c.config}
+	query := (&UserClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := a.ID
 		step := sqlgraph.NewStep(
@@ -321,6 +383,26 @@ func (c *AccountClient) Hooks() []Hook {
 	return c.hooks.Account
 }
 
+// Interceptors returns the client interceptors.
+func (c *AccountClient) Interceptors() []Interceptor {
+	return c.inters.Account
+}
+
+func (c *AccountClient) mutate(ctx context.Context, m *AccountMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&AccountCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&AccountUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&AccountUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&AccountDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown Account mutation op: %q", m.Op())
+	}
+}
+
 // FriendGroupClient is a client for the FriendGroup schema.
 type FriendGroupClient struct {
 	config
@@ -335,6 +417,12 @@ func NewFriendGroupClient(c config) *FriendGroupClient {
 // A call to `Use(f, g, h)` equals to `friendgroup.Hooks(f(g(h())))`.
 func (c *FriendGroupClient) Use(hooks ...Hook) {
 	c.hooks.FriendGroup = append(c.hooks.FriendGroup, hooks...)
+}
+
+// Use adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `friendgroup.Intercept(f(g(h())))`.
+func (c *FriendGroupClient) Intercept(interceptors ...Interceptor) {
+	c.inters.FriendGroup = append(c.inters.FriendGroup, interceptors...)
 }
 
 // Create returns a builder for creating a FriendGroup entity.
@@ -389,6 +477,7 @@ func (c *FriendGroupClient) DeleteOneID(id uuid.UUID) *FriendGroupDeleteOne {
 func (c *FriendGroupClient) Query() *FriendGroupQuery {
 	return &FriendGroupQuery{
 		config: c.config,
+		inters: c.Interceptors(),
 	}
 }
 
@@ -408,7 +497,7 @@ func (c *FriendGroupClient) GetX(ctx context.Context, id uuid.UUID) *FriendGroup
 
 // QueryUser queries the user edge of a FriendGroup.
 func (c *FriendGroupClient) QueryUser(fg *FriendGroup) *UserQuery {
-	query := &UserQuery{config: c.config}
+	query := (&UserClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := fg.ID
 		step := sqlgraph.NewStep(
@@ -424,7 +513,7 @@ func (c *FriendGroupClient) QueryUser(fg *FriendGroup) *UserQuery {
 
 // QueryFriendUsers queries the friend_users edge of a FriendGroup.
 func (c *FriendGroupClient) QueryFriendUsers(fg *FriendGroup) *UserQuery {
-	query := &UserQuery{config: c.config}
+	query := (&UserClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := fg.ID
 		step := sqlgraph.NewStep(
@@ -440,7 +529,7 @@ func (c *FriendGroupClient) QueryFriendUsers(fg *FriendGroup) *UserQuery {
 
 // QueryInvitationFriendGroups queries the invitation_friend_groups edge of a FriendGroup.
 func (c *FriendGroupClient) QueryInvitationFriendGroups(fg *FriendGroup) *InvitationFriendGroupQuery {
-	query := &InvitationFriendGroupQuery{config: c.config}
+	query := (&InvitationFriendGroupClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := fg.ID
 		step := sqlgraph.NewStep(
@@ -456,7 +545,7 @@ func (c *FriendGroupClient) QueryInvitationFriendGroups(fg *FriendGroup) *Invita
 
 // QueryUserFriendGroups queries the user_friend_groups edge of a FriendGroup.
 func (c *FriendGroupClient) QueryUserFriendGroups(fg *FriendGroup) *UserFriendGroupQuery {
-	query := &UserFriendGroupQuery{config: c.config}
+	query := (&UserFriendGroupClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := fg.ID
 		step := sqlgraph.NewStep(
@@ -475,6 +564,26 @@ func (c *FriendGroupClient) Hooks() []Hook {
 	return c.hooks.FriendGroup
 }
 
+// Interceptors returns the client interceptors.
+func (c *FriendGroupClient) Interceptors() []Interceptor {
+	return c.inters.FriendGroup
+}
+
+func (c *FriendGroupClient) mutate(ctx context.Context, m *FriendGroupMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&FriendGroupCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&FriendGroupUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&FriendGroupUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&FriendGroupDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown FriendGroup mutation op: %q", m.Op())
+	}
+}
+
 // FriendshipClient is a client for the Friendship schema.
 type FriendshipClient struct {
 	config
@@ -489,6 +598,12 @@ func NewFriendshipClient(c config) *FriendshipClient {
 // A call to `Use(f, g, h)` equals to `friendship.Hooks(f(g(h())))`.
 func (c *FriendshipClient) Use(hooks ...Hook) {
 	c.hooks.Friendship = append(c.hooks.Friendship, hooks...)
+}
+
+// Use adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `friendship.Intercept(f(g(h())))`.
+func (c *FriendshipClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Friendship = append(c.inters.Friendship, interceptors...)
 }
 
 // Create returns a builder for creating a Friendship entity.
@@ -543,6 +658,7 @@ func (c *FriendshipClient) DeleteOneID(id uuid.UUID) *FriendshipDeleteOne {
 func (c *FriendshipClient) Query() *FriendshipQuery {
 	return &FriendshipQuery{
 		config: c.config,
+		inters: c.Interceptors(),
 	}
 }
 
@@ -562,7 +678,7 @@ func (c *FriendshipClient) GetX(ctx context.Context, id uuid.UUID) *Friendship {
 
 // QueryUser queries the user edge of a Friendship.
 func (c *FriendshipClient) QueryUser(f *Friendship) *UserQuery {
-	query := &UserQuery{config: c.config}
+	query := (&UserClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := f.ID
 		step := sqlgraph.NewStep(
@@ -578,7 +694,7 @@ func (c *FriendshipClient) QueryUser(f *Friendship) *UserQuery {
 
 // QueryFriendUser queries the friend_user edge of a Friendship.
 func (c *FriendshipClient) QueryFriendUser(f *Friendship) *UserQuery {
-	query := &UserQuery{config: c.config}
+	query := (&UserClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := f.ID
 		step := sqlgraph.NewStep(
@@ -597,6 +713,26 @@ func (c *FriendshipClient) Hooks() []Hook {
 	return c.hooks.Friendship
 }
 
+// Interceptors returns the client interceptors.
+func (c *FriendshipClient) Interceptors() []Interceptor {
+	return c.inters.Friendship
+}
+
+func (c *FriendshipClient) mutate(ctx context.Context, m *FriendshipMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&FriendshipCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&FriendshipUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&FriendshipUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&FriendshipDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown Friendship mutation op: %q", m.Op())
+	}
+}
+
 // FriendshipRequestClient is a client for the FriendshipRequest schema.
 type FriendshipRequestClient struct {
 	config
@@ -611,6 +747,12 @@ func NewFriendshipRequestClient(c config) *FriendshipRequestClient {
 // A call to `Use(f, g, h)` equals to `friendshiprequest.Hooks(f(g(h())))`.
 func (c *FriendshipRequestClient) Use(hooks ...Hook) {
 	c.hooks.FriendshipRequest = append(c.hooks.FriendshipRequest, hooks...)
+}
+
+// Use adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `friendshiprequest.Intercept(f(g(h())))`.
+func (c *FriendshipRequestClient) Intercept(interceptors ...Interceptor) {
+	c.inters.FriendshipRequest = append(c.inters.FriendshipRequest, interceptors...)
 }
 
 // Create returns a builder for creating a FriendshipRequest entity.
@@ -665,6 +807,7 @@ func (c *FriendshipRequestClient) DeleteOneID(id uuid.UUID) *FriendshipRequestDe
 func (c *FriendshipRequestClient) Query() *FriendshipRequestQuery {
 	return &FriendshipRequestQuery{
 		config: c.config,
+		inters: c.Interceptors(),
 	}
 }
 
@@ -684,7 +827,7 @@ func (c *FriendshipRequestClient) GetX(ctx context.Context, id uuid.UUID) *Frien
 
 // QueryFromUsers queries the from_users edge of a FriendshipRequest.
 func (c *FriendshipRequestClient) QueryFromUsers(fr *FriendshipRequest) *UserQuery {
-	query := &UserQuery{config: c.config}
+	query := (&UserClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := fr.ID
 		step := sqlgraph.NewStep(
@@ -700,7 +843,7 @@ func (c *FriendshipRequestClient) QueryFromUsers(fr *FriendshipRequest) *UserQue
 
 // QueryToUsers queries the to_users edge of a FriendshipRequest.
 func (c *FriendshipRequestClient) QueryToUsers(fr *FriendshipRequest) *UserQuery {
-	query := &UserQuery{config: c.config}
+	query := (&UserClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := fr.ID
 		step := sqlgraph.NewStep(
@@ -719,6 +862,26 @@ func (c *FriendshipRequestClient) Hooks() []Hook {
 	return c.hooks.FriendshipRequest
 }
 
+// Interceptors returns the client interceptors.
+func (c *FriendshipRequestClient) Interceptors() []Interceptor {
+	return c.inters.FriendshipRequest
+}
+
+func (c *FriendshipRequestClient) mutate(ctx context.Context, m *FriendshipRequestMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&FriendshipRequestCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&FriendshipRequestUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&FriendshipRequestUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&FriendshipRequestDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown FriendshipRequest mutation op: %q", m.Op())
+	}
+}
+
 // InvitationClient is a client for the Invitation schema.
 type InvitationClient struct {
 	config
@@ -733,6 +896,12 @@ func NewInvitationClient(c config) *InvitationClient {
 // A call to `Use(f, g, h)` equals to `invitation.Hooks(f(g(h())))`.
 func (c *InvitationClient) Use(hooks ...Hook) {
 	c.hooks.Invitation = append(c.hooks.Invitation, hooks...)
+}
+
+// Use adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `invitation.Intercept(f(g(h())))`.
+func (c *InvitationClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Invitation = append(c.inters.Invitation, interceptors...)
 }
 
 // Create returns a builder for creating a Invitation entity.
@@ -787,6 +956,7 @@ func (c *InvitationClient) DeleteOneID(id uuid.UUID) *InvitationDeleteOne {
 func (c *InvitationClient) Query() *InvitationQuery {
 	return &InvitationQuery{
 		config: c.config,
+		inters: c.Interceptors(),
 	}
 }
 
@@ -806,7 +976,7 @@ func (c *InvitationClient) GetX(ctx context.Context, id uuid.UUID) *Invitation {
 
 // QueryUser queries the user edge of a Invitation.
 func (c *InvitationClient) QueryUser(i *Invitation) *UserQuery {
-	query := &UserQuery{config: c.config}
+	query := (&UserClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := i.ID
 		step := sqlgraph.NewStep(
@@ -822,7 +992,7 @@ func (c *InvitationClient) QueryUser(i *Invitation) *UserQuery {
 
 // QueryInvitationUsers queries the invitation_users edge of a Invitation.
 func (c *InvitationClient) QueryInvitationUsers(i *Invitation) *InvitationUserQuery {
-	query := &InvitationUserQuery{config: c.config}
+	query := (&InvitationUserClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := i.ID
 		step := sqlgraph.NewStep(
@@ -838,7 +1008,7 @@ func (c *InvitationClient) QueryInvitationUsers(i *Invitation) *InvitationUserQu
 
 // QueryInvitationFriendGroups queries the invitation_friend_groups edge of a Invitation.
 func (c *InvitationClient) QueryInvitationFriendGroups(i *Invitation) *InvitationFriendGroupQuery {
-	query := &InvitationFriendGroupQuery{config: c.config}
+	query := (&InvitationFriendGroupClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := i.ID
 		step := sqlgraph.NewStep(
@@ -854,7 +1024,7 @@ func (c *InvitationClient) QueryInvitationFriendGroups(i *Invitation) *Invitatio
 
 // QueryInvitationAcceptances queries the invitation_acceptances edge of a Invitation.
 func (c *InvitationClient) QueryInvitationAcceptances(i *Invitation) *InvitationAcceptanceQuery {
-	query := &InvitationAcceptanceQuery{config: c.config}
+	query := (&InvitationAcceptanceClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := i.ID
 		step := sqlgraph.NewStep(
@@ -870,7 +1040,7 @@ func (c *InvitationClient) QueryInvitationAcceptances(i *Invitation) *Invitation
 
 // QueryInvitationDenials queries the invitation_denials edge of a Invitation.
 func (c *InvitationClient) QueryInvitationDenials(i *Invitation) *InvitationDenialQuery {
-	query := &InvitationDenialQuery{config: c.config}
+	query := (&InvitationDenialClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := i.ID
 		step := sqlgraph.NewStep(
@@ -889,6 +1059,26 @@ func (c *InvitationClient) Hooks() []Hook {
 	return c.hooks.Invitation
 }
 
+// Interceptors returns the client interceptors.
+func (c *InvitationClient) Interceptors() []Interceptor {
+	return c.inters.Invitation
+}
+
+func (c *InvitationClient) mutate(ctx context.Context, m *InvitationMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&InvitationCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&InvitationUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&InvitationUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&InvitationDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown Invitation mutation op: %q", m.Op())
+	}
+}
+
 // InvitationAcceptanceClient is a client for the InvitationAcceptance schema.
 type InvitationAcceptanceClient struct {
 	config
@@ -903,6 +1093,12 @@ func NewInvitationAcceptanceClient(c config) *InvitationAcceptanceClient {
 // A call to `Use(f, g, h)` equals to `invitationacceptance.Hooks(f(g(h())))`.
 func (c *InvitationAcceptanceClient) Use(hooks ...Hook) {
 	c.hooks.InvitationAcceptance = append(c.hooks.InvitationAcceptance, hooks...)
+}
+
+// Use adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `invitationacceptance.Intercept(f(g(h())))`.
+func (c *InvitationAcceptanceClient) Intercept(interceptors ...Interceptor) {
+	c.inters.InvitationAcceptance = append(c.inters.InvitationAcceptance, interceptors...)
 }
 
 // Create returns a builder for creating a InvitationAcceptance entity.
@@ -957,6 +1153,7 @@ func (c *InvitationAcceptanceClient) DeleteOneID(id uuid.UUID) *InvitationAccept
 func (c *InvitationAcceptanceClient) Query() *InvitationAcceptanceQuery {
 	return &InvitationAcceptanceQuery{
 		config: c.config,
+		inters: c.Interceptors(),
 	}
 }
 
@@ -976,7 +1173,7 @@ func (c *InvitationAcceptanceClient) GetX(ctx context.Context, id uuid.UUID) *In
 
 // QueryUser queries the user edge of a InvitationAcceptance.
 func (c *InvitationAcceptanceClient) QueryUser(ia *InvitationAcceptance) *UserQuery {
-	query := &UserQuery{config: c.config}
+	query := (&UserClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := ia.ID
 		step := sqlgraph.NewStep(
@@ -992,7 +1189,7 @@ func (c *InvitationAcceptanceClient) QueryUser(ia *InvitationAcceptance) *UserQu
 
 // QueryInvitation queries the invitation edge of a InvitationAcceptance.
 func (c *InvitationAcceptanceClient) QueryInvitation(ia *InvitationAcceptance) *InvitationQuery {
-	query := &InvitationQuery{config: c.config}
+	query := (&InvitationClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := ia.ID
 		step := sqlgraph.NewStep(
@@ -1011,6 +1208,26 @@ func (c *InvitationAcceptanceClient) Hooks() []Hook {
 	return c.hooks.InvitationAcceptance
 }
 
+// Interceptors returns the client interceptors.
+func (c *InvitationAcceptanceClient) Interceptors() []Interceptor {
+	return c.inters.InvitationAcceptance
+}
+
+func (c *InvitationAcceptanceClient) mutate(ctx context.Context, m *InvitationAcceptanceMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&InvitationAcceptanceCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&InvitationAcceptanceUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&InvitationAcceptanceUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&InvitationAcceptanceDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown InvitationAcceptance mutation op: %q", m.Op())
+	}
+}
+
 // InvitationDenialClient is a client for the InvitationDenial schema.
 type InvitationDenialClient struct {
 	config
@@ -1025,6 +1242,12 @@ func NewInvitationDenialClient(c config) *InvitationDenialClient {
 // A call to `Use(f, g, h)` equals to `invitationdenial.Hooks(f(g(h())))`.
 func (c *InvitationDenialClient) Use(hooks ...Hook) {
 	c.hooks.InvitationDenial = append(c.hooks.InvitationDenial, hooks...)
+}
+
+// Use adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `invitationdenial.Intercept(f(g(h())))`.
+func (c *InvitationDenialClient) Intercept(interceptors ...Interceptor) {
+	c.inters.InvitationDenial = append(c.inters.InvitationDenial, interceptors...)
 }
 
 // Create returns a builder for creating a InvitationDenial entity.
@@ -1079,6 +1302,7 @@ func (c *InvitationDenialClient) DeleteOneID(id uuid.UUID) *InvitationDenialDele
 func (c *InvitationDenialClient) Query() *InvitationDenialQuery {
 	return &InvitationDenialQuery{
 		config: c.config,
+		inters: c.Interceptors(),
 	}
 }
 
@@ -1098,7 +1322,7 @@ func (c *InvitationDenialClient) GetX(ctx context.Context, id uuid.UUID) *Invita
 
 // QueryUser queries the user edge of a InvitationDenial.
 func (c *InvitationDenialClient) QueryUser(node *InvitationDenial) *UserQuery {
-	query := &UserQuery{config: c.config}
+	query := (&UserClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := node.ID
 		step := sqlgraph.NewStep(
@@ -1114,7 +1338,7 @@ func (c *InvitationDenialClient) QueryUser(node *InvitationDenial) *UserQuery {
 
 // QueryInvitation queries the invitation edge of a InvitationDenial.
 func (c *InvitationDenialClient) QueryInvitation(node *InvitationDenial) *InvitationQuery {
-	query := &InvitationQuery{config: c.config}
+	query := (&InvitationClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := node.ID
 		step := sqlgraph.NewStep(
@@ -1133,6 +1357,26 @@ func (c *InvitationDenialClient) Hooks() []Hook {
 	return c.hooks.InvitationDenial
 }
 
+// Interceptors returns the client interceptors.
+func (c *InvitationDenialClient) Interceptors() []Interceptor {
+	return c.inters.InvitationDenial
+}
+
+func (c *InvitationDenialClient) mutate(ctx context.Context, m *InvitationDenialMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&InvitationDenialCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&InvitationDenialUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&InvitationDenialUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&InvitationDenialDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown InvitationDenial mutation op: %q", m.Op())
+	}
+}
+
 // InvitationFriendGroupClient is a client for the InvitationFriendGroup schema.
 type InvitationFriendGroupClient struct {
 	config
@@ -1147,6 +1391,12 @@ func NewInvitationFriendGroupClient(c config) *InvitationFriendGroupClient {
 // A call to `Use(f, g, h)` equals to `invitationfriendgroup.Hooks(f(g(h())))`.
 func (c *InvitationFriendGroupClient) Use(hooks ...Hook) {
 	c.hooks.InvitationFriendGroup = append(c.hooks.InvitationFriendGroup, hooks...)
+}
+
+// Use adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `invitationfriendgroup.Intercept(f(g(h())))`.
+func (c *InvitationFriendGroupClient) Intercept(interceptors ...Interceptor) {
+	c.inters.InvitationFriendGroup = append(c.inters.InvitationFriendGroup, interceptors...)
 }
 
 // Create returns a builder for creating a InvitationFriendGroup entity.
@@ -1201,6 +1451,7 @@ func (c *InvitationFriendGroupClient) DeleteOneID(id uuid.UUID) *InvitationFrien
 func (c *InvitationFriendGroupClient) Query() *InvitationFriendGroupQuery {
 	return &InvitationFriendGroupQuery{
 		config: c.config,
+		inters: c.Interceptors(),
 	}
 }
 
@@ -1220,7 +1471,7 @@ func (c *InvitationFriendGroupClient) GetX(ctx context.Context, id uuid.UUID) *I
 
 // QueryInvitation queries the invitation edge of a InvitationFriendGroup.
 func (c *InvitationFriendGroupClient) QueryInvitation(ifg *InvitationFriendGroup) *InvitationQuery {
-	query := &InvitationQuery{config: c.config}
+	query := (&InvitationClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := ifg.ID
 		step := sqlgraph.NewStep(
@@ -1236,7 +1487,7 @@ func (c *InvitationFriendGroupClient) QueryInvitation(ifg *InvitationFriendGroup
 
 // QueryFriendGroup queries the friend_group edge of a InvitationFriendGroup.
 func (c *InvitationFriendGroupClient) QueryFriendGroup(ifg *InvitationFriendGroup) *FriendGroupQuery {
-	query := &FriendGroupQuery{config: c.config}
+	query := (&FriendGroupClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := ifg.ID
 		step := sqlgraph.NewStep(
@@ -1255,6 +1506,26 @@ func (c *InvitationFriendGroupClient) Hooks() []Hook {
 	return c.hooks.InvitationFriendGroup
 }
 
+// Interceptors returns the client interceptors.
+func (c *InvitationFriendGroupClient) Interceptors() []Interceptor {
+	return c.inters.InvitationFriendGroup
+}
+
+func (c *InvitationFriendGroupClient) mutate(ctx context.Context, m *InvitationFriendGroupMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&InvitationFriendGroupCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&InvitationFriendGroupUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&InvitationFriendGroupUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&InvitationFriendGroupDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown InvitationFriendGroup mutation op: %q", m.Op())
+	}
+}
+
 // InvitationUserClient is a client for the InvitationUser schema.
 type InvitationUserClient struct {
 	config
@@ -1269,6 +1540,12 @@ func NewInvitationUserClient(c config) *InvitationUserClient {
 // A call to `Use(f, g, h)` equals to `invitationuser.Hooks(f(g(h())))`.
 func (c *InvitationUserClient) Use(hooks ...Hook) {
 	c.hooks.InvitationUser = append(c.hooks.InvitationUser, hooks...)
+}
+
+// Use adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `invitationuser.Intercept(f(g(h())))`.
+func (c *InvitationUserClient) Intercept(interceptors ...Interceptor) {
+	c.inters.InvitationUser = append(c.inters.InvitationUser, interceptors...)
 }
 
 // Create returns a builder for creating a InvitationUser entity.
@@ -1323,6 +1600,7 @@ func (c *InvitationUserClient) DeleteOneID(id uuid.UUID) *InvitationUserDeleteOn
 func (c *InvitationUserClient) Query() *InvitationUserQuery {
 	return &InvitationUserQuery{
 		config: c.config,
+		inters: c.Interceptors(),
 	}
 }
 
@@ -1342,7 +1620,7 @@ func (c *InvitationUserClient) GetX(ctx context.Context, id uuid.UUID) *Invitati
 
 // QueryInvitation queries the invitation edge of a InvitationUser.
 func (c *InvitationUserClient) QueryInvitation(iu *InvitationUser) *InvitationQuery {
-	query := &InvitationQuery{config: c.config}
+	query := (&InvitationClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := iu.ID
 		step := sqlgraph.NewStep(
@@ -1358,7 +1636,7 @@ func (c *InvitationUserClient) QueryInvitation(iu *InvitationUser) *InvitationQu
 
 // QueryUser queries the user edge of a InvitationUser.
 func (c *InvitationUserClient) QueryUser(iu *InvitationUser) *UserQuery {
-	query := &UserQuery{config: c.config}
+	query := (&UserClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := iu.ID
 		step := sqlgraph.NewStep(
@@ -1377,6 +1655,26 @@ func (c *InvitationUserClient) Hooks() []Hook {
 	return c.hooks.InvitationUser
 }
 
+// Interceptors returns the client interceptors.
+func (c *InvitationUserClient) Interceptors() []Interceptor {
+	return c.inters.InvitationUser
+}
+
+func (c *InvitationUserClient) mutate(ctx context.Context, m *InvitationUserMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&InvitationUserCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&InvitationUserUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&InvitationUserUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&InvitationUserDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown InvitationUser mutation op: %q", m.Op())
+	}
+}
+
 // PushNotificationTokenClient is a client for the PushNotificationToken schema.
 type PushNotificationTokenClient struct {
 	config
@@ -1391,6 +1689,12 @@ func NewPushNotificationTokenClient(c config) *PushNotificationTokenClient {
 // A call to `Use(f, g, h)` equals to `pushnotificationtoken.Hooks(f(g(h())))`.
 func (c *PushNotificationTokenClient) Use(hooks ...Hook) {
 	c.hooks.PushNotificationToken = append(c.hooks.PushNotificationToken, hooks...)
+}
+
+// Use adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `pushnotificationtoken.Intercept(f(g(h())))`.
+func (c *PushNotificationTokenClient) Intercept(interceptors ...Interceptor) {
+	c.inters.PushNotificationToken = append(c.inters.PushNotificationToken, interceptors...)
 }
 
 // Create returns a builder for creating a PushNotificationToken entity.
@@ -1445,6 +1749,7 @@ func (c *PushNotificationTokenClient) DeleteOneID(id uuid.UUID) *PushNotificatio
 func (c *PushNotificationTokenClient) Query() *PushNotificationTokenQuery {
 	return &PushNotificationTokenQuery{
 		config: c.config,
+		inters: c.Interceptors(),
 	}
 }
 
@@ -1464,7 +1769,7 @@ func (c *PushNotificationTokenClient) GetX(ctx context.Context, id uuid.UUID) *P
 
 // QueryUser queries the user edge of a PushNotificationToken.
 func (c *PushNotificationTokenClient) QueryUser(pnt *PushNotificationToken) *UserQuery {
-	query := &UserQuery{config: c.config}
+	query := (&UserClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := pnt.ID
 		step := sqlgraph.NewStep(
@@ -1483,6 +1788,26 @@ func (c *PushNotificationTokenClient) Hooks() []Hook {
 	return c.hooks.PushNotificationToken
 }
 
+// Interceptors returns the client interceptors.
+func (c *PushNotificationTokenClient) Interceptors() []Interceptor {
+	return c.inters.PushNotificationToken
+}
+
+func (c *PushNotificationTokenClient) mutate(ctx context.Context, m *PushNotificationTokenMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&PushNotificationTokenCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&PushNotificationTokenUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&PushNotificationTokenUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&PushNotificationTokenDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown PushNotificationToken mutation op: %q", m.Op())
+	}
+}
+
 // UserClient is a client for the User schema.
 type UserClient struct {
 	config
@@ -1497,6 +1822,12 @@ func NewUserClient(c config) *UserClient {
 // A call to `Use(f, g, h)` equals to `user.Hooks(f(g(h())))`.
 func (c *UserClient) Use(hooks ...Hook) {
 	c.hooks.User = append(c.hooks.User, hooks...)
+}
+
+// Use adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `user.Intercept(f(g(h())))`.
+func (c *UserClient) Intercept(interceptors ...Interceptor) {
+	c.inters.User = append(c.inters.User, interceptors...)
 }
 
 // Create returns a builder for creating a User entity.
@@ -1551,6 +1882,7 @@ func (c *UserClient) DeleteOneID(id uuid.UUID) *UserDeleteOne {
 func (c *UserClient) Query() *UserQuery {
 	return &UserQuery{
 		config: c.config,
+		inters: c.Interceptors(),
 	}
 }
 
@@ -1570,7 +1902,7 @@ func (c *UserClient) GetX(ctx context.Context, id uuid.UUID) *User {
 
 // QueryAccount queries the account edge of a User.
 func (c *UserClient) QueryAccount(u *User) *AccountQuery {
-	query := &AccountQuery{config: c.config}
+	query := (&AccountClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := u.ID
 		step := sqlgraph.NewStep(
@@ -1586,7 +1918,7 @@ func (c *UserClient) QueryAccount(u *User) *AccountQuery {
 
 // QueryUserProfile queries the user_profile edge of a User.
 func (c *UserClient) QueryUserProfile(u *User) *UserProfileQuery {
-	query := &UserProfileQuery{config: c.config}
+	query := (&UserProfileClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := u.ID
 		step := sqlgraph.NewStep(
@@ -1602,7 +1934,7 @@ func (c *UserClient) QueryUserProfile(u *User) *UserProfileQuery {
 
 // QueryFriendUsers queries the friend_users edge of a User.
 func (c *UserClient) QueryFriendUsers(u *User) *UserQuery {
-	query := &UserQuery{config: c.config}
+	query := (&UserClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := u.ID
 		step := sqlgraph.NewStep(
@@ -1618,7 +1950,7 @@ func (c *UserClient) QueryFriendUsers(u *User) *UserQuery {
 
 // QueryPushNotificationTokens queries the push_notification_tokens edge of a User.
 func (c *UserClient) QueryPushNotificationTokens(u *User) *PushNotificationTokenQuery {
-	query := &PushNotificationTokenQuery{config: c.config}
+	query := (&PushNotificationTokenClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := u.ID
 		step := sqlgraph.NewStep(
@@ -1634,7 +1966,7 @@ func (c *UserClient) QueryPushNotificationTokens(u *User) *PushNotificationToken
 
 // QueryFriendGroups queries the friend_groups edge of a User.
 func (c *UserClient) QueryFriendGroups(u *User) *FriendGroupQuery {
-	query := &FriendGroupQuery{config: c.config}
+	query := (&FriendGroupClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := u.ID
 		step := sqlgraph.NewStep(
@@ -1650,7 +1982,7 @@ func (c *UserClient) QueryFriendGroups(u *User) *FriendGroupQuery {
 
 // QueryBelongingFriendGroups queries the belonging_friend_groups edge of a User.
 func (c *UserClient) QueryBelongingFriendGroups(u *User) *FriendGroupQuery {
-	query := &FriendGroupQuery{config: c.config}
+	query := (&FriendGroupClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := u.ID
 		step := sqlgraph.NewStep(
@@ -1666,7 +1998,7 @@ func (c *UserClient) QueryBelongingFriendGroups(u *User) *FriendGroupQuery {
 
 // QueryInvitationAcceptances queries the invitation_acceptances edge of a User.
 func (c *UserClient) QueryInvitationAcceptances(u *User) *InvitationAcceptanceQuery {
-	query := &InvitationAcceptanceQuery{config: c.config}
+	query := (&InvitationAcceptanceClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := u.ID
 		step := sqlgraph.NewStep(
@@ -1682,7 +2014,7 @@ func (c *UserClient) QueryInvitationAcceptances(u *User) *InvitationAcceptanceQu
 
 // QueryInvitationDenials queries the invitation_denials edge of a User.
 func (c *UserClient) QueryInvitationDenials(u *User) *InvitationDenialQuery {
-	query := &InvitationDenialQuery{config: c.config}
+	query := (&InvitationDenialClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := u.ID
 		step := sqlgraph.NewStep(
@@ -1698,7 +2030,7 @@ func (c *UserClient) QueryInvitationDenials(u *User) *InvitationDenialQuery {
 
 // QueryFriendships queries the friendships edge of a User.
 func (c *UserClient) QueryFriendships(u *User) *FriendshipQuery {
-	query := &FriendshipQuery{config: c.config}
+	query := (&FriendshipClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := u.ID
 		step := sqlgraph.NewStep(
@@ -1714,7 +2046,7 @@ func (c *UserClient) QueryFriendships(u *User) *FriendshipQuery {
 
 // QueryUserFriendGroups queries the user_friend_groups edge of a User.
 func (c *UserClient) QueryUserFriendGroups(u *User) *UserFriendGroupQuery {
-	query := &UserFriendGroupQuery{config: c.config}
+	query := (&UserFriendGroupClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := u.ID
 		step := sqlgraph.NewStep(
@@ -1733,6 +2065,26 @@ func (c *UserClient) Hooks() []Hook {
 	return c.hooks.User
 }
 
+// Interceptors returns the client interceptors.
+func (c *UserClient) Interceptors() []Interceptor {
+	return c.inters.User
+}
+
+func (c *UserClient) mutate(ctx context.Context, m *UserMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&UserCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&UserUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&UserUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&UserDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown User mutation op: %q", m.Op())
+	}
+}
+
 // UserFriendGroupClient is a client for the UserFriendGroup schema.
 type UserFriendGroupClient struct {
 	config
@@ -1747,6 +2099,12 @@ func NewUserFriendGroupClient(c config) *UserFriendGroupClient {
 // A call to `Use(f, g, h)` equals to `userfriendgroup.Hooks(f(g(h())))`.
 func (c *UserFriendGroupClient) Use(hooks ...Hook) {
 	c.hooks.UserFriendGroup = append(c.hooks.UserFriendGroup, hooks...)
+}
+
+// Use adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `userfriendgroup.Intercept(f(g(h())))`.
+func (c *UserFriendGroupClient) Intercept(interceptors ...Interceptor) {
+	c.inters.UserFriendGroup = append(c.inters.UserFriendGroup, interceptors...)
 }
 
 // Create returns a builder for creating a UserFriendGroup entity.
@@ -1801,6 +2159,7 @@ func (c *UserFriendGroupClient) DeleteOneID(id uuid.UUID) *UserFriendGroupDelete
 func (c *UserFriendGroupClient) Query() *UserFriendGroupQuery {
 	return &UserFriendGroupQuery{
 		config: c.config,
+		inters: c.Interceptors(),
 	}
 }
 
@@ -1820,7 +2179,7 @@ func (c *UserFriendGroupClient) GetX(ctx context.Context, id uuid.UUID) *UserFri
 
 // QueryFriendGroup queries the friend_group edge of a UserFriendGroup.
 func (c *UserFriendGroupClient) QueryFriendGroup(ufg *UserFriendGroup) *FriendGroupQuery {
-	query := &FriendGroupQuery{config: c.config}
+	query := (&FriendGroupClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := ufg.ID
 		step := sqlgraph.NewStep(
@@ -1836,7 +2195,7 @@ func (c *UserFriendGroupClient) QueryFriendGroup(ufg *UserFriendGroup) *FriendGr
 
 // QueryUser queries the user edge of a UserFriendGroup.
 func (c *UserFriendGroupClient) QueryUser(ufg *UserFriendGroup) *UserQuery {
-	query := &UserQuery{config: c.config}
+	query := (&UserClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := ufg.ID
 		step := sqlgraph.NewStep(
@@ -1855,6 +2214,26 @@ func (c *UserFriendGroupClient) Hooks() []Hook {
 	return c.hooks.UserFriendGroup
 }
 
+// Interceptors returns the client interceptors.
+func (c *UserFriendGroupClient) Interceptors() []Interceptor {
+	return c.inters.UserFriendGroup
+}
+
+func (c *UserFriendGroupClient) mutate(ctx context.Context, m *UserFriendGroupMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&UserFriendGroupCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&UserFriendGroupUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&UserFriendGroupUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&UserFriendGroupDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown UserFriendGroup mutation op: %q", m.Op())
+	}
+}
+
 // UserMuteClient is a client for the UserMute schema.
 type UserMuteClient struct {
 	config
@@ -1869,6 +2248,12 @@ func NewUserMuteClient(c config) *UserMuteClient {
 // A call to `Use(f, g, h)` equals to `usermute.Hooks(f(g(h())))`.
 func (c *UserMuteClient) Use(hooks ...Hook) {
 	c.hooks.UserMute = append(c.hooks.UserMute, hooks...)
+}
+
+// Use adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `usermute.Intercept(f(g(h())))`.
+func (c *UserMuteClient) Intercept(interceptors ...Interceptor) {
+	c.inters.UserMute = append(c.inters.UserMute, interceptors...)
 }
 
 // Create returns a builder for creating a UserMute entity.
@@ -1923,6 +2308,7 @@ func (c *UserMuteClient) DeleteOneID(id uuid.UUID) *UserMuteDeleteOne {
 func (c *UserMuteClient) Query() *UserMuteQuery {
 	return &UserMuteQuery{
 		config: c.config,
+		inters: c.Interceptors(),
 	}
 }
 
@@ -1942,7 +2328,7 @@ func (c *UserMuteClient) GetX(ctx context.Context, id uuid.UUID) *UserMute {
 
 // QueryUser queries the user edge of a UserMute.
 func (c *UserMuteClient) QueryUser(um *UserMute) *UserQuery {
-	query := &UserQuery{config: c.config}
+	query := (&UserClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := um.ID
 		step := sqlgraph.NewStep(
@@ -1958,7 +2344,7 @@ func (c *UserMuteClient) QueryUser(um *UserMute) *UserQuery {
 
 // QueryMuteUser queries the mute_user edge of a UserMute.
 func (c *UserMuteClient) QueryMuteUser(um *UserMute) *UserQuery {
-	query := &UserQuery{config: c.config}
+	query := (&UserClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := um.ID
 		step := sqlgraph.NewStep(
@@ -1977,6 +2363,26 @@ func (c *UserMuteClient) Hooks() []Hook {
 	return c.hooks.UserMute
 }
 
+// Interceptors returns the client interceptors.
+func (c *UserMuteClient) Interceptors() []Interceptor {
+	return c.inters.UserMute
+}
+
+func (c *UserMuteClient) mutate(ctx context.Context, m *UserMuteMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&UserMuteCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&UserMuteUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&UserMuteUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&UserMuteDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown UserMute mutation op: %q", m.Op())
+	}
+}
+
 // UserProfileClient is a client for the UserProfile schema.
 type UserProfileClient struct {
 	config
@@ -1991,6 +2397,12 @@ func NewUserProfileClient(c config) *UserProfileClient {
 // A call to `Use(f, g, h)` equals to `userprofile.Hooks(f(g(h())))`.
 func (c *UserProfileClient) Use(hooks ...Hook) {
 	c.hooks.UserProfile = append(c.hooks.UserProfile, hooks...)
+}
+
+// Use adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `userprofile.Intercept(f(g(h())))`.
+func (c *UserProfileClient) Intercept(interceptors ...Interceptor) {
+	c.inters.UserProfile = append(c.inters.UserProfile, interceptors...)
 }
 
 // Create returns a builder for creating a UserProfile entity.
@@ -2045,6 +2457,7 @@ func (c *UserProfileClient) DeleteOneID(id uuid.UUID) *UserProfileDeleteOne {
 func (c *UserProfileClient) Query() *UserProfileQuery {
 	return &UserProfileQuery{
 		config: c.config,
+		inters: c.Interceptors(),
 	}
 }
 
@@ -2064,7 +2477,7 @@ func (c *UserProfileClient) GetX(ctx context.Context, id uuid.UUID) *UserProfile
 
 // QueryUser queries the user edge of a UserProfile.
 func (c *UserProfileClient) QueryUser(up *UserProfile) *UserQuery {
-	query := &UserQuery{config: c.config}
+	query := (&UserClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := up.ID
 		step := sqlgraph.NewStep(
@@ -2081,4 +2494,24 @@ func (c *UserProfileClient) QueryUser(up *UserProfile) *UserQuery {
 // Hooks returns the client hooks.
 func (c *UserProfileClient) Hooks() []Hook {
 	return c.hooks.UserProfile
+}
+
+// Interceptors returns the client interceptors.
+func (c *UserProfileClient) Interceptors() []Interceptor {
+	return c.inters.UserProfile
+}
+
+func (c *UserProfileClient) mutate(ctx context.Context, m *UserProfileMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&UserProfileCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&UserProfileUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&UserProfileUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&UserProfileDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown UserProfile mutation op: %q", m.Op())
+	}
 }

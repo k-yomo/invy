@@ -34,40 +34,7 @@ func (ufgu *UserFriendGroupUpdate) Mutation() *UserFriendGroupMutation {
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (ufgu *UserFriendGroupUpdate) Save(ctx context.Context) (int, error) {
-	var (
-		err      error
-		affected int
-	)
-	if len(ufgu.hooks) == 0 {
-		if err = ufgu.check(); err != nil {
-			return 0, err
-		}
-		affected, err = ufgu.sqlSave(ctx)
-	} else {
-		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-			mutation, ok := m.(*UserFriendGroupMutation)
-			if !ok {
-				return nil, fmt.Errorf("unexpected mutation type %T", m)
-			}
-			if err = ufgu.check(); err != nil {
-				return 0, err
-			}
-			ufgu.mutation = mutation
-			affected, err = ufgu.sqlSave(ctx)
-			mutation.done = true
-			return affected, err
-		})
-		for i := len(ufgu.hooks) - 1; i >= 0; i-- {
-			if ufgu.hooks[i] == nil {
-				return 0, fmt.Errorf("ent: uninitialized hook (forgotten import ent/runtime?)")
-			}
-			mut = ufgu.hooks[i](mut)
-		}
-		if _, err := mut.Mutate(ctx, ufgu.mutation); err != nil {
-			return 0, err
-		}
-	}
-	return affected, err
+	return withHooks[int, UserFriendGroupMutation](ctx, ufgu.sqlSave, ufgu.mutation, ufgu.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
@@ -104,6 +71,9 @@ func (ufgu *UserFriendGroupUpdate) check() error {
 }
 
 func (ufgu *UserFriendGroupUpdate) sqlSave(ctx context.Context) (n int, err error) {
+	if err := ufgu.check(); err != nil {
+		return n, err
+	}
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
 			Table:   userfriendgroup.Table,
@@ -129,6 +99,7 @@ func (ufgu *UserFriendGroupUpdate) sqlSave(ctx context.Context) (n int, err erro
 		}
 		return 0, err
 	}
+	ufgu.mutation.done = true
 	return n, nil
 }
 
@@ -154,46 +125,7 @@ func (ufguo *UserFriendGroupUpdateOne) Select(field string, fields ...string) *U
 
 // Save executes the query and returns the updated UserFriendGroup entity.
 func (ufguo *UserFriendGroupUpdateOne) Save(ctx context.Context) (*UserFriendGroup, error) {
-	var (
-		err  error
-		node *UserFriendGroup
-	)
-	if len(ufguo.hooks) == 0 {
-		if err = ufguo.check(); err != nil {
-			return nil, err
-		}
-		node, err = ufguo.sqlSave(ctx)
-	} else {
-		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-			mutation, ok := m.(*UserFriendGroupMutation)
-			if !ok {
-				return nil, fmt.Errorf("unexpected mutation type %T", m)
-			}
-			if err = ufguo.check(); err != nil {
-				return nil, err
-			}
-			ufguo.mutation = mutation
-			node, err = ufguo.sqlSave(ctx)
-			mutation.done = true
-			return node, err
-		})
-		for i := len(ufguo.hooks) - 1; i >= 0; i-- {
-			if ufguo.hooks[i] == nil {
-				return nil, fmt.Errorf("ent: uninitialized hook (forgotten import ent/runtime?)")
-			}
-			mut = ufguo.hooks[i](mut)
-		}
-		v, err := mut.Mutate(ctx, ufguo.mutation)
-		if err != nil {
-			return nil, err
-		}
-		nv, ok := v.(*UserFriendGroup)
-		if !ok {
-			return nil, fmt.Errorf("unexpected node type %T returned from UserFriendGroupMutation", v)
-		}
-		node = nv
-	}
-	return node, err
+	return withHooks[*UserFriendGroup, UserFriendGroupMutation](ctx, ufguo.sqlSave, ufguo.mutation, ufguo.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
@@ -230,6 +162,9 @@ func (ufguo *UserFriendGroupUpdateOne) check() error {
 }
 
 func (ufguo *UserFriendGroupUpdateOne) sqlSave(ctx context.Context) (_node *UserFriendGroup, err error) {
+	if err := ufguo.check(); err != nil {
+		return _node, err
+	}
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
 			Table:   userfriendgroup.Table,
@@ -275,5 +210,6 @@ func (ufguo *UserFriendGroupUpdateOne) sqlSave(ctx context.Context) (_node *User
 		}
 		return nil, err
 	}
+	ufguo.mutation.done = true
 	return _node, nil
 }

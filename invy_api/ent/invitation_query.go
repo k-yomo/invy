@@ -29,6 +29,7 @@ type InvitationQuery struct {
 	unique                          *bool
 	order                           []OrderFunc
 	fields                          []string
+	inters                          []Interceptor
 	predicates                      []predicate.Invitation
 	withUser                        *UserQuery
 	withInvitationUsers             *InvitationUserQuery
@@ -52,13 +53,13 @@ func (iq *InvitationQuery) Where(ps ...predicate.Invitation) *InvitationQuery {
 	return iq
 }
 
-// Limit adds a limit step to the query.
+// Limit the number of records to be returned by this query.
 func (iq *InvitationQuery) Limit(limit int) *InvitationQuery {
 	iq.limit = &limit
 	return iq
 }
 
-// Offset adds an offset step to the query.
+// Offset to start from.
 func (iq *InvitationQuery) Offset(offset int) *InvitationQuery {
 	iq.offset = &offset
 	return iq
@@ -71,7 +72,7 @@ func (iq *InvitationQuery) Unique(unique bool) *InvitationQuery {
 	return iq
 }
 
-// Order adds an order step to the query.
+// Order specifies how the records should be ordered.
 func (iq *InvitationQuery) Order(o ...OrderFunc) *InvitationQuery {
 	iq.order = append(iq.order, o...)
 	return iq
@@ -79,7 +80,7 @@ func (iq *InvitationQuery) Order(o ...OrderFunc) *InvitationQuery {
 
 // QueryUser chains the current query on the "user" edge.
 func (iq *InvitationQuery) QueryUser() *UserQuery {
-	query := &UserQuery{config: iq.config}
+	query := (&UserClient{config: iq.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := iq.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -101,7 +102,7 @@ func (iq *InvitationQuery) QueryUser() *UserQuery {
 
 // QueryInvitationUsers chains the current query on the "invitation_users" edge.
 func (iq *InvitationQuery) QueryInvitationUsers() *InvitationUserQuery {
-	query := &InvitationUserQuery{config: iq.config}
+	query := (&InvitationUserClient{config: iq.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := iq.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -123,7 +124,7 @@ func (iq *InvitationQuery) QueryInvitationUsers() *InvitationUserQuery {
 
 // QueryInvitationFriendGroups chains the current query on the "invitation_friend_groups" edge.
 func (iq *InvitationQuery) QueryInvitationFriendGroups() *InvitationFriendGroupQuery {
-	query := &InvitationFriendGroupQuery{config: iq.config}
+	query := (&InvitationFriendGroupClient{config: iq.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := iq.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -145,7 +146,7 @@ func (iq *InvitationQuery) QueryInvitationFriendGroups() *InvitationFriendGroupQ
 
 // QueryInvitationAcceptances chains the current query on the "invitation_acceptances" edge.
 func (iq *InvitationQuery) QueryInvitationAcceptances() *InvitationAcceptanceQuery {
-	query := &InvitationAcceptanceQuery{config: iq.config}
+	query := (&InvitationAcceptanceClient{config: iq.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := iq.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -167,7 +168,7 @@ func (iq *InvitationQuery) QueryInvitationAcceptances() *InvitationAcceptanceQue
 
 // QueryInvitationDenials chains the current query on the "invitation_denials" edge.
 func (iq *InvitationQuery) QueryInvitationDenials() *InvitationDenialQuery {
-	query := &InvitationDenialQuery{config: iq.config}
+	query := (&InvitationDenialClient{config: iq.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := iq.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -190,7 +191,7 @@ func (iq *InvitationQuery) QueryInvitationDenials() *InvitationDenialQuery {
 // First returns the first Invitation entity from the query.
 // Returns a *NotFoundError when no Invitation was found.
 func (iq *InvitationQuery) First(ctx context.Context) (*Invitation, error) {
-	nodes, err := iq.Limit(1).All(ctx)
+	nodes, err := iq.Limit(1).All(newQueryContext(ctx, TypeInvitation, "First"))
 	if err != nil {
 		return nil, err
 	}
@@ -213,7 +214,7 @@ func (iq *InvitationQuery) FirstX(ctx context.Context) *Invitation {
 // Returns a *NotFoundError when no Invitation ID was found.
 func (iq *InvitationQuery) FirstID(ctx context.Context) (id uuid.UUID, err error) {
 	var ids []uuid.UUID
-	if ids, err = iq.Limit(1).IDs(ctx); err != nil {
+	if ids, err = iq.Limit(1).IDs(newQueryContext(ctx, TypeInvitation, "FirstID")); err != nil {
 		return
 	}
 	if len(ids) == 0 {
@@ -236,7 +237,7 @@ func (iq *InvitationQuery) FirstIDX(ctx context.Context) uuid.UUID {
 // Returns a *NotSingularError when more than one Invitation entity is found.
 // Returns a *NotFoundError when no Invitation entities are found.
 func (iq *InvitationQuery) Only(ctx context.Context) (*Invitation, error) {
-	nodes, err := iq.Limit(2).All(ctx)
+	nodes, err := iq.Limit(2).All(newQueryContext(ctx, TypeInvitation, "Only"))
 	if err != nil {
 		return nil, err
 	}
@@ -264,7 +265,7 @@ func (iq *InvitationQuery) OnlyX(ctx context.Context) *Invitation {
 // Returns a *NotFoundError when no entities are found.
 func (iq *InvitationQuery) OnlyID(ctx context.Context) (id uuid.UUID, err error) {
 	var ids []uuid.UUID
-	if ids, err = iq.Limit(2).IDs(ctx); err != nil {
+	if ids, err = iq.Limit(2).IDs(newQueryContext(ctx, TypeInvitation, "OnlyID")); err != nil {
 		return
 	}
 	switch len(ids) {
@@ -289,10 +290,12 @@ func (iq *InvitationQuery) OnlyIDX(ctx context.Context) uuid.UUID {
 
 // All executes the query and returns a list of Invitations.
 func (iq *InvitationQuery) All(ctx context.Context) ([]*Invitation, error) {
+	ctx = newQueryContext(ctx, TypeInvitation, "All")
 	if err := iq.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
-	return iq.sqlAll(ctx)
+	qr := querierAll[[]*Invitation, *InvitationQuery]()
+	return withInterceptors[[]*Invitation](ctx, iq, qr, iq.inters)
 }
 
 // AllX is like All, but panics if an error occurs.
@@ -307,6 +310,7 @@ func (iq *InvitationQuery) AllX(ctx context.Context) []*Invitation {
 // IDs executes the query and returns a list of Invitation IDs.
 func (iq *InvitationQuery) IDs(ctx context.Context) ([]uuid.UUID, error) {
 	var ids []uuid.UUID
+	ctx = newQueryContext(ctx, TypeInvitation, "IDs")
 	if err := iq.Select(invitation.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
@@ -324,10 +328,11 @@ func (iq *InvitationQuery) IDsX(ctx context.Context) []uuid.UUID {
 
 // Count returns the count of the given query.
 func (iq *InvitationQuery) Count(ctx context.Context) (int, error) {
+	ctx = newQueryContext(ctx, TypeInvitation, "Count")
 	if err := iq.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
-	return iq.sqlCount(ctx)
+	return withInterceptors[int](ctx, iq, querierCount[*InvitationQuery](), iq.inters)
 }
 
 // CountX is like Count, but panics if an error occurs.
@@ -341,10 +346,15 @@ func (iq *InvitationQuery) CountX(ctx context.Context) int {
 
 // Exist returns true if the query has elements in the graph.
 func (iq *InvitationQuery) Exist(ctx context.Context) (bool, error) {
-	if err := iq.prepareQuery(ctx); err != nil {
-		return false, err
+	ctx = newQueryContext(ctx, TypeInvitation, "Exist")
+	switch _, err := iq.FirstID(ctx); {
+	case IsNotFound(err):
+		return false, nil
+	case err != nil:
+		return false, fmt.Errorf("ent: check existence: %w", err)
+	default:
+		return true, nil
 	}
-	return iq.sqlExist(ctx)
 }
 
 // ExistX is like Exist, but panics if an error occurs.
@@ -367,6 +377,7 @@ func (iq *InvitationQuery) Clone() *InvitationQuery {
 		limit:                      iq.limit,
 		offset:                     iq.offset,
 		order:                      append([]OrderFunc{}, iq.order...),
+		inters:                     append([]Interceptor{}, iq.inters...),
 		predicates:                 append([]predicate.Invitation{}, iq.predicates...),
 		withUser:                   iq.withUser.Clone(),
 		withInvitationUsers:        iq.withInvitationUsers.Clone(),
@@ -383,7 +394,7 @@ func (iq *InvitationQuery) Clone() *InvitationQuery {
 // WithUser tells the query-builder to eager-load the nodes that are connected to
 // the "user" edge. The optional arguments are used to configure the query builder of the edge.
 func (iq *InvitationQuery) WithUser(opts ...func(*UserQuery)) *InvitationQuery {
-	query := &UserQuery{config: iq.config}
+	query := (&UserClient{config: iq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
@@ -394,7 +405,7 @@ func (iq *InvitationQuery) WithUser(opts ...func(*UserQuery)) *InvitationQuery {
 // WithInvitationUsers tells the query-builder to eager-load the nodes that are connected to
 // the "invitation_users" edge. The optional arguments are used to configure the query builder of the edge.
 func (iq *InvitationQuery) WithInvitationUsers(opts ...func(*InvitationUserQuery)) *InvitationQuery {
-	query := &InvitationUserQuery{config: iq.config}
+	query := (&InvitationUserClient{config: iq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
@@ -405,7 +416,7 @@ func (iq *InvitationQuery) WithInvitationUsers(opts ...func(*InvitationUserQuery
 // WithInvitationFriendGroups tells the query-builder to eager-load the nodes that are connected to
 // the "invitation_friend_groups" edge. The optional arguments are used to configure the query builder of the edge.
 func (iq *InvitationQuery) WithInvitationFriendGroups(opts ...func(*InvitationFriendGroupQuery)) *InvitationQuery {
-	query := &InvitationFriendGroupQuery{config: iq.config}
+	query := (&InvitationFriendGroupClient{config: iq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
@@ -416,7 +427,7 @@ func (iq *InvitationQuery) WithInvitationFriendGroups(opts ...func(*InvitationFr
 // WithInvitationAcceptances tells the query-builder to eager-load the nodes that are connected to
 // the "invitation_acceptances" edge. The optional arguments are used to configure the query builder of the edge.
 func (iq *InvitationQuery) WithInvitationAcceptances(opts ...func(*InvitationAcceptanceQuery)) *InvitationQuery {
-	query := &InvitationAcceptanceQuery{config: iq.config}
+	query := (&InvitationAcceptanceClient{config: iq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
@@ -427,7 +438,7 @@ func (iq *InvitationQuery) WithInvitationAcceptances(opts ...func(*InvitationAcc
 // WithInvitationDenials tells the query-builder to eager-load the nodes that are connected to
 // the "invitation_denials" edge. The optional arguments are used to configure the query builder of the edge.
 func (iq *InvitationQuery) WithInvitationDenials(opts ...func(*InvitationDenialQuery)) *InvitationQuery {
-	query := &InvitationDenialQuery{config: iq.config}
+	query := (&InvitationDenialClient{config: iq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
@@ -450,16 +461,11 @@ func (iq *InvitationQuery) WithInvitationDenials(opts ...func(*InvitationDenialQ
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (iq *InvitationQuery) GroupBy(field string, fields ...string) *InvitationGroupBy {
-	grbuild := &InvitationGroupBy{config: iq.config}
-	grbuild.fields = append([]string{field}, fields...)
-	grbuild.path = func(ctx context.Context) (prev *sql.Selector, err error) {
-		if err := iq.prepareQuery(ctx); err != nil {
-			return nil, err
-		}
-		return iq.sqlQuery(ctx), nil
-	}
+	iq.fields = append([]string{field}, fields...)
+	grbuild := &InvitationGroupBy{build: iq}
+	grbuild.flds = &iq.fields
 	grbuild.label = invitation.Label
-	grbuild.flds, grbuild.scan = &grbuild.fields, grbuild.Scan
+	grbuild.scan = grbuild.Scan
 	return grbuild
 }
 
@@ -477,10 +483,10 @@ func (iq *InvitationQuery) GroupBy(field string, fields ...string) *InvitationGr
 //		Scan(ctx, &v)
 func (iq *InvitationQuery) Select(fields ...string) *InvitationSelect {
 	iq.fields = append(iq.fields, fields...)
-	selbuild := &InvitationSelect{InvitationQuery: iq}
-	selbuild.label = invitation.Label
-	selbuild.flds, selbuild.scan = &iq.fields, selbuild.Scan
-	return selbuild
+	sbuild := &InvitationSelect{InvitationQuery: iq}
+	sbuild.label = invitation.Label
+	sbuild.flds, sbuild.scan = &iq.fields, sbuild.Scan
+	return sbuild
 }
 
 // Aggregate returns a InvitationSelect configured with the given aggregations.
@@ -489,6 +495,16 @@ func (iq *InvitationQuery) Aggregate(fns ...AggregateFunc) *InvitationSelect {
 }
 
 func (iq *InvitationQuery) prepareQuery(ctx context.Context) error {
+	for _, inter := range iq.inters {
+		if inter == nil {
+			return fmt.Errorf("ent: uninitialized interceptor (forgotten import ent/runtime?)")
+		}
+		if trv, ok := inter.(Traverser); ok {
+			if err := trv.Traverse(ctx, iq); err != nil {
+				return err
+			}
+		}
+	}
 	for _, f := range iq.fields {
 		if !invitation.ValidColumn(f) {
 			return &ValidationError{Name: f, err: fmt.Errorf("ent: invalid field %q for query", f)}
@@ -760,17 +776,6 @@ func (iq *InvitationQuery) sqlCount(ctx context.Context) (int, error) {
 	return sqlgraph.CountNodes(ctx, iq.driver, _spec)
 }
 
-func (iq *InvitationQuery) sqlExist(ctx context.Context) (bool, error) {
-	switch _, err := iq.FirstID(ctx); {
-	case IsNotFound(err):
-		return false, nil
-	case err != nil:
-		return false, fmt.Errorf("ent: check existence: %w", err)
-	default:
-		return true, nil
-	}
-}
-
 func (iq *InvitationQuery) querySpec() *sqlgraph.QuerySpec {
 	_spec := &sqlgraph.QuerySpec{
 		Node: &sqlgraph.NodeSpec{
@@ -854,7 +859,7 @@ func (iq *InvitationQuery) sqlQuery(ctx context.Context) *sql.Selector {
 // WithNamedInvitationUsers tells the query-builder to eager-load the nodes that are connected to the "invitation_users"
 // edge with the given name. The optional arguments are used to configure the query builder of the edge.
 func (iq *InvitationQuery) WithNamedInvitationUsers(name string, opts ...func(*InvitationUserQuery)) *InvitationQuery {
-	query := &InvitationUserQuery{config: iq.config}
+	query := (&InvitationUserClient{config: iq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
@@ -868,7 +873,7 @@ func (iq *InvitationQuery) WithNamedInvitationUsers(name string, opts ...func(*I
 // WithNamedInvitationFriendGroups tells the query-builder to eager-load the nodes that are connected to the "invitation_friend_groups"
 // edge with the given name. The optional arguments are used to configure the query builder of the edge.
 func (iq *InvitationQuery) WithNamedInvitationFriendGroups(name string, opts ...func(*InvitationFriendGroupQuery)) *InvitationQuery {
-	query := &InvitationFriendGroupQuery{config: iq.config}
+	query := (&InvitationFriendGroupClient{config: iq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
@@ -882,7 +887,7 @@ func (iq *InvitationQuery) WithNamedInvitationFriendGroups(name string, opts ...
 // WithNamedInvitationAcceptances tells the query-builder to eager-load the nodes that are connected to the "invitation_acceptances"
 // edge with the given name. The optional arguments are used to configure the query builder of the edge.
 func (iq *InvitationQuery) WithNamedInvitationAcceptances(name string, opts ...func(*InvitationAcceptanceQuery)) *InvitationQuery {
-	query := &InvitationAcceptanceQuery{config: iq.config}
+	query := (&InvitationAcceptanceClient{config: iq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
@@ -896,7 +901,7 @@ func (iq *InvitationQuery) WithNamedInvitationAcceptances(name string, opts ...f
 // WithNamedInvitationDenials tells the query-builder to eager-load the nodes that are connected to the "invitation_denials"
 // edge with the given name. The optional arguments are used to configure the query builder of the edge.
 func (iq *InvitationQuery) WithNamedInvitationDenials(name string, opts ...func(*InvitationDenialQuery)) *InvitationQuery {
-	query := &InvitationDenialQuery{config: iq.config}
+	query := (&InvitationDenialClient{config: iq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
@@ -909,13 +914,8 @@ func (iq *InvitationQuery) WithNamedInvitationDenials(name string, opts ...func(
 
 // InvitationGroupBy is the group-by builder for Invitation entities.
 type InvitationGroupBy struct {
-	config
 	selector
-	fields []string
-	fns    []AggregateFunc
-	// intermediate query (i.e. traversal path).
-	sql  *sql.Selector
-	path func(context.Context) (*sql.Selector, error)
+	build *InvitationQuery
 }
 
 // Aggregate adds the given aggregation functions to the group-by query.
@@ -924,58 +924,46 @@ func (igb *InvitationGroupBy) Aggregate(fns ...AggregateFunc) *InvitationGroupBy
 	return igb
 }
 
-// Scan applies the group-by query and scans the result into the given value.
+// Scan applies the selector query and scans the result into the given value.
 func (igb *InvitationGroupBy) Scan(ctx context.Context, v any) error {
-	query, err := igb.path(ctx)
-	if err != nil {
+	ctx = newQueryContext(ctx, TypeInvitation, "GroupBy")
+	if err := igb.build.prepareQuery(ctx); err != nil {
 		return err
 	}
-	igb.sql = query
-	return igb.sqlScan(ctx, v)
+	return scanWithInterceptors[*InvitationQuery, *InvitationGroupBy](ctx, igb.build, igb, igb.build.inters, v)
 }
 
-func (igb *InvitationGroupBy) sqlScan(ctx context.Context, v any) error {
-	for _, f := range igb.fields {
-		if !invitation.ValidColumn(f) {
-			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for group-by", f)}
-		}
+func (igb *InvitationGroupBy) sqlScan(ctx context.Context, root *InvitationQuery, v any) error {
+	selector := root.sqlQuery(ctx).Select()
+	aggregation := make([]string, 0, len(igb.fns))
+	for _, fn := range igb.fns {
+		aggregation = append(aggregation, fn(selector))
 	}
-	selector := igb.sqlQuery()
+	if len(selector.SelectedColumns()) == 0 {
+		columns := make([]string, 0, len(*igb.flds)+len(igb.fns))
+		for _, f := range *igb.flds {
+			columns = append(columns, selector.C(f))
+		}
+		columns = append(columns, aggregation...)
+		selector.Select(columns...)
+	}
+	selector.GroupBy(selector.Columns(*igb.flds...)...)
 	if err := selector.Err(); err != nil {
 		return err
 	}
 	rows := &sql.Rows{}
 	query, args := selector.Query()
-	if err := igb.driver.Query(ctx, query, args, rows); err != nil {
+	if err := igb.build.driver.Query(ctx, query, args, rows); err != nil {
 		return err
 	}
 	defer rows.Close()
 	return sql.ScanSlice(rows, v)
 }
 
-func (igb *InvitationGroupBy) sqlQuery() *sql.Selector {
-	selector := igb.sql.Select()
-	aggregation := make([]string, 0, len(igb.fns))
-	for _, fn := range igb.fns {
-		aggregation = append(aggregation, fn(selector))
-	}
-	if len(selector.SelectedColumns()) == 0 {
-		columns := make([]string, 0, len(igb.fields)+len(igb.fns))
-		for _, f := range igb.fields {
-			columns = append(columns, selector.C(f))
-		}
-		columns = append(columns, aggregation...)
-		selector.Select(columns...)
-	}
-	return selector.GroupBy(selector.Columns(igb.fields...)...)
-}
-
 // InvitationSelect is the builder for selecting fields of Invitation entities.
 type InvitationSelect struct {
 	*InvitationQuery
 	selector
-	// intermediate query (i.e. traversal path).
-	sql *sql.Selector
 }
 
 // Aggregate adds the given aggregation functions to the selector query.
@@ -986,26 +974,27 @@ func (is *InvitationSelect) Aggregate(fns ...AggregateFunc) *InvitationSelect {
 
 // Scan applies the selector query and scans the result into the given value.
 func (is *InvitationSelect) Scan(ctx context.Context, v any) error {
+	ctx = newQueryContext(ctx, TypeInvitation, "Select")
 	if err := is.prepareQuery(ctx); err != nil {
 		return err
 	}
-	is.sql = is.InvitationQuery.sqlQuery(ctx)
-	return is.sqlScan(ctx, v)
+	return scanWithInterceptors[*InvitationQuery, *InvitationSelect](ctx, is.InvitationQuery, is, is.inters, v)
 }
 
-func (is *InvitationSelect) sqlScan(ctx context.Context, v any) error {
+func (is *InvitationSelect) sqlScan(ctx context.Context, root *InvitationQuery, v any) error {
+	selector := root.sqlQuery(ctx)
 	aggregation := make([]string, 0, len(is.fns))
 	for _, fn := range is.fns {
-		aggregation = append(aggregation, fn(is.sql))
+		aggregation = append(aggregation, fn(selector))
 	}
 	switch n := len(*is.selector.flds); {
 	case n == 0 && len(aggregation) > 0:
-		is.sql.Select(aggregation...)
+		selector.Select(aggregation...)
 	case n != 0 && len(aggregation) > 0:
-		is.sql.AppendSelect(aggregation...)
+		selector.AppendSelect(aggregation...)
 	}
 	rows := &sql.Rows{}
-	query, args := is.sql.Query()
+	query, args := selector.Query()
 	if err := is.driver.Query(ctx, query, args, rows); err != nil {
 		return err
 	}

@@ -59,41 +59,8 @@ func (upu *UserProfileUpdate) Mutation() *UserProfileMutation {
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (upu *UserProfileUpdate) Save(ctx context.Context) (int, error) {
-	var (
-		err      error
-		affected int
-	)
 	upu.defaults()
-	if len(upu.hooks) == 0 {
-		if err = upu.check(); err != nil {
-			return 0, err
-		}
-		affected, err = upu.sqlSave(ctx)
-	} else {
-		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-			mutation, ok := m.(*UserProfileMutation)
-			if !ok {
-				return nil, fmt.Errorf("unexpected mutation type %T", m)
-			}
-			if err = upu.check(); err != nil {
-				return 0, err
-			}
-			upu.mutation = mutation
-			affected, err = upu.sqlSave(ctx)
-			mutation.done = true
-			return affected, err
-		})
-		for i := len(upu.hooks) - 1; i >= 0; i-- {
-			if upu.hooks[i] == nil {
-				return 0, fmt.Errorf("ent: uninitialized hook (forgotten import ent/runtime?)")
-			}
-			mut = upu.hooks[i](mut)
-		}
-		if _, err := mut.Mutate(ctx, upu.mutation); err != nil {
-			return 0, err
-		}
-	}
-	return affected, err
+	return withHooks[int, UserProfileMutation](ctx, upu.sqlSave, upu.mutation, upu.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
@@ -135,6 +102,9 @@ func (upu *UserProfileUpdate) check() error {
 }
 
 func (upu *UserProfileUpdate) sqlSave(ctx context.Context) (n int, err error) {
+	if err := upu.check(); err != nil {
+		return n, err
+	}
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
 			Table:   userprofile.Table,
@@ -172,6 +142,7 @@ func (upu *UserProfileUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		return 0, err
 	}
+	upu.mutation.done = true
 	return n, nil
 }
 
@@ -221,47 +192,8 @@ func (upuo *UserProfileUpdateOne) Select(field string, fields ...string) *UserPr
 
 // Save executes the query and returns the updated UserProfile entity.
 func (upuo *UserProfileUpdateOne) Save(ctx context.Context) (*UserProfile, error) {
-	var (
-		err  error
-		node *UserProfile
-	)
 	upuo.defaults()
-	if len(upuo.hooks) == 0 {
-		if err = upuo.check(); err != nil {
-			return nil, err
-		}
-		node, err = upuo.sqlSave(ctx)
-	} else {
-		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-			mutation, ok := m.(*UserProfileMutation)
-			if !ok {
-				return nil, fmt.Errorf("unexpected mutation type %T", m)
-			}
-			if err = upuo.check(); err != nil {
-				return nil, err
-			}
-			upuo.mutation = mutation
-			node, err = upuo.sqlSave(ctx)
-			mutation.done = true
-			return node, err
-		})
-		for i := len(upuo.hooks) - 1; i >= 0; i-- {
-			if upuo.hooks[i] == nil {
-				return nil, fmt.Errorf("ent: uninitialized hook (forgotten import ent/runtime?)")
-			}
-			mut = upuo.hooks[i](mut)
-		}
-		v, err := mut.Mutate(ctx, upuo.mutation)
-		if err != nil {
-			return nil, err
-		}
-		nv, ok := v.(*UserProfile)
-		if !ok {
-			return nil, fmt.Errorf("unexpected node type %T returned from UserProfileMutation", v)
-		}
-		node = nv
-	}
-	return node, err
+	return withHooks[*UserProfile, UserProfileMutation](ctx, upuo.sqlSave, upuo.mutation, upuo.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
@@ -303,6 +235,9 @@ func (upuo *UserProfileUpdateOne) check() error {
 }
 
 func (upuo *UserProfileUpdateOne) sqlSave(ctx context.Context) (_node *UserProfile, err error) {
+	if err := upuo.check(); err != nil {
+		return _node, err
+	}
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
 			Table:   userprofile.Table,
@@ -360,5 +295,6 @@ func (upuo *UserProfileUpdateOne) sqlSave(ctx context.Context) (_node *UserProfi
 		}
 		return nil, err
 	}
+	upuo.mutation.done = true
 	return _node, nil
 }

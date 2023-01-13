@@ -25,6 +25,7 @@ type InvitationAcceptanceQuery struct {
 	unique         *bool
 	order          []OrderFunc
 	fields         []string
+	inters         []Interceptor
 	predicates     []predicate.InvitationAcceptance
 	withUser       *UserQuery
 	withInvitation *InvitationQuery
@@ -41,13 +42,13 @@ func (iaq *InvitationAcceptanceQuery) Where(ps ...predicate.InvitationAcceptance
 	return iaq
 }
 
-// Limit adds a limit step to the query.
+// Limit the number of records to be returned by this query.
 func (iaq *InvitationAcceptanceQuery) Limit(limit int) *InvitationAcceptanceQuery {
 	iaq.limit = &limit
 	return iaq
 }
 
-// Offset adds an offset step to the query.
+// Offset to start from.
 func (iaq *InvitationAcceptanceQuery) Offset(offset int) *InvitationAcceptanceQuery {
 	iaq.offset = &offset
 	return iaq
@@ -60,7 +61,7 @@ func (iaq *InvitationAcceptanceQuery) Unique(unique bool) *InvitationAcceptanceQ
 	return iaq
 }
 
-// Order adds an order step to the query.
+// Order specifies how the records should be ordered.
 func (iaq *InvitationAcceptanceQuery) Order(o ...OrderFunc) *InvitationAcceptanceQuery {
 	iaq.order = append(iaq.order, o...)
 	return iaq
@@ -68,7 +69,7 @@ func (iaq *InvitationAcceptanceQuery) Order(o ...OrderFunc) *InvitationAcceptanc
 
 // QueryUser chains the current query on the "user" edge.
 func (iaq *InvitationAcceptanceQuery) QueryUser() *UserQuery {
-	query := &UserQuery{config: iaq.config}
+	query := (&UserClient{config: iaq.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := iaq.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -90,7 +91,7 @@ func (iaq *InvitationAcceptanceQuery) QueryUser() *UserQuery {
 
 // QueryInvitation chains the current query on the "invitation" edge.
 func (iaq *InvitationAcceptanceQuery) QueryInvitation() *InvitationQuery {
-	query := &InvitationQuery{config: iaq.config}
+	query := (&InvitationClient{config: iaq.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := iaq.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -113,7 +114,7 @@ func (iaq *InvitationAcceptanceQuery) QueryInvitation() *InvitationQuery {
 // First returns the first InvitationAcceptance entity from the query.
 // Returns a *NotFoundError when no InvitationAcceptance was found.
 func (iaq *InvitationAcceptanceQuery) First(ctx context.Context) (*InvitationAcceptance, error) {
-	nodes, err := iaq.Limit(1).All(ctx)
+	nodes, err := iaq.Limit(1).All(newQueryContext(ctx, TypeInvitationAcceptance, "First"))
 	if err != nil {
 		return nil, err
 	}
@@ -136,7 +137,7 @@ func (iaq *InvitationAcceptanceQuery) FirstX(ctx context.Context) *InvitationAcc
 // Returns a *NotFoundError when no InvitationAcceptance ID was found.
 func (iaq *InvitationAcceptanceQuery) FirstID(ctx context.Context) (id uuid.UUID, err error) {
 	var ids []uuid.UUID
-	if ids, err = iaq.Limit(1).IDs(ctx); err != nil {
+	if ids, err = iaq.Limit(1).IDs(newQueryContext(ctx, TypeInvitationAcceptance, "FirstID")); err != nil {
 		return
 	}
 	if len(ids) == 0 {
@@ -159,7 +160,7 @@ func (iaq *InvitationAcceptanceQuery) FirstIDX(ctx context.Context) uuid.UUID {
 // Returns a *NotSingularError when more than one InvitationAcceptance entity is found.
 // Returns a *NotFoundError when no InvitationAcceptance entities are found.
 func (iaq *InvitationAcceptanceQuery) Only(ctx context.Context) (*InvitationAcceptance, error) {
-	nodes, err := iaq.Limit(2).All(ctx)
+	nodes, err := iaq.Limit(2).All(newQueryContext(ctx, TypeInvitationAcceptance, "Only"))
 	if err != nil {
 		return nil, err
 	}
@@ -187,7 +188,7 @@ func (iaq *InvitationAcceptanceQuery) OnlyX(ctx context.Context) *InvitationAcce
 // Returns a *NotFoundError when no entities are found.
 func (iaq *InvitationAcceptanceQuery) OnlyID(ctx context.Context) (id uuid.UUID, err error) {
 	var ids []uuid.UUID
-	if ids, err = iaq.Limit(2).IDs(ctx); err != nil {
+	if ids, err = iaq.Limit(2).IDs(newQueryContext(ctx, TypeInvitationAcceptance, "OnlyID")); err != nil {
 		return
 	}
 	switch len(ids) {
@@ -212,10 +213,12 @@ func (iaq *InvitationAcceptanceQuery) OnlyIDX(ctx context.Context) uuid.UUID {
 
 // All executes the query and returns a list of InvitationAcceptances.
 func (iaq *InvitationAcceptanceQuery) All(ctx context.Context) ([]*InvitationAcceptance, error) {
+	ctx = newQueryContext(ctx, TypeInvitationAcceptance, "All")
 	if err := iaq.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
-	return iaq.sqlAll(ctx)
+	qr := querierAll[[]*InvitationAcceptance, *InvitationAcceptanceQuery]()
+	return withInterceptors[[]*InvitationAcceptance](ctx, iaq, qr, iaq.inters)
 }
 
 // AllX is like All, but panics if an error occurs.
@@ -230,6 +233,7 @@ func (iaq *InvitationAcceptanceQuery) AllX(ctx context.Context) []*InvitationAcc
 // IDs executes the query and returns a list of InvitationAcceptance IDs.
 func (iaq *InvitationAcceptanceQuery) IDs(ctx context.Context) ([]uuid.UUID, error) {
 	var ids []uuid.UUID
+	ctx = newQueryContext(ctx, TypeInvitationAcceptance, "IDs")
 	if err := iaq.Select(invitationacceptance.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
@@ -247,10 +251,11 @@ func (iaq *InvitationAcceptanceQuery) IDsX(ctx context.Context) []uuid.UUID {
 
 // Count returns the count of the given query.
 func (iaq *InvitationAcceptanceQuery) Count(ctx context.Context) (int, error) {
+	ctx = newQueryContext(ctx, TypeInvitationAcceptance, "Count")
 	if err := iaq.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
-	return iaq.sqlCount(ctx)
+	return withInterceptors[int](ctx, iaq, querierCount[*InvitationAcceptanceQuery](), iaq.inters)
 }
 
 // CountX is like Count, but panics if an error occurs.
@@ -264,10 +269,15 @@ func (iaq *InvitationAcceptanceQuery) CountX(ctx context.Context) int {
 
 // Exist returns true if the query has elements in the graph.
 func (iaq *InvitationAcceptanceQuery) Exist(ctx context.Context) (bool, error) {
-	if err := iaq.prepareQuery(ctx); err != nil {
-		return false, err
+	ctx = newQueryContext(ctx, TypeInvitationAcceptance, "Exist")
+	switch _, err := iaq.FirstID(ctx); {
+	case IsNotFound(err):
+		return false, nil
+	case err != nil:
+		return false, fmt.Errorf("ent: check existence: %w", err)
+	default:
+		return true, nil
 	}
-	return iaq.sqlExist(ctx)
 }
 
 // ExistX is like Exist, but panics if an error occurs.
@@ -290,6 +300,7 @@ func (iaq *InvitationAcceptanceQuery) Clone() *InvitationAcceptanceQuery {
 		limit:          iaq.limit,
 		offset:         iaq.offset,
 		order:          append([]OrderFunc{}, iaq.order...),
+		inters:         append([]Interceptor{}, iaq.inters...),
 		predicates:     append([]predicate.InvitationAcceptance{}, iaq.predicates...),
 		withUser:       iaq.withUser.Clone(),
 		withInvitation: iaq.withInvitation.Clone(),
@@ -303,7 +314,7 @@ func (iaq *InvitationAcceptanceQuery) Clone() *InvitationAcceptanceQuery {
 // WithUser tells the query-builder to eager-load the nodes that are connected to
 // the "user" edge. The optional arguments are used to configure the query builder of the edge.
 func (iaq *InvitationAcceptanceQuery) WithUser(opts ...func(*UserQuery)) *InvitationAcceptanceQuery {
-	query := &UserQuery{config: iaq.config}
+	query := (&UserClient{config: iaq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
@@ -314,7 +325,7 @@ func (iaq *InvitationAcceptanceQuery) WithUser(opts ...func(*UserQuery)) *Invita
 // WithInvitation tells the query-builder to eager-load the nodes that are connected to
 // the "invitation" edge. The optional arguments are used to configure the query builder of the edge.
 func (iaq *InvitationAcceptanceQuery) WithInvitation(opts ...func(*InvitationQuery)) *InvitationAcceptanceQuery {
-	query := &InvitationQuery{config: iaq.config}
+	query := (&InvitationClient{config: iaq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
@@ -337,16 +348,11 @@ func (iaq *InvitationAcceptanceQuery) WithInvitation(opts ...func(*InvitationQue
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (iaq *InvitationAcceptanceQuery) GroupBy(field string, fields ...string) *InvitationAcceptanceGroupBy {
-	grbuild := &InvitationAcceptanceGroupBy{config: iaq.config}
-	grbuild.fields = append([]string{field}, fields...)
-	grbuild.path = func(ctx context.Context) (prev *sql.Selector, err error) {
-		if err := iaq.prepareQuery(ctx); err != nil {
-			return nil, err
-		}
-		return iaq.sqlQuery(ctx), nil
-	}
+	iaq.fields = append([]string{field}, fields...)
+	grbuild := &InvitationAcceptanceGroupBy{build: iaq}
+	grbuild.flds = &iaq.fields
 	grbuild.label = invitationacceptance.Label
-	grbuild.flds, grbuild.scan = &grbuild.fields, grbuild.Scan
+	grbuild.scan = grbuild.Scan
 	return grbuild
 }
 
@@ -364,10 +370,10 @@ func (iaq *InvitationAcceptanceQuery) GroupBy(field string, fields ...string) *I
 //		Scan(ctx, &v)
 func (iaq *InvitationAcceptanceQuery) Select(fields ...string) *InvitationAcceptanceSelect {
 	iaq.fields = append(iaq.fields, fields...)
-	selbuild := &InvitationAcceptanceSelect{InvitationAcceptanceQuery: iaq}
-	selbuild.label = invitationacceptance.Label
-	selbuild.flds, selbuild.scan = &iaq.fields, selbuild.Scan
-	return selbuild
+	sbuild := &InvitationAcceptanceSelect{InvitationAcceptanceQuery: iaq}
+	sbuild.label = invitationacceptance.Label
+	sbuild.flds, sbuild.scan = &iaq.fields, sbuild.Scan
+	return sbuild
 }
 
 // Aggregate returns a InvitationAcceptanceSelect configured with the given aggregations.
@@ -376,6 +382,16 @@ func (iaq *InvitationAcceptanceQuery) Aggregate(fns ...AggregateFunc) *Invitatio
 }
 
 func (iaq *InvitationAcceptanceQuery) prepareQuery(ctx context.Context) error {
+	for _, inter := range iaq.inters {
+		if inter == nil {
+			return fmt.Errorf("ent: uninitialized interceptor (forgotten import ent/runtime?)")
+		}
+		if trv, ok := inter.(Traverser); ok {
+			if err := trv.Traverse(ctx, iaq); err != nil {
+				return err
+			}
+		}
+	}
 	for _, f := range iaq.fields {
 		if !invitationacceptance.ValidColumn(f) {
 			return &ValidationError{Name: f, err: fmt.Errorf("ent: invalid field %q for query", f)}
@@ -506,17 +522,6 @@ func (iaq *InvitationAcceptanceQuery) sqlCount(ctx context.Context) (int, error)
 	return sqlgraph.CountNodes(ctx, iaq.driver, _spec)
 }
 
-func (iaq *InvitationAcceptanceQuery) sqlExist(ctx context.Context) (bool, error) {
-	switch _, err := iaq.FirstID(ctx); {
-	case IsNotFound(err):
-		return false, nil
-	case err != nil:
-		return false, fmt.Errorf("ent: check existence: %w", err)
-	default:
-		return true, nil
-	}
-}
-
 func (iaq *InvitationAcceptanceQuery) querySpec() *sqlgraph.QuerySpec {
 	_spec := &sqlgraph.QuerySpec{
 		Node: &sqlgraph.NodeSpec{
@@ -599,13 +604,8 @@ func (iaq *InvitationAcceptanceQuery) sqlQuery(ctx context.Context) *sql.Selecto
 
 // InvitationAcceptanceGroupBy is the group-by builder for InvitationAcceptance entities.
 type InvitationAcceptanceGroupBy struct {
-	config
 	selector
-	fields []string
-	fns    []AggregateFunc
-	// intermediate query (i.e. traversal path).
-	sql  *sql.Selector
-	path func(context.Context) (*sql.Selector, error)
+	build *InvitationAcceptanceQuery
 }
 
 // Aggregate adds the given aggregation functions to the group-by query.
@@ -614,58 +614,46 @@ func (iagb *InvitationAcceptanceGroupBy) Aggregate(fns ...AggregateFunc) *Invita
 	return iagb
 }
 
-// Scan applies the group-by query and scans the result into the given value.
+// Scan applies the selector query and scans the result into the given value.
 func (iagb *InvitationAcceptanceGroupBy) Scan(ctx context.Context, v any) error {
-	query, err := iagb.path(ctx)
-	if err != nil {
+	ctx = newQueryContext(ctx, TypeInvitationAcceptance, "GroupBy")
+	if err := iagb.build.prepareQuery(ctx); err != nil {
 		return err
 	}
-	iagb.sql = query
-	return iagb.sqlScan(ctx, v)
+	return scanWithInterceptors[*InvitationAcceptanceQuery, *InvitationAcceptanceGroupBy](ctx, iagb.build, iagb, iagb.build.inters, v)
 }
 
-func (iagb *InvitationAcceptanceGroupBy) sqlScan(ctx context.Context, v any) error {
-	for _, f := range iagb.fields {
-		if !invitationacceptance.ValidColumn(f) {
-			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for group-by", f)}
-		}
+func (iagb *InvitationAcceptanceGroupBy) sqlScan(ctx context.Context, root *InvitationAcceptanceQuery, v any) error {
+	selector := root.sqlQuery(ctx).Select()
+	aggregation := make([]string, 0, len(iagb.fns))
+	for _, fn := range iagb.fns {
+		aggregation = append(aggregation, fn(selector))
 	}
-	selector := iagb.sqlQuery()
+	if len(selector.SelectedColumns()) == 0 {
+		columns := make([]string, 0, len(*iagb.flds)+len(iagb.fns))
+		for _, f := range *iagb.flds {
+			columns = append(columns, selector.C(f))
+		}
+		columns = append(columns, aggregation...)
+		selector.Select(columns...)
+	}
+	selector.GroupBy(selector.Columns(*iagb.flds...)...)
 	if err := selector.Err(); err != nil {
 		return err
 	}
 	rows := &sql.Rows{}
 	query, args := selector.Query()
-	if err := iagb.driver.Query(ctx, query, args, rows); err != nil {
+	if err := iagb.build.driver.Query(ctx, query, args, rows); err != nil {
 		return err
 	}
 	defer rows.Close()
 	return sql.ScanSlice(rows, v)
 }
 
-func (iagb *InvitationAcceptanceGroupBy) sqlQuery() *sql.Selector {
-	selector := iagb.sql.Select()
-	aggregation := make([]string, 0, len(iagb.fns))
-	for _, fn := range iagb.fns {
-		aggregation = append(aggregation, fn(selector))
-	}
-	if len(selector.SelectedColumns()) == 0 {
-		columns := make([]string, 0, len(iagb.fields)+len(iagb.fns))
-		for _, f := range iagb.fields {
-			columns = append(columns, selector.C(f))
-		}
-		columns = append(columns, aggregation...)
-		selector.Select(columns...)
-	}
-	return selector.GroupBy(selector.Columns(iagb.fields...)...)
-}
-
 // InvitationAcceptanceSelect is the builder for selecting fields of InvitationAcceptance entities.
 type InvitationAcceptanceSelect struct {
 	*InvitationAcceptanceQuery
 	selector
-	// intermediate query (i.e. traversal path).
-	sql *sql.Selector
 }
 
 // Aggregate adds the given aggregation functions to the selector query.
@@ -676,26 +664,27 @@ func (ias *InvitationAcceptanceSelect) Aggregate(fns ...AggregateFunc) *Invitati
 
 // Scan applies the selector query and scans the result into the given value.
 func (ias *InvitationAcceptanceSelect) Scan(ctx context.Context, v any) error {
+	ctx = newQueryContext(ctx, TypeInvitationAcceptance, "Select")
 	if err := ias.prepareQuery(ctx); err != nil {
 		return err
 	}
-	ias.sql = ias.InvitationAcceptanceQuery.sqlQuery(ctx)
-	return ias.sqlScan(ctx, v)
+	return scanWithInterceptors[*InvitationAcceptanceQuery, *InvitationAcceptanceSelect](ctx, ias.InvitationAcceptanceQuery, ias, ias.inters, v)
 }
 
-func (ias *InvitationAcceptanceSelect) sqlScan(ctx context.Context, v any) error {
+func (ias *InvitationAcceptanceSelect) sqlScan(ctx context.Context, root *InvitationAcceptanceQuery, v any) error {
+	selector := root.sqlQuery(ctx)
 	aggregation := make([]string, 0, len(ias.fns))
 	for _, fn := range ias.fns {
-		aggregation = append(aggregation, fn(ias.sql))
+		aggregation = append(aggregation, fn(selector))
 	}
 	switch n := len(*ias.selector.flds); {
 	case n == 0 && len(aggregation) > 0:
-		ias.sql.Select(aggregation...)
+		selector.Select(aggregation...)
 	case n != 0 && len(aggregation) > 0:
-		ias.sql.AppendSelect(aggregation...)
+		selector.AppendSelect(aggregation...)
 	}
 	rows := &sql.Rows{}
-	query, args := ias.sql.Query()
+	query, args := selector.Query()
 	if err := ias.driver.Query(ctx, query, args, rows); err != nil {
 		return err
 	}

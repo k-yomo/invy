@@ -24,6 +24,7 @@ type UserMuteQuery struct {
 	unique       *bool
 	order        []OrderFunc
 	fields       []string
+	inters       []Interceptor
 	predicates   []predicate.UserMute
 	withUser     *UserQuery
 	withMuteUser *UserQuery
@@ -40,13 +41,13 @@ func (umq *UserMuteQuery) Where(ps ...predicate.UserMute) *UserMuteQuery {
 	return umq
 }
 
-// Limit adds a limit step to the query.
+// Limit the number of records to be returned by this query.
 func (umq *UserMuteQuery) Limit(limit int) *UserMuteQuery {
 	umq.limit = &limit
 	return umq
 }
 
-// Offset adds an offset step to the query.
+// Offset to start from.
 func (umq *UserMuteQuery) Offset(offset int) *UserMuteQuery {
 	umq.offset = &offset
 	return umq
@@ -59,7 +60,7 @@ func (umq *UserMuteQuery) Unique(unique bool) *UserMuteQuery {
 	return umq
 }
 
-// Order adds an order step to the query.
+// Order specifies how the records should be ordered.
 func (umq *UserMuteQuery) Order(o ...OrderFunc) *UserMuteQuery {
 	umq.order = append(umq.order, o...)
 	return umq
@@ -67,7 +68,7 @@ func (umq *UserMuteQuery) Order(o ...OrderFunc) *UserMuteQuery {
 
 // QueryUser chains the current query on the "user" edge.
 func (umq *UserMuteQuery) QueryUser() *UserQuery {
-	query := &UserQuery{config: umq.config}
+	query := (&UserClient{config: umq.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := umq.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -89,7 +90,7 @@ func (umq *UserMuteQuery) QueryUser() *UserQuery {
 
 // QueryMuteUser chains the current query on the "mute_user" edge.
 func (umq *UserMuteQuery) QueryMuteUser() *UserQuery {
-	query := &UserQuery{config: umq.config}
+	query := (&UserClient{config: umq.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := umq.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -112,7 +113,7 @@ func (umq *UserMuteQuery) QueryMuteUser() *UserQuery {
 // First returns the first UserMute entity from the query.
 // Returns a *NotFoundError when no UserMute was found.
 func (umq *UserMuteQuery) First(ctx context.Context) (*UserMute, error) {
-	nodes, err := umq.Limit(1).All(ctx)
+	nodes, err := umq.Limit(1).All(newQueryContext(ctx, TypeUserMute, "First"))
 	if err != nil {
 		return nil, err
 	}
@@ -135,7 +136,7 @@ func (umq *UserMuteQuery) FirstX(ctx context.Context) *UserMute {
 // Returns a *NotFoundError when no UserMute ID was found.
 func (umq *UserMuteQuery) FirstID(ctx context.Context) (id uuid.UUID, err error) {
 	var ids []uuid.UUID
-	if ids, err = umq.Limit(1).IDs(ctx); err != nil {
+	if ids, err = umq.Limit(1).IDs(newQueryContext(ctx, TypeUserMute, "FirstID")); err != nil {
 		return
 	}
 	if len(ids) == 0 {
@@ -158,7 +159,7 @@ func (umq *UserMuteQuery) FirstIDX(ctx context.Context) uuid.UUID {
 // Returns a *NotSingularError when more than one UserMute entity is found.
 // Returns a *NotFoundError when no UserMute entities are found.
 func (umq *UserMuteQuery) Only(ctx context.Context) (*UserMute, error) {
-	nodes, err := umq.Limit(2).All(ctx)
+	nodes, err := umq.Limit(2).All(newQueryContext(ctx, TypeUserMute, "Only"))
 	if err != nil {
 		return nil, err
 	}
@@ -186,7 +187,7 @@ func (umq *UserMuteQuery) OnlyX(ctx context.Context) *UserMute {
 // Returns a *NotFoundError when no entities are found.
 func (umq *UserMuteQuery) OnlyID(ctx context.Context) (id uuid.UUID, err error) {
 	var ids []uuid.UUID
-	if ids, err = umq.Limit(2).IDs(ctx); err != nil {
+	if ids, err = umq.Limit(2).IDs(newQueryContext(ctx, TypeUserMute, "OnlyID")); err != nil {
 		return
 	}
 	switch len(ids) {
@@ -211,10 +212,12 @@ func (umq *UserMuteQuery) OnlyIDX(ctx context.Context) uuid.UUID {
 
 // All executes the query and returns a list of UserMutes.
 func (umq *UserMuteQuery) All(ctx context.Context) ([]*UserMute, error) {
+	ctx = newQueryContext(ctx, TypeUserMute, "All")
 	if err := umq.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
-	return umq.sqlAll(ctx)
+	qr := querierAll[[]*UserMute, *UserMuteQuery]()
+	return withInterceptors[[]*UserMute](ctx, umq, qr, umq.inters)
 }
 
 // AllX is like All, but panics if an error occurs.
@@ -229,6 +232,7 @@ func (umq *UserMuteQuery) AllX(ctx context.Context) []*UserMute {
 // IDs executes the query and returns a list of UserMute IDs.
 func (umq *UserMuteQuery) IDs(ctx context.Context) ([]uuid.UUID, error) {
 	var ids []uuid.UUID
+	ctx = newQueryContext(ctx, TypeUserMute, "IDs")
 	if err := umq.Select(usermute.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
@@ -246,10 +250,11 @@ func (umq *UserMuteQuery) IDsX(ctx context.Context) []uuid.UUID {
 
 // Count returns the count of the given query.
 func (umq *UserMuteQuery) Count(ctx context.Context) (int, error) {
+	ctx = newQueryContext(ctx, TypeUserMute, "Count")
 	if err := umq.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
-	return umq.sqlCount(ctx)
+	return withInterceptors[int](ctx, umq, querierCount[*UserMuteQuery](), umq.inters)
 }
 
 // CountX is like Count, but panics if an error occurs.
@@ -263,10 +268,15 @@ func (umq *UserMuteQuery) CountX(ctx context.Context) int {
 
 // Exist returns true if the query has elements in the graph.
 func (umq *UserMuteQuery) Exist(ctx context.Context) (bool, error) {
-	if err := umq.prepareQuery(ctx); err != nil {
-		return false, err
+	ctx = newQueryContext(ctx, TypeUserMute, "Exist")
+	switch _, err := umq.FirstID(ctx); {
+	case IsNotFound(err):
+		return false, nil
+	case err != nil:
+		return false, fmt.Errorf("ent: check existence: %w", err)
+	default:
+		return true, nil
 	}
-	return umq.sqlExist(ctx)
 }
 
 // ExistX is like Exist, but panics if an error occurs.
@@ -289,6 +299,7 @@ func (umq *UserMuteQuery) Clone() *UserMuteQuery {
 		limit:        umq.limit,
 		offset:       umq.offset,
 		order:        append([]OrderFunc{}, umq.order...),
+		inters:       append([]Interceptor{}, umq.inters...),
 		predicates:   append([]predicate.UserMute{}, umq.predicates...),
 		withUser:     umq.withUser.Clone(),
 		withMuteUser: umq.withMuteUser.Clone(),
@@ -302,7 +313,7 @@ func (umq *UserMuteQuery) Clone() *UserMuteQuery {
 // WithUser tells the query-builder to eager-load the nodes that are connected to
 // the "user" edge. The optional arguments are used to configure the query builder of the edge.
 func (umq *UserMuteQuery) WithUser(opts ...func(*UserQuery)) *UserMuteQuery {
-	query := &UserQuery{config: umq.config}
+	query := (&UserClient{config: umq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
@@ -313,7 +324,7 @@ func (umq *UserMuteQuery) WithUser(opts ...func(*UserQuery)) *UserMuteQuery {
 // WithMuteUser tells the query-builder to eager-load the nodes that are connected to
 // the "mute_user" edge. The optional arguments are used to configure the query builder of the edge.
 func (umq *UserMuteQuery) WithMuteUser(opts ...func(*UserQuery)) *UserMuteQuery {
-	query := &UserQuery{config: umq.config}
+	query := (&UserClient{config: umq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
@@ -336,16 +347,11 @@ func (umq *UserMuteQuery) WithMuteUser(opts ...func(*UserQuery)) *UserMuteQuery 
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (umq *UserMuteQuery) GroupBy(field string, fields ...string) *UserMuteGroupBy {
-	grbuild := &UserMuteGroupBy{config: umq.config}
-	grbuild.fields = append([]string{field}, fields...)
-	grbuild.path = func(ctx context.Context) (prev *sql.Selector, err error) {
-		if err := umq.prepareQuery(ctx); err != nil {
-			return nil, err
-		}
-		return umq.sqlQuery(ctx), nil
-	}
+	umq.fields = append([]string{field}, fields...)
+	grbuild := &UserMuteGroupBy{build: umq}
+	grbuild.flds = &umq.fields
 	grbuild.label = usermute.Label
-	grbuild.flds, grbuild.scan = &grbuild.fields, grbuild.Scan
+	grbuild.scan = grbuild.Scan
 	return grbuild
 }
 
@@ -363,10 +369,10 @@ func (umq *UserMuteQuery) GroupBy(field string, fields ...string) *UserMuteGroup
 //		Scan(ctx, &v)
 func (umq *UserMuteQuery) Select(fields ...string) *UserMuteSelect {
 	umq.fields = append(umq.fields, fields...)
-	selbuild := &UserMuteSelect{UserMuteQuery: umq}
-	selbuild.label = usermute.Label
-	selbuild.flds, selbuild.scan = &umq.fields, selbuild.Scan
-	return selbuild
+	sbuild := &UserMuteSelect{UserMuteQuery: umq}
+	sbuild.label = usermute.Label
+	sbuild.flds, sbuild.scan = &umq.fields, sbuild.Scan
+	return sbuild
 }
 
 // Aggregate returns a UserMuteSelect configured with the given aggregations.
@@ -375,6 +381,16 @@ func (umq *UserMuteQuery) Aggregate(fns ...AggregateFunc) *UserMuteSelect {
 }
 
 func (umq *UserMuteQuery) prepareQuery(ctx context.Context) error {
+	for _, inter := range umq.inters {
+		if inter == nil {
+			return fmt.Errorf("ent: uninitialized interceptor (forgotten import ent/runtime?)")
+		}
+		if trv, ok := inter.(Traverser); ok {
+			if err := trv.Traverse(ctx, umq); err != nil {
+				return err
+			}
+		}
+	}
 	for _, f := range umq.fields {
 		if !usermute.ValidColumn(f) {
 			return &ValidationError{Name: f, err: fmt.Errorf("ent: invalid field %q for query", f)}
@@ -505,17 +521,6 @@ func (umq *UserMuteQuery) sqlCount(ctx context.Context) (int, error) {
 	return sqlgraph.CountNodes(ctx, umq.driver, _spec)
 }
 
-func (umq *UserMuteQuery) sqlExist(ctx context.Context) (bool, error) {
-	switch _, err := umq.FirstID(ctx); {
-	case IsNotFound(err):
-		return false, nil
-	case err != nil:
-		return false, fmt.Errorf("ent: check existence: %w", err)
-	default:
-		return true, nil
-	}
-}
-
 func (umq *UserMuteQuery) querySpec() *sqlgraph.QuerySpec {
 	_spec := &sqlgraph.QuerySpec{
 		Node: &sqlgraph.NodeSpec{
@@ -598,13 +603,8 @@ func (umq *UserMuteQuery) sqlQuery(ctx context.Context) *sql.Selector {
 
 // UserMuteGroupBy is the group-by builder for UserMute entities.
 type UserMuteGroupBy struct {
-	config
 	selector
-	fields []string
-	fns    []AggregateFunc
-	// intermediate query (i.e. traversal path).
-	sql  *sql.Selector
-	path func(context.Context) (*sql.Selector, error)
+	build *UserMuteQuery
 }
 
 // Aggregate adds the given aggregation functions to the group-by query.
@@ -613,58 +613,46 @@ func (umgb *UserMuteGroupBy) Aggregate(fns ...AggregateFunc) *UserMuteGroupBy {
 	return umgb
 }
 
-// Scan applies the group-by query and scans the result into the given value.
+// Scan applies the selector query and scans the result into the given value.
 func (umgb *UserMuteGroupBy) Scan(ctx context.Context, v any) error {
-	query, err := umgb.path(ctx)
-	if err != nil {
+	ctx = newQueryContext(ctx, TypeUserMute, "GroupBy")
+	if err := umgb.build.prepareQuery(ctx); err != nil {
 		return err
 	}
-	umgb.sql = query
-	return umgb.sqlScan(ctx, v)
+	return scanWithInterceptors[*UserMuteQuery, *UserMuteGroupBy](ctx, umgb.build, umgb, umgb.build.inters, v)
 }
 
-func (umgb *UserMuteGroupBy) sqlScan(ctx context.Context, v any) error {
-	for _, f := range umgb.fields {
-		if !usermute.ValidColumn(f) {
-			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for group-by", f)}
-		}
+func (umgb *UserMuteGroupBy) sqlScan(ctx context.Context, root *UserMuteQuery, v any) error {
+	selector := root.sqlQuery(ctx).Select()
+	aggregation := make([]string, 0, len(umgb.fns))
+	for _, fn := range umgb.fns {
+		aggregation = append(aggregation, fn(selector))
 	}
-	selector := umgb.sqlQuery()
+	if len(selector.SelectedColumns()) == 0 {
+		columns := make([]string, 0, len(*umgb.flds)+len(umgb.fns))
+		for _, f := range *umgb.flds {
+			columns = append(columns, selector.C(f))
+		}
+		columns = append(columns, aggregation...)
+		selector.Select(columns...)
+	}
+	selector.GroupBy(selector.Columns(*umgb.flds...)...)
 	if err := selector.Err(); err != nil {
 		return err
 	}
 	rows := &sql.Rows{}
 	query, args := selector.Query()
-	if err := umgb.driver.Query(ctx, query, args, rows); err != nil {
+	if err := umgb.build.driver.Query(ctx, query, args, rows); err != nil {
 		return err
 	}
 	defer rows.Close()
 	return sql.ScanSlice(rows, v)
 }
 
-func (umgb *UserMuteGroupBy) sqlQuery() *sql.Selector {
-	selector := umgb.sql.Select()
-	aggregation := make([]string, 0, len(umgb.fns))
-	for _, fn := range umgb.fns {
-		aggregation = append(aggregation, fn(selector))
-	}
-	if len(selector.SelectedColumns()) == 0 {
-		columns := make([]string, 0, len(umgb.fields)+len(umgb.fns))
-		for _, f := range umgb.fields {
-			columns = append(columns, selector.C(f))
-		}
-		columns = append(columns, aggregation...)
-		selector.Select(columns...)
-	}
-	return selector.GroupBy(selector.Columns(umgb.fields...)...)
-}
-
 // UserMuteSelect is the builder for selecting fields of UserMute entities.
 type UserMuteSelect struct {
 	*UserMuteQuery
 	selector
-	// intermediate query (i.e. traversal path).
-	sql *sql.Selector
 }
 
 // Aggregate adds the given aggregation functions to the selector query.
@@ -675,26 +663,27 @@ func (ums *UserMuteSelect) Aggregate(fns ...AggregateFunc) *UserMuteSelect {
 
 // Scan applies the selector query and scans the result into the given value.
 func (ums *UserMuteSelect) Scan(ctx context.Context, v any) error {
+	ctx = newQueryContext(ctx, TypeUserMute, "Select")
 	if err := ums.prepareQuery(ctx); err != nil {
 		return err
 	}
-	ums.sql = ums.UserMuteQuery.sqlQuery(ctx)
-	return ums.sqlScan(ctx, v)
+	return scanWithInterceptors[*UserMuteQuery, *UserMuteSelect](ctx, ums.UserMuteQuery, ums, ums.inters, v)
 }
 
-func (ums *UserMuteSelect) sqlScan(ctx context.Context, v any) error {
+func (ums *UserMuteSelect) sqlScan(ctx context.Context, root *UserMuteQuery, v any) error {
+	selector := root.sqlQuery(ctx)
 	aggregation := make([]string, 0, len(ums.fns))
 	for _, fn := range ums.fns {
-		aggregation = append(aggregation, fn(ums.sql))
+		aggregation = append(aggregation, fn(selector))
 	}
 	switch n := len(*ums.selector.flds); {
 	case n == 0 && len(aggregation) > 0:
-		ums.sql.Select(aggregation...)
+		selector.Select(aggregation...)
 	case n != 0 && len(aggregation) > 0:
-		ums.sql.AppendSelect(aggregation...)
+		selector.AppendSelect(aggregation...)
 	}
 	rows := &sql.Rows{}
-	query, args := ums.sql.Query()
+	query, args := selector.Query()
 	if err := ums.driver.Query(ctx, query, args, rows); err != nil {
 		return err
 	}

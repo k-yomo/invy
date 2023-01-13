@@ -4,7 +4,6 @@ package ent
 
 import (
 	"context"
-	"fmt"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -28,34 +27,7 @@ func (frd *FriendshipRequestDelete) Where(ps ...predicate.FriendshipRequest) *Fr
 
 // Exec executes the deletion query and returns how many vertices were deleted.
 func (frd *FriendshipRequestDelete) Exec(ctx context.Context) (int, error) {
-	var (
-		err      error
-		affected int
-	)
-	if len(frd.hooks) == 0 {
-		affected, err = frd.sqlExec(ctx)
-	} else {
-		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-			mutation, ok := m.(*FriendshipRequestMutation)
-			if !ok {
-				return nil, fmt.Errorf("unexpected mutation type %T", m)
-			}
-			frd.mutation = mutation
-			affected, err = frd.sqlExec(ctx)
-			mutation.done = true
-			return affected, err
-		})
-		for i := len(frd.hooks) - 1; i >= 0; i-- {
-			if frd.hooks[i] == nil {
-				return 0, fmt.Errorf("ent: uninitialized hook (forgotten import ent/runtime?)")
-			}
-			mut = frd.hooks[i](mut)
-		}
-		if _, err := mut.Mutate(ctx, frd.mutation); err != nil {
-			return 0, err
-		}
-	}
-	return affected, err
+	return withHooks[int, FriendshipRequestMutation](ctx, frd.sqlExec, frd.mutation, frd.hooks)
 }
 
 // ExecX is like Exec, but panics if an error occurs.
@@ -88,6 +60,7 @@ func (frd *FriendshipRequestDelete) sqlExec(ctx context.Context) (int, error) {
 	if err != nil && sqlgraph.IsConstraintError(err) {
 		err = &ConstraintError{msg: err.Error(), wrap: err}
 	}
+	frd.mutation.done = true
 	return affected, err
 }
 

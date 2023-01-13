@@ -5,6 +5,6 @@ package runtime
 // The schema-stitching logic is generated in github.com/k-yomo/invy/invy_api/ent/runtime.go
 
 const (
-	Version = "v0.11.5-0.20221031135557-521f9b57bc3d"           // Version of ent codegen.
-	Sum     = "h1:slfuvOSWSiV0ldHU+V+O2cfOEgWRpbRloUeE9k7wXnw=" // Sum of ent codegen.
+	Version = "v0.11.5"                                         // Version of ent codegen.
+	Sum     = "h1:V2qhG91C4PMQTa82Q4StoESMQ4dzkMNeStCzszxi0jQ=" // Sum of ent codegen.
 )
