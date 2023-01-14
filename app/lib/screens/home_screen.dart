@@ -31,6 +31,7 @@ class HomeScreen extends HookConsumerWidget {
         if (viewer == null) {
           return Scaffold(body: SingleChildScrollView(child: Container()));
         }
+        badgeCounter.value!.setBadgeCount(viewer.pendingInvitations.length);
         return Scaffold(
           backgroundColor: Colors.grey.shade100,
           body: SingleChildScrollView(
@@ -113,7 +114,7 @@ class HomeScreen extends HookConsumerWidget {
                         margin: const EdgeInsets.symmetric(horizontal: 5),
                         child: Column(
                           children: [
-                            ...viewer?.acceptedInvitations
+                            ...viewer.acceptedInvitations
                                     .map((invitation) => (Container(
                                           margin: const EdgeInsets.symmetric(
                                               vertical: 5),
@@ -137,7 +138,7 @@ class HomeScreen extends HookConsumerWidget {
                         margin: const EdgeInsets.symmetric(horizontal: 5),
                         child: Column(
                           children: [
-                            ...viewer?.pendingInvitations.map((invitation) =>
+                            ...viewer.pendingInvitations.map((invitation) =>
                                     (Container(
                                       margin: const EdgeInsets.symmetric(
                                           vertical: 5),
@@ -154,7 +155,6 @@ class HomeScreen extends HookConsumerWidget {
                                           if (result.parsedData
                                                   ?.acceptInvitation !=
                                               null) {
-                                            await badgeCounter.value!.setBadgeCount(viewer!.pendingInvitations.length - 1);
                                             viewerQuery.refetch();
                                           }
                                         },
@@ -169,7 +169,6 @@ class HomeScreen extends HookConsumerWidget {
                                           if (result
                                                   .parsedData?.denyInvitation !=
                                               null) {
-                                            await badgeCounter.value!.setBadgeCount(viewer!.pendingInvitations.length - 1);
                                             viewerQuery.refetch();
                                           }
                                         },
