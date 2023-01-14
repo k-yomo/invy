@@ -70,14 +70,18 @@ func (g GraphQLResponseInterceptor) InterceptResponse(ctx context.Context, next 
 	resp := next(ctx)
 
 	latency := time.Since(oc.Stats.OperationStart)
+	operationName := oc.OperationName
+	if oc.Operation != nil {
+		operationName = oc.Operation.Name
+	}
 	reqLog := requestLog{
-		GraphqlOperation:    oc.Operation.Name,
+		GraphqlOperation:    operationName,
 		Latency:             newCloudLoggingDuration(latency),
 		LatencyMilliseconds: latency.Milliseconds(),
 		ResponseSize:        int64(len(resp.Data)),
 	}
 	Logger(ctx).Info(
-		fmt.Sprintf("graphql operation: %s", oc.Operation.Name),
+		fmt.Sprintf("graphql operation: %s", operationName),
 		zap.Bool("isError", resp.Errors != nil),
 		zap.Object("httpRequest", &reqLog),
 	)

@@ -15,3 +15,8 @@ targets:
               type: String
             Cursor:
               type: String
+            Upload:
+              type: MultipartFile
+              fromJsonFunctionName: fileFromJson
+              toJsonFunctionName: fileToJson
+              import: package:invy/graphql/scalars.dart

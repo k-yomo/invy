@@ -35,7 +35,7 @@ class App extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final loggedInUser = ref.watch(loggedInUserProvider);
+    final isLoggedIn = ref.watch(isLoggedInProvider);
 
     return StreamBuilder<User?>(
       stream: FirebaseAuth.instance.authStateChanges(),
@@ -45,7 +45,7 @@ class App extends HookConsumerWidget {
         }
         return FutureBuilder<Query$viewer$viewer?>(
           future: () async {
-            if (loggedInUser != null) {
+            if (isLoggedIn) {
               return null;
             }
             if (authSnapshot.hasData) {
@@ -74,9 +74,7 @@ class App extends HookConsumerWidget {
               // TODO: support dark mode
               // darkTheme: ThemeData.dark(),
               themeMode: ThemeMode.system,
-              home: (loggedInUser != null)
-                  ? const RootWidget()
-                  : const LoginScreen(),
+              home: isLoggedIn ? const RootWidget() : const LoginScreen(),
             );
           },
         );

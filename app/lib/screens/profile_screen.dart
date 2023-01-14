@@ -1,13 +1,15 @@
 import 'dart:ui';
 
-import 'package:invy/state/auth.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:invy/services/graphql_client.dart';
 import 'package:invy/graphql/profile_screen.graphql.dart';
+import 'package:invy/screens/profile_edit_screen.dart';
+import 'package:invy/services/graphql_client.dart';
+import 'package:invy/state/auth.dart';
 
 class ProfileScreen extends HookConsumerWidget {
   const ProfileScreen({super.key});
@@ -15,7 +17,7 @@ class ProfileScreen extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final graphqlClient = ref.read(graphqlClientProvider);
-    final user = ref.read(loggedInUserProvider)!;
+    final user = ref.watch(loggedInUserProvider)!;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -86,6 +88,16 @@ class ProfileScreen extends HookConsumerWidget {
                       ),
                     ),
                   ],
+                ),
+                Gap(10),
+                OutlinedButton(
+                  onPressed: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => ProfileEditScreen(),
+                    ));
+                  },
+                  child:
+                      Text("プロフィールを編集", style: TextStyle(color: Colors.black)),
                 ),
               ],
             ),

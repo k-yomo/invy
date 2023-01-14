@@ -1,0 +1,17 @@
+mutation updateAvatar($avatar: Upload!) {
+    updateAvatar(avatar: $avatar) {
+        viewer {
+            id
+            avatarUrl
+        }
+    }
+}
+
+mutation updateNickname($nickname: String!) {
+    updateNickname(nickname: $nickname) {
+        viewer {
+            id
+            nickname
+        }
+    }
+}

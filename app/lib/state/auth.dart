@@ -14,8 +14,23 @@ class LoggedInUser {
   final String screenId;
   final String nickname;
   final String avatarUrl;
+
+  LoggedInUser copyWith({
+    String? nickname,
+    String? avatarUrl,
+  }) =>
+      LoggedInUser(
+        id: id,
+        screenId: screenId,
+        nickname: nickname ?? this.nickname,
+        avatarUrl: avatarUrl ?? this.avatarUrl,
+      );
 }
 
+final isLoggedInProvider = StateProvider<bool>((ref) {
+  final loggedInUser = ref.watch(loggedInUserProvider);
+  return loggedInUser != null;
+});
 final loggedInUserProvider = StateProvider<LoggedInUser?>((ref) => null);
 
 void setViewerToLoggedInUser(WidgetRef ref, Query$viewer$viewer viewer) {
