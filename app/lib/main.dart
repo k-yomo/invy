@@ -25,7 +25,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
 
   if (message.data["type"] ==
-      Enum$PushNotificationType.INVITATION_RECEIVED.toString()) {
+      toJson$Enum$PushNotificationType(Enum$PushNotificationType.INVITATION_RECEIVED)) {
     final badgeCounter = await BadgeCounter.open();
     badgeCounter.setBadgeCount(badgeCounter.badgeCount + 1);
   }
