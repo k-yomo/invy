@@ -345,9 +345,13 @@ class InvitationDetailFormState extends State<InvitationDetailForm> {
                   }
                 },
                 child: isLoading
-                    ? CircularProgressIndicator(
-                        color: Colors.black,
-                        strokeWidth: 3,
+                    ? SizedBox(
+                        width: 25,
+                        height: 25,
+                        child: CircularProgressIndicator(
+                          color: Colors.black,
+                          strokeWidth: 3,
+                        ),
                       )
                     : Text(
                         '招待を送信する',

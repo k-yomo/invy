@@ -1,11 +1,12 @@
 import 'dart:ui';
 
-import 'package:http/http.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
 import 'package:graphql/client.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:http/http.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:invy/graphql/profile_edit_screen.graphql.dart';
@@ -21,15 +22,17 @@ class ProfileEditScreen extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final graphqlClient = ref.read(graphqlClientProvider);
-    final user = ref.read(loggedInUserProvider)!;
     final picker = ImagePicker();
+    final graphqlClient = ref.read(graphqlClientProvider);
+    final user = ref.watch(loggedInUserProvider)!;
+    final avatarUpdateLoading = useState(false);
 
     onPressedAvatarUpdate() async {
       final pickedImage = await picker.pickImage(source: ImageSource.gallery);
       if (pickedImage == null) {
         return;
       }
+      avatarUpdateLoading.value = true;
       var byteData = await pickedImage.readAsBytes();
       var multipartFile = MultipartFile.fromBytes(
         pickedImage.path.split('/').last,
@@ -44,6 +47,8 @@ class ProfileEditScreen extends HookConsumerWidget {
           ),
         ),
       );
+      avatarUpdateLoading.value = false;
+
       if (result.hasException) {
         print(result.exception);
         // TODO: show error;
@@ -94,8 +99,17 @@ class ProfileEditScreen extends HookConsumerWidget {
                 Gap(10),
                 OutlinedButton(
                   onPressed: onPressedAvatarUpdate,
-                  child: Text("プロフィール写真を変更",
-                      style: TextStyle(color: Colors.black)),
+                  child: avatarUpdateLoading.value
+                      ? SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            color: Colors.black,
+                            strokeWidth: 3,
+                          ),
+                        )
+                      : Text("プロフィール写真を変更",
+                          style: TextStyle(color: Colors.black)),
                 ),
                 Gap(20),
                 TextFormField(
