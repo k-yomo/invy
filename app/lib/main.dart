@@ -8,6 +8,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:invy/config/config.dart';
 import 'package:invy/graphql/push_notification.graphql.dart';
@@ -16,10 +18,24 @@ import 'package:invy/util/device.dart';
 
 import 'app.dart';
 import 'graphql/schema.graphql.dart';
+import 'state/badge_count.dart';
+
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Hive.initFlutter();
+  await Firebase.initializeApp();
+
+  if (message.data["type"] ==
+      Enum$PushNotificationType.INVITATION_RECEIVED.toString()) {
+    final badgeCounter = await BadgeCounter.open();
+    badgeCounter.setBadgeCount(badgeCounter.badgeCount + 1);
+  }
+}
 
 Future main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+
+  await Hive.initFlutter();
 
   /// Fix vertical screen
   SystemChrome.setPreferredOrientations([
@@ -61,6 +77,8 @@ Future main() async {
       });
     }
   });
+
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
   runApp(
     ProviderScope(

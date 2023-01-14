@@ -1241,6 +1241,14 @@ input RegisterPushNotificationTokenInput {
 type RegisterPushNotificationTokenPayload {
     registeredPushNotificationTokenId: UUID!
 }
+
+# PushNotificationType is included in the push notification payload
+enum PushNotificationType {
+    FRIENDSHIP_REQUEST_RECEIVED
+    FRIENDSHIP_REQUEST_ACCEPTED
+    INVITATION_RECEIVED
+    INVITATION_ACCEPTED
+}
 `, BuiltIn: false},
 	{Name: "../../../defs/graphql/schema.graphql", Input: `scalar Time
 scalar UUID

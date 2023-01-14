@@ -153,7 +153,9 @@ func (r *mutationResolver) SendInvitation(ctx context.Context, input *gqlmodel.S
 	// TODO: Chunk tokens by 500 (max tokens per multicast)
 	r.FCMClient.SendMulticast(ctx, &fcm.MulticastMessage{
 		Tokens: fcmTokens,
-		Data:   nil,
+		Data: map[string]string{
+			"type": gqlmodel.PushNotificationTypeInvitationReceived.String(),
+		},
 		Notification: &fcm.Notification{
 			Body: fmt.Sprintf("%sさんから、%s開催のさそいが届きました。", inviterProfile.Nickname, dbInvitation.Location),
 		},
@@ -221,7 +223,9 @@ func (r *mutationResolver) AcceptInvitation(ctx context.Context, invitationID uu
 	// TODO: Chunk tokens by 500 (max tokens per multicast)
 	r.FCMClient.SendMulticast(ctx, &fcm.MulticastMessage{
 		Tokens: fcmTokens,
-		Data:   nil,
+		Data: map[string]string{
+			"type": gqlmodel.PushNotificationTypeInvitationAccepted.String(),
+		},
 		Notification: &fcm.Notification{
 			Body: fmt.Sprintf("%sさんがさそいを承諾しました。", acceptedUserProfile.Nickname),
 		},

@@ -7,6 +7,7 @@ import 'package:invy/components/sent_invitation_card.dart';
 import 'package:invy/graphql/home_screen.graphql.dart';
 import 'package:invy/screens/invitation_screen.dart';
 import 'package:invy/services/graphql_client.dart';
+import 'package:invy/state/badge_count.dart';
 
 import '../components/sub_title.dart';
 
@@ -16,6 +17,7 @@ class HomeScreen extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final graphqlClient = ref.read(graphqlClientProvider);
+    final badgeCounter = ref.watch(pushNotificationBadgeCounter);
     final viewerQuery = graphqlClient
         .watchQuery$homeScreenViewer(WatchOptions$Query$homeScreenViewer(
       eagerlyFetchResults: true,
@@ -152,6 +154,7 @@ class HomeScreen extends HookConsumerWidget {
                                           if (result.parsedData
                                                   ?.acceptInvitation !=
                                               null) {
+                                            await badgeCounter.value!.setBadgeCount(viewer!.pendingInvitations.length - 1);
                                             viewerQuery.refetch();
                                           }
                                         },
@@ -166,6 +169,7 @@ class HomeScreen extends HookConsumerWidget {
                                           if (result
                                                   .parsedData?.denyInvitation !=
                                               null) {
+                                            await badgeCounter.value!.setBadgeCount(viewer!.pendingInvitations.length - 1);
                                             viewerQuery.refetch();
                                           }
                                         },

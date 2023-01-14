@@ -101,7 +101,9 @@ func (r *mutationResolver) RequestFriendship(ctx context.Context, friendUserID u
 	})
 	r.FCMClient.SendMulticast(ctx, &fcm.MulticastMessage{
 		Tokens: fcmTokens,
-		Data:   nil,
+		Data: map[string]string{
+			"type": gqlmodel.PushNotificationTypeFriendshipRequestReceived.String(),
+		},
 		Notification: &fcm.Notification{
 			Body: fmt.Sprintf("%sさんから友達申請が届きました。", requesterProfile.Nickname),
 		},
@@ -182,7 +184,9 @@ func (r *mutationResolver) AcceptFriendshipRequest(ctx context.Context, friendsh
 	})
 	r.FCMClient.SendMulticast(ctx, &fcm.MulticastMessage{
 		Tokens: fcmTokens,
-		Data:   nil,
+		Data: map[string]string{
+			"type": gqlmodel.PushNotificationTypeFriendshipRequestAccepted.String(),
+		},
 		Notification: &fcm.Notification{
 			Body: fmt.Sprintf("%sさんが友達申請を承諾しました。", acceptedUserProfile.Nickname),
 		},

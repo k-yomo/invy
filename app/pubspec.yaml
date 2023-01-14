@@ -66,6 +66,11 @@ dependencies:
   firebase_messaging: ^14.2.1
   flutter_udid: ^2.0.1
   image_picker: ^0.8.6
+  google_maps_flutter: ^2.2.3
+  google_place: ^0.4.7
+  flutter_app_badger: ^1.5.0
+  hive_flutter: ^1.1.0
+  hive: ^2.2.3
 
 dev_dependencies:
   flutter_test:

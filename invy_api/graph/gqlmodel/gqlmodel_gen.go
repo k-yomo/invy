@@ -254,3 +254,48 @@ func (e *ConstraintFormat) UnmarshalGQL(v interface{}) error {
 func (e ConstraintFormat) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
+
+type PushNotificationType string
+
+const (
+	PushNotificationTypeFriendshipRequestReceived PushNotificationType = "FRIENDSHIP_REQUEST_RECEIVED"
+	PushNotificationTypeFriendshipRequestAccepted PushNotificationType = "FRIENDSHIP_REQUEST_ACCEPTED"
+	PushNotificationTypeInvitationReceived        PushNotificationType = "INVITATION_RECEIVED"
+	PushNotificationTypeInvitationAccepted        PushNotificationType = "INVITATION_ACCEPTED"
+)
+
+var AllPushNotificationType = []PushNotificationType{
+	PushNotificationTypeFriendshipRequestReceived,
+	PushNotificationTypeFriendshipRequestAccepted,
+	PushNotificationTypeInvitationReceived,
+	PushNotificationTypeInvitationAccepted,
+}
+
+func (e PushNotificationType) IsValid() bool {
+	switch e {
+	case PushNotificationTypeFriendshipRequestReceived, PushNotificationTypeFriendshipRequestAccepted, PushNotificationTypeInvitationReceived, PushNotificationTypeInvitationAccepted:
+		return true
+	}
+	return false
+}
+
+func (e PushNotificationType) String() string {
+	return string(e)
+}
+
+func (e *PushNotificationType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = PushNotificationType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid PushNotificationType", str)
+	}
+	return nil
+}
+
+func (e PushNotificationType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}

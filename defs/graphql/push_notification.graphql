@@ -9,3 +9,11 @@ input RegisterPushNotificationTokenInput {
 type RegisterPushNotificationTokenPayload {
     registeredPushNotificationTokenId: UUID!
 }
+
+# PushNotificationType is included in the push notification payload
+enum PushNotificationType {
+    FRIENDSHIP_REQUEST_RECEIVED
+    FRIENDSHIP_REQUEST_ACCEPTED
+    INVITATION_RECEIVED
+    INVITATION_ACCEPTED
+}

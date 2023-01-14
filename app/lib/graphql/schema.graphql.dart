@@ -949,6 +949,44 @@ Enum$ConstraintFormat fromJson$Enum$ConstraintFormat(String value) {
   }
 }
 
+enum Enum$PushNotificationType {
+  FRIENDSHIP_REQUEST_RECEIVED,
+  FRIENDSHIP_REQUEST_ACCEPTED,
+  INVITATION_RECEIVED,
+  INVITATION_ACCEPTED,
+  $unknown
+}
+
+String toJson$Enum$PushNotificationType(Enum$PushNotificationType e) {
+  switch (e) {
+    case Enum$PushNotificationType.FRIENDSHIP_REQUEST_RECEIVED:
+      return r'FRIENDSHIP_REQUEST_RECEIVED';
+    case Enum$PushNotificationType.FRIENDSHIP_REQUEST_ACCEPTED:
+      return r'FRIENDSHIP_REQUEST_ACCEPTED';
+    case Enum$PushNotificationType.INVITATION_RECEIVED:
+      return r'INVITATION_RECEIVED';
+    case Enum$PushNotificationType.INVITATION_ACCEPTED:
+      return r'INVITATION_ACCEPTED';
+    case Enum$PushNotificationType.$unknown:
+      return r'$unknown';
+  }
+}
+
+Enum$PushNotificationType fromJson$Enum$PushNotificationType(String value) {
+  switch (value) {
+    case r'FRIENDSHIP_REQUEST_RECEIVED':
+      return Enum$PushNotificationType.FRIENDSHIP_REQUEST_RECEIVED;
+    case r'FRIENDSHIP_REQUEST_ACCEPTED':
+      return Enum$PushNotificationType.FRIENDSHIP_REQUEST_ACCEPTED;
+    case r'INVITATION_RECEIVED':
+      return Enum$PushNotificationType.INVITATION_RECEIVED;
+    case r'INVITATION_ACCEPTED':
+      return Enum$PushNotificationType.INVITATION_ACCEPTED;
+    default:
+      return Enum$PushNotificationType.$unknown;
+  }
+}
+
 const possibleTypesMap = {
   'Node': {
     'FriendGroup',
