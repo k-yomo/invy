@@ -1,16 +1,18 @@
 import 'dart:ui';
 
-import 'package:dio/dio.dart';
-import 'package:gap/gap.dart';
-import 'package:invy/graphql/profile_edit_screen.graphql.dart';
-import 'package:mime/mime.dart';
-import 'package:http_parser/http_parser.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:invy/state/auth.dart';
+import 'package:http/http.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:gap/gap.dart';
+import 'package:graphql/client.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:http_parser/http_parser.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:invy/graphql/profile_edit_screen.graphql.dart';
 import 'package:invy/services/graphql_client.dart';
+import 'package:invy/state/auth.dart';
+import 'package:invy/util/toast.dart';
+import 'package:mime/mime.dart';
 
 import '../components/app_bar_leading.dart';
 
@@ -24,38 +26,39 @@ class ProfileEditScreen extends HookConsumerWidget {
     final picker = ImagePicker();
 
     onPressedAvatarUpdate() async {
-      final pickedImage =
-          await picker.pickImage(source: ImageSource.gallery);
+      final pickedImage = await picker.pickImage(source: ImageSource.gallery);
       if (pickedImage == null) {
         return;
       }
       var byteData = await pickedImage.readAsBytes();
       var multipartFile = MultipartFile.fromBytes(
+        pickedImage.path.split('/').last,
         byteData,
-        filename: pickedImage.path.split('/').last,
-        contentType:
-        MediaType.parse(lookupMimeType(pickedImage.path)!),
+        contentType: MediaType.parse(lookupMimeType(pickedImage.path)!),
       );
-      final result = await graphqlClient
-          .mutate$updateAvatar(Options$Mutation$updateAvatar(
-        variables: Variables$Mutation$updateAvatar(
-            avatar: multipartFile),
-      ));
+      final result = await graphqlClient.mutate$updateAvatar(
+        Options$Mutation$updateAvatar(
+          fetchPolicy: FetchPolicy.networkOnly,
+          variables: Variables$Mutation$updateAvatar(
+            avatar: multipartFile,
+          ),
+        ),
+      );
       if (result.hasException) {
+        print(result.exception);
         // TODO: show error;
         return;
       }
-      ref.read(loggedInUserProvider.notifier).state =
-          user.copyWith(
-              avatarUrl: result
-                  .parsedData!.updateAvatar.viewer.avatarUrl);
+      ref.read(loggedInUserProvider.notifier).state = user.copyWith(
+          avatarUrl: result.parsedData!.updateAvatar.viewer.avatarUrl);
+      showToast("プロフィール写真を更新しました", ToastLevel.success);
     }
 
     onNicknameSubmitted(String nickname) async {
       final result = await graphqlClient.mutate$updateNickname(
           Options$Mutation$updateNickname(
-              variables: Variables$Mutation$updateNickname(
-                  nickname: nickname)));
+              variables:
+                  Variables$Mutation$updateNickname(nickname: nickname)));
       if (result.hasException) {
         print(result.exception);
         // TODO: show error;
@@ -63,6 +66,7 @@ class ProfileEditScreen extends HookConsumerWidget {
       }
       ref.read(loggedInUserProvider.notifier).state =
           user.copyWith(nickname: nickname);
+      showToast("ニックネームを更新しました", ToastLevel.success);
     }
 
     return Scaffold(
@@ -73,7 +77,7 @@ class ProfileEditScreen extends HookConsumerWidget {
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
         shape:
-        Border(bottom: BorderSide(color: Colors.grey.shade200, width: 1)),
+            Border(bottom: BorderSide(color: Colors.grey.shade200, width: 1)),
       ),
       backgroundColor: Colors.white,
       body: Center(

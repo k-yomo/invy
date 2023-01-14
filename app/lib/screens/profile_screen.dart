@@ -3,13 +3,13 @@ import 'dart:ui';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:invy/graphql/profile_screen.graphql.dart';
 import 'package:invy/screens/profile_edit_screen.dart';
 import 'package:invy/services/graphql_client.dart';
 import 'package:invy/state/auth.dart';
+import 'package:invy/util/toast.dart';
 
 class ProfileScreen extends HookConsumerWidget {
   const ProfileScreen({super.key});
@@ -68,14 +68,9 @@ class ProfileScreen extends HookConsumerWidget {
                         ),
                         onPressed: () async {
                           Clipboard.setData(ClipboardData(text: user.screenId))
-                              .then((_) => Fluttertoast.showToast(
-                                  msg: "コピーしました",
-                                  toastLength: Toast.LENGTH_SHORT,
-                                  gravity: ToastGravity.TOP,
-                                  timeInSecForIosWeb: 1,
-                                  backgroundColor: Colors.black,
-                                  textColor: Colors.white,
-                                  fontSize: 16.0));
+                              .then(
+                            (_) => showToast("コピーしました", ToastLevel.info),
+                          );
                         },
                         child: Row(
                           children: [

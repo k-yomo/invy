@@ -1,5 +1,5 @@
-import 'package:dio/dio.dart';
-export 'package:dio/dio.dart' show MultipartFile;
+import 'package:http/http.dart';
+export 'package:http/http.dart' show MultipartFile;
 
 MultipartFile fileFromJson(dynamic data) {
   return data as MultipartFile;

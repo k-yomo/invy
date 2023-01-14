@@ -95,7 +95,7 @@ func main() {
 		}
 		defer gcsClient.Close()
 
-		avatarUploader = storage.NewGCSFileUploader(gcsClient, appConfig.GCPProjectID)
+		avatarUploader = storage.NewGCSFileUploader(gcsClient, appConfig.GCSAvatarImageBucketName)
 	} else {
 		// TODO: Don't use mock and use GCS for local development.
 		avatarUploader = storage.NewMockFileUploader()
