@@ -60,6 +60,10 @@ class ProfileEditScreen extends HookConsumerWidget {
     }
 
     onNicknameSubmitted(String nickname) async {
+      if (nickname == user.nickname) {
+        // no change
+        return;
+      }
       final result = await graphqlClient.mutate$updateNickname(
           Options$Mutation$updateNickname(
               variables:
