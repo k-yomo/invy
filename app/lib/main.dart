@@ -14,6 +14,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:invy/config/config.dart';
 import 'package:invy/graphql/push_notification.graphql.dart';
 import 'package:invy/services/graphql_client.dart';
+import 'package:invy/state/onboarding.dart';
 import 'package:invy/util/device.dart';
 
 import 'app.dart';
@@ -25,7 +26,8 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
 
   if (message.data["type"] ==
-      toJson$Enum$PushNotificationType(Enum$PushNotificationType.INVITATION_RECEIVED)) {
+      toJson$Enum$PushNotificationType(
+          Enum$PushNotificationType.INVITATION_RECEIVED)) {
     final badgeCounter = await BadgeCounter.open();
     badgeCounter.setBadgeCount(badgeCounter.badgeCount + 1);
   }
@@ -80,9 +82,14 @@ Future main() async {
 
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
+  final onboarding = await Onboarding.open();
+  final badgeCounter = await BadgeCounter.open();
+
   runApp(
-    ProviderScope(
-        overrides: [graphqlClientProvider.overrideWithValue(graphqlClient)],
-        child: App()),
+    ProviderScope(overrides: [
+      graphqlClientProvider.overrideWithValue(graphqlClient),
+      onboardingProvider.overrideWithValue(onboarding),
+      pushNotificationBadgeCounter.overrideWithValue(badgeCounter)
+    ], child: App()),
   );
 }

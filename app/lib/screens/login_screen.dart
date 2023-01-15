@@ -3,11 +3,13 @@ import 'dart:math';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_signin_button/button_list.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:gap/gap.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:hive/hive.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:invy/graphql/login_screen.graphql.dart';
 import 'package:invy/graphql/push_notification.graphql.dart';
@@ -15,8 +17,10 @@ import 'package:invy/graphql/schema.graphql.dart';
 import 'package:invy/graphql/viewer.graphql.dart';
 import 'package:invy/services/graphql_client.dart';
 import 'package:invy/state/auth.dart';
+import 'package:invy/state/onboarding.dart';
 
 import '../util/device.dart';
+import 'onboarding_screen.dart';
 
 class LoginScreen extends HookConsumerWidget {
   const LoginScreen({super.key});
@@ -24,6 +28,7 @@ class LoginScreen extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final graphqlClient = ref.read(graphqlClientProvider);
+    final onboarding = ref.read(onboardingProvider);
 
     signInToInvy() async {
       final firebaseUser = FirebaseAuth.instance.currentUser;
@@ -132,6 +137,14 @@ class LoginScreen extends HookConsumerWidget {
       }
     }
 
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!onboarding.isFinished) {
+        Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => const OnboardingScreen(),
+        ));
+      }
+    });
+
     return Scaffold(
         appBar: AppBar(
           title: const Text(
@@ -172,7 +185,7 @@ class LoginScreen extends HookConsumerWidget {
                           Buttons.Apple,
                           text: 'Apple サインイン',
                           onPressed: onAppleSignInPressed,
-                          padding: EdgeInsets.symmetric(
+                          padding: const EdgeInsets.symmetric(
                               vertical: 15, horizontal: 25),
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(30),

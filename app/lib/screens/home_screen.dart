@@ -31,7 +31,7 @@ class HomeScreen extends HookConsumerWidget {
         if (viewer == null) {
           return Scaffold(body: SingleChildScrollView(child: Container()));
         }
-        badgeCounter.value!.setBadgeCount(viewer.pendingInvitations.length);
+        badgeCounter.setBadgeCount(viewer.pendingInvitations.length);
         return Scaffold(
           backgroundColor: Colors.grey.shade100,
           body: SingleChildScrollView(
