@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:graphql/client.dart';
@@ -34,10 +33,10 @@ class InvitationScreen extends HookConsumerWidget {
           final viewer = snapshot.data?.parsedData?.viewer;
           return Scaffold(
             appBar: AppBar(
-              leading: AppBarLeading(),
+              leading: const AppBarLeading(),
               title: Text(
-                selectedCount > 0 ? '選択中(${selectedCount})' : '友だちを選択',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                selectedCount > 0 ? '選択中($selectedCount)' : '友だちを選択',
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               actions: <Widget>[
                 TextButton(

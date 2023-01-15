@@ -8,7 +8,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
-import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:invy/config/config.dart';
@@ -90,6 +89,6 @@ Future main() async {
       graphqlClientProvider.overrideWithValue(graphqlClient),
       onboardingProvider.overrideWithValue(onboarding),
       pushNotificationBadgeCounter.overrideWithValue(badgeCounter)
-    ], child: App()),
+    ], child: const App()),
   );
 }

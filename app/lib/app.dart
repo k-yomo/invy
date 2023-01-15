@@ -5,7 +5,6 @@ import 'package:graphql/client.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:invy/graphql/viewer.graphql.dart';
 import 'package:invy/screens/invitation_screen.dart';
-import 'package:invy/screens/onboarding_screen.dart';
 import 'package:invy/services/graphql_client.dart';
 import 'package:invy/state/bottom_navigation.dart';
 

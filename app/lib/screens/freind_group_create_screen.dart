@@ -58,10 +58,10 @@ class FriendGroupCreateScreen extends HookConsumerWidget {
 
           return Scaffold(
               appBar: AppBar(
-                leading: AppBarLeading(),
+                leading: const AppBarLeading(),
                 title: Text(
-                  selectedCount > 0 ? '選択中(${selectedCount})' : 'グループ作成',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  selectedCount > 0 ? '選択中($selectedCount)' : 'グループ作成',
+                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 actions: <Widget>[
                   TextButton(
@@ -81,7 +81,7 @@ class FriendGroupCreateScreen extends HookConsumerWidget {
                     bottom: BorderSide(color: Colors.grey.shade200, width: 1)),
               ),
               body: Container(
-                margin: EdgeInsets.only(top: 30, left: 20, right: 20),
+                margin: const EdgeInsets.only(top: 30, left: 20, right: 20),
                 child: Column(
                   children: [
                     TextField(

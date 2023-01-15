@@ -14,12 +14,12 @@ class Fragment$friendGroupListItemFragment {
     final l$id = json['id'];
     final l$name = json['name'];
     final l$totalCount = json['totalCount'];
-    final l$$__typename = json['__typename'];
+    final l$$Typename = json['__typename'];
     return Fragment$friendGroupListItemFragment(
       id: (l$id as String),
       name: (l$name as String),
       totalCount: (l$totalCount as int),
-      $__typename: (l$$__typename as String),
+      $__typename: (l$$Typename as String),
     );
   }
 
@@ -32,16 +32,16 @@ class Fragment$friendGroupListItemFragment {
   final String $__typename;
 
   Map<String, dynamic> toJson() {
-    final _resultData = <String, dynamic>{};
+    final resultData = <String, dynamic>{};
     final l$id = id;
-    _resultData['id'] = l$id;
+    resultData['id'] = l$id;
     final l$name = name;
-    _resultData['name'] = l$name;
+    resultData['name'] = l$name;
     final l$totalCount = totalCount;
-    _resultData['totalCount'] = l$totalCount;
-    final l$$__typename = $__typename;
-    _resultData['__typename'] = l$$__typename;
-    return _resultData;
+    resultData['totalCount'] = l$totalCount;
+    final l$$Typename = $__typename;
+    resultData['__typename'] = l$$Typename;
+    return resultData;
   }
 
   @override
@@ -49,12 +49,12 @@ class Fragment$friendGroupListItemFragment {
     final l$id = id;
     final l$name = name;
     final l$totalCount = totalCount;
-    final l$$__typename = $__typename;
+    final l$$Typename = $__typename;
     return Object.hashAll([
       l$id,
       l$name,
       l$totalCount,
-      l$$__typename,
+      l$$Typename,
     ]);
   }
 
@@ -63,7 +63,7 @@ class Fragment$friendGroupListItemFragment {
     if (identical(this, other)) {
       return true;
     }
-    if (!(other is Fragment$friendGroupListItemFragment) ||
+    if (other is! Fragment$friendGroupListItemFragment ||
         runtimeType != other.runtimeType) {
       return false;
     }
@@ -82,9 +82,9 @@ class Fragment$friendGroupListItemFragment {
     if (l$totalCount != lOther$totalCount) {
       return false;
     }
-    final l$$__typename = $__typename;
-    final lOther$$__typename = other.$__typename;
-    if (l$$__typename != lOther$$__typename) {
+    final l$$Typename = $__typename;
+    final lOther$$Typename = other.$__typename;
+    if (l$$Typename != lOther$$Typename) {
       return false;
     }
     return true;
@@ -131,6 +131,7 @@ class _CopyWithImpl$Fragment$friendGroupListItemFragment<TRes>
 
   static const _undefined = {};
 
+  @override
   TRes call({
     Object? id = _undefined,
     Object? name = _undefined,
@@ -155,8 +156,9 @@ class _CopyWithStubImpl$Fragment$friendGroupListItemFragment<TRes>
     implements CopyWith$Fragment$friendGroupListItemFragment<TRes> {
   _CopyWithStubImpl$Fragment$friendGroupListItemFragment(this._res);
 
-  TRes _res;
+  final TRes _res;
 
+  @override
   call({
     String? id,
     String? name,
@@ -217,7 +219,7 @@ extension ClientExtension$Fragment$friendGroupListItemFragment
     required Map<String, dynamic> idFields,
     bool broadcast = true,
   }) =>
-      this.writeFragment(
+      writeFragment(
         graphql.FragmentRequest(
           idFields: idFields,
           fragment: const graphql.Fragment(
@@ -233,7 +235,7 @@ extension ClientExtension$Fragment$friendGroupListItemFragment
     required Map<String, dynamic> idFields,
     bool optimistic = true,
   }) {
-    final result = this.readFragment(
+    final result = readFragment(
       graphql.FragmentRequest(
         idFields: idFields,
         fragment: const graphql.Fragment(

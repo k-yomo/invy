@@ -26,7 +26,6 @@ class FriendList extends HookConsumerWidget {
 
 class _FriendListItem extends HookConsumerWidget {
   const _FriendListItem({
-    super.key,
     required this.friend,
   });
 
@@ -64,7 +63,7 @@ class _FriendListItem extends HookConsumerWidget {
         children: [
           SlidableAction(
             onPressed: onPressed,
-            backgroundColor: Color(0xFFFE4A49),
+            backgroundColor: const Color(0xFFFE4A49),
             foregroundColor: Colors.white,
             icon: friend.value.isMuted ? Icons.volume_off : Icons.volume_up,
             label: friend.value.isMuted ? 'Unmute' : 'mute',

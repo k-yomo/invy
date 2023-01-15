@@ -31,7 +31,7 @@ Future<DeviceInfo> getDeviceInfo() async {
     // it must be Android if not iOS
     final androidInfo = await DeviceInfoPlugin().androidInfo;
     return DeviceInfo(
-      osVersion: androidInfo.version.release!,
+      osVersion: androidInfo.version.release,
       manufacturer: androidInfo.manufacturer,
       model: androidInfo.model,
       deviceId: deviceId,

@@ -1,7 +1,5 @@
-import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
 import 'package:graphql/client.dart';
@@ -80,8 +78,8 @@ class ProfileEditScreen extends HookConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        leading: AppBarLeading(),
-        title: Text(
+        leading: const AppBarLeading(),
+        title: const Text(
           'プロフィール編集',
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
@@ -92,19 +90,19 @@ class ProfileEditScreen extends HookConsumerWidget {
       body: Center(
         child: Column(children: <Widget>[
           Container(
-            margin: EdgeInsets.only(top: 60),
-            padding: EdgeInsets.symmetric(horizontal: 20),
+            margin: const EdgeInsets.only(top: 60),
+            padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Column(
               children: [
                 CircleAvatar(
                   radius: 60.0,
                   backgroundImage: NetworkImage(user.avatarUrl),
                 ),
-                Gap(10),
+                const Gap(10),
                 OutlinedButton(
                   onPressed: onPressedAvatarUpdate,
                   child: avatarUpdateLoading.value
-                      ? SizedBox(
+                      ? const SizedBox(
                           width: 20,
                           height: 20,
                           child: CircularProgressIndicator(
@@ -112,10 +110,10 @@ class ProfileEditScreen extends HookConsumerWidget {
                             strokeWidth: 3,
                           ),
                         )
-                      : Text("プロフィール写真を変更",
+                      : const Text("プロフィール写真を変更",
                           style: TextStyle(color: Colors.black)),
                 ),
-                Gap(20),
+                const Gap(20),
                 TextFormField(
                   controller: TextEditingController(text: user.nickname),
                   cursorColor: Colors.grey.shade600,

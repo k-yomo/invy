@@ -50,11 +50,11 @@ class FriendScreen extends HookConsumerWidget {
                             Navigator.of(context).push(
                               MaterialPageRoute(
                                 fullscreenDialog: true,
-                                builder: (context) => FriendGroupCreateScreen(),
+                                builder: (context) => const FriendGroupCreateScreen(),
                               ),
                             );
                           },
-                          child: _AddFriendGroup(),
+                          child: const _AddFriendGroup(),
                         ),
                         FriendGroupList(
                             friendGroups: viewer?.friendGroups.toList() ?? [])
@@ -69,11 +69,11 @@ class FriendScreen extends HookConsumerWidget {
                             Navigator.of(context).push(
                               MaterialPageRoute(
                                 fullscreenDialog: true,
-                                builder: (context) => FriendshipRequestScreen(),
+                                builder: (context) => const FriendshipRequestScreen(),
                               ),
                             );
                           },
-                          child: _AddFriend(),
+                          child: const _AddFriend(),
                         ),
                         PendingFriendshipRequestList(
                           pendingFriendshipRequests:
@@ -102,7 +102,7 @@ class FriendScreen extends HookConsumerWidget {
 }
 
 class _AddFriendGroup extends StatelessWidget {
-  const _AddFriendGroup({super.key});
+  const _AddFriendGroup();
 
   @override
   Widget build(BuildContext context) {
@@ -114,16 +114,16 @@ class _AddFriendGroup extends StatelessWidget {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(100),
             ),
-            child: CircleAvatar(
+            child: const CircleAvatar(
               backgroundColor: Colors.white,
               child: Icon(Icons.group_add_outlined, color: Colors.black),
             ),
           ),
           Container(
             margin: const EdgeInsets.only(left: 10, right: 2),
-            child: Text(
+            child: const Text(
               "グループを作成する",
-              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
               overflow: TextOverflow.ellipsis,
             ),
           ),
@@ -134,7 +134,7 @@ class _AddFriendGroup extends StatelessWidget {
 }
 
 class _AddFriend extends StatelessWidget {
-  const _AddFriend({super.key});
+  const _AddFriend();
 
   @override
   Widget build(BuildContext context) {
@@ -146,16 +146,16 @@ class _AddFriend extends StatelessWidget {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(100),
             ),
-            child: CircleAvatar(
+            child: const CircleAvatar(
               backgroundColor: Colors.white,
               child: Icon(Icons.person_add_alt_outlined, color: Colors.black),
             ),
           ),
           Container(
             margin: const EdgeInsets.only(left: 10, right: 2),
-            child: Text(
+            child: const Text(
               "友だちを追加する",
-              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
               overflow: TextOverflow.ellipsis,
             ),
           ),

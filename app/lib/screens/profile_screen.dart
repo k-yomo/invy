@@ -47,24 +47,24 @@ class ProfileScreen extends HookConsumerWidget {
                   backgroundImage: NetworkImage(user.avatarUrl),
                 ),
                 Container(
-                  margin: EdgeInsets.symmetric(vertical: 15),
+                  margin: const EdgeInsets.symmetric(vertical: 15),
                   child: Text(
                     user.nickname,
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                    style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                   ),
                 ),
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text("ユーザーID | ${user.screenId}",
-                        style: TextStyle(color: Colors.black, fontSize: 16)),
+                        style: const TextStyle(color: Colors.black, fontSize: 16)),
                     Container(
-                      margin: EdgeInsets.only(left: 10),
+                      margin: const EdgeInsets.only(left: 10),
                       child: OutlinedButton(
                         style: OutlinedButton.styleFrom(
                           minimumSize: Size.zero,
                           padding:
-                              EdgeInsets.symmetric(vertical: 3, horizontal: 10),
+                              const EdgeInsets.symmetric(vertical: 3, horizontal: 10),
                         ),
                         onPressed: () async {
                           Clipboard.setData(ClipboardData(text: user.screenId))
@@ -73,7 +73,7 @@ class ProfileScreen extends HookConsumerWidget {
                           );
                         },
                         child: Row(
-                          children: [
+                          children: const [
                             Text("コピー",
                                 style: TextStyle(
                                     color: Colors.black, fontSize: 12)),
@@ -84,15 +84,15 @@ class ProfileScreen extends HookConsumerWidget {
                     ),
                   ],
                 ),
-                Gap(10),
+                const Gap(10),
                 OutlinedButton(
                   onPressed: () {
                     Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => ProfileEditScreen(),
+                      builder: (context) => const ProfileEditScreen(),
                     ));
                   },
                   child:
-                      Text("プロフィールを編集", style: TextStyle(color: Colors.black)),
+                      const Text("プロフィールを編集", style: TextStyle(color: Colors.black)),
                 ),
               ],
             ),
@@ -101,7 +101,7 @@ class ProfileScreen extends HookConsumerWidget {
             child: Align(
               alignment: FractionalOffset.bottomCenter,
               child: Container(
-                margin: EdgeInsets.symmetric(vertical: 50),
+                margin: const EdgeInsets.symmetric(vertical: 50),
                 child: OutlinedButton(
                   onPressed: () async {
                     await graphqlClient.mutate$signOut();

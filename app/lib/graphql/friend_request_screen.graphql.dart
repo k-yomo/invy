@@ -39,7 +39,7 @@ class Variables$Query$searchUser {
     if (identical(this, other)) {
       return true;
     }
-    if (!(other is Variables$Query$searchUser) ||
+    if (other is! Variables$Query$searchUser ||
         runtimeType != other.runtimeType) {
       return false;
     }
@@ -83,6 +83,7 @@ class _CopyWithImpl$Variables$Query$searchUser<TRes>
 
   static const _undefined = {};
 
+  @override
   TRes call({Object? userScreenId = _undefined}) =>
       _then(Variables$Query$searchUser._({
         ..._instance._$data,
@@ -95,8 +96,9 @@ class _CopyWithStubImpl$Variables$Query$searchUser<TRes>
     implements CopyWith$Variables$Query$searchUser<TRes> {
   _CopyWithStubImpl$Variables$Query$searchUser(this._res);
 
-  TRes _res;
+  final TRes _res;
 
+  @override
   call({String? userScreenId}) => _res;
 }
 
@@ -108,11 +110,11 @@ class Query$searchUser {
 
   factory Query$searchUser.fromJson(Map<String, dynamic> json) {
     final l$userByScreenId = json['userByScreenId'];
-    final l$$__typename = json['__typename'];
+    final l$$Typename = json['__typename'];
     return Query$searchUser(
       userByScreenId: Query$searchUser$userByScreenId.fromJson(
           (l$userByScreenId as Map<String, dynamic>)),
-      $__typename: (l$$__typename as String),
+      $__typename: (l$$Typename as String),
     );
   }
 
@@ -121,21 +123,21 @@ class Query$searchUser {
   final String $__typename;
 
   Map<String, dynamic> toJson() {
-    final _resultData = <String, dynamic>{};
+    final resultData = <String, dynamic>{};
     final l$userByScreenId = userByScreenId;
-    _resultData['userByScreenId'] = l$userByScreenId.toJson();
-    final l$$__typename = $__typename;
-    _resultData['__typename'] = l$$__typename;
-    return _resultData;
+    resultData['userByScreenId'] = l$userByScreenId.toJson();
+    final l$$Typename = $__typename;
+    resultData['__typename'] = l$$Typename;
+    return resultData;
   }
 
   @override
   int get hashCode {
     final l$userByScreenId = userByScreenId;
-    final l$$__typename = $__typename;
+    final l$$Typename = $__typename;
     return Object.hashAll([
       l$userByScreenId,
-      l$$__typename,
+      l$$Typename,
     ]);
   }
 
@@ -144,7 +146,7 @@ class Query$searchUser {
     if (identical(this, other)) {
       return true;
     }
-    if (!(other is Query$searchUser) || runtimeType != other.runtimeType) {
+    if (other is! Query$searchUser || runtimeType != other.runtimeType) {
       return false;
     }
     final l$userByScreenId = userByScreenId;
@@ -152,9 +154,9 @@ class Query$searchUser {
     if (l$userByScreenId != lOther$userByScreenId) {
       return false;
     }
-    final l$$__typename = $__typename;
-    final lOther$$__typename = other.$__typename;
-    if (l$$__typename != lOther$$__typename) {
+    final l$$Typename = $__typename;
+    final lOther$$Typename = other.$__typename;
+    if (l$$Typename != lOther$$Typename) {
       return false;
     }
     return true;
@@ -198,6 +200,7 @@ class _CopyWithImpl$Query$searchUser<TRes>
 
   static const _undefined = {};
 
+  @override
   TRes call({
     Object? userByScreenId = _undefined,
     Object? $__typename = _undefined,
@@ -210,6 +213,7 @@ class _CopyWithImpl$Query$searchUser<TRes>
             ? _instance.$__typename
             : ($__typename as String),
       ));
+  @override
   CopyWith$Query$searchUser$userByScreenId<TRes> get userByScreenId {
     final local$userByScreenId = _instance.userByScreenId;
     return CopyWith$Query$searchUser$userByScreenId(
@@ -221,13 +225,15 @@ class _CopyWithStubImpl$Query$searchUser<TRes>
     implements CopyWith$Query$searchUser<TRes> {
   _CopyWithStubImpl$Query$searchUser(this._res);
 
-  TRes _res;
+  final TRes _res;
 
+  @override
   call({
     Query$searchUser$userByScreenId? userByScreenId,
     String? $__typename,
   }) =>
       _res;
+  @override
   CopyWith$Query$searchUser$userByScreenId<TRes> get userByScreenId =>
       CopyWith$Query$searchUser$userByScreenId.stub(_res);
 }
@@ -386,18 +392,18 @@ class FetchMoreOptions$Query$searchUser extends graphql.FetchMoreOptions {
 extension ClientExtension$Query$searchUser on graphql.GraphQLClient {
   Future<graphql.QueryResult<Query$searchUser>> query$searchUser(
           Options$Query$searchUser options) async =>
-      await this.query(options);
+      await query(options);
   graphql.ObservableQuery<Query$searchUser> watchQuery$searchUser(
           WatchOptions$Query$searchUser options) =>
-      this.watchQuery(options);
+      watchQuery(options);
   void writeQuery$searchUser({
     required Query$searchUser data,
     required Variables$Query$searchUser variables,
     bool broadcast = true,
   }) =>
-      this.writeQuery(
+      writeQuery(
         graphql.Request(
-          operation: graphql.Operation(document: documentNodeQuerysearchUser),
+          operation: const graphql.Operation(document: documentNodeQuerysearchUser),
           variables: variables.toJson(),
         ),
         data: data.toJson(),
@@ -407,9 +413,9 @@ extension ClientExtension$Query$searchUser on graphql.GraphQLClient {
     required Variables$Query$searchUser variables,
     bool optimistic = true,
   }) {
-    final result = this.readQuery(
+    final result = readQuery(
       graphql.Request(
-        operation: graphql.Operation(document: documentNodeQuerysearchUser),
+        operation: const graphql.Operation(document: documentNodeQuerysearchUser),
         variables: variables.toJson(),
       ),
       optimistic: optimistic,
@@ -426,7 +432,7 @@ graphql.ObservableQuery<Query$searchUser> useWatchQuery$searchUser(
     graphql_flutter.useWatchQuery(options);
 
 class Query$searchUser$Widget extends graphql_flutter.Query<Query$searchUser> {
-  Query$searchUser$Widget({
+  const Query$searchUser$Widget({
     widgets.Key? key,
     required Options$Query$searchUser options,
     required graphql_flutter.QueryBuilder<Query$searchUser> builder,
@@ -453,14 +459,14 @@ class Query$searchUser$userByScreenId {
     final l$avatarUrl = json['avatarUrl'];
     final l$isFriend = json['isFriend'];
     final l$isRequestingFriendship = json['isRequestingFriendship'];
-    final l$$__typename = json['__typename'];
+    final l$$Typename = json['__typename'];
     return Query$searchUser$userByScreenId(
       id: (l$id as String),
       nickname: (l$nickname as String),
       avatarUrl: (l$avatarUrl as String),
       isFriend: (l$isFriend as bool),
       isRequestingFriendship: (l$isRequestingFriendship as bool),
-      $__typename: (l$$__typename as String),
+      $__typename: (l$$Typename as String),
     );
   }
 
@@ -477,20 +483,20 @@ class Query$searchUser$userByScreenId {
   final String $__typename;
 
   Map<String, dynamic> toJson() {
-    final _resultData = <String, dynamic>{};
+    final resultData = <String, dynamic>{};
     final l$id = id;
-    _resultData['id'] = l$id;
+    resultData['id'] = l$id;
     final l$nickname = nickname;
-    _resultData['nickname'] = l$nickname;
+    resultData['nickname'] = l$nickname;
     final l$avatarUrl = avatarUrl;
-    _resultData['avatarUrl'] = l$avatarUrl;
+    resultData['avatarUrl'] = l$avatarUrl;
     final l$isFriend = isFriend;
-    _resultData['isFriend'] = l$isFriend;
+    resultData['isFriend'] = l$isFriend;
     final l$isRequestingFriendship = isRequestingFriendship;
-    _resultData['isRequestingFriendship'] = l$isRequestingFriendship;
-    final l$$__typename = $__typename;
-    _resultData['__typename'] = l$$__typename;
-    return _resultData;
+    resultData['isRequestingFriendship'] = l$isRequestingFriendship;
+    final l$$Typename = $__typename;
+    resultData['__typename'] = l$$Typename;
+    return resultData;
   }
 
   @override
@@ -500,14 +506,14 @@ class Query$searchUser$userByScreenId {
     final l$avatarUrl = avatarUrl;
     final l$isFriend = isFriend;
     final l$isRequestingFriendship = isRequestingFriendship;
-    final l$$__typename = $__typename;
+    final l$$Typename = $__typename;
     return Object.hashAll([
       l$id,
       l$nickname,
       l$avatarUrl,
       l$isFriend,
       l$isRequestingFriendship,
-      l$$__typename,
+      l$$Typename,
     ]);
   }
 
@@ -516,7 +522,7 @@ class Query$searchUser$userByScreenId {
     if (identical(this, other)) {
       return true;
     }
-    if (!(other is Query$searchUser$userByScreenId) ||
+    if (other is! Query$searchUser$userByScreenId ||
         runtimeType != other.runtimeType) {
       return false;
     }
@@ -545,9 +551,9 @@ class Query$searchUser$userByScreenId {
     if (l$isRequestingFriendship != lOther$isRequestingFriendship) {
       return false;
     }
-    final l$$__typename = $__typename;
-    final lOther$$__typename = other.$__typename;
-    if (l$$__typename != lOther$$__typename) {
+    final l$$Typename = $__typename;
+    final lOther$$Typename = other.$__typename;
+    if (l$$Typename != lOther$$Typename) {
       return false;
     }
     return true;
@@ -595,6 +601,7 @@ class _CopyWithImpl$Query$searchUser$userByScreenId<TRes>
 
   static const _undefined = {};
 
+  @override
   TRes call({
     Object? id = _undefined,
     Object? nickname = _undefined,
@@ -628,8 +635,9 @@ class _CopyWithStubImpl$Query$searchUser$userByScreenId<TRes>
     implements CopyWith$Query$searchUser$userByScreenId<TRes> {
   _CopyWithStubImpl$Query$searchUser$userByScreenId(this._res);
 
-  TRes _res;
+  final TRes _res;
 
+  @override
   call({
     String? id,
     String? nickname,
@@ -678,7 +686,7 @@ class Variables$Mutation$requestFriendship {
     if (identical(this, other)) {
       return true;
     }
-    if (!(other is Variables$Mutation$requestFriendship) ||
+    if (other is! Variables$Mutation$requestFriendship ||
         runtimeType != other.runtimeType) {
       return false;
     }
@@ -722,6 +730,7 @@ class _CopyWithImpl$Variables$Mutation$requestFriendship<TRes>
 
   static const _undefined = {};
 
+  @override
   TRes call({Object? userId = _undefined}) =>
       _then(Variables$Mutation$requestFriendship._({
         ..._instance._$data,
@@ -734,8 +743,9 @@ class _CopyWithStubImpl$Variables$Mutation$requestFriendship<TRes>
     implements CopyWith$Variables$Mutation$requestFriendship<TRes> {
   _CopyWithStubImpl$Variables$Mutation$requestFriendship(this._res);
 
-  TRes _res;
+  final TRes _res;
 
+  @override
   call({String? userId}) => _res;
 }
 
@@ -747,11 +757,11 @@ class Mutation$requestFriendship {
 
   factory Mutation$requestFriendship.fromJson(Map<String, dynamic> json) {
     final l$requestFriendship = json['requestFriendship'];
-    final l$$__typename = json['__typename'];
+    final l$$Typename = json['__typename'];
     return Mutation$requestFriendship(
       requestFriendship: Mutation$requestFriendship$requestFriendship.fromJson(
           (l$requestFriendship as Map<String, dynamic>)),
-      $__typename: (l$$__typename as String),
+      $__typename: (l$$Typename as String),
     );
   }
 
@@ -760,21 +770,21 @@ class Mutation$requestFriendship {
   final String $__typename;
 
   Map<String, dynamic> toJson() {
-    final _resultData = <String, dynamic>{};
+    final resultData = <String, dynamic>{};
     final l$requestFriendship = requestFriendship;
-    _resultData['requestFriendship'] = l$requestFriendship.toJson();
-    final l$$__typename = $__typename;
-    _resultData['__typename'] = l$$__typename;
-    return _resultData;
+    resultData['requestFriendship'] = l$requestFriendship.toJson();
+    final l$$Typename = $__typename;
+    resultData['__typename'] = l$$Typename;
+    return resultData;
   }
 
   @override
   int get hashCode {
     final l$requestFriendship = requestFriendship;
-    final l$$__typename = $__typename;
+    final l$$Typename = $__typename;
     return Object.hashAll([
       l$requestFriendship,
-      l$$__typename,
+      l$$Typename,
     ]);
   }
 
@@ -783,7 +793,7 @@ class Mutation$requestFriendship {
     if (identical(this, other)) {
       return true;
     }
-    if (!(other is Mutation$requestFriendship) ||
+    if (other is! Mutation$requestFriendship ||
         runtimeType != other.runtimeType) {
       return false;
     }
@@ -792,9 +802,9 @@ class Mutation$requestFriendship {
     if (l$requestFriendship != lOther$requestFriendship) {
       return false;
     }
-    final l$$__typename = $__typename;
-    final lOther$$__typename = other.$__typename;
-    if (l$$__typename != lOther$$__typename) {
+    final l$$Typename = $__typename;
+    final lOther$$Typename = other.$__typename;
+    if (l$$Typename != lOther$$Typename) {
       return false;
     }
     return true;
@@ -840,6 +850,7 @@ class _CopyWithImpl$Mutation$requestFriendship<TRes>
 
   static const _undefined = {};
 
+  @override
   TRes call({
     Object? requestFriendship = _undefined,
     Object? $__typename = _undefined,
@@ -854,6 +865,7 @@ class _CopyWithImpl$Mutation$requestFriendship<TRes>
             ? _instance.$__typename
             : ($__typename as String),
       ));
+  @override
   CopyWith$Mutation$requestFriendship$requestFriendship<TRes>
       get requestFriendship {
     final local$requestFriendship = _instance.requestFriendship;
@@ -866,13 +878,15 @@ class _CopyWithStubImpl$Mutation$requestFriendship<TRes>
     implements CopyWith$Mutation$requestFriendship<TRes> {
   _CopyWithStubImpl$Mutation$requestFriendship(this._res);
 
-  TRes _res;
+  final TRes _res;
 
+  @override
   call({
     Mutation$requestFriendship$requestFriendship? requestFriendship,
     String? $__typename,
   }) =>
       _res;
+  @override
   CopyWith$Mutation$requestFriendship$requestFriendship<TRes>
       get requestFriendship =>
           CopyWith$Mutation$requestFriendship$requestFriendship.stub(_res);
@@ -1038,11 +1052,11 @@ extension ClientExtension$Mutation$requestFriendship on graphql.GraphQLClient {
   Future<graphql.QueryResult<Mutation$requestFriendship>>
       mutate$requestFriendship(
               Options$Mutation$requestFriendship options) async =>
-          await this.mutate(options);
+          await mutate(options);
   graphql.ObservableQuery<Mutation$requestFriendship>
       watchMutation$requestFriendship(
               WatchOptions$Mutation$requestFriendship options) =>
-          this.watchMutation(options);
+          watchMutation(options);
 }
 
 class Mutation$requestFriendship$HookResult {
@@ -1165,12 +1179,12 @@ class Mutation$requestFriendship$requestFriendship {
   factory Mutation$requestFriendship$requestFriendship.fromJson(
       Map<String, dynamic> json) {
     final l$friendShipRequest = json['friendShipRequest'];
-    final l$$__typename = json['__typename'];
+    final l$$Typename = json['__typename'];
     return Mutation$requestFriendship$requestFriendship(
       friendShipRequest:
           Mutation$requestFriendship$requestFriendship$friendShipRequest
               .fromJson((l$friendShipRequest as Map<String, dynamic>)),
-      $__typename: (l$$__typename as String),
+      $__typename: (l$$Typename as String),
     );
   }
 
@@ -1180,21 +1194,21 @@ class Mutation$requestFriendship$requestFriendship {
   final String $__typename;
 
   Map<String, dynamic> toJson() {
-    final _resultData = <String, dynamic>{};
+    final resultData = <String, dynamic>{};
     final l$friendShipRequest = friendShipRequest;
-    _resultData['friendShipRequest'] = l$friendShipRequest.toJson();
-    final l$$__typename = $__typename;
-    _resultData['__typename'] = l$$__typename;
-    return _resultData;
+    resultData['friendShipRequest'] = l$friendShipRequest.toJson();
+    final l$$Typename = $__typename;
+    resultData['__typename'] = l$$Typename;
+    return resultData;
   }
 
   @override
   int get hashCode {
     final l$friendShipRequest = friendShipRequest;
-    final l$$__typename = $__typename;
+    final l$$Typename = $__typename;
     return Object.hashAll([
       l$friendShipRequest,
-      l$$__typename,
+      l$$Typename,
     ]);
   }
 
@@ -1203,7 +1217,7 @@ class Mutation$requestFriendship$requestFriendship {
     if (identical(this, other)) {
       return true;
     }
-    if (!(other is Mutation$requestFriendship$requestFriendship) ||
+    if (other is! Mutation$requestFriendship$requestFriendship ||
         runtimeType != other.runtimeType) {
       return false;
     }
@@ -1212,9 +1226,9 @@ class Mutation$requestFriendship$requestFriendship {
     if (l$friendShipRequest != lOther$friendShipRequest) {
       return false;
     }
-    final l$$__typename = $__typename;
-    final lOther$$__typename = other.$__typename;
-    if (l$$__typename != lOther$$__typename) {
+    final l$$Typename = $__typename;
+    final lOther$$Typename = other.$__typename;
+    if (l$$Typename != lOther$$Typename) {
       return false;
     }
     return true;
@@ -1262,6 +1276,7 @@ class _CopyWithImpl$Mutation$requestFriendship$requestFriendship<TRes>
 
   static const _undefined = {};
 
+  @override
   TRes call({
     Object? friendShipRequest = _undefined,
     Object? $__typename = _undefined,
@@ -1276,6 +1291,7 @@ class _CopyWithImpl$Mutation$requestFriendship$requestFriendship<TRes>
             ? _instance.$__typename
             : ($__typename as String),
       ));
+  @override
   CopyWith$Mutation$requestFriendship$requestFriendship$friendShipRequest<TRes>
       get friendShipRequest {
     final local$friendShipRequest = _instance.friendShipRequest;
@@ -1288,14 +1304,16 @@ class _CopyWithStubImpl$Mutation$requestFriendship$requestFriendship<TRes>
     implements CopyWith$Mutation$requestFriendship$requestFriendship<TRes> {
   _CopyWithStubImpl$Mutation$requestFriendship$requestFriendship(this._res);
 
-  TRes _res;
+  final TRes _res;
 
+  @override
   call({
     Mutation$requestFriendship$requestFriendship$friendShipRequest?
         friendShipRequest,
     String? $__typename,
   }) =>
       _res;
+  @override
   CopyWith$Mutation$requestFriendship$requestFriendship$friendShipRequest<TRes>
       get friendShipRequest =>
           CopyWith$Mutation$requestFriendship$requestFriendship$friendShipRequest
@@ -1311,10 +1329,10 @@ class Mutation$requestFriendship$requestFriendship$friendShipRequest {
   factory Mutation$requestFriendship$requestFriendship$friendShipRequest.fromJson(
       Map<String, dynamic> json) {
     final l$id = json['id'];
-    final l$$__typename = json['__typename'];
+    final l$$Typename = json['__typename'];
     return Mutation$requestFriendship$requestFriendship$friendShipRequest(
       id: (l$id as String),
-      $__typename: (l$$__typename as String),
+      $__typename: (l$$Typename as String),
     );
   }
 
@@ -1323,21 +1341,21 @@ class Mutation$requestFriendship$requestFriendship$friendShipRequest {
   final String $__typename;
 
   Map<String, dynamic> toJson() {
-    final _resultData = <String, dynamic>{};
+    final resultData = <String, dynamic>{};
     final l$id = id;
-    _resultData['id'] = l$id;
-    final l$$__typename = $__typename;
-    _resultData['__typename'] = l$$__typename;
-    return _resultData;
+    resultData['id'] = l$id;
+    final l$$Typename = $__typename;
+    resultData['__typename'] = l$$Typename;
+    return resultData;
   }
 
   @override
   int get hashCode {
     final l$id = id;
-    final l$$__typename = $__typename;
+    final l$$Typename = $__typename;
     return Object.hashAll([
       l$id,
-      l$$__typename,
+      l$$Typename,
     ]);
   }
 
@@ -1346,8 +1364,8 @@ class Mutation$requestFriendship$requestFriendship$friendShipRequest {
     if (identical(this, other)) {
       return true;
     }
-    if (!(other
-            is Mutation$requestFriendship$requestFriendship$friendShipRequest) ||
+    if (other
+            is! Mutation$requestFriendship$requestFriendship$friendShipRequest ||
         runtimeType != other.runtimeType) {
       return false;
     }
@@ -1356,9 +1374,9 @@ class Mutation$requestFriendship$requestFriendship$friendShipRequest {
     if (l$id != lOther$id) {
       return false;
     }
-    final l$$__typename = $__typename;
-    final lOther$$__typename = other.$__typename;
-    if (l$$__typename != lOther$$__typename) {
+    final l$$Typename = $__typename;
+    final lOther$$Typename = other.$__typename;
+    if (l$$Typename != lOther$$Typename) {
       return false;
     }
     return true;
@@ -1413,6 +1431,7 @@ class _CopyWithImpl$Mutation$requestFriendship$requestFriendship$friendShipReque
 
   static const _undefined = {};
 
+  @override
   TRes call({
     Object? id = _undefined,
     Object? $__typename = _undefined,
@@ -1433,8 +1452,9 @@ class _CopyWithStubImpl$Mutation$requestFriendship$requestFriendship$friendShipR
   _CopyWithStubImpl$Mutation$requestFriendship$requestFriendship$friendShipRequest(
       this._res);
 
-  TRes _res;
+  final TRes _res;
 
+  @override
   call({
     String? id,
     String? $__typename,

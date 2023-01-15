@@ -1,6 +1,5 @@
 import 'package:hive/hive.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:flutter_app_badger/flutter_app_badger.dart';
 
 final onboardingProvider = Provider<Onboarding>((_) {
   throw Exception();

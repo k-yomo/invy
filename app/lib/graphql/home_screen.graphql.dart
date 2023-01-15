@@ -13,11 +13,11 @@ class Query$homeScreenViewer {
 
   factory Query$homeScreenViewer.fromJson(Map<String, dynamic> json) {
     final l$viewer = json['viewer'];
-    final l$$__typename = json['__typename'];
+    final l$$Typename = json['__typename'];
     return Query$homeScreenViewer(
       viewer: Query$homeScreenViewer$viewer.fromJson(
           (l$viewer as Map<String, dynamic>)),
-      $__typename: (l$$__typename as String),
+      $__typename: (l$$Typename as String),
     );
   }
 
@@ -26,21 +26,21 @@ class Query$homeScreenViewer {
   final String $__typename;
 
   Map<String, dynamic> toJson() {
-    final _resultData = <String, dynamic>{};
+    final resultData = <String, dynamic>{};
     final l$viewer = viewer;
-    _resultData['viewer'] = l$viewer.toJson();
-    final l$$__typename = $__typename;
-    _resultData['__typename'] = l$$__typename;
-    return _resultData;
+    resultData['viewer'] = l$viewer.toJson();
+    final l$$Typename = $__typename;
+    resultData['__typename'] = l$$Typename;
+    return resultData;
   }
 
   @override
   int get hashCode {
     final l$viewer = viewer;
-    final l$$__typename = $__typename;
+    final l$$Typename = $__typename;
     return Object.hashAll([
       l$viewer,
-      l$$__typename,
+      l$$Typename,
     ]);
   }
 
@@ -49,7 +49,7 @@ class Query$homeScreenViewer {
     if (identical(this, other)) {
       return true;
     }
-    if (!(other is Query$homeScreenViewer) ||
+    if (other is! Query$homeScreenViewer ||
         runtimeType != other.runtimeType) {
       return false;
     }
@@ -58,9 +58,9 @@ class Query$homeScreenViewer {
     if (l$viewer != lOther$viewer) {
       return false;
     }
-    final l$$__typename = $__typename;
-    final lOther$$__typename = other.$__typename;
-    if (l$$__typename != lOther$$__typename) {
+    final l$$Typename = $__typename;
+    final lOther$$Typename = other.$__typename;
+    if (l$$Typename != lOther$$Typename) {
       return false;
     }
     return true;
@@ -104,6 +104,7 @@ class _CopyWithImpl$Query$homeScreenViewer<TRes>
 
   static const _undefined = {};
 
+  @override
   TRes call({
     Object? viewer = _undefined,
     Object? $__typename = _undefined,
@@ -116,6 +117,7 @@ class _CopyWithImpl$Query$homeScreenViewer<TRes>
             ? _instance.$__typename
             : ($__typename as String),
       ));
+  @override
   CopyWith$Query$homeScreenViewer$viewer<TRes> get viewer {
     final local$viewer = _instance.viewer;
     return CopyWith$Query$homeScreenViewer$viewer(
@@ -127,13 +129,15 @@ class _CopyWithStubImpl$Query$homeScreenViewer<TRes>
     implements CopyWith$Query$homeScreenViewer<TRes> {
   _CopyWithStubImpl$Query$homeScreenViewer(this._res);
 
-  TRes _res;
+  final TRes _res;
 
+  @override
   call({
     Query$homeScreenViewer$viewer? viewer,
     String? $__typename,
   }) =>
       _res;
+  @override
   CopyWith$Query$homeScreenViewer$viewer<TRes> get viewer =>
       CopyWith$Query$homeScreenViewer$viewer.stub(_res);
 }
@@ -296,24 +300,24 @@ class FetchMoreOptions$Query$homeScreenViewer extends graphql.FetchMoreOptions {
 extension ClientExtension$Query$homeScreenViewer on graphql.GraphQLClient {
   Future<graphql.QueryResult<Query$homeScreenViewer>> query$homeScreenViewer(
           [Options$Query$homeScreenViewer? options]) async =>
-      await this.query(options ?? Options$Query$homeScreenViewer());
+      await query(options ?? Options$Query$homeScreenViewer());
   graphql.ObservableQuery<Query$homeScreenViewer> watchQuery$homeScreenViewer(
           [WatchOptions$Query$homeScreenViewer? options]) =>
-      this.watchQuery(options ?? WatchOptions$Query$homeScreenViewer());
+      watchQuery(options ?? WatchOptions$Query$homeScreenViewer());
   void writeQuery$homeScreenViewer({
     required Query$homeScreenViewer data,
     bool broadcast = true,
   }) =>
-      this.writeQuery(
-        graphql.Request(
+      writeQuery(
+        const graphql.Request(
             operation:
                 graphql.Operation(document: documentNodeQueryhomeScreenViewer)),
         data: data.toJson(),
         broadcast: broadcast,
       );
   Query$homeScreenViewer? readQuery$homeScreenViewer({bool optimistic = true}) {
-    final result = this.readQuery(
-      graphql.Request(
+    final result = readQuery(
+      const graphql.Request(
           operation:
               graphql.Operation(document: documentNodeQueryhomeScreenViewer)),
       optimistic: optimistic,
@@ -355,7 +359,7 @@ class Query$homeScreenViewer$viewer {
     final l$sentInvitations = json['sentInvitations'];
     final l$pendingInvitations = json['pendingInvitations'];
     final l$acceptedInvitations = json['acceptedInvitations'];
-    final l$$__typename = json['__typename'];
+    final l$$Typename = json['__typename'];
     return Query$homeScreenViewer$viewer(
       sentInvitations: (l$sentInvitations as List<dynamic>)
           .map((e) => Fragment$invitationCardFragment.fromJson(
@@ -369,7 +373,7 @@ class Query$homeScreenViewer$viewer {
           .map((e) => Fragment$invitationCardFragment.fromJson(
               (e as Map<String, dynamic>)))
           .toList(),
-      $__typename: (l$$__typename as String),
+      $__typename: (l$$Typename as String),
     );
   }
 
@@ -382,19 +386,19 @@ class Query$homeScreenViewer$viewer {
   final String $__typename;
 
   Map<String, dynamic> toJson() {
-    final _resultData = <String, dynamic>{};
+    final resultData = <String, dynamic>{};
     final l$sentInvitations = sentInvitations;
-    _resultData['sentInvitations'] =
+    resultData['sentInvitations'] =
         l$sentInvitations.map((e) => e.toJson()).toList();
     final l$pendingInvitations = pendingInvitations;
-    _resultData['pendingInvitations'] =
+    resultData['pendingInvitations'] =
         l$pendingInvitations.map((e) => e.toJson()).toList();
     final l$acceptedInvitations = acceptedInvitations;
-    _resultData['acceptedInvitations'] =
+    resultData['acceptedInvitations'] =
         l$acceptedInvitations.map((e) => e.toJson()).toList();
-    final l$$__typename = $__typename;
-    _resultData['__typename'] = l$$__typename;
-    return _resultData;
+    final l$$Typename = $__typename;
+    resultData['__typename'] = l$$Typename;
+    return resultData;
   }
 
   @override
@@ -402,12 +406,12 @@ class Query$homeScreenViewer$viewer {
     final l$sentInvitations = sentInvitations;
     final l$pendingInvitations = pendingInvitations;
     final l$acceptedInvitations = acceptedInvitations;
-    final l$$__typename = $__typename;
+    final l$$Typename = $__typename;
     return Object.hashAll([
       Object.hashAll(l$sentInvitations.map((v) => v)),
       Object.hashAll(l$pendingInvitations.map((v) => v)),
       Object.hashAll(l$acceptedInvitations.map((v) => v)),
-      l$$__typename,
+      l$$Typename,
     ]);
   }
 
@@ -416,7 +420,7 @@ class Query$homeScreenViewer$viewer {
     if (identical(this, other)) {
       return true;
     }
-    if (!(other is Query$homeScreenViewer$viewer) ||
+    if (other is! Query$homeScreenViewer$viewer ||
         runtimeType != other.runtimeType) {
       return false;
     }
@@ -456,9 +460,9 @@ class Query$homeScreenViewer$viewer {
         return false;
       }
     }
-    final l$$__typename = $__typename;
-    final lOther$$__typename = other.$__typename;
-    if (l$$__typename != lOther$$__typename) {
+    final l$$Typename = $__typename;
+    final lOther$$Typename = other.$__typename;
+    if (l$$Typename != lOther$$Typename) {
       return false;
     }
     return true;
@@ -494,19 +498,19 @@ abstract class CopyWith$Query$homeScreenViewer$viewer<TRes> {
               Iterable<
                   CopyWith$Fragment$invitationCardFragment<
                       Fragment$invitationCardFragment>>)
-          _fn);
+          fn);
   TRes pendingInvitations(
       Iterable<Fragment$invitationCardFragment> Function(
               Iterable<
                   CopyWith$Fragment$invitationCardFragment<
                       Fragment$invitationCardFragment>>)
-          _fn);
+          fn);
   TRes acceptedInvitations(
       Iterable<Fragment$invitationCardFragment> Function(
               Iterable<
                   CopyWith$Fragment$invitationCardFragment<
                       Fragment$invitationCardFragment>>)
-          _fn);
+          fn);
 }
 
 class _CopyWithImpl$Query$homeScreenViewer$viewer<TRes>
@@ -522,6 +526,7 @@ class _CopyWithImpl$Query$homeScreenViewer$viewer<TRes>
 
   static const _undefined = {};
 
+  @override
   TRes call({
     Object? sentInvitations = _undefined,
     Object? pendingInvitations = _undefined,
@@ -545,38 +550,41 @@ class _CopyWithImpl$Query$homeScreenViewer$viewer<TRes>
             ? _instance.$__typename
             : ($__typename as String),
       ));
+  @override
   TRes sentInvitations(
           Iterable<Fragment$invitationCardFragment> Function(
                   Iterable<
                       CopyWith$Fragment$invitationCardFragment<
                           Fragment$invitationCardFragment>>)
-              _fn) =>
+              fn) =>
       call(
-          sentInvitations: _fn(_instance.sentInvitations
+          sentInvitations: fn(_instance.sentInvitations
               .map((e) => CopyWith$Fragment$invitationCardFragment(
                     e,
                     (i) => i,
                   ))).toList());
+  @override
   TRes pendingInvitations(
           Iterable<Fragment$invitationCardFragment> Function(
                   Iterable<
                       CopyWith$Fragment$invitationCardFragment<
                           Fragment$invitationCardFragment>>)
-              _fn) =>
+              fn) =>
       call(
-          pendingInvitations: _fn(_instance.pendingInvitations
+          pendingInvitations: fn(_instance.pendingInvitations
               .map((e) => CopyWith$Fragment$invitationCardFragment(
                     e,
                     (i) => i,
                   ))).toList());
+  @override
   TRes acceptedInvitations(
           Iterable<Fragment$invitationCardFragment> Function(
                   Iterable<
                       CopyWith$Fragment$invitationCardFragment<
                           Fragment$invitationCardFragment>>)
-              _fn) =>
+              fn) =>
       call(
-          acceptedInvitations: _fn(_instance.acceptedInvitations
+          acceptedInvitations: fn(_instance.acceptedInvitations
               .map((e) => CopyWith$Fragment$invitationCardFragment(
                     e,
                     (i) => i,
@@ -587,8 +595,9 @@ class _CopyWithStubImpl$Query$homeScreenViewer$viewer<TRes>
     implements CopyWith$Query$homeScreenViewer$viewer<TRes> {
   _CopyWithStubImpl$Query$homeScreenViewer$viewer(this._res);
 
-  TRes _res;
+  final TRes _res;
 
+  @override
   call({
     List<Fragment$invitationCardFragment>? sentInvitations,
     List<Fragment$invitationCardFragment>? pendingInvitations,
@@ -596,9 +605,12 @@ class _CopyWithStubImpl$Query$homeScreenViewer$viewer<TRes>
     String? $__typename,
   }) =>
       _res;
-  sentInvitations(_fn) => _res;
-  pendingInvitations(_fn) => _res;
-  acceptedInvitations(_fn) => _res;
+  @override
+  sentInvitations(fn) => _res;
+  @override
+  pendingInvitations(fn) => _res;
+  @override
+  acceptedInvitations(fn) => _res;
 }
 
 class Variables$Mutation$acceptInvitation {
@@ -638,7 +650,7 @@ class Variables$Mutation$acceptInvitation {
     if (identical(this, other)) {
       return true;
     }
-    if (!(other is Variables$Mutation$acceptInvitation) ||
+    if (other is! Variables$Mutation$acceptInvitation ||
         runtimeType != other.runtimeType) {
       return false;
     }
@@ -682,6 +694,7 @@ class _CopyWithImpl$Variables$Mutation$acceptInvitation<TRes>
 
   static const _undefined = {};
 
+  @override
   TRes call({Object? invitationId = _undefined}) =>
       _then(Variables$Mutation$acceptInvitation._({
         ..._instance._$data,
@@ -694,8 +707,9 @@ class _CopyWithStubImpl$Variables$Mutation$acceptInvitation<TRes>
     implements CopyWith$Variables$Mutation$acceptInvitation<TRes> {
   _CopyWithStubImpl$Variables$Mutation$acceptInvitation(this._res);
 
-  TRes _res;
+  final TRes _res;
 
+  @override
   call({String? invitationId}) => _res;
 }
 
@@ -707,11 +721,11 @@ class Mutation$acceptInvitation {
 
   factory Mutation$acceptInvitation.fromJson(Map<String, dynamic> json) {
     final l$acceptInvitation = json['acceptInvitation'];
-    final l$$__typename = json['__typename'];
+    final l$$Typename = json['__typename'];
     return Mutation$acceptInvitation(
       acceptInvitation: Mutation$acceptInvitation$acceptInvitation.fromJson(
           (l$acceptInvitation as Map<String, dynamic>)),
-      $__typename: (l$$__typename as String),
+      $__typename: (l$$Typename as String),
     );
   }
 
@@ -720,21 +734,21 @@ class Mutation$acceptInvitation {
   final String $__typename;
 
   Map<String, dynamic> toJson() {
-    final _resultData = <String, dynamic>{};
+    final resultData = <String, dynamic>{};
     final l$acceptInvitation = acceptInvitation;
-    _resultData['acceptInvitation'] = l$acceptInvitation.toJson();
-    final l$$__typename = $__typename;
-    _resultData['__typename'] = l$$__typename;
-    return _resultData;
+    resultData['acceptInvitation'] = l$acceptInvitation.toJson();
+    final l$$Typename = $__typename;
+    resultData['__typename'] = l$$Typename;
+    return resultData;
   }
 
   @override
   int get hashCode {
     final l$acceptInvitation = acceptInvitation;
-    final l$$__typename = $__typename;
+    final l$$Typename = $__typename;
     return Object.hashAll([
       l$acceptInvitation,
-      l$$__typename,
+      l$$Typename,
     ]);
   }
 
@@ -743,7 +757,7 @@ class Mutation$acceptInvitation {
     if (identical(this, other)) {
       return true;
     }
-    if (!(other is Mutation$acceptInvitation) ||
+    if (other is! Mutation$acceptInvitation ||
         runtimeType != other.runtimeType) {
       return false;
     }
@@ -752,9 +766,9 @@ class Mutation$acceptInvitation {
     if (l$acceptInvitation != lOther$acceptInvitation) {
       return false;
     }
-    final l$$__typename = $__typename;
-    final lOther$$__typename = other.$__typename;
-    if (l$$__typename != lOther$$__typename) {
+    final l$$Typename = $__typename;
+    final lOther$$Typename = other.$__typename;
+    if (l$$Typename != lOther$$Typename) {
       return false;
     }
     return true;
@@ -800,6 +814,7 @@ class _CopyWithImpl$Mutation$acceptInvitation<TRes>
 
   static const _undefined = {};
 
+  @override
   TRes call({
     Object? acceptInvitation = _undefined,
     Object? $__typename = _undefined,
@@ -813,6 +828,7 @@ class _CopyWithImpl$Mutation$acceptInvitation<TRes>
             ? _instance.$__typename
             : ($__typename as String),
       ));
+  @override
   CopyWith$Mutation$acceptInvitation$acceptInvitation<TRes>
       get acceptInvitation {
     final local$acceptInvitation = _instance.acceptInvitation;
@@ -825,13 +841,15 @@ class _CopyWithStubImpl$Mutation$acceptInvitation<TRes>
     implements CopyWith$Mutation$acceptInvitation<TRes> {
   _CopyWithStubImpl$Mutation$acceptInvitation(this._res);
 
-  TRes _res;
+  final TRes _res;
 
+  @override
   call({
     Mutation$acceptInvitation$acceptInvitation? acceptInvitation,
     String? $__typename,
   }) =>
       _res;
+  @override
   CopyWith$Mutation$acceptInvitation$acceptInvitation<TRes>
       get acceptInvitation =>
           CopyWith$Mutation$acceptInvitation$acceptInvitation.stub(_res);
@@ -994,11 +1012,11 @@ extension ClientExtension$Mutation$acceptInvitation on graphql.GraphQLClient {
   Future<graphql.QueryResult<Mutation$acceptInvitation>>
       mutate$acceptInvitation(
               Options$Mutation$acceptInvitation options) async =>
-          await this.mutate(options);
+          await mutate(options);
   graphql.ObservableQuery<Mutation$acceptInvitation>
       watchMutation$acceptInvitation(
               WatchOptions$Mutation$acceptInvitation options) =>
-          this.watchMutation(options);
+          watchMutation(options);
 }
 
 class Mutation$acceptInvitation$HookResult {
@@ -1121,11 +1139,11 @@ class Mutation$acceptInvitation$acceptInvitation {
   factory Mutation$acceptInvitation$acceptInvitation.fromJson(
       Map<String, dynamic> json) {
     final l$invitation = json['invitation'];
-    final l$$__typename = json['__typename'];
+    final l$$Typename = json['__typename'];
     return Mutation$acceptInvitation$acceptInvitation(
       invitation: Fragment$invitationCardFragment.fromJson(
           (l$invitation as Map<String, dynamic>)),
-      $__typename: (l$$__typename as String),
+      $__typename: (l$$Typename as String),
     );
   }
 
@@ -1134,21 +1152,21 @@ class Mutation$acceptInvitation$acceptInvitation {
   final String $__typename;
 
   Map<String, dynamic> toJson() {
-    final _resultData = <String, dynamic>{};
+    final resultData = <String, dynamic>{};
     final l$invitation = invitation;
-    _resultData['invitation'] = l$invitation.toJson();
-    final l$$__typename = $__typename;
-    _resultData['__typename'] = l$$__typename;
-    return _resultData;
+    resultData['invitation'] = l$invitation.toJson();
+    final l$$Typename = $__typename;
+    resultData['__typename'] = l$$Typename;
+    return resultData;
   }
 
   @override
   int get hashCode {
     final l$invitation = invitation;
-    final l$$__typename = $__typename;
+    final l$$Typename = $__typename;
     return Object.hashAll([
       l$invitation,
-      l$$__typename,
+      l$$Typename,
     ]);
   }
 
@@ -1157,7 +1175,7 @@ class Mutation$acceptInvitation$acceptInvitation {
     if (identical(this, other)) {
       return true;
     }
-    if (!(other is Mutation$acceptInvitation$acceptInvitation) ||
+    if (other is! Mutation$acceptInvitation$acceptInvitation ||
         runtimeType != other.runtimeType) {
       return false;
     }
@@ -1166,9 +1184,9 @@ class Mutation$acceptInvitation$acceptInvitation {
     if (l$invitation != lOther$invitation) {
       return false;
     }
-    final l$$__typename = $__typename;
-    final lOther$$__typename = other.$__typename;
-    if (l$$__typename != lOther$$__typename) {
+    final l$$Typename = $__typename;
+    final lOther$$Typename = other.$__typename;
+    if (l$$Typename != lOther$$Typename) {
       return false;
     }
     return true;
@@ -1214,6 +1232,7 @@ class _CopyWithImpl$Mutation$acceptInvitation$acceptInvitation<TRes>
 
   static const _undefined = {};
 
+  @override
   TRes call({
     Object? invitation = _undefined,
     Object? $__typename = _undefined,
@@ -1226,6 +1245,7 @@ class _CopyWithImpl$Mutation$acceptInvitation$acceptInvitation<TRes>
             ? _instance.$__typename
             : ($__typename as String),
       ));
+  @override
   CopyWith$Fragment$invitationCardFragment<TRes> get invitation {
     final local$invitation = _instance.invitation;
     return CopyWith$Fragment$invitationCardFragment(
@@ -1237,13 +1257,15 @@ class _CopyWithStubImpl$Mutation$acceptInvitation$acceptInvitation<TRes>
     implements CopyWith$Mutation$acceptInvitation$acceptInvitation<TRes> {
   _CopyWithStubImpl$Mutation$acceptInvitation$acceptInvitation(this._res);
 
-  TRes _res;
+  final TRes _res;
 
+  @override
   call({
     Fragment$invitationCardFragment? invitation,
     String? $__typename,
   }) =>
       _res;
+  @override
   CopyWith$Fragment$invitationCardFragment<TRes> get invitation =>
       CopyWith$Fragment$invitationCardFragment.stub(_res);
 }
@@ -1284,7 +1306,7 @@ class Variables$Mutation$denyInvitation {
     if (identical(this, other)) {
       return true;
     }
-    if (!(other is Variables$Mutation$denyInvitation) ||
+    if (other is! Variables$Mutation$denyInvitation ||
         runtimeType != other.runtimeType) {
       return false;
     }
@@ -1328,6 +1350,7 @@ class _CopyWithImpl$Variables$Mutation$denyInvitation<TRes>
 
   static const _undefined = {};
 
+  @override
   TRes call({Object? invitationId = _undefined}) =>
       _then(Variables$Mutation$denyInvitation._({
         ..._instance._$data,
@@ -1340,8 +1363,9 @@ class _CopyWithStubImpl$Variables$Mutation$denyInvitation<TRes>
     implements CopyWith$Variables$Mutation$denyInvitation<TRes> {
   _CopyWithStubImpl$Variables$Mutation$denyInvitation(this._res);
 
-  TRes _res;
+  final TRes _res;
 
+  @override
   call({String? invitationId}) => _res;
 }
 
@@ -1353,11 +1377,11 @@ class Mutation$denyInvitation {
 
   factory Mutation$denyInvitation.fromJson(Map<String, dynamic> json) {
     final l$denyInvitation = json['denyInvitation'];
-    final l$$__typename = json['__typename'];
+    final l$$Typename = json['__typename'];
     return Mutation$denyInvitation(
       denyInvitation: Mutation$denyInvitation$denyInvitation.fromJson(
           (l$denyInvitation as Map<String, dynamic>)),
-      $__typename: (l$$__typename as String),
+      $__typename: (l$$Typename as String),
     );
   }
 
@@ -1366,21 +1390,21 @@ class Mutation$denyInvitation {
   final String $__typename;
 
   Map<String, dynamic> toJson() {
-    final _resultData = <String, dynamic>{};
+    final resultData = <String, dynamic>{};
     final l$denyInvitation = denyInvitation;
-    _resultData['denyInvitation'] = l$denyInvitation.toJson();
-    final l$$__typename = $__typename;
-    _resultData['__typename'] = l$$__typename;
-    return _resultData;
+    resultData['denyInvitation'] = l$denyInvitation.toJson();
+    final l$$Typename = $__typename;
+    resultData['__typename'] = l$$Typename;
+    return resultData;
   }
 
   @override
   int get hashCode {
     final l$denyInvitation = denyInvitation;
-    final l$$__typename = $__typename;
+    final l$$Typename = $__typename;
     return Object.hashAll([
       l$denyInvitation,
-      l$$__typename,
+      l$$Typename,
     ]);
   }
 
@@ -1389,7 +1413,7 @@ class Mutation$denyInvitation {
     if (identical(this, other)) {
       return true;
     }
-    if (!(other is Mutation$denyInvitation) ||
+    if (other is! Mutation$denyInvitation ||
         runtimeType != other.runtimeType) {
       return false;
     }
@@ -1398,9 +1422,9 @@ class Mutation$denyInvitation {
     if (l$denyInvitation != lOther$denyInvitation) {
       return false;
     }
-    final l$$__typename = $__typename;
-    final lOther$$__typename = other.$__typename;
-    if (l$$__typename != lOther$$__typename) {
+    final l$$Typename = $__typename;
+    final lOther$$Typename = other.$__typename;
+    if (l$$Typename != lOther$$Typename) {
       return false;
     }
     return true;
@@ -1444,6 +1468,7 @@ class _CopyWithImpl$Mutation$denyInvitation<TRes>
 
   static const _undefined = {};
 
+  @override
   TRes call({
     Object? denyInvitation = _undefined,
     Object? $__typename = _undefined,
@@ -1456,6 +1481,7 @@ class _CopyWithImpl$Mutation$denyInvitation<TRes>
             ? _instance.$__typename
             : ($__typename as String),
       ));
+  @override
   CopyWith$Mutation$denyInvitation$denyInvitation<TRes> get denyInvitation {
     final local$denyInvitation = _instance.denyInvitation;
     return CopyWith$Mutation$denyInvitation$denyInvitation(
@@ -1467,13 +1493,15 @@ class _CopyWithStubImpl$Mutation$denyInvitation<TRes>
     implements CopyWith$Mutation$denyInvitation<TRes> {
   _CopyWithStubImpl$Mutation$denyInvitation(this._res);
 
-  TRes _res;
+  final TRes _res;
 
+  @override
   call({
     Mutation$denyInvitation$denyInvitation? denyInvitation,
     String? $__typename,
   }) =>
       _res;
+  @override
   CopyWith$Mutation$denyInvitation$denyInvitation<TRes> get denyInvitation =>
       CopyWith$Mutation$denyInvitation$denyInvitation.stub(_res);
 }
@@ -1636,10 +1664,10 @@ class WatchOptions$Mutation$denyInvitation
 extension ClientExtension$Mutation$denyInvitation on graphql.GraphQLClient {
   Future<graphql.QueryResult<Mutation$denyInvitation>> mutate$denyInvitation(
           Options$Mutation$denyInvitation options) async =>
-      await this.mutate(options);
+      await mutate(options);
   graphql.ObservableQuery<Mutation$denyInvitation> watchMutation$denyInvitation(
           WatchOptions$Mutation$denyInvitation options) =>
-      this.watchMutation(options);
+      watchMutation(options);
 }
 
 class Mutation$denyInvitation$HookResult {
@@ -1762,11 +1790,11 @@ class Mutation$denyInvitation$denyInvitation {
   factory Mutation$denyInvitation$denyInvitation.fromJson(
       Map<String, dynamic> json) {
     final l$invitation = json['invitation'];
-    final l$$__typename = json['__typename'];
+    final l$$Typename = json['__typename'];
     return Mutation$denyInvitation$denyInvitation(
       invitation: Mutation$denyInvitation$denyInvitation$invitation.fromJson(
           (l$invitation as Map<String, dynamic>)),
-      $__typename: (l$$__typename as String),
+      $__typename: (l$$Typename as String),
     );
   }
 
@@ -1775,21 +1803,21 @@ class Mutation$denyInvitation$denyInvitation {
   final String $__typename;
 
   Map<String, dynamic> toJson() {
-    final _resultData = <String, dynamic>{};
+    final resultData = <String, dynamic>{};
     final l$invitation = invitation;
-    _resultData['invitation'] = l$invitation.toJson();
-    final l$$__typename = $__typename;
-    _resultData['__typename'] = l$$__typename;
-    return _resultData;
+    resultData['invitation'] = l$invitation.toJson();
+    final l$$Typename = $__typename;
+    resultData['__typename'] = l$$Typename;
+    return resultData;
   }
 
   @override
   int get hashCode {
     final l$invitation = invitation;
-    final l$$__typename = $__typename;
+    final l$$Typename = $__typename;
     return Object.hashAll([
       l$invitation,
-      l$$__typename,
+      l$$Typename,
     ]);
   }
 
@@ -1798,7 +1826,7 @@ class Mutation$denyInvitation$denyInvitation {
     if (identical(this, other)) {
       return true;
     }
-    if (!(other is Mutation$denyInvitation$denyInvitation) ||
+    if (other is! Mutation$denyInvitation$denyInvitation ||
         runtimeType != other.runtimeType) {
       return false;
     }
@@ -1807,9 +1835,9 @@ class Mutation$denyInvitation$denyInvitation {
     if (l$invitation != lOther$invitation) {
       return false;
     }
-    final l$$__typename = $__typename;
-    final lOther$$__typename = other.$__typename;
-    if (l$$__typename != lOther$$__typename) {
+    final l$$Typename = $__typename;
+    final lOther$$Typename = other.$__typename;
+    if (l$$Typename != lOther$$Typename) {
       return false;
     }
     return true;
@@ -1856,6 +1884,7 @@ class _CopyWithImpl$Mutation$denyInvitation$denyInvitation<TRes>
 
   static const _undefined = {};
 
+  @override
   TRes call({
     Object? invitation = _undefined,
     Object? $__typename = _undefined,
@@ -1868,6 +1897,7 @@ class _CopyWithImpl$Mutation$denyInvitation$denyInvitation<TRes>
             ? _instance.$__typename
             : ($__typename as String),
       ));
+  @override
   CopyWith$Mutation$denyInvitation$denyInvitation$invitation<TRes>
       get invitation {
     final local$invitation = _instance.invitation;
@@ -1880,13 +1910,15 @@ class _CopyWithStubImpl$Mutation$denyInvitation$denyInvitation<TRes>
     implements CopyWith$Mutation$denyInvitation$denyInvitation<TRes> {
   _CopyWithStubImpl$Mutation$denyInvitation$denyInvitation(this._res);
 
-  TRes _res;
+  final TRes _res;
 
+  @override
   call({
     Mutation$denyInvitation$denyInvitation$invitation? invitation,
     String? $__typename,
   }) =>
       _res;
+  @override
   CopyWith$Mutation$denyInvitation$denyInvitation$invitation<TRes>
       get invitation =>
           CopyWith$Mutation$denyInvitation$denyInvitation$invitation.stub(_res);
@@ -1901,10 +1933,10 @@ class Mutation$denyInvitation$denyInvitation$invitation {
   factory Mutation$denyInvitation$denyInvitation$invitation.fromJson(
       Map<String, dynamic> json) {
     final l$id = json['id'];
-    final l$$__typename = json['__typename'];
+    final l$$Typename = json['__typename'];
     return Mutation$denyInvitation$denyInvitation$invitation(
       id: (l$id as String),
-      $__typename: (l$$__typename as String),
+      $__typename: (l$$Typename as String),
     );
   }
 
@@ -1913,21 +1945,21 @@ class Mutation$denyInvitation$denyInvitation$invitation {
   final String $__typename;
 
   Map<String, dynamic> toJson() {
-    final _resultData = <String, dynamic>{};
+    final resultData = <String, dynamic>{};
     final l$id = id;
-    _resultData['id'] = l$id;
-    final l$$__typename = $__typename;
-    _resultData['__typename'] = l$$__typename;
-    return _resultData;
+    resultData['id'] = l$id;
+    final l$$Typename = $__typename;
+    resultData['__typename'] = l$$Typename;
+    return resultData;
   }
 
   @override
   int get hashCode {
     final l$id = id;
-    final l$$__typename = $__typename;
+    final l$$Typename = $__typename;
     return Object.hashAll([
       l$id,
-      l$$__typename,
+      l$$Typename,
     ]);
   }
 
@@ -1936,7 +1968,7 @@ class Mutation$denyInvitation$denyInvitation$invitation {
     if (identical(this, other)) {
       return true;
     }
-    if (!(other is Mutation$denyInvitation$denyInvitation$invitation) ||
+    if (other is! Mutation$denyInvitation$denyInvitation$invitation ||
         runtimeType != other.runtimeType) {
       return false;
     }
@@ -1945,9 +1977,9 @@ class Mutation$denyInvitation$denyInvitation$invitation {
     if (l$id != lOther$id) {
       return false;
     }
-    final l$$__typename = $__typename;
-    final lOther$$__typename = other.$__typename;
-    if (l$$__typename != lOther$$__typename) {
+    final l$$Typename = $__typename;
+    final lOther$$Typename = other.$__typename;
+    if (l$$Typename != lOther$$Typename) {
       return false;
     }
     return true;
@@ -1996,6 +2028,7 @@ class _CopyWithImpl$Mutation$denyInvitation$denyInvitation$invitation<TRes>
 
   static const _undefined = {};
 
+  @override
   TRes call({
     Object? id = _undefined,
     Object? $__typename = _undefined,
@@ -2014,8 +2047,9 @@ class _CopyWithStubImpl$Mutation$denyInvitation$denyInvitation$invitation<TRes>
   _CopyWithStubImpl$Mutation$denyInvitation$denyInvitation$invitation(
       this._res);
 
-  TRes _res;
+  final TRes _res;
 
+  @override
   call({
     String? id,
     String? $__typename,

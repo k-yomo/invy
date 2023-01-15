@@ -14,7 +14,7 @@ import '../graphql/schema.graphql.dart';
 import '../services/graphql_client.dart';
 import '../state/bottom_navigation.dart';
 
-final dateTimeFormat = 'yyyy年MM月dd日 HH時mm分';
+const dateTimeFormat = 'yyyy年MM月dd日 HH時mm分';
 
 class InvitationDetailFormScreen extends HookConsumerWidget {
   const InvitationDetailFormScreen({
@@ -62,8 +62,8 @@ class InvitationDetailFormScreen extends HookConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        leading: AppBarLeading(),
-        title: Text(
+        leading: const AppBarLeading(),
+        title: const Text(
           '詳細設定',
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
@@ -74,34 +74,34 @@ class InvitationDetailFormScreen extends HookConsumerWidget {
       body: SingleChildScrollView(
         reverse: true,
         child: Container(
-          padding: EdgeInsets.symmetric(vertical: 10),
+          padding: const EdgeInsets.symmetric(vertical: 10),
           width: double.infinity,
           child: Column(
             children: [
               Container(
                 width: double.infinity,
-                margin: EdgeInsets.symmetric(vertical: 5, horizontal: 20),
-                child: Text("選択中",
+                margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 20),
+                child: const Text("選択中",
                     style:
                         TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
               ),
-              Container(
+              SizedBox(
                 width: double.infinity,
                 child: SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
-                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Row(
                     children: [
                       Row(
                         children: selectedFriendGroups
-                            .map((friendGroup) => Container(
+                            .map((friendGroup) => SizedBox(
                                   width: 50,
                                   child: Column(
                                     children: [
                                       FriendGroupIcon(friendGroup.name),
                                       Text(
                                         friendGroup.name,
-                                        style: TextStyle(fontSize: 14),
+                                        style: const TextStyle(fontSize: 14),
                                         overflow: TextOverflow.ellipsis,
                                       ),
                                     ],
@@ -111,7 +111,7 @@ class InvitationDetailFormScreen extends HookConsumerWidget {
                       ),
                       Row(
                         children: selectedFriends
-                            .map((friend) => Container(
+                            .map((friend) => SizedBox(
                                   width: 50,
                                   child: Column(
                                     children: [
@@ -121,7 +121,7 @@ class InvitationDetailFormScreen extends HookConsumerWidget {
                                       ),
                                       Text(
                                         friend.nickname,
-                                        style: TextStyle(fontSize: 14),
+                                        style: const TextStyle(fontSize: 14),
                                         overflow: TextOverflow.ellipsis,
                                       ),
                                     ],
@@ -134,7 +134,7 @@ class InvitationDetailFormScreen extends HookConsumerWidget {
                 ),
               ),
               Container(
-                padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
                 child: InvitationDetailForm(
                   onSubmitted: onSubmittedForm,
                 ),
@@ -213,8 +213,8 @@ class InvitationDetailFormState extends State<InvitationDetailForm> {
                 location = value!;
               },
             ),
-            Gap(10),
-            Container(
+            const Gap(10),
+            SizedBox(
               width: double.infinity,
               child: TextFormField(
                 controller: startsAtController,
@@ -224,7 +224,7 @@ class InvitationDetailFormState extends State<InvitationDetailForm> {
                     context,
                     showTitleActions: true,
                     minTime: now,
-                    maxTime: now.add(Duration(days: 7)),
+                    maxTime: now.add(const Duration(days: 7)),
                     onConfirm: (date) {
                       startsAtController.text =
                           DateFormat(dateTimeFormat).format(date);
@@ -258,8 +258,8 @@ class InvitationDetailFormState extends State<InvitationDetailForm> {
                 },
               ),
             ),
-            Gap(10),
-            Container(
+            const Gap(10),
+            SizedBox(
               width: double.infinity,
               child: TextFormField(
                 controller: expiresAtController,
@@ -268,13 +268,13 @@ class InvitationDetailFormState extends State<InvitationDetailForm> {
                   DatePicker.showDateTimePicker(
                     context,
                     showTitleActions: true,
-                    minTime: now.add(Duration(minutes: 30)),
-                    maxTime: now.add(Duration(days: 7)),
+                    minTime: now.add(const Duration(minutes: 30)),
+                    maxTime: now.add(const Duration(days: 7)),
                     onConfirm: (date) {
                       expiresAtController.text =
                           DateFormat(dateTimeFormat).format(date);
                     },
-                    currentTime: now.add(Duration(minutes: 30)),
+                    currentTime: now.add(const Duration(minutes: 30)),
                     locale: LocaleType.jp,
                   );
                 },
@@ -303,7 +303,7 @@ class InvitationDetailFormState extends State<InvitationDetailForm> {
                 },
               ),
             ),
-            Gap(10),
+            const Gap(10),
             TextFormField(
               keyboardType: TextInputType.multiline,
               focusNode: commentFocusNode,
@@ -323,10 +323,10 @@ class InvitationDetailFormState extends State<InvitationDetailForm> {
             ),
             Container(
               width: double.infinity,
-              margin: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+              margin: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
               child: OutlinedButton(
                 style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(vertical: 15),
+                  padding: const EdgeInsets.symmetric(vertical: 15),
                   backgroundColor: Colors.white,
                   foregroundColor: Colors.black,
                 ),
@@ -345,7 +345,7 @@ class InvitationDetailFormState extends State<InvitationDetailForm> {
                   }
                 },
                 child: isLoading
-                    ? SizedBox(
+                    ? const SizedBox(
                         width: 25,
                         height: 25,
                         child: CircularProgressIndicator(
@@ -353,7 +353,7 @@ class InvitationDetailFormState extends State<InvitationDetailForm> {
                           strokeWidth: 3,
                         ),
                       )
-                    : Text(
+                    : const Text(
                         '招待を送信する',
                         style: TextStyle(
                             fontSize: 18,
@@ -382,8 +382,8 @@ class InvitationDetailFormState extends State<InvitationDetailForm> {
               return GestureDetector(
                 onTap: () => node.unfocus(),
                 child: Container(
-                  padding: EdgeInsets.all(8.0),
-                  child: Text(
+                  padding: const EdgeInsets.all(8.0),
+                  child: const Text(
                     "完了",
                   ),
                 ),

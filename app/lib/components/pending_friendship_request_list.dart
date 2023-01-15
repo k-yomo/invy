@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:graphql/client.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:invy/components/pending_friendship_request_list_fragment.graphql.dart';
 import 'package:invy/graphql/friend_screen.graphql.dart';
@@ -65,24 +63,24 @@ class PendingFriendshipRequestList extends HookConsumerWidget {
                       style: ElevatedButton.styleFrom(
                         minimumSize: Size.zero,
                         padding:
-                            EdgeInsets.symmetric(vertical: 5, horizontal: 16),
+                            const EdgeInsets.symmetric(vertical: 5, horizontal: 16),
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
-                            side: BorderSide(color: Colors.transparent)),
+                            side: const BorderSide(color: Colors.transparent)),
                       ),
                       onPressed: () async =>
                           onPressedDenyFriendship(request.id),
                       child: const Text('拒否',
                           style: TextStyle(color: Colors.black))),
-                  Container(margin: EdgeInsets.symmetric(horizontal: 2)),
+                  Container(margin: const EdgeInsets.symmetric(horizontal: 2)),
                   ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         minimumSize: Size.zero,
                         padding:
-                            EdgeInsets.symmetric(vertical: 5, horizontal: 16),
+                            const EdgeInsets.symmetric(vertical: 5, horizontal: 16),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
-                          side: BorderSide(color: Colors.transparent),
+                          side: const BorderSide(color: Colors.transparent),
                         ),
                         backgroundColor: Colors.blue,
                       ),

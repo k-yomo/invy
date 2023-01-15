@@ -25,10 +25,10 @@ class FriendGroupDetailScreen extends HookConsumerWidget {
           final viewer = snapshot.data?.parsedData?.viewer;
           return Scaffold(
             appBar: AppBar(
-              leading: AppBarLeading(),
+              leading: const AppBarLeading(),
               title: Text(
                 viewer?.friendGroup.name ?? '',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
               ),
               shape: Border(
                   bottom: BorderSide(color: Colors.grey.shade200, width: 1)),

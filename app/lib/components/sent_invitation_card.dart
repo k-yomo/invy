@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:invy/components/invitation_card_fragment.graphql.dart';
 
-final dateTimeFormat = 'MM月dd日 HH時mm分';
+const dateTimeFormat = 'MM月dd日 HH時mm分';
 
 class SentInvitationCard extends StatelessWidget {
   SentInvitationCard({
@@ -31,7 +31,7 @@ class SentInvitationCard extends StatelessWidget {
               Container(
                 margin: const EdgeInsets.only(top: 5, left: 4, bottom: 5),
                 child: Row(children: [
-                  Icon(Icons.location_pin, size: 25),
+                  const Icon(Icons.location_pin, size: 25),
                   Text(invitation.location),
                 ]),
               ),
@@ -39,7 +39,7 @@ class SentInvitationCard extends StatelessWidget {
                 margin: const EdgeInsets.only(top: 5, left: 6, bottom: 5),
                 child: Row(
                   children: [
-                    Icon(Icons.today, size: 25),
+                    const Icon(Icons.today, size: 25),
                     Container(
                       margin: const EdgeInsets.only(left: 5),
                       child: Text(DateFormat(dateTimeFormat)
@@ -55,7 +55,7 @@ class SentInvitationCard extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(Icons.notes, size: 20),
+                const Icon(Icons.notes, size: 20),
                 Flexible(
                     child: Container(
                   margin: const EdgeInsets.only(left: 5),
@@ -65,25 +65,25 @@ class SentInvitationCard extends StatelessWidget {
             ),
           ),
           Column(
-            children: invitation.acceptedUsers.length > 0
+            children: invitation.acceptedUsers.isNotEmpty
                 ? [
                     Container(
                       width: double.infinity,
-                      margin: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
-                      child: Text("参加者",
+                      margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+                      child: const Text("参加者",
                           style: TextStyle(
                               fontSize: 12, fontWeight: FontWeight.bold)),
                     ),
-                    Container(
+                    SizedBox(
                       width: double.infinity,
                       child: SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
-                        padding: EdgeInsets.symmetric(horizontal: 10),
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
                         child: Row(
                           children: [
                             Row(
                               children: invitation.acceptedUsers
-                                  .map((acceptedUser) => Container(
+                                  .map((acceptedUser) => SizedBox(
                                         width: 50,
                                         child: Column(
                                           children: [
@@ -93,7 +93,7 @@ class SentInvitationCard extends StatelessWidget {
                                             ),
                                             Text(
                                               acceptedUser.nickname,
-                                              style: TextStyle(fontSize: 12),
+                                              style: const TextStyle(fontSize: 12),
                                               overflow: TextOverflow.ellipsis,
                                             ),
                                           ],

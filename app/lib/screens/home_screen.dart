@@ -22,7 +22,7 @@ class HomeScreen extends HookConsumerWidget {
         .watchQuery$homeScreenViewer(WatchOptions$Query$homeScreenViewer(
       eagerlyFetchResults: true,
     ));
-    viewerQuery.startPolling(Duration(seconds: 30));
+    viewerQuery.startPolling(const Duration(seconds: 30));
 
     return StreamBuilder<QueryResult<Query$homeScreenViewer>>(
       stream: viewerQuery.stream,
@@ -45,10 +45,10 @@ class HomeScreen extends HookConsumerWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const SubTitle(text: "送信済みの招待"),
-                      Gap(10),
+                      const Gap(10),
                       Container(
                         margin: const EdgeInsets.symmetric(horizontal: 5),
-                        child: viewer.sentInvitations.length > 0
+                        child: viewer.sentInvitations.isNotEmpty
                             ? Column(
                                 children: [
                                   ...viewer.sentInvitations
@@ -70,7 +70,7 @@ class HomeScreen extends HookConsumerWidget {
                                     Container(
                                       margin: const EdgeInsets.symmetric(
                                           vertical: 10),
-                                      child: Text("送信済みの招待はありません",
+                                      child: const Text("送信済みの招待はありません",
                                           style: TextStyle(
                                               fontWeight: FontWeight.bold)),
                                     ),
@@ -80,12 +80,12 @@ class HomeScreen extends HookConsumerWidget {
                                           MaterialPageRoute(
                                             fullscreenDialog: true,
                                             builder: (context) =>
-                                                InvitationScreen(),
+                                                const InvitationScreen(),
                                           ),
                                         );
                                       },
                                       style: ElevatedButton.styleFrom(
-                                        padding: EdgeInsets.symmetric(
+                                        padding: const EdgeInsets.symmetric(
                                           vertical: 10,
                                           horizontal: 60,
                                         ),
@@ -109,7 +109,7 @@ class HomeScreen extends HookConsumerWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const SubTitle(text: "回答済みの招待"),
-                      Gap(10),
+                      const Gap(10),
                       Container(
                         margin: const EdgeInsets.symmetric(horizontal: 5),
                         child: Column(
@@ -133,7 +133,7 @@ class HomeScreen extends HookConsumerWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const SubTitle(text: "届いている招待"),
-                      Gap(10),
+                      const Gap(10),
                       Container(
                         margin: const EdgeInsets.symmetric(horizontal: 5),
                         child: Column(

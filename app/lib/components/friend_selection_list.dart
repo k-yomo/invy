@@ -33,7 +33,7 @@ class FriendSelectionList extends StatelessWidget {
             child: FriendListItem(
                 key: Key(friend.id),
                 friend: friend,
-                rightWidget: isSelected ? Icon(Icons.check) : SizedBox()),
+                rightWidget: isSelected ? const Icon(Icons.check) : const SizedBox()),
           ),
           Divider(height: 0, thickness: 1, color: Colors.grey.shade200),
         ],

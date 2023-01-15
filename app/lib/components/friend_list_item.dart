@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'friend_list_item_fragment.graphql.dart';
@@ -33,7 +32,7 @@ class FriendListItem extends StatelessWidget {
               ),
             ),
           ),
-          rightWidget != null ? rightWidget! : SizedBox(),
+          rightWidget != null ? rightWidget! : const SizedBox(),
         ],
       ),
     );

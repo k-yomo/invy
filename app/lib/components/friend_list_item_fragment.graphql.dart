@@ -15,13 +15,13 @@ class Fragment$friendListItemFragment {
     final l$nickname = json['nickname'];
     final l$avatarUrl = json['avatarUrl'];
     final l$isMuted = json['isMuted'];
-    final l$$__typename = json['__typename'];
+    final l$$Typename = json['__typename'];
     return Fragment$friendListItemFragment(
       id: (l$id as String),
       nickname: (l$nickname as String),
       avatarUrl: (l$avatarUrl as String),
       isMuted: (l$isMuted as bool),
-      $__typename: (l$$__typename as String),
+      $__typename: (l$$Typename as String),
     );
   }
 
@@ -36,18 +36,18 @@ class Fragment$friendListItemFragment {
   final String $__typename;
 
   Map<String, dynamic> toJson() {
-    final _resultData = <String, dynamic>{};
+    final resultData = <String, dynamic>{};
     final l$id = id;
-    _resultData['id'] = l$id;
+    resultData['id'] = l$id;
     final l$nickname = nickname;
-    _resultData['nickname'] = l$nickname;
+    resultData['nickname'] = l$nickname;
     final l$avatarUrl = avatarUrl;
-    _resultData['avatarUrl'] = l$avatarUrl;
+    resultData['avatarUrl'] = l$avatarUrl;
     final l$isMuted = isMuted;
-    _resultData['isMuted'] = l$isMuted;
-    final l$$__typename = $__typename;
-    _resultData['__typename'] = l$$__typename;
-    return _resultData;
+    resultData['isMuted'] = l$isMuted;
+    final l$$Typename = $__typename;
+    resultData['__typename'] = l$$Typename;
+    return resultData;
   }
 
   @override
@@ -56,13 +56,13 @@ class Fragment$friendListItemFragment {
     final l$nickname = nickname;
     final l$avatarUrl = avatarUrl;
     final l$isMuted = isMuted;
-    final l$$__typename = $__typename;
+    final l$$Typename = $__typename;
     return Object.hashAll([
       l$id,
       l$nickname,
       l$avatarUrl,
       l$isMuted,
-      l$$__typename,
+      l$$Typename,
     ]);
   }
 
@@ -71,7 +71,7 @@ class Fragment$friendListItemFragment {
     if (identical(this, other)) {
       return true;
     }
-    if (!(other is Fragment$friendListItemFragment) ||
+    if (other is! Fragment$friendListItemFragment ||
         runtimeType != other.runtimeType) {
       return false;
     }
@@ -95,9 +95,9 @@ class Fragment$friendListItemFragment {
     if (l$isMuted != lOther$isMuted) {
       return false;
     }
-    final l$$__typename = $__typename;
-    final lOther$$__typename = other.$__typename;
-    if (l$$__typename != lOther$$__typename) {
+    final l$$Typename = $__typename;
+    final lOther$$Typename = other.$__typename;
+    if (l$$Typename != lOther$$Typename) {
       return false;
     }
     return true;
@@ -144,6 +144,7 @@ class _CopyWithImpl$Fragment$friendListItemFragment<TRes>
 
   static const _undefined = {};
 
+  @override
   TRes call({
     Object? id = _undefined,
     Object? nickname = _undefined,
@@ -172,8 +173,9 @@ class _CopyWithStubImpl$Fragment$friendListItemFragment<TRes>
     implements CopyWith$Fragment$friendListItemFragment<TRes> {
   _CopyWithStubImpl$Fragment$friendListItemFragment(this._res);
 
-  TRes _res;
+  final TRes _res;
 
+  @override
   call({
     String? id,
     String? nickname,
@@ -241,7 +243,7 @@ extension ClientExtension$Fragment$friendListItemFragment
     required Map<String, dynamic> idFields,
     bool broadcast = true,
   }) =>
-      this.writeFragment(
+      writeFragment(
         graphql.FragmentRequest(
           idFields: idFields,
           fragment: const graphql.Fragment(
@@ -256,7 +258,7 @@ extension ClientExtension$Fragment$friendListItemFragment
     required Map<String, dynamic> idFields,
     bool optimistic = true,
   }) {
-    final result = this.readFragment(
+    final result = readFragment(
       graphql.FragmentRequest(
         idFields: idFields,
         fragment: const graphql.Fragment(

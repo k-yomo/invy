@@ -71,7 +71,7 @@ class _FriendGroupListItem extends StatelessWidget {
               child: Text("(${friendGroup.totalCount.toString()})",
                   style: const TextStyle(
                       fontSize: 14, fontWeight: FontWeight.bold))),
-          isSelected ? Icon(Icons.check) : SizedBox(),
+          isSelected ? const Icon(Icons.check) : const SizedBox(),
         ],
       ),
     );

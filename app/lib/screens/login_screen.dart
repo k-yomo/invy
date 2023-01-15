@@ -1,15 +1,11 @@
-import 'dart:math';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:flutter_signin_button/button_list.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:gap/gap.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:hive/hive.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:invy/graphql/login_screen.graphql.dart';
 import 'package:invy/graphql/push_notification.graphql.dart';
@@ -117,10 +113,10 @@ class LoginScreen extends HookConsumerWidget {
         await signInToInvy();
       } on FirebaseAuthException catch (e) {
         print('FirebaseAuthException');
-        print('${e.code}');
+        print(e.code);
       } on Exception catch (e) {
         print('Other Exception');
-        print('${e.toString()}');
+        print(e.toString());
       }
     }
 
@@ -130,10 +126,10 @@ class LoginScreen extends HookConsumerWidget {
         await signInToInvy();
       } on FirebaseAuthException catch (e) {
         print('FirebaseAuthException');
-        print('${e.code}');
+        print(e.code);
       } on Exception catch (e) {
         print('Other Exception');
-        print('${e.toString()}');
+        print(e.toString());
       }
     }
 
@@ -161,7 +157,7 @@ class LoginScreen extends HookConsumerWidget {
               Expanded(
                 child: Center(
                     child: Container(
-                  margin: EdgeInsets.only(top: 80),
+                  margin: const EdgeInsets.only(top: 80),
                   child: Column(
                     children: [
                       SizedBox(
@@ -171,14 +167,14 @@ class LoginScreen extends HookConsumerWidget {
                           text: 'Google サインイン',
                           onPressed: onGoogleSignInPressed,
                           padding:
-                              EdgeInsets.symmetric(vertical: 8, horizontal: 25),
+                              const EdgeInsets.symmetric(vertical: 8, horizontal: 25),
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(30),
-                              side: BorderSide(color: Colors.black)),
+                              side: const BorderSide(color: Colors.black)),
                           elevation: 0,
                         ),
                       ),
-                      Gap(15),
+                      const Gap(15),
                       SizedBox(
                         width: double.infinity,
                         child: SignInButton(
@@ -189,7 +185,7 @@ class LoginScreen extends HookConsumerWidget {
                               vertical: 15, horizontal: 25),
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(30),
-                              side: BorderSide(color: Colors.black)),
+                              side: const BorderSide(color: Colors.black)),
                           elevation: 0,
                         ),
                       ),

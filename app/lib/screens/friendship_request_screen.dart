@@ -19,7 +19,7 @@ class FriendshipRequestScreen extends HookConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        leading: AppBarLeading(),
+        leading: const AppBarLeading(),
         title: const Text(
           '友だち追加',
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
@@ -30,9 +30,9 @@ class FriendshipRequestScreen extends HookConsumerWidget {
       body: Column(
         children: [
           Container(
-            margin: EdgeInsets.only(top: 30),
+            margin: const EdgeInsets.only(top: 30),
             child: Container(
-              margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+              margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
               child: TextField(
                 textInputAction: TextInputAction.search,
                 cursorColor: Colors.black,
@@ -68,7 +68,7 @@ class FriendshipRequestScreen extends HookConsumerWidget {
           ),
           searchUserQueryResult.value != null
               ? _FriendSearchResult(searchUserQueryResult.value!)
-              : SizedBox(),
+              : const SizedBox(),
         ],
       ),
     );
@@ -76,7 +76,7 @@ class FriendshipRequestScreen extends HookConsumerWidget {
 }
 
 class _FriendSearchResult extends HookConsumerWidget {
-  const _FriendSearchResult(this.searchResult, {super.key});
+  const _FriendSearchResult(this.searchResult);
 
   final QueryResult<Query$searchUser> searchResult;
 
@@ -101,13 +101,13 @@ class _FriendSearchResult extends HookConsumerWidget {
 
     if (foundUser.value == null || foundUser.value?.id == user.id) {
       return Container(
-        margin: EdgeInsets.symmetric(vertical: 15),
-        child: Text("ユーザーが見つかりませんでした。"),
+        margin: const EdgeInsets.symmetric(vertical: 15),
+        child: const Text("ユーザーが見つかりませんでした。"),
       );
     }
 
     return Container(
-      margin: EdgeInsets.all(15),
+      margin: const EdgeInsets.all(15),
       child: Column(
         children: [
           Divider(height: 0, thickness: 1, color: Colors.grey.shade200),
@@ -130,21 +130,21 @@ class _FriendSearchResult extends HookConsumerWidget {
               ),
               () {
                 if (foundUser.value!.isFriend) {
-                  return Icon(Icons.check);
+                  return const Icon(Icons.check);
                 } else if (foundUser.value!.isRequestingFriendship) {
-                  return Text("リクエスト済み",
+                  return const Text("リクエスト済み",
                       style: TextStyle(fontWeight: FontWeight.bold));
                 } else {
                   return OutlinedButton(
                     style: OutlinedButton.styleFrom(
                       minimumSize: Size.zero,
                       padding:
-                          EdgeInsets.symmetric(vertical: 5, horizontal: 12),
+                          const EdgeInsets.symmetric(vertical: 5, horizontal: 12),
                     ),
                     onPressed: () async => {
                       onPressedRequestFriendship(foundUser.value!.id),
                     },
-                    child: Text("申請する",
+                    child: const Text("申請する",
                         style: TextStyle(color: Colors.black, fontSize: 16)),
                   );
                 }

@@ -8,9 +8,9 @@ class AppBarLeading extends StatelessWidget {
     final navigator = Navigator.of(context);
     return navigator.canPop()
         ? IconButton(
-            icon: Icon(Icons.arrow_back, color: Colors.black),
+            icon: const Icon(Icons.arrow_back, color: Colors.black),
             onPressed: () => navigator.pop(),
           )
-        : SizedBox();
+        : const SizedBox();
   }
 }

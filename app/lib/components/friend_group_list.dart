@@ -38,7 +38,6 @@ class FriendGroupList extends StatelessWidget {
 
 class _FriendGroupListItem extends StatelessWidget {
   const _FriendGroupListItem({
-    super.key,
     required this.friendGroup,
   });
 

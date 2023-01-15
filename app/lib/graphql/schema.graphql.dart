@@ -43,7 +43,7 @@ class Input$CreateFriendGroupInput {
     if (identical(this, other)) {
       return true;
     }
-    if (!(other is Input$CreateFriendGroupInput) ||
+    if (other is! Input$CreateFriendGroupInput ||
         runtimeType != other.runtimeType) {
       return false;
     }
@@ -106,6 +106,7 @@ class _CopyWithImpl$Input$CreateFriendGroupInput<TRes>
 
   static const _undefined = {};
 
+  @override
   TRes call({
     Object? name = _undefined,
     Object? friendUserIds = _undefined,
@@ -122,8 +123,9 @@ class _CopyWithStubImpl$Input$CreateFriendGroupInput<TRes>
     implements CopyWith$Input$CreateFriendGroupInput<TRes> {
   _CopyWithStubImpl$Input$CreateFriendGroupInput(this._res);
 
-  TRes _res;
+  final TRes _res;
 
+  @override
   call({
     String? name,
     List<String>? friendUserIds,
@@ -179,7 +181,7 @@ class Input$CreateUserInput {
     if (identical(this, other)) {
       return true;
     }
-    if (!(other is Input$CreateUserInput) || runtimeType != other.runtimeType) {
+    if (other is! Input$CreateUserInput || runtimeType != other.runtimeType) {
       return false;
     }
     final l$nickname = nickname;
@@ -238,6 +240,7 @@ class _CopyWithImpl$Input$CreateUserInput<TRes>
 
   static const _undefined = {};
 
+  @override
   TRes call({
     Object? nickname = _undefined,
     Object? avatarUrl = _undefined,
@@ -254,8 +257,9 @@ class _CopyWithStubImpl$Input$CreateUserInput<TRes>
     implements CopyWith$Input$CreateUserInput<TRes> {
   _CopyWithStubImpl$Input$CreateUserInput(this._res);
 
-  TRes _res;
+  final TRes _res;
 
+  @override
   call({
     String? nickname,
     String? avatarUrl,
@@ -309,7 +313,7 @@ class Input$RegisterPushNotificationTokenInput {
     if (identical(this, other)) {
       return true;
     }
-    if (!(other is Input$RegisterPushNotificationTokenInput) ||
+    if (other is! Input$RegisterPushNotificationTokenInput ||
         runtimeType != other.runtimeType) {
       return false;
     }
@@ -365,6 +369,7 @@ class _CopyWithImpl$Input$RegisterPushNotificationTokenInput<TRes>
 
   static const _undefined = {};
 
+  @override
   TRes call({
     Object? deviceId = _undefined,
     Object? fcmToken = _undefined,
@@ -382,8 +387,9 @@ class _CopyWithStubImpl$Input$RegisterPushNotificationTokenInput<TRes>
     implements CopyWith$Input$RegisterPushNotificationTokenInput<TRes> {
   _CopyWithStubImpl$Input$RegisterPushNotificationTokenInput(this._res);
 
-  TRes _res;
+  final TRes _res;
 
+  @override
   call({
     String? deviceId,
     String? fcmToken,
@@ -473,7 +479,7 @@ class Input$SendInvitationInput {
     if (identical(this, other)) {
       return true;
     }
-    if (!(other is Input$SendInvitationInput) ||
+    if (other is! Input$SendInvitationInput ||
         runtimeType != other.runtimeType) {
       return false;
     }
@@ -575,6 +581,7 @@ class _CopyWithImpl$Input$SendInvitationInput<TRes>
 
   static const _undefined = {};
 
+  @override
   TRes call({
     Object? targetFriendGroupIds = _undefined,
     Object? targetFriendUserIds = _undefined,
@@ -604,8 +611,9 @@ class _CopyWithStubImpl$Input$SendInvitationInput<TRes>
     implements CopyWith$Input$SendInvitationInput<TRes> {
   _CopyWithStubImpl$Input$SendInvitationInput(this._res);
 
-  TRes _res;
+  final TRes _res;
 
+  @override
   call({
     List<String>? targetFriendGroupIds,
     List<String>? targetFriendUserIds,
@@ -676,7 +684,7 @@ class Input$SignUpInput {
     if (identical(this, other)) {
       return true;
     }
-    if (!(other is Input$SignUpInput) || runtimeType != other.runtimeType) {
+    if (other is! Input$SignUpInput || runtimeType != other.runtimeType) {
       return false;
     }
     final l$email = email;
@@ -746,6 +754,7 @@ class _CopyWithImpl$Input$SignUpInput<TRes>
 
   static const _undefined = {};
 
+  @override
   TRes call({
     Object? email = _undefined,
     Object? nickname = _undefined,
@@ -764,8 +773,9 @@ class _CopyWithStubImpl$Input$SignUpInput<TRes>
     implements CopyWith$Input$SignUpInput<TRes> {
   _CopyWithStubImpl$Input$SignUpInput(this._res);
 
-  TRes _res;
+  final TRes _res;
 
+  @override
   call({
     String? email,
     String? nickname,
@@ -826,7 +836,7 @@ class Input$UpdateFriendGroupInput {
     if (identical(this, other)) {
       return true;
     }
-    if (!(other is Input$UpdateFriendGroupInput) ||
+    if (other is! Input$UpdateFriendGroupInput ||
         runtimeType != other.runtimeType) {
       return false;
     }
@@ -897,6 +907,7 @@ class _CopyWithImpl$Input$UpdateFriendGroupInput<TRes>
 
   static const _undefined = {};
 
+  @override
   TRes call({
     Object? id = _undefined,
     Object? name = _undefined,
@@ -915,8 +926,9 @@ class _CopyWithStubImpl$Input$UpdateFriendGroupInput<TRes>
     implements CopyWith$Input$UpdateFriendGroupInput<TRes> {
   _CopyWithStubImpl$Input$UpdateFriendGroupInput(this._res);
 
-  TRes _res;
+  final TRes _res;
 
+  @override
   call({
     String? id,
     String? name,
