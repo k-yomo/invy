@@ -138,8 +138,8 @@ class _FriendSearchResult extends HookConsumerWidget {
                   return OutlinedButton(
                     style: OutlinedButton.styleFrom(
                       minimumSize: Size.zero,
-                      padding:
-                          const EdgeInsets.symmetric(vertical: 5, horizontal: 12),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 5, horizontal: 12),
                     ),
                     onPressed: () async => {
                       onPressedRequestFriendship(foundUser.value!.id),

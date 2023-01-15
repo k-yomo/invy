@@ -69,7 +69,8 @@ class SentInvitationCard extends StatelessWidget {
                 ? [
                     Container(
                       width: double.infinity,
-                      margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+                      margin: const EdgeInsets.symmetric(
+                          vertical: 5, horizontal: 5),
                       child: const Text("参加者",
                           style: TextStyle(
                               fontSize: 12, fontWeight: FontWeight.bold)),
@@ -93,7 +94,8 @@ class SentInvitationCard extends StatelessWidget {
                                             ),
                                             Text(
                                               acceptedUser.nickname,
-                                              style: const TextStyle(fontSize: 12),
+                                              style:
+                                                  const TextStyle(fontSize: 12),
                                               overflow: TextOverflow.ellipsis,
                                             ),
                                           ],

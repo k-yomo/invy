@@ -28,7 +28,8 @@ class FriendGroupDetailScreen extends HookConsumerWidget {
               leading: const AppBarLeading(),
               title: Text(
                 viewer?.friendGroup.name ?? '',
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                style:
+                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
               ),
               shape: Border(
                   bottom: BorderSide(color: Colors.grey.shade200, width: 1)),

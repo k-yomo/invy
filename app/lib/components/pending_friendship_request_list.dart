@@ -62,8 +62,8 @@ class PendingFriendshipRequestList extends HookConsumerWidget {
                   ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         minimumSize: Size.zero,
-                        padding:
-                            const EdgeInsets.symmetric(vertical: 5, horizontal: 16),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 5, horizontal: 16),
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                             side: const BorderSide(color: Colors.transparent)),
@@ -76,8 +76,8 @@ class PendingFriendshipRequestList extends HookConsumerWidget {
                   ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         minimumSize: Size.zero,
-                        padding:
-                            const EdgeInsets.symmetric(vertical: 5, horizontal: 16),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 5, horizontal: 16),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
                           side: const BorderSide(color: Colors.transparent),

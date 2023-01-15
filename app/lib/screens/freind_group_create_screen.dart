@@ -61,7 +61,8 @@ class FriendGroupCreateScreen extends HookConsumerWidget {
                 leading: const AppBarLeading(),
                 title: Text(
                   selectedCount > 0 ? '選択中($selectedCount)' : 'グループ作成',
-                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                      fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 actions: <Widget>[
                   TextButton(

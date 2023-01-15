@@ -50,21 +50,23 @@ class ProfileScreen extends HookConsumerWidget {
                   margin: const EdgeInsets.symmetric(vertical: 15),
                   child: Text(
                     user.nickname,
-                    style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                        fontSize: 24, fontWeight: FontWeight.bold),
                   ),
                 ),
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text("ユーザーID | ${user.screenId}",
-                        style: const TextStyle(color: Colors.black, fontSize: 16)),
+                        style:
+                            const TextStyle(color: Colors.black, fontSize: 16)),
                     Container(
                       margin: const EdgeInsets.only(left: 10),
                       child: OutlinedButton(
                         style: OutlinedButton.styleFrom(
                           minimumSize: Size.zero,
-                          padding:
-                              const EdgeInsets.symmetric(vertical: 3, horizontal: 10),
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 3, horizontal: 10),
                         ),
                         onPressed: () async {
                           Clipboard.setData(ClipboardData(text: user.screenId))
@@ -91,8 +93,8 @@ class ProfileScreen extends HookConsumerWidget {
                       builder: (context) => const ProfileEditScreen(),
                     ));
                   },
-                  child:
-                      const Text("プロフィールを編集", style: TextStyle(color: Colors.black)),
+                  child: const Text("プロフィールを編集",
+                      style: TextStyle(color: Colors.black)),
                 ),
               ],
             ),

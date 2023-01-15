@@ -36,7 +36,8 @@ class InvitationScreen extends HookConsumerWidget {
               leading: const AppBarLeading(),
               title: Text(
                 selectedCount > 0 ? '選択中($selectedCount)' : '友だちを選択',
-                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                style:
+                    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               actions: <Widget>[
                 TextButton(

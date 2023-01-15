@@ -40,7 +40,7 @@ class Variables$Mutation$updateAvatar {
     if (identical(this, other)) {
       return true;
     }
-    if (other is! Variables$Mutation$updateAvatar ||
+    if (!(other is Variables$Mutation$updateAvatar) ||
         runtimeType != other.runtimeType) {
       return false;
     }
@@ -84,7 +84,6 @@ class _CopyWithImpl$Variables$Mutation$updateAvatar<TRes>
 
   static const _undefined = {};
 
-  @override
   TRes call({Object? avatar = _undefined}) =>
       _then(Variables$Mutation$updateAvatar._({
         ..._instance._$data,
@@ -97,9 +96,8 @@ class _CopyWithStubImpl$Variables$Mutation$updateAvatar<TRes>
     implements CopyWith$Variables$Mutation$updateAvatar<TRes> {
   _CopyWithStubImpl$Variables$Mutation$updateAvatar(this._res);
 
-  final TRes _res;
+  TRes _res;
 
-  @override
   call({MultipartFile? avatar}) => _res;
 }
 
@@ -111,11 +109,11 @@ class Mutation$updateAvatar {
 
   factory Mutation$updateAvatar.fromJson(Map<String, dynamic> json) {
     final l$updateAvatar = json['updateAvatar'];
-    final l$$Typename = json['__typename'];
+    final l$$__typename = json['__typename'];
     return Mutation$updateAvatar(
       updateAvatar: Mutation$updateAvatar$updateAvatar.fromJson(
           (l$updateAvatar as Map<String, dynamic>)),
-      $__typename: (l$$Typename as String),
+      $__typename: (l$$__typename as String),
     );
   }
 
@@ -124,21 +122,21 @@ class Mutation$updateAvatar {
   final String $__typename;
 
   Map<String, dynamic> toJson() {
-    final resultData = <String, dynamic>{};
+    final _resultData = <String, dynamic>{};
     final l$updateAvatar = updateAvatar;
-    resultData['updateAvatar'] = l$updateAvatar.toJson();
-    final l$$Typename = $__typename;
-    resultData['__typename'] = l$$Typename;
-    return resultData;
+    _resultData['updateAvatar'] = l$updateAvatar.toJson();
+    final l$$__typename = $__typename;
+    _resultData['__typename'] = l$$__typename;
+    return _resultData;
   }
 
   @override
   int get hashCode {
     final l$updateAvatar = updateAvatar;
-    final l$$Typename = $__typename;
+    final l$$__typename = $__typename;
     return Object.hashAll([
       l$updateAvatar,
-      l$$Typename,
+      l$$__typename,
     ]);
   }
 
@@ -147,7 +145,7 @@ class Mutation$updateAvatar {
     if (identical(this, other)) {
       return true;
     }
-    if (other is! Mutation$updateAvatar || runtimeType != other.runtimeType) {
+    if (!(other is Mutation$updateAvatar) || runtimeType != other.runtimeType) {
       return false;
     }
     final l$updateAvatar = updateAvatar;
@@ -155,9 +153,9 @@ class Mutation$updateAvatar {
     if (l$updateAvatar != lOther$updateAvatar) {
       return false;
     }
-    final l$$Typename = $__typename;
-    final lOther$$Typename = other.$__typename;
-    if (l$$Typename != lOther$$Typename) {
+    final l$$__typename = $__typename;
+    final lOther$$__typename = other.$__typename;
+    if (l$$__typename != lOther$$__typename) {
       return false;
     }
     return true;
@@ -201,7 +199,6 @@ class _CopyWithImpl$Mutation$updateAvatar<TRes>
 
   static const _undefined = {};
 
-  @override
   TRes call({
     Object? updateAvatar = _undefined,
     Object? $__typename = _undefined,
@@ -214,7 +211,6 @@ class _CopyWithImpl$Mutation$updateAvatar<TRes>
             ? _instance.$__typename
             : ($__typename as String),
       ));
-  @override
   CopyWith$Mutation$updateAvatar$updateAvatar<TRes> get updateAvatar {
     final local$updateAvatar = _instance.updateAvatar;
     return CopyWith$Mutation$updateAvatar$updateAvatar(
@@ -226,15 +222,13 @@ class _CopyWithStubImpl$Mutation$updateAvatar<TRes>
     implements CopyWith$Mutation$updateAvatar<TRes> {
   _CopyWithStubImpl$Mutation$updateAvatar(this._res);
 
-  final TRes _res;
+  TRes _res;
 
-  @override
   call({
     Mutation$updateAvatar$updateAvatar? updateAvatar,
     String? $__typename,
   }) =>
       _res;
-  @override
   CopyWith$Mutation$updateAvatar$updateAvatar<TRes> get updateAvatar =>
       CopyWith$Mutation$updateAvatar$updateAvatar.stub(_res);
 }
@@ -402,10 +396,10 @@ class WatchOptions$Mutation$updateAvatar
 extension ClientExtension$Mutation$updateAvatar on graphql.GraphQLClient {
   Future<graphql.QueryResult<Mutation$updateAvatar>> mutate$updateAvatar(
           Options$Mutation$updateAvatar options) async =>
-      await mutate(options);
+      await this.mutate(options);
   graphql.ObservableQuery<Mutation$updateAvatar> watchMutation$updateAvatar(
           WatchOptions$Mutation$updateAvatar options) =>
-      watchMutation(options);
+      this.watchMutation(options);
 }
 
 class Mutation$updateAvatar$HookResult {
@@ -525,11 +519,11 @@ class Mutation$updateAvatar$updateAvatar {
   factory Mutation$updateAvatar$updateAvatar.fromJson(
       Map<String, dynamic> json) {
     final l$viewer = json['viewer'];
-    final l$$Typename = json['__typename'];
+    final l$$__typename = json['__typename'];
     return Mutation$updateAvatar$updateAvatar(
       viewer: Mutation$updateAvatar$updateAvatar$viewer.fromJson(
           (l$viewer as Map<String, dynamic>)),
-      $__typename: (l$$Typename as String),
+      $__typename: (l$$__typename as String),
     );
   }
 
@@ -538,21 +532,21 @@ class Mutation$updateAvatar$updateAvatar {
   final String $__typename;
 
   Map<String, dynamic> toJson() {
-    final resultData = <String, dynamic>{};
+    final _resultData = <String, dynamic>{};
     final l$viewer = viewer;
-    resultData['viewer'] = l$viewer.toJson();
-    final l$$Typename = $__typename;
-    resultData['__typename'] = l$$Typename;
-    return resultData;
+    _resultData['viewer'] = l$viewer.toJson();
+    final l$$__typename = $__typename;
+    _resultData['__typename'] = l$$__typename;
+    return _resultData;
   }
 
   @override
   int get hashCode {
     final l$viewer = viewer;
-    final l$$Typename = $__typename;
+    final l$$__typename = $__typename;
     return Object.hashAll([
       l$viewer,
-      l$$Typename,
+      l$$__typename,
     ]);
   }
 
@@ -561,7 +555,7 @@ class Mutation$updateAvatar$updateAvatar {
     if (identical(this, other)) {
       return true;
     }
-    if (other is! Mutation$updateAvatar$updateAvatar ||
+    if (!(other is Mutation$updateAvatar$updateAvatar) ||
         runtimeType != other.runtimeType) {
       return false;
     }
@@ -570,9 +564,9 @@ class Mutation$updateAvatar$updateAvatar {
     if (l$viewer != lOther$viewer) {
       return false;
     }
-    final l$$Typename = $__typename;
-    final lOther$$Typename = other.$__typename;
-    if (l$$Typename != lOther$$Typename) {
+    final l$$__typename = $__typename;
+    final lOther$$__typename = other.$__typename;
+    if (l$$__typename != lOther$$__typename) {
       return false;
     }
     return true;
@@ -618,7 +612,6 @@ class _CopyWithImpl$Mutation$updateAvatar$updateAvatar<TRes>
 
   static const _undefined = {};
 
-  @override
   TRes call({
     Object? viewer = _undefined,
     Object? $__typename = _undefined,
@@ -631,7 +624,6 @@ class _CopyWithImpl$Mutation$updateAvatar$updateAvatar<TRes>
             ? _instance.$__typename
             : ($__typename as String),
       ));
-  @override
   CopyWith$Mutation$updateAvatar$updateAvatar$viewer<TRes> get viewer {
     final local$viewer = _instance.viewer;
     return CopyWith$Mutation$updateAvatar$updateAvatar$viewer(
@@ -643,15 +635,13 @@ class _CopyWithStubImpl$Mutation$updateAvatar$updateAvatar<TRes>
     implements CopyWith$Mutation$updateAvatar$updateAvatar<TRes> {
   _CopyWithStubImpl$Mutation$updateAvatar$updateAvatar(this._res);
 
-  final TRes _res;
+  TRes _res;
 
-  @override
   call({
     Mutation$updateAvatar$updateAvatar$viewer? viewer,
     String? $__typename,
   }) =>
       _res;
-  @override
   CopyWith$Mutation$updateAvatar$updateAvatar$viewer<TRes> get viewer =>
       CopyWith$Mutation$updateAvatar$updateAvatar$viewer.stub(_res);
 }
@@ -667,11 +657,11 @@ class Mutation$updateAvatar$updateAvatar$viewer {
       Map<String, dynamic> json) {
     final l$id = json['id'];
     final l$avatarUrl = json['avatarUrl'];
-    final l$$Typename = json['__typename'];
+    final l$$__typename = json['__typename'];
     return Mutation$updateAvatar$updateAvatar$viewer(
       id: (l$id as String),
       avatarUrl: (l$avatarUrl as String),
-      $__typename: (l$$Typename as String),
+      $__typename: (l$$__typename as String),
     );
   }
 
@@ -682,25 +672,25 @@ class Mutation$updateAvatar$updateAvatar$viewer {
   final String $__typename;
 
   Map<String, dynamic> toJson() {
-    final resultData = <String, dynamic>{};
+    final _resultData = <String, dynamic>{};
     final l$id = id;
-    resultData['id'] = l$id;
+    _resultData['id'] = l$id;
     final l$avatarUrl = avatarUrl;
-    resultData['avatarUrl'] = l$avatarUrl;
-    final l$$Typename = $__typename;
-    resultData['__typename'] = l$$Typename;
-    return resultData;
+    _resultData['avatarUrl'] = l$avatarUrl;
+    final l$$__typename = $__typename;
+    _resultData['__typename'] = l$$__typename;
+    return _resultData;
   }
 
   @override
   int get hashCode {
     final l$id = id;
     final l$avatarUrl = avatarUrl;
-    final l$$Typename = $__typename;
+    final l$$__typename = $__typename;
     return Object.hashAll([
       l$id,
       l$avatarUrl,
-      l$$Typename,
+      l$$__typename,
     ]);
   }
 
@@ -709,7 +699,7 @@ class Mutation$updateAvatar$updateAvatar$viewer {
     if (identical(this, other)) {
       return true;
     }
-    if (other is! Mutation$updateAvatar$updateAvatar$viewer ||
+    if (!(other is Mutation$updateAvatar$updateAvatar$viewer) ||
         runtimeType != other.runtimeType) {
       return false;
     }
@@ -723,9 +713,9 @@ class Mutation$updateAvatar$updateAvatar$viewer {
     if (l$avatarUrl != lOther$avatarUrl) {
       return false;
     }
-    final l$$Typename = $__typename;
-    final lOther$$Typename = other.$__typename;
-    if (l$$Typename != lOther$$Typename) {
+    final l$$__typename = $__typename;
+    final lOther$$__typename = other.$__typename;
+    if (l$$__typename != lOther$$__typename) {
       return false;
     }
     return true;
@@ -771,7 +761,6 @@ class _CopyWithImpl$Mutation$updateAvatar$updateAvatar$viewer<TRes>
 
   static const _undefined = {};
 
-  @override
   TRes call({
     Object? id = _undefined,
     Object? avatarUrl = _undefined,
@@ -792,9 +781,8 @@ class _CopyWithStubImpl$Mutation$updateAvatar$updateAvatar$viewer<TRes>
     implements CopyWith$Mutation$updateAvatar$updateAvatar$viewer<TRes> {
   _CopyWithStubImpl$Mutation$updateAvatar$updateAvatar$viewer(this._res);
 
-  final TRes _res;
+  TRes _res;
 
-  @override
   call({
     String? id,
     String? avatarUrl,
@@ -839,7 +827,7 @@ class Variables$Mutation$updateNickname {
     if (identical(this, other)) {
       return true;
     }
-    if (other is! Variables$Mutation$updateNickname ||
+    if (!(other is Variables$Mutation$updateNickname) ||
         runtimeType != other.runtimeType) {
       return false;
     }
@@ -883,7 +871,6 @@ class _CopyWithImpl$Variables$Mutation$updateNickname<TRes>
 
   static const _undefined = {};
 
-  @override
   TRes call({Object? nickname = _undefined}) =>
       _then(Variables$Mutation$updateNickname._({
         ..._instance._$data,
@@ -896,9 +883,8 @@ class _CopyWithStubImpl$Variables$Mutation$updateNickname<TRes>
     implements CopyWith$Variables$Mutation$updateNickname<TRes> {
   _CopyWithStubImpl$Variables$Mutation$updateNickname(this._res);
 
-  final TRes _res;
+  TRes _res;
 
-  @override
   call({String? nickname}) => _res;
 }
 
@@ -910,11 +896,11 @@ class Mutation$updateNickname {
 
   factory Mutation$updateNickname.fromJson(Map<String, dynamic> json) {
     final l$updateNickname = json['updateNickname'];
-    final l$$Typename = json['__typename'];
+    final l$$__typename = json['__typename'];
     return Mutation$updateNickname(
       updateNickname: Mutation$updateNickname$updateNickname.fromJson(
           (l$updateNickname as Map<String, dynamic>)),
-      $__typename: (l$$Typename as String),
+      $__typename: (l$$__typename as String),
     );
   }
 
@@ -923,21 +909,21 @@ class Mutation$updateNickname {
   final String $__typename;
 
   Map<String, dynamic> toJson() {
-    final resultData = <String, dynamic>{};
+    final _resultData = <String, dynamic>{};
     final l$updateNickname = updateNickname;
-    resultData['updateNickname'] = l$updateNickname.toJson();
-    final l$$Typename = $__typename;
-    resultData['__typename'] = l$$Typename;
-    return resultData;
+    _resultData['updateNickname'] = l$updateNickname.toJson();
+    final l$$__typename = $__typename;
+    _resultData['__typename'] = l$$__typename;
+    return _resultData;
   }
 
   @override
   int get hashCode {
     final l$updateNickname = updateNickname;
-    final l$$Typename = $__typename;
+    final l$$__typename = $__typename;
     return Object.hashAll([
       l$updateNickname,
-      l$$Typename,
+      l$$__typename,
     ]);
   }
 
@@ -946,7 +932,7 @@ class Mutation$updateNickname {
     if (identical(this, other)) {
       return true;
     }
-    if (other is! Mutation$updateNickname ||
+    if (!(other is Mutation$updateNickname) ||
         runtimeType != other.runtimeType) {
       return false;
     }
@@ -955,9 +941,9 @@ class Mutation$updateNickname {
     if (l$updateNickname != lOther$updateNickname) {
       return false;
     }
-    final l$$Typename = $__typename;
-    final lOther$$Typename = other.$__typename;
-    if (l$$Typename != lOther$$Typename) {
+    final l$$__typename = $__typename;
+    final lOther$$__typename = other.$__typename;
+    if (l$$__typename != lOther$$__typename) {
       return false;
     }
     return true;
@@ -1001,7 +987,6 @@ class _CopyWithImpl$Mutation$updateNickname<TRes>
 
   static const _undefined = {};
 
-  @override
   TRes call({
     Object? updateNickname = _undefined,
     Object? $__typename = _undefined,
@@ -1014,7 +999,6 @@ class _CopyWithImpl$Mutation$updateNickname<TRes>
             ? _instance.$__typename
             : ($__typename as String),
       ));
-  @override
   CopyWith$Mutation$updateNickname$updateNickname<TRes> get updateNickname {
     final local$updateNickname = _instance.updateNickname;
     return CopyWith$Mutation$updateNickname$updateNickname(
@@ -1026,15 +1010,13 @@ class _CopyWithStubImpl$Mutation$updateNickname<TRes>
     implements CopyWith$Mutation$updateNickname<TRes> {
   _CopyWithStubImpl$Mutation$updateNickname(this._res);
 
-  final TRes _res;
+  TRes _res;
 
-  @override
   call({
     Mutation$updateNickname$updateNickname? updateNickname,
     String? $__typename,
   }) =>
       _res;
-  @override
   CopyWith$Mutation$updateNickname$updateNickname<TRes> get updateNickname =>
       CopyWith$Mutation$updateNickname$updateNickname.stub(_res);
 }
@@ -1204,10 +1186,10 @@ class WatchOptions$Mutation$updateNickname
 extension ClientExtension$Mutation$updateNickname on graphql.GraphQLClient {
   Future<graphql.QueryResult<Mutation$updateNickname>> mutate$updateNickname(
           Options$Mutation$updateNickname options) async =>
-      await mutate(options);
+      await this.mutate(options);
   graphql.ObservableQuery<Mutation$updateNickname> watchMutation$updateNickname(
           WatchOptions$Mutation$updateNickname options) =>
-      watchMutation(options);
+      this.watchMutation(options);
 }
 
 class Mutation$updateNickname$HookResult {
@@ -1330,11 +1312,11 @@ class Mutation$updateNickname$updateNickname {
   factory Mutation$updateNickname$updateNickname.fromJson(
       Map<String, dynamic> json) {
     final l$viewer = json['viewer'];
-    final l$$Typename = json['__typename'];
+    final l$$__typename = json['__typename'];
     return Mutation$updateNickname$updateNickname(
       viewer: Mutation$updateNickname$updateNickname$viewer.fromJson(
           (l$viewer as Map<String, dynamic>)),
-      $__typename: (l$$Typename as String),
+      $__typename: (l$$__typename as String),
     );
   }
 
@@ -1343,21 +1325,21 @@ class Mutation$updateNickname$updateNickname {
   final String $__typename;
 
   Map<String, dynamic> toJson() {
-    final resultData = <String, dynamic>{};
+    final _resultData = <String, dynamic>{};
     final l$viewer = viewer;
-    resultData['viewer'] = l$viewer.toJson();
-    final l$$Typename = $__typename;
-    resultData['__typename'] = l$$Typename;
-    return resultData;
+    _resultData['viewer'] = l$viewer.toJson();
+    final l$$__typename = $__typename;
+    _resultData['__typename'] = l$$__typename;
+    return _resultData;
   }
 
   @override
   int get hashCode {
     final l$viewer = viewer;
-    final l$$Typename = $__typename;
+    final l$$__typename = $__typename;
     return Object.hashAll([
       l$viewer,
-      l$$Typename,
+      l$$__typename,
     ]);
   }
 
@@ -1366,7 +1348,7 @@ class Mutation$updateNickname$updateNickname {
     if (identical(this, other)) {
       return true;
     }
-    if (other is! Mutation$updateNickname$updateNickname ||
+    if (!(other is Mutation$updateNickname$updateNickname) ||
         runtimeType != other.runtimeType) {
       return false;
     }
@@ -1375,9 +1357,9 @@ class Mutation$updateNickname$updateNickname {
     if (l$viewer != lOther$viewer) {
       return false;
     }
-    final l$$Typename = $__typename;
-    final lOther$$Typename = other.$__typename;
-    if (l$$Typename != lOther$$Typename) {
+    final l$$__typename = $__typename;
+    final lOther$$__typename = other.$__typename;
+    if (l$$__typename != lOther$$__typename) {
       return false;
     }
     return true;
@@ -1423,7 +1405,6 @@ class _CopyWithImpl$Mutation$updateNickname$updateNickname<TRes>
 
   static const _undefined = {};
 
-  @override
   TRes call({
     Object? viewer = _undefined,
     Object? $__typename = _undefined,
@@ -1436,7 +1417,6 @@ class _CopyWithImpl$Mutation$updateNickname$updateNickname<TRes>
             ? _instance.$__typename
             : ($__typename as String),
       ));
-  @override
   CopyWith$Mutation$updateNickname$updateNickname$viewer<TRes> get viewer {
     final local$viewer = _instance.viewer;
     return CopyWith$Mutation$updateNickname$updateNickname$viewer(
@@ -1448,15 +1428,13 @@ class _CopyWithStubImpl$Mutation$updateNickname$updateNickname<TRes>
     implements CopyWith$Mutation$updateNickname$updateNickname<TRes> {
   _CopyWithStubImpl$Mutation$updateNickname$updateNickname(this._res);
 
-  final TRes _res;
+  TRes _res;
 
-  @override
   call({
     Mutation$updateNickname$updateNickname$viewer? viewer,
     String? $__typename,
   }) =>
       _res;
-  @override
   CopyWith$Mutation$updateNickname$updateNickname$viewer<TRes> get viewer =>
       CopyWith$Mutation$updateNickname$updateNickname$viewer.stub(_res);
 }
@@ -1472,11 +1450,11 @@ class Mutation$updateNickname$updateNickname$viewer {
       Map<String, dynamic> json) {
     final l$id = json['id'];
     final l$nickname = json['nickname'];
-    final l$$Typename = json['__typename'];
+    final l$$__typename = json['__typename'];
     return Mutation$updateNickname$updateNickname$viewer(
       id: (l$id as String),
       nickname: (l$nickname as String),
-      $__typename: (l$$Typename as String),
+      $__typename: (l$$__typename as String),
     );
   }
 
@@ -1487,25 +1465,25 @@ class Mutation$updateNickname$updateNickname$viewer {
   final String $__typename;
 
   Map<String, dynamic> toJson() {
-    final resultData = <String, dynamic>{};
+    final _resultData = <String, dynamic>{};
     final l$id = id;
-    resultData['id'] = l$id;
+    _resultData['id'] = l$id;
     final l$nickname = nickname;
-    resultData['nickname'] = l$nickname;
-    final l$$Typename = $__typename;
-    resultData['__typename'] = l$$Typename;
-    return resultData;
+    _resultData['nickname'] = l$nickname;
+    final l$$__typename = $__typename;
+    _resultData['__typename'] = l$$__typename;
+    return _resultData;
   }
 
   @override
   int get hashCode {
     final l$id = id;
     final l$nickname = nickname;
-    final l$$Typename = $__typename;
+    final l$$__typename = $__typename;
     return Object.hashAll([
       l$id,
       l$nickname,
-      l$$Typename,
+      l$$__typename,
     ]);
   }
 
@@ -1514,7 +1492,7 @@ class Mutation$updateNickname$updateNickname$viewer {
     if (identical(this, other)) {
       return true;
     }
-    if (other is! Mutation$updateNickname$updateNickname$viewer ||
+    if (!(other is Mutation$updateNickname$updateNickname$viewer) ||
         runtimeType != other.runtimeType) {
       return false;
     }
@@ -1528,9 +1506,9 @@ class Mutation$updateNickname$updateNickname$viewer {
     if (l$nickname != lOther$nickname) {
       return false;
     }
-    final l$$Typename = $__typename;
-    final lOther$$Typename = other.$__typename;
-    if (l$$Typename != lOther$$Typename) {
+    final l$$__typename = $__typename;
+    final lOther$$__typename = other.$__typename;
+    if (l$$__typename != lOther$$__typename) {
       return false;
     }
     return true;
@@ -1577,7 +1555,6 @@ class _CopyWithImpl$Mutation$updateNickname$updateNickname$viewer<TRes>
 
   static const _undefined = {};
 
-  @override
   TRes call({
     Object? id = _undefined,
     Object? nickname = _undefined,
@@ -1598,9 +1575,8 @@ class _CopyWithStubImpl$Mutation$updateNickname$updateNickname$viewer<TRes>
     implements CopyWith$Mutation$updateNickname$updateNickname$viewer<TRes> {
   _CopyWithStubImpl$Mutation$updateNickname$updateNickname$viewer(this._res);
 
-  final TRes _res;
+  TRes _res;
 
-  @override
   call({
     String? id,
     String? nickname,

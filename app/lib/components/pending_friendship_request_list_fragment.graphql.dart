@@ -13,12 +13,12 @@ class Fragment$pendingFriendRequestItemFragment {
       Map<String, dynamic> json) {
     final l$id = json['id'];
     final l$fromUser = json['fromUser'];
-    final l$$Typename = json['__typename'];
+    final l$$__typename = json['__typename'];
     return Fragment$pendingFriendRequestItemFragment(
       id: (l$id as String),
       fromUser: Fragment$friendListItemFragment.fromJson(
           (l$fromUser as Map<String, dynamic>)),
-      $__typename: (l$$Typename as String),
+      $__typename: (l$$__typename as String),
     );
   }
 
@@ -29,25 +29,25 @@ class Fragment$pendingFriendRequestItemFragment {
   final String $__typename;
 
   Map<String, dynamic> toJson() {
-    final resultData = <String, dynamic>{};
+    final _resultData = <String, dynamic>{};
     final l$id = id;
-    resultData['id'] = l$id;
+    _resultData['id'] = l$id;
     final l$fromUser = fromUser;
-    resultData['fromUser'] = l$fromUser.toJson();
-    final l$$Typename = $__typename;
-    resultData['__typename'] = l$$Typename;
-    return resultData;
+    _resultData['fromUser'] = l$fromUser.toJson();
+    final l$$__typename = $__typename;
+    _resultData['__typename'] = l$$__typename;
+    return _resultData;
   }
 
   @override
   int get hashCode {
     final l$id = id;
     final l$fromUser = fromUser;
-    final l$$Typename = $__typename;
+    final l$$__typename = $__typename;
     return Object.hashAll([
       l$id,
       l$fromUser,
-      l$$Typename,
+      l$$__typename,
     ]);
   }
 
@@ -56,7 +56,7 @@ class Fragment$pendingFriendRequestItemFragment {
     if (identical(this, other)) {
       return true;
     }
-    if (other is! Fragment$pendingFriendRequestItemFragment ||
+    if (!(other is Fragment$pendingFriendRequestItemFragment) ||
         runtimeType != other.runtimeType) {
       return false;
     }
@@ -70,9 +70,9 @@ class Fragment$pendingFriendRequestItemFragment {
     if (l$fromUser != lOther$fromUser) {
       return false;
     }
-    final l$$Typename = $__typename;
-    final lOther$$Typename = other.$__typename;
-    if (l$$Typename != lOther$$Typename) {
+    final l$$__typename = $__typename;
+    final lOther$$__typename = other.$__typename;
+    if (l$$__typename != lOther$$__typename) {
       return false;
     }
     return true;
@@ -119,7 +119,6 @@ class _CopyWithImpl$Fragment$pendingFriendRequestItemFragment<TRes>
 
   static const _undefined = {};
 
-  @override
   TRes call({
     Object? id = _undefined,
     Object? fromUser = _undefined,
@@ -134,7 +133,6 @@ class _CopyWithImpl$Fragment$pendingFriendRequestItemFragment<TRes>
             ? _instance.$__typename
             : ($__typename as String),
       ));
-  @override
   CopyWith$Fragment$friendListItemFragment<TRes> get fromUser {
     final local$fromUser = _instance.fromUser;
     return CopyWith$Fragment$friendListItemFragment(
@@ -146,16 +144,14 @@ class _CopyWithStubImpl$Fragment$pendingFriendRequestItemFragment<TRes>
     implements CopyWith$Fragment$pendingFriendRequestItemFragment<TRes> {
   _CopyWithStubImpl$Fragment$pendingFriendRequestItemFragment(this._res);
 
-  final TRes _res;
+  TRes _res;
 
-  @override
   call({
     String? id,
     Fragment$friendListItemFragment? fromUser,
     String? $__typename,
   }) =>
       _res;
-  @override
   CopyWith$Fragment$friendListItemFragment<TRes> get fromUser =>
       CopyWith$Fragment$friendListItemFragment.stub(_res);
 }
@@ -218,7 +214,7 @@ extension ClientExtension$Fragment$pendingFriendRequestItemFragment
     required Map<String, dynamic> idFields,
     bool broadcast = true,
   }) =>
-      writeFragment(
+      this.writeFragment(
         graphql.FragmentRequest(
           idFields: idFields,
           fragment: const graphql.Fragment(
@@ -234,7 +230,7 @@ extension ClientExtension$Fragment$pendingFriendRequestItemFragment
     required Map<String, dynamic> idFields,
     bool optimistic = true,
   }) {
-    final result = readFragment(
+    final result = this.readFragment(
       graphql.FragmentRequest(
         idFields: idFields,
         fragment: const graphql.Fragment(

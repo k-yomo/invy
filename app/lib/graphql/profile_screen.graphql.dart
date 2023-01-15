@@ -12,11 +12,11 @@ class Mutation$signOut {
 
   factory Mutation$signOut.fromJson(Map<String, dynamic> json) {
     final l$signOut = json['signOut'];
-    final l$$Typename = json['__typename'];
+    final l$$__typename = json['__typename'];
     return Mutation$signOut(
       signOut: Mutation$signOut$signOut.fromJson(
           (l$signOut as Map<String, dynamic>)),
-      $__typename: (l$$Typename as String),
+      $__typename: (l$$__typename as String),
     );
   }
 
@@ -25,21 +25,21 @@ class Mutation$signOut {
   final String $__typename;
 
   Map<String, dynamic> toJson() {
-    final resultData = <String, dynamic>{};
+    final _resultData = <String, dynamic>{};
     final l$signOut = signOut;
-    resultData['signOut'] = l$signOut.toJson();
-    final l$$Typename = $__typename;
-    resultData['__typename'] = l$$Typename;
-    return resultData;
+    _resultData['signOut'] = l$signOut.toJson();
+    final l$$__typename = $__typename;
+    _resultData['__typename'] = l$$__typename;
+    return _resultData;
   }
 
   @override
   int get hashCode {
     final l$signOut = signOut;
-    final l$$Typename = $__typename;
+    final l$$__typename = $__typename;
     return Object.hashAll([
       l$signOut,
-      l$$Typename,
+      l$$__typename,
     ]);
   }
 
@@ -48,7 +48,7 @@ class Mutation$signOut {
     if (identical(this, other)) {
       return true;
     }
-    if (other is! Mutation$signOut || runtimeType != other.runtimeType) {
+    if (!(other is Mutation$signOut) || runtimeType != other.runtimeType) {
       return false;
     }
     final l$signOut = signOut;
@@ -56,9 +56,9 @@ class Mutation$signOut {
     if (l$signOut != lOther$signOut) {
       return false;
     }
-    final l$$Typename = $__typename;
-    final lOther$$Typename = other.$__typename;
-    if (l$$Typename != lOther$$Typename) {
+    final l$$__typename = $__typename;
+    final lOther$$__typename = other.$__typename;
+    if (l$$__typename != lOther$$__typename) {
       return false;
     }
     return true;
@@ -102,7 +102,6 @@ class _CopyWithImpl$Mutation$signOut<TRes>
 
   static const _undefined = {};
 
-  @override
   TRes call({
     Object? signOut = _undefined,
     Object? $__typename = _undefined,
@@ -115,7 +114,6 @@ class _CopyWithImpl$Mutation$signOut<TRes>
             ? _instance.$__typename
             : ($__typename as String),
       ));
-  @override
   CopyWith$Mutation$signOut$signOut<TRes> get signOut {
     final local$signOut = _instance.signOut;
     return CopyWith$Mutation$signOut$signOut(
@@ -127,15 +125,13 @@ class _CopyWithStubImpl$Mutation$signOut<TRes>
     implements CopyWith$Mutation$signOut<TRes> {
   _CopyWithStubImpl$Mutation$signOut(this._res);
 
-  final TRes _res;
+  TRes _res;
 
-  @override
   call({
     Mutation$signOut$signOut? signOut,
     String? $__typename,
   }) =>
       _res;
-  @override
   CopyWith$Mutation$signOut$signOut<TRes> get signOut =>
       CopyWith$Mutation$signOut$signOut.stub(_res);
 }
@@ -261,10 +257,10 @@ class WatchOptions$Mutation$signOut
 extension ClientExtension$Mutation$signOut on graphql.GraphQLClient {
   Future<graphql.QueryResult<Mutation$signOut>> mutate$signOut(
           [Options$Mutation$signOut? options]) async =>
-      await mutate(options ?? Options$Mutation$signOut());
+      await this.mutate(options ?? Options$Mutation$signOut());
   graphql.ObservableQuery<Mutation$signOut> watchMutation$signOut(
           [WatchOptions$Mutation$signOut? options]) =>
-      watchMutation(options ?? WatchOptions$Mutation$signOut());
+      this.watchMutation(options ?? WatchOptions$Mutation$signOut());
 }
 
 class Mutation$signOut$HookResult {
@@ -378,10 +374,10 @@ class Mutation$signOut$signOut {
 
   factory Mutation$signOut$signOut.fromJson(Map<String, dynamic> json) {
     final l$signedOutUserId = json['signedOutUserId'];
-    final l$$Typename = json['__typename'];
+    final l$$__typename = json['__typename'];
     return Mutation$signOut$signOut(
       signedOutUserId: (l$signedOutUserId as String),
-      $__typename: (l$$Typename as String),
+      $__typename: (l$$__typename as String),
     );
   }
 
@@ -390,21 +386,21 @@ class Mutation$signOut$signOut {
   final String $__typename;
 
   Map<String, dynamic> toJson() {
-    final resultData = <String, dynamic>{};
+    final _resultData = <String, dynamic>{};
     final l$signedOutUserId = signedOutUserId;
-    resultData['signedOutUserId'] = l$signedOutUserId;
-    final l$$Typename = $__typename;
-    resultData['__typename'] = l$$Typename;
-    return resultData;
+    _resultData['signedOutUserId'] = l$signedOutUserId;
+    final l$$__typename = $__typename;
+    _resultData['__typename'] = l$$__typename;
+    return _resultData;
   }
 
   @override
   int get hashCode {
     final l$signedOutUserId = signedOutUserId;
-    final l$$Typename = $__typename;
+    final l$$__typename = $__typename;
     return Object.hashAll([
       l$signedOutUserId,
-      l$$Typename,
+      l$$__typename,
     ]);
   }
 
@@ -413,7 +409,7 @@ class Mutation$signOut$signOut {
     if (identical(this, other)) {
       return true;
     }
-    if (other is! Mutation$signOut$signOut ||
+    if (!(other is Mutation$signOut$signOut) ||
         runtimeType != other.runtimeType) {
       return false;
     }
@@ -422,9 +418,9 @@ class Mutation$signOut$signOut {
     if (l$signedOutUserId != lOther$signedOutUserId) {
       return false;
     }
-    final l$$Typename = $__typename;
-    final lOther$$Typename = other.$__typename;
-    if (l$$Typename != lOther$$Typename) {
+    final l$$__typename = $__typename;
+    final lOther$$__typename = other.$__typename;
+    if (l$$__typename != lOther$$__typename) {
       return false;
     }
     return true;
@@ -468,7 +464,6 @@ class _CopyWithImpl$Mutation$signOut$signOut<TRes>
 
   static const _undefined = {};
 
-  @override
   TRes call({
     Object? signedOutUserId = _undefined,
     Object? $__typename = _undefined,
@@ -488,9 +483,8 @@ class _CopyWithStubImpl$Mutation$signOut$signOut<TRes>
     implements CopyWith$Mutation$signOut$signOut<TRes> {
   _CopyWithStubImpl$Mutation$signOut$signOut(this._res);
 
-  final TRes _res;
+  TRes _res;
 
-  @override
   call({
     String? signedOutUserId,
     String? $__typename,

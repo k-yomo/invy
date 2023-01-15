@@ -134,7 +134,8 @@ class InvitationDetailFormScreen extends HookConsumerWidget {
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
                 child: InvitationDetailForm(
                   onSubmitted: onSubmittedForm,
                 ),

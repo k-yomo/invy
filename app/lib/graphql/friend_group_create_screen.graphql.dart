@@ -15,11 +15,11 @@ class Query$friendGroupCreateScreenViewer {
   factory Query$friendGroupCreateScreenViewer.fromJson(
       Map<String, dynamic> json) {
     final l$viewer = json['viewer'];
-    final l$$Typename = json['__typename'];
+    final l$$__typename = json['__typename'];
     return Query$friendGroupCreateScreenViewer(
       viewer: Query$friendGroupCreateScreenViewer$viewer.fromJson(
           (l$viewer as Map<String, dynamic>)),
-      $__typename: (l$$Typename as String),
+      $__typename: (l$$__typename as String),
     );
   }
 
@@ -28,21 +28,21 @@ class Query$friendGroupCreateScreenViewer {
   final String $__typename;
 
   Map<String, dynamic> toJson() {
-    final resultData = <String, dynamic>{};
+    final _resultData = <String, dynamic>{};
     final l$viewer = viewer;
-    resultData['viewer'] = l$viewer.toJson();
-    final l$$Typename = $__typename;
-    resultData['__typename'] = l$$Typename;
-    return resultData;
+    _resultData['viewer'] = l$viewer.toJson();
+    final l$$__typename = $__typename;
+    _resultData['__typename'] = l$$__typename;
+    return _resultData;
   }
 
   @override
   int get hashCode {
     final l$viewer = viewer;
-    final l$$Typename = $__typename;
+    final l$$__typename = $__typename;
     return Object.hashAll([
       l$viewer,
-      l$$Typename,
+      l$$__typename,
     ]);
   }
 
@@ -51,7 +51,7 @@ class Query$friendGroupCreateScreenViewer {
     if (identical(this, other)) {
       return true;
     }
-    if (other is! Query$friendGroupCreateScreenViewer ||
+    if (!(other is Query$friendGroupCreateScreenViewer) ||
         runtimeType != other.runtimeType) {
       return false;
     }
@@ -60,9 +60,9 @@ class Query$friendGroupCreateScreenViewer {
     if (l$viewer != lOther$viewer) {
       return false;
     }
-    final l$$Typename = $__typename;
-    final lOther$$Typename = other.$__typename;
-    if (l$$Typename != lOther$$Typename) {
+    final l$$__typename = $__typename;
+    final lOther$$__typename = other.$__typename;
+    if (l$$__typename != lOther$$__typename) {
       return false;
     }
     return true;
@@ -108,7 +108,6 @@ class _CopyWithImpl$Query$friendGroupCreateScreenViewer<TRes>
 
   static const _undefined = {};
 
-  @override
   TRes call({
     Object? viewer = _undefined,
     Object? $__typename = _undefined,
@@ -121,7 +120,6 @@ class _CopyWithImpl$Query$friendGroupCreateScreenViewer<TRes>
             ? _instance.$__typename
             : ($__typename as String),
       ));
-  @override
   CopyWith$Query$friendGroupCreateScreenViewer$viewer<TRes> get viewer {
     final local$viewer = _instance.viewer;
     return CopyWith$Query$friendGroupCreateScreenViewer$viewer(
@@ -133,15 +131,13 @@ class _CopyWithStubImpl$Query$friendGroupCreateScreenViewer<TRes>
     implements CopyWith$Query$friendGroupCreateScreenViewer<TRes> {
   _CopyWithStubImpl$Query$friendGroupCreateScreenViewer(this._res);
 
-  final TRes _res;
+  TRes _res;
 
-  @override
   call({
     Query$friendGroupCreateScreenViewer$viewer? viewer,
     String? $__typename,
   }) =>
       _res;
-  @override
   CopyWith$Query$friendGroupCreateScreenViewer$viewer<TRes> get viewer =>
       CopyWith$Query$friendGroupCreateScreenViewer$viewer.stub(_res);
 }
@@ -348,18 +344,19 @@ extension ClientExtension$Query$friendGroupCreateScreenViewer
   Future<graphql.QueryResult<Query$friendGroupCreateScreenViewer>>
       query$friendGroupCreateScreenViewer(
               [Options$Query$friendGroupCreateScreenViewer? options]) async =>
-          await query(options ?? Options$Query$friendGroupCreateScreenViewer());
+          await this
+              .query(options ?? Options$Query$friendGroupCreateScreenViewer());
   graphql.ObservableQuery<Query$friendGroupCreateScreenViewer>
       watchQuery$friendGroupCreateScreenViewer(
               [WatchOptions$Query$friendGroupCreateScreenViewer? options]) =>
-          watchQuery(
+          this.watchQuery(
               options ?? WatchOptions$Query$friendGroupCreateScreenViewer());
   void writeQuery$friendGroupCreateScreenViewer({
     required Query$friendGroupCreateScreenViewer data,
     bool broadcast = true,
   }) =>
-      writeQuery(
-        const graphql.Request(
+      this.writeQuery(
+        graphql.Request(
             operation: graphql.Operation(
                 document: documentNodeQueryfriendGroupCreateScreenViewer)),
         data: data.toJson(),
@@ -367,8 +364,8 @@ extension ClientExtension$Query$friendGroupCreateScreenViewer
       );
   Query$friendGroupCreateScreenViewer? readQuery$friendGroupCreateScreenViewer(
       {bool optimistic = true}) {
-    final result = readQuery(
-      const graphql.Request(
+    final result = this.readQuery(
+      graphql.Request(
           operation: graphql.Operation(
               document: documentNodeQueryfriendGroupCreateScreenViewer)),
       optimistic: optimistic,
@@ -413,11 +410,11 @@ class Query$friendGroupCreateScreenViewer$viewer {
   factory Query$friendGroupCreateScreenViewer$viewer.fromJson(
       Map<String, dynamic> json) {
     final l$friends = json['friends'];
-    final l$$Typename = json['__typename'];
+    final l$$__typename = json['__typename'];
     return Query$friendGroupCreateScreenViewer$viewer(
       friends: Query$friendGroupCreateScreenViewer$viewer$friends.fromJson(
           (l$friends as Map<String, dynamic>)),
-      $__typename: (l$$Typename as String),
+      $__typename: (l$$__typename as String),
     );
   }
 
@@ -426,21 +423,21 @@ class Query$friendGroupCreateScreenViewer$viewer {
   final String $__typename;
 
   Map<String, dynamic> toJson() {
-    final resultData = <String, dynamic>{};
+    final _resultData = <String, dynamic>{};
     final l$friends = friends;
-    resultData['friends'] = l$friends.toJson();
-    final l$$Typename = $__typename;
-    resultData['__typename'] = l$$Typename;
-    return resultData;
+    _resultData['friends'] = l$friends.toJson();
+    final l$$__typename = $__typename;
+    _resultData['__typename'] = l$$__typename;
+    return _resultData;
   }
 
   @override
   int get hashCode {
     final l$friends = friends;
-    final l$$Typename = $__typename;
+    final l$$__typename = $__typename;
     return Object.hashAll([
       l$friends,
-      l$$Typename,
+      l$$__typename,
     ]);
   }
 
@@ -449,7 +446,7 @@ class Query$friendGroupCreateScreenViewer$viewer {
     if (identical(this, other)) {
       return true;
     }
-    if (other is! Query$friendGroupCreateScreenViewer$viewer ||
+    if (!(other is Query$friendGroupCreateScreenViewer$viewer) ||
         runtimeType != other.runtimeType) {
       return false;
     }
@@ -458,9 +455,9 @@ class Query$friendGroupCreateScreenViewer$viewer {
     if (l$friends != lOther$friends) {
       return false;
     }
-    final l$$Typename = $__typename;
-    final lOther$$Typename = other.$__typename;
-    if (l$$Typename != lOther$$Typename) {
+    final l$$__typename = $__typename;
+    final lOther$$__typename = other.$__typename;
+    if (l$$__typename != lOther$$__typename) {
       return false;
     }
     return true;
@@ -506,7 +503,6 @@ class _CopyWithImpl$Query$friendGroupCreateScreenViewer$viewer<TRes>
 
   static const _undefined = {};
 
-  @override
   TRes call({
     Object? friends = _undefined,
     Object? $__typename = _undefined,
@@ -519,7 +515,6 @@ class _CopyWithImpl$Query$friendGroupCreateScreenViewer$viewer<TRes>
             ? _instance.$__typename
             : ($__typename as String),
       ));
-  @override
   CopyWith$Query$friendGroupCreateScreenViewer$viewer$friends<TRes>
       get friends {
     final local$friends = _instance.friends;
@@ -532,15 +527,13 @@ class _CopyWithStubImpl$Query$friendGroupCreateScreenViewer$viewer<TRes>
     implements CopyWith$Query$friendGroupCreateScreenViewer$viewer<TRes> {
   _CopyWithStubImpl$Query$friendGroupCreateScreenViewer$viewer(this._res);
 
-  final TRes _res;
+  TRes _res;
 
-  @override
   call({
     Query$friendGroupCreateScreenViewer$viewer$friends? friends,
     String? $__typename,
   }) =>
       _res;
-  @override
   CopyWith$Query$friendGroupCreateScreenViewer$viewer$friends<TRes>
       get friends =>
           CopyWith$Query$friendGroupCreateScreenViewer$viewer$friends.stub(
@@ -558,7 +551,7 @@ class Query$friendGroupCreateScreenViewer$viewer$friends {
       Map<String, dynamic> json) {
     final l$edges = json['edges'];
     final l$pageInfo = json['pageInfo'];
-    final l$$Typename = json['__typename'];
+    final l$$__typename = json['__typename'];
     return Query$friendGroupCreateScreenViewer$viewer$friends(
       edges: (l$edges as List<dynamic>)
           .map((e) =>
@@ -568,7 +561,7 @@ class Query$friendGroupCreateScreenViewer$viewer$friends {
       pageInfo:
           Query$friendGroupCreateScreenViewer$viewer$friends$pageInfo.fromJson(
               (l$pageInfo as Map<String, dynamic>)),
-      $__typename: (l$$Typename as String),
+      $__typename: (l$$__typename as String),
     );
   }
 
@@ -579,25 +572,25 @@ class Query$friendGroupCreateScreenViewer$viewer$friends {
   final String $__typename;
 
   Map<String, dynamic> toJson() {
-    final resultData = <String, dynamic>{};
+    final _resultData = <String, dynamic>{};
     final l$edges = edges;
-    resultData['edges'] = l$edges.map((e) => e.toJson()).toList();
+    _resultData['edges'] = l$edges.map((e) => e.toJson()).toList();
     final l$pageInfo = pageInfo;
-    resultData['pageInfo'] = l$pageInfo.toJson();
-    final l$$Typename = $__typename;
-    resultData['__typename'] = l$$Typename;
-    return resultData;
+    _resultData['pageInfo'] = l$pageInfo.toJson();
+    final l$$__typename = $__typename;
+    _resultData['__typename'] = l$$__typename;
+    return _resultData;
   }
 
   @override
   int get hashCode {
     final l$edges = edges;
     final l$pageInfo = pageInfo;
-    final l$$Typename = $__typename;
+    final l$$__typename = $__typename;
     return Object.hashAll([
       Object.hashAll(l$edges.map((v) => v)),
       l$pageInfo,
-      l$$Typename,
+      l$$__typename,
     ]);
   }
 
@@ -606,7 +599,7 @@ class Query$friendGroupCreateScreenViewer$viewer$friends {
     if (identical(this, other)) {
       return true;
     }
-    if (other is! Query$friendGroupCreateScreenViewer$viewer$friends ||
+    if (!(other is Query$friendGroupCreateScreenViewer$viewer$friends) ||
         runtimeType != other.runtimeType) {
       return false;
     }
@@ -627,9 +620,9 @@ class Query$friendGroupCreateScreenViewer$viewer$friends {
     if (l$pageInfo != lOther$pageInfo) {
       return false;
     }
-    final l$$Typename = $__typename;
-    final lOther$$Typename = other.$__typename;
-    if (l$$Typename != lOther$$Typename) {
+    final l$$__typename = $__typename;
+    final lOther$$__typename = other.$__typename;
+    if (l$$__typename != lOther$$__typename) {
       return false;
     }
     return true;
@@ -668,7 +661,7 @@ abstract class CopyWith$Query$friendGroupCreateScreenViewer$viewer$friends<
               Iterable<
                   CopyWith$Query$friendGroupCreateScreenViewer$viewer$friends$edges<
                       Query$friendGroupCreateScreenViewer$viewer$friends$edges>>)
-          fn);
+          _fn);
   CopyWith$Query$friendGroupCreateScreenViewer$viewer$friends$pageInfo<TRes>
       get pageInfo;
 }
@@ -687,7 +680,6 @@ class _CopyWithImpl$Query$friendGroupCreateScreenViewer$viewer$friends<TRes>
 
   static const _undefined = {};
 
-  @override
   TRes call({
     Object? edges = _undefined,
     Object? pageInfo = _undefined,
@@ -706,20 +698,18 @@ class _CopyWithImpl$Query$friendGroupCreateScreenViewer$viewer$friends<TRes>
             ? _instance.$__typename
             : ($__typename as String),
       ));
-  @override
   TRes edges(
           Iterable<Query$friendGroupCreateScreenViewer$viewer$friends$edges> Function(
                   Iterable<
                       CopyWith$Query$friendGroupCreateScreenViewer$viewer$friends$edges<
                           Query$friendGroupCreateScreenViewer$viewer$friends$edges>>)
-              fn) =>
+              _fn) =>
       call(
-          edges: fn(_instance.edges.map((e) =>
+          edges: _fn(_instance.edges.map((e) =>
               CopyWith$Query$friendGroupCreateScreenViewer$viewer$friends$edges(
                 e,
                 (i) => i,
               ))).toList());
-  @override
   CopyWith$Query$friendGroupCreateScreenViewer$viewer$friends$pageInfo<TRes>
       get pageInfo {
     final local$pageInfo = _instance.pageInfo;
@@ -734,18 +724,15 @@ class _CopyWithStubImpl$Query$friendGroupCreateScreenViewer$viewer$friends<TRes>
   _CopyWithStubImpl$Query$friendGroupCreateScreenViewer$viewer$friends(
       this._res);
 
-  final TRes _res;
+  TRes _res;
 
-  @override
   call({
     List<Query$friendGroupCreateScreenViewer$viewer$friends$edges>? edges,
     Query$friendGroupCreateScreenViewer$viewer$friends$pageInfo? pageInfo,
     String? $__typename,
   }) =>
       _res;
-  @override
-  edges(fn) => _res;
-  @override
+  edges(_fn) => _res;
   CopyWith$Query$friendGroupCreateScreenViewer$viewer$friends$pageInfo<TRes>
       get pageInfo =>
           CopyWith$Query$friendGroupCreateScreenViewer$viewer$friends$pageInfo
@@ -761,11 +748,11 @@ class Query$friendGroupCreateScreenViewer$viewer$friends$edges {
   factory Query$friendGroupCreateScreenViewer$viewer$friends$edges.fromJson(
       Map<String, dynamic> json) {
     final l$node = json['node'];
-    final l$$Typename = json['__typename'];
+    final l$$__typename = json['__typename'];
     return Query$friendGroupCreateScreenViewer$viewer$friends$edges(
       node: Fragment$friendListItemFragment.fromJson(
           (l$node as Map<String, dynamic>)),
-      $__typename: (l$$Typename as String),
+      $__typename: (l$$__typename as String),
     );
   }
 
@@ -774,21 +761,21 @@ class Query$friendGroupCreateScreenViewer$viewer$friends$edges {
   final String $__typename;
 
   Map<String, dynamic> toJson() {
-    final resultData = <String, dynamic>{};
+    final _resultData = <String, dynamic>{};
     final l$node = node;
-    resultData['node'] = l$node.toJson();
-    final l$$Typename = $__typename;
-    resultData['__typename'] = l$$Typename;
-    return resultData;
+    _resultData['node'] = l$node.toJson();
+    final l$$__typename = $__typename;
+    _resultData['__typename'] = l$$__typename;
+    return _resultData;
   }
 
   @override
   int get hashCode {
     final l$node = node;
-    final l$$Typename = $__typename;
+    final l$$__typename = $__typename;
     return Object.hashAll([
       l$node,
-      l$$Typename,
+      l$$__typename,
     ]);
   }
 
@@ -797,7 +784,7 @@ class Query$friendGroupCreateScreenViewer$viewer$friends$edges {
     if (identical(this, other)) {
       return true;
     }
-    if (other is! Query$friendGroupCreateScreenViewer$viewer$friends$edges ||
+    if (!(other is Query$friendGroupCreateScreenViewer$viewer$friends$edges) ||
         runtimeType != other.runtimeType) {
       return false;
     }
@@ -806,9 +793,9 @@ class Query$friendGroupCreateScreenViewer$viewer$friends$edges {
     if (l$node != lOther$node) {
       return false;
     }
-    final l$$Typename = $__typename;
-    final lOther$$Typename = other.$__typename;
-    if (l$$Typename != lOther$$Typename) {
+    final l$$__typename = $__typename;
+    final lOther$$__typename = other.$__typename;
+    if (l$$__typename != lOther$$__typename) {
       return false;
     }
     return true;
@@ -862,7 +849,6 @@ class _CopyWithImpl$Query$friendGroupCreateScreenViewer$viewer$friends$edges<
 
   static const _undefined = {};
 
-  @override
   TRes call({
     Object? node = _undefined,
     Object? $__typename = _undefined,
@@ -875,7 +861,6 @@ class _CopyWithImpl$Query$friendGroupCreateScreenViewer$viewer$friends$edges<
             ? _instance.$__typename
             : ($__typename as String),
       ));
-  @override
   CopyWith$Fragment$friendListItemFragment<TRes> get node {
     final local$node = _instance.node;
     return CopyWith$Fragment$friendListItemFragment(
@@ -891,15 +876,13 @@ class _CopyWithStubImpl$Query$friendGroupCreateScreenViewer$viewer$friends$edges
   _CopyWithStubImpl$Query$friendGroupCreateScreenViewer$viewer$friends$edges(
       this._res);
 
-  final TRes _res;
+  TRes _res;
 
-  @override
   call({
     Fragment$friendListItemFragment? node,
     String? $__typename,
   }) =>
       _res;
-  @override
   CopyWith$Fragment$friendListItemFragment<TRes> get node =>
       CopyWith$Fragment$friendListItemFragment.stub(_res);
 }
@@ -919,13 +902,13 @@ class Query$friendGroupCreateScreenViewer$viewer$friends$pageInfo {
     final l$endCursor = json['endCursor'];
     final l$hasNextPage = json['hasNextPage'];
     final l$hasPreviousPage = json['hasPreviousPage'];
-    final l$$Typename = json['__typename'];
+    final l$$__typename = json['__typename'];
     return Query$friendGroupCreateScreenViewer$viewer$friends$pageInfo(
       startCursor: (l$startCursor as String?),
       endCursor: (l$endCursor as String?),
       hasNextPage: (l$hasNextPage as bool),
       hasPreviousPage: (l$hasPreviousPage as bool),
-      $__typename: (l$$Typename as String),
+      $__typename: (l$$__typename as String),
     );
   }
 
@@ -940,18 +923,18 @@ class Query$friendGroupCreateScreenViewer$viewer$friends$pageInfo {
   final String $__typename;
 
   Map<String, dynamic> toJson() {
-    final resultData = <String, dynamic>{};
+    final _resultData = <String, dynamic>{};
     final l$startCursor = startCursor;
-    resultData['startCursor'] = l$startCursor;
+    _resultData['startCursor'] = l$startCursor;
     final l$endCursor = endCursor;
-    resultData['endCursor'] = l$endCursor;
+    _resultData['endCursor'] = l$endCursor;
     final l$hasNextPage = hasNextPage;
-    resultData['hasNextPage'] = l$hasNextPage;
+    _resultData['hasNextPage'] = l$hasNextPage;
     final l$hasPreviousPage = hasPreviousPage;
-    resultData['hasPreviousPage'] = l$hasPreviousPage;
-    final l$$Typename = $__typename;
-    resultData['__typename'] = l$$Typename;
-    return resultData;
+    _resultData['hasPreviousPage'] = l$hasPreviousPage;
+    final l$$__typename = $__typename;
+    _resultData['__typename'] = l$$__typename;
+    return _resultData;
   }
 
   @override
@@ -960,13 +943,13 @@ class Query$friendGroupCreateScreenViewer$viewer$friends$pageInfo {
     final l$endCursor = endCursor;
     final l$hasNextPage = hasNextPage;
     final l$hasPreviousPage = hasPreviousPage;
-    final l$$Typename = $__typename;
+    final l$$__typename = $__typename;
     return Object.hashAll([
       l$startCursor,
       l$endCursor,
       l$hasNextPage,
       l$hasPreviousPage,
-      l$$Typename,
+      l$$__typename,
     ]);
   }
 
@@ -975,8 +958,8 @@ class Query$friendGroupCreateScreenViewer$viewer$friends$pageInfo {
     if (identical(this, other)) {
       return true;
     }
-    if (other
-            is! Query$friendGroupCreateScreenViewer$viewer$friends$pageInfo ||
+    if (!(other
+            is Query$friendGroupCreateScreenViewer$viewer$friends$pageInfo) ||
         runtimeType != other.runtimeType) {
       return false;
     }
@@ -1000,9 +983,9 @@ class Query$friendGroupCreateScreenViewer$viewer$friends$pageInfo {
     if (l$hasPreviousPage != lOther$hasPreviousPage) {
       return false;
     }
-    final l$$Typename = $__typename;
-    final lOther$$Typename = other.$__typename;
-    if (l$$Typename != lOther$$Typename) {
+    final l$$__typename = $__typename;
+    final lOther$$__typename = other.$__typename;
+    if (l$$__typename != lOther$$__typename) {
       return false;
     }
     return true;
@@ -1058,7 +1041,6 @@ class _CopyWithImpl$Query$friendGroupCreateScreenViewer$viewer$friends$pageInfo<
 
   static const _undefined = {};
 
-  @override
   TRes call({
     Object? startCursor = _undefined,
     Object? endCursor = _undefined,
@@ -1094,9 +1076,8 @@ class _CopyWithStubImpl$Query$friendGroupCreateScreenViewer$viewer$friends$pageI
   _CopyWithStubImpl$Query$friendGroupCreateScreenViewer$viewer$friends$pageInfo(
       this._res);
 
-  final TRes _res;
+  TRes _res;
 
-  @override
   call({
     String? startCursor,
     String? endCursor,
@@ -1147,7 +1128,7 @@ class Variables$Mutation$createFriendGroup {
     if (identical(this, other)) {
       return true;
     }
-    if (other is! Variables$Mutation$createFriendGroup ||
+    if (!(other is Variables$Mutation$createFriendGroup) ||
         runtimeType != other.runtimeType) {
       return false;
     }
@@ -1191,7 +1172,6 @@ class _CopyWithImpl$Variables$Mutation$createFriendGroup<TRes>
 
   static const _undefined = {};
 
-  @override
   TRes call({Object? input = _undefined}) =>
       _then(Variables$Mutation$createFriendGroup._({
         ..._instance._$data,
@@ -1204,9 +1184,8 @@ class _CopyWithStubImpl$Variables$Mutation$createFriendGroup<TRes>
     implements CopyWith$Variables$Mutation$createFriendGroup<TRes> {
   _CopyWithStubImpl$Variables$Mutation$createFriendGroup(this._res);
 
-  final TRes _res;
+  TRes _res;
 
-  @override
   call({Input$CreateFriendGroupInput? input}) => _res;
 }
 
@@ -1218,11 +1197,11 @@ class Mutation$createFriendGroup {
 
   factory Mutation$createFriendGroup.fromJson(Map<String, dynamic> json) {
     final l$createFriendGroup = json['createFriendGroup'];
-    final l$$Typename = json['__typename'];
+    final l$$__typename = json['__typename'];
     return Mutation$createFriendGroup(
       createFriendGroup: Mutation$createFriendGroup$createFriendGroup.fromJson(
           (l$createFriendGroup as Map<String, dynamic>)),
-      $__typename: (l$$Typename as String),
+      $__typename: (l$$__typename as String),
     );
   }
 
@@ -1231,21 +1210,21 @@ class Mutation$createFriendGroup {
   final String $__typename;
 
   Map<String, dynamic> toJson() {
-    final resultData = <String, dynamic>{};
+    final _resultData = <String, dynamic>{};
     final l$createFriendGroup = createFriendGroup;
-    resultData['createFriendGroup'] = l$createFriendGroup.toJson();
-    final l$$Typename = $__typename;
-    resultData['__typename'] = l$$Typename;
-    return resultData;
+    _resultData['createFriendGroup'] = l$createFriendGroup.toJson();
+    final l$$__typename = $__typename;
+    _resultData['__typename'] = l$$__typename;
+    return _resultData;
   }
 
   @override
   int get hashCode {
     final l$createFriendGroup = createFriendGroup;
-    final l$$Typename = $__typename;
+    final l$$__typename = $__typename;
     return Object.hashAll([
       l$createFriendGroup,
-      l$$Typename,
+      l$$__typename,
     ]);
   }
 
@@ -1254,7 +1233,7 @@ class Mutation$createFriendGroup {
     if (identical(this, other)) {
       return true;
     }
-    if (other is! Mutation$createFriendGroup ||
+    if (!(other is Mutation$createFriendGroup) ||
         runtimeType != other.runtimeType) {
       return false;
     }
@@ -1263,9 +1242,9 @@ class Mutation$createFriendGroup {
     if (l$createFriendGroup != lOther$createFriendGroup) {
       return false;
     }
-    final l$$Typename = $__typename;
-    final lOther$$Typename = other.$__typename;
-    if (l$$Typename != lOther$$Typename) {
+    final l$$__typename = $__typename;
+    final lOther$$__typename = other.$__typename;
+    if (l$$__typename != lOther$$__typename) {
       return false;
     }
     return true;
@@ -1311,7 +1290,6 @@ class _CopyWithImpl$Mutation$createFriendGroup<TRes>
 
   static const _undefined = {};
 
-  @override
   TRes call({
     Object? createFriendGroup = _undefined,
     Object? $__typename = _undefined,
@@ -1326,7 +1304,6 @@ class _CopyWithImpl$Mutation$createFriendGroup<TRes>
             ? _instance.$__typename
             : ($__typename as String),
       ));
-  @override
   CopyWith$Mutation$createFriendGroup$createFriendGroup<TRes>
       get createFriendGroup {
     final local$createFriendGroup = _instance.createFriendGroup;
@@ -1339,15 +1316,13 @@ class _CopyWithStubImpl$Mutation$createFriendGroup<TRes>
     implements CopyWith$Mutation$createFriendGroup<TRes> {
   _CopyWithStubImpl$Mutation$createFriendGroup(this._res);
 
-  final TRes _res;
+  TRes _res;
 
-  @override
   call({
     Mutation$createFriendGroup$createFriendGroup? createFriendGroup,
     String? $__typename,
   }) =>
       _res;
-  @override
   CopyWith$Mutation$createFriendGroup$createFriendGroup<TRes>
       get createFriendGroup =>
           CopyWith$Mutation$createFriendGroup$createFriendGroup.stub(_res);
@@ -1513,11 +1488,11 @@ extension ClientExtension$Mutation$createFriendGroup on graphql.GraphQLClient {
   Future<graphql.QueryResult<Mutation$createFriendGroup>>
       mutate$createFriendGroup(
               Options$Mutation$createFriendGroup options) async =>
-          await mutate(options);
+          await this.mutate(options);
   graphql.ObservableQuery<Mutation$createFriendGroup>
       watchMutation$createFriendGroup(
               WatchOptions$Mutation$createFriendGroup options) =>
-          watchMutation(options);
+          this.watchMutation(options);
 }
 
 class Mutation$createFriendGroup$HookResult {
@@ -1640,12 +1615,12 @@ class Mutation$createFriendGroup$createFriendGroup {
   factory Mutation$createFriendGroup$createFriendGroup.fromJson(
       Map<String, dynamic> json) {
     final l$friendGroup = json['friendGroup'];
-    final l$$Typename = json['__typename'];
+    final l$$__typename = json['__typename'];
     return Mutation$createFriendGroup$createFriendGroup(
       friendGroup:
           Mutation$createFriendGroup$createFriendGroup$friendGroup.fromJson(
               (l$friendGroup as Map<String, dynamic>)),
-      $__typename: (l$$Typename as String),
+      $__typename: (l$$__typename as String),
     );
   }
 
@@ -1654,21 +1629,21 @@ class Mutation$createFriendGroup$createFriendGroup {
   final String $__typename;
 
   Map<String, dynamic> toJson() {
-    final resultData = <String, dynamic>{};
+    final _resultData = <String, dynamic>{};
     final l$friendGroup = friendGroup;
-    resultData['friendGroup'] = l$friendGroup.toJson();
-    final l$$Typename = $__typename;
-    resultData['__typename'] = l$$Typename;
-    return resultData;
+    _resultData['friendGroup'] = l$friendGroup.toJson();
+    final l$$__typename = $__typename;
+    _resultData['__typename'] = l$$__typename;
+    return _resultData;
   }
 
   @override
   int get hashCode {
     final l$friendGroup = friendGroup;
-    final l$$Typename = $__typename;
+    final l$$__typename = $__typename;
     return Object.hashAll([
       l$friendGroup,
-      l$$Typename,
+      l$$__typename,
     ]);
   }
 
@@ -1677,7 +1652,7 @@ class Mutation$createFriendGroup$createFriendGroup {
     if (identical(this, other)) {
       return true;
     }
-    if (other is! Mutation$createFriendGroup$createFriendGroup ||
+    if (!(other is Mutation$createFriendGroup$createFriendGroup) ||
         runtimeType != other.runtimeType) {
       return false;
     }
@@ -1686,9 +1661,9 @@ class Mutation$createFriendGroup$createFriendGroup {
     if (l$friendGroup != lOther$friendGroup) {
       return false;
     }
-    final l$$Typename = $__typename;
-    final lOther$$Typename = other.$__typename;
-    if (l$$Typename != lOther$$Typename) {
+    final l$$__typename = $__typename;
+    final lOther$$__typename = other.$__typename;
+    if (l$$__typename != lOther$$__typename) {
       return false;
     }
     return true;
@@ -1735,7 +1710,6 @@ class _CopyWithImpl$Mutation$createFriendGroup$createFriendGroup<TRes>
 
   static const _undefined = {};
 
-  @override
   TRes call({
     Object? friendGroup = _undefined,
     Object? $__typename = _undefined,
@@ -1749,7 +1723,6 @@ class _CopyWithImpl$Mutation$createFriendGroup$createFriendGroup<TRes>
             ? _instance.$__typename
             : ($__typename as String),
       ));
-  @override
   CopyWith$Mutation$createFriendGroup$createFriendGroup$friendGroup<TRes>
       get friendGroup {
     final local$friendGroup = _instance.friendGroup;
@@ -1762,15 +1735,13 @@ class _CopyWithStubImpl$Mutation$createFriendGroup$createFriendGroup<TRes>
     implements CopyWith$Mutation$createFriendGroup$createFriendGroup<TRes> {
   _CopyWithStubImpl$Mutation$createFriendGroup$createFriendGroup(this._res);
 
-  final TRes _res;
+  TRes _res;
 
-  @override
   call({
     Mutation$createFriendGroup$createFriendGroup$friendGroup? friendGroup,
     String? $__typename,
   }) =>
       _res;
-  @override
   CopyWith$Mutation$createFriendGroup$createFriendGroup$friendGroup<TRes>
       get friendGroup =>
           CopyWith$Mutation$createFriendGroup$createFriendGroup$friendGroup
@@ -1786,10 +1757,10 @@ class Mutation$createFriendGroup$createFriendGroup$friendGroup {
   factory Mutation$createFriendGroup$createFriendGroup$friendGroup.fromJson(
       Map<String, dynamic> json) {
     final l$id = json['id'];
-    final l$$Typename = json['__typename'];
+    final l$$__typename = json['__typename'];
     return Mutation$createFriendGroup$createFriendGroup$friendGroup(
       id: (l$id as String),
-      $__typename: (l$$Typename as String),
+      $__typename: (l$$__typename as String),
     );
   }
 
@@ -1798,21 +1769,21 @@ class Mutation$createFriendGroup$createFriendGroup$friendGroup {
   final String $__typename;
 
   Map<String, dynamic> toJson() {
-    final resultData = <String, dynamic>{};
+    final _resultData = <String, dynamic>{};
     final l$id = id;
-    resultData['id'] = l$id;
-    final l$$Typename = $__typename;
-    resultData['__typename'] = l$$Typename;
-    return resultData;
+    _resultData['id'] = l$id;
+    final l$$__typename = $__typename;
+    _resultData['__typename'] = l$$__typename;
+    return _resultData;
   }
 
   @override
   int get hashCode {
     final l$id = id;
-    final l$$Typename = $__typename;
+    final l$$__typename = $__typename;
     return Object.hashAll([
       l$id,
-      l$$Typename,
+      l$$__typename,
     ]);
   }
 
@@ -1821,7 +1792,7 @@ class Mutation$createFriendGroup$createFriendGroup$friendGroup {
     if (identical(this, other)) {
       return true;
     }
-    if (other is! Mutation$createFriendGroup$createFriendGroup$friendGroup ||
+    if (!(other is Mutation$createFriendGroup$createFriendGroup$friendGroup) ||
         runtimeType != other.runtimeType) {
       return false;
     }
@@ -1830,9 +1801,9 @@ class Mutation$createFriendGroup$createFriendGroup$friendGroup {
     if (l$id != lOther$id) {
       return false;
     }
-    final l$$Typename = $__typename;
-    final lOther$$Typename = other.$__typename;
-    if (l$$Typename != lOther$$Typename) {
+    final l$$__typename = $__typename;
+    final lOther$$__typename = other.$__typename;
+    if (l$$__typename != lOther$$__typename) {
       return false;
     }
     return true;
@@ -1885,7 +1856,6 @@ class _CopyWithImpl$Mutation$createFriendGroup$createFriendGroup$friendGroup<
 
   static const _undefined = {};
 
-  @override
   TRes call({
     Object? id = _undefined,
     Object? $__typename = _undefined,
@@ -1906,9 +1876,8 @@ class _CopyWithStubImpl$Mutation$createFriendGroup$createFriendGroup$friendGroup
   _CopyWithStubImpl$Mutation$createFriendGroup$createFriendGroup$friendGroup(
       this._res);
 
-  final TRes _res;
+  TRes _res;
 
-  @override
   call({
     String? id,
     String? $__typename,

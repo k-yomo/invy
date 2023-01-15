@@ -1,4 +1,3 @@
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -166,8 +165,8 @@ class LoginScreen extends HookConsumerWidget {
                           Buttons.Google,
                           text: 'Google サインイン',
                           onPressed: onGoogleSignInPressed,
-                          padding:
-                              const EdgeInsets.symmetric(vertical: 8, horizontal: 25),
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 8, horizontal: 25),
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(30),
                               side: const BorderSide(color: Colors.black)),

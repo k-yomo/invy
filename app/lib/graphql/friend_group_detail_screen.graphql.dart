@@ -42,7 +42,7 @@ class Variables$Query$friendGroupDetailScreenViewer {
     if (identical(this, other)) {
       return true;
     }
-    if (other is! Variables$Query$friendGroupDetailScreenViewer ||
+    if (!(other is Variables$Query$friendGroupDetailScreenViewer) ||
         runtimeType != other.runtimeType) {
       return false;
     }
@@ -87,7 +87,6 @@ class _CopyWithImpl$Variables$Query$friendGroupDetailScreenViewer<TRes>
 
   static const _undefined = {};
 
-  @override
   TRes call({Object? friendGroupId = _undefined}) =>
       _then(Variables$Query$friendGroupDetailScreenViewer._({
         ..._instance._$data,
@@ -100,9 +99,8 @@ class _CopyWithStubImpl$Variables$Query$friendGroupDetailScreenViewer<TRes>
     implements CopyWith$Variables$Query$friendGroupDetailScreenViewer<TRes> {
   _CopyWithStubImpl$Variables$Query$friendGroupDetailScreenViewer(this._res);
 
-  final TRes _res;
+  TRes _res;
 
-  @override
   call({String? friendGroupId}) => _res;
 }
 
@@ -115,11 +113,11 @@ class Query$friendGroupDetailScreenViewer {
   factory Query$friendGroupDetailScreenViewer.fromJson(
       Map<String, dynamic> json) {
     final l$viewer = json['viewer'];
-    final l$$Typename = json['__typename'];
+    final l$$__typename = json['__typename'];
     return Query$friendGroupDetailScreenViewer(
       viewer: Query$friendGroupDetailScreenViewer$viewer.fromJson(
           (l$viewer as Map<String, dynamic>)),
-      $__typename: (l$$Typename as String),
+      $__typename: (l$$__typename as String),
     );
   }
 
@@ -128,21 +126,21 @@ class Query$friendGroupDetailScreenViewer {
   final String $__typename;
 
   Map<String, dynamic> toJson() {
-    final resultData = <String, dynamic>{};
+    final _resultData = <String, dynamic>{};
     final l$viewer = viewer;
-    resultData['viewer'] = l$viewer.toJson();
-    final l$$Typename = $__typename;
-    resultData['__typename'] = l$$Typename;
-    return resultData;
+    _resultData['viewer'] = l$viewer.toJson();
+    final l$$__typename = $__typename;
+    _resultData['__typename'] = l$$__typename;
+    return _resultData;
   }
 
   @override
   int get hashCode {
     final l$viewer = viewer;
-    final l$$Typename = $__typename;
+    final l$$__typename = $__typename;
     return Object.hashAll([
       l$viewer,
-      l$$Typename,
+      l$$__typename,
     ]);
   }
 
@@ -151,7 +149,7 @@ class Query$friendGroupDetailScreenViewer {
     if (identical(this, other)) {
       return true;
     }
-    if (other is! Query$friendGroupDetailScreenViewer ||
+    if (!(other is Query$friendGroupDetailScreenViewer) ||
         runtimeType != other.runtimeType) {
       return false;
     }
@@ -160,9 +158,9 @@ class Query$friendGroupDetailScreenViewer {
     if (l$viewer != lOther$viewer) {
       return false;
     }
-    final l$$Typename = $__typename;
-    final lOther$$Typename = other.$__typename;
-    if (l$$Typename != lOther$$Typename) {
+    final l$$__typename = $__typename;
+    final lOther$$__typename = other.$__typename;
+    if (l$$__typename != lOther$$__typename) {
       return false;
     }
     return true;
@@ -208,7 +206,6 @@ class _CopyWithImpl$Query$friendGroupDetailScreenViewer<TRes>
 
   static const _undefined = {};
 
-  @override
   TRes call({
     Object? viewer = _undefined,
     Object? $__typename = _undefined,
@@ -221,7 +218,6 @@ class _CopyWithImpl$Query$friendGroupDetailScreenViewer<TRes>
             ? _instance.$__typename
             : ($__typename as String),
       ));
-  @override
   CopyWith$Query$friendGroupDetailScreenViewer$viewer<TRes> get viewer {
     final local$viewer = _instance.viewer;
     return CopyWith$Query$friendGroupDetailScreenViewer$viewer(
@@ -233,15 +229,13 @@ class _CopyWithStubImpl$Query$friendGroupDetailScreenViewer<TRes>
     implements CopyWith$Query$friendGroupDetailScreenViewer<TRes> {
   _CopyWithStubImpl$Query$friendGroupDetailScreenViewer(this._res);
 
-  final TRes _res;
+  TRes _res;
 
-  @override
   call({
     Query$friendGroupDetailScreenViewer$viewer? viewer,
     String? $__typename,
   }) =>
       _res;
-  @override
   CopyWith$Query$friendGroupDetailScreenViewer$viewer<TRes> get viewer =>
       CopyWith$Query$friendGroupDetailScreenViewer$viewer.stub(_res);
 }
@@ -427,19 +421,19 @@ extension ClientExtension$Query$friendGroupDetailScreenViewer
   Future<graphql.QueryResult<Query$friendGroupDetailScreenViewer>>
       query$friendGroupDetailScreenViewer(
               Options$Query$friendGroupDetailScreenViewer options) async =>
-          await query(options);
+          await this.query(options);
   graphql.ObservableQuery<Query$friendGroupDetailScreenViewer>
       watchQuery$friendGroupDetailScreenViewer(
               WatchOptions$Query$friendGroupDetailScreenViewer options) =>
-          watchQuery(options);
+          this.watchQuery(options);
   void writeQuery$friendGroupDetailScreenViewer({
     required Query$friendGroupDetailScreenViewer data,
     required Variables$Query$friendGroupDetailScreenViewer variables,
     bool broadcast = true,
   }) =>
-      writeQuery(
+      this.writeQuery(
         graphql.Request(
-          operation: const graphql.Operation(
+          operation: graphql.Operation(
               document: documentNodeQueryfriendGroupDetailScreenViewer),
           variables: variables.toJson(),
         ),
@@ -450,9 +444,9 @@ extension ClientExtension$Query$friendGroupDetailScreenViewer
     required Variables$Query$friendGroupDetailScreenViewer variables,
     bool optimistic = true,
   }) {
-    final result = readQuery(
+    final result = this.readQuery(
       graphql.Request(
-        operation: const graphql.Operation(
+        operation: graphql.Operation(
             document: documentNodeQueryfriendGroupDetailScreenViewer),
         variables: variables.toJson(),
       ),
@@ -475,7 +469,7 @@ graphql.ObservableQuery<Query$friendGroupDetailScreenViewer>
 
 class Query$friendGroupDetailScreenViewer$Widget
     extends graphql_flutter.Query<Query$friendGroupDetailScreenViewer> {
-  const Query$friendGroupDetailScreenViewer$Widget({
+  Query$friendGroupDetailScreenViewer$Widget({
     widgets.Key? key,
     required Options$Query$friendGroupDetailScreenViewer options,
     required graphql_flutter.QueryBuilder<Query$friendGroupDetailScreenViewer>
@@ -496,12 +490,12 @@ class Query$friendGroupDetailScreenViewer$viewer {
   factory Query$friendGroupDetailScreenViewer$viewer.fromJson(
       Map<String, dynamic> json) {
     final l$friendGroup = json['friendGroup'];
-    final l$$Typename = json['__typename'];
+    final l$$__typename = json['__typename'];
     return Query$friendGroupDetailScreenViewer$viewer(
       friendGroup:
           Query$friendGroupDetailScreenViewer$viewer$friendGroup.fromJson(
               (l$friendGroup as Map<String, dynamic>)),
-      $__typename: (l$$Typename as String),
+      $__typename: (l$$__typename as String),
     );
   }
 
@@ -510,21 +504,21 @@ class Query$friendGroupDetailScreenViewer$viewer {
   final String $__typename;
 
   Map<String, dynamic> toJson() {
-    final resultData = <String, dynamic>{};
+    final _resultData = <String, dynamic>{};
     final l$friendGroup = friendGroup;
-    resultData['friendGroup'] = l$friendGroup.toJson();
-    final l$$Typename = $__typename;
-    resultData['__typename'] = l$$Typename;
-    return resultData;
+    _resultData['friendGroup'] = l$friendGroup.toJson();
+    final l$$__typename = $__typename;
+    _resultData['__typename'] = l$$__typename;
+    return _resultData;
   }
 
   @override
   int get hashCode {
     final l$friendGroup = friendGroup;
-    final l$$Typename = $__typename;
+    final l$$__typename = $__typename;
     return Object.hashAll([
       l$friendGroup,
-      l$$Typename,
+      l$$__typename,
     ]);
   }
 
@@ -533,7 +527,7 @@ class Query$friendGroupDetailScreenViewer$viewer {
     if (identical(this, other)) {
       return true;
     }
-    if (other is! Query$friendGroupDetailScreenViewer$viewer ||
+    if (!(other is Query$friendGroupDetailScreenViewer$viewer) ||
         runtimeType != other.runtimeType) {
       return false;
     }
@@ -542,9 +536,9 @@ class Query$friendGroupDetailScreenViewer$viewer {
     if (l$friendGroup != lOther$friendGroup) {
       return false;
     }
-    final l$$Typename = $__typename;
-    final lOther$$Typename = other.$__typename;
-    if (l$$Typename != lOther$$Typename) {
+    final l$$__typename = $__typename;
+    final lOther$$__typename = other.$__typename;
+    if (l$$__typename != lOther$$__typename) {
       return false;
     }
     return true;
@@ -591,7 +585,6 @@ class _CopyWithImpl$Query$friendGroupDetailScreenViewer$viewer<TRes>
 
   static const _undefined = {};
 
-  @override
   TRes call({
     Object? friendGroup = _undefined,
     Object? $__typename = _undefined,
@@ -605,7 +598,6 @@ class _CopyWithImpl$Query$friendGroupDetailScreenViewer$viewer<TRes>
             ? _instance.$__typename
             : ($__typename as String),
       ));
-  @override
   CopyWith$Query$friendGroupDetailScreenViewer$viewer$friendGroup<TRes>
       get friendGroup {
     final local$friendGroup = _instance.friendGroup;
@@ -618,15 +610,13 @@ class _CopyWithStubImpl$Query$friendGroupDetailScreenViewer$viewer<TRes>
     implements CopyWith$Query$friendGroupDetailScreenViewer$viewer<TRes> {
   _CopyWithStubImpl$Query$friendGroupDetailScreenViewer$viewer(this._res);
 
-  final TRes _res;
+  TRes _res;
 
-  @override
   call({
     Query$friendGroupDetailScreenViewer$viewer$friendGroup? friendGroup,
     String? $__typename,
   }) =>
       _res;
-  @override
   CopyWith$Query$friendGroupDetailScreenViewer$viewer$friendGroup<TRes>
       get friendGroup =>
           CopyWith$Query$friendGroupDetailScreenViewer$viewer$friendGroup.stub(
@@ -648,7 +638,7 @@ class Query$friendGroupDetailScreenViewer$viewer$friendGroup {
     final l$name = json['name'];
     final l$totalCount = json['totalCount'];
     final l$friendUsers = json['friendUsers'];
-    final l$$Typename = json['__typename'];
+    final l$$__typename = json['__typename'];
     return Query$friendGroupDetailScreenViewer$viewer$friendGroup(
       id: (l$id as String),
       name: (l$name as String),
@@ -657,7 +647,7 @@ class Query$friendGroupDetailScreenViewer$viewer$friendGroup {
           .map((e) => Fragment$friendListItemFragment.fromJson(
               (e as Map<String, dynamic>)))
           .toList(),
-      $__typename: (l$$Typename as String),
+      $__typename: (l$$__typename as String),
     );
   }
 
@@ -672,18 +662,18 @@ class Query$friendGroupDetailScreenViewer$viewer$friendGroup {
   final String $__typename;
 
   Map<String, dynamic> toJson() {
-    final resultData = <String, dynamic>{};
+    final _resultData = <String, dynamic>{};
     final l$id = id;
-    resultData['id'] = l$id;
+    _resultData['id'] = l$id;
     final l$name = name;
-    resultData['name'] = l$name;
+    _resultData['name'] = l$name;
     final l$totalCount = totalCount;
-    resultData['totalCount'] = l$totalCount;
+    _resultData['totalCount'] = l$totalCount;
     final l$friendUsers = friendUsers;
-    resultData['friendUsers'] = l$friendUsers.map((e) => e.toJson()).toList();
-    final l$$Typename = $__typename;
-    resultData['__typename'] = l$$Typename;
-    return resultData;
+    _resultData['friendUsers'] = l$friendUsers.map((e) => e.toJson()).toList();
+    final l$$__typename = $__typename;
+    _resultData['__typename'] = l$$__typename;
+    return _resultData;
   }
 
   @override
@@ -692,13 +682,13 @@ class Query$friendGroupDetailScreenViewer$viewer$friendGroup {
     final l$name = name;
     final l$totalCount = totalCount;
     final l$friendUsers = friendUsers;
-    final l$$Typename = $__typename;
+    final l$$__typename = $__typename;
     return Object.hashAll([
       l$id,
       l$name,
       l$totalCount,
       Object.hashAll(l$friendUsers.map((v) => v)),
-      l$$Typename,
+      l$$__typename,
     ]);
   }
 
@@ -707,7 +697,7 @@ class Query$friendGroupDetailScreenViewer$viewer$friendGroup {
     if (identical(this, other)) {
       return true;
     }
-    if (other is! Query$friendGroupDetailScreenViewer$viewer$friendGroup ||
+    if (!(other is Query$friendGroupDetailScreenViewer$viewer$friendGroup) ||
         runtimeType != other.runtimeType) {
       return false;
     }
@@ -738,9 +728,9 @@ class Query$friendGroupDetailScreenViewer$viewer$friendGroup {
         return false;
       }
     }
-    final l$$Typename = $__typename;
-    final lOther$$Typename = other.$__typename;
-    if (l$$Typename != lOther$$Typename) {
+    final l$$__typename = $__typename;
+    final lOther$$__typename = other.$__typename;
+    if (l$$__typename != lOther$$__typename) {
       return false;
     }
     return true;
@@ -781,7 +771,7 @@ abstract class CopyWith$Query$friendGroupDetailScreenViewer$viewer$friendGroup<
               Iterable<
                   CopyWith$Fragment$friendListItemFragment<
                       Fragment$friendListItemFragment>>)
-          fn);
+          _fn);
 }
 
 class _CopyWithImpl$Query$friendGroupDetailScreenViewer$viewer$friendGroup<TRes>
@@ -799,7 +789,6 @@ class _CopyWithImpl$Query$friendGroupDetailScreenViewer$viewer$friendGroup<TRes>
 
   static const _undefined = {};
 
-  @override
   TRes call({
     Object? id = _undefined,
     Object? name = _undefined,
@@ -822,15 +811,14 @@ class _CopyWithImpl$Query$friendGroupDetailScreenViewer$viewer$friendGroup<TRes>
             ? _instance.$__typename
             : ($__typename as String),
       ));
-  @override
   TRes friendUsers(
           Iterable<Fragment$friendListItemFragment> Function(
                   Iterable<
                       CopyWith$Fragment$friendListItemFragment<
                           Fragment$friendListItemFragment>>)
-              fn) =>
+              _fn) =>
       call(
-          friendUsers: fn(_instance.friendUsers
+          friendUsers: _fn(_instance.friendUsers
               .map((e) => CopyWith$Fragment$friendListItemFragment(
                     e,
                     (i) => i,
@@ -844,9 +832,8 @@ class _CopyWithStubImpl$Query$friendGroupDetailScreenViewer$viewer$friendGroup<
   _CopyWithStubImpl$Query$friendGroupDetailScreenViewer$viewer$friendGroup(
       this._res);
 
-  final TRes _res;
+  TRes _res;
 
-  @override
   call({
     String? id,
     String? name,
@@ -855,6 +842,5 @@ class _CopyWithStubImpl$Query$friendGroupDetailScreenViewer$viewer$friendGroup<
     String? $__typename,
   }) =>
       _res;
-  @override
-  friendUsers(fn) => _res;
+  friendUsers(_fn) => _res;
 }

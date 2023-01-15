@@ -11,10 +11,10 @@ class Query$viewer {
 
   factory Query$viewer.fromJson(Map<String, dynamic> json) {
     final l$viewer = json['viewer'];
-    final l$$Typename = json['__typename'];
+    final l$$__typename = json['__typename'];
     return Query$viewer(
       viewer: Query$viewer$viewer.fromJson((l$viewer as Map<String, dynamic>)),
-      $__typename: (l$$Typename as String),
+      $__typename: (l$$__typename as String),
     );
   }
 
@@ -23,21 +23,21 @@ class Query$viewer {
   final String $__typename;
 
   Map<String, dynamic> toJson() {
-    final resultData = <String, dynamic>{};
+    final _resultData = <String, dynamic>{};
     final l$viewer = viewer;
-    resultData['viewer'] = l$viewer.toJson();
-    final l$$Typename = $__typename;
-    resultData['__typename'] = l$$Typename;
-    return resultData;
+    _resultData['viewer'] = l$viewer.toJson();
+    final l$$__typename = $__typename;
+    _resultData['__typename'] = l$$__typename;
+    return _resultData;
   }
 
   @override
   int get hashCode {
     final l$viewer = viewer;
-    final l$$Typename = $__typename;
+    final l$$__typename = $__typename;
     return Object.hashAll([
       l$viewer,
-      l$$Typename,
+      l$$__typename,
     ]);
   }
 
@@ -46,7 +46,7 @@ class Query$viewer {
     if (identical(this, other)) {
       return true;
     }
-    if (other is! Query$viewer || runtimeType != other.runtimeType) {
+    if (!(other is Query$viewer) || runtimeType != other.runtimeType) {
       return false;
     }
     final l$viewer = viewer;
@@ -54,9 +54,9 @@ class Query$viewer {
     if (l$viewer != lOther$viewer) {
       return false;
     }
-    final l$$Typename = $__typename;
-    final lOther$$Typename = other.$__typename;
-    if (l$$Typename != lOther$$Typename) {
+    final l$$__typename = $__typename;
+    final lOther$$__typename = other.$__typename;
+    if (l$$__typename != lOther$$__typename) {
       return false;
     }
     return true;
@@ -97,7 +97,6 @@ class _CopyWithImpl$Query$viewer<TRes> implements CopyWith$Query$viewer<TRes> {
 
   static const _undefined = {};
 
-  @override
   TRes call({
     Object? viewer = _undefined,
     Object? $__typename = _undefined,
@@ -110,7 +109,6 @@ class _CopyWithImpl$Query$viewer<TRes> implements CopyWith$Query$viewer<TRes> {
             ? _instance.$__typename
             : ($__typename as String),
       ));
-  @override
   CopyWith$Query$viewer$viewer<TRes> get viewer {
     final local$viewer = _instance.viewer;
     return CopyWith$Query$viewer$viewer(local$viewer, (e) => call(viewer: e));
@@ -121,15 +119,13 @@ class _CopyWithStubImpl$Query$viewer<TRes>
     implements CopyWith$Query$viewer<TRes> {
   _CopyWithStubImpl$Query$viewer(this._res);
 
-  final TRes _res;
+  TRes _res;
 
-  @override
   call({
     Query$viewer$viewer? viewer,
     String? $__typename,
   }) =>
       _res;
-  @override
   CopyWith$Query$viewer$viewer<TRes> get viewer =>
       CopyWith$Query$viewer$viewer.stub(_res);
 }
@@ -259,23 +255,23 @@ class FetchMoreOptions$Query$viewer extends graphql.FetchMoreOptions {
 extension ClientExtension$Query$viewer on graphql.GraphQLClient {
   Future<graphql.QueryResult<Query$viewer>> query$viewer(
           [Options$Query$viewer? options]) async =>
-      await query(options ?? Options$Query$viewer());
+      await this.query(options ?? Options$Query$viewer());
   graphql.ObservableQuery<Query$viewer> watchQuery$viewer(
           [WatchOptions$Query$viewer? options]) =>
-      watchQuery(options ?? WatchOptions$Query$viewer());
+      this.watchQuery(options ?? WatchOptions$Query$viewer());
   void writeQuery$viewer({
     required Query$viewer data,
     bool broadcast = true,
   }) =>
-      writeQuery(
-        const graphql.Request(
+      this.writeQuery(
+        graphql.Request(
             operation: graphql.Operation(document: documentNodeQueryviewer)),
         data: data.toJson(),
         broadcast: broadcast,
       );
   Query$viewer? readQuery$viewer({bool optimistic = true}) {
-    final result = readQuery(
-      const graphql.Request(
+    final result = this.readQuery(
+      graphql.Request(
           operation: graphql.Operation(document: documentNodeQueryviewer)),
       optimistic: optimistic,
     );
@@ -316,13 +312,13 @@ class Query$viewer$viewer {
     final l$screenId = json['screenId'];
     final l$nickname = json['nickname'];
     final l$avatarUrl = json['avatarUrl'];
-    final l$$Typename = json['__typename'];
+    final l$$__typename = json['__typename'];
     return Query$viewer$viewer(
       id: (l$id as String),
       screenId: (l$screenId as String),
       nickname: (l$nickname as String),
       avatarUrl: (l$avatarUrl as String),
-      $__typename: (l$$Typename as String),
+      $__typename: (l$$__typename as String),
     );
   }
 
@@ -337,18 +333,18 @@ class Query$viewer$viewer {
   final String $__typename;
 
   Map<String, dynamic> toJson() {
-    final resultData = <String, dynamic>{};
+    final _resultData = <String, dynamic>{};
     final l$id = id;
-    resultData['id'] = l$id;
+    _resultData['id'] = l$id;
     final l$screenId = screenId;
-    resultData['screenId'] = l$screenId;
+    _resultData['screenId'] = l$screenId;
     final l$nickname = nickname;
-    resultData['nickname'] = l$nickname;
+    _resultData['nickname'] = l$nickname;
     final l$avatarUrl = avatarUrl;
-    resultData['avatarUrl'] = l$avatarUrl;
-    final l$$Typename = $__typename;
-    resultData['__typename'] = l$$Typename;
-    return resultData;
+    _resultData['avatarUrl'] = l$avatarUrl;
+    final l$$__typename = $__typename;
+    _resultData['__typename'] = l$$__typename;
+    return _resultData;
   }
 
   @override
@@ -357,13 +353,13 @@ class Query$viewer$viewer {
     final l$screenId = screenId;
     final l$nickname = nickname;
     final l$avatarUrl = avatarUrl;
-    final l$$Typename = $__typename;
+    final l$$__typename = $__typename;
     return Object.hashAll([
       l$id,
       l$screenId,
       l$nickname,
       l$avatarUrl,
-      l$$Typename,
+      l$$__typename,
     ]);
   }
 
@@ -372,7 +368,7 @@ class Query$viewer$viewer {
     if (identical(this, other)) {
       return true;
     }
-    if (other is! Query$viewer$viewer || runtimeType != other.runtimeType) {
+    if (!(other is Query$viewer$viewer) || runtimeType != other.runtimeType) {
       return false;
     }
     final l$id = id;
@@ -395,9 +391,9 @@ class Query$viewer$viewer {
     if (l$avatarUrl != lOther$avatarUrl) {
       return false;
     }
-    final l$$Typename = $__typename;
-    final lOther$$Typename = other.$__typename;
-    if (l$$Typename != lOther$$Typename) {
+    final l$$__typename = $__typename;
+    final lOther$$__typename = other.$__typename;
+    if (l$$__typename != lOther$$__typename) {
       return false;
     }
     return true;
@@ -443,7 +439,6 @@ class _CopyWithImpl$Query$viewer$viewer<TRes>
 
   static const _undefined = {};
 
-  @override
   TRes call({
     Object? id = _undefined,
     Object? screenId = _undefined,
@@ -472,9 +467,8 @@ class _CopyWithStubImpl$Query$viewer$viewer<TRes>
     implements CopyWith$Query$viewer$viewer<TRes> {
   _CopyWithStubImpl$Query$viewer$viewer(this._res);
 
-  final TRes _res;
+  TRes _res;
 
-  @override
   call({
     String? id,
     String? screenId,

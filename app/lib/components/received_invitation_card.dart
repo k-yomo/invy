@@ -88,7 +88,8 @@ class ReceivedInvitationCard extends StatelessWidget {
                 ? [
                     Container(
                       width: double.infinity,
-                      margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+                      margin: const EdgeInsets.symmetric(
+                          vertical: 5, horizontal: 5),
                       child: const Text("参加者",
                           style: TextStyle(
                               fontSize: 12, fontWeight: FontWeight.bold)),
@@ -112,7 +113,8 @@ class ReceivedInvitationCard extends StatelessWidget {
                                             ),
                                             Text(
                                               acceptedUser.nickname,
-                                              style: const TextStyle(fontSize: 12),
+                                              style:
+                                                  const TextStyle(fontSize: 12),
                                               overflow: TextOverflow.ellipsis,
                                             ),
                                           ],
@@ -140,7 +142,8 @@ class ReceivedInvitationCard extends StatelessWidget {
                         Text(
                             DateFormat(dateTimeFormat)
                                 .format(invitation.expiresAt.toLocal()),
-                            style: const TextStyle(fontWeight: FontWeight.bold)),
+                            style:
+                                const TextStyle(fontWeight: FontWeight.bold)),
                       ],
                     ),
                   ),
@@ -164,7 +167,8 @@ class ReceivedInvitationCard extends StatelessWidget {
                           ),
                         ),
                       ),
-                      Container(margin: const EdgeInsets.symmetric(horizontal: 5)),
+                      Container(
+                          margin: const EdgeInsets.symmetric(horizontal: 5)),
                       Expanded(
                         child: TextButton(
                           style: ElevatedButton.styleFrom(

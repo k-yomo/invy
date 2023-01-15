@@ -50,7 +50,8 @@ class FriendScreen extends HookConsumerWidget {
                             Navigator.of(context).push(
                               MaterialPageRoute(
                                 fullscreenDialog: true,
-                                builder: (context) => const FriendGroupCreateScreen(),
+                                builder: (context) =>
+                                    const FriendGroupCreateScreen(),
                               ),
                             );
                           },
@@ -69,7 +70,8 @@ class FriendScreen extends HookConsumerWidget {
                             Navigator.of(context).push(
                               MaterialPageRoute(
                                 fullscreenDialog: true,
-                                builder: (context) => const FriendshipRequestScreen(),
+                                builder: (context) =>
+                                    const FriendshipRequestScreen(),
                               ),
                             );
                           },

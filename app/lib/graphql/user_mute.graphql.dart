@@ -39,7 +39,7 @@ class Variables$Mutation$muteFriend {
     if (identical(this, other)) {
       return true;
     }
-    if (other is! Variables$Mutation$muteFriend ||
+    if (!(other is Variables$Mutation$muteFriend) ||
         runtimeType != other.runtimeType) {
       return false;
     }
@@ -83,7 +83,6 @@ class _CopyWithImpl$Variables$Mutation$muteFriend<TRes>
 
   static const _undefined = {};
 
-  @override
   TRes call({Object? userId = _undefined}) =>
       _then(Variables$Mutation$muteFriend._({
         ..._instance._$data,
@@ -96,9 +95,8 @@ class _CopyWithStubImpl$Variables$Mutation$muteFriend<TRes>
     implements CopyWith$Variables$Mutation$muteFriend<TRes> {
   _CopyWithStubImpl$Variables$Mutation$muteFriend(this._res);
 
-  final TRes _res;
+  TRes _res;
 
-  @override
   call({String? userId}) => _res;
 }
 
@@ -110,11 +108,11 @@ class Mutation$muteFriend {
 
   factory Mutation$muteFriend.fromJson(Map<String, dynamic> json) {
     final l$muteUser = json['muteUser'];
-    final l$$Typename = json['__typename'];
+    final l$$__typename = json['__typename'];
     return Mutation$muteFriend(
       muteUser: Mutation$muteFriend$muteUser.fromJson(
           (l$muteUser as Map<String, dynamic>)),
-      $__typename: (l$$Typename as String),
+      $__typename: (l$$__typename as String),
     );
   }
 
@@ -123,21 +121,21 @@ class Mutation$muteFriend {
   final String $__typename;
 
   Map<String, dynamic> toJson() {
-    final resultData = <String, dynamic>{};
+    final _resultData = <String, dynamic>{};
     final l$muteUser = muteUser;
-    resultData['muteUser'] = l$muteUser.toJson();
-    final l$$Typename = $__typename;
-    resultData['__typename'] = l$$Typename;
-    return resultData;
+    _resultData['muteUser'] = l$muteUser.toJson();
+    final l$$__typename = $__typename;
+    _resultData['__typename'] = l$$__typename;
+    return _resultData;
   }
 
   @override
   int get hashCode {
     final l$muteUser = muteUser;
-    final l$$Typename = $__typename;
+    final l$$__typename = $__typename;
     return Object.hashAll([
       l$muteUser,
-      l$$Typename,
+      l$$__typename,
     ]);
   }
 
@@ -146,7 +144,7 @@ class Mutation$muteFriend {
     if (identical(this, other)) {
       return true;
     }
-    if (other is! Mutation$muteFriend || runtimeType != other.runtimeType) {
+    if (!(other is Mutation$muteFriend) || runtimeType != other.runtimeType) {
       return false;
     }
     final l$muteUser = muteUser;
@@ -154,9 +152,9 @@ class Mutation$muteFriend {
     if (l$muteUser != lOther$muteUser) {
       return false;
     }
-    final l$$Typename = $__typename;
-    final lOther$$Typename = other.$__typename;
-    if (l$$Typename != lOther$$Typename) {
+    final l$$__typename = $__typename;
+    final lOther$$__typename = other.$__typename;
+    if (l$$__typename != lOther$$__typename) {
       return false;
     }
     return true;
@@ -200,7 +198,6 @@ class _CopyWithImpl$Mutation$muteFriend<TRes>
 
   static const _undefined = {};
 
-  @override
   TRes call({
     Object? muteUser = _undefined,
     Object? $__typename = _undefined,
@@ -213,7 +210,6 @@ class _CopyWithImpl$Mutation$muteFriend<TRes>
             ? _instance.$__typename
             : ($__typename as String),
       ));
-  @override
   CopyWith$Mutation$muteFriend$muteUser<TRes> get muteUser {
     final local$muteUser = _instance.muteUser;
     return CopyWith$Mutation$muteFriend$muteUser(
@@ -225,15 +221,13 @@ class _CopyWithStubImpl$Mutation$muteFriend<TRes>
     implements CopyWith$Mutation$muteFriend<TRes> {
   _CopyWithStubImpl$Mutation$muteFriend(this._res);
 
-  final TRes _res;
+  TRes _res;
 
-  @override
   call({
     Mutation$muteFriend$muteUser? muteUser,
     String? $__typename,
   }) =>
       _res;
-  @override
   CopyWith$Mutation$muteFriend$muteUser<TRes> get muteUser =>
       CopyWith$Mutation$muteFriend$muteUser.stub(_res);
 }
@@ -378,10 +372,10 @@ class WatchOptions$Mutation$muteFriend
 extension ClientExtension$Mutation$muteFriend on graphql.GraphQLClient {
   Future<graphql.QueryResult<Mutation$muteFriend>> mutate$muteFriend(
           Options$Mutation$muteFriend options) async =>
-      await mutate(options);
+      await this.mutate(options);
   graphql.ObservableQuery<Mutation$muteFriend> watchMutation$muteFriend(
           WatchOptions$Mutation$muteFriend options) =>
-      watchMutation(options);
+      this.watchMutation(options);
 }
 
 class Mutation$muteFriend$HookResult {
@@ -500,10 +494,10 @@ class Mutation$muteFriend$muteUser {
 
   factory Mutation$muteFriend$muteUser.fromJson(Map<String, dynamic> json) {
     final l$mutedUserId = json['mutedUserId'];
-    final l$$Typename = json['__typename'];
+    final l$$__typename = json['__typename'];
     return Mutation$muteFriend$muteUser(
       mutedUserId: (l$mutedUserId as String),
-      $__typename: (l$$Typename as String),
+      $__typename: (l$$__typename as String),
     );
   }
 
@@ -512,21 +506,21 @@ class Mutation$muteFriend$muteUser {
   final String $__typename;
 
   Map<String, dynamic> toJson() {
-    final resultData = <String, dynamic>{};
+    final _resultData = <String, dynamic>{};
     final l$mutedUserId = mutedUserId;
-    resultData['mutedUserId'] = l$mutedUserId;
-    final l$$Typename = $__typename;
-    resultData['__typename'] = l$$Typename;
-    return resultData;
+    _resultData['mutedUserId'] = l$mutedUserId;
+    final l$$__typename = $__typename;
+    _resultData['__typename'] = l$$__typename;
+    return _resultData;
   }
 
   @override
   int get hashCode {
     final l$mutedUserId = mutedUserId;
-    final l$$Typename = $__typename;
+    final l$$__typename = $__typename;
     return Object.hashAll([
       l$mutedUserId,
-      l$$Typename,
+      l$$__typename,
     ]);
   }
 
@@ -535,7 +529,7 @@ class Mutation$muteFriend$muteUser {
     if (identical(this, other)) {
       return true;
     }
-    if (other is! Mutation$muteFriend$muteUser ||
+    if (!(other is Mutation$muteFriend$muteUser) ||
         runtimeType != other.runtimeType) {
       return false;
     }
@@ -544,9 +538,9 @@ class Mutation$muteFriend$muteUser {
     if (l$mutedUserId != lOther$mutedUserId) {
       return false;
     }
-    final l$$Typename = $__typename;
-    final lOther$$Typename = other.$__typename;
-    if (l$$Typename != lOther$$Typename) {
+    final l$$__typename = $__typename;
+    final lOther$$__typename = other.$__typename;
+    if (l$$__typename != lOther$$__typename) {
       return false;
     }
     return true;
@@ -590,7 +584,6 @@ class _CopyWithImpl$Mutation$muteFriend$muteUser<TRes>
 
   static const _undefined = {};
 
-  @override
   TRes call({
     Object? mutedUserId = _undefined,
     Object? $__typename = _undefined,
@@ -609,9 +602,8 @@ class _CopyWithStubImpl$Mutation$muteFriend$muteUser<TRes>
     implements CopyWith$Mutation$muteFriend$muteUser<TRes> {
   _CopyWithStubImpl$Mutation$muteFriend$muteUser(this._res);
 
-  final TRes _res;
+  TRes _res;
 
-  @override
   call({
     String? mutedUserId,
     String? $__typename,
@@ -654,7 +646,7 @@ class Variables$Mutation$unmuteFriend {
     if (identical(this, other)) {
       return true;
     }
-    if (other is! Variables$Mutation$unmuteFriend ||
+    if (!(other is Variables$Mutation$unmuteFriend) ||
         runtimeType != other.runtimeType) {
       return false;
     }
@@ -698,7 +690,6 @@ class _CopyWithImpl$Variables$Mutation$unmuteFriend<TRes>
 
   static const _undefined = {};
 
-  @override
   TRes call({Object? userId = _undefined}) =>
       _then(Variables$Mutation$unmuteFriend._({
         ..._instance._$data,
@@ -711,9 +702,8 @@ class _CopyWithStubImpl$Variables$Mutation$unmuteFriend<TRes>
     implements CopyWith$Variables$Mutation$unmuteFriend<TRes> {
   _CopyWithStubImpl$Variables$Mutation$unmuteFriend(this._res);
 
-  final TRes _res;
+  TRes _res;
 
-  @override
   call({String? userId}) => _res;
 }
 
@@ -725,11 +715,11 @@ class Mutation$unmuteFriend {
 
   factory Mutation$unmuteFriend.fromJson(Map<String, dynamic> json) {
     final l$unmuteUser = json['unmuteUser'];
-    final l$$Typename = json['__typename'];
+    final l$$__typename = json['__typename'];
     return Mutation$unmuteFriend(
       unmuteUser: Mutation$unmuteFriend$unmuteUser.fromJson(
           (l$unmuteUser as Map<String, dynamic>)),
-      $__typename: (l$$Typename as String),
+      $__typename: (l$$__typename as String),
     );
   }
 
@@ -738,21 +728,21 @@ class Mutation$unmuteFriend {
   final String $__typename;
 
   Map<String, dynamic> toJson() {
-    final resultData = <String, dynamic>{};
+    final _resultData = <String, dynamic>{};
     final l$unmuteUser = unmuteUser;
-    resultData['unmuteUser'] = l$unmuteUser.toJson();
-    final l$$Typename = $__typename;
-    resultData['__typename'] = l$$Typename;
-    return resultData;
+    _resultData['unmuteUser'] = l$unmuteUser.toJson();
+    final l$$__typename = $__typename;
+    _resultData['__typename'] = l$$__typename;
+    return _resultData;
   }
 
   @override
   int get hashCode {
     final l$unmuteUser = unmuteUser;
-    final l$$Typename = $__typename;
+    final l$$__typename = $__typename;
     return Object.hashAll([
       l$unmuteUser,
-      l$$Typename,
+      l$$__typename,
     ]);
   }
 
@@ -761,7 +751,7 @@ class Mutation$unmuteFriend {
     if (identical(this, other)) {
       return true;
     }
-    if (other is! Mutation$unmuteFriend || runtimeType != other.runtimeType) {
+    if (!(other is Mutation$unmuteFriend) || runtimeType != other.runtimeType) {
       return false;
     }
     final l$unmuteUser = unmuteUser;
@@ -769,9 +759,9 @@ class Mutation$unmuteFriend {
     if (l$unmuteUser != lOther$unmuteUser) {
       return false;
     }
-    final l$$Typename = $__typename;
-    final lOther$$Typename = other.$__typename;
-    if (l$$Typename != lOther$$Typename) {
+    final l$$__typename = $__typename;
+    final lOther$$__typename = other.$__typename;
+    if (l$$__typename != lOther$$__typename) {
       return false;
     }
     return true;
@@ -815,7 +805,6 @@ class _CopyWithImpl$Mutation$unmuteFriend<TRes>
 
   static const _undefined = {};
 
-  @override
   TRes call({
     Object? unmuteUser = _undefined,
     Object? $__typename = _undefined,
@@ -828,7 +817,6 @@ class _CopyWithImpl$Mutation$unmuteFriend<TRes>
             ? _instance.$__typename
             : ($__typename as String),
       ));
-  @override
   CopyWith$Mutation$unmuteFriend$unmuteUser<TRes> get unmuteUser {
     final local$unmuteUser = _instance.unmuteUser;
     return CopyWith$Mutation$unmuteFriend$unmuteUser(
@@ -840,15 +828,13 @@ class _CopyWithStubImpl$Mutation$unmuteFriend<TRes>
     implements CopyWith$Mutation$unmuteFriend<TRes> {
   _CopyWithStubImpl$Mutation$unmuteFriend(this._res);
 
-  final TRes _res;
+  TRes _res;
 
-  @override
   call({
     Mutation$unmuteFriend$unmuteUser? unmuteUser,
     String? $__typename,
   }) =>
       _res;
-  @override
   CopyWith$Mutation$unmuteFriend$unmuteUser<TRes> get unmuteUser =>
       CopyWith$Mutation$unmuteFriend$unmuteUser.stub(_res);
 }
@@ -994,10 +980,10 @@ class WatchOptions$Mutation$unmuteFriend
 extension ClientExtension$Mutation$unmuteFriend on graphql.GraphQLClient {
   Future<graphql.QueryResult<Mutation$unmuteFriend>> mutate$unmuteFriend(
           Options$Mutation$unmuteFriend options) async =>
-      await mutate(options);
+      await this.mutate(options);
   graphql.ObservableQuery<Mutation$unmuteFriend> watchMutation$unmuteFriend(
           WatchOptions$Mutation$unmuteFriend options) =>
-      watchMutation(options);
+      this.watchMutation(options);
 }
 
 class Mutation$unmuteFriend$HookResult {
@@ -1116,10 +1102,10 @@ class Mutation$unmuteFriend$unmuteUser {
 
   factory Mutation$unmuteFriend$unmuteUser.fromJson(Map<String, dynamic> json) {
     final l$unmutedUserId = json['unmutedUserId'];
-    final l$$Typename = json['__typename'];
+    final l$$__typename = json['__typename'];
     return Mutation$unmuteFriend$unmuteUser(
       unmutedUserId: (l$unmutedUserId as String),
-      $__typename: (l$$Typename as String),
+      $__typename: (l$$__typename as String),
     );
   }
 
@@ -1128,21 +1114,21 @@ class Mutation$unmuteFriend$unmuteUser {
   final String $__typename;
 
   Map<String, dynamic> toJson() {
-    final resultData = <String, dynamic>{};
+    final _resultData = <String, dynamic>{};
     final l$unmutedUserId = unmutedUserId;
-    resultData['unmutedUserId'] = l$unmutedUserId;
-    final l$$Typename = $__typename;
-    resultData['__typename'] = l$$Typename;
-    return resultData;
+    _resultData['unmutedUserId'] = l$unmutedUserId;
+    final l$$__typename = $__typename;
+    _resultData['__typename'] = l$$__typename;
+    return _resultData;
   }
 
   @override
   int get hashCode {
     final l$unmutedUserId = unmutedUserId;
-    final l$$Typename = $__typename;
+    final l$$__typename = $__typename;
     return Object.hashAll([
       l$unmutedUserId,
-      l$$Typename,
+      l$$__typename,
     ]);
   }
 
@@ -1151,7 +1137,7 @@ class Mutation$unmuteFriend$unmuteUser {
     if (identical(this, other)) {
       return true;
     }
-    if (other is! Mutation$unmuteFriend$unmuteUser ||
+    if (!(other is Mutation$unmuteFriend$unmuteUser) ||
         runtimeType != other.runtimeType) {
       return false;
     }
@@ -1160,9 +1146,9 @@ class Mutation$unmuteFriend$unmuteUser {
     if (l$unmutedUserId != lOther$unmutedUserId) {
       return false;
     }
-    final l$$Typename = $__typename;
-    final lOther$$Typename = other.$__typename;
-    if (l$$Typename != lOther$$Typename) {
+    final l$$__typename = $__typename;
+    final lOther$$__typename = other.$__typename;
+    if (l$$__typename != lOther$$__typename) {
       return false;
     }
     return true;
@@ -1206,7 +1192,6 @@ class _CopyWithImpl$Mutation$unmuteFriend$unmuteUser<TRes>
 
   static const _undefined = {};
 
-  @override
   TRes call({
     Object? unmutedUserId = _undefined,
     Object? $__typename = _undefined,
@@ -1225,9 +1210,8 @@ class _CopyWithStubImpl$Mutation$unmuteFriend$unmuteUser<TRes>
     implements CopyWith$Mutation$unmuteFriend$unmuteUser<TRes> {
   _CopyWithStubImpl$Mutation$unmuteFriend$unmuteUser(this._res);
 
-  final TRes _res;
+  TRes _res;
 
-  @override
   call({
     String? unmutedUserId,
     String? $__typename,

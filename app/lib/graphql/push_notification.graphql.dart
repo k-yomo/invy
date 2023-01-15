@@ -45,7 +45,7 @@ class Variables$Mutation$registerPushNotificationToken {
     if (identical(this, other)) {
       return true;
     }
-    if (other is! Variables$Mutation$registerPushNotificationToken ||
+    if (!(other is Variables$Mutation$registerPushNotificationToken) ||
         runtimeType != other.runtimeType) {
       return false;
     }
@@ -90,7 +90,6 @@ class _CopyWithImpl$Variables$Mutation$registerPushNotificationToken<TRes>
 
   static const _undefined = {};
 
-  @override
   TRes call({Object? input = _undefined}) =>
       _then(Variables$Mutation$registerPushNotificationToken._({
         ..._instance._$data,
@@ -103,9 +102,8 @@ class _CopyWithStubImpl$Variables$Mutation$registerPushNotificationToken<TRes>
     implements CopyWith$Variables$Mutation$registerPushNotificationToken<TRes> {
   _CopyWithStubImpl$Variables$Mutation$registerPushNotificationToken(this._res);
 
-  final TRes _res;
+  TRes _res;
 
-  @override
   call({Input$RegisterPushNotificationTokenInput? input}) => _res;
 }
 
@@ -119,13 +117,13 @@ class Mutation$registerPushNotificationToken {
       Map<String, dynamic> json) {
     final l$registerPushNotificationToken =
         json['registerPushNotificationToken'];
-    final l$$Typename = json['__typename'];
+    final l$$__typename = json['__typename'];
     return Mutation$registerPushNotificationToken(
       registerPushNotificationToken:
           Mutation$registerPushNotificationToken$registerPushNotificationToken
               .fromJson(
                   (l$registerPushNotificationToken as Map<String, dynamic>)),
-      $__typename: (l$$Typename as String),
+      $__typename: (l$$__typename as String),
     );
   }
 
@@ -135,22 +133,22 @@ class Mutation$registerPushNotificationToken {
   final String $__typename;
 
   Map<String, dynamic> toJson() {
-    final resultData = <String, dynamic>{};
+    final _resultData = <String, dynamic>{};
     final l$registerPushNotificationToken = registerPushNotificationToken;
-    resultData['registerPushNotificationToken'] =
+    _resultData['registerPushNotificationToken'] =
         l$registerPushNotificationToken.toJson();
-    final l$$Typename = $__typename;
-    resultData['__typename'] = l$$Typename;
-    return resultData;
+    final l$$__typename = $__typename;
+    _resultData['__typename'] = l$$__typename;
+    return _resultData;
   }
 
   @override
   int get hashCode {
     final l$registerPushNotificationToken = registerPushNotificationToken;
-    final l$$Typename = $__typename;
+    final l$$__typename = $__typename;
     return Object.hashAll([
       l$registerPushNotificationToken,
-      l$$Typename,
+      l$$__typename,
     ]);
   }
 
@@ -159,7 +157,7 @@ class Mutation$registerPushNotificationToken {
     if (identical(this, other)) {
       return true;
     }
-    if (other is! Mutation$registerPushNotificationToken ||
+    if (!(other is Mutation$registerPushNotificationToken) ||
         runtimeType != other.runtimeType) {
       return false;
     }
@@ -170,9 +168,9 @@ class Mutation$registerPushNotificationToken {
         lOther$registerPushNotificationToken) {
       return false;
     }
-    final l$$Typename = $__typename;
-    final lOther$$Typename = other.$__typename;
-    if (l$$Typename != lOther$$Typename) {
+    final l$$__typename = $__typename;
+    final lOther$$__typename = other.$__typename;
+    if (l$$__typename != lOther$$__typename) {
       return false;
     }
     return true;
@@ -220,7 +218,6 @@ class _CopyWithImpl$Mutation$registerPushNotificationToken<TRes>
 
   static const _undefined = {};
 
-  @override
   TRes call({
     Object? registerPushNotificationToken = _undefined,
     Object? $__typename = _undefined,
@@ -236,7 +233,6 @@ class _CopyWithImpl$Mutation$registerPushNotificationToken<TRes>
             ? _instance.$__typename
             : ($__typename as String),
       ));
-  @override
   CopyWith$Mutation$registerPushNotificationToken$registerPushNotificationToken<
       TRes> get registerPushNotificationToken {
     final local$registerPushNotificationToken =
@@ -251,16 +247,14 @@ class _CopyWithStubImpl$Mutation$registerPushNotificationToken<TRes>
     implements CopyWith$Mutation$registerPushNotificationToken<TRes> {
   _CopyWithStubImpl$Mutation$registerPushNotificationToken(this._res);
 
-  final TRes _res;
+  TRes _res;
 
-  @override
   call({
     Mutation$registerPushNotificationToken$registerPushNotificationToken?
         registerPushNotificationToken,
     String? $__typename,
   }) =>
       _res;
-  @override
   CopyWith$Mutation$registerPushNotificationToken$registerPushNotificationToken<
           TRes>
       get registerPushNotificationToken =>
@@ -418,11 +412,11 @@ extension ClientExtension$Mutation$registerPushNotificationToken
   Future<graphql.QueryResult<Mutation$registerPushNotificationToken>>
       mutate$registerPushNotificationToken(
               Options$Mutation$registerPushNotificationToken options) async =>
-          await mutate(options);
+          await this.mutate(options);
   graphql.ObservableQuery<Mutation$registerPushNotificationToken>
       watchMutation$registerPushNotificationToken(
               WatchOptions$Mutation$registerPushNotificationToken options) =>
-          watchMutation(options);
+          this.watchMutation(options);
 }
 
 class Mutation$registerPushNotificationToken$HookResult {
@@ -552,11 +546,11 @@ class Mutation$registerPushNotificationToken$registerPushNotificationToken {
       Map<String, dynamic> json) {
     final l$registeredPushNotificationTokenId =
         json['registeredPushNotificationTokenId'];
-    final l$$Typename = json['__typename'];
+    final l$$__typename = json['__typename'];
     return Mutation$registerPushNotificationToken$registerPushNotificationToken(
       registeredPushNotificationTokenId:
           (l$registeredPushNotificationTokenId as String),
-      $__typename: (l$$Typename as String),
+      $__typename: (l$$__typename as String),
     );
   }
 
@@ -565,24 +559,24 @@ class Mutation$registerPushNotificationToken$registerPushNotificationToken {
   final String $__typename;
 
   Map<String, dynamic> toJson() {
-    final resultData = <String, dynamic>{};
+    final _resultData = <String, dynamic>{};
     final l$registeredPushNotificationTokenId =
         registeredPushNotificationTokenId;
-    resultData['registeredPushNotificationTokenId'] =
+    _resultData['registeredPushNotificationTokenId'] =
         l$registeredPushNotificationTokenId;
-    final l$$Typename = $__typename;
-    resultData['__typename'] = l$$Typename;
-    return resultData;
+    final l$$__typename = $__typename;
+    _resultData['__typename'] = l$$__typename;
+    return _resultData;
   }
 
   @override
   int get hashCode {
     final l$registeredPushNotificationTokenId =
         registeredPushNotificationTokenId;
-    final l$$Typename = $__typename;
+    final l$$__typename = $__typename;
     return Object.hashAll([
       l$registeredPushNotificationTokenId,
-      l$$Typename,
+      l$$__typename,
     ]);
   }
 
@@ -591,8 +585,8 @@ class Mutation$registerPushNotificationToken$registerPushNotificationToken {
     if (identical(this, other)) {
       return true;
     }
-    if (other
-            is! Mutation$registerPushNotificationToken$registerPushNotificationToken ||
+    if (!(other
+            is Mutation$registerPushNotificationToken$registerPushNotificationToken) ||
         runtimeType != other.runtimeType) {
       return false;
     }
@@ -604,9 +598,9 @@ class Mutation$registerPushNotificationToken$registerPushNotificationToken {
         lOther$registeredPushNotificationTokenId) {
       return false;
     }
-    final l$$Typename = $__typename;
-    final lOther$$Typename = other.$__typename;
-    if (l$$Typename != lOther$$Typename) {
+    final l$$__typename = $__typename;
+    final lOther$$__typename = other.$__typename;
+    if (l$$__typename != lOther$$__typename) {
       return false;
     }
     return true;
@@ -663,7 +657,6 @@ class _CopyWithImpl$Mutation$registerPushNotificationToken$registerPushNotificat
 
   static const _undefined = {};
 
-  @override
   TRes call({
     Object? registeredPushNotificationTokenId = _undefined,
     Object? $__typename = _undefined,
@@ -689,9 +682,8 @@ class _CopyWithStubImpl$Mutation$registerPushNotificationToken$registerPushNotif
   _CopyWithStubImpl$Mutation$registerPushNotificationToken$registerPushNotificationToken(
       this._res);
 
-  final TRes _res;
+  TRes _res;
 
-  @override
   call({
     String? registeredPushNotificationTokenId,
     String? $__typename,

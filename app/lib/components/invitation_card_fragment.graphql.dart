@@ -21,7 +21,7 @@ class Fragment$invitationCardFragment {
     final l$expiresAt = json['expiresAt'];
     final l$user = json['user'];
     final l$acceptedUsers = json['acceptedUsers'];
-    final l$$Typename = json['__typename'];
+    final l$$__typename = json['__typename'];
     return Fragment$invitationCardFragment(
       id: (l$id as String),
       location: (l$location as String),
@@ -34,7 +34,7 @@ class Fragment$invitationCardFragment {
           .map((e) => Fragment$invitationCardFragment$acceptedUsers.fromJson(
               (e as Map<String, dynamic>)))
           .toList(),
-      $__typename: (l$$Typename as String),
+      $__typename: (l$$__typename as String),
     );
   }
 
@@ -55,25 +55,25 @@ class Fragment$invitationCardFragment {
   final String $__typename;
 
   Map<String, dynamic> toJson() {
-    final resultData = <String, dynamic>{};
+    final _resultData = <String, dynamic>{};
     final l$id = id;
-    resultData['id'] = l$id;
+    _resultData['id'] = l$id;
     final l$location = location;
-    resultData['location'] = l$location;
+    _resultData['location'] = l$location;
     final l$comment = comment;
-    resultData['comment'] = l$comment;
+    _resultData['comment'] = l$comment;
     final l$startsAt = startsAt;
-    resultData['startsAt'] = l$startsAt.toIso8601String();
+    _resultData['startsAt'] = l$startsAt.toIso8601String();
     final l$expiresAt = expiresAt;
-    resultData['expiresAt'] = l$expiresAt.toIso8601String();
+    _resultData['expiresAt'] = l$expiresAt.toIso8601String();
     final l$user = user;
-    resultData['user'] = l$user.toJson();
+    _resultData['user'] = l$user.toJson();
     final l$acceptedUsers = acceptedUsers;
-    resultData['acceptedUsers'] =
+    _resultData['acceptedUsers'] =
         l$acceptedUsers.map((e) => e.toJson()).toList();
-    final l$$Typename = $__typename;
-    resultData['__typename'] = l$$Typename;
-    return resultData;
+    final l$$__typename = $__typename;
+    _resultData['__typename'] = l$$__typename;
+    return _resultData;
   }
 
   @override
@@ -85,7 +85,7 @@ class Fragment$invitationCardFragment {
     final l$expiresAt = expiresAt;
     final l$user = user;
     final l$acceptedUsers = acceptedUsers;
-    final l$$Typename = $__typename;
+    final l$$__typename = $__typename;
     return Object.hashAll([
       l$id,
       l$location,
@@ -94,7 +94,7 @@ class Fragment$invitationCardFragment {
       l$expiresAt,
       l$user,
       Object.hashAll(l$acceptedUsers.map((v) => v)),
-      l$$Typename,
+      l$$__typename,
     ]);
   }
 
@@ -103,7 +103,7 @@ class Fragment$invitationCardFragment {
     if (identical(this, other)) {
       return true;
     }
-    if (other is! Fragment$invitationCardFragment ||
+    if (!(other is Fragment$invitationCardFragment) ||
         runtimeType != other.runtimeType) {
       return false;
     }
@@ -149,9 +149,9 @@ class Fragment$invitationCardFragment {
         return false;
       }
     }
-    final l$$Typename = $__typename;
-    final lOther$$Typename = other.$__typename;
-    if (l$$Typename != lOther$$Typename) {
+    final l$$__typename = $__typename;
+    final lOther$$__typename = other.$__typename;
+    if (l$$__typename != lOther$$__typename) {
       return false;
     }
     return true;
@@ -192,7 +192,7 @@ abstract class CopyWith$Fragment$invitationCardFragment<TRes> {
               Iterable<
                   CopyWith$Fragment$invitationCardFragment$acceptedUsers<
                       Fragment$invitationCardFragment$acceptedUsers>>)
-          fn);
+          _fn);
 }
 
 class _CopyWithImpl$Fragment$invitationCardFragment<TRes>
@@ -208,7 +208,6 @@ class _CopyWithImpl$Fragment$invitationCardFragment<TRes>
 
   static const _undefined = {};
 
-  @override
   TRes call({
     Object? id = _undefined,
     Object? location = _undefined,
@@ -244,22 +243,20 @@ class _CopyWithImpl$Fragment$invitationCardFragment<TRes>
             ? _instance.$__typename
             : ($__typename as String),
       ));
-  @override
   CopyWith$Fragment$invitationCardFragment$user<TRes> get user {
     final local$user = _instance.user;
     return CopyWith$Fragment$invitationCardFragment$user(
         local$user, (e) => call(user: e));
   }
 
-  @override
   TRes acceptedUsers(
           Iterable<Fragment$invitationCardFragment$acceptedUsers> Function(
                   Iterable<
                       CopyWith$Fragment$invitationCardFragment$acceptedUsers<
                           Fragment$invitationCardFragment$acceptedUsers>>)
-              fn) =>
+              _fn) =>
       call(
-          acceptedUsers: fn(_instance.acceptedUsers.map(
+          acceptedUsers: _fn(_instance.acceptedUsers.map(
               (e) => CopyWith$Fragment$invitationCardFragment$acceptedUsers(
                     e,
                     (i) => i,
@@ -270,9 +267,8 @@ class _CopyWithStubImpl$Fragment$invitationCardFragment<TRes>
     implements CopyWith$Fragment$invitationCardFragment<TRes> {
   _CopyWithStubImpl$Fragment$invitationCardFragment(this._res);
 
-  final TRes _res;
+  TRes _res;
 
-  @override
   call({
     String? id,
     String? location,
@@ -284,11 +280,9 @@ class _CopyWithStubImpl$Fragment$invitationCardFragment<TRes>
     String? $__typename,
   }) =>
       _res;
-  @override
   CopyWith$Fragment$invitationCardFragment$user<TRes> get user =>
       CopyWith$Fragment$invitationCardFragment$user.stub(_res);
-  @override
-  acceptedUsers(fn) => _res;
+  acceptedUsers(_fn) => _res;
 }
 
 const fragmentDefinitioninvitationCardFragment = FragmentDefinitionNode(
@@ -427,7 +421,7 @@ extension ClientExtension$Fragment$invitationCardFragment
     required Map<String, dynamic> idFields,
     bool broadcast = true,
   }) =>
-      writeFragment(
+      this.writeFragment(
         graphql.FragmentRequest(
           idFields: idFields,
           fragment: const graphql.Fragment(
@@ -442,7 +436,7 @@ extension ClientExtension$Fragment$invitationCardFragment
     required Map<String, dynamic> idFields,
     bool optimistic = true,
   }) {
-    final result = readFragment(
+    final result = this.readFragment(
       graphql.FragmentRequest(
         idFields: idFields,
         fragment: const graphql.Fragment(
@@ -471,12 +465,12 @@ class Fragment$invitationCardFragment$user {
     final l$id = json['id'];
     final l$nickname = json['nickname'];
     final l$avatarUrl = json['avatarUrl'];
-    final l$$Typename = json['__typename'];
+    final l$$__typename = json['__typename'];
     return Fragment$invitationCardFragment$user(
       id: (l$id as String),
       nickname: (l$nickname as String),
       avatarUrl: (l$avatarUrl as String),
-      $__typename: (l$$Typename as String),
+      $__typename: (l$$__typename as String),
     );
   }
 
@@ -489,16 +483,16 @@ class Fragment$invitationCardFragment$user {
   final String $__typename;
 
   Map<String, dynamic> toJson() {
-    final resultData = <String, dynamic>{};
+    final _resultData = <String, dynamic>{};
     final l$id = id;
-    resultData['id'] = l$id;
+    _resultData['id'] = l$id;
     final l$nickname = nickname;
-    resultData['nickname'] = l$nickname;
+    _resultData['nickname'] = l$nickname;
     final l$avatarUrl = avatarUrl;
-    resultData['avatarUrl'] = l$avatarUrl;
-    final l$$Typename = $__typename;
-    resultData['__typename'] = l$$Typename;
-    return resultData;
+    _resultData['avatarUrl'] = l$avatarUrl;
+    final l$$__typename = $__typename;
+    _resultData['__typename'] = l$$__typename;
+    return _resultData;
   }
 
   @override
@@ -506,12 +500,12 @@ class Fragment$invitationCardFragment$user {
     final l$id = id;
     final l$nickname = nickname;
     final l$avatarUrl = avatarUrl;
-    final l$$Typename = $__typename;
+    final l$$__typename = $__typename;
     return Object.hashAll([
       l$id,
       l$nickname,
       l$avatarUrl,
-      l$$Typename,
+      l$$__typename,
     ]);
   }
 
@@ -520,7 +514,7 @@ class Fragment$invitationCardFragment$user {
     if (identical(this, other)) {
       return true;
     }
-    if (other is! Fragment$invitationCardFragment$user ||
+    if (!(other is Fragment$invitationCardFragment$user) ||
         runtimeType != other.runtimeType) {
       return false;
     }
@@ -539,9 +533,9 @@ class Fragment$invitationCardFragment$user {
     if (l$avatarUrl != lOther$avatarUrl) {
       return false;
     }
-    final l$$Typename = $__typename;
-    final lOther$$Typename = other.$__typename;
-    if (l$$Typename != lOther$$Typename) {
+    final l$$__typename = $__typename;
+    final lOther$$__typename = other.$__typename;
+    if (l$$__typename != lOther$$__typename) {
       return false;
     }
     return true;
@@ -588,7 +582,6 @@ class _CopyWithImpl$Fragment$invitationCardFragment$user<TRes>
 
   static const _undefined = {};
 
-  @override
   TRes call({
     Object? id = _undefined,
     Object? nickname = _undefined,
@@ -613,9 +606,8 @@ class _CopyWithStubImpl$Fragment$invitationCardFragment$user<TRes>
     implements CopyWith$Fragment$invitationCardFragment$user<TRes> {
   _CopyWithStubImpl$Fragment$invitationCardFragment$user(this._res);
 
-  final TRes _res;
+  TRes _res;
 
-  @override
   call({
     String? id,
     String? nickname,
@@ -638,12 +630,12 @@ class Fragment$invitationCardFragment$acceptedUsers {
     final l$id = json['id'];
     final l$nickname = json['nickname'];
     final l$avatarUrl = json['avatarUrl'];
-    final l$$Typename = json['__typename'];
+    final l$$__typename = json['__typename'];
     return Fragment$invitationCardFragment$acceptedUsers(
       id: (l$id as String),
       nickname: (l$nickname as String),
       avatarUrl: (l$avatarUrl as String),
-      $__typename: (l$$Typename as String),
+      $__typename: (l$$__typename as String),
     );
   }
 
@@ -656,16 +648,16 @@ class Fragment$invitationCardFragment$acceptedUsers {
   final String $__typename;
 
   Map<String, dynamic> toJson() {
-    final resultData = <String, dynamic>{};
+    final _resultData = <String, dynamic>{};
     final l$id = id;
-    resultData['id'] = l$id;
+    _resultData['id'] = l$id;
     final l$nickname = nickname;
-    resultData['nickname'] = l$nickname;
+    _resultData['nickname'] = l$nickname;
     final l$avatarUrl = avatarUrl;
-    resultData['avatarUrl'] = l$avatarUrl;
-    final l$$Typename = $__typename;
-    resultData['__typename'] = l$$Typename;
-    return resultData;
+    _resultData['avatarUrl'] = l$avatarUrl;
+    final l$$__typename = $__typename;
+    _resultData['__typename'] = l$$__typename;
+    return _resultData;
   }
 
   @override
@@ -673,12 +665,12 @@ class Fragment$invitationCardFragment$acceptedUsers {
     final l$id = id;
     final l$nickname = nickname;
     final l$avatarUrl = avatarUrl;
-    final l$$Typename = $__typename;
+    final l$$__typename = $__typename;
     return Object.hashAll([
       l$id,
       l$nickname,
       l$avatarUrl,
-      l$$Typename,
+      l$$__typename,
     ]);
   }
 
@@ -687,7 +679,7 @@ class Fragment$invitationCardFragment$acceptedUsers {
     if (identical(this, other)) {
       return true;
     }
-    if (other is! Fragment$invitationCardFragment$acceptedUsers ||
+    if (!(other is Fragment$invitationCardFragment$acceptedUsers) ||
         runtimeType != other.runtimeType) {
       return false;
     }
@@ -706,9 +698,9 @@ class Fragment$invitationCardFragment$acceptedUsers {
     if (l$avatarUrl != lOther$avatarUrl) {
       return false;
     }
-    final l$$Typename = $__typename;
-    final lOther$$Typename = other.$__typename;
-    if (l$$Typename != lOther$$Typename) {
+    final l$$__typename = $__typename;
+    final lOther$$__typename = other.$__typename;
+    if (l$$__typename != lOther$$__typename) {
       return false;
     }
     return true;
@@ -756,7 +748,6 @@ class _CopyWithImpl$Fragment$invitationCardFragment$acceptedUsers<TRes>
 
   static const _undefined = {};
 
-  @override
   TRes call({
     Object? id = _undefined,
     Object? nickname = _undefined,
@@ -781,9 +772,8 @@ class _CopyWithStubImpl$Fragment$invitationCardFragment$acceptedUsers<TRes>
     implements CopyWith$Fragment$invitationCardFragment$acceptedUsers<TRes> {
   _CopyWithStubImpl$Fragment$invitationCardFragment$acceptedUsers(this._res);
 
-  final TRes _res;
+  TRes _res;
 
-  @override
   call({
     String? id,
     String? nickname,
