@@ -25,6 +25,7 @@ import (
 	"github.com/k-yomo/invy/invy_api/ent/userfriendgroup"
 	"github.com/k-yomo/invy/invy_api/ent/usermute"
 	"github.com/k-yomo/invy/invy_api/ent/userprofile"
+	"github.com/k-yomo/invy/pkg/pgutil"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
@@ -2607,6 +2608,7 @@ type InvitationMutation struct {
 	typ                             string
 	id                              *uuid.UUID
 	location                        *string
+	coordinate                      **pgutil.GeoPoint
 	comment                         *string
 	starts_at                       *time.Time
 	expires_at                      *time.Time
@@ -2806,6 +2808,42 @@ func (m *InvitationMutation) OldLocation(ctx context.Context) (v string, err err
 // ResetLocation resets all changes to the "location" field.
 func (m *InvitationMutation) ResetLocation() {
 	m.location = nil
+}
+
+// SetCoordinate sets the "coordinate" field.
+func (m *InvitationMutation) SetCoordinate(pp *pgutil.GeoPoint) {
+	m.coordinate = &pp
+}
+
+// Coordinate returns the value of the "coordinate" field in the mutation.
+func (m *InvitationMutation) Coordinate() (r *pgutil.GeoPoint, exists bool) {
+	v := m.coordinate
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCoordinate returns the old "coordinate" field's value of the Invitation entity.
+// If the Invitation object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *InvitationMutation) OldCoordinate(ctx context.Context) (v *pgutil.GeoPoint, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCoordinate is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCoordinate requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCoordinate: %w", err)
+	}
+	return oldValue.Coordinate, nil
+}
+
+// ResetCoordinate resets all changes to the "coordinate" field.
+func (m *InvitationMutation) ResetCoordinate() {
+	m.coordinate = nil
 }
 
 // SetComment sets the "comment" field.
@@ -3264,12 +3302,15 @@ func (m *InvitationMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *InvitationMutation) Fields() []string {
-	fields := make([]string, 0, 7)
+	fields := make([]string, 0, 8)
 	if m.user != nil {
 		fields = append(fields, invitation.FieldUserID)
 	}
 	if m.location != nil {
 		fields = append(fields, invitation.FieldLocation)
+	}
+	if m.coordinate != nil {
+		fields = append(fields, invitation.FieldCoordinate)
 	}
 	if m.comment != nil {
 		fields = append(fields, invitation.FieldComment)
@@ -3298,6 +3339,8 @@ func (m *InvitationMutation) Field(name string) (ent.Value, bool) {
 		return m.UserID()
 	case invitation.FieldLocation:
 		return m.Location()
+	case invitation.FieldCoordinate:
+		return m.Coordinate()
 	case invitation.FieldComment:
 		return m.Comment()
 	case invitation.FieldStartsAt:
@@ -3321,6 +3364,8 @@ func (m *InvitationMutation) OldField(ctx context.Context, name string) (ent.Val
 		return m.OldUserID(ctx)
 	case invitation.FieldLocation:
 		return m.OldLocation(ctx)
+	case invitation.FieldCoordinate:
+		return m.OldCoordinate(ctx)
 	case invitation.FieldComment:
 		return m.OldComment(ctx)
 	case invitation.FieldStartsAt:
@@ -3353,6 +3398,13 @@ func (m *InvitationMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetLocation(v)
+		return nil
+	case invitation.FieldCoordinate:
+		v, ok := value.(*pgutil.GeoPoint)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCoordinate(v)
 		return nil
 	case invitation.FieldComment:
 		v, ok := value.(string)
@@ -3443,6 +3495,9 @@ func (m *InvitationMutation) ResetField(name string) error {
 		return nil
 	case invitation.FieldLocation:
 		m.ResetLocation()
+		return nil
+	case invitation.FieldCoordinate:
+		m.ResetCoordinate()
 		return nil
 	case invitation.FieldComment:
 		m.ResetComment()

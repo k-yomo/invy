@@ -5,6 +5,7 @@ class Fragment$invitationCardFragment {
   Fragment$invitationCardFragment({
     required this.id,
     required this.location,
+    required this.coordinate,
     required this.comment,
     required this.startsAt,
     required this.expiresAt,
@@ -16,6 +17,7 @@ class Fragment$invitationCardFragment {
   factory Fragment$invitationCardFragment.fromJson(Map<String, dynamic> json) {
     final l$id = json['id'];
     final l$location = json['location'];
+    final l$coordinate = json['coordinate'];
     final l$comment = json['comment'];
     final l$startsAt = json['startsAt'];
     final l$expiresAt = json['expiresAt'];
@@ -25,6 +27,8 @@ class Fragment$invitationCardFragment {
     return Fragment$invitationCardFragment(
       id: (l$id as String),
       location: (l$location as String),
+      coordinate: Fragment$invitationCardFragment$coordinate.fromJson(
+          (l$coordinate as Map<String, dynamic>)),
       comment: (l$comment as String),
       startsAt: DateTime.parse((l$startsAt as String)),
       expiresAt: DateTime.parse((l$expiresAt as String)),
@@ -41,6 +45,8 @@ class Fragment$invitationCardFragment {
   final String id;
 
   final String location;
+
+  final Fragment$invitationCardFragment$coordinate coordinate;
 
   final String comment;
 
@@ -60,6 +66,8 @@ class Fragment$invitationCardFragment {
     _resultData['id'] = l$id;
     final l$location = location;
     _resultData['location'] = l$location;
+    final l$coordinate = coordinate;
+    _resultData['coordinate'] = l$coordinate.toJson();
     final l$comment = comment;
     _resultData['comment'] = l$comment;
     final l$startsAt = startsAt;
@@ -80,6 +88,7 @@ class Fragment$invitationCardFragment {
   int get hashCode {
     final l$id = id;
     final l$location = location;
+    final l$coordinate = coordinate;
     final l$comment = comment;
     final l$startsAt = startsAt;
     final l$expiresAt = expiresAt;
@@ -89,6 +98,7 @@ class Fragment$invitationCardFragment {
     return Object.hashAll([
       l$id,
       l$location,
+      l$coordinate,
       l$comment,
       l$startsAt,
       l$expiresAt,
@@ -115,6 +125,11 @@ class Fragment$invitationCardFragment {
     final l$location = location;
     final lOther$location = other.location;
     if (l$location != lOther$location) {
+      return false;
+    }
+    final l$coordinate = coordinate;
+    final lOther$coordinate = other.coordinate;
+    if (l$coordinate != lOther$coordinate) {
       return false;
     }
     final l$comment = comment;
@@ -179,6 +194,7 @@ abstract class CopyWith$Fragment$invitationCardFragment<TRes> {
   TRes call({
     String? id,
     String? location,
+    Fragment$invitationCardFragment$coordinate? coordinate,
     String? comment,
     DateTime? startsAt,
     DateTime? expiresAt,
@@ -186,6 +202,7 @@ abstract class CopyWith$Fragment$invitationCardFragment<TRes> {
     List<Fragment$invitationCardFragment$acceptedUsers>? acceptedUsers,
     String? $__typename,
   });
+  CopyWith$Fragment$invitationCardFragment$coordinate<TRes> get coordinate;
   CopyWith$Fragment$invitationCardFragment$user<TRes> get user;
   TRes acceptedUsers(
       Iterable<Fragment$invitationCardFragment$acceptedUsers> Function(
@@ -211,6 +228,7 @@ class _CopyWithImpl$Fragment$invitationCardFragment<TRes>
   TRes call({
     Object? id = _undefined,
     Object? location = _undefined,
+    Object? coordinate = _undefined,
     Object? comment = _undefined,
     Object? startsAt = _undefined,
     Object? expiresAt = _undefined,
@@ -223,6 +241,9 @@ class _CopyWithImpl$Fragment$invitationCardFragment<TRes>
         location: location == _undefined || location == null
             ? _instance.location
             : (location as String),
+        coordinate: coordinate == _undefined || coordinate == null
+            ? _instance.coordinate
+            : (coordinate as Fragment$invitationCardFragment$coordinate),
         comment: comment == _undefined || comment == null
             ? _instance.comment
             : (comment as String),
@@ -243,6 +264,12 @@ class _CopyWithImpl$Fragment$invitationCardFragment<TRes>
             ? _instance.$__typename
             : ($__typename as String),
       ));
+  CopyWith$Fragment$invitationCardFragment$coordinate<TRes> get coordinate {
+    final local$coordinate = _instance.coordinate;
+    return CopyWith$Fragment$invitationCardFragment$coordinate(
+        local$coordinate, (e) => call(coordinate: e));
+  }
+
   CopyWith$Fragment$invitationCardFragment$user<TRes> get user {
     final local$user = _instance.user;
     return CopyWith$Fragment$invitationCardFragment$user(
@@ -272,6 +299,7 @@ class _CopyWithStubImpl$Fragment$invitationCardFragment<TRes>
   call({
     String? id,
     String? location,
+    Fragment$invitationCardFragment$coordinate? coordinate,
     String? comment,
     DateTime? startsAt,
     DateTime? expiresAt,
@@ -280,6 +308,8 @@ class _CopyWithStubImpl$Fragment$invitationCardFragment<TRes>
     String? $__typename,
   }) =>
       _res;
+  CopyWith$Fragment$invitationCardFragment$coordinate<TRes> get coordinate =>
+      CopyWith$Fragment$invitationCardFragment$coordinate.stub(_res);
   CopyWith$Fragment$invitationCardFragment$user<TRes> get user =>
       CopyWith$Fragment$invitationCardFragment$user.stub(_res);
   acceptedUsers(_fn) => _res;
@@ -307,6 +337,35 @@ const fragmentDefinitioninvitationCardFragment = FragmentDefinitionNode(
       arguments: [],
       directives: [],
       selectionSet: null,
+    ),
+    FieldNode(
+      name: NameNode(value: 'coordinate'),
+      alias: null,
+      arguments: [],
+      directives: [],
+      selectionSet: SelectionSetNode(selections: [
+        FieldNode(
+          name: NameNode(value: 'latitude'),
+          alias: null,
+          arguments: [],
+          directives: [],
+          selectionSet: null,
+        ),
+        FieldNode(
+          name: NameNode(value: 'longitude'),
+          alias: null,
+          arguments: [],
+          directives: [],
+          selectionSet: null,
+        ),
+        FieldNode(
+          name: NameNode(value: '__typename'),
+          alias: null,
+          arguments: [],
+          directives: [],
+          selectionSet: null,
+        ),
+      ]),
     ),
     FieldNode(
       name: NameNode(value: 'comment'),
@@ -450,6 +509,153 @@ extension ClientExtension$Fragment$invitationCardFragment
         ? null
         : Fragment$invitationCardFragment.fromJson(result);
   }
+}
+
+class Fragment$invitationCardFragment$coordinate {
+  Fragment$invitationCardFragment$coordinate({
+    required this.latitude,
+    required this.longitude,
+    required this.$__typename,
+  });
+
+  factory Fragment$invitationCardFragment$coordinate.fromJson(
+      Map<String, dynamic> json) {
+    final l$latitude = json['latitude'];
+    final l$longitude = json['longitude'];
+    final l$$__typename = json['__typename'];
+    return Fragment$invitationCardFragment$coordinate(
+      latitude: (l$latitude as num).toDouble(),
+      longitude: (l$longitude as num).toDouble(),
+      $__typename: (l$$__typename as String),
+    );
+  }
+
+  final double latitude;
+
+  final double longitude;
+
+  final String $__typename;
+
+  Map<String, dynamic> toJson() {
+    final _resultData = <String, dynamic>{};
+    final l$latitude = latitude;
+    _resultData['latitude'] = l$latitude;
+    final l$longitude = longitude;
+    _resultData['longitude'] = l$longitude;
+    final l$$__typename = $__typename;
+    _resultData['__typename'] = l$$__typename;
+    return _resultData;
+  }
+
+  @override
+  int get hashCode {
+    final l$latitude = latitude;
+    final l$longitude = longitude;
+    final l$$__typename = $__typename;
+    return Object.hashAll([
+      l$latitude,
+      l$longitude,
+      l$$__typename,
+    ]);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    if (!(other is Fragment$invitationCardFragment$coordinate) ||
+        runtimeType != other.runtimeType) {
+      return false;
+    }
+    final l$latitude = latitude;
+    final lOther$latitude = other.latitude;
+    if (l$latitude != lOther$latitude) {
+      return false;
+    }
+    final l$longitude = longitude;
+    final lOther$longitude = other.longitude;
+    if (l$longitude != lOther$longitude) {
+      return false;
+    }
+    final l$$__typename = $__typename;
+    final lOther$$__typename = other.$__typename;
+    if (l$$__typename != lOther$$__typename) {
+      return false;
+    }
+    return true;
+  }
+}
+
+extension UtilityExtension$Fragment$invitationCardFragment$coordinate
+    on Fragment$invitationCardFragment$coordinate {
+  CopyWith$Fragment$invitationCardFragment$coordinate<
+          Fragment$invitationCardFragment$coordinate>
+      get copyWith => CopyWith$Fragment$invitationCardFragment$coordinate(
+            this,
+            (i) => i,
+          );
+}
+
+abstract class CopyWith$Fragment$invitationCardFragment$coordinate<TRes> {
+  factory CopyWith$Fragment$invitationCardFragment$coordinate(
+    Fragment$invitationCardFragment$coordinate instance,
+    TRes Function(Fragment$invitationCardFragment$coordinate) then,
+  ) = _CopyWithImpl$Fragment$invitationCardFragment$coordinate;
+
+  factory CopyWith$Fragment$invitationCardFragment$coordinate.stub(TRes res) =
+      _CopyWithStubImpl$Fragment$invitationCardFragment$coordinate;
+
+  TRes call({
+    double? latitude,
+    double? longitude,
+    String? $__typename,
+  });
+}
+
+class _CopyWithImpl$Fragment$invitationCardFragment$coordinate<TRes>
+    implements CopyWith$Fragment$invitationCardFragment$coordinate<TRes> {
+  _CopyWithImpl$Fragment$invitationCardFragment$coordinate(
+    this._instance,
+    this._then,
+  );
+
+  final Fragment$invitationCardFragment$coordinate _instance;
+
+  final TRes Function(Fragment$invitationCardFragment$coordinate) _then;
+
+  static const _undefined = {};
+
+  TRes call({
+    Object? latitude = _undefined,
+    Object? longitude = _undefined,
+    Object? $__typename = _undefined,
+  }) =>
+      _then(Fragment$invitationCardFragment$coordinate(
+        latitude: latitude == _undefined || latitude == null
+            ? _instance.latitude
+            : (latitude as double),
+        longitude: longitude == _undefined || longitude == null
+            ? _instance.longitude
+            : (longitude as double),
+        $__typename: $__typename == _undefined || $__typename == null
+            ? _instance.$__typename
+            : ($__typename as String),
+      ));
+}
+
+class _CopyWithStubImpl$Fragment$invitationCardFragment$coordinate<TRes>
+    implements CopyWith$Fragment$invitationCardFragment$coordinate<TRes> {
+  _CopyWithStubImpl$Fragment$invitationCardFragment$coordinate(this._res);
+
+  TRes _res;
+
+  call({
+    double? latitude,
+    double? longitude,
+    String? $__typename,
+  }) =>
+      _res;
 }
 
 class Fragment$invitationCardFragment$user {

@@ -19,6 +19,7 @@ import (
 	"github.com/k-yomo/invy/invy_api/ent/invitationfriendgroup"
 	"github.com/k-yomo/invy/invy_api/ent/invitationuser"
 	"github.com/k-yomo/invy/invy_api/ent/user"
+	"github.com/k-yomo/invy/pkg/pgutil"
 )
 
 // InvitationCreate is the builder for creating a Invitation entity.
@@ -38,6 +39,12 @@ func (ic *InvitationCreate) SetUserID(u uuid.UUID) *InvitationCreate {
 // SetLocation sets the "location" field.
 func (ic *InvitationCreate) SetLocation(s string) *InvitationCreate {
 	ic.mutation.SetLocation(s)
+	return ic
+}
+
+// SetCoordinate sets the "coordinate" field.
+func (ic *InvitationCreate) SetCoordinate(pp *pgutil.GeoPoint) *InvitationCreate {
+	ic.mutation.SetCoordinate(pp)
 	return ic
 }
 
@@ -223,6 +230,9 @@ func (ic *InvitationCreate) check() error {
 	if _, ok := ic.mutation.Location(); !ok {
 		return &ValidationError{Name: "location", err: errors.New(`ent: missing required field "Invitation.location"`)}
 	}
+	if _, ok := ic.mutation.Coordinate(); !ok {
+		return &ValidationError{Name: "coordinate", err: errors.New(`ent: missing required field "Invitation.coordinate"`)}
+	}
 	if _, ok := ic.mutation.Comment(); !ok {
 		return &ValidationError{Name: "comment", err: errors.New(`ent: missing required field "Invitation.comment"`)}
 	}
@@ -286,6 +296,10 @@ func (ic *InvitationCreate) createSpec() (*Invitation, *sqlgraph.CreateSpec) {
 	if value, ok := ic.mutation.Location(); ok {
 		_spec.SetField(invitation.FieldLocation, field.TypeString, value)
 		_node.Location = value
+	}
+	if value, ok := ic.mutation.Coordinate(); ok {
+		_spec.SetField(invitation.FieldCoordinate, field.TypeOther, value)
+		_node.Coordinate = value
 	}
 	if value, ok := ic.mutation.Comment(); ok {
 		_spec.SetField(invitation.FieldComment, field.TypeString, value)
@@ -467,6 +481,18 @@ func (u *InvitationUpsert) UpdateLocation() *InvitationUpsert {
 	return u
 }
 
+// SetCoordinate sets the "coordinate" field.
+func (u *InvitationUpsert) SetCoordinate(v *pgutil.GeoPoint) *InvitationUpsert {
+	u.Set(invitation.FieldCoordinate, v)
+	return u
+}
+
+// UpdateCoordinate sets the "coordinate" field to the value that was provided on create.
+func (u *InvitationUpsert) UpdateCoordinate() *InvitationUpsert {
+	u.SetExcluded(invitation.FieldCoordinate)
+	return u
+}
+
 // SetComment sets the "comment" field.
 func (u *InvitationUpsert) SetComment(v string) *InvitationUpsert {
 	u.Set(invitation.FieldComment, v)
@@ -580,6 +606,20 @@ func (u *InvitationUpsertOne) SetLocation(v string) *InvitationUpsertOne {
 func (u *InvitationUpsertOne) UpdateLocation() *InvitationUpsertOne {
 	return u.Update(func(s *InvitationUpsert) {
 		s.UpdateLocation()
+	})
+}
+
+// SetCoordinate sets the "coordinate" field.
+func (u *InvitationUpsertOne) SetCoordinate(v *pgutil.GeoPoint) *InvitationUpsertOne {
+	return u.Update(func(s *InvitationUpsert) {
+		s.SetCoordinate(v)
+	})
+}
+
+// UpdateCoordinate sets the "coordinate" field to the value that was provided on create.
+func (u *InvitationUpsertOne) UpdateCoordinate() *InvitationUpsertOne {
+	return u.Update(func(s *InvitationUpsert) {
+		s.UpdateCoordinate()
 	})
 }
 
@@ -867,6 +907,20 @@ func (u *InvitationUpsertBulk) SetLocation(v string) *InvitationUpsertBulk {
 func (u *InvitationUpsertBulk) UpdateLocation() *InvitationUpsertBulk {
 	return u.Update(func(s *InvitationUpsert) {
 		s.UpdateLocation()
+	})
+}
+
+// SetCoordinate sets the "coordinate" field.
+func (u *InvitationUpsertBulk) SetCoordinate(v *pgutil.GeoPoint) *InvitationUpsertBulk {
+	return u.Update(func(s *InvitationUpsert) {
+		s.SetCoordinate(v)
+	})
+}
+
+// UpdateCoordinate sets the "coordinate" field to the value that was provided on create.
+func (u *InvitationUpsertBulk) UpdateCoordinate() *InvitationUpsertBulk {
+	return u.Update(func(s *InvitationUpsert) {
+		s.UpdateCoordinate()
 	})
 }
 

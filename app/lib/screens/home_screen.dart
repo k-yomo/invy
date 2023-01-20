@@ -5,7 +5,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:invy/components/received_invitation_card.dart';
 import 'package:invy/components/sent_invitation_card.dart';
 import 'package:invy/graphql/home_screen.graphql.dart';
-import 'package:invy/screens/invitation_screen.dart';
+import 'package:invy/screens/new_invitation_screen.dart';
 import 'package:invy/services/graphql_client.dart';
 import 'package:invy/state/badge_count.dart';
 
@@ -80,7 +80,7 @@ class HomeScreen extends HookConsumerWidget {
                                           MaterialPageRoute(
                                             fullscreenDialog: true,
                                             builder: (context) =>
-                                                const InvitationScreen(),
+                                                InvitationScreen(),
                                           ),
                                         );
                                       },

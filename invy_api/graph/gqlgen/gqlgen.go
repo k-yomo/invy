@@ -67,6 +67,11 @@ type ComplexityRoot struct {
 		CanceledFriendshipRequestID func(childComplexity int) int
 	}
 
+	Coordinate struct {
+		Latitude  func(childComplexity int) int
+		Longitude func(childComplexity int) int
+	}
+
 	CreateFriendGroupPayload struct {
 		FriendGroup func(childComplexity int) int
 	}
@@ -107,6 +112,7 @@ type ComplexityRoot struct {
 	Invitation struct {
 		AcceptedUsers func(childComplexity int) int
 		Comment       func(childComplexity int) int
+		Coordinate    func(childComplexity int) int
 		ExpiresAt     func(childComplexity int) int
 		ID            func(childComplexity int) int
 		Location      func(childComplexity int) int
@@ -321,6 +327,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.CancelFriendshipRequestPayload.CanceledFriendshipRequestID(childComplexity), true
 
+	case "Coordinate.latitude":
+		if e.complexity.Coordinate.Latitude == nil {
+			break
+		}
+
+		return e.complexity.Coordinate.Latitude(childComplexity), true
+
+	case "Coordinate.longitude":
+		if e.complexity.Coordinate.Longitude == nil {
+			break
+		}
+
+		return e.complexity.Coordinate.Longitude(childComplexity), true
+
 	case "CreateFriendGroupPayload.friendGroup":
 		if e.complexity.CreateFriendGroupPayload.FriendGroup == nil {
 			break
@@ -446,6 +466,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Invitation.Comment(childComplexity), true
+
+	case "Invitation.coordinate":
+		if e.complexity.Invitation.Coordinate == nil {
+			break
+		}
+
+		return e.complexity.Invitation.Coordinate(childComplexity), true
 
 	case "Invitation.expiresAt":
 		if e.complexity.Invitation.ExpiresAt == nil {
@@ -1198,11 +1225,17 @@ type DeleteFriendGroupPayload {
     denyInvitation(invitationId: UUID!): DenyInvitationPayload! @authRequired
 }
 
+type Coordinate {
+    latitude: Float!
+    longitude: Float!
+}
+
 type Invitation implements Node {
     id: UUID!
     userId: UUID!
     user: User! @goField(forceResolver: true)
     location: String!
+    coordinate: Coordinate!
     comment: String!
     startsAt: Time!
     expiresAt: Time!
@@ -1216,6 +1249,8 @@ input SendInvitationInput {
     expiresAt: Time!
     startsAt: Time!
     location: String!
+    latitude: Float!
+    longitude: Float!
     comment: String!
 }
 type SendInvitationPayload {
@@ -1913,6 +1948,8 @@ func (ec *executionContext) fieldContext_AcceptInvitationPayload_invitation(ctx 
 				return ec.fieldContext_Invitation_user(ctx, field)
 			case "location":
 				return ec.fieldContext_Invitation_location(ctx, field)
+			case "coordinate":
+				return ec.fieldContext_Invitation_coordinate(ctx, field)
 			case "comment":
 				return ec.fieldContext_Invitation_comment(ctx, field)
 			case "startsAt":
@@ -1967,6 +2004,94 @@ func (ec *executionContext) fieldContext_CancelFriendshipRequestPayload_canceled
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type UUID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Coordinate_latitude(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Coordinate) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Coordinate_latitude(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Latitude, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalNFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Coordinate_latitude(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Coordinate",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Coordinate_longitude(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Coordinate) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Coordinate_longitude(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Longitude, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalNFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Coordinate_longitude(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Coordinate",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
 		},
 	}
 	return fc, nil
@@ -2233,6 +2358,8 @@ func (ec *executionContext) fieldContext_DenyInvitationPayload_invitation(ctx co
 				return ec.fieldContext_Invitation_user(ctx, field)
 			case "location":
 				return ec.fieldContext_Invitation_location(ctx, field)
+			case "coordinate":
+				return ec.fieldContext_Invitation_coordinate(ctx, field)
 			case "comment":
 				return ec.fieldContext_Invitation_comment(ctx, field)
 			case "startsAt":
@@ -2959,6 +3086,56 @@ func (ec *executionContext) fieldContext_Invitation_location(ctx context.Context
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Invitation_coordinate(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Invitation) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Invitation_coordinate(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Coordinate, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.Coordinate)
+	fc.Result = res
+	return ec.marshalNCoordinate2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐCoordinate(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Invitation_coordinate(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Invitation",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "latitude":
+				return ec.fieldContext_Coordinate_latitude(ctx, field)
+			case "longitude":
+				return ec.fieldContext_Coordinate_longitude(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Coordinate", field.Name)
 		},
 	}
 	return fc, nil
@@ -5384,6 +5561,8 @@ func (ec *executionContext) fieldContext_SendInvitationPayload_invitation(ctx co
 				return ec.fieldContext_Invitation_user(ctx, field)
 			case "location":
 				return ec.fieldContext_Invitation_location(ctx, field)
+			case "coordinate":
+				return ec.fieldContext_Invitation_coordinate(ctx, field)
 			case "comment":
 				return ec.fieldContext_Invitation_comment(ctx, field)
 			case "startsAt":
@@ -6862,6 +7041,8 @@ func (ec *executionContext) fieldContext_Viewer_sentInvitations(ctx context.Cont
 				return ec.fieldContext_Invitation_user(ctx, field)
 			case "location":
 				return ec.fieldContext_Invitation_location(ctx, field)
+			case "coordinate":
+				return ec.fieldContext_Invitation_coordinate(ctx, field)
 			case "comment":
 				return ec.fieldContext_Invitation_comment(ctx, field)
 			case "startsAt":
@@ -6924,6 +7105,8 @@ func (ec *executionContext) fieldContext_Viewer_pendingInvitations(ctx context.C
 				return ec.fieldContext_Invitation_user(ctx, field)
 			case "location":
 				return ec.fieldContext_Invitation_location(ctx, field)
+			case "coordinate":
+				return ec.fieldContext_Invitation_coordinate(ctx, field)
 			case "comment":
 				return ec.fieldContext_Invitation_comment(ctx, field)
 			case "startsAt":
@@ -6986,6 +7169,8 @@ func (ec *executionContext) fieldContext_Viewer_acceptedInvitations(ctx context.
 				return ec.fieldContext_Invitation_user(ctx, field)
 			case "location":
 				return ec.fieldContext_Invitation_location(ctx, field)
+			case "coordinate":
+				return ec.fieldContext_Invitation_coordinate(ctx, field)
 			case "comment":
 				return ec.fieldContext_Invitation_comment(ctx, field)
 			case "startsAt":
@@ -8945,7 +9130,7 @@ func (ec *executionContext) unmarshalInputSendInvitationInput(ctx context.Contex
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"targetFriendGroupIds", "targetFriendUserIds", "expiresAt", "startsAt", "location", "comment"}
+	fieldsInOrder := [...]string{"targetFriendGroupIds", "targetFriendUserIds", "expiresAt", "startsAt", "location", "latitude", "longitude", "comment"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -8989,6 +9174,22 @@ func (ec *executionContext) unmarshalInputSendInvitationInput(ctx context.Contex
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("location"))
 			it.Location, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "latitude":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("latitude"))
+			it.Latitude, err = ec.unmarshalNFloat2float64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "longitude":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("longitude"))
+			it.Longitude, err = ec.unmarshalNFloat2float64(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -9291,6 +9492,41 @@ func (ec *executionContext) _CancelFriendshipRequestPayload(ctx context.Context,
 		case "canceledFriendshipRequestId":
 
 			out.Values[i] = ec._CancelFriendshipRequestPayload_canceledFriendshipRequestId(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var coordinateImplementors = []string{"Coordinate"}
+
+func (ec *executionContext) _Coordinate(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.Coordinate) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, coordinateImplementors)
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Coordinate")
+		case "latitude":
+
+			out.Values[i] = ec._Coordinate_latitude(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "longitude":
+
+			out.Values[i] = ec._Coordinate_longitude(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				invalids++
@@ -9651,6 +9887,13 @@ func (ec *executionContext) _Invitation(ctx context.Context, sel ast.SelectionSe
 		case "location":
 
 			out.Values[i] = ec._Invitation_location(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "coordinate":
+
+			out.Values[i] = ec._Invitation_coordinate(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
@@ -11133,6 +11376,16 @@ func (ec *executionContext) marshalNCancelFriendshipRequestPayload2ᚖgithubᚗc
 	return ec._CancelFriendshipRequestPayload(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalNCoordinate2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐCoordinate(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.Coordinate) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._Coordinate(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalNCreateFriendGroupInput2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐCreateFriendGroupInput(ctx context.Context, v interface{}) (gqlmodel.CreateFriendGroupInput, error) {
 	res, err := ec.unmarshalInputCreateFriendGroupInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -11221,6 +11474,21 @@ func (ec *executionContext) marshalNDenyInvitationPayload2ᚖgithubᚗcomᚋkᚑ
 		return graphql.Null
 	}
 	return ec._DenyInvitationPayload(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNFloat2float64(ctx context.Context, v interface{}) (float64, error) {
+	res, err := graphql.UnmarshalFloatContext(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNFloat2float64(ctx context.Context, sel ast.SelectionSet, v float64) graphql.Marshaler {
+	res := graphql.MarshalFloatContext(v)
+	if res == graphql.Null {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+	}
+	return graphql.WrapContextMarshaler(ctx, res)
 }
 
 func (ec *executionContext) marshalNFriendGroup2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐFriendGroup(ctx context.Context, sel ast.SelectionSet, v gqlmodel.FriendGroup) graphql.Marshaler {

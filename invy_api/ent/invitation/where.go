@@ -9,6 +9,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/google/uuid"
 	"github.com/k-yomo/invy/invy_api/ent/predicate"
+	"github.com/k-yomo/invy/pkg/pgutil"
 )
 
 // ID filters vertices based on their ID field.
@@ -64,6 +65,11 @@ func UserID(v uuid.UUID) predicate.Invitation {
 // Location applies equality check predicate on the "location" field. It's identical to LocationEQ.
 func Location(v string) predicate.Invitation {
 	return predicate.Invitation(sql.FieldEQ(FieldLocation, v))
+}
+
+// Coordinate applies equality check predicate on the "coordinate" field. It's identical to CoordinateEQ.
+func Coordinate(v *pgutil.GeoPoint) predicate.Invitation {
+	return predicate.Invitation(sql.FieldEQ(FieldCoordinate, v))
 }
 
 // Comment applies equality check predicate on the "comment" field. It's identical to CommentEQ.
@@ -174,6 +180,46 @@ func LocationEqualFold(v string) predicate.Invitation {
 // LocationContainsFold applies the ContainsFold predicate on the "location" field.
 func LocationContainsFold(v string) predicate.Invitation {
 	return predicate.Invitation(sql.FieldContainsFold(FieldLocation, v))
+}
+
+// CoordinateEQ applies the EQ predicate on the "coordinate" field.
+func CoordinateEQ(v *pgutil.GeoPoint) predicate.Invitation {
+	return predicate.Invitation(sql.FieldEQ(FieldCoordinate, v))
+}
+
+// CoordinateNEQ applies the NEQ predicate on the "coordinate" field.
+func CoordinateNEQ(v *pgutil.GeoPoint) predicate.Invitation {
+	return predicate.Invitation(sql.FieldNEQ(FieldCoordinate, v))
+}
+
+// CoordinateIn applies the In predicate on the "coordinate" field.
+func CoordinateIn(vs ...*pgutil.GeoPoint) predicate.Invitation {
+	return predicate.Invitation(sql.FieldIn(FieldCoordinate, vs...))
+}
+
+// CoordinateNotIn applies the NotIn predicate on the "coordinate" field.
+func CoordinateNotIn(vs ...*pgutil.GeoPoint) predicate.Invitation {
+	return predicate.Invitation(sql.FieldNotIn(FieldCoordinate, vs...))
+}
+
+// CoordinateGT applies the GT predicate on the "coordinate" field.
+func CoordinateGT(v *pgutil.GeoPoint) predicate.Invitation {
+	return predicate.Invitation(sql.FieldGT(FieldCoordinate, v))
+}
+
+// CoordinateGTE applies the GTE predicate on the "coordinate" field.
+func CoordinateGTE(v *pgutil.GeoPoint) predicate.Invitation {
+	return predicate.Invitation(sql.FieldGTE(FieldCoordinate, v))
+}
+
+// CoordinateLT applies the LT predicate on the "coordinate" field.
+func CoordinateLT(v *pgutil.GeoPoint) predicate.Invitation {
+	return predicate.Invitation(sql.FieldLT(FieldCoordinate, v))
+}
+
+// CoordinateLTE applies the LTE predicate on the "coordinate" field.
+func CoordinateLTE(v *pgutil.GeoPoint) predicate.Invitation {
+	return predicate.Invitation(sql.FieldLTE(FieldCoordinate, v))
 }
 
 // CommentEQ applies the EQ predicate on the "comment" field.

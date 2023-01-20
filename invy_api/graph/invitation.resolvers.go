@@ -26,7 +26,9 @@ import (
 	"github.com/k-yomo/invy/invy_api/graph/gqlmodel"
 	"github.com/k-yomo/invy/invy_api/graph/loader"
 	"github.com/k-yomo/invy/pkg/convutil"
+	"github.com/k-yomo/invy/pkg/pgutil"
 	"github.com/k-yomo/invy/pkg/sliceutil"
+	"github.com/twpayne/go-geom"
 )
 
 // User is the resolver for the user field.
@@ -57,12 +59,20 @@ func (r *mutationResolver) SendInvitation(ctx context.Context, input *gqlmodel.S
 		return nil, errors.New("expiration time must be future date time")
 	}
 	authUserID := auth.GetCurrentUserID(ctx)
+
+	coordinate := pgutil.GeoPoint{
+		Point: geom.NewPoint(geom.XY).
+			MustSetCoords(geom.Coord{input.Latitude, input.Longitude}).
+			SetSRID(4326),
+	}
+
 	var dbInvitation *ent.Invitation
 	err := ent.RunInTx(ctx, r.DB, func(tx *ent.Tx) error {
 		var err error
 		dbInvitation, err = tx.Invitation.Create().
 			SetUserID(authUserID).
 			SetLocation(input.Location).
+			SetCoordinate(&coordinate).
 			SetComment(input.Comment).
 			SetStartsAt(input.StartsAt).
 			SetExpiresAt(input.ExpiresAt).

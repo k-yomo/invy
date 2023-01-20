@@ -26,6 +26,11 @@ enum ConstraintFormat {
   URL
 }
 
+type Coordinate {
+  latitude: Float!
+  longitude: Float!
+}
+
 input CreateFriendGroupInput {
   name: String!
   friendUserIds: [UUID!]!
@@ -80,6 +85,7 @@ type Invitation implements Node {
   userId: UUID!
   user: User!
   location: String!
+  coordinate: Coordinate!
   comment: String!
   startsAt: Time!
   expiresAt: Time!
@@ -158,6 +164,8 @@ input SendInvitationInput {
   expiresAt: Time!
   startsAt: Time!
   location: String!
+  latitude: Float!
+  longitude: Float!
   comment: String!
 }
 

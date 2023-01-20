@@ -17,6 +17,8 @@ const (
 	FieldUserID = "user_id"
 	// FieldLocation holds the string denoting the location field in the database.
 	FieldLocation = "location"
+	// FieldCoordinate holds the string denoting the coordinate field in the database.
+	FieldCoordinate = "coordinate"
 	// FieldComment holds the string denoting the comment field in the database.
 	FieldComment = "comment"
 	// FieldStartsAt holds the string denoting the starts_at field in the database.
@@ -81,6 +83,7 @@ var Columns = []string{
 	FieldID,
 	FieldUserID,
 	FieldLocation,
+	FieldCoordinate,
 	FieldComment,
 	FieldStartsAt,
 	FieldExpiresAt,

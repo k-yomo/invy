@@ -116,6 +116,7 @@ var (
 	InvitationsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUUID},
 		{Name: "location", Type: field.TypeString},
+		{Name: "coordinate", Type: field.TypeOther, SchemaType: map[string]string{"postgres": "geometry(Point,4326)"}},
 		{Name: "comment", Type: field.TypeString},
 		{Name: "starts_at", Type: field.TypeTime},
 		{Name: "expires_at", Type: field.TypeTime},
@@ -131,7 +132,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "invitations_users_user",
-				Columns:    []*schema.Column{InvitationsColumns[7]},
+				Columns:    []*schema.Column{InvitationsColumns[8]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},

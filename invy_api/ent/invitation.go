@@ -11,6 +11,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/k-yomo/invy/invy_api/ent/invitation"
 	"github.com/k-yomo/invy/invy_api/ent/user"
+	"github.com/k-yomo/invy/pkg/pgutil"
 )
 
 // Invitation is the model entity for the Invitation schema.
@@ -22,6 +23,8 @@ type Invitation struct {
 	UserID uuid.UUID `json:"user_id,omitempty"`
 	// Location holds the value of the "location" field.
 	Location string `json:"location,omitempty"`
+	// Coordinate holds the value of the "coordinate" field.
+	Coordinate *pgutil.GeoPoint `json:"coordinate,omitempty"`
 	// Comment holds the value of the "comment" field.
 	Comment string `json:"comment,omitempty"`
 	// StartsAt holds the value of the "starts_at" field.
@@ -115,6 +118,8 @@ func (*Invitation) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
+		case invitation.FieldCoordinate:
+			values[i] = new(pgutil.GeoPoint)
 		case invitation.FieldLocation, invitation.FieldComment:
 			values[i] = new(sql.NullString)
 		case invitation.FieldStartsAt, invitation.FieldExpiresAt, invitation.FieldCreatedAt, invitation.FieldUpdatedAt:
@@ -153,6 +158,12 @@ func (i *Invitation) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field location", values[j])
 			} else if value.Valid {
 				i.Location = value.String
+			}
+		case invitation.FieldCoordinate:
+			if value, ok := values[j].(*pgutil.GeoPoint); !ok {
+				return fmt.Errorf("unexpected type %T for field coordinate", values[j])
+			} else if value != nil {
+				i.Coordinate = value
 			}
 		case invitation.FieldComment:
 			if value, ok := values[j].(*sql.NullString); !ok {
@@ -242,6 +253,9 @@ func (i *Invitation) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("location=")
 	builder.WriteString(i.Location)
+	builder.WriteString(", ")
+	builder.WriteString("coordinate=")
+	builder.WriteString(fmt.Sprintf("%v", i.Coordinate))
 	builder.WriteString(", ")
 	builder.WriteString("comment=")
 	builder.WriteString(i.Comment)

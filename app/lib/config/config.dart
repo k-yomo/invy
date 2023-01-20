@@ -4,6 +4,8 @@ import 'package:invy/services/firebase_options_dev.dart' as dev;
 import 'package:invy/services/firebase_options_prod.dart' as prod;
 import 'package:universal_platform/universal_platform.dart';
 
+const googleApiKey = String.fromEnvironment('GOOGLE_API_KEY');
+
 abstract class AppConfig {
   String get apiBaseUrl;
 

@@ -4,9 +4,11 @@ import (
 	"time"
 
 	"entgo.io/ent"
+	"entgo.io/ent/dialect"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
+	"github.com/k-yomo/invy/pkg/pgutil"
 )
 
 // Invitation holds the schema definition for the Invitation entity.
@@ -21,6 +23,10 @@ func (Invitation) Fields() []ent.Field {
 			Default(uuid.New),
 		field.UUID("user_id", uuid.UUID{}).Immutable(),
 		field.String("location"),
+		field.Other("coordinate", &pgutil.GeoPoint{}).
+			SchemaType(map[string]string{
+				dialect.Postgres: "geometry(Point,4326)",
+			}),
 		field.String("comment"),
 		field.Time("starts_at"),
 		field.Time("expires_at"),

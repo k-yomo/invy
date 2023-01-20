@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   db:
-    image: postgres:13
+    image: postgis/postgis:13-3.3
     ports:
       - 15432:5432
     volumes:

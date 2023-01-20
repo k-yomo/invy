@@ -18,6 +18,7 @@ import (
 	"github.com/k-yomo/invy/invy_api/ent/invitationfriendgroup"
 	"github.com/k-yomo/invy/invy_api/ent/invitationuser"
 	"github.com/k-yomo/invy/invy_api/ent/predicate"
+	"github.com/k-yomo/invy/pkg/pgutil"
 )
 
 // InvitationUpdate is the builder for updating Invitation entities.
@@ -36,6 +37,12 @@ func (iu *InvitationUpdate) Where(ps ...predicate.Invitation) *InvitationUpdate 
 // SetLocation sets the "location" field.
 func (iu *InvitationUpdate) SetLocation(s string) *InvitationUpdate {
 	iu.mutation.SetLocation(s)
+	return iu
+}
+
+// SetCoordinate sets the "coordinate" field.
+func (iu *InvitationUpdate) SetCoordinate(pp *pgutil.GeoPoint) *InvitationUpdate {
+	iu.mutation.SetCoordinate(pp)
 	return iu
 }
 
@@ -279,6 +286,9 @@ func (iu *InvitationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := iu.mutation.Location(); ok {
 		_spec.SetField(invitation.FieldLocation, field.TypeString, value)
+	}
+	if value, ok := iu.mutation.Coordinate(); ok {
+		_spec.SetField(invitation.FieldCoordinate, field.TypeOther, value)
 	}
 	if value, ok := iu.mutation.Comment(); ok {
 		_spec.SetField(invitation.FieldComment, field.TypeString, value)
@@ -531,6 +541,12 @@ type InvitationUpdateOne struct {
 // SetLocation sets the "location" field.
 func (iuo *InvitationUpdateOne) SetLocation(s string) *InvitationUpdateOne {
 	iuo.mutation.SetLocation(s)
+	return iuo
+}
+
+// SetCoordinate sets the "coordinate" field.
+func (iuo *InvitationUpdateOne) SetCoordinate(pp *pgutil.GeoPoint) *InvitationUpdateOne {
+	iuo.mutation.SetCoordinate(pp)
 	return iuo
 }
 
@@ -798,6 +814,9 @@ func (iuo *InvitationUpdateOne) sqlSave(ctx context.Context) (_node *Invitation,
 	}
 	if value, ok := iuo.mutation.Location(); ok {
 		_spec.SetField(invitation.FieldLocation, field.TypeString, value)
+	}
+	if value, ok := iuo.mutation.Coordinate(); ok {
+		_spec.SetField(invitation.FieldCoordinate, field.TypeOther, value)
 	}
 	if value, ok := iuo.mutation.Comment(); ok {
 		_spec.SetField(invitation.FieldComment, field.TypeString, value)

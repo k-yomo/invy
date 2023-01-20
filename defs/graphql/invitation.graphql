@@ -4,11 +4,17 @@ extend type Mutation {
     denyInvitation(invitationId: UUID!): DenyInvitationPayload! @authRequired
 }
 
+type Coordinate {
+    latitude: Float!
+    longitude: Float!
+}
+
 type Invitation implements Node {
     id: UUID!
     userId: UUID!
     user: User! @goField(forceResolver: true)
     location: String!
+    coordinate: Coordinate!
     comment: String!
     startsAt: Time!
     expiresAt: Time!
@@ -22,6 +28,8 @@ input SendInvitationInput {
     expiresAt: Time!
     startsAt: Time!
     location: String!
+    latitude: Float!
+    longitude: Float!
     comment: String!
 }
 type SendInvitationPayload {

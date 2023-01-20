@@ -33,11 +33,11 @@ push-api-prod: docker-build-api  ## Build and push docker image to dev artifact 
 
 .PHONY: run-app
 run-app: ## Run app
-	cd app && flutter run --dart-define=FLAVOR=local
+	cd app && flutter run --dart-define=FLAVOR=local --dart-define=GOOGLE_API_KEY=AIzaSyC5-1sT3hduoMlGnrBTVTaQo-Al0GpRC_Q
 
 .PHONY: run-app-dev
 run-app-dev: ## Run app with connecting to dev env
-	cd app && flutter run --dart-define=FLAVOR=dev
+	cd app && flutter run --dart-define=FLAVOR=dev --dart-define=GOOGLE_API_KEY=AIzaSyC5-1sT3hduoMlGnrBTVTaQo-Al0GpRC_Q
 
 .PHONY: run-db
 run-db:

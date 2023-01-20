@@ -1414,6 +1414,35 @@ const documentNodeMutationsendInvitation = DocumentNode(definitions: [
                 selectionSet: null,
               ),
               FieldNode(
+                name: NameNode(value: 'coordinate'),
+                alias: null,
+                arguments: [],
+                directives: [],
+                selectionSet: SelectionSetNode(selections: [
+                  FieldNode(
+                    name: NameNode(value: 'latitude'),
+                    alias: null,
+                    arguments: [],
+                    directives: [],
+                    selectionSet: null,
+                  ),
+                  FieldNode(
+                    name: NameNode(value: 'longitude'),
+                    alias: null,
+                    arguments: [],
+                    directives: [],
+                    selectionSet: null,
+                  ),
+                  FieldNode(
+                    name: NameNode(value: '__typename'),
+                    alias: null,
+                    arguments: [],
+                    directives: [],
+                    selectionSet: null,
+                  ),
+                ]),
+              ),
+              FieldNode(
                 name: NameNode(value: 'startsAt'),
                 alias: null,
                 arguments: [],
@@ -1804,6 +1833,7 @@ class Mutation$sendInvitation$sendInvitation$invitation {
   Mutation$sendInvitation$sendInvitation$invitation({
     required this.id,
     required this.location,
+    required this.coordinate,
     required this.startsAt,
     required this.expiresAt,
     required this.$__typename,
@@ -1813,12 +1843,16 @@ class Mutation$sendInvitation$sendInvitation$invitation {
       Map<String, dynamic> json) {
     final l$id = json['id'];
     final l$location = json['location'];
+    final l$coordinate = json['coordinate'];
     final l$startsAt = json['startsAt'];
     final l$expiresAt = json['expiresAt'];
     final l$$__typename = json['__typename'];
     return Mutation$sendInvitation$sendInvitation$invitation(
       id: (l$id as String),
       location: (l$location as String),
+      coordinate:
+          Mutation$sendInvitation$sendInvitation$invitation$coordinate.fromJson(
+              (l$coordinate as Map<String, dynamic>)),
       startsAt: DateTime.parse((l$startsAt as String)),
       expiresAt: DateTime.parse((l$expiresAt as String)),
       $__typename: (l$$__typename as String),
@@ -1828,6 +1862,8 @@ class Mutation$sendInvitation$sendInvitation$invitation {
   final String id;
 
   final String location;
+
+  final Mutation$sendInvitation$sendInvitation$invitation$coordinate coordinate;
 
   final DateTime startsAt;
 
@@ -1841,6 +1877,8 @@ class Mutation$sendInvitation$sendInvitation$invitation {
     _resultData['id'] = l$id;
     final l$location = location;
     _resultData['location'] = l$location;
+    final l$coordinate = coordinate;
+    _resultData['coordinate'] = l$coordinate.toJson();
     final l$startsAt = startsAt;
     _resultData['startsAt'] = l$startsAt.toIso8601String();
     final l$expiresAt = expiresAt;
@@ -1854,12 +1892,14 @@ class Mutation$sendInvitation$sendInvitation$invitation {
   int get hashCode {
     final l$id = id;
     final l$location = location;
+    final l$coordinate = coordinate;
     final l$startsAt = startsAt;
     final l$expiresAt = expiresAt;
     final l$$__typename = $__typename;
     return Object.hashAll([
       l$id,
       l$location,
+      l$coordinate,
       l$startsAt,
       l$expiresAt,
       l$$__typename,
@@ -1883,6 +1923,11 @@ class Mutation$sendInvitation$sendInvitation$invitation {
     final l$location = location;
     final lOther$location = other.location;
     if (l$location != lOther$location) {
+      return false;
+    }
+    final l$coordinate = coordinate;
+    final lOther$coordinate = other.coordinate;
+    if (l$coordinate != lOther$coordinate) {
       return false;
     }
     final l$startsAt = startsAt;
@@ -1929,10 +1974,13 @@ abstract class CopyWith$Mutation$sendInvitation$sendInvitation$invitation<
   TRes call({
     String? id,
     String? location,
+    Mutation$sendInvitation$sendInvitation$invitation$coordinate? coordinate,
     DateTime? startsAt,
     DateTime? expiresAt,
     String? $__typename,
   });
+  CopyWith$Mutation$sendInvitation$sendInvitation$invitation$coordinate<TRes>
+      get coordinate;
 }
 
 class _CopyWithImpl$Mutation$sendInvitation$sendInvitation$invitation<TRes>
@@ -1952,6 +2000,7 @@ class _CopyWithImpl$Mutation$sendInvitation$sendInvitation$invitation<TRes>
   TRes call({
     Object? id = _undefined,
     Object? location = _undefined,
+    Object? coordinate = _undefined,
     Object? startsAt = _undefined,
     Object? expiresAt = _undefined,
     Object? $__typename = _undefined,
@@ -1961,6 +2010,10 @@ class _CopyWithImpl$Mutation$sendInvitation$sendInvitation$invitation<TRes>
         location: location == _undefined || location == null
             ? _instance.location
             : (location as String),
+        coordinate: coordinate == _undefined || coordinate == null
+            ? _instance.coordinate
+            : (coordinate
+                as Mutation$sendInvitation$sendInvitation$invitation$coordinate),
         startsAt: startsAt == _undefined || startsAt == null
             ? _instance.startsAt
             : (startsAt as DateTime),
@@ -1971,6 +2024,12 @@ class _CopyWithImpl$Mutation$sendInvitation$sendInvitation$invitation<TRes>
             ? _instance.$__typename
             : ($__typename as String),
       ));
+  CopyWith$Mutation$sendInvitation$sendInvitation$invitation$coordinate<TRes>
+      get coordinate {
+    final local$coordinate = _instance.coordinate;
+    return CopyWith$Mutation$sendInvitation$sendInvitation$invitation$coordinate(
+        local$coordinate, (e) => call(coordinate: e));
+  }
 }
 
 class _CopyWithStubImpl$Mutation$sendInvitation$sendInvitation$invitation<TRes>
@@ -1984,8 +2043,173 @@ class _CopyWithStubImpl$Mutation$sendInvitation$sendInvitation$invitation<TRes>
   call({
     String? id,
     String? location,
+    Mutation$sendInvitation$sendInvitation$invitation$coordinate? coordinate,
     DateTime? startsAt,
     DateTime? expiresAt,
+    String? $__typename,
+  }) =>
+      _res;
+  CopyWith$Mutation$sendInvitation$sendInvitation$invitation$coordinate<TRes>
+      get coordinate =>
+          CopyWith$Mutation$sendInvitation$sendInvitation$invitation$coordinate
+              .stub(_res);
+}
+
+class Mutation$sendInvitation$sendInvitation$invitation$coordinate {
+  Mutation$sendInvitation$sendInvitation$invitation$coordinate({
+    required this.latitude,
+    required this.longitude,
+    required this.$__typename,
+  });
+
+  factory Mutation$sendInvitation$sendInvitation$invitation$coordinate.fromJson(
+      Map<String, dynamic> json) {
+    final l$latitude = json['latitude'];
+    final l$longitude = json['longitude'];
+    final l$$__typename = json['__typename'];
+    return Mutation$sendInvitation$sendInvitation$invitation$coordinate(
+      latitude: (l$latitude as num).toDouble(),
+      longitude: (l$longitude as num).toDouble(),
+      $__typename: (l$$__typename as String),
+    );
+  }
+
+  final double latitude;
+
+  final double longitude;
+
+  final String $__typename;
+
+  Map<String, dynamic> toJson() {
+    final _resultData = <String, dynamic>{};
+    final l$latitude = latitude;
+    _resultData['latitude'] = l$latitude;
+    final l$longitude = longitude;
+    _resultData['longitude'] = l$longitude;
+    final l$$__typename = $__typename;
+    _resultData['__typename'] = l$$__typename;
+    return _resultData;
+  }
+
+  @override
+  int get hashCode {
+    final l$latitude = latitude;
+    final l$longitude = longitude;
+    final l$$__typename = $__typename;
+    return Object.hashAll([
+      l$latitude,
+      l$longitude,
+      l$$__typename,
+    ]);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    if (!(other
+            is Mutation$sendInvitation$sendInvitation$invitation$coordinate) ||
+        runtimeType != other.runtimeType) {
+      return false;
+    }
+    final l$latitude = latitude;
+    final lOther$latitude = other.latitude;
+    if (l$latitude != lOther$latitude) {
+      return false;
+    }
+    final l$longitude = longitude;
+    final lOther$longitude = other.longitude;
+    if (l$longitude != lOther$longitude) {
+      return false;
+    }
+    final l$$__typename = $__typename;
+    final lOther$$__typename = other.$__typename;
+    if (l$$__typename != lOther$$__typename) {
+      return false;
+    }
+    return true;
+  }
+}
+
+extension UtilityExtension$Mutation$sendInvitation$sendInvitation$invitation$coordinate
+    on Mutation$sendInvitation$sendInvitation$invitation$coordinate {
+  CopyWith$Mutation$sendInvitation$sendInvitation$invitation$coordinate<
+          Mutation$sendInvitation$sendInvitation$invitation$coordinate>
+      get copyWith =>
+          CopyWith$Mutation$sendInvitation$sendInvitation$invitation$coordinate(
+            this,
+            (i) => i,
+          );
+}
+
+abstract class CopyWith$Mutation$sendInvitation$sendInvitation$invitation$coordinate<
+    TRes> {
+  factory CopyWith$Mutation$sendInvitation$sendInvitation$invitation$coordinate(
+    Mutation$sendInvitation$sendInvitation$invitation$coordinate instance,
+    TRes Function(Mutation$sendInvitation$sendInvitation$invitation$coordinate)
+        then,
+  ) = _CopyWithImpl$Mutation$sendInvitation$sendInvitation$invitation$coordinate;
+
+  factory CopyWith$Mutation$sendInvitation$sendInvitation$invitation$coordinate.stub(
+          TRes res) =
+      _CopyWithStubImpl$Mutation$sendInvitation$sendInvitation$invitation$coordinate;
+
+  TRes call({
+    double? latitude,
+    double? longitude,
+    String? $__typename,
+  });
+}
+
+class _CopyWithImpl$Mutation$sendInvitation$sendInvitation$invitation$coordinate<
+        TRes>
+    implements
+        CopyWith$Mutation$sendInvitation$sendInvitation$invitation$coordinate<
+            TRes> {
+  _CopyWithImpl$Mutation$sendInvitation$sendInvitation$invitation$coordinate(
+    this._instance,
+    this._then,
+  );
+
+  final Mutation$sendInvitation$sendInvitation$invitation$coordinate _instance;
+
+  final TRes Function(
+      Mutation$sendInvitation$sendInvitation$invitation$coordinate) _then;
+
+  static const _undefined = {};
+
+  TRes call({
+    Object? latitude = _undefined,
+    Object? longitude = _undefined,
+    Object? $__typename = _undefined,
+  }) =>
+      _then(Mutation$sendInvitation$sendInvitation$invitation$coordinate(
+        latitude: latitude == _undefined || latitude == null
+            ? _instance.latitude
+            : (latitude as double),
+        longitude: longitude == _undefined || longitude == null
+            ? _instance.longitude
+            : (longitude as double),
+        $__typename: $__typename == _undefined || $__typename == null
+            ? _instance.$__typename
+            : ($__typename as String),
+      ));
+}
+
+class _CopyWithStubImpl$Mutation$sendInvitation$sendInvitation$invitation$coordinate<
+        TRes>
+    implements
+        CopyWith$Mutation$sendInvitation$sendInvitation$invitation$coordinate<
+            TRes> {
+  _CopyWithStubImpl$Mutation$sendInvitation$sendInvitation$invitation$coordinate(
+      this._res);
+
+  TRes _res;
+
+  call({
+    double? latitude,
+    double? longitude,
     String? $__typename,
   }) =>
       _res;

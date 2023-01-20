@@ -398,6 +398,8 @@ class Input$SendInvitationInput {
     required DateTime expiresAt,
     required DateTime startsAt,
     required String location,
+    required double latitude,
+    required double longitude,
     required String comment,
   }) =>
       Input$SendInvitationInput._({
@@ -406,6 +408,8 @@ class Input$SendInvitationInput {
         r'expiresAt': expiresAt,
         r'startsAt': startsAt,
         r'location': location,
+        r'latitude': latitude,
+        r'longitude': longitude,
         r'comment': comment,
       });
 
@@ -429,6 +433,10 @@ class Input$SendInvitationInput {
     result$data['startsAt'] = DateTime.parse((l$startsAt as String));
     final l$location = data['location'];
     result$data['location'] = (l$location as String);
+    final l$latitude = data['latitude'];
+    result$data['latitude'] = (l$latitude as num).toDouble();
+    final l$longitude = data['longitude'];
+    result$data['longitude'] = (l$longitude as num).toDouble();
     final l$comment = data['comment'];
     result$data['comment'] = (l$comment as String);
     return Input$SendInvitationInput._(result$data);
@@ -443,6 +451,8 @@ class Input$SendInvitationInput {
   DateTime get expiresAt => (_$data['expiresAt'] as DateTime);
   DateTime get startsAt => (_$data['startsAt'] as DateTime);
   String get location => (_$data['location'] as String);
+  double get latitude => (_$data['latitude'] as double);
+  double get longitude => (_$data['longitude'] as double);
   String get comment => (_$data['comment'] as String);
   Map<String, dynamic> toJson() {
     final result$data = <String, dynamic>{};
@@ -458,6 +468,10 @@ class Input$SendInvitationInput {
     result$data['startsAt'] = l$startsAt.toIso8601String();
     final l$location = location;
     result$data['location'] = l$location;
+    final l$latitude = latitude;
+    result$data['latitude'] = l$latitude;
+    final l$longitude = longitude;
+    result$data['longitude'] = l$longitude;
     final l$comment = comment;
     result$data['comment'] = l$comment;
     return result$data;
@@ -516,6 +530,16 @@ class Input$SendInvitationInput {
     if (l$location != lOther$location) {
       return false;
     }
+    final l$latitude = latitude;
+    final lOther$latitude = other.latitude;
+    if (l$latitude != lOther$latitude) {
+      return false;
+    }
+    final l$longitude = longitude;
+    final lOther$longitude = other.longitude;
+    if (l$longitude != lOther$longitude) {
+      return false;
+    }
     final l$comment = comment;
     final lOther$comment = other.comment;
     if (l$comment != lOther$comment) {
@@ -531,6 +555,8 @@ class Input$SendInvitationInput {
     final l$expiresAt = expiresAt;
     final l$startsAt = startsAt;
     final l$location = location;
+    final l$latitude = latitude;
+    final l$longitude = longitude;
     final l$comment = comment;
     return Object.hashAll([
       Object.hashAll(l$targetFriendGroupIds.map((v) => v)),
@@ -538,6 +564,8 @@ class Input$SendInvitationInput {
       l$expiresAt,
       l$startsAt,
       l$location,
+      l$latitude,
+      l$longitude,
       l$comment,
     ]);
   }
@@ -558,6 +586,8 @@ abstract class CopyWith$Input$SendInvitationInput<TRes> {
     DateTime? expiresAt,
     DateTime? startsAt,
     String? location,
+    double? latitude,
+    double? longitude,
     String? comment,
   });
 }
@@ -581,6 +611,8 @@ class _CopyWithImpl$Input$SendInvitationInput<TRes>
     Object? expiresAt = _undefined,
     Object? startsAt = _undefined,
     Object? location = _undefined,
+    Object? latitude = _undefined,
+    Object? longitude = _undefined,
     Object? comment = _undefined,
   }) =>
       _then(Input$SendInvitationInput._({
@@ -595,6 +627,10 @@ class _CopyWithImpl$Input$SendInvitationInput<TRes>
           'startsAt': (startsAt as DateTime),
         if (location != _undefined && location != null)
           'location': (location as String),
+        if (latitude != _undefined && latitude != null)
+          'latitude': (latitude as double),
+        if (longitude != _undefined && longitude != null)
+          'longitude': (longitude as double),
         if (comment != _undefined && comment != null)
           'comment': (comment as String),
       }));
@@ -612,6 +648,8 @@ class _CopyWithStubImpl$Input$SendInvitationInput<TRes>
     DateTime? expiresAt,
     DateTime? startsAt,
     String? location,
+    double? latitude,
+    double? longitude,
     String? comment,
   }) =>
       _res;

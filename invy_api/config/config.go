@@ -57,7 +57,7 @@ func NewAppConfig() (*AppConfig, error) {
 
 func (d *DBConfig) Dsn() string {
 	if d.ConnectionName != "" {
-		return fmt.Sprintf("user=%s password=%s host=%s database=%s sslmode=disable", d.User, d.Password, d.ConnectionName, d.DBName)
+		return fmt.Sprintf("user=%s password=%s host=%s database=%s sslmode=disable binary_parameters=yes", d.User, d.Password, d.ConnectionName, d.DBName)
 	}
-	return fmt.Sprintf("postgres://%s:%s@%s/%s?sslmode=disable", d.User, d.Password, d.DBURL, d.DBName)
+	return fmt.Sprintf("postgres://%s:%s@%s/%s?sslmode=disable&binary_parameters=yes", d.User, d.Password, d.DBURL, d.DBName)
 }

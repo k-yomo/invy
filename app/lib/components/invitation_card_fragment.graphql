@@ -2,6 +2,10 @@
 fragment invitationCardFragment on Invitation {
     id
     location
+    coordinate {
+        latitude
+        longitude
+    }
     comment
     startsAt
     expiresAt

@@ -304,7 +304,7 @@ func (i *Invitation) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     i.ID,
 		Type:   "Invitation",
-		Fields: make([]*Field, 7),
+		Fields: make([]*Field, 8),
 		Edges:  make([]*Edge, 5),
 	}
 	var buf []byte
@@ -324,10 +324,18 @@ func (i *Invitation) Node(ctx context.Context) (node *Node, err error) {
 		Name:  "location",
 		Value: string(buf),
 	}
-	if buf, err = json.Marshal(i.Comment); err != nil {
+	if buf, err = json.Marshal(i.Coordinate); err != nil {
 		return nil, err
 	}
 	node.Fields[2] = &Field{
+		Type:  "*pgutil.GeoPoint",
+		Name:  "coordinate",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(i.Comment); err != nil {
+		return nil, err
+	}
+	node.Fields[3] = &Field{
 		Type:  "string",
 		Name:  "comment",
 		Value: string(buf),
@@ -335,7 +343,7 @@ func (i *Invitation) Node(ctx context.Context) (node *Node, err error) {
 	if buf, err = json.Marshal(i.StartsAt); err != nil {
 		return nil, err
 	}
-	node.Fields[3] = &Field{
+	node.Fields[4] = &Field{
 		Type:  "time.Time",
 		Name:  "starts_at",
 		Value: string(buf),
@@ -343,7 +351,7 @@ func (i *Invitation) Node(ctx context.Context) (node *Node, err error) {
 	if buf, err = json.Marshal(i.ExpiresAt); err != nil {
 		return nil, err
 	}
-	node.Fields[4] = &Field{
+	node.Fields[5] = &Field{
 		Type:  "time.Time",
 		Name:  "expires_at",
 		Value: string(buf),
@@ -351,7 +359,7 @@ func (i *Invitation) Node(ctx context.Context) (node *Node, err error) {
 	if buf, err = json.Marshal(i.CreatedAt); err != nil {
 		return nil, err
 	}
-	node.Fields[5] = &Field{
+	node.Fields[6] = &Field{
 		Type:  "time.Time",
 		Name:  "created_at",
 		Value: string(buf),
@@ -359,7 +367,7 @@ func (i *Invitation) Node(ctx context.Context) (node *Node, err error) {
 	if buf, err = json.Marshal(i.UpdatedAt); err != nil {
 		return nil, err
 	}
-	node.Fields[6] = &Field{
+	node.Fields[7] = &Field{
 		Type:  "time.Time",
 		Name:  "updated_at",
 		Value: string(buf),

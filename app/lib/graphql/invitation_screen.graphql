@@ -25,6 +25,10 @@ mutation sendInvitation($input: SendInvitationInput!) {
         invitation {
             id
             location
+            coordinate {
+                latitude
+                longitude
+            }
             startsAt
             expiresAt
         }

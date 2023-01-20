@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -13,6 +14,7 @@ import '../components/friend_list_item_fragment.graphql.dart';
 import '../graphql/schema.graphql.dart';
 import '../services/graphql_client.dart';
 import '../state/bottom_navigation.dart';
+import '../state/location.dart';
 
 const dateTimeFormat = 'yyyy年MM月dd日 HH時mm分';
 
@@ -29,6 +31,7 @@ class InvitationDetailFormScreen extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final graphqlClient = ref.read(graphqlClientProvider);
+    final invitationLocation = ref.watch(invitationLocationProvider);
 
     onSubmittedForm({
       required String location,
@@ -41,6 +44,8 @@ class InvitationDetailFormScreen extends HookConsumerWidget {
         variables: Variables$Mutation$sendInvitation(
           input: Input$SendInvitationInput(
             location: location,
+            latitude: invitationLocation.latitude,
+            longitude: invitationLocation.longitude,
             startsAt: startsAt,
             expiresAt: expiresAt,
             comment: comment ?? '',
@@ -148,7 +153,7 @@ class InvitationDetailFormScreen extends HookConsumerWidget {
   }
 }
 
-class InvitationDetailForm extends StatefulWidget {
+class InvitationDetailForm extends StatefulHookConsumerWidget {
   const InvitationDetailForm({super.key, required this.onSubmitted});
 
   final Future Function({
@@ -164,8 +169,9 @@ class InvitationDetailForm extends StatefulWidget {
   }
 }
 
-class InvitationDetailFormState extends State<InvitationDetailForm> {
+class InvitationDetailFormState extends ConsumerState<InvitationDetailForm> {
   final _formKey = GlobalKey<FormState>();
+  final locationController = TextEditingController();
   final startsAtController = TextEditingController();
   final expiresAtController = TextEditingController();
   final commentFocusNode = FocusNode();
@@ -180,6 +186,7 @@ class InvitationDetailFormState extends State<InvitationDetailForm> {
 
   @override
   Widget build(BuildContext context) {
+    final invitationLocationName = ref.read(locationNameProvider);
     final now = DateTime.now();
 
     // form values
@@ -187,6 +194,10 @@ class InvitationDetailFormState extends State<InvitationDetailForm> {
     DateTime startsAt = now;
     DateTime expiresAt = now;
     String? comment;
+
+    useEffect(() {
+      locationController.text = invitationLocationName;
+    }, []);
 
     return KeyboardActions(
       disableScroll: true,
@@ -196,6 +207,7 @@ class InvitationDetailFormState extends State<InvitationDetailForm> {
         child: Container(
           child: Column(children: [
             TextFormField(
+              controller: locationController,
               cursorColor: Colors.grey.shade600,
               decoration: InputDecoration(
                 labelText: '開催地',

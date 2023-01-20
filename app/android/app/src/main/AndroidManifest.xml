@@ -1,5 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.invy_app">
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
    <application
         android:label="@string/app_name"
         android:name="${applicationName}"
@@ -30,5 +32,9 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+       <!-- TOOD: Use env var
+            https://zenn.dev/taitai9847/articles/0be7298408b7c8 -->
+       <meta-data android:name="com.google.android.geo.API_KEY"
+                  android:value="AIzaSyC5-1sT3hduoMlGnrBTVTaQo-Al0GpRC_Q"/>
     </application>
 </manifest>

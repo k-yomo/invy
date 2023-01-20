@@ -24,6 +24,7 @@ require (
 	github.com/matoous/go-nanoid/v2 v2.0.0
 	github.com/pkg/errors v0.9.1
 	github.com/rs/cors v1.8.3
+	github.com/twpayne/go-geom v1.4.4
 	github.com/vektah/gqlparser/v2 v2.5.1
 	github.com/vmihailenco/msgpack/v5 v5.3.5
 	go.opentelemetry.io/otel v1.11.2

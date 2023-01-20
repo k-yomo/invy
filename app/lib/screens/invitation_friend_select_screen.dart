@@ -12,8 +12,8 @@ import '../components/friend_group_selection_list.dart';
 import '../services/graphql_client.dart';
 import 'inivitation_detail_form_screen.dart';
 
-class InvitationScreen extends HookConsumerWidget {
-  const InvitationScreen({super.key});
+class InvitationFriendSelectScreen extends HookConsumerWidget {
+  const InvitationFriendSelectScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
