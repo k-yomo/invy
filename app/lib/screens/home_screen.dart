@@ -48,7 +48,7 @@ class HomeScreen extends HookConsumerWidget {
                 children: [
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
+                    children: viewer.pendingInvitations.isEmpty ? [] : [
                       const SubTitle(text: "届いている招待"),
                       const Gap(10),
                       Container(
