@@ -1,4 +1,4 @@
-import '../components/invitation_card_fragment.graphql.dart';
+import '../components/invitation_detail_fragment.graphql.dart';
 import 'dart:async';
 import 'package:flutter/widgets.dart' as widgets;
 import 'package:gql/ast.dart';
@@ -158,7 +158,7 @@ const documentNodeQueryhomeScreenViewer = DocumentNode(definitions: [
             directives: [],
             selectionSet: SelectionSetNode(selections: [
               FragmentSpreadNode(
-                name: NameNode(value: 'invitationCardFragment'),
+                name: NameNode(value: 'invitationDetailFragment'),
                 directives: [],
               ),
               FieldNode(
@@ -177,7 +177,7 @@ const documentNodeQueryhomeScreenViewer = DocumentNode(definitions: [
             directives: [],
             selectionSet: SelectionSetNode(selections: [
               FragmentSpreadNode(
-                name: NameNode(value: 'invitationCardFragment'),
+                name: NameNode(value: 'invitationDetailFragment'),
                 directives: [],
               ),
               FieldNode(
@@ -196,7 +196,7 @@ const documentNodeQueryhomeScreenViewer = DocumentNode(definitions: [
             directives: [],
             selectionSet: SelectionSetNode(selections: [
               FragmentSpreadNode(
-                name: NameNode(value: 'invitationCardFragment'),
+                name: NameNode(value: 'invitationDetailFragment'),
                 directives: [],
               ),
               FieldNode(
@@ -226,7 +226,7 @@ const documentNodeQueryhomeScreenViewer = DocumentNode(definitions: [
       ),
     ]),
   ),
-  fragmentDefinitioninvitationCardFragment,
+  fragmentDefinitioninvitationDetailFragment,
 ]);
 Query$homeScreenViewer _parserFn$Query$homeScreenViewer(
         Map<String, dynamic> data) =>
@@ -358,26 +358,26 @@ class Query$homeScreenViewer$viewer {
     final l$$__typename = json['__typename'];
     return Query$homeScreenViewer$viewer(
       sentInvitations: (l$sentInvitations as List<dynamic>)
-          .map((e) => Fragment$invitationCardFragment.fromJson(
+          .map((e) => Fragment$invitationDetailFragment.fromJson(
               (e as Map<String, dynamic>)))
           .toList(),
       pendingInvitations: (l$pendingInvitations as List<dynamic>)
-          .map((e) => Fragment$invitationCardFragment.fromJson(
+          .map((e) => Fragment$invitationDetailFragment.fromJson(
               (e as Map<String, dynamic>)))
           .toList(),
       acceptedInvitations: (l$acceptedInvitations as List<dynamic>)
-          .map((e) => Fragment$invitationCardFragment.fromJson(
+          .map((e) => Fragment$invitationDetailFragment.fromJson(
               (e as Map<String, dynamic>)))
           .toList(),
       $__typename: (l$$__typename as String),
     );
   }
 
-  final List<Fragment$invitationCardFragment> sentInvitations;
+  final List<Fragment$invitationDetailFragment> sentInvitations;
 
-  final List<Fragment$invitationCardFragment> pendingInvitations;
+  final List<Fragment$invitationDetailFragment> pendingInvitations;
 
-  final List<Fragment$invitationCardFragment> acceptedInvitations;
+  final List<Fragment$invitationDetailFragment> acceptedInvitations;
 
   final String $__typename;
 
@@ -484,28 +484,28 @@ abstract class CopyWith$Query$homeScreenViewer$viewer<TRes> {
       _CopyWithStubImpl$Query$homeScreenViewer$viewer;
 
   TRes call({
-    List<Fragment$invitationCardFragment>? sentInvitations,
-    List<Fragment$invitationCardFragment>? pendingInvitations,
-    List<Fragment$invitationCardFragment>? acceptedInvitations,
+    List<Fragment$invitationDetailFragment>? sentInvitations,
+    List<Fragment$invitationDetailFragment>? pendingInvitations,
+    List<Fragment$invitationDetailFragment>? acceptedInvitations,
     String? $__typename,
   });
   TRes sentInvitations(
-      Iterable<Fragment$invitationCardFragment> Function(
+      Iterable<Fragment$invitationDetailFragment> Function(
               Iterable<
-                  CopyWith$Fragment$invitationCardFragment<
-                      Fragment$invitationCardFragment>>)
+                  CopyWith$Fragment$invitationDetailFragment<
+                      Fragment$invitationDetailFragment>>)
           _fn);
   TRes pendingInvitations(
-      Iterable<Fragment$invitationCardFragment> Function(
+      Iterable<Fragment$invitationDetailFragment> Function(
               Iterable<
-                  CopyWith$Fragment$invitationCardFragment<
-                      Fragment$invitationCardFragment>>)
+                  CopyWith$Fragment$invitationDetailFragment<
+                      Fragment$invitationDetailFragment>>)
           _fn);
   TRes acceptedInvitations(
-      Iterable<Fragment$invitationCardFragment> Function(
+      Iterable<Fragment$invitationDetailFragment> Function(
               Iterable<
-                  CopyWith$Fragment$invitationCardFragment<
-                      Fragment$invitationCardFragment>>)
+                  CopyWith$Fragment$invitationDetailFragment<
+                      Fragment$invitationDetailFragment>>)
           _fn);
 }
 
@@ -532,52 +532,52 @@ class _CopyWithImpl$Query$homeScreenViewer$viewer<TRes>
         sentInvitations:
             sentInvitations == _undefined || sentInvitations == null
                 ? _instance.sentInvitations
-                : (sentInvitations as List<Fragment$invitationCardFragment>),
-        pendingInvitations:
-            pendingInvitations == _undefined || pendingInvitations == null
-                ? _instance.pendingInvitations
-                : (pendingInvitations as List<Fragment$invitationCardFragment>),
+                : (sentInvitations as List<Fragment$invitationDetailFragment>),
+        pendingInvitations: pendingInvitations == _undefined ||
+                pendingInvitations == null
+            ? _instance.pendingInvitations
+            : (pendingInvitations as List<Fragment$invitationDetailFragment>),
         acceptedInvitations: acceptedInvitations == _undefined ||
                 acceptedInvitations == null
             ? _instance.acceptedInvitations
-            : (acceptedInvitations as List<Fragment$invitationCardFragment>),
+            : (acceptedInvitations as List<Fragment$invitationDetailFragment>),
         $__typename: $__typename == _undefined || $__typename == null
             ? _instance.$__typename
             : ($__typename as String),
       ));
   TRes sentInvitations(
-          Iterable<Fragment$invitationCardFragment> Function(
+          Iterable<Fragment$invitationDetailFragment> Function(
                   Iterable<
-                      CopyWith$Fragment$invitationCardFragment<
-                          Fragment$invitationCardFragment>>)
+                      CopyWith$Fragment$invitationDetailFragment<
+                          Fragment$invitationDetailFragment>>)
               _fn) =>
       call(
           sentInvitations: _fn(_instance.sentInvitations
-              .map((e) => CopyWith$Fragment$invitationCardFragment(
+              .map((e) => CopyWith$Fragment$invitationDetailFragment(
                     e,
                     (i) => i,
                   ))).toList());
   TRes pendingInvitations(
-          Iterable<Fragment$invitationCardFragment> Function(
+          Iterable<Fragment$invitationDetailFragment> Function(
                   Iterable<
-                      CopyWith$Fragment$invitationCardFragment<
-                          Fragment$invitationCardFragment>>)
+                      CopyWith$Fragment$invitationDetailFragment<
+                          Fragment$invitationDetailFragment>>)
               _fn) =>
       call(
           pendingInvitations: _fn(_instance.pendingInvitations
-              .map((e) => CopyWith$Fragment$invitationCardFragment(
+              .map((e) => CopyWith$Fragment$invitationDetailFragment(
                     e,
                     (i) => i,
                   ))).toList());
   TRes acceptedInvitations(
-          Iterable<Fragment$invitationCardFragment> Function(
+          Iterable<Fragment$invitationDetailFragment> Function(
                   Iterable<
-                      CopyWith$Fragment$invitationCardFragment<
-                          Fragment$invitationCardFragment>>)
+                      CopyWith$Fragment$invitationDetailFragment<
+                          Fragment$invitationDetailFragment>>)
               _fn) =>
       call(
           acceptedInvitations: _fn(_instance.acceptedInvitations
-              .map((e) => CopyWith$Fragment$invitationCardFragment(
+              .map((e) => CopyWith$Fragment$invitationDetailFragment(
                     e,
                     (i) => i,
                   ))).toList());
@@ -590,9 +590,9 @@ class _CopyWithStubImpl$Query$homeScreenViewer$viewer<TRes>
   TRes _res;
 
   call({
-    List<Fragment$invitationCardFragment>? sentInvitations,
-    List<Fragment$invitationCardFragment>? pendingInvitations,
-    List<Fragment$invitationCardFragment>? acceptedInvitations,
+    List<Fragment$invitationDetailFragment>? sentInvitations,
+    List<Fragment$invitationDetailFragment>? pendingInvitations,
+    List<Fragment$invitationDetailFragment>? acceptedInvitations,
     String? $__typename,
   }) =>
       _res;
@@ -872,7 +872,7 @@ const documentNodeMutationacceptInvitation = DocumentNode(definitions: [
             directives: [],
             selectionSet: SelectionSetNode(selections: [
               FragmentSpreadNode(
-                name: NameNode(value: 'invitationCardFragment'),
+                name: NameNode(value: 'invitationDetailFragment'),
                 directives: [],
               ),
               FieldNode(
@@ -902,7 +902,7 @@ const documentNodeMutationacceptInvitation = DocumentNode(definitions: [
       ),
     ]),
   ),
-  fragmentDefinitioninvitationCardFragment,
+  fragmentDefinitioninvitationDetailFragment,
 ]);
 Mutation$acceptInvitation _parserFn$Mutation$acceptInvitation(
         Map<String, dynamic> data) =>
@@ -1123,13 +1123,13 @@ class Mutation$acceptInvitation$acceptInvitation {
     final l$invitation = json['invitation'];
     final l$$__typename = json['__typename'];
     return Mutation$acceptInvitation$acceptInvitation(
-      invitation: Fragment$invitationCardFragment.fromJson(
+      invitation: Fragment$invitationDetailFragment.fromJson(
           (l$invitation as Map<String, dynamic>)),
       $__typename: (l$$__typename as String),
     );
   }
 
-  final Fragment$invitationCardFragment invitation;
+  final Fragment$invitationDetailFragment invitation;
 
   final String $__typename;
 
@@ -1195,10 +1195,10 @@ abstract class CopyWith$Mutation$acceptInvitation$acceptInvitation<TRes> {
       _CopyWithStubImpl$Mutation$acceptInvitation$acceptInvitation;
 
   TRes call({
-    Fragment$invitationCardFragment? invitation,
+    Fragment$invitationDetailFragment? invitation,
     String? $__typename,
   });
-  CopyWith$Fragment$invitationCardFragment<TRes> get invitation;
+  CopyWith$Fragment$invitationDetailFragment<TRes> get invitation;
 }
 
 class _CopyWithImpl$Mutation$acceptInvitation$acceptInvitation<TRes>
@@ -1221,14 +1221,14 @@ class _CopyWithImpl$Mutation$acceptInvitation$acceptInvitation<TRes>
       _then(Mutation$acceptInvitation$acceptInvitation(
         invitation: invitation == _undefined || invitation == null
             ? _instance.invitation
-            : (invitation as Fragment$invitationCardFragment),
+            : (invitation as Fragment$invitationDetailFragment),
         $__typename: $__typename == _undefined || $__typename == null
             ? _instance.$__typename
             : ($__typename as String),
       ));
-  CopyWith$Fragment$invitationCardFragment<TRes> get invitation {
+  CopyWith$Fragment$invitationDetailFragment<TRes> get invitation {
     final local$invitation = _instance.invitation;
-    return CopyWith$Fragment$invitationCardFragment(
+    return CopyWith$Fragment$invitationDetailFragment(
         local$invitation, (e) => call(invitation: e));
   }
 }
@@ -1240,12 +1240,12 @@ class _CopyWithStubImpl$Mutation$acceptInvitation$acceptInvitation<TRes>
   TRes _res;
 
   call({
-    Fragment$invitationCardFragment? invitation,
+    Fragment$invitationDetailFragment? invitation,
     String? $__typename,
   }) =>
       _res;
-  CopyWith$Fragment$invitationCardFragment<TRes> get invitation =>
-      CopyWith$Fragment$invitationCardFragment.stub(_res);
+  CopyWith$Fragment$invitationDetailFragment<TRes> get invitation =>
+      CopyWith$Fragment$invitationDetailFragment.stub(_res);
 }
 
 class Variables$Mutation$denyInvitation {

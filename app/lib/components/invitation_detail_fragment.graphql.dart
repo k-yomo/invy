@@ -1,8 +1,8 @@
 import 'package:gql/ast.dart';
 import 'package:graphql/client.dart' as graphql;
 
-class Fragment$invitationCardFragment {
-  Fragment$invitationCardFragment({
+class Fragment$invitationDetailFragment {
+  Fragment$invitationDetailFragment({
     required this.id,
     required this.location,
     required this.coordinate,
@@ -14,7 +14,8 @@ class Fragment$invitationCardFragment {
     required this.$__typename,
   });
 
-  factory Fragment$invitationCardFragment.fromJson(Map<String, dynamic> json) {
+  factory Fragment$invitationDetailFragment.fromJson(
+      Map<String, dynamic> json) {
     final l$id = json['id'];
     final l$location = json['location'];
     final l$coordinate = json['coordinate'];
@@ -24,18 +25,18 @@ class Fragment$invitationCardFragment {
     final l$user = json['user'];
     final l$acceptedUsers = json['acceptedUsers'];
     final l$$__typename = json['__typename'];
-    return Fragment$invitationCardFragment(
+    return Fragment$invitationDetailFragment(
       id: (l$id as String),
       location: (l$location as String),
-      coordinate: Fragment$invitationCardFragment$coordinate.fromJson(
+      coordinate: Fragment$invitationDetailFragment$coordinate.fromJson(
           (l$coordinate as Map<String, dynamic>)),
       comment: (l$comment as String),
       startsAt: DateTime.parse((l$startsAt as String)),
       expiresAt: DateTime.parse((l$expiresAt as String)),
-      user: Fragment$invitationCardFragment$user.fromJson(
+      user: Fragment$invitationDetailFragment$user.fromJson(
           (l$user as Map<String, dynamic>)),
       acceptedUsers: (l$acceptedUsers as List<dynamic>)
-          .map((e) => Fragment$invitationCardFragment$acceptedUsers.fromJson(
+          .map((e) => Fragment$invitationDetailFragment$acceptedUsers.fromJson(
               (e as Map<String, dynamic>)))
           .toList(),
       $__typename: (l$$__typename as String),
@@ -46,7 +47,7 @@ class Fragment$invitationCardFragment {
 
   final String location;
 
-  final Fragment$invitationCardFragment$coordinate coordinate;
+  final Fragment$invitationDetailFragment$coordinate coordinate;
 
   final String comment;
 
@@ -54,9 +55,9 @@ class Fragment$invitationCardFragment {
 
   final DateTime expiresAt;
 
-  final Fragment$invitationCardFragment$user user;
+  final Fragment$invitationDetailFragment$user user;
 
-  final List<Fragment$invitationCardFragment$acceptedUsers> acceptedUsers;
+  final List<Fragment$invitationDetailFragment$acceptedUsers> acceptedUsers;
 
   final String $__typename;
 
@@ -113,7 +114,7 @@ class Fragment$invitationCardFragment {
     if (identical(this, other)) {
       return true;
     }
-    if (!(other is Fragment$invitationCardFragment) ||
+    if (!(other is Fragment$invitationDetailFragment) ||
         runtimeType != other.runtimeType) {
       return false;
     }
@@ -173,55 +174,55 @@ class Fragment$invitationCardFragment {
   }
 }
 
-extension UtilityExtension$Fragment$invitationCardFragment
-    on Fragment$invitationCardFragment {
-  CopyWith$Fragment$invitationCardFragment<Fragment$invitationCardFragment>
-      get copyWith => CopyWith$Fragment$invitationCardFragment(
+extension UtilityExtension$Fragment$invitationDetailFragment
+    on Fragment$invitationDetailFragment {
+  CopyWith$Fragment$invitationDetailFragment<Fragment$invitationDetailFragment>
+      get copyWith => CopyWith$Fragment$invitationDetailFragment(
             this,
             (i) => i,
           );
 }
 
-abstract class CopyWith$Fragment$invitationCardFragment<TRes> {
-  factory CopyWith$Fragment$invitationCardFragment(
-    Fragment$invitationCardFragment instance,
-    TRes Function(Fragment$invitationCardFragment) then,
-  ) = _CopyWithImpl$Fragment$invitationCardFragment;
+abstract class CopyWith$Fragment$invitationDetailFragment<TRes> {
+  factory CopyWith$Fragment$invitationDetailFragment(
+    Fragment$invitationDetailFragment instance,
+    TRes Function(Fragment$invitationDetailFragment) then,
+  ) = _CopyWithImpl$Fragment$invitationDetailFragment;
 
-  factory CopyWith$Fragment$invitationCardFragment.stub(TRes res) =
-      _CopyWithStubImpl$Fragment$invitationCardFragment;
+  factory CopyWith$Fragment$invitationDetailFragment.stub(TRes res) =
+      _CopyWithStubImpl$Fragment$invitationDetailFragment;
 
   TRes call({
     String? id,
     String? location,
-    Fragment$invitationCardFragment$coordinate? coordinate,
+    Fragment$invitationDetailFragment$coordinate? coordinate,
     String? comment,
     DateTime? startsAt,
     DateTime? expiresAt,
-    Fragment$invitationCardFragment$user? user,
-    List<Fragment$invitationCardFragment$acceptedUsers>? acceptedUsers,
+    Fragment$invitationDetailFragment$user? user,
+    List<Fragment$invitationDetailFragment$acceptedUsers>? acceptedUsers,
     String? $__typename,
   });
-  CopyWith$Fragment$invitationCardFragment$coordinate<TRes> get coordinate;
-  CopyWith$Fragment$invitationCardFragment$user<TRes> get user;
+  CopyWith$Fragment$invitationDetailFragment$coordinate<TRes> get coordinate;
+  CopyWith$Fragment$invitationDetailFragment$user<TRes> get user;
   TRes acceptedUsers(
-      Iterable<Fragment$invitationCardFragment$acceptedUsers> Function(
+      Iterable<Fragment$invitationDetailFragment$acceptedUsers> Function(
               Iterable<
-                  CopyWith$Fragment$invitationCardFragment$acceptedUsers<
-                      Fragment$invitationCardFragment$acceptedUsers>>)
+                  CopyWith$Fragment$invitationDetailFragment$acceptedUsers<
+                      Fragment$invitationDetailFragment$acceptedUsers>>)
           _fn);
 }
 
-class _CopyWithImpl$Fragment$invitationCardFragment<TRes>
-    implements CopyWith$Fragment$invitationCardFragment<TRes> {
-  _CopyWithImpl$Fragment$invitationCardFragment(
+class _CopyWithImpl$Fragment$invitationDetailFragment<TRes>
+    implements CopyWith$Fragment$invitationDetailFragment<TRes> {
+  _CopyWithImpl$Fragment$invitationDetailFragment(
     this._instance,
     this._then,
   );
 
-  final Fragment$invitationCardFragment _instance;
+  final Fragment$invitationDetailFragment _instance;
 
-  final TRes Function(Fragment$invitationCardFragment) _then;
+  final TRes Function(Fragment$invitationDetailFragment) _then;
 
   static const _undefined = {};
 
@@ -236,14 +237,14 @@ class _CopyWithImpl$Fragment$invitationCardFragment<TRes>
     Object? acceptedUsers = _undefined,
     Object? $__typename = _undefined,
   }) =>
-      _then(Fragment$invitationCardFragment(
+      _then(Fragment$invitationDetailFragment(
         id: id == _undefined || id == null ? _instance.id : (id as String),
         location: location == _undefined || location == null
             ? _instance.location
             : (location as String),
         coordinate: coordinate == _undefined || coordinate == null
             ? _instance.coordinate
-            : (coordinate as Fragment$invitationCardFragment$coordinate),
+            : (coordinate as Fragment$invitationDetailFragment$coordinate),
         comment: comment == _undefined || comment == null
             ? _instance.comment
             : (comment as String),
@@ -255,68 +256,68 @@ class _CopyWithImpl$Fragment$invitationCardFragment<TRes>
             : (expiresAt as DateTime),
         user: user == _undefined || user == null
             ? _instance.user
-            : (user as Fragment$invitationCardFragment$user),
+            : (user as Fragment$invitationDetailFragment$user),
         acceptedUsers: acceptedUsers == _undefined || acceptedUsers == null
             ? _instance.acceptedUsers
             : (acceptedUsers
-                as List<Fragment$invitationCardFragment$acceptedUsers>),
+                as List<Fragment$invitationDetailFragment$acceptedUsers>),
         $__typename: $__typename == _undefined || $__typename == null
             ? _instance.$__typename
             : ($__typename as String),
       ));
-  CopyWith$Fragment$invitationCardFragment$coordinate<TRes> get coordinate {
+  CopyWith$Fragment$invitationDetailFragment$coordinate<TRes> get coordinate {
     final local$coordinate = _instance.coordinate;
-    return CopyWith$Fragment$invitationCardFragment$coordinate(
+    return CopyWith$Fragment$invitationDetailFragment$coordinate(
         local$coordinate, (e) => call(coordinate: e));
   }
 
-  CopyWith$Fragment$invitationCardFragment$user<TRes> get user {
+  CopyWith$Fragment$invitationDetailFragment$user<TRes> get user {
     final local$user = _instance.user;
-    return CopyWith$Fragment$invitationCardFragment$user(
+    return CopyWith$Fragment$invitationDetailFragment$user(
         local$user, (e) => call(user: e));
   }
 
   TRes acceptedUsers(
-          Iterable<Fragment$invitationCardFragment$acceptedUsers> Function(
+          Iterable<Fragment$invitationDetailFragment$acceptedUsers> Function(
                   Iterable<
-                      CopyWith$Fragment$invitationCardFragment$acceptedUsers<
-                          Fragment$invitationCardFragment$acceptedUsers>>)
+                      CopyWith$Fragment$invitationDetailFragment$acceptedUsers<
+                          Fragment$invitationDetailFragment$acceptedUsers>>)
               _fn) =>
       call(
           acceptedUsers: _fn(_instance.acceptedUsers.map(
-              (e) => CopyWith$Fragment$invitationCardFragment$acceptedUsers(
+              (e) => CopyWith$Fragment$invitationDetailFragment$acceptedUsers(
                     e,
                     (i) => i,
                   ))).toList());
 }
 
-class _CopyWithStubImpl$Fragment$invitationCardFragment<TRes>
-    implements CopyWith$Fragment$invitationCardFragment<TRes> {
-  _CopyWithStubImpl$Fragment$invitationCardFragment(this._res);
+class _CopyWithStubImpl$Fragment$invitationDetailFragment<TRes>
+    implements CopyWith$Fragment$invitationDetailFragment<TRes> {
+  _CopyWithStubImpl$Fragment$invitationDetailFragment(this._res);
 
   TRes _res;
 
   call({
     String? id,
     String? location,
-    Fragment$invitationCardFragment$coordinate? coordinate,
+    Fragment$invitationDetailFragment$coordinate? coordinate,
     String? comment,
     DateTime? startsAt,
     DateTime? expiresAt,
-    Fragment$invitationCardFragment$user? user,
-    List<Fragment$invitationCardFragment$acceptedUsers>? acceptedUsers,
+    Fragment$invitationDetailFragment$user? user,
+    List<Fragment$invitationDetailFragment$acceptedUsers>? acceptedUsers,
     String? $__typename,
   }) =>
       _res;
-  CopyWith$Fragment$invitationCardFragment$coordinate<TRes> get coordinate =>
-      CopyWith$Fragment$invitationCardFragment$coordinate.stub(_res);
-  CopyWith$Fragment$invitationCardFragment$user<TRes> get user =>
-      CopyWith$Fragment$invitationCardFragment$user.stub(_res);
+  CopyWith$Fragment$invitationDetailFragment$coordinate<TRes> get coordinate =>
+      CopyWith$Fragment$invitationDetailFragment$coordinate.stub(_res);
+  CopyWith$Fragment$invitationDetailFragment$user<TRes> get user =>
+      CopyWith$Fragment$invitationDetailFragment$user.stub(_res);
   acceptedUsers(_fn) => _res;
 }
 
-const fragmentDefinitioninvitationCardFragment = FragmentDefinitionNode(
-  name: NameNode(value: 'invitationCardFragment'),
+const fragmentDefinitioninvitationDetailFragment = FragmentDefinitionNode(
+  name: NameNode(value: 'invitationDetailFragment'),
   typeCondition: TypeConditionNode(
       on: NamedTypeNode(
     name: NameNode(value: 'Invitation'),
@@ -469,14 +470,14 @@ const fragmentDefinitioninvitationCardFragment = FragmentDefinitionNode(
     ),
   ]),
 );
-const documentNodeFragmentinvitationCardFragment = DocumentNode(definitions: [
-  fragmentDefinitioninvitationCardFragment,
+const documentNodeFragmentinvitationDetailFragment = DocumentNode(definitions: [
+  fragmentDefinitioninvitationDetailFragment,
 ]);
 
-extension ClientExtension$Fragment$invitationCardFragment
+extension ClientExtension$Fragment$invitationDetailFragment
     on graphql.GraphQLClient {
-  void writeFragment$invitationCardFragment({
-    required Fragment$invitationCardFragment data,
+  void writeFragment$invitationDetailFragment({
+    required Fragment$invitationDetailFragment data,
     required Map<String, dynamic> idFields,
     bool broadcast = true,
   }) =>
@@ -484,14 +485,14 @@ extension ClientExtension$Fragment$invitationCardFragment
         graphql.FragmentRequest(
           idFields: idFields,
           fragment: const graphql.Fragment(
-            fragmentName: 'invitationCardFragment',
-            document: documentNodeFragmentinvitationCardFragment,
+            fragmentName: 'invitationDetailFragment',
+            document: documentNodeFragmentinvitationDetailFragment,
           ),
         ),
         data: data.toJson(),
         broadcast: broadcast,
       );
-  Fragment$invitationCardFragment? readFragment$invitationCardFragment({
+  Fragment$invitationDetailFragment? readFragment$invitationDetailFragment({
     required Map<String, dynamic> idFields,
     bool optimistic = true,
   }) {
@@ -499,31 +500,31 @@ extension ClientExtension$Fragment$invitationCardFragment
       graphql.FragmentRequest(
         idFields: idFields,
         fragment: const graphql.Fragment(
-          fragmentName: 'invitationCardFragment',
-          document: documentNodeFragmentinvitationCardFragment,
+          fragmentName: 'invitationDetailFragment',
+          document: documentNodeFragmentinvitationDetailFragment,
         ),
       ),
       optimistic: optimistic,
     );
     return result == null
         ? null
-        : Fragment$invitationCardFragment.fromJson(result);
+        : Fragment$invitationDetailFragment.fromJson(result);
   }
 }
 
-class Fragment$invitationCardFragment$coordinate {
-  Fragment$invitationCardFragment$coordinate({
+class Fragment$invitationDetailFragment$coordinate {
+  Fragment$invitationDetailFragment$coordinate({
     required this.latitude,
     required this.longitude,
     required this.$__typename,
   });
 
-  factory Fragment$invitationCardFragment$coordinate.fromJson(
+  factory Fragment$invitationDetailFragment$coordinate.fromJson(
       Map<String, dynamic> json) {
     final l$latitude = json['latitude'];
     final l$longitude = json['longitude'];
     final l$$__typename = json['__typename'];
-    return Fragment$invitationCardFragment$coordinate(
+    return Fragment$invitationDetailFragment$coordinate(
       latitude: (l$latitude as num).toDouble(),
       longitude: (l$longitude as num).toDouble(),
       $__typename: (l$$__typename as String),
@@ -564,7 +565,7 @@ class Fragment$invitationCardFragment$coordinate {
     if (identical(this, other)) {
       return true;
     }
-    if (!(other is Fragment$invitationCardFragment$coordinate) ||
+    if (!(other is Fragment$invitationDetailFragment$coordinate) ||
         runtimeType != other.runtimeType) {
       return false;
     }
@@ -587,24 +588,24 @@ class Fragment$invitationCardFragment$coordinate {
   }
 }
 
-extension UtilityExtension$Fragment$invitationCardFragment$coordinate
-    on Fragment$invitationCardFragment$coordinate {
-  CopyWith$Fragment$invitationCardFragment$coordinate<
-          Fragment$invitationCardFragment$coordinate>
-      get copyWith => CopyWith$Fragment$invitationCardFragment$coordinate(
+extension UtilityExtension$Fragment$invitationDetailFragment$coordinate
+    on Fragment$invitationDetailFragment$coordinate {
+  CopyWith$Fragment$invitationDetailFragment$coordinate<
+          Fragment$invitationDetailFragment$coordinate>
+      get copyWith => CopyWith$Fragment$invitationDetailFragment$coordinate(
             this,
             (i) => i,
           );
 }
 
-abstract class CopyWith$Fragment$invitationCardFragment$coordinate<TRes> {
-  factory CopyWith$Fragment$invitationCardFragment$coordinate(
-    Fragment$invitationCardFragment$coordinate instance,
-    TRes Function(Fragment$invitationCardFragment$coordinate) then,
-  ) = _CopyWithImpl$Fragment$invitationCardFragment$coordinate;
+abstract class CopyWith$Fragment$invitationDetailFragment$coordinate<TRes> {
+  factory CopyWith$Fragment$invitationDetailFragment$coordinate(
+    Fragment$invitationDetailFragment$coordinate instance,
+    TRes Function(Fragment$invitationDetailFragment$coordinate) then,
+  ) = _CopyWithImpl$Fragment$invitationDetailFragment$coordinate;
 
-  factory CopyWith$Fragment$invitationCardFragment$coordinate.stub(TRes res) =
-      _CopyWithStubImpl$Fragment$invitationCardFragment$coordinate;
+  factory CopyWith$Fragment$invitationDetailFragment$coordinate.stub(TRes res) =
+      _CopyWithStubImpl$Fragment$invitationDetailFragment$coordinate;
 
   TRes call({
     double? latitude,
@@ -613,16 +614,16 @@ abstract class CopyWith$Fragment$invitationCardFragment$coordinate<TRes> {
   });
 }
 
-class _CopyWithImpl$Fragment$invitationCardFragment$coordinate<TRes>
-    implements CopyWith$Fragment$invitationCardFragment$coordinate<TRes> {
-  _CopyWithImpl$Fragment$invitationCardFragment$coordinate(
+class _CopyWithImpl$Fragment$invitationDetailFragment$coordinate<TRes>
+    implements CopyWith$Fragment$invitationDetailFragment$coordinate<TRes> {
+  _CopyWithImpl$Fragment$invitationDetailFragment$coordinate(
     this._instance,
     this._then,
   );
 
-  final Fragment$invitationCardFragment$coordinate _instance;
+  final Fragment$invitationDetailFragment$coordinate _instance;
 
-  final TRes Function(Fragment$invitationCardFragment$coordinate) _then;
+  final TRes Function(Fragment$invitationDetailFragment$coordinate) _then;
 
   static const _undefined = {};
 
@@ -631,7 +632,7 @@ class _CopyWithImpl$Fragment$invitationCardFragment$coordinate<TRes>
     Object? longitude = _undefined,
     Object? $__typename = _undefined,
   }) =>
-      _then(Fragment$invitationCardFragment$coordinate(
+      _then(Fragment$invitationDetailFragment$coordinate(
         latitude: latitude == _undefined || latitude == null
             ? _instance.latitude
             : (latitude as double),
@@ -644,9 +645,9 @@ class _CopyWithImpl$Fragment$invitationCardFragment$coordinate<TRes>
       ));
 }
 
-class _CopyWithStubImpl$Fragment$invitationCardFragment$coordinate<TRes>
-    implements CopyWith$Fragment$invitationCardFragment$coordinate<TRes> {
-  _CopyWithStubImpl$Fragment$invitationCardFragment$coordinate(this._res);
+class _CopyWithStubImpl$Fragment$invitationDetailFragment$coordinate<TRes>
+    implements CopyWith$Fragment$invitationDetailFragment$coordinate<TRes> {
+  _CopyWithStubImpl$Fragment$invitationDetailFragment$coordinate(this._res);
 
   TRes _res;
 
@@ -658,21 +659,21 @@ class _CopyWithStubImpl$Fragment$invitationCardFragment$coordinate<TRes>
       _res;
 }
 
-class Fragment$invitationCardFragment$user {
-  Fragment$invitationCardFragment$user({
+class Fragment$invitationDetailFragment$user {
+  Fragment$invitationDetailFragment$user({
     required this.id,
     required this.nickname,
     required this.avatarUrl,
     required this.$__typename,
   });
 
-  factory Fragment$invitationCardFragment$user.fromJson(
+  factory Fragment$invitationDetailFragment$user.fromJson(
       Map<String, dynamic> json) {
     final l$id = json['id'];
     final l$nickname = json['nickname'];
     final l$avatarUrl = json['avatarUrl'];
     final l$$__typename = json['__typename'];
-    return Fragment$invitationCardFragment$user(
+    return Fragment$invitationDetailFragment$user(
       id: (l$id as String),
       nickname: (l$nickname as String),
       avatarUrl: (l$avatarUrl as String),
@@ -720,7 +721,7 @@ class Fragment$invitationCardFragment$user {
     if (identical(this, other)) {
       return true;
     }
-    if (!(other is Fragment$invitationCardFragment$user) ||
+    if (!(other is Fragment$invitationDetailFragment$user) ||
         runtimeType != other.runtimeType) {
       return false;
     }
@@ -748,24 +749,24 @@ class Fragment$invitationCardFragment$user {
   }
 }
 
-extension UtilityExtension$Fragment$invitationCardFragment$user
-    on Fragment$invitationCardFragment$user {
-  CopyWith$Fragment$invitationCardFragment$user<
-          Fragment$invitationCardFragment$user>
-      get copyWith => CopyWith$Fragment$invitationCardFragment$user(
+extension UtilityExtension$Fragment$invitationDetailFragment$user
+    on Fragment$invitationDetailFragment$user {
+  CopyWith$Fragment$invitationDetailFragment$user<
+          Fragment$invitationDetailFragment$user>
+      get copyWith => CopyWith$Fragment$invitationDetailFragment$user(
             this,
             (i) => i,
           );
 }
 
-abstract class CopyWith$Fragment$invitationCardFragment$user<TRes> {
-  factory CopyWith$Fragment$invitationCardFragment$user(
-    Fragment$invitationCardFragment$user instance,
-    TRes Function(Fragment$invitationCardFragment$user) then,
-  ) = _CopyWithImpl$Fragment$invitationCardFragment$user;
+abstract class CopyWith$Fragment$invitationDetailFragment$user<TRes> {
+  factory CopyWith$Fragment$invitationDetailFragment$user(
+    Fragment$invitationDetailFragment$user instance,
+    TRes Function(Fragment$invitationDetailFragment$user) then,
+  ) = _CopyWithImpl$Fragment$invitationDetailFragment$user;
 
-  factory CopyWith$Fragment$invitationCardFragment$user.stub(TRes res) =
-      _CopyWithStubImpl$Fragment$invitationCardFragment$user;
+  factory CopyWith$Fragment$invitationDetailFragment$user.stub(TRes res) =
+      _CopyWithStubImpl$Fragment$invitationDetailFragment$user;
 
   TRes call({
     String? id,
@@ -775,16 +776,16 @@ abstract class CopyWith$Fragment$invitationCardFragment$user<TRes> {
   });
 }
 
-class _CopyWithImpl$Fragment$invitationCardFragment$user<TRes>
-    implements CopyWith$Fragment$invitationCardFragment$user<TRes> {
-  _CopyWithImpl$Fragment$invitationCardFragment$user(
+class _CopyWithImpl$Fragment$invitationDetailFragment$user<TRes>
+    implements CopyWith$Fragment$invitationDetailFragment$user<TRes> {
+  _CopyWithImpl$Fragment$invitationDetailFragment$user(
     this._instance,
     this._then,
   );
 
-  final Fragment$invitationCardFragment$user _instance;
+  final Fragment$invitationDetailFragment$user _instance;
 
-  final TRes Function(Fragment$invitationCardFragment$user) _then;
+  final TRes Function(Fragment$invitationDetailFragment$user) _then;
 
   static const _undefined = {};
 
@@ -794,7 +795,7 @@ class _CopyWithImpl$Fragment$invitationCardFragment$user<TRes>
     Object? avatarUrl = _undefined,
     Object? $__typename = _undefined,
   }) =>
-      _then(Fragment$invitationCardFragment$user(
+      _then(Fragment$invitationDetailFragment$user(
         id: id == _undefined || id == null ? _instance.id : (id as String),
         nickname: nickname == _undefined || nickname == null
             ? _instance.nickname
@@ -808,9 +809,9 @@ class _CopyWithImpl$Fragment$invitationCardFragment$user<TRes>
       ));
 }
 
-class _CopyWithStubImpl$Fragment$invitationCardFragment$user<TRes>
-    implements CopyWith$Fragment$invitationCardFragment$user<TRes> {
-  _CopyWithStubImpl$Fragment$invitationCardFragment$user(this._res);
+class _CopyWithStubImpl$Fragment$invitationDetailFragment$user<TRes>
+    implements CopyWith$Fragment$invitationDetailFragment$user<TRes> {
+  _CopyWithStubImpl$Fragment$invitationDetailFragment$user(this._res);
 
   TRes _res;
 
@@ -823,21 +824,21 @@ class _CopyWithStubImpl$Fragment$invitationCardFragment$user<TRes>
       _res;
 }
 
-class Fragment$invitationCardFragment$acceptedUsers {
-  Fragment$invitationCardFragment$acceptedUsers({
+class Fragment$invitationDetailFragment$acceptedUsers {
+  Fragment$invitationDetailFragment$acceptedUsers({
     required this.id,
     required this.nickname,
     required this.avatarUrl,
     required this.$__typename,
   });
 
-  factory Fragment$invitationCardFragment$acceptedUsers.fromJson(
+  factory Fragment$invitationDetailFragment$acceptedUsers.fromJson(
       Map<String, dynamic> json) {
     final l$id = json['id'];
     final l$nickname = json['nickname'];
     final l$avatarUrl = json['avatarUrl'];
     final l$$__typename = json['__typename'];
-    return Fragment$invitationCardFragment$acceptedUsers(
+    return Fragment$invitationDetailFragment$acceptedUsers(
       id: (l$id as String),
       nickname: (l$nickname as String),
       avatarUrl: (l$avatarUrl as String),
@@ -885,7 +886,7 @@ class Fragment$invitationCardFragment$acceptedUsers {
     if (identical(this, other)) {
       return true;
     }
-    if (!(other is Fragment$invitationCardFragment$acceptedUsers) ||
+    if (!(other is Fragment$invitationDetailFragment$acceptedUsers) ||
         runtimeType != other.runtimeType) {
       return false;
     }
@@ -913,25 +914,25 @@ class Fragment$invitationCardFragment$acceptedUsers {
   }
 }
 
-extension UtilityExtension$Fragment$invitationCardFragment$acceptedUsers
-    on Fragment$invitationCardFragment$acceptedUsers {
-  CopyWith$Fragment$invitationCardFragment$acceptedUsers<
-          Fragment$invitationCardFragment$acceptedUsers>
-      get copyWith => CopyWith$Fragment$invitationCardFragment$acceptedUsers(
+extension UtilityExtension$Fragment$invitationDetailFragment$acceptedUsers
+    on Fragment$invitationDetailFragment$acceptedUsers {
+  CopyWith$Fragment$invitationDetailFragment$acceptedUsers<
+          Fragment$invitationDetailFragment$acceptedUsers>
+      get copyWith => CopyWith$Fragment$invitationDetailFragment$acceptedUsers(
             this,
             (i) => i,
           );
 }
 
-abstract class CopyWith$Fragment$invitationCardFragment$acceptedUsers<TRes> {
-  factory CopyWith$Fragment$invitationCardFragment$acceptedUsers(
-    Fragment$invitationCardFragment$acceptedUsers instance,
-    TRes Function(Fragment$invitationCardFragment$acceptedUsers) then,
-  ) = _CopyWithImpl$Fragment$invitationCardFragment$acceptedUsers;
+abstract class CopyWith$Fragment$invitationDetailFragment$acceptedUsers<TRes> {
+  factory CopyWith$Fragment$invitationDetailFragment$acceptedUsers(
+    Fragment$invitationDetailFragment$acceptedUsers instance,
+    TRes Function(Fragment$invitationDetailFragment$acceptedUsers) then,
+  ) = _CopyWithImpl$Fragment$invitationDetailFragment$acceptedUsers;
 
-  factory CopyWith$Fragment$invitationCardFragment$acceptedUsers.stub(
+  factory CopyWith$Fragment$invitationDetailFragment$acceptedUsers.stub(
           TRes res) =
-      _CopyWithStubImpl$Fragment$invitationCardFragment$acceptedUsers;
+      _CopyWithStubImpl$Fragment$invitationDetailFragment$acceptedUsers;
 
   TRes call({
     String? id,
@@ -941,16 +942,16 @@ abstract class CopyWith$Fragment$invitationCardFragment$acceptedUsers<TRes> {
   });
 }
 
-class _CopyWithImpl$Fragment$invitationCardFragment$acceptedUsers<TRes>
-    implements CopyWith$Fragment$invitationCardFragment$acceptedUsers<TRes> {
-  _CopyWithImpl$Fragment$invitationCardFragment$acceptedUsers(
+class _CopyWithImpl$Fragment$invitationDetailFragment$acceptedUsers<TRes>
+    implements CopyWith$Fragment$invitationDetailFragment$acceptedUsers<TRes> {
+  _CopyWithImpl$Fragment$invitationDetailFragment$acceptedUsers(
     this._instance,
     this._then,
   );
 
-  final Fragment$invitationCardFragment$acceptedUsers _instance;
+  final Fragment$invitationDetailFragment$acceptedUsers _instance;
 
-  final TRes Function(Fragment$invitationCardFragment$acceptedUsers) _then;
+  final TRes Function(Fragment$invitationDetailFragment$acceptedUsers) _then;
 
   static const _undefined = {};
 
@@ -960,7 +961,7 @@ class _CopyWithImpl$Fragment$invitationCardFragment$acceptedUsers<TRes>
     Object? avatarUrl = _undefined,
     Object? $__typename = _undefined,
   }) =>
-      _then(Fragment$invitationCardFragment$acceptedUsers(
+      _then(Fragment$invitationDetailFragment$acceptedUsers(
         id: id == _undefined || id == null ? _instance.id : (id as String),
         nickname: nickname == _undefined || nickname == null
             ? _instance.nickname
@@ -974,9 +975,9 @@ class _CopyWithImpl$Fragment$invitationCardFragment$acceptedUsers<TRes>
       ));
 }
 
-class _CopyWithStubImpl$Fragment$invitationCardFragment$acceptedUsers<TRes>
-    implements CopyWith$Fragment$invitationCardFragment$acceptedUsers<TRes> {
-  _CopyWithStubImpl$Fragment$invitationCardFragment$acceptedUsers(this._res);
+class _CopyWithStubImpl$Fragment$invitationDetailFragment$acceptedUsers<TRes>
+    implements CopyWith$Fragment$invitationDetailFragment$acceptedUsers<TRes> {
+  _CopyWithStubImpl$Fragment$invitationDetailFragment$acceptedUsers(this._res);
 
   TRes _res;
 

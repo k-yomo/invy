@@ -197,6 +197,7 @@ class InvitationDetailFormState extends ConsumerState<InvitationDetailForm> {
 
     useEffect(() {
       locationController.text = invitationLocationName;
+      return null;
     }, []);
 
     return KeyboardActions(

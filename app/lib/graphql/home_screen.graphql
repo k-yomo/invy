@@ -2,15 +2,15 @@
 query homeScreenViewer {
     viewer {
         sentInvitations {
-            ...invitationCardFragment
+            ...invitationDetailFragment
         }
 
         pendingInvitations {
-            ...invitationCardFragment
+            ...invitationDetailFragment
         }
 
         acceptedInvitations {
-            ...invitationCardFragment
+            ...invitationDetailFragment
         }
     }
 }
@@ -18,7 +18,7 @@ query homeScreenViewer {
 mutation acceptInvitation($invitationId: UUID!) {
     acceptInvitation(invitationId: $invitationId) {
         invitation {
-            ...invitationCardFragment
+            ...invitationDetailFragment
         }
     }
 }

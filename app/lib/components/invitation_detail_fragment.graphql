@@ -1,5 +1,5 @@
 
-fragment invitationCardFragment on Invitation {
+fragment invitationDetailFragment on Invitation {
     id
     location
     coordinate {
