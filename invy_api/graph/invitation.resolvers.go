@@ -164,7 +164,8 @@ func (r *mutationResolver) SendInvitation(ctx context.Context, input *gqlmodel.S
 	r.FCMClient.SendMulticast(ctx, &fcm.MulticastMessage{
 		Tokens: fcmTokens,
 		Data: map[string]string{
-			"type": gqlmodel.PushNotificationTypeInvitationReceived.String(),
+			"type":         gqlmodel.PushNotificationTypeInvitationReceived.String(),
+			"invitationId": dbInvitation.ID.String(),
 		},
 		Notification: &fcm.Notification{
 			Body: fmt.Sprintf("%sさんから、%s開催のさそいが届きました。", inviterProfile.Nickname, dbInvitation.Location),
@@ -234,7 +235,8 @@ func (r *mutationResolver) AcceptInvitation(ctx context.Context, invitationID uu
 	r.FCMClient.SendMulticast(ctx, &fcm.MulticastMessage{
 		Tokens: fcmTokens,
 		Data: map[string]string{
-			"type": gqlmodel.PushNotificationTypeInvitationAccepted.String(),
+			"type":         gqlmodel.PushNotificationTypeInvitationAccepted.String(),
+			"invitationId": invitationID.String(),
 		},
 		Notification: &fcm.Notification{
 			Body: fmt.Sprintf("%sさんがさそいを承諾しました。", acceptedUserProfile.Nickname),
