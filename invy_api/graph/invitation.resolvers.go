@@ -26,9 +26,11 @@ import (
 	"github.com/k-yomo/invy/invy_api/graph/gqlmodel"
 	"github.com/k-yomo/invy/invy_api/graph/loader"
 	"github.com/k-yomo/invy/pkg/convutil"
+	"github.com/k-yomo/invy/pkg/logging"
 	"github.com/k-yomo/invy/pkg/pgutil"
 	"github.com/k-yomo/invy/pkg/sliceutil"
 	"github.com/twpayne/go-geom"
+	"go.uber.org/zap"
 )
 
 // User is the resolver for the user field.
@@ -161,7 +163,8 @@ func (r *mutationResolver) SendInvitation(ctx context.Context, input *gqlmodel.S
 		return from.FcmToken
 	})
 	// TODO: Chunk tokens by 500 (max tokens per multicast)
-	r.FCMClient.SendMulticast(ctx, &fcm.MulticastMessage{
+	// TODO: delete expired tokens
+	_, err = r.FCMClient.SendMulticast(ctx, &fcm.MulticastMessage{
 		Tokens: fcmTokens,
 		Data: map[string]string{
 			"type":         gqlmodel.PushNotificationTypeInvitationReceived.String(),
@@ -174,6 +177,9 @@ func (r *mutationResolver) SendInvitation(ctx context.Context, input *gqlmodel.S
 			Priority: "high",
 		},
 	})
+	if err != nil {
+		logging.Logger(ctx).Error(err.Error(), zap.String("invitationId", dbInvitation.ID.String()))
+	}
 	return &gqlmodel.SendInvitationPayload{Invitation: conv.ConvertFromDBInvitation(dbInvitation)}, nil
 }
 
@@ -232,7 +238,7 @@ func (r *mutationResolver) AcceptInvitation(ctx context.Context, invitationID uu
 		return from.FcmToken
 	})
 	// TODO: Chunk tokens by 500 (max tokens per multicast)
-	r.FCMClient.SendMulticast(ctx, &fcm.MulticastMessage{
+	_, err = r.FCMClient.SendMulticast(ctx, &fcm.MulticastMessage{
 		Tokens: fcmTokens,
 		Data: map[string]string{
 			"type":         gqlmodel.PushNotificationTypeInvitationAccepted.String(),
@@ -245,6 +251,9 @@ func (r *mutationResolver) AcceptInvitation(ctx context.Context, invitationID uu
 			Priority: "high",
 		},
 	})
+	if err != nil {
+		logging.Logger(ctx).Error(err.Error(), zap.String("invitationId", invitationID.String()))
+	}
 
 	dbInvitation, err := r.DB.Invitation.Get(ctx, invitationID)
 	if err != nil {
