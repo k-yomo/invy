@@ -61,6 +61,11 @@
 	<false/>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>LSApplicationQueriesSchemes</key>
+    <array>
+        <string>googlechromes</string>
+        <string>comgooglemaps</string>
+    </array>
     <key>NSLocationWhenInUseUsageDescription</key>
     <string>開催地の入力補助に利用します。</string>
     <key>NSLocationAlwaysUsageDescription</key>
