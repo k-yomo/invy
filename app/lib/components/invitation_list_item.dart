@@ -97,8 +97,8 @@ class InvitationListItem extends StatelessWidget {
                 ),
                 invitation.comment.isNotEmpty
                     ? Container(
-                        margin: const EdgeInsets.only(
-                            top: 5, left: 5, right: 5),
+                        margin:
+                            const EdgeInsets.only(top: 5, left: 5, right: 5),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -116,7 +116,8 @@ class InvitationListItem extends StatelessWidget {
                       )
                     : const SizedBox(),
                 Container(
-                  margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+                  margin:
+                      const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
                   child: Column(
                     children: invitation.acceptedUsers.isNotEmpty
                         ? [
@@ -124,7 +125,8 @@ class InvitationListItem extends StatelessWidget {
                               width: double.infinity,
                               child: const Text("参加者",
                                   style: TextStyle(
-                                      fontSize: 12, fontWeight: FontWeight.bold)),
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold)),
                             ),
                             Container(
                               width: double.infinity,
