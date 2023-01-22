@@ -20,10 +20,10 @@ import 'app.dart';
 import 'graphql/schema.graphql.dart';
 import 'state/badge_count.dart';
 
+@pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Hive.initFlutter();
   await Firebase.initializeApp();
-
   if (message.data["type"] ==
       toJson$Enum$PushNotificationType(
           Enum$PushNotificationType.INVITATION_RECEIVED)) {

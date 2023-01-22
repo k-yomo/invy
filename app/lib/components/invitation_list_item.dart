@@ -74,10 +74,15 @@ class InvitationListItem extends StatelessWidget {
                                   fontSize: 14, fontWeight: FontWeight.bold),
                               overflow: TextOverflow.ellipsis,
                             ),
-                            Text(
-                              invitation.location,
-                              style: const TextStyle(fontSize: 12),
-                              overflow: TextOverflow.ellipsis,
+                            Row(
+                              children: [
+                                const Icon(Icons.fmd_good, size: 20),
+                                Text(
+                                  invitation.location,
+                                  style: const TextStyle(fontSize: 12),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ],
                             )
                           ],
                         ),
@@ -85,12 +90,9 @@ class InvitationListItem extends StatelessWidget {
                     ),
                     Container(
                       margin: const EdgeInsets.only(top: 5, left: 5, bottom: 5),
-                      child: Container(
-                        margin: const EdgeInsets.only(left: 5),
-                        child: Text(
-                          "${_convertToDisplayTime(invitation.startsAt)}〜",
-                          style: const TextStyle(fontSize: 12),
-                        ),
+                      child: Text(
+                        "${_convertToDisplayTime(invitation.startsAt)}〜",
+                        style: const TextStyle(fontSize: 12),
                       ),
                     ),
                   ],

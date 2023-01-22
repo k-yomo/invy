@@ -77,9 +77,11 @@ class InvitationDetailScreen extends HookConsumerWidget {
                     ),
                     Positioned(
                       bottom: 10,
+                      right: 10,
                       child: TextButton(
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.black,
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
                         ),
                         onPressed: () {
                           _launchMapApp(invitation.coordinate.latitude,
@@ -247,7 +249,8 @@ class InvitationDetailScreen extends HookConsumerWidget {
 }
 
 _launchMapApp(double latitude, double longitude) async {
-  final googleUrl = Uri.parse('comgooglemaps://?center=$latitude,$longitude');
+  final googleUrl =
+      Uri.parse('comgooglemaps://?q=$latitude,$longitude&zoom=16');
   final appleUrl =
       Uri.parse('https://maps.apple.com/?sll=$latitude},$longitude}');
   if (await canLaunchUrl(Uri.parse("comgooglemaps://"))) {

@@ -48,54 +48,61 @@ class HomeScreen extends HookConsumerWidget {
                 children: [
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: viewer.pendingInvitations.isEmpty ? [] : [
-                      const SubTitle(text: "届いている招待"),
-                      const Gap(10),
-                      Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 5),
-                        child: Column(
-                          children: [
-                            ...viewer.pendingInvitations.map((invitation) =>
-                                    (Container(
-                                      margin: const EdgeInsets.symmetric(
-                                          vertical: 5),
-                                      child: InvitationListItem(
-                                        invitation: invitation,
-                                        onAccepted: (invitationId) async {
-                                          final result = await graphqlClient
-                                              .mutate$acceptInvitation(
-                                                  Options$Mutation$acceptInvitation(
-                                            variables:
-                                                Variables$Mutation$acceptInvitation(
-                                                    invitationId: invitationId),
-                                          ));
-                                          if (result.parsedData
-                                                  ?.acceptInvitation !=
-                                              null) {
-                                            viewerQuery.refetch();
-                                          }
-                                        },
-                                        onDenied: (invitationId) async {
-                                          final result = await graphqlClient
-                                              .mutate$denyInvitation(
-                                                  Options$Mutation$denyInvitation(
-                                            variables:
-                                                Variables$Mutation$denyInvitation(
-                                                    invitationId: invitationId),
-                                          ));
-                                          if (result
-                                                  .parsedData?.denyInvitation !=
-                                              null) {
-                                            viewerQuery.refetch();
-                                          }
-                                        },
-                                      ),
-                                    ))) ??
-                                []
+                    children: viewer.pendingInvitations.isEmpty
+                        ? []
+                        : [
+                            const SubTitle(text: "届いている招待"),
+                            const Gap(10),
+                            Container(
+                              margin: const EdgeInsets.symmetric(horizontal: 5),
+                              child: Column(
+                                children: [
+                                  ...viewer.pendingInvitations
+                                          .map((invitation) => (Container(
+                                                margin:
+                                                    const EdgeInsets.symmetric(
+                                                        vertical: 5),
+                                                child: InvitationListItem(
+                                                  invitation: invitation,
+                                                  onAccepted:
+                                                      (invitationId) async {
+                                                    final result = await graphqlClient
+                                                        .mutate$acceptInvitation(
+                                                            Options$Mutation$acceptInvitation(
+                                                      variables:
+                                                          Variables$Mutation$acceptInvitation(
+                                                              invitationId:
+                                                                  invitationId),
+                                                    ));
+                                                    if (result.parsedData
+                                                            ?.acceptInvitation !=
+                                                        null) {
+                                                      viewerQuery.refetch();
+                                                    }
+                                                  },
+                                                  onDenied:
+                                                      (invitationId) async {
+                                                    final result = await graphqlClient
+                                                        .mutate$denyInvitation(
+                                                            Options$Mutation$denyInvitation(
+                                                      variables:
+                                                          Variables$Mutation$denyInvitation(
+                                                              invitationId:
+                                                                  invitationId),
+                                                    ));
+                                                    if (result.parsedData
+                                                            ?.denyInvitation !=
+                                                        null) {
+                                                      viewerQuery.refetch();
+                                                    }
+                                                  },
+                                                ),
+                                              ))) ??
+                                      []
+                                ],
+                              ),
+                            ),
                           ],
-                        ),
-                      ),
-                    ],
                   ),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
