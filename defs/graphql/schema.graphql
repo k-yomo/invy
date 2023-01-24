@@ -33,3 +33,12 @@ type PageInfo {
     hasNextPage: Boolean!
     hasPreviousPage: Boolean!
 }
+
+enum ErrorCode {
+    INVALID_ARGUMENT
+    UNAUTHENTICATED
+    FORBIDDEN
+    NOT_FOUND
+    ALREADY_EXISTS
+    INTERNAL
+}

@@ -141,6 +141,7 @@ type ComplexityRoot struct {
 		UpdateAvatar                  func(childComplexity int, avatar graphql.Upload) int
 		UpdateFriendGroup             func(childComplexity int, input gqlmodel.UpdateFriendGroupInput) int
 		UpdateNickname                func(childComplexity int, nickname string) int
+		UpdateScreenID                func(childComplexity int, screenID string) int
 	}
 
 	MuteUserPayload struct {
@@ -197,6 +198,10 @@ type ComplexityRoot struct {
 	}
 
 	UpdateNicknamePayload struct {
+		Viewer func(childComplexity int) int
+	}
+
+	UpdateScreenIdPayload struct {
 		Viewer func(childComplexity int) int
 	}
 
@@ -267,6 +272,7 @@ type MutationResolver interface {
 	RegisterPushNotificationToken(ctx context.Context, input *gqlmodel.RegisterPushNotificationTokenInput) (*gqlmodel.RegisterPushNotificationTokenPayload, error)
 	UpdateAvatar(ctx context.Context, avatar graphql.Upload) (*gqlmodel.UpdateAvatarPayload, error)
 	UpdateNickname(ctx context.Context, nickname string) (*gqlmodel.UpdateNicknamePayload, error)
+	UpdateScreenID(ctx context.Context, screenID string) (*gqlmodel.UpdateScreenIDPayload, error)
 	MuteUser(ctx context.Context, userID uuid.UUID) (*gqlmodel.MuteUserPayload, error)
 	UnmuteUser(ctx context.Context, userID uuid.UUID) (*gqlmodel.UnmuteUserPayload, error)
 }
@@ -739,6 +745,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.UpdateNickname(childComplexity, args["nickname"].(string)), true
 
+	case "Mutation.updateScreenId":
+		if e.complexity.Mutation.UpdateScreenID == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updateScreenId_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdateScreenID(childComplexity, args["screenId"].(string)), true
+
 	case "MuteUserPayload.mutedUserId":
 		if e.complexity.MuteUserPayload.MutedUserID == nil {
 			break
@@ -874,6 +892,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.UpdateNicknamePayload.Viewer(childComplexity), true
+
+	case "UpdateScreenIdPayload.viewer":
+		if e.complexity.UpdateScreenIdPayload.Viewer == nil {
+			break
+		}
+
+		return e.complexity.UpdateScreenIdPayload.Viewer(childComplexity), true
 
 	case "User.avatarUrl":
 		if e.complexity.User.AvatarURL == nil {
@@ -1320,6 +1345,15 @@ type PageInfo {
     hasNextPage: Boolean!
     hasPreviousPage: Boolean!
 }
+
+enum ErrorCode {
+    INVALID_ARGUMENT
+    UNAUTHENTICATED
+    FORBIDDEN
+    NOT_FOUND
+    ALREADY_EXISTS
+    INTERNAL
+}
 `, BuiltIn: false},
 	{Name: "../../../defs/graphql/user.graphql", Input: `
 extend type Query {
@@ -1332,6 +1366,7 @@ extend type Query {
 extend type Mutation {
     updateAvatar(avatar: Upload!): UpdateAvatarPayload! @authRequired
     updateNickname(nickname: String!): UpdateNicknamePayload! @authRequired
+    updateScreenId(screenId: String!): UpdateScreenIdPayload! @authRequired
     muteUser(userId: UUID!): MuteUserPayload! @authRequired
     unmuteUser(userId: UUID!): UnmuteUserPayload! @authRequired
 }
@@ -1387,6 +1422,10 @@ type UpdateAvatarPayload {
 }
 
 type UpdateNicknamePayload {
+    viewer: Viewer!
+}
+
+type UpdateScreenIdPayload {
     viewer: Viewer!
 }
 
@@ -1714,6 +1753,21 @@ func (ec *executionContext) field_Mutation_updateNickname_args(ctx context.Conte
 		}
 	}
 	args["nickname"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_updateScreenId_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["screenId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("screenId"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["screenId"] = arg0
 	return args, nil
 }
 
@@ -4643,6 +4697,85 @@ func (ec *executionContext) fieldContext_Mutation_updateNickname(ctx context.Con
 	return fc, nil
 }
 
+func (ec *executionContext) _Mutation_updateScreenId(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_updateScreenId(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().UpdateScreenID(rctx, fc.Args["screenId"].(string))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.AuthRequired == nil {
+				return nil, errors.New("directive authRequired is not implemented")
+			}
+			return ec.directives.AuthRequired(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*gqlmodel.UpdateScreenIDPayload); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/k-yomo/invy/invy_api/graph/gqlmodel.UpdateScreenIDPayload`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.UpdateScreenIDPayload)
+	fc.Result = res
+	return ec.marshalNUpdateScreenIdPayload2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐUpdateScreenIDPayload(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_updateScreenId(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "viewer":
+				return ec.fieldContext_UpdateScreenIdPayload_viewer(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type UpdateScreenIdPayload", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_updateScreenId_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Mutation_muteUser(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Mutation_muteUser(ctx, field)
 	if err != nil {
@@ -5966,6 +6099,76 @@ func (ec *executionContext) _UpdateNicknamePayload_viewer(ctx context.Context, f
 func (ec *executionContext) fieldContext_UpdateNicknamePayload_viewer(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "UpdateNicknamePayload",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Viewer_id(ctx, field)
+			case "screenId":
+				return ec.fieldContext_Viewer_screenId(ctx, field)
+			case "nickname":
+				return ec.fieldContext_Viewer_nickname(ctx, field)
+			case "avatarUrl":
+				return ec.fieldContext_Viewer_avatarUrl(ctx, field)
+			case "friends":
+				return ec.fieldContext_Viewer_friends(ctx, field)
+			case "pendingFriendshipRequests":
+				return ec.fieldContext_Viewer_pendingFriendshipRequests(ctx, field)
+			case "requestingFriendshipRequests":
+				return ec.fieldContext_Viewer_requestingFriendshipRequests(ctx, field)
+			case "friendGroup":
+				return ec.fieldContext_Viewer_friendGroup(ctx, field)
+			case "friendGroups":
+				return ec.fieldContext_Viewer_friendGroups(ctx, field)
+			case "sentInvitations":
+				return ec.fieldContext_Viewer_sentInvitations(ctx, field)
+			case "pendingInvitations":
+				return ec.fieldContext_Viewer_pendingInvitations(ctx, field)
+			case "acceptedInvitations":
+				return ec.fieldContext_Viewer_acceptedInvitations(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Viewer", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _UpdateScreenIdPayload_viewer(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.UpdateScreenIDPayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UpdateScreenIdPayload_viewer(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Viewer, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.Viewer)
+	fc.Result = res
+	return ec.marshalNViewer2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐViewer(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_UpdateScreenIdPayload_viewer(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "UpdateScreenIdPayload",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -10122,6 +10325,15 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "updateScreenId":
+
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_updateScreenId(ctx, field)
+			})
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "muteUser":
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
@@ -10598,6 +10810,34 @@ func (ec *executionContext) _UpdateNicknamePayload(ctx context.Context, sel ast.
 		case "viewer":
 
 			out.Values[i] = ec._UpdateNicknamePayload_viewer(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var updateScreenIdPayloadImplementors = []string{"UpdateScreenIdPayload"}
+
+func (ec *executionContext) _UpdateScreenIdPayload(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.UpdateScreenIDPayload) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, updateScreenIdPayloadImplementors)
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("UpdateScreenIdPayload")
+		case "viewer":
+
+			out.Values[i] = ec._UpdateScreenIdPayload_viewer(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				invalids++
@@ -11921,6 +12161,20 @@ func (ec *executionContext) marshalNUpdateNicknamePayload2ᚖgithubᚗcomᚋkᚑ
 		return graphql.Null
 	}
 	return ec._UpdateNicknamePayload(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNUpdateScreenIdPayload2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐUpdateScreenIDPayload(ctx context.Context, sel ast.SelectionSet, v gqlmodel.UpdateScreenIDPayload) graphql.Marshaler {
+	return ec._UpdateScreenIdPayload(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNUpdateScreenIdPayload2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐUpdateScreenIDPayload(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.UpdateScreenIDPayload) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._UpdateScreenIdPayload(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNUpload2githubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚐUpload(ctx context.Context, v interface{}) (graphql.Upload, error) {

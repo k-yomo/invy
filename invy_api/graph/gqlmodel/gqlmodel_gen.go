@@ -181,6 +181,10 @@ type UpdateNicknamePayload struct {
 	Viewer *Viewer `json:"viewer"`
 }
 
+type UpdateScreenIDPayload struct {
+	Viewer *Viewer `json:"viewer"`
+}
+
 type User struct {
 	ID                     uuid.UUID `json:"id"`
 	Nickname               string    `json:"nickname"`
@@ -260,6 +264,55 @@ func (e *ConstraintFormat) UnmarshalGQL(v interface{}) error {
 }
 
 func (e ConstraintFormat) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type ErrorCode string
+
+const (
+	ErrorCodeInvalidArgument ErrorCode = "INVALID_ARGUMENT"
+	ErrorCodeUnauthenticated ErrorCode = "UNAUTHENTICATED"
+	ErrorCodeForbidden       ErrorCode = "FORBIDDEN"
+	ErrorCodeNotFound        ErrorCode = "NOT_FOUND"
+	ErrorCodeAlreadyExists   ErrorCode = "ALREADY_EXISTS"
+	ErrorCodeInternal        ErrorCode = "INTERNAL"
+)
+
+var AllErrorCode = []ErrorCode{
+	ErrorCodeInvalidArgument,
+	ErrorCodeUnauthenticated,
+	ErrorCodeForbidden,
+	ErrorCodeNotFound,
+	ErrorCodeAlreadyExists,
+	ErrorCodeInternal,
+}
+
+func (e ErrorCode) IsValid() bool {
+	switch e {
+	case ErrorCodeInvalidArgument, ErrorCodeUnauthenticated, ErrorCodeForbidden, ErrorCodeNotFound, ErrorCodeAlreadyExists, ErrorCodeInternal:
+		return true
+	}
+	return false
+}
+
+func (e ErrorCode) String() string {
+	return string(e)
+}
+
+func (e *ErrorCode) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = ErrorCode(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid ErrorCode", str)
+	}
+	return nil
+}
+
+func (e ErrorCode) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 

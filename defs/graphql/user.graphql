@@ -9,6 +9,7 @@ extend type Query {
 extend type Mutation {
     updateAvatar(avatar: Upload!): UpdateAvatarPayload! @authRequired
     updateNickname(nickname: String!): UpdateNicknamePayload! @authRequired
+    updateScreenId(screenId: String!): UpdateScreenIdPayload! @authRequired
     muteUser(userId: UUID!): MuteUserPayload! @authRequired
     unmuteUser(userId: UUID!): UnmuteUserPayload! @authRequired
 }
@@ -64,6 +65,10 @@ type UpdateAvatarPayload {
 }
 
 type UpdateNicknamePayload {
+    viewer: Viewer!
+}
+
+type UpdateScreenIdPayload {
     viewer: Viewer!
 }
 

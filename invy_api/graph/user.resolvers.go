@@ -31,6 +31,7 @@ import (
 	"github.com/k-yomo/invy/invy_api/graph/gqlgen"
 	"github.com/k-yomo/invy/invy_api/graph/gqlmodel"
 	"github.com/k-yomo/invy/invy_api/graph/loader"
+	"github.com/k-yomo/invy/invy_api/internal/xerrors"
 	"github.com/k-yomo/invy/pkg/convutil"
 	"github.com/k-yomo/invy/pkg/sliceutil"
 )
@@ -76,6 +77,28 @@ func (r *mutationResolver) UpdateNickname(ctx context.Context, nickname string) 
 		return nil, err
 	}
 	return &gqlmodel.UpdateNicknamePayload{Viewer: conv.ConvertFromDBUserProfileToViewer(dbUserProfile)}, nil
+}
+
+// UpdateScreenID is the resolver for the updateScreenId field.
+func (r *mutationResolver) UpdateScreenID(ctx context.Context, screenID string) (*gqlmodel.UpdateScreenIDPayload, error) {
+	authUserID := auth.GetCurrentUserID(ctx)
+	err := r.DB.UserProfile.Update().
+		Where(userprofile.UserID(authUserID)).
+		SetScreenID(screenID).
+		Exec(ctx)
+	if err != nil {
+		return nil, err
+	}
+	dbUserProfile, err := r.DB.UserProfile.Query().
+		Where(userprofile.UserID(authUserID)).
+		Only(ctx)
+	if err != nil {
+		if ent.IsConstraintError(err) {
+			return nil, xerrors.New(err, gqlmodel.ErrorCodeAlreadyExists)
+		}
+		return nil, err
+	}
+	return &gqlmodel.UpdateScreenIDPayload{Viewer: conv.ConvertFromDBUserProfileToViewer(dbUserProfile)}, nil
 }
 
 // MuteUser is the resolver for the muteUser field.

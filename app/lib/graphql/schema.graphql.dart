@@ -987,6 +987,49 @@ Enum$ConstraintFormat fromJson$Enum$ConstraintFormat(String value) {
   }
 }
 
+enum Enum$ErrorCode {
+  INVALID_ARGUMENT,
+  UNAUTHENTICATED,
+  FORBIDDEN,
+  NOT_FOUND,
+  ALREADY_EXISTS,
+  $unknown
+}
+
+String toJson$Enum$ErrorCode(Enum$ErrorCode e) {
+  switch (e) {
+    case Enum$ErrorCode.INVALID_ARGUMENT:
+      return r'INVALID_ARGUMENT';
+    case Enum$ErrorCode.UNAUTHENTICATED:
+      return r'UNAUTHENTICATED';
+    case Enum$ErrorCode.FORBIDDEN:
+      return r'FORBIDDEN';
+    case Enum$ErrorCode.NOT_FOUND:
+      return r'NOT_FOUND';
+    case Enum$ErrorCode.ALREADY_EXISTS:
+      return r'ALREADY_EXISTS';
+    case Enum$ErrorCode.$unknown:
+      return r'$unknown';
+  }
+}
+
+Enum$ErrorCode fromJson$Enum$ErrorCode(String value) {
+  switch (value) {
+    case r'INVALID_ARGUMENT':
+      return Enum$ErrorCode.INVALID_ARGUMENT;
+    case r'UNAUTHENTICATED':
+      return Enum$ErrorCode.UNAUTHENTICATED;
+    case r'FORBIDDEN':
+      return Enum$ErrorCode.FORBIDDEN;
+    case r'NOT_FOUND':
+      return Enum$ErrorCode.NOT_FOUND;
+    case r'ALREADY_EXISTS':
+      return Enum$ErrorCode.ALREADY_EXISTS;
+    default:
+      return Enum$ErrorCode.$unknown;
+  }
+}
+
 enum Enum$PushNotificationType {
   FRIENDSHIP_REQUEST_RECEIVED,
   FRIENDSHIP_REQUEST_ACCEPTED,

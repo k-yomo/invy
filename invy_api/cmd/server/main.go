@@ -114,7 +114,7 @@ func main() {
 		},
 	}
 	gqlServer := handler.NewDefaultServer(gqlgen.NewExecutableSchema(gqlConfig))
-	// gqlServer.SetErrorPresenter(graph.NewErrorPresenter())
+	gqlServer.SetErrorPresenter(graph.NewErrorPresenter())
 	gqlServer.Use(tracing.GraphqlExtension{})
 	gqlServer.Use(logging.GraphQLResponseInterceptor{})
 

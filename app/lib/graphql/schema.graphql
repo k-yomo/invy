@@ -63,6 +63,14 @@ type DenyInvitationPayload {
   invitation: Invitation!
 }
 
+enum ErrorCode {
+  INVALID_ARGUMENT
+  UNAUTHENTICATED
+  FORBIDDEN
+  NOT_FOUND
+  ALREADY_EXISTS
+}
+
 type FriendGroup implements Node {
   id: UUID!
   userId: UUID!
@@ -110,6 +118,7 @@ type Mutation {
   registerPushNotificationToken(input: RegisterPushNotificationTokenInput): RegisterPushNotificationTokenPayload!
   updateAvatar(avatar: Upload!): UpdateAvatarPayload!
   updateNickname(nickname: String!): UpdateNicknamePayload!
+  updateScreenId(screenId: String!): UpdateScreenIdPayload!
   muteUser(userId: UUID!): MuteUserPayload!
   unmuteUser(userId: UUID!): UnmuteUserPayload!
 }
@@ -212,6 +221,10 @@ type UpdateFriendGroupPayload {
 }
 
 type UpdateNicknamePayload {
+  viewer: Viewer!
+}
+
+type UpdateScreenIdPayload {
   viewer: Viewer!
 }
 
