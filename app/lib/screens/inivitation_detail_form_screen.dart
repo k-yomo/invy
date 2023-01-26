@@ -353,6 +353,19 @@ class InvitationDetailFormState extends ConsumerState<InvitationDetailForm> {
                       foregroundColor: Colors.black),
                   onPressed: () {
                     expiresAtController.text = DateFormat(dateTimeFormat)
+                        .format(now.add(const Duration(hours: 1)));
+                  },
+                  child: const Text("1時間後"),
+                ),
+                const Gap(5),
+                OutlinedButton(
+                  style: ElevatedButton.styleFrom(
+                      minimumSize: Size.zero,
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 5, horizontal: 10),
+                      foregroundColor: Colors.black),
+                  onPressed: () {
+                    expiresAtController.text = DateFormat(dateTimeFormat)
                         .format(DateTime(now.year, now.month, now.day + 1)
                             .subtract(const Duration(milliseconds: 1)));
                   },
