@@ -228,6 +228,62 @@ class InvitationDetailFormState extends ConsumerState<InvitationDetailForm> {
               },
             ),
             const Gap(10),
+            Row(
+              children: [
+                OutlinedButton(
+                  style: ElevatedButton.styleFrom(
+                    minimumSize: Size.zero,
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                    foregroundColor: Colors.black,
+                  ),
+                  onPressed: () {
+                    startsAtController.text =
+                        DateFormat(dateTimeFormat).format(now);
+                  },
+                  child: const Text("開催中"),
+                ),
+                const Gap(5),
+                OutlinedButton(
+                  style: ElevatedButton.styleFrom(
+                      minimumSize: Size.zero,
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 5, horizontal: 10),
+                      foregroundColor: Colors.black),
+                  onPressed: () {
+                    startsAtController.text = DateFormat(dateTimeFormat)
+                        .format(now.add(const Duration(hours: 1)));
+                  },
+                  child: const Text("1時間後"),
+                ),
+                const Gap(5),
+                OutlinedButton(
+                  style: ElevatedButton.styleFrom(
+                      minimumSize: Size.zero,
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 5, horizontal: 10),
+                      foregroundColor: Colors.black),
+                  onPressed: () {
+                    startsAtController.text = DateFormat(dateTimeFormat)
+                        .format(now.add(const Duration(hours: 3)));
+                  },
+                  child: const Text("3時間後"),
+                ),
+                const Gap(5),
+                OutlinedButton(
+                  style: ElevatedButton.styleFrom(
+                      minimumSize: Size.zero,
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 5, horizontal: 10),
+                      foregroundColor: Colors.black),
+                  onPressed: () {
+                    startsAtController.text = DateFormat(dateTimeFormat)
+                        .format(now.add(const Duration(hours: 12)));
+                  },
+                  child: const Text("12時間後"),
+                ),
+              ],
+            ),
             SizedBox(
               width: double.infinity,
               child: TextFormField(
@@ -243,7 +299,10 @@ class InvitationDetailFormState extends ConsumerState<InvitationDetailForm> {
                       startsAtController.text =
                           DateFormat(dateTimeFormat).format(date);
                     },
-                    currentTime: now,
+                    currentTime: startsAtController.text.isNotEmpty
+                        ? DateFormat(dateTimeFormat)
+                            .parse(startsAtController.text)
+                        : now,
                     locale: LocaleType.jp,
                   );
                 },
@@ -273,6 +332,36 @@ class InvitationDetailFormState extends ConsumerState<InvitationDetailForm> {
               ),
             ),
             const Gap(10),
+            Row(
+              children: [
+                OutlinedButton(
+                  style: ElevatedButton.styleFrom(
+                    minimumSize: Size.zero,
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                    foregroundColor: Colors.black,
+                  ),
+                  onPressed: () {
+                    expiresAtController.text = startsAtController.text;
+                  },
+                  child: const Text("開始日時と同じ"),
+                ),
+                const Gap(5),
+                OutlinedButton(
+                  style: ElevatedButton.styleFrom(
+                      minimumSize: Size.zero,
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 5, horizontal: 10),
+                      foregroundColor: Colors.black),
+                  onPressed: () {
+                    expiresAtController.text = DateFormat(dateTimeFormat)
+                        .format(DateTime(now.year, now.month, now.day + 1)
+                            .subtract(const Duration(milliseconds: 1)));
+                  },
+                  child: const Text("今日中"),
+                ),
+              ],
+            ),
             SizedBox(
               width: double.infinity,
               child: TextFormField(
@@ -288,7 +377,10 @@ class InvitationDetailFormState extends ConsumerState<InvitationDetailForm> {
                       expiresAtController.text =
                           DateFormat(dateTimeFormat).format(date);
                     },
-                    currentTime: now.add(const Duration(minutes: 30)),
+                    currentTime: expiresAtController.text.isNotEmpty
+                        ? DateFormat(dateTimeFormat)
+                            .parse(expiresAtController.text)
+                        : now.add(const Duration(minutes: 30)),
                     locale: LocaleType.jp,
                   );
                 },
