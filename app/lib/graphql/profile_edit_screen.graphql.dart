@@ -1584,3 +1584,797 @@ class _CopyWithStubImpl$Mutation$updateNickname$updateNickname$viewer<TRes>
   }) =>
       _res;
 }
+
+class Variables$Mutation$updateScreenId {
+  factory Variables$Mutation$updateScreenId({required String screenId}) =>
+      Variables$Mutation$updateScreenId._({
+        r'screenId': screenId,
+      });
+
+  Variables$Mutation$updateScreenId._(this._$data);
+
+  factory Variables$Mutation$updateScreenId.fromJson(
+      Map<String, dynamic> data) {
+    final result$data = <String, dynamic>{};
+    final l$screenId = data['screenId'];
+    result$data['screenId'] = (l$screenId as String);
+    return Variables$Mutation$updateScreenId._(result$data);
+  }
+
+  Map<String, dynamic> _$data;
+
+  String get screenId => (_$data['screenId'] as String);
+  Map<String, dynamic> toJson() {
+    final result$data = <String, dynamic>{};
+    final l$screenId = screenId;
+    result$data['screenId'] = l$screenId;
+    return result$data;
+  }
+
+  CopyWith$Variables$Mutation$updateScreenId<Variables$Mutation$updateScreenId>
+      get copyWith => CopyWith$Variables$Mutation$updateScreenId(
+            this,
+            (i) => i,
+          );
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    if (!(other is Variables$Mutation$updateScreenId) ||
+        runtimeType != other.runtimeType) {
+      return false;
+    }
+    final l$screenId = screenId;
+    final lOther$screenId = other.screenId;
+    if (l$screenId != lOther$screenId) {
+      return false;
+    }
+    return true;
+  }
+
+  @override
+  int get hashCode {
+    final l$screenId = screenId;
+    return Object.hashAll([l$screenId]);
+  }
+}
+
+abstract class CopyWith$Variables$Mutation$updateScreenId<TRes> {
+  factory CopyWith$Variables$Mutation$updateScreenId(
+    Variables$Mutation$updateScreenId instance,
+    TRes Function(Variables$Mutation$updateScreenId) then,
+  ) = _CopyWithImpl$Variables$Mutation$updateScreenId;
+
+  factory CopyWith$Variables$Mutation$updateScreenId.stub(TRes res) =
+      _CopyWithStubImpl$Variables$Mutation$updateScreenId;
+
+  TRes call({String? screenId});
+}
+
+class _CopyWithImpl$Variables$Mutation$updateScreenId<TRes>
+    implements CopyWith$Variables$Mutation$updateScreenId<TRes> {
+  _CopyWithImpl$Variables$Mutation$updateScreenId(
+    this._instance,
+    this._then,
+  );
+
+  final Variables$Mutation$updateScreenId _instance;
+
+  final TRes Function(Variables$Mutation$updateScreenId) _then;
+
+  static const _undefined = {};
+
+  TRes call({Object? screenId = _undefined}) =>
+      _then(Variables$Mutation$updateScreenId._({
+        ..._instance._$data,
+        if (screenId != _undefined && screenId != null)
+          'screenId': (screenId as String),
+      }));
+}
+
+class _CopyWithStubImpl$Variables$Mutation$updateScreenId<TRes>
+    implements CopyWith$Variables$Mutation$updateScreenId<TRes> {
+  _CopyWithStubImpl$Variables$Mutation$updateScreenId(this._res);
+
+  TRes _res;
+
+  call({String? screenId}) => _res;
+}
+
+class Mutation$updateScreenId {
+  Mutation$updateScreenId({
+    required this.updateScreenId,
+    required this.$__typename,
+  });
+
+  factory Mutation$updateScreenId.fromJson(Map<String, dynamic> json) {
+    final l$updateScreenId = json['updateScreenId'];
+    final l$$__typename = json['__typename'];
+    return Mutation$updateScreenId(
+      updateScreenId: Mutation$updateScreenId$updateScreenId.fromJson(
+          (l$updateScreenId as Map<String, dynamic>)),
+      $__typename: (l$$__typename as String),
+    );
+  }
+
+  final Mutation$updateScreenId$updateScreenId updateScreenId;
+
+  final String $__typename;
+
+  Map<String, dynamic> toJson() {
+    final _resultData = <String, dynamic>{};
+    final l$updateScreenId = updateScreenId;
+    _resultData['updateScreenId'] = l$updateScreenId.toJson();
+    final l$$__typename = $__typename;
+    _resultData['__typename'] = l$$__typename;
+    return _resultData;
+  }
+
+  @override
+  int get hashCode {
+    final l$updateScreenId = updateScreenId;
+    final l$$__typename = $__typename;
+    return Object.hashAll([
+      l$updateScreenId,
+      l$$__typename,
+    ]);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    if (!(other is Mutation$updateScreenId) ||
+        runtimeType != other.runtimeType) {
+      return false;
+    }
+    final l$updateScreenId = updateScreenId;
+    final lOther$updateScreenId = other.updateScreenId;
+    if (l$updateScreenId != lOther$updateScreenId) {
+      return false;
+    }
+    final l$$__typename = $__typename;
+    final lOther$$__typename = other.$__typename;
+    if (l$$__typename != lOther$$__typename) {
+      return false;
+    }
+    return true;
+  }
+}
+
+extension UtilityExtension$Mutation$updateScreenId on Mutation$updateScreenId {
+  CopyWith$Mutation$updateScreenId<Mutation$updateScreenId> get copyWith =>
+      CopyWith$Mutation$updateScreenId(
+        this,
+        (i) => i,
+      );
+}
+
+abstract class CopyWith$Mutation$updateScreenId<TRes> {
+  factory CopyWith$Mutation$updateScreenId(
+    Mutation$updateScreenId instance,
+    TRes Function(Mutation$updateScreenId) then,
+  ) = _CopyWithImpl$Mutation$updateScreenId;
+
+  factory CopyWith$Mutation$updateScreenId.stub(TRes res) =
+      _CopyWithStubImpl$Mutation$updateScreenId;
+
+  TRes call({
+    Mutation$updateScreenId$updateScreenId? updateScreenId,
+    String? $__typename,
+  });
+  CopyWith$Mutation$updateScreenId$updateScreenId<TRes> get updateScreenId;
+}
+
+class _CopyWithImpl$Mutation$updateScreenId<TRes>
+    implements CopyWith$Mutation$updateScreenId<TRes> {
+  _CopyWithImpl$Mutation$updateScreenId(
+    this._instance,
+    this._then,
+  );
+
+  final Mutation$updateScreenId _instance;
+
+  final TRes Function(Mutation$updateScreenId) _then;
+
+  static const _undefined = {};
+
+  TRes call({
+    Object? updateScreenId = _undefined,
+    Object? $__typename = _undefined,
+  }) =>
+      _then(Mutation$updateScreenId(
+        updateScreenId: updateScreenId == _undefined || updateScreenId == null
+            ? _instance.updateScreenId
+            : (updateScreenId as Mutation$updateScreenId$updateScreenId),
+        $__typename: $__typename == _undefined || $__typename == null
+            ? _instance.$__typename
+            : ($__typename as String),
+      ));
+  CopyWith$Mutation$updateScreenId$updateScreenId<TRes> get updateScreenId {
+    final local$updateScreenId = _instance.updateScreenId;
+    return CopyWith$Mutation$updateScreenId$updateScreenId(
+        local$updateScreenId, (e) => call(updateScreenId: e));
+  }
+}
+
+class _CopyWithStubImpl$Mutation$updateScreenId<TRes>
+    implements CopyWith$Mutation$updateScreenId<TRes> {
+  _CopyWithStubImpl$Mutation$updateScreenId(this._res);
+
+  TRes _res;
+
+  call({
+    Mutation$updateScreenId$updateScreenId? updateScreenId,
+    String? $__typename,
+  }) =>
+      _res;
+  CopyWith$Mutation$updateScreenId$updateScreenId<TRes> get updateScreenId =>
+      CopyWith$Mutation$updateScreenId$updateScreenId.stub(_res);
+}
+
+const documentNodeMutationupdateScreenId = DocumentNode(definitions: [
+  OperationDefinitionNode(
+    type: OperationType.mutation,
+    name: NameNode(value: 'updateScreenId'),
+    variableDefinitions: [
+      VariableDefinitionNode(
+        variable: VariableNode(name: NameNode(value: 'screenId')),
+        type: NamedTypeNode(
+          name: NameNode(value: 'String'),
+          isNonNull: true,
+        ),
+        defaultValue: DefaultValueNode(value: null),
+        directives: [],
+      )
+    ],
+    directives: [],
+    selectionSet: SelectionSetNode(selections: [
+      FieldNode(
+        name: NameNode(value: 'updateScreenId'),
+        alias: null,
+        arguments: [
+          ArgumentNode(
+            name: NameNode(value: 'screenId'),
+            value: VariableNode(name: NameNode(value: 'screenId')),
+          )
+        ],
+        directives: [],
+        selectionSet: SelectionSetNode(selections: [
+          FieldNode(
+            name: NameNode(value: 'viewer'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: SelectionSetNode(selections: [
+              FieldNode(
+                name: NameNode(value: 'id'),
+                alias: null,
+                arguments: [],
+                directives: [],
+                selectionSet: null,
+              ),
+              FieldNode(
+                name: NameNode(value: 'screenId'),
+                alias: null,
+                arguments: [],
+                directives: [],
+                selectionSet: null,
+              ),
+              FieldNode(
+                name: NameNode(value: '__typename'),
+                alias: null,
+                arguments: [],
+                directives: [],
+                selectionSet: null,
+              ),
+            ]),
+          ),
+          FieldNode(
+            name: NameNode(value: '__typename'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: null,
+          ),
+        ]),
+      ),
+      FieldNode(
+        name: NameNode(value: '__typename'),
+        alias: null,
+        arguments: [],
+        directives: [],
+        selectionSet: null,
+      ),
+    ]),
+  ),
+]);
+Mutation$updateScreenId _parserFn$Mutation$updateScreenId(
+        Map<String, dynamic> data) =>
+    Mutation$updateScreenId.fromJson(data);
+typedef OnMutationCompleted$Mutation$updateScreenId = FutureOr<void> Function(
+  dynamic,
+  Mutation$updateScreenId?,
+);
+
+class Options$Mutation$updateScreenId
+    extends graphql.MutationOptions<Mutation$updateScreenId> {
+  Options$Mutation$updateScreenId({
+    String? operationName,
+    required Variables$Mutation$updateScreenId variables,
+    graphql.FetchPolicy? fetchPolicy,
+    graphql.ErrorPolicy? errorPolicy,
+    graphql.CacheRereadPolicy? cacheRereadPolicy,
+    Object? optimisticResult,
+    graphql.Context? context,
+    OnMutationCompleted$Mutation$updateScreenId? onCompleted,
+    graphql.OnMutationUpdate<Mutation$updateScreenId>? update,
+    graphql.OnError? onError,
+  })  : onCompletedWithParsed = onCompleted,
+        super(
+          variables: variables.toJson(),
+          operationName: operationName,
+          fetchPolicy: fetchPolicy,
+          errorPolicy: errorPolicy,
+          cacheRereadPolicy: cacheRereadPolicy,
+          optimisticResult: optimisticResult,
+          context: context,
+          onCompleted: onCompleted == null
+              ? null
+              : (data) => onCompleted(
+                    data,
+                    data == null
+                        ? null
+                        : _parserFn$Mutation$updateScreenId(data),
+                  ),
+          update: update,
+          onError: onError,
+          document: documentNodeMutationupdateScreenId,
+          parserFn: _parserFn$Mutation$updateScreenId,
+        );
+
+  final OnMutationCompleted$Mutation$updateScreenId? onCompletedWithParsed;
+
+  @override
+  List<Object?> get properties => [
+        ...super.onCompleted == null
+            ? super.properties
+            : super.properties.where((property) => property != onCompleted),
+        onCompletedWithParsed,
+      ];
+}
+
+class WatchOptions$Mutation$updateScreenId
+    extends graphql.WatchQueryOptions<Mutation$updateScreenId> {
+  WatchOptions$Mutation$updateScreenId({
+    String? operationName,
+    required Variables$Mutation$updateScreenId variables,
+    graphql.FetchPolicy? fetchPolicy,
+    graphql.ErrorPolicy? errorPolicy,
+    graphql.CacheRereadPolicy? cacheRereadPolicy,
+    Object? optimisticResult,
+    graphql.Context? context,
+    Duration? pollInterval,
+    bool? eagerlyFetchResults,
+    bool carryForwardDataOnException = true,
+    bool fetchResults = false,
+  }) : super(
+          variables: variables.toJson(),
+          operationName: operationName,
+          fetchPolicy: fetchPolicy,
+          errorPolicy: errorPolicy,
+          cacheRereadPolicy: cacheRereadPolicy,
+          optimisticResult: optimisticResult,
+          context: context,
+          document: documentNodeMutationupdateScreenId,
+          pollInterval: pollInterval,
+          eagerlyFetchResults: eagerlyFetchResults,
+          carryForwardDataOnException: carryForwardDataOnException,
+          fetchResults: fetchResults,
+          parserFn: _parserFn$Mutation$updateScreenId,
+        );
+}
+
+extension ClientExtension$Mutation$updateScreenId on graphql.GraphQLClient {
+  Future<graphql.QueryResult<Mutation$updateScreenId>> mutate$updateScreenId(
+          Options$Mutation$updateScreenId options) async =>
+      await this.mutate(options);
+  graphql.ObservableQuery<Mutation$updateScreenId> watchMutation$updateScreenId(
+          WatchOptions$Mutation$updateScreenId options) =>
+      this.watchMutation(options);
+}
+
+class Mutation$updateScreenId$HookResult {
+  Mutation$updateScreenId$HookResult(
+    this.runMutation,
+    this.result,
+  );
+
+  final RunMutation$Mutation$updateScreenId runMutation;
+
+  final graphql.QueryResult<Mutation$updateScreenId> result;
+}
+
+Mutation$updateScreenId$HookResult useMutation$updateScreenId(
+    [WidgetOptions$Mutation$updateScreenId? options]) {
+  final result = graphql_flutter
+      .useMutation(options ?? WidgetOptions$Mutation$updateScreenId());
+  return Mutation$updateScreenId$HookResult(
+    (variables, {optimisticResult}) => result.runMutation(
+      variables.toJson(),
+      optimisticResult: optimisticResult,
+    ),
+    result.result,
+  );
+}
+
+graphql.ObservableQuery<Mutation$updateScreenId>
+    useWatchMutation$updateScreenId(
+            WatchOptions$Mutation$updateScreenId options) =>
+        graphql_flutter.useWatchMutation(options);
+
+class WidgetOptions$Mutation$updateScreenId
+    extends graphql.MutationOptions<Mutation$updateScreenId> {
+  WidgetOptions$Mutation$updateScreenId({
+    String? operationName,
+    graphql.FetchPolicy? fetchPolicy,
+    graphql.ErrorPolicy? errorPolicy,
+    graphql.CacheRereadPolicy? cacheRereadPolicy,
+    Object? optimisticResult,
+    graphql.Context? context,
+    OnMutationCompleted$Mutation$updateScreenId? onCompleted,
+    graphql.OnMutationUpdate<Mutation$updateScreenId>? update,
+    graphql.OnError? onError,
+  })  : onCompletedWithParsed = onCompleted,
+        super(
+          operationName: operationName,
+          fetchPolicy: fetchPolicy,
+          errorPolicy: errorPolicy,
+          cacheRereadPolicy: cacheRereadPolicy,
+          optimisticResult: optimisticResult,
+          context: context,
+          onCompleted: onCompleted == null
+              ? null
+              : (data) => onCompleted(
+                    data,
+                    data == null
+                        ? null
+                        : _parserFn$Mutation$updateScreenId(data),
+                  ),
+          update: update,
+          onError: onError,
+          document: documentNodeMutationupdateScreenId,
+          parserFn: _parserFn$Mutation$updateScreenId,
+        );
+
+  final OnMutationCompleted$Mutation$updateScreenId? onCompletedWithParsed;
+
+  @override
+  List<Object?> get properties => [
+        ...super.onCompleted == null
+            ? super.properties
+            : super.properties.where((property) => property != onCompleted),
+        onCompletedWithParsed,
+      ];
+}
+
+typedef RunMutation$Mutation$updateScreenId
+    = graphql.MultiSourceResult<Mutation$updateScreenId> Function(
+  Variables$Mutation$updateScreenId, {
+  Object? optimisticResult,
+});
+typedef Builder$Mutation$updateScreenId = widgets.Widget Function(
+  RunMutation$Mutation$updateScreenId,
+  graphql.QueryResult<Mutation$updateScreenId>?,
+);
+
+class Mutation$updateScreenId$Widget
+    extends graphql_flutter.Mutation<Mutation$updateScreenId> {
+  Mutation$updateScreenId$Widget({
+    widgets.Key? key,
+    WidgetOptions$Mutation$updateScreenId? options,
+    required Builder$Mutation$updateScreenId builder,
+  }) : super(
+          key: key,
+          options: options ?? WidgetOptions$Mutation$updateScreenId(),
+          builder: (
+            run,
+            result,
+          ) =>
+              builder(
+            (
+              variables, {
+              optimisticResult,
+            }) =>
+                run(
+              variables.toJson(),
+              optimisticResult: optimisticResult,
+            ),
+            result,
+          ),
+        );
+}
+
+class Mutation$updateScreenId$updateScreenId {
+  Mutation$updateScreenId$updateScreenId({
+    required this.viewer,
+    required this.$__typename,
+  });
+
+  factory Mutation$updateScreenId$updateScreenId.fromJson(
+      Map<String, dynamic> json) {
+    final l$viewer = json['viewer'];
+    final l$$__typename = json['__typename'];
+    return Mutation$updateScreenId$updateScreenId(
+      viewer: Mutation$updateScreenId$updateScreenId$viewer.fromJson(
+          (l$viewer as Map<String, dynamic>)),
+      $__typename: (l$$__typename as String),
+    );
+  }
+
+  final Mutation$updateScreenId$updateScreenId$viewer viewer;
+
+  final String $__typename;
+
+  Map<String, dynamic> toJson() {
+    final _resultData = <String, dynamic>{};
+    final l$viewer = viewer;
+    _resultData['viewer'] = l$viewer.toJson();
+    final l$$__typename = $__typename;
+    _resultData['__typename'] = l$$__typename;
+    return _resultData;
+  }
+
+  @override
+  int get hashCode {
+    final l$viewer = viewer;
+    final l$$__typename = $__typename;
+    return Object.hashAll([
+      l$viewer,
+      l$$__typename,
+    ]);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    if (!(other is Mutation$updateScreenId$updateScreenId) ||
+        runtimeType != other.runtimeType) {
+      return false;
+    }
+    final l$viewer = viewer;
+    final lOther$viewer = other.viewer;
+    if (l$viewer != lOther$viewer) {
+      return false;
+    }
+    final l$$__typename = $__typename;
+    final lOther$$__typename = other.$__typename;
+    if (l$$__typename != lOther$$__typename) {
+      return false;
+    }
+    return true;
+  }
+}
+
+extension UtilityExtension$Mutation$updateScreenId$updateScreenId
+    on Mutation$updateScreenId$updateScreenId {
+  CopyWith$Mutation$updateScreenId$updateScreenId<
+          Mutation$updateScreenId$updateScreenId>
+      get copyWith => CopyWith$Mutation$updateScreenId$updateScreenId(
+            this,
+            (i) => i,
+          );
+}
+
+abstract class CopyWith$Mutation$updateScreenId$updateScreenId<TRes> {
+  factory CopyWith$Mutation$updateScreenId$updateScreenId(
+    Mutation$updateScreenId$updateScreenId instance,
+    TRes Function(Mutation$updateScreenId$updateScreenId) then,
+  ) = _CopyWithImpl$Mutation$updateScreenId$updateScreenId;
+
+  factory CopyWith$Mutation$updateScreenId$updateScreenId.stub(TRes res) =
+      _CopyWithStubImpl$Mutation$updateScreenId$updateScreenId;
+
+  TRes call({
+    Mutation$updateScreenId$updateScreenId$viewer? viewer,
+    String? $__typename,
+  });
+  CopyWith$Mutation$updateScreenId$updateScreenId$viewer<TRes> get viewer;
+}
+
+class _CopyWithImpl$Mutation$updateScreenId$updateScreenId<TRes>
+    implements CopyWith$Mutation$updateScreenId$updateScreenId<TRes> {
+  _CopyWithImpl$Mutation$updateScreenId$updateScreenId(
+    this._instance,
+    this._then,
+  );
+
+  final Mutation$updateScreenId$updateScreenId _instance;
+
+  final TRes Function(Mutation$updateScreenId$updateScreenId) _then;
+
+  static const _undefined = {};
+
+  TRes call({
+    Object? viewer = _undefined,
+    Object? $__typename = _undefined,
+  }) =>
+      _then(Mutation$updateScreenId$updateScreenId(
+        viewer: viewer == _undefined || viewer == null
+            ? _instance.viewer
+            : (viewer as Mutation$updateScreenId$updateScreenId$viewer),
+        $__typename: $__typename == _undefined || $__typename == null
+            ? _instance.$__typename
+            : ($__typename as String),
+      ));
+  CopyWith$Mutation$updateScreenId$updateScreenId$viewer<TRes> get viewer {
+    final local$viewer = _instance.viewer;
+    return CopyWith$Mutation$updateScreenId$updateScreenId$viewer(
+        local$viewer, (e) => call(viewer: e));
+  }
+}
+
+class _CopyWithStubImpl$Mutation$updateScreenId$updateScreenId<TRes>
+    implements CopyWith$Mutation$updateScreenId$updateScreenId<TRes> {
+  _CopyWithStubImpl$Mutation$updateScreenId$updateScreenId(this._res);
+
+  TRes _res;
+
+  call({
+    Mutation$updateScreenId$updateScreenId$viewer? viewer,
+    String? $__typename,
+  }) =>
+      _res;
+  CopyWith$Mutation$updateScreenId$updateScreenId$viewer<TRes> get viewer =>
+      CopyWith$Mutation$updateScreenId$updateScreenId$viewer.stub(_res);
+}
+
+class Mutation$updateScreenId$updateScreenId$viewer {
+  Mutation$updateScreenId$updateScreenId$viewer({
+    required this.id,
+    required this.screenId,
+    required this.$__typename,
+  });
+
+  factory Mutation$updateScreenId$updateScreenId$viewer.fromJson(
+      Map<String, dynamic> json) {
+    final l$id = json['id'];
+    final l$screenId = json['screenId'];
+    final l$$__typename = json['__typename'];
+    return Mutation$updateScreenId$updateScreenId$viewer(
+      id: (l$id as String),
+      screenId: (l$screenId as String),
+      $__typename: (l$$__typename as String),
+    );
+  }
+
+  final String id;
+
+  final String screenId;
+
+  final String $__typename;
+
+  Map<String, dynamic> toJson() {
+    final _resultData = <String, dynamic>{};
+    final l$id = id;
+    _resultData['id'] = l$id;
+    final l$screenId = screenId;
+    _resultData['screenId'] = l$screenId;
+    final l$$__typename = $__typename;
+    _resultData['__typename'] = l$$__typename;
+    return _resultData;
+  }
+
+  @override
+  int get hashCode {
+    final l$id = id;
+    final l$screenId = screenId;
+    final l$$__typename = $__typename;
+    return Object.hashAll([
+      l$id,
+      l$screenId,
+      l$$__typename,
+    ]);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    if (!(other is Mutation$updateScreenId$updateScreenId$viewer) ||
+        runtimeType != other.runtimeType) {
+      return false;
+    }
+    final l$id = id;
+    final lOther$id = other.id;
+    if (l$id != lOther$id) {
+      return false;
+    }
+    final l$screenId = screenId;
+    final lOther$screenId = other.screenId;
+    if (l$screenId != lOther$screenId) {
+      return false;
+    }
+    final l$$__typename = $__typename;
+    final lOther$$__typename = other.$__typename;
+    if (l$$__typename != lOther$$__typename) {
+      return false;
+    }
+    return true;
+  }
+}
+
+extension UtilityExtension$Mutation$updateScreenId$updateScreenId$viewer
+    on Mutation$updateScreenId$updateScreenId$viewer {
+  CopyWith$Mutation$updateScreenId$updateScreenId$viewer<
+          Mutation$updateScreenId$updateScreenId$viewer>
+      get copyWith => CopyWith$Mutation$updateScreenId$updateScreenId$viewer(
+            this,
+            (i) => i,
+          );
+}
+
+abstract class CopyWith$Mutation$updateScreenId$updateScreenId$viewer<TRes> {
+  factory CopyWith$Mutation$updateScreenId$updateScreenId$viewer(
+    Mutation$updateScreenId$updateScreenId$viewer instance,
+    TRes Function(Mutation$updateScreenId$updateScreenId$viewer) then,
+  ) = _CopyWithImpl$Mutation$updateScreenId$updateScreenId$viewer;
+
+  factory CopyWith$Mutation$updateScreenId$updateScreenId$viewer.stub(
+          TRes res) =
+      _CopyWithStubImpl$Mutation$updateScreenId$updateScreenId$viewer;
+
+  TRes call({
+    String? id,
+    String? screenId,
+    String? $__typename,
+  });
+}
+
+class _CopyWithImpl$Mutation$updateScreenId$updateScreenId$viewer<TRes>
+    implements CopyWith$Mutation$updateScreenId$updateScreenId$viewer<TRes> {
+  _CopyWithImpl$Mutation$updateScreenId$updateScreenId$viewer(
+    this._instance,
+    this._then,
+  );
+
+  final Mutation$updateScreenId$updateScreenId$viewer _instance;
+
+  final TRes Function(Mutation$updateScreenId$updateScreenId$viewer) _then;
+
+  static const _undefined = {};
+
+  TRes call({
+    Object? id = _undefined,
+    Object? screenId = _undefined,
+    Object? $__typename = _undefined,
+  }) =>
+      _then(Mutation$updateScreenId$updateScreenId$viewer(
+        id: id == _undefined || id == null ? _instance.id : (id as String),
+        screenId: screenId == _undefined || screenId == null
+            ? _instance.screenId
+            : (screenId as String),
+        $__typename: $__typename == _undefined || $__typename == null
+            ? _instance.$__typename
+            : ($__typename as String),
+      ));
+}
+
+class _CopyWithStubImpl$Mutation$updateScreenId$updateScreenId$viewer<TRes>
+    implements CopyWith$Mutation$updateScreenId$updateScreenId$viewer<TRes> {
+  _CopyWithStubImpl$Mutation$updateScreenId$updateScreenId$viewer(this._res);
+
+  TRes _res;
+
+  call({
+    String? id,
+    String? screenId,
+    String? $__typename,
+  }) =>
+      _res;
+}

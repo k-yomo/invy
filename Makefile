@@ -55,7 +55,7 @@ fmt: ## Format code
 
 .PHONY: lint
 lint: ## Run linter
-	cd app && flutter format . & \
+	cd app && dart fix --apply . & \
 	wait
 
 .PHONY: help

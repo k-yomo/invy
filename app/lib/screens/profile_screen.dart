@@ -19,7 +19,7 @@ class ProfileScreen extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final graphqlClient = ref.read(graphqlClientProvider);
     final user = ref.watch(loggedInUserProvider)!;
-    final packageInfo = ref.read(packageInfoProvider)!;
+    final packageInfo = ref.read(packageInfoProvider);
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -116,18 +116,17 @@ class ProfileScreen extends HookConsumerWidget {
                     context: context,
                     builder: (_) {
                       return AlertDialog(
-                        title: Text("ログアウト"),
-                        content: Text("ログアウトしてもよろしいですか？"),
+                        title: const Text("ログアウト"),
+                        content: const Text("ログアウトしてもよろしいですか？"),
                         actions: <Widget>[
                           TextButton(
-                            child: Text("キャンセル"),
                             onPressed: () => Navigator.pop(context),
                             style: ElevatedButton.styleFrom(
                               foregroundColor: Colors.grey,
                             ),
+                            child: const Text("キャンセル"),
                           ),
                           TextButton(
-                            child: Text("OK"),
                             onPressed: () async {
                               await graphqlClient.mutate$signOut();
                               await FirebaseAuth.instance.signOut();
@@ -137,6 +136,7 @@ class ProfileScreen extends HookConsumerWidget {
                             style: ElevatedButton.styleFrom(
                               foregroundColor: Colors.blue,
                             ),
+                            child: const Text("OK"),
                           ),
                         ],
                       );
@@ -144,18 +144,18 @@ class ProfileScreen extends HookConsumerWidget {
                   );
                 },
                 child: Container(
-                  padding: EdgeInsets.symmetric(vertical: 10),
+                  padding: const EdgeInsets.symmetric(vertical: 10),
                   child: Row(
-                    children: [
+                    children: const [
                       Expanded(child: Text("ログアウト")),
                       Icon(Icons.chevron_right)
                     ],
                   ),
                 ),
               ),
-              Divider(color: Colors.grey, height: 0),
+              const Divider(color: Colors.grey, height: 0),
               Container(
-                padding: EdgeInsets.symmetric(vertical: 20),
+                padding: const EdgeInsets.symmetric(vertical: 20),
                 child: Center(child: Text("バージョン ${packageInfo.version}")),
               )
             ],

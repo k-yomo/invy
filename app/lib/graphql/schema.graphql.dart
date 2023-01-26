@@ -993,6 +993,7 @@ enum Enum$ErrorCode {
   FORBIDDEN,
   NOT_FOUND,
   ALREADY_EXISTS,
+  INTERNAL,
   $unknown
 }
 
@@ -1008,6 +1009,8 @@ String toJson$Enum$ErrorCode(Enum$ErrorCode e) {
       return r'NOT_FOUND';
     case Enum$ErrorCode.ALREADY_EXISTS:
       return r'ALREADY_EXISTS';
+    case Enum$ErrorCode.INTERNAL:
+      return r'INTERNAL';
     case Enum$ErrorCode.$unknown:
       return r'$unknown';
   }
@@ -1025,6 +1028,8 @@ Enum$ErrorCode fromJson$Enum$ErrorCode(String value) {
       return Enum$ErrorCode.NOT_FOUND;
     case r'ALREADY_EXISTS':
       return Enum$ErrorCode.ALREADY_EXISTS;
+    case r'INTERNAL':
+      return Enum$ErrorCode.INTERNAL;
     default:
       return Enum$ErrorCode.$unknown;
   }

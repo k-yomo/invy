@@ -7,6 +7,7 @@ import 'package:http/http.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:invy/graphql/profile_edit_screen.graphql.dart';
+import 'package:invy/graphql/schema.graphql.dart';
 import 'package:invy/services/graphql_client.dart';
 import 'package:invy/state/auth.dart';
 import 'package:invy/util/toast.dart';
@@ -14,11 +15,21 @@ import 'package:mime/mime.dart';
 
 import '../components/app_bar_leading.dart';
 
-class ProfileEditScreen extends HookConsumerWidget {
+class ProfileEditScreen extends StatefulHookConsumerWidget {
   const ProfileEditScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ProfileEditScreenState createState() {
+    return ProfileEditScreenState();
+  }
+}
+
+class ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
+  final _nicknameFormKey = GlobalKey<FormState>();
+  final _screenIdFormKey = GlobalKey<FormState>();
+
+  @override
+  Widget build(BuildContext context) {
     final picker = ImagePicker();
     final graphqlClient = ref.read(graphqlClientProvider);
     final user = ref.watch(loggedInUserProvider)!;
@@ -56,7 +67,20 @@ class ProfileEditScreen extends HookConsumerWidget {
       showToast("プロフィール写真を更新しました", ToastLevel.success);
     }
 
+    validateNickname(value) {
+      if (value == null || value.isEmpty) {
+        return 'ニックネームを入力してください';
+      }
+      if (value.length < 3) {
+        return '3文字以上入力してください';
+      }
+      return null;
+    }
+
     onNicknameSubmitted(String nickname) async {
+      if (validateNickname(nickname) != null) {
+        return;
+      }
       if (nickname == user.nickname) {
         // no change
         return;
@@ -73,6 +97,48 @@ class ProfileEditScreen extends HookConsumerWidget {
       ref.read(loggedInUserProvider.notifier).state =
           user.copyWith(nickname: nickname);
       showToast("ニックネームを更新しました", ToastLevel.success);
+    }
+
+    validateScreenId(value) {
+      final screenIdRegex = RegExp(r'(^[a-zA-Z0-9_]*$)');
+      if (value == null || value.isEmpty) {
+        return 'ユーザーIDを入力してください';
+      }
+      if (value.length < 3) {
+        return '3文字以上入力してください';
+      }
+      if (!screenIdRegex.hasMatch(value)) {
+        return '英数字、アンダースコア（_）のみ使用可能です';
+      }
+      return null;
+    }
+
+    onScreenIdSubmitted(String screenId) async {
+      if (validateScreenId(screenId) != null) {
+        return;
+      }
+      if (screenId == user.screenId) {
+        // no change
+        return;
+      }
+      final result = await graphqlClient.mutate$updateScreenId(
+          Options$Mutation$updateScreenId(
+              variables:
+                  Variables$Mutation$updateScreenId(screenId: screenId)));
+      if (result.hasException) {
+        if (result.exception?.graphqlErrors.first.extensions != null) {
+          if (result.exception!.graphqlErrors.first.extensions!["code"] ==
+              toJson$Enum$ErrorCode(Enum$ErrorCode.ALREADY_EXISTS)) {
+            showToast("入力されたユーザーIDは既に使用されています", ToastLevel.error);
+            return;
+          }
+        }
+        showToast("ユーザーIDの更新に失敗しました", ToastLevel.error);
+        return;
+      }
+      ref.read(loggedInUserProvider.notifier).state =
+          user.copyWith(screenId: screenId);
+      showToast("ユーザーIDを更新しました", ToastLevel.success);
     }
 
     return Scaffold(
@@ -113,23 +179,42 @@ class ProfileEditScreen extends HookConsumerWidget {
                           style: TextStyle(color: Colors.black)),
                 ),
                 const Gap(20),
-                TextFormField(
-                  controller: TextEditingController(text: user.nickname),
-                  cursorColor: Colors.grey.shade600,
-                  decoration: InputDecoration(
-                    labelText: 'ニックネーム',
-                    labelStyle: TextStyle(color: Colors.grey.shade600),
-                    filled: true,
-                    fillColor: Colors.grey.shade100,
-                    border: InputBorder.none,
+                Form(
+                  key: _nicknameFormKey,
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  child: TextFormField(
+                    controller: TextEditingController(text: user.nickname),
+                    cursorColor: Colors.grey.shade600,
+                    decoration: InputDecoration(
+                      labelText: 'ニックネーム',
+                      labelStyle: TextStyle(color: Colors.grey.shade600),
+                      filled: true,
+                      fillColor: Colors.grey.shade100,
+                      border: InputBorder.none,
+                    ),
+                    maxLength: 50,
+                    validator: validateNickname,
+                    onFieldSubmitted: onNicknameSubmitted,
                   ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'ニックネームを入力してください';
-                    }
-                    return null;
-                  },
-                  onFieldSubmitted: onNicknameSubmitted,
+                ),
+                const Gap(20),
+                Form(
+                  key: _screenIdFormKey,
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  child: TextFormField(
+                    controller: TextEditingController(text: user.screenId),
+                    cursorColor: Colors.grey.shade600,
+                    decoration: InputDecoration(
+                      labelText: 'ユーザーID',
+                      labelStyle: TextStyle(color: Colors.grey.shade600),
+                      filled: true,
+                      fillColor: Colors.grey.shade100,
+                      border: InputBorder.none,
+                    ),
+                    maxLength: 15,
+                    validator: validateScreenId,
+                    onFieldSubmitted: onScreenIdSubmitted,
+                  ),
                 ),
               ],
             ),

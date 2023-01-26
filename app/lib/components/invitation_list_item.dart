@@ -123,9 +123,9 @@ class InvitationListItem extends StatelessWidget {
                   child: Column(
                     children: invitation.acceptedUsers.isNotEmpty
                         ? [
-                            Container(
+                            const SizedBox(
                               width: double.infinity,
-                              child: const Text("参加者",
+                              child: Text("参加者",
                                   style: TextStyle(
                                       fontSize: 12,
                                       fontWeight: FontWeight.bold)),

@@ -15,3 +15,12 @@ mutation updateNickname($nickname: String!) {
         }
     }
 }
+
+mutation updateScreenId($screenId: String!) {
+    updateScreenId(screenId: $screenId) {
+        viewer {
+            id
+            screenId
+        }
+    }
+}

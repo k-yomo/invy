@@ -69,6 +69,7 @@ enum ErrorCode {
   FORBIDDEN
   NOT_FOUND
   ALREADY_EXISTS
+  INTERNAL
 }
 
 type FriendGroup implements Node {

@@ -16,12 +16,13 @@ class LoggedInUser {
   final String avatarUrl;
 
   LoggedInUser copyWith({
+    String? screenId,
     String? nickname,
     String? avatarUrl,
   }) =>
       LoggedInUser(
         id: id,
-        screenId: screenId,
+        screenId: screenId ?? this.screenId,
         nickname: nickname ?? this.nickname,
         avatarUrl: avatarUrl ?? this.avatarUrl,
       );
