@@ -325,8 +325,6 @@ class InvitationDetailFormState extends ConsumerState<InvitationDetailForm> {
                   return null;
                 },
                 onSaved: (value) {
-                  // TODO: adding 9 hour to get the JST time, but there must be smarter way to store
-                  // time with timezone;
                   startsAt = DateFormat(dateTimeFormat).parse(value!).toUtc();
                 },
               ),
@@ -403,8 +401,6 @@ class InvitationDetailFormState extends ConsumerState<InvitationDetailForm> {
                   return null;
                 },
                 onSaved: (value) {
-                  // TODO: adding 9 hour to get the JST time, but there must be smarter way to store
-                  // time with timezone;
                   expiresAt = DateFormat(dateTimeFormat).parse(value!).toUtc();
                 },
               ),

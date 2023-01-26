@@ -152,74 +152,76 @@ class ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
             Border(bottom: BorderSide(color: Colors.grey.shade200, width: 1)),
       ),
       backgroundColor: Colors.white,
-      body: Center(
-        child: Column(children: <Widget>[
-          Container(
-            margin: const EdgeInsets.only(top: 60),
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Column(
-              children: [
-                CircleAvatar(
-                  radius: 60.0,
-                  backgroundImage: NetworkImage(user.avatarUrl),
-                ),
-                const Gap(10),
-                OutlinedButton(
-                  onPressed: onPressedAvatarUpdate,
-                  child: avatarUpdateLoading.value
-                      ? const SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(
-                            color: Colors.black,
-                            strokeWidth: 3,
-                          ),
-                        )
-                      : const Text("プロフィール写真を変更",
-                          style: TextStyle(color: Colors.black)),
-                ),
-                const Gap(20),
-                Form(
-                  key: _nicknameFormKey,
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                  child: TextFormField(
-                    controller: TextEditingController(text: user.nickname),
-                    cursorColor: Colors.grey.shade600,
-                    decoration: InputDecoration(
-                      labelText: 'ニックネーム',
-                      labelStyle: TextStyle(color: Colors.grey.shade600),
-                      filled: true,
-                      fillColor: Colors.grey.shade100,
-                      border: InputBorder.none,
-                    ),
-                    maxLength: 50,
-                    validator: validateNickname,
-                    onFieldSubmitted: onNicknameSubmitted,
+      body: SingleChildScrollView(
+        child: Center(
+          child: Column(children: <Widget>[
+            Container(
+              margin: const EdgeInsets.only(top: 60),
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Column(
+                children: [
+                  CircleAvatar(
+                    radius: 60.0,
+                    backgroundImage: NetworkImage(user.avatarUrl),
                   ),
-                ),
-                const Gap(20),
-                Form(
-                  key: _screenIdFormKey,
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                  child: TextFormField(
-                    controller: TextEditingController(text: user.screenId),
-                    cursorColor: Colors.grey.shade600,
-                    decoration: InputDecoration(
-                      labelText: 'ユーザーID',
-                      labelStyle: TextStyle(color: Colors.grey.shade600),
-                      filled: true,
-                      fillColor: Colors.grey.shade100,
-                      border: InputBorder.none,
-                    ),
-                    maxLength: 15,
-                    validator: validateScreenId,
-                    onFieldSubmitted: onScreenIdSubmitted,
+                  const Gap(10),
+                  OutlinedButton(
+                    onPressed: onPressedAvatarUpdate,
+                    child: avatarUpdateLoading.value
+                        ? const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              color: Colors.black,
+                              strokeWidth: 3,
+                            ),
+                          )
+                        : const Text("プロフィール写真を変更",
+                            style: TextStyle(color: Colors.black)),
                   ),
-                ),
-              ],
+                  const Gap(20),
+                  Form(
+                    key: _nicknameFormKey,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    child: TextFormField(
+                      controller: TextEditingController(text: user.nickname),
+                      cursorColor: Colors.grey.shade600,
+                      decoration: InputDecoration(
+                        labelText: 'ニックネーム',
+                        labelStyle: TextStyle(color: Colors.grey.shade600),
+                        filled: true,
+                        fillColor: Colors.grey.shade100,
+                        border: InputBorder.none,
+                      ),
+                      maxLength: 50,
+                      validator: validateNickname,
+                      onFieldSubmitted: onNicknameSubmitted,
+                    ),
+                  ),
+                  const Gap(20),
+                  Form(
+                    key: _screenIdFormKey,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    child: TextFormField(
+                      controller: TextEditingController(text: user.screenId),
+                      cursorColor: Colors.grey.shade600,
+                      decoration: InputDecoration(
+                        labelText: 'ユーザーID',
+                        labelStyle: TextStyle(color: Colors.grey.shade600),
+                        filled: true,
+                        fillColor: Colors.grey.shade100,
+                        border: InputBorder.none,
+                      ),
+                      maxLength: 15,
+                      validator: validateScreenId,
+                      onFieldSubmitted: onScreenIdSubmitted,
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ]),
+          ]),
+        ),
       ),
     );
   }
