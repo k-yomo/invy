@@ -9,6 +9,7 @@ import 'package:invy/graphql/profile_screen.graphql.dart';
 import 'package:invy/screens/profile_edit_screen.dart';
 import 'package:invy/services/graphql_client.dart';
 import 'package:invy/state/auth.dart';
+import 'package:invy/state/device.dart';
 import 'package:invy/util/toast.dart';
 
 class ProfileScreen extends HookConsumerWidget {
@@ -18,6 +19,7 @@ class ProfileScreen extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final graphqlClient = ref.read(graphqlClientProvider);
     final user = ref.watch(loggedInUserProvider)!;
+    final packageInfo = ref.read(packageInfoProvider)!;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -100,23 +102,64 @@ class ProfileScreen extends HookConsumerWidget {
             ),
           ),
           Expanded(
-            child: Align(
-              alignment: FractionalOffset.bottomCenter,
-              child: Container(
-                margin: const EdgeInsets.symmetric(vertical: 50),
-                child: OutlinedButton(
-                  onPressed: () async {
-                    await graphqlClient.mutate$signOut();
-                    await FirebaseAuth.instance.signOut();
-                    graphqlClient.cache.store.reset();
-                    ref.invalidate(loggedInUserProvider);
-                  },
-                  child: const Text('ログアウト',
-                      style: TextStyle(color: Colors.black, fontSize: 16)),
+              child: ListView(
+            children: [
+              TextButton(
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: Colors.black,
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.zero,
+                  ),
+                ),
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (_) {
+                      return AlertDialog(
+                        title: Text("ログアウト"),
+                        content: Text("ログアウトしてもよろしいですか？"),
+                        actions: <Widget>[
+                          TextButton(
+                            child: Text("キャンセル"),
+                            onPressed: () => Navigator.pop(context),
+                            style: ElevatedButton.styleFrom(
+                              foregroundColor: Colors.grey,
+                            ),
+                          ),
+                          TextButton(
+                            child: Text("OK"),
+                            onPressed: () async {
+                              await graphqlClient.mutate$signOut();
+                              await FirebaseAuth.instance.signOut();
+                              graphqlClient.cache.store.reset();
+                              ref.invalidate(loggedInUserProvider);
+                            },
+                            style: ElevatedButton.styleFrom(
+                              foregroundColor: Colors.blue,
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
+                child: Container(
+                  padding: EdgeInsets.symmetric(vertical: 10),
+                  child: Row(
+                    children: [
+                      Expanded(child: Text("ログアウト")),
+                      Icon(Icons.chevron_right)
+                    ],
+                  ),
                 ),
               ),
-            ),
-          )
+              Divider(color: Colors.grey, height: 0),
+              Container(
+                padding: EdgeInsets.symmetric(vertical: 20),
+                child: Center(child: Text("バージョン ${packageInfo.version}")),
+              )
+            ],
+          ))
         ]),
       ),
     );

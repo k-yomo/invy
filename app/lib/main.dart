@@ -13,8 +13,10 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:invy/config/config.dart';
 import 'package:invy/graphql/push_notification.graphql.dart';
 import 'package:invy/services/graphql_client.dart';
+import 'package:invy/state/device.dart';
 import 'package:invy/state/onboarding.dart';
 import 'package:invy/util/device.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 import 'app.dart';
 import 'graphql/schema.graphql.dart';
@@ -62,6 +64,7 @@ Future main() async {
   );
 
   final deviceInfo = await getDeviceInfo();
+  final packageInfo = await PackageInfo.fromPlatform();
   FirebaseMessaging.instance.onTokenRefresh.listen((fcmToken) {
     final mutateOptions = Options$Mutation$registerPushNotificationToken(
       variables: Variables$Mutation$registerPushNotificationToken(
@@ -88,7 +91,9 @@ Future main() async {
     ProviderScope(overrides: [
       graphqlClientProvider.overrideWithValue(graphqlClient),
       onboardingProvider.overrideWithValue(onboarding),
-      pushNotificationBadgeCounter.overrideWithValue(badgeCounter)
+      pushNotificationBadgeCounter.overrideWithValue(badgeCounter),
+      deviceInfoProvider.overrideWithValue(deviceInfo),
+      packageInfoProvider.overrideWithValue(packageInfo),
     ], child: const App()),
   );
 }
