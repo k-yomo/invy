@@ -51,7 +51,7 @@ class App extends HookConsumerWidget {
             if (authSnapshot.hasData) {
               final graphqlClient = ref.read(graphqlClientProvider);
               final viewer = await graphqlClient.query$viewer(
-                Options$Query$viewer(fetchPolicy: FetchPolicy.networkOnly),
+                Options$Query$viewer(fetchPolicy: FetchPolicy.cacheFirst),
               );
               if (viewer.hasException) {
                 return null;
