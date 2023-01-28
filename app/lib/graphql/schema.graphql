@@ -274,6 +274,7 @@ type Viewer implements Node {
   nickname: String!
   avatarUrl: String!
   friends(after: Cursor, first: Int, before: Cursor, last: Int): UserConnection!
+  blockedFriends(after: Cursor, first: Int, before: Cursor, last: Int): UserConnection!
 
   """fetch friend ship requests need to be approved by the logged in user"""
   pendingFriendshipRequests: [FriendshipRequest!]!

@@ -22,6 +22,7 @@ import (
 	"github.com/k-yomo/invy/invy_api/ent/invitationacceptance"
 	"github.com/k-yomo/invy/invy_api/ent/invitationdenial"
 	"github.com/k-yomo/invy/invy_api/ent/invitationuser"
+	"github.com/k-yomo/invy/invy_api/ent/userblock"
 	"github.com/k-yomo/invy/invy_api/ent/userprofile"
 	"github.com/k-yomo/invy/invy_api/graph/conv"
 	"github.com/k-yomo/invy/invy_api/graph/gqlgen"
@@ -179,7 +180,24 @@ func (r *viewerResolver) Friends(ctx context.Context, obj *gqlmodel.Viewer, afte
 		WithFriendUser(func(q *ent.UserQuery) {
 			q.WithUserProfile()
 		}).
-		Where(friendship.UserID(authUserID)).
+		Where(
+			friendship.UserID(authUserID),
+			func(s *sql.Selector) {
+				userBlockTable := sql.Table(userblock.Table)
+				s.Where(
+					sql.NotExists(
+						sql.Select().
+							From(userBlockTable).
+							Where(
+								sql.And(
+									sql.EQ(userBlockTable.C(userblock.FieldUserID), authUserID),
+									sql.ColumnsEQ(userBlockTable.C(userblock.FieldBlockUserID), s.C(friendship.FieldFriendUserID)),
+								),
+							),
+					),
+				)
+			},
+		).
 		Paginate(ctx, after, first, before, last, ent.WithFriendshipOrder(order))
 	if err != nil {
 		return nil, err
@@ -191,6 +209,30 @@ func (r *viewerResolver) Friends(ctx context.Context, obj *gqlmodel.Viewer, afte
 	for _, edge := range dbFriendshipConnection.Edges {
 		userConnection.Edges = append(userConnection.Edges, &gqlmodel.UserEdge{
 			Node:   conv.ConvertFromDBUserProfile(edge.Node.Edges.FriendUser.Edges.UserProfile),
+			Cursor: edge.Cursor,
+		})
+	}
+	return &userConnection, nil
+}
+
+// BlockedFriends is the resolver for the blockedFriends field.
+func (r *viewerResolver) BlockedFriends(ctx context.Context, obj *gqlmodel.Viewer, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*gqlmodel.UserConnection, error) {
+	authUserID := auth.GetCurrentUserID(ctx)
+	dbUserProfileConnection, err := r.DB.UserBlock.Query().
+		Where(userblock.UserID(authUserID)).
+		QueryBlockUser().
+		QueryUserProfile().
+		Paginate(ctx, after, first, before, last)
+	if err != nil {
+		return nil, err
+	}
+	userConnection := gqlmodel.UserConnection{
+		PageInfo:   conv.ConvertFromDBPageInfo(&dbUserProfileConnection.PageInfo),
+		TotalCount: dbUserProfileConnection.TotalCount,
+	}
+	for _, edge := range dbUserProfileConnection.Edges {
+		userConnection.Edges = append(userConnection.Edges, &gqlmodel.UserEdge{
+			Node:   conv.ConvertFromDBUserProfile(edge.Node),
 			Cursor: edge.Cursor,
 		})
 	}

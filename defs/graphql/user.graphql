@@ -20,6 +20,7 @@ type Viewer implements Node {
     avatarUrl: String!
 
     friends(after: Cursor, first: Int, before: Cursor, last: Int): UserConnection! @goField(forceResolver: true)
+    blockedFriends(after: Cursor, first: Int, before: Cursor, last: Int): UserConnection! @goField(forceResolver: true)
     # fetch friend ship requests need to be approved by the logged in user
     pendingFriendshipRequests: [FriendshipRequest!]! @goField(forceResolver: true)
     # fetch friend ship requests sent by the logged in user

@@ -222,6 +222,7 @@ type Viewer struct {
 	Nickname                     string               `json:"nickname"`
 	AvatarURL                    string               `json:"avatarUrl"`
 	Friends                      *UserConnection      `json:"friends"`
+	BlockedFriends               *UserConnection      `json:"blockedFriends"`
 	PendingFriendshipRequests    []*FriendshipRequest `json:"pendingFriendshipRequests"`
 	RequestingFriendshipRequests []*FriendshipRequest `json:"requestingFriendshipRequests"`
 	FriendGroup                  *FriendGroup         `json:"friendGroup"`

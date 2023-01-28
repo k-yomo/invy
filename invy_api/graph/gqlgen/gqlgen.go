@@ -238,6 +238,7 @@ type ComplexityRoot struct {
 	Viewer struct {
 		AcceptedInvitations          func(childComplexity int) int
 		AvatarURL                    func(childComplexity int) int
+		BlockedFriends               func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
 		FriendGroup                  func(childComplexity int, friendGroupID uuid.UUID) int
 		FriendGroups                 func(childComplexity int) int
 		Friends                      func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
@@ -300,6 +301,7 @@ type UserResolver interface {
 }
 type ViewerResolver interface {
 	Friends(ctx context.Context, obj *gqlmodel.Viewer, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*gqlmodel.UserConnection, error)
+	BlockedFriends(ctx context.Context, obj *gqlmodel.Viewer, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*gqlmodel.UserConnection, error)
 	PendingFriendshipRequests(ctx context.Context, obj *gqlmodel.Viewer) ([]*gqlmodel.FriendshipRequest, error)
 	RequestingFriendshipRequests(ctx context.Context, obj *gqlmodel.Viewer) ([]*gqlmodel.FriendshipRequest, error)
 	FriendGroup(ctx context.Context, obj *gqlmodel.Viewer, friendGroupID uuid.UUID) (*gqlmodel.FriendGroup, error)
@@ -1041,6 +1043,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Viewer.AvatarURL(childComplexity), true
 
+	case "Viewer.blockedFriends":
+		if e.complexity.Viewer.BlockedFriends == nil {
+			break
+		}
+
+		args, err := ec.field_Viewer_blockedFriends_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Viewer.BlockedFriends(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int)), true
+
 	case "Viewer.friendGroup":
 		if e.complexity.Viewer.FriendGroup == nil {
 			break
@@ -1397,6 +1411,7 @@ type Viewer implements Node {
     avatarUrl: String!
 
     friends(after: Cursor, first: Int, before: Cursor, last: Int): UserConnection! @goField(forceResolver: true)
+    blockedFriends(after: Cursor, first: Int, before: Cursor, last: Int): UserConnection! @goField(forceResolver: true)
     # fetch friend ship requests need to be approved by the logged in user
     pendingFriendshipRequests: [FriendshipRequest!]! @goField(forceResolver: true)
     # fetch friend ship requests sent by the logged in user
@@ -1911,6 +1926,48 @@ func (ec *executionContext) field_Query_user_args(ctx context.Context, rawArgs m
 	return args, nil
 }
 
+func (ec *executionContext) field_Viewer_blockedFriends_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *ent.Cursor
+	if tmp, ok := rawArgs["after"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("after"))
+		arg0, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋentᚐCursor(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["after"] = arg0
+	var arg1 *int
+	if tmp, ok := rawArgs["first"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("first"))
+		arg1, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["first"] = arg1
+	var arg2 *ent.Cursor
+	if tmp, ok := rawArgs["before"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("before"))
+		arg2, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋentᚐCursor(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["before"] = arg2
+	var arg3 *int
+	if tmp, ok := rawArgs["last"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("last"))
+		arg3, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["last"] = arg3
+	return args, nil
+}
+
 func (ec *executionContext) field_Viewer_friendGroup_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -2395,6 +2452,8 @@ func (ec *executionContext) fieldContext_CreateUserPayload_viewer(ctx context.Co
 				return ec.fieldContext_Viewer_avatarUrl(ctx, field)
 			case "friends":
 				return ec.fieldContext_Viewer_friends(ctx, field)
+			case "blockedFriends":
+				return ec.fieldContext_Viewer_blockedFriends(ctx, field)
 			case "pendingFriendshipRequests":
 				return ec.fieldContext_Viewer_pendingFriendshipRequests(ctx, field)
 			case "requestingFriendshipRequests":
@@ -5514,6 +5573,8 @@ func (ec *executionContext) fieldContext_Query_viewer(ctx context.Context, field
 				return ec.fieldContext_Viewer_avatarUrl(ctx, field)
 			case "friends":
 				return ec.fieldContext_Viewer_friends(ctx, field)
+			case "blockedFriends":
+				return ec.fieldContext_Viewer_blockedFriends(ctx, field)
 			case "pendingFriendshipRequests":
 				return ec.fieldContext_Viewer_pendingFriendshipRequests(ctx, field)
 			case "requestingFriendshipRequests":
@@ -6101,6 +6162,8 @@ func (ec *executionContext) fieldContext_SignUpPayload_viewer(ctx context.Contex
 				return ec.fieldContext_Viewer_avatarUrl(ctx, field)
 			case "friends":
 				return ec.fieldContext_Viewer_friends(ctx, field)
+			case "blockedFriends":
+				return ec.fieldContext_Viewer_blockedFriends(ctx, field)
 			case "pendingFriendshipRequests":
 				return ec.fieldContext_Viewer_pendingFriendshipRequests(ctx, field)
 			case "requestingFriendshipRequests":
@@ -6171,6 +6234,8 @@ func (ec *executionContext) fieldContext_SwitchUserPayload_viewer(ctx context.Co
 				return ec.fieldContext_Viewer_avatarUrl(ctx, field)
 			case "friends":
 				return ec.fieldContext_Viewer_friends(ctx, field)
+			case "blockedFriends":
+				return ec.fieldContext_Viewer_blockedFriends(ctx, field)
 			case "pendingFriendshipRequests":
 				return ec.fieldContext_Viewer_pendingFriendshipRequests(ctx, field)
 			case "requestingFriendshipRequests":
@@ -6329,6 +6394,8 @@ func (ec *executionContext) fieldContext_UpdateAvatarPayload_viewer(ctx context.
 				return ec.fieldContext_Viewer_avatarUrl(ctx, field)
 			case "friends":
 				return ec.fieldContext_Viewer_friends(ctx, field)
+			case "blockedFriends":
+				return ec.fieldContext_Viewer_blockedFriends(ctx, field)
 			case "pendingFriendshipRequests":
 				return ec.fieldContext_Viewer_pendingFriendshipRequests(ctx, field)
 			case "requestingFriendshipRequests":
@@ -6455,6 +6522,8 @@ func (ec *executionContext) fieldContext_UpdateNicknamePayload_viewer(ctx contex
 				return ec.fieldContext_Viewer_avatarUrl(ctx, field)
 			case "friends":
 				return ec.fieldContext_Viewer_friends(ctx, field)
+			case "blockedFriends":
+				return ec.fieldContext_Viewer_blockedFriends(ctx, field)
 			case "pendingFriendshipRequests":
 				return ec.fieldContext_Viewer_pendingFriendshipRequests(ctx, field)
 			case "requestingFriendshipRequests":
@@ -6525,6 +6594,8 @@ func (ec *executionContext) fieldContext_UpdateScreenIdPayload_viewer(ctx contex
 				return ec.fieldContext_Viewer_avatarUrl(ctx, field)
 			case "friends":
 				return ec.fieldContext_Viewer_friends(ctx, field)
+			case "blockedFriends":
+				return ec.fieldContext_Viewer_blockedFriends(ctx, field)
 			case "pendingFriendshipRequests":
 				return ec.fieldContext_Viewer_pendingFriendshipRequests(ctx, field)
 			case "requestingFriendshipRequests":
@@ -7293,6 +7364,69 @@ func (ec *executionContext) fieldContext_Viewer_friends(ctx context.Context, fie
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Viewer_friends_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Viewer_blockedFriends(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Viewer) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Viewer_blockedFriends(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Viewer().BlockedFriends(rctx, obj, fc.Args["after"].(*ent.Cursor), fc.Args["first"].(*int), fc.Args["before"].(*ent.Cursor), fc.Args["last"].(*int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.UserConnection)
+	fc.Result = res
+	return ec.marshalNUserConnection2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐUserConnection(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Viewer_blockedFriends(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Viewer",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "edges":
+				return ec.fieldContext_UserConnection_edges(ctx, field)
+			case "pageInfo":
+				return ec.fieldContext_UserConnection_pageInfo(ctx, field)
+			case "totalCount":
+				return ec.fieldContext_UserConnection_totalCount(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type UserConnection", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Viewer_blockedFriends_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return
 	}
@@ -11495,6 +11629,26 @@ func (ec *executionContext) _Viewer(ctx context.Context, sel ast.SelectionSet, o
 					}
 				}()
 				res = ec._Viewer_friends(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return innerFunc(ctx)
+
+			})
+		case "blockedFriends":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Viewer_blockedFriends(ctx, field, obj)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
