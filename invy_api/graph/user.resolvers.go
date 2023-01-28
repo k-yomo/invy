@@ -8,7 +8,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"sort"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
@@ -23,9 +22,6 @@ import (
 	"github.com/k-yomo/invy/invy_api/ent/invitationacceptance"
 	"github.com/k-yomo/invy/invy_api/ent/invitationdenial"
 	"github.com/k-yomo/invy/invy_api/ent/invitationuser"
-	"github.com/k-yomo/invy/invy_api/ent/predicate"
-	"github.com/k-yomo/invy/invy_api/ent/userfriendgroup"
-	"github.com/k-yomo/invy/invy_api/ent/usermute"
 	"github.com/k-yomo/invy/invy_api/ent/userprofile"
 	"github.com/k-yomo/invy/invy_api/graph/conv"
 	"github.com/k-yomo/invy/invy_api/graph/gqlgen"
@@ -33,7 +29,6 @@ import (
 	"github.com/k-yomo/invy/invy_api/graph/loader"
 	"github.com/k-yomo/invy/invy_api/internal/xerrors"
 	"github.com/k-yomo/invy/pkg/convutil"
-	"github.com/k-yomo/invy/pkg/sliceutil"
 )
 
 // UpdateAvatar is the resolver for the updateAvatar field.
@@ -99,33 +94,6 @@ func (r *mutationResolver) UpdateScreenID(ctx context.Context, screenID string) 
 		return nil, err
 	}
 	return &gqlmodel.UpdateScreenIDPayload{Viewer: conv.ConvertFromDBUserProfileToViewer(dbUserProfile)}, nil
-}
-
-// MuteUser is the resolver for the muteUser field.
-func (r *mutationResolver) MuteUser(ctx context.Context, userID uuid.UUID) (*gqlmodel.MuteUserPayload, error) {
-	authUserID := auth.GetCurrentUserID(ctx)
-	err := r.DB.UserMute.Create().
-		SetUserID(authUserID).
-		SetMuteUserID(userID).
-		OnConflictColumns(usermute.UserColumn, usermute.MuteUserColumn).
-		Ignore().
-		Exec(ctx)
-	if err != nil {
-		return nil, err
-	}
-	return &gqlmodel.MuteUserPayload{MutedUserID: userID}, nil
-}
-
-// UnmuteUser is the resolver for the unmuteUser field.
-func (r *mutationResolver) UnmuteUser(ctx context.Context, userID uuid.UUID) (*gqlmodel.UnmuteUserPayload, error) {
-	authUserID := auth.GetCurrentUserID(ctx)
-	_, err := r.DB.UserMute.Delete().
-		Where(usermute.UserID(authUserID), usermute.MuteUserID(userID)).
-		Exec(ctx)
-	if err != nil {
-		return nil, err
-	}
-	return &gqlmodel.UnmuteUserPayload{UnmutedUserID: userID}, nil
 }
 
 // Viewer is the resolver for the viewer field.
@@ -294,69 +262,49 @@ func (r *viewerResolver) SentInvitations(ctx context.Context, obj *gqlmodel.View
 func (r *viewerResolver) PendingInvitations(ctx context.Context, obj *gqlmodel.Viewer) ([]*gqlmodel.Invitation, error) {
 	authUserID := auth.GetCurrentUserID(ctx)
 	now := time.Now()
-	invitationWhereClauses := []predicate.Invitation{
-		invitation.ExpiresAtGTE(now),
-		func(s *sql.Selector) {
-			invitationAcceptanceTable := sql.Table(invitationacceptance.Table)
-			s.Where(
-				sql.NotExists(
-					sql.Select().
-						From(invitationAcceptanceTable).
-						Where(
-							sql.And(
-								sql.EQ(invitationAcceptanceTable.C(invitationacceptance.FieldUserID), authUserID),
-								sql.ColumnsEQ(invitationAcceptanceTable.C(invitationacceptance.FieldInvitationID), s.C(invitation.FieldID)),
-							),
-						),
-				),
-			)
-		},
-		func(s *sql.Selector) {
-			invitationDenialTable := sql.Table(invitationdenial.Table)
-			s.Where(
-				sql.NotExists(
-					sql.Select().
-						From(invitationDenialTable).
-						Where(
-							sql.And(
-								sql.EQ(invitationDenialTable.C(invitationdenial.FieldUserID), authUserID),
-								sql.ColumnsEQ(invitationDenialTable.C(invitationdenial.FieldInvitationID), s.C(invitation.FieldID)),
-							),
-						),
-				),
-			)
-		},
-	}
-	dbInvitationsToUser, err := r.DB.InvitationUser.Query().
+
+	dbInvitations, err := r.DB.InvitationUser.Query().
 		Where(invitationuser.UserID(authUserID)).
 		QueryInvitation().
-		Where(invitationWhereClauses...).
+		Where(
+			invitation.ExpiresAtGTE(now),
+			func(s *sql.Selector) {
+				invitationAcceptanceTable := sql.Table(invitationacceptance.Table)
+				s.Where(
+					sql.NotExists(
+						sql.Select().
+							From(invitationAcceptanceTable).
+							Where(
+								sql.And(
+									sql.EQ(invitationAcceptanceTable.C(invitationacceptance.FieldUserID), authUserID),
+									sql.ColumnsEQ(invitationAcceptanceTable.C(invitationacceptance.FieldInvitationID), s.C(invitation.FieldID)),
+								),
+							),
+					),
+				)
+			},
+			func(s *sql.Selector) {
+				invitationDenialTable := sql.Table(invitationdenial.Table)
+				s.Where(
+					sql.NotExists(
+						sql.Select().
+							From(invitationDenialTable).
+							Where(
+								sql.And(
+									sql.EQ(invitationDenialTable.C(invitationdenial.FieldUserID), authUserID),
+									sql.ColumnsEQ(invitationDenialTable.C(invitationdenial.FieldInvitationID), s.C(invitation.FieldID)),
+								),
+							),
+					),
+				)
+			}).
+		Order(ent.Asc(invitation.FieldExpiresAt)).
 		All(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	dbInvitationsToGroup, err := r.DB.UserFriendGroup.Query().
-		Where(userfriendgroup.UserID(authUserID)).
-		QueryFriendGroup().
-		QueryInvitationFriendGroups().
-		QueryInvitation().
-		Where(invitationWhereClauses...).
-		All(ctx)
-	if err != nil {
-		return nil, err
-	}
-	invitations := sliceutil.MergeNodes(
-		convutil.ConvertToList(dbInvitationsToUser, conv.ConvertFromDBInvitation),
-		convutil.ConvertToList(dbInvitationsToGroup, conv.ConvertFromDBInvitation),
-	)
-
-	// TODO: dedup
-
-	// sort by expiration time ASC
-	sort.Slice(invitations, func(i, j int) bool {
-		return invitations[i].ExpiresAt.Before(invitations[j].ExpiresAt)
-	})
+	invitations := convutil.ConvertToList(dbInvitations, conv.ConvertFromDBInvitation)
 
 	return invitations, nil
 }

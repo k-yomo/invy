@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"net/http"
 	"os"
@@ -25,12 +26,16 @@ import (
 	"github.com/k-yomo/invy/invy_api/graph/directive"
 	"github.com/k-yomo/invy/invy_api/graph/gqlgen"
 	"github.com/k-yomo/invy/invy_api/graph/loader"
+	"github.com/k-yomo/invy/invy_api/query"
 	"github.com/k-yomo/invy/pkg/logging"
 	"github.com/k-yomo/invy/pkg/requestutil"
 	"github.com/k-yomo/invy/pkg/storage"
 	"github.com/k-yomo/invy/pkg/tracing"
 	_ "github.com/lib/pq"
 	"github.com/rs/cors"
+	"github.com/uptrace/bun"
+	"github.com/uptrace/bun/dialect/pgdialect"
+	"github.com/uptrace/bun/driver/pgdriver"
 	"go.uber.org/zap"
 	"google.golang.org/api/option"
 )
@@ -59,13 +64,19 @@ func main() {
 		}
 	}
 
-	db, err := ent.Open(appConfig.DBConfig.Driver, appConfig.DBConfig.Dsn())
+	sql.OpenDB(pgdriver.NewConnector(pgdriver.WithDSN(appConfig.DBConfig.Dsn())))
+	sqldb, err := sql.Open(appConfig.DBConfig.Driver, "file::memory:?cache=shared")
 	if err != nil {
 		logger.Fatal("initialize db failed", zap.Error(err))
 	}
-	defer db.Close()
+	bunDB := bun.NewDB(sqldb, pgdialect.New())
+	entDB, err := ent.Open(appConfig.DBConfig.Driver, appConfig.DBConfig.Dsn())
+	if err != nil {
+		logger.Fatal("initialize ent db failed", zap.Error(err))
+	}
+	defer entDB.Close()
 	// Run migration.
-	if err := db.Schema.Create(ctx); err != nil {
+	if err := entDB.Schema.Create(ctx); err != nil {
 		logger.Fatal("creating schema resources failed", zap.Error(err))
 	}
 
@@ -103,7 +114,8 @@ func main() {
 
 	gqlConfig := gqlgen.Config{
 		Resolvers: &graph.Resolver{
-			DB:                 db,
+			DB:                 entDB,
+			DBQuery:            query.NewQuery(bunDB),
 			FirebaseAuthClient: firebaseAuthClient,
 			FCMClient:          fcmClient,
 			AvatarUploader:     avatarUploader,
@@ -119,7 +131,7 @@ func main() {
 	gqlServer.Use(logging.GraphQLResponseInterceptor{})
 
 	r := newBaseRouter(appConfig, logger, firebaseAuthClient)
-	r.With(loader.Middleware(db)).Handle("/query", gqlServer)
+	r.With(loader.Middleware(entDB)).Handle("/query", gqlServer)
 
 	if appConfig.Env == config.EnvLocal {
 		r.Get("/", playground.Handler("GraphQL playground", "/query"))

@@ -14,7 +14,6 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
 	"github.com/k-yomo/invy/invy_api/ent/friendgroup"
-	"github.com/k-yomo/invy/invy_api/ent/invitationfriendgroup"
 	"github.com/k-yomo/invy/invy_api/ent/user"
 	"github.com/k-yomo/invy/invy_api/ent/userfriendgroup"
 )
@@ -113,21 +112,6 @@ func (fgc *FriendGroupCreate) AddFriendUsers(u ...*User) *FriendGroupCreate {
 		ids[i] = u[i].ID
 	}
 	return fgc.AddFriendUserIDs(ids...)
-}
-
-// AddInvitationFriendGroupIDs adds the "invitation_friend_groups" edge to the InvitationFriendGroup entity by IDs.
-func (fgc *FriendGroupCreate) AddInvitationFriendGroupIDs(ids ...uuid.UUID) *FriendGroupCreate {
-	fgc.mutation.AddInvitationFriendGroupIDs(ids...)
-	return fgc
-}
-
-// AddInvitationFriendGroups adds the "invitation_friend_groups" edges to the InvitationFriendGroup entity.
-func (fgc *FriendGroupCreate) AddInvitationFriendGroups(i ...*InvitationFriendGroup) *FriendGroupCreate {
-	ids := make([]uuid.UUID, len(i))
-	for j := range i {
-		ids[j] = i[j].ID
-	}
-	return fgc.AddInvitationFriendGroupIDs(ids...)
 }
 
 // AddUserFriendGroupIDs adds the "user_friend_groups" edge to the UserFriendGroup entity by IDs.
@@ -319,25 +303,6 @@ func (fgc *FriendGroupCreate) createSpec() (*FriendGroup, *sqlgraph.CreateSpec) 
 		edge.Target.Fields = specE.Fields
 		if specE.ID.Value != nil {
 			edge.Target.Fields = append(edge.Target.Fields, specE.ID)
-		}
-		_spec.Edges = append(_spec.Edges, edge)
-	}
-	if nodes := fgc.mutation.InvitationFriendGroupsIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: true,
-			Table:   friendgroup.InvitationFriendGroupsTable,
-			Columns: []string{friendgroup.InvitationFriendGroupsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeUUID,
-					Column: invitationfriendgroup.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}

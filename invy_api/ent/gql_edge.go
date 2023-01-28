@@ -40,18 +40,6 @@ func (fg *FriendGroup) FriendUsers(ctx context.Context) (result []*User, err err
 	return result, err
 }
 
-func (fg *FriendGroup) InvitationFriendGroups(ctx context.Context) (result []*InvitationFriendGroup, err error) {
-	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
-		result, err = fg.NamedInvitationFriendGroups(graphql.GetFieldContext(ctx).Field.Alias)
-	} else {
-		result, err = fg.Edges.InvitationFriendGroupsOrErr()
-	}
-	if IsNotLoaded(err) {
-		result, err = fg.QueryInvitationFriendGroups().All(ctx)
-	}
-	return result, err
-}
-
 func (fg *FriendGroup) UserFriendGroups(ctx context.Context) (result []*UserFriendGroup, err error) {
 	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
 		result, err = fg.NamedUserFriendGroups(graphql.GetFieldContext(ctx).Field.Alias)
@@ -116,18 +104,6 @@ func (i *Invitation) InvitationUsers(ctx context.Context) (result []*InvitationU
 	return result, err
 }
 
-func (i *Invitation) InvitationFriendGroups(ctx context.Context) (result []*InvitationFriendGroup, err error) {
-	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
-		result, err = i.NamedInvitationFriendGroups(graphql.GetFieldContext(ctx).Field.Alias)
-	} else {
-		result, err = i.Edges.InvitationFriendGroupsOrErr()
-	}
-	if IsNotLoaded(err) {
-		result, err = i.QueryInvitationFriendGroups().All(ctx)
-	}
-	return result, err
-}
-
 func (i *Invitation) InvitationAcceptances(ctx context.Context) (result []*InvitationAcceptance, err error) {
 	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
 		result, err = i.NamedInvitationAcceptances(graphql.GetFieldContext(ctx).Field.Alias)
@@ -180,22 +156,6 @@ func (id *InvitationDenial) Invitation(ctx context.Context) (*Invitation, error)
 	result, err := id.Edges.InvitationOrErr()
 	if IsNotLoaded(err) {
 		result, err = id.QueryInvitation().Only(ctx)
-	}
-	return result, err
-}
-
-func (ifg *InvitationFriendGroup) Invitation(ctx context.Context) (*Invitation, error) {
-	result, err := ifg.Edges.InvitationOrErr()
-	if IsNotLoaded(err) {
-		result, err = ifg.QueryInvitation().Only(ctx)
-	}
-	return result, err
-}
-
-func (ifg *InvitationFriendGroup) FriendGroup(ctx context.Context) (*FriendGroup, error) {
-	result, err := ifg.Edges.FriendGroupOrErr()
-	if IsNotLoaded(err) {
-		result, err = ifg.QueryFriendGroup().Only(ctx)
 	}
 	return result, err
 }
@@ -332,6 +292,22 @@ func (u *User) UserFriendGroups(ctx context.Context) (result []*UserFriendGroup,
 	}
 	if IsNotLoaded(err) {
 		result, err = u.QueryUserFriendGroups().All(ctx)
+	}
+	return result, err
+}
+
+func (ub *UserBlock) User(ctx context.Context) (*User, error) {
+	result, err := ub.Edges.UserOrErr()
+	if IsNotLoaded(err) {
+		result, err = ub.QueryUser().Only(ctx)
+	}
+	return result, err
+}
+
+func (ub *UserBlock) BlockUser(ctx context.Context) (*User, error) {
+	result, err := ub.Edges.BlockUserOrErr()
+	if IsNotLoaded(err) {
+		result, err = ub.QueryBlockUser().Only(ctx)
 	}
 	return result, err
 }

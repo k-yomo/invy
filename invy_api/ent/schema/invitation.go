@@ -49,8 +49,6 @@ func (Invitation) Edges() []ent.Edge {
 			Field("user_id"),
 		edge.From("invitation_users", InvitationUser.Type).
 			Ref("invitation"),
-		edge.From("invitation_friend_groups", InvitationFriendGroup.Type).
-			Ref("invitation"),
 		edge.From("invitation_acceptances", InvitationAcceptance.Type).
 			Ref("invitation"),
 		edge.From("invitation_denials", InvitationDenial.Type).

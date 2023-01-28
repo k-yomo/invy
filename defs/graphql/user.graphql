@@ -10,8 +10,6 @@ extend type Mutation {
     updateAvatar(avatar: Upload!): UpdateAvatarPayload! @authRequired
     updateNickname(nickname: String!): UpdateNicknamePayload! @authRequired
     updateScreenId(screenId: String!): UpdateScreenIdPayload! @authRequired
-    muteUser(userId: UUID!): MuteUserPayload! @authRequired
-    unmuteUser(userId: UUID!): UnmuteUserPayload! @authRequired
 }
 
 # Currently logged in user
@@ -70,12 +68,4 @@ type UpdateNicknamePayload {
 
 type UpdateScreenIdPayload {
     viewer: Viewer!
-}
-
-type MuteUserPayload {
-    mutedUserId: UUID!
-}
-
-type UnmuteUserPayload {
-    unmutedUserId: UUID!
 }

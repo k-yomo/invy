@@ -18,10 +18,10 @@ import (
 	"github.com/k-yomo/invy/invy_api/ent/invitation"
 	"github.com/k-yomo/invy/invy_api/ent/invitationacceptance"
 	"github.com/k-yomo/invy/invy_api/ent/invitationdenial"
-	"github.com/k-yomo/invy/invy_api/ent/invitationfriendgroup"
 	"github.com/k-yomo/invy/invy_api/ent/invitationuser"
 	"github.com/k-yomo/invy/invy_api/ent/pushnotificationtoken"
 	"github.com/k-yomo/invy/invy_api/ent/user"
+	"github.com/k-yomo/invy/invy_api/ent/userblock"
 	"github.com/k-yomo/invy/invy_api/ent/userfriendgroup"
 	"github.com/k-yomo/invy/invy_api/ent/usermute"
 	"github.com/k-yomo/invy/invy_api/ent/userprofile"
@@ -58,10 +58,10 @@ func columnChecker(table string) func(string) error {
 		invitation.Table:            invitation.ValidColumn,
 		invitationacceptance.Table:  invitationacceptance.ValidColumn,
 		invitationdenial.Table:      invitationdenial.ValidColumn,
-		invitationfriendgroup.Table: invitationfriendgroup.ValidColumn,
 		invitationuser.Table:        invitationuser.ValidColumn,
 		pushnotificationtoken.Table: pushnotificationtoken.ValidColumn,
 		user.Table:                  user.ValidColumn,
+		userblock.Table:             userblock.ValidColumn,
 		userfriendgroup.Table:       userfriendgroup.ValidColumn,
 		usermute.Table:              usermute.ValidColumn,
 		userprofile.Table:           userprofile.ValidColumn,

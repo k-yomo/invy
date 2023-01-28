@@ -206,33 +206,6 @@ var (
 			},
 		},
 	}
-	// InvitationFriendGroupsColumns holds the columns for the "invitation_friend_groups" table.
-	InvitationFriendGroupsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUUID},
-		{Name: "created_at", Type: field.TypeTime},
-		{Name: "invitation_id", Type: field.TypeUUID},
-		{Name: "friend_group_id", Type: field.TypeUUID},
-	}
-	// InvitationFriendGroupsTable holds the schema information for the "invitation_friend_groups" table.
-	InvitationFriendGroupsTable = &schema.Table{
-		Name:       "invitation_friend_groups",
-		Columns:    InvitationFriendGroupsColumns,
-		PrimaryKey: []*schema.Column{InvitationFriendGroupsColumns[0]},
-		ForeignKeys: []*schema.ForeignKey{
-			{
-				Symbol:     "invitation_friend_groups_invitations_invitation",
-				Columns:    []*schema.Column{InvitationFriendGroupsColumns[2]},
-				RefColumns: []*schema.Column{InvitationsColumns[0]},
-				OnDelete:   schema.NoAction,
-			},
-			{
-				Symbol:     "invitation_friend_groups_friend_groups_friend_group",
-				Columns:    []*schema.Column{InvitationFriendGroupsColumns[3]},
-				RefColumns: []*schema.Column{FriendGroupsColumns[0]},
-				OnDelete:   schema.NoAction,
-			},
-		},
-	}
 	// InvitationUsersColumns holds the columns for the "invitation_users" table.
 	InvitationUsersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUUID},
@@ -300,6 +273,40 @@ var (
 				Columns:    []*schema.Column{UsersColumns[2]},
 				RefColumns: []*schema.Column{AccountsColumns[0]},
 				OnDelete:   schema.NoAction,
+			},
+		},
+	}
+	// UserBlocksColumns holds the columns for the "user_blocks" table.
+	UserBlocksColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "user_id", Type: field.TypeUUID},
+		{Name: "block_user_id", Type: field.TypeUUID},
+	}
+	// UserBlocksTable holds the schema information for the "user_blocks" table.
+	UserBlocksTable = &schema.Table{
+		Name:       "user_blocks",
+		Columns:    UserBlocksColumns,
+		PrimaryKey: []*schema.Column{UserBlocksColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "user_blocks_users_user",
+				Columns:    []*schema.Column{UserBlocksColumns[2]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "user_blocks_users_block_user",
+				Columns:    []*schema.Column{UserBlocksColumns[3]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "userblock_user_id_block_user_id",
+				Unique:  true,
+				Columns: []*schema.Column{UserBlocksColumns[2], UserBlocksColumns[3]},
 			},
 		},
 	}
@@ -404,10 +411,10 @@ var (
 		InvitationsTable,
 		InvitationAcceptancesTable,
 		InvitationDenialsTable,
-		InvitationFriendGroupsTable,
 		InvitationUsersTable,
 		PushNotificationTokensTable,
 		UsersTable,
+		UserBlocksTable,
 		UserFriendGroupsTable,
 		UserMutesTable,
 		UserProfilesTable,
@@ -425,12 +432,12 @@ func init() {
 	InvitationAcceptancesTable.ForeignKeys[1].RefTable = InvitationsTable
 	InvitationDenialsTable.ForeignKeys[0].RefTable = UsersTable
 	InvitationDenialsTable.ForeignKeys[1].RefTable = InvitationsTable
-	InvitationFriendGroupsTable.ForeignKeys[0].RefTable = InvitationsTable
-	InvitationFriendGroupsTable.ForeignKeys[1].RefTable = FriendGroupsTable
 	InvitationUsersTable.ForeignKeys[0].RefTable = InvitationsTable
 	InvitationUsersTable.ForeignKeys[1].RefTable = UsersTable
 	PushNotificationTokensTable.ForeignKeys[0].RefTable = UsersTable
 	UsersTable.ForeignKeys[0].RefTable = AccountsTable
+	UserBlocksTable.ForeignKeys[0].RefTable = UsersTable
+	UserBlocksTable.ForeignKeys[1].RefTable = UsersTable
 	UserFriendGroupsTable.ForeignKeys[0].RefTable = FriendGroupsTable
 	UserFriendGroupsTable.ForeignKeys[1].RefTable = UsersTable
 	UserMutesTable.ForeignKeys[0].RefTable = UsersTable

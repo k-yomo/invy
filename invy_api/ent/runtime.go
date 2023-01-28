@@ -13,11 +13,11 @@ import (
 	"github.com/k-yomo/invy/invy_api/ent/invitation"
 	"github.com/k-yomo/invy/invy_api/ent/invitationacceptance"
 	"github.com/k-yomo/invy/invy_api/ent/invitationdenial"
-	"github.com/k-yomo/invy/invy_api/ent/invitationfriendgroup"
 	"github.com/k-yomo/invy/invy_api/ent/invitationuser"
 	"github.com/k-yomo/invy/invy_api/ent/pushnotificationtoken"
 	"github.com/k-yomo/invy/invy_api/ent/schema"
 	"github.com/k-yomo/invy/invy_api/ent/user"
+	"github.com/k-yomo/invy/invy_api/ent/userblock"
 	"github.com/k-yomo/invy/invy_api/ent/userfriendgroup"
 	"github.com/k-yomo/invy/invy_api/ent/usermute"
 	"github.com/k-yomo/invy/invy_api/ent/userprofile"
@@ -113,16 +113,6 @@ func init() {
 	invitationdenialDescID := invitationdenialFields[0].Descriptor()
 	// invitationdenial.DefaultID holds the default value on creation for the id field.
 	invitationdenial.DefaultID = invitationdenialDescID.Default.(func() uuid.UUID)
-	invitationfriendgroupFields := schema.InvitationFriendGroup{}.Fields()
-	_ = invitationfriendgroupFields
-	// invitationfriendgroupDescCreatedAt is the schema descriptor for created_at field.
-	invitationfriendgroupDescCreatedAt := invitationfriendgroupFields[3].Descriptor()
-	// invitationfriendgroup.DefaultCreatedAt holds the default value on creation for the created_at field.
-	invitationfriendgroup.DefaultCreatedAt = invitationfriendgroupDescCreatedAt.Default.(func() time.Time)
-	// invitationfriendgroupDescID is the schema descriptor for id field.
-	invitationfriendgroupDescID := invitationfriendgroupFields[0].Descriptor()
-	// invitationfriendgroup.DefaultID holds the default value on creation for the id field.
-	invitationfriendgroup.DefaultID = invitationfriendgroupDescID.Default.(func() uuid.UUID)
 	invitationuserFields := schema.InvitationUser{}.Fields()
 	_ = invitationuserFields
 	// invitationuserDescCreatedAt is the schema descriptor for created_at field.
@@ -159,6 +149,16 @@ func init() {
 	userDescID := userFields[0].Descriptor()
 	// user.DefaultID holds the default value on creation for the id field.
 	user.DefaultID = userDescID.Default.(func() uuid.UUID)
+	userblockFields := schema.UserBlock{}.Fields()
+	_ = userblockFields
+	// userblockDescCreatedAt is the schema descriptor for created_at field.
+	userblockDescCreatedAt := userblockFields[3].Descriptor()
+	// userblock.DefaultCreatedAt holds the default value on creation for the created_at field.
+	userblock.DefaultCreatedAt = userblockDescCreatedAt.Default.(func() time.Time)
+	// userblockDescID is the schema descriptor for id field.
+	userblockDescID := userblockFields[0].Descriptor()
+	// userblock.DefaultID holds the default value on creation for the id field.
+	userblock.DefaultID = userblockDescID.Default.(func() uuid.UUID)
 	userfriendgroupFields := schema.UserFriendGroup{}.Fields()
 	_ = userfriendgroupFields
 	// userfriendgroupDescCreatedAt is the schema descriptor for created_at field.

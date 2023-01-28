@@ -45,7 +45,8 @@ class DevConfig implements AppConfig {
 class LocalConfig implements AppConfig {
   @override
   String get apiBaseUrl {
-    return 'http://$_host:8000';
+    return 'http://192.168.1.147:8000';
+    // return 'http://$_host:8000';
   }
 
   @override

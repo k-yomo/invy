@@ -22,10 +22,10 @@ import (
 	"github.com/k-yomo/invy/invy_api/ent/invitation"
 	"github.com/k-yomo/invy/invy_api/ent/invitationacceptance"
 	"github.com/k-yomo/invy/invy_api/ent/invitationdenial"
-	"github.com/k-yomo/invy/invy_api/ent/invitationfriendgroup"
 	"github.com/k-yomo/invy/invy_api/ent/invitationuser"
 	"github.com/k-yomo/invy/invy_api/ent/pushnotificationtoken"
 	"github.com/k-yomo/invy/invy_api/ent/user"
+	"github.com/k-yomo/invy/invy_api/ent/userblock"
 	"github.com/k-yomo/invy/invy_api/ent/userfriendgroup"
 	"github.com/k-yomo/invy/invy_api/ent/usermute"
 	"github.com/k-yomo/invy/invy_api/ent/userprofile"
@@ -1915,237 +1915,6 @@ func (id *InvitationDenial) ToEdge(order *InvitationDenialOrder) *InvitationDeni
 	}
 }
 
-// InvitationFriendGroupEdge is the edge representation of InvitationFriendGroup.
-type InvitationFriendGroupEdge struct {
-	Node   *InvitationFriendGroup `json:"node"`
-	Cursor Cursor                 `json:"cursor"`
-}
-
-// InvitationFriendGroupConnection is the connection containing edges to InvitationFriendGroup.
-type InvitationFriendGroupConnection struct {
-	Edges      []*InvitationFriendGroupEdge `json:"edges"`
-	PageInfo   PageInfo                     `json:"pageInfo"`
-	TotalCount int                          `json:"totalCount"`
-}
-
-func (c *InvitationFriendGroupConnection) build(nodes []*InvitationFriendGroup, pager *invitationfriendgroupPager, after *Cursor, first *int, before *Cursor, last *int) {
-	c.PageInfo.HasNextPage = before != nil
-	c.PageInfo.HasPreviousPage = after != nil
-	if first != nil && *first+1 == len(nodes) {
-		c.PageInfo.HasNextPage = true
-		nodes = nodes[:len(nodes)-1]
-	} else if last != nil && *last+1 == len(nodes) {
-		c.PageInfo.HasPreviousPage = true
-		nodes = nodes[:len(nodes)-1]
-	}
-	var nodeAt func(int) *InvitationFriendGroup
-	if last != nil {
-		n := len(nodes) - 1
-		nodeAt = func(i int) *InvitationFriendGroup {
-			return nodes[n-i]
-		}
-	} else {
-		nodeAt = func(i int) *InvitationFriendGroup {
-			return nodes[i]
-		}
-	}
-	c.Edges = make([]*InvitationFriendGroupEdge, len(nodes))
-	for i := range nodes {
-		node := nodeAt(i)
-		c.Edges[i] = &InvitationFriendGroupEdge{
-			Node:   node,
-			Cursor: pager.toCursor(node),
-		}
-	}
-	if l := len(c.Edges); l > 0 {
-		c.PageInfo.StartCursor = &c.Edges[0].Cursor
-		c.PageInfo.EndCursor = &c.Edges[l-1].Cursor
-	}
-	if c.TotalCount == 0 {
-		c.TotalCount = len(nodes)
-	}
-}
-
-// InvitationFriendGroupPaginateOption enables pagination customization.
-type InvitationFriendGroupPaginateOption func(*invitationfriendgroupPager) error
-
-// WithInvitationFriendGroupOrder configures pagination ordering.
-func WithInvitationFriendGroupOrder(order *InvitationFriendGroupOrder) InvitationFriendGroupPaginateOption {
-	if order == nil {
-		order = DefaultInvitationFriendGroupOrder
-	}
-	o := *order
-	return func(pager *invitationfriendgroupPager) error {
-		if err := o.Direction.Validate(); err != nil {
-			return err
-		}
-		if o.Field == nil {
-			o.Field = DefaultInvitationFriendGroupOrder.Field
-		}
-		pager.order = &o
-		return nil
-	}
-}
-
-// WithInvitationFriendGroupFilter configures pagination filter.
-func WithInvitationFriendGroupFilter(filter func(*InvitationFriendGroupQuery) (*InvitationFriendGroupQuery, error)) InvitationFriendGroupPaginateOption {
-	return func(pager *invitationfriendgroupPager) error {
-		if filter == nil {
-			return errors.New("InvitationFriendGroupQuery filter cannot be nil")
-		}
-		pager.filter = filter
-		return nil
-	}
-}
-
-type invitationfriendgroupPager struct {
-	order  *InvitationFriendGroupOrder
-	filter func(*InvitationFriendGroupQuery) (*InvitationFriendGroupQuery, error)
-}
-
-func newInvitationFriendGroupPager(opts []InvitationFriendGroupPaginateOption) (*invitationfriendgroupPager, error) {
-	pager := &invitationfriendgroupPager{}
-	for _, opt := range opts {
-		if err := opt(pager); err != nil {
-			return nil, err
-		}
-	}
-	if pager.order == nil {
-		pager.order = DefaultInvitationFriendGroupOrder
-	}
-	return pager, nil
-}
-
-func (p *invitationfriendgroupPager) applyFilter(query *InvitationFriendGroupQuery) (*InvitationFriendGroupQuery, error) {
-	if p.filter != nil {
-		return p.filter(query)
-	}
-	return query, nil
-}
-
-func (p *invitationfriendgroupPager) toCursor(ifg *InvitationFriendGroup) Cursor {
-	return p.order.Field.toCursor(ifg)
-}
-
-func (p *invitationfriendgroupPager) applyCursors(query *InvitationFriendGroupQuery, after, before *Cursor) *InvitationFriendGroupQuery {
-	for _, predicate := range cursorsToPredicates(
-		p.order.Direction, after, before,
-		p.order.Field.field, DefaultInvitationFriendGroupOrder.Field.field,
-	) {
-		query = query.Where(predicate)
-	}
-	return query
-}
-
-func (p *invitationfriendgroupPager) applyOrder(query *InvitationFriendGroupQuery, reverse bool) *InvitationFriendGroupQuery {
-	direction := p.order.Direction
-	if reverse {
-		direction = direction.reverse()
-	}
-	query = query.Order(direction.orderFunc(p.order.Field.field))
-	if p.order.Field != DefaultInvitationFriendGroupOrder.Field {
-		query = query.Order(direction.orderFunc(DefaultInvitationFriendGroupOrder.Field.field))
-	}
-	return query
-}
-
-func (p *invitationfriendgroupPager) orderExpr(reverse bool) sql.Querier {
-	direction := p.order.Direction
-	if reverse {
-		direction = direction.reverse()
-	}
-	return sql.ExprFunc(func(b *sql.Builder) {
-		b.Ident(p.order.Field.field).Pad().WriteString(string(direction))
-		if p.order.Field != DefaultInvitationFriendGroupOrder.Field {
-			b.Comma().Ident(DefaultInvitationFriendGroupOrder.Field.field).Pad().WriteString(string(direction))
-		}
-	})
-}
-
-// Paginate executes the query and returns a relay based cursor connection to InvitationFriendGroup.
-func (ifg *InvitationFriendGroupQuery) Paginate(
-	ctx context.Context, after *Cursor, first *int,
-	before *Cursor, last *int, opts ...InvitationFriendGroupPaginateOption,
-) (*InvitationFriendGroupConnection, error) {
-	if err := validateFirstLast(first, last); err != nil {
-		return nil, err
-	}
-	pager, err := newInvitationFriendGroupPager(opts)
-	if err != nil {
-		return nil, err
-	}
-	if ifg, err = pager.applyFilter(ifg); err != nil {
-		return nil, err
-	}
-	conn := &InvitationFriendGroupConnection{Edges: []*InvitationFriendGroupEdge{}}
-	ignoredEdges := !hasCollectedField(ctx, edgesField)
-	if hasCollectedField(ctx, totalCountField) || hasCollectedField(ctx, pageInfoField) {
-		hasPagination := after != nil || first != nil || before != nil || last != nil
-		if hasPagination || ignoredEdges {
-			if conn.TotalCount, err = ifg.Clone().Count(ctx); err != nil {
-				return nil, err
-			}
-			conn.PageInfo.HasNextPage = first != nil && conn.TotalCount > 0
-			conn.PageInfo.HasPreviousPage = last != nil && conn.TotalCount > 0
-		}
-	}
-	if ignoredEdges || (first != nil && *first == 0) || (last != nil && *last == 0) {
-		return conn, nil
-	}
-
-	ifg = pager.applyCursors(ifg, after, before)
-	ifg = pager.applyOrder(ifg, last != nil)
-	if limit := paginateLimit(first, last); limit != 0 {
-		ifg.Limit(limit)
-	}
-	if field := collectedField(ctx, edgesField, nodeField); field != nil {
-		if err := ifg.collectField(ctx, graphql.GetOperationContext(ctx), *field, []string{edgesField, nodeField}); err != nil {
-			return nil, err
-		}
-	}
-
-	nodes, err := ifg.All(ctx)
-	if err != nil {
-		return nil, err
-	}
-	conn.build(nodes, pager, after, first, before, last)
-	return conn, nil
-}
-
-// InvitationFriendGroupOrderField defines the ordering field of InvitationFriendGroup.
-type InvitationFriendGroupOrderField struct {
-	field    string
-	toCursor func(*InvitationFriendGroup) Cursor
-}
-
-// InvitationFriendGroupOrder defines the ordering of InvitationFriendGroup.
-type InvitationFriendGroupOrder struct {
-	Direction OrderDirection                   `json:"direction"`
-	Field     *InvitationFriendGroupOrderField `json:"field"`
-}
-
-// DefaultInvitationFriendGroupOrder is the default ordering of InvitationFriendGroup.
-var DefaultInvitationFriendGroupOrder = &InvitationFriendGroupOrder{
-	Direction: OrderDirectionAsc,
-	Field: &InvitationFriendGroupOrderField{
-		field: invitationfriendgroup.FieldID,
-		toCursor: func(ifg *InvitationFriendGroup) Cursor {
-			return Cursor{ID: ifg.ID}
-		},
-	},
-}
-
-// ToEdge converts InvitationFriendGroup into InvitationFriendGroupEdge.
-func (ifg *InvitationFriendGroup) ToEdge(order *InvitationFriendGroupOrder) *InvitationFriendGroupEdge {
-	if order == nil {
-		order = DefaultInvitationFriendGroupOrder
-	}
-	return &InvitationFriendGroupEdge{
-		Node:   ifg,
-		Cursor: order.Field.toCursor(ifg),
-	}
-}
-
 // InvitationUserEdge is the edge representation of InvitationUser.
 type InvitationUserEdge struct {
 	Node   *InvitationUser `json:"node"`
@@ -2836,6 +2605,237 @@ func (u *User) ToEdge(order *UserOrder) *UserEdge {
 	return &UserEdge{
 		Node:   u,
 		Cursor: order.Field.toCursor(u),
+	}
+}
+
+// UserBlockEdge is the edge representation of UserBlock.
+type UserBlockEdge struct {
+	Node   *UserBlock `json:"node"`
+	Cursor Cursor     `json:"cursor"`
+}
+
+// UserBlockConnection is the connection containing edges to UserBlock.
+type UserBlockConnection struct {
+	Edges      []*UserBlockEdge `json:"edges"`
+	PageInfo   PageInfo         `json:"pageInfo"`
+	TotalCount int              `json:"totalCount"`
+}
+
+func (c *UserBlockConnection) build(nodes []*UserBlock, pager *userblockPager, after *Cursor, first *int, before *Cursor, last *int) {
+	c.PageInfo.HasNextPage = before != nil
+	c.PageInfo.HasPreviousPage = after != nil
+	if first != nil && *first+1 == len(nodes) {
+		c.PageInfo.HasNextPage = true
+		nodes = nodes[:len(nodes)-1]
+	} else if last != nil && *last+1 == len(nodes) {
+		c.PageInfo.HasPreviousPage = true
+		nodes = nodes[:len(nodes)-1]
+	}
+	var nodeAt func(int) *UserBlock
+	if last != nil {
+		n := len(nodes) - 1
+		nodeAt = func(i int) *UserBlock {
+			return nodes[n-i]
+		}
+	} else {
+		nodeAt = func(i int) *UserBlock {
+			return nodes[i]
+		}
+	}
+	c.Edges = make([]*UserBlockEdge, len(nodes))
+	for i := range nodes {
+		node := nodeAt(i)
+		c.Edges[i] = &UserBlockEdge{
+			Node:   node,
+			Cursor: pager.toCursor(node),
+		}
+	}
+	if l := len(c.Edges); l > 0 {
+		c.PageInfo.StartCursor = &c.Edges[0].Cursor
+		c.PageInfo.EndCursor = &c.Edges[l-1].Cursor
+	}
+	if c.TotalCount == 0 {
+		c.TotalCount = len(nodes)
+	}
+}
+
+// UserBlockPaginateOption enables pagination customization.
+type UserBlockPaginateOption func(*userblockPager) error
+
+// WithUserBlockOrder configures pagination ordering.
+func WithUserBlockOrder(order *UserBlockOrder) UserBlockPaginateOption {
+	if order == nil {
+		order = DefaultUserBlockOrder
+	}
+	o := *order
+	return func(pager *userblockPager) error {
+		if err := o.Direction.Validate(); err != nil {
+			return err
+		}
+		if o.Field == nil {
+			o.Field = DefaultUserBlockOrder.Field
+		}
+		pager.order = &o
+		return nil
+	}
+}
+
+// WithUserBlockFilter configures pagination filter.
+func WithUserBlockFilter(filter func(*UserBlockQuery) (*UserBlockQuery, error)) UserBlockPaginateOption {
+	return func(pager *userblockPager) error {
+		if filter == nil {
+			return errors.New("UserBlockQuery filter cannot be nil")
+		}
+		pager.filter = filter
+		return nil
+	}
+}
+
+type userblockPager struct {
+	order  *UserBlockOrder
+	filter func(*UserBlockQuery) (*UserBlockQuery, error)
+}
+
+func newUserBlockPager(opts []UserBlockPaginateOption) (*userblockPager, error) {
+	pager := &userblockPager{}
+	for _, opt := range opts {
+		if err := opt(pager); err != nil {
+			return nil, err
+		}
+	}
+	if pager.order == nil {
+		pager.order = DefaultUserBlockOrder
+	}
+	return pager, nil
+}
+
+func (p *userblockPager) applyFilter(query *UserBlockQuery) (*UserBlockQuery, error) {
+	if p.filter != nil {
+		return p.filter(query)
+	}
+	return query, nil
+}
+
+func (p *userblockPager) toCursor(ub *UserBlock) Cursor {
+	return p.order.Field.toCursor(ub)
+}
+
+func (p *userblockPager) applyCursors(query *UserBlockQuery, after, before *Cursor) *UserBlockQuery {
+	for _, predicate := range cursorsToPredicates(
+		p.order.Direction, after, before,
+		p.order.Field.field, DefaultUserBlockOrder.Field.field,
+	) {
+		query = query.Where(predicate)
+	}
+	return query
+}
+
+func (p *userblockPager) applyOrder(query *UserBlockQuery, reverse bool) *UserBlockQuery {
+	direction := p.order.Direction
+	if reverse {
+		direction = direction.reverse()
+	}
+	query = query.Order(direction.orderFunc(p.order.Field.field))
+	if p.order.Field != DefaultUserBlockOrder.Field {
+		query = query.Order(direction.orderFunc(DefaultUserBlockOrder.Field.field))
+	}
+	return query
+}
+
+func (p *userblockPager) orderExpr(reverse bool) sql.Querier {
+	direction := p.order.Direction
+	if reverse {
+		direction = direction.reverse()
+	}
+	return sql.ExprFunc(func(b *sql.Builder) {
+		b.Ident(p.order.Field.field).Pad().WriteString(string(direction))
+		if p.order.Field != DefaultUserBlockOrder.Field {
+			b.Comma().Ident(DefaultUserBlockOrder.Field.field).Pad().WriteString(string(direction))
+		}
+	})
+}
+
+// Paginate executes the query and returns a relay based cursor connection to UserBlock.
+func (ub *UserBlockQuery) Paginate(
+	ctx context.Context, after *Cursor, first *int,
+	before *Cursor, last *int, opts ...UserBlockPaginateOption,
+) (*UserBlockConnection, error) {
+	if err := validateFirstLast(first, last); err != nil {
+		return nil, err
+	}
+	pager, err := newUserBlockPager(opts)
+	if err != nil {
+		return nil, err
+	}
+	if ub, err = pager.applyFilter(ub); err != nil {
+		return nil, err
+	}
+	conn := &UserBlockConnection{Edges: []*UserBlockEdge{}}
+	ignoredEdges := !hasCollectedField(ctx, edgesField)
+	if hasCollectedField(ctx, totalCountField) || hasCollectedField(ctx, pageInfoField) {
+		hasPagination := after != nil || first != nil || before != nil || last != nil
+		if hasPagination || ignoredEdges {
+			if conn.TotalCount, err = ub.Clone().Count(ctx); err != nil {
+				return nil, err
+			}
+			conn.PageInfo.HasNextPage = first != nil && conn.TotalCount > 0
+			conn.PageInfo.HasPreviousPage = last != nil && conn.TotalCount > 0
+		}
+	}
+	if ignoredEdges || (first != nil && *first == 0) || (last != nil && *last == 0) {
+		return conn, nil
+	}
+
+	ub = pager.applyCursors(ub, after, before)
+	ub = pager.applyOrder(ub, last != nil)
+	if limit := paginateLimit(first, last); limit != 0 {
+		ub.Limit(limit)
+	}
+	if field := collectedField(ctx, edgesField, nodeField); field != nil {
+		if err := ub.collectField(ctx, graphql.GetOperationContext(ctx), *field, []string{edgesField, nodeField}); err != nil {
+			return nil, err
+		}
+	}
+
+	nodes, err := ub.All(ctx)
+	if err != nil {
+		return nil, err
+	}
+	conn.build(nodes, pager, after, first, before, last)
+	return conn, nil
+}
+
+// UserBlockOrderField defines the ordering field of UserBlock.
+type UserBlockOrderField struct {
+	field    string
+	toCursor func(*UserBlock) Cursor
+}
+
+// UserBlockOrder defines the ordering of UserBlock.
+type UserBlockOrder struct {
+	Direction OrderDirection       `json:"direction"`
+	Field     *UserBlockOrderField `json:"field"`
+}
+
+// DefaultUserBlockOrder is the default ordering of UserBlock.
+var DefaultUserBlockOrder = &UserBlockOrder{
+	Direction: OrderDirectionAsc,
+	Field: &UserBlockOrderField{
+		field: userblock.FieldID,
+		toCursor: func(ub *UserBlock) Cursor {
+			return Cursor{ID: ub.ID}
+		},
+	},
+}
+
+// ToEdge converts UserBlock into UserBlockEdge.
+func (ub *UserBlock) ToEdge(order *UserBlockOrder) *UserBlockEdge {
+	if order == nil {
+		order = DefaultUserBlockOrder
+	}
+	return &UserBlockEdge{
+		Node:   ub,
+		Cursor: order.Field.toCursor(ub),
 	}
 }
 

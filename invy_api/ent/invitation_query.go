@@ -15,7 +15,6 @@ import (
 	"github.com/k-yomo/invy/invy_api/ent/invitation"
 	"github.com/k-yomo/invy/invy_api/ent/invitationacceptance"
 	"github.com/k-yomo/invy/invy_api/ent/invitationdenial"
-	"github.com/k-yomo/invy/invy_api/ent/invitationfriendgroup"
 	"github.com/k-yomo/invy/invy_api/ent/invitationuser"
 	"github.com/k-yomo/invy/invy_api/ent/predicate"
 	"github.com/k-yomo/invy/invy_api/ent/user"
@@ -24,24 +23,22 @@ import (
 // InvitationQuery is the builder for querying Invitation entities.
 type InvitationQuery struct {
 	config
-	limit                           *int
-	offset                          *int
-	unique                          *bool
-	order                           []OrderFunc
-	fields                          []string
-	inters                          []Interceptor
-	predicates                      []predicate.Invitation
-	withUser                        *UserQuery
-	withInvitationUsers             *InvitationUserQuery
-	withInvitationFriendGroups      *InvitationFriendGroupQuery
-	withInvitationAcceptances       *InvitationAcceptanceQuery
-	withInvitationDenials           *InvitationDenialQuery
-	modifiers                       []func(*sql.Selector)
-	loadTotal                       []func(context.Context, []*Invitation) error
-	withNamedInvitationUsers        map[string]*InvitationUserQuery
-	withNamedInvitationFriendGroups map[string]*InvitationFriendGroupQuery
-	withNamedInvitationAcceptances  map[string]*InvitationAcceptanceQuery
-	withNamedInvitationDenials      map[string]*InvitationDenialQuery
+	limit                          *int
+	offset                         *int
+	unique                         *bool
+	order                          []OrderFunc
+	fields                         []string
+	inters                         []Interceptor
+	predicates                     []predicate.Invitation
+	withUser                       *UserQuery
+	withInvitationUsers            *InvitationUserQuery
+	withInvitationAcceptances      *InvitationAcceptanceQuery
+	withInvitationDenials          *InvitationDenialQuery
+	modifiers                      []func(*sql.Selector)
+	loadTotal                      []func(context.Context, []*Invitation) error
+	withNamedInvitationUsers       map[string]*InvitationUserQuery
+	withNamedInvitationAcceptances map[string]*InvitationAcceptanceQuery
+	withNamedInvitationDenials     map[string]*InvitationDenialQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -115,28 +112,6 @@ func (iq *InvitationQuery) QueryInvitationUsers() *InvitationUserQuery {
 			sqlgraph.From(invitation.Table, invitation.FieldID, selector),
 			sqlgraph.To(invitationuser.Table, invitationuser.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, true, invitation.InvitationUsersTable, invitation.InvitationUsersColumn),
-		)
-		fromU = sqlgraph.SetNeighbors(iq.driver.Dialect(), step)
-		return fromU, nil
-	}
-	return query
-}
-
-// QueryInvitationFriendGroups chains the current query on the "invitation_friend_groups" edge.
-func (iq *InvitationQuery) QueryInvitationFriendGroups() *InvitationFriendGroupQuery {
-	query := (&InvitationFriendGroupClient{config: iq.config}).Query()
-	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
-		if err := iq.prepareQuery(ctx); err != nil {
-			return nil, err
-		}
-		selector := iq.sqlQuery(ctx)
-		if err := selector.Err(); err != nil {
-			return nil, err
-		}
-		step := sqlgraph.NewStep(
-			sqlgraph.From(invitation.Table, invitation.FieldID, selector),
-			sqlgraph.To(invitationfriendgroup.Table, invitationfriendgroup.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, true, invitation.InvitationFriendGroupsTable, invitation.InvitationFriendGroupsColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(iq.driver.Dialect(), step)
 		return fromU, nil
@@ -373,17 +348,16 @@ func (iq *InvitationQuery) Clone() *InvitationQuery {
 		return nil
 	}
 	return &InvitationQuery{
-		config:                     iq.config,
-		limit:                      iq.limit,
-		offset:                     iq.offset,
-		order:                      append([]OrderFunc{}, iq.order...),
-		inters:                     append([]Interceptor{}, iq.inters...),
-		predicates:                 append([]predicate.Invitation{}, iq.predicates...),
-		withUser:                   iq.withUser.Clone(),
-		withInvitationUsers:        iq.withInvitationUsers.Clone(),
-		withInvitationFriendGroups: iq.withInvitationFriendGroups.Clone(),
-		withInvitationAcceptances:  iq.withInvitationAcceptances.Clone(),
-		withInvitationDenials:      iq.withInvitationDenials.Clone(),
+		config:                    iq.config,
+		limit:                     iq.limit,
+		offset:                    iq.offset,
+		order:                     append([]OrderFunc{}, iq.order...),
+		inters:                    append([]Interceptor{}, iq.inters...),
+		predicates:                append([]predicate.Invitation{}, iq.predicates...),
+		withUser:                  iq.withUser.Clone(),
+		withInvitationUsers:       iq.withInvitationUsers.Clone(),
+		withInvitationAcceptances: iq.withInvitationAcceptances.Clone(),
+		withInvitationDenials:     iq.withInvitationDenials.Clone(),
 		// clone intermediate query.
 		sql:    iq.sql.Clone(),
 		path:   iq.path,
@@ -410,17 +384,6 @@ func (iq *InvitationQuery) WithInvitationUsers(opts ...func(*InvitationUserQuery
 		opt(query)
 	}
 	iq.withInvitationUsers = query
-	return iq
-}
-
-// WithInvitationFriendGroups tells the query-builder to eager-load the nodes that are connected to
-// the "invitation_friend_groups" edge. The optional arguments are used to configure the query builder of the edge.
-func (iq *InvitationQuery) WithInvitationFriendGroups(opts ...func(*InvitationFriendGroupQuery)) *InvitationQuery {
-	query := (&InvitationFriendGroupClient{config: iq.config}).Query()
-	for _, opt := range opts {
-		opt(query)
-	}
-	iq.withInvitationFriendGroups = query
 	return iq
 }
 
@@ -524,10 +487,9 @@ func (iq *InvitationQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*I
 	var (
 		nodes       = []*Invitation{}
 		_spec       = iq.querySpec()
-		loadedTypes = [5]bool{
+		loadedTypes = [4]bool{
 			iq.withUser != nil,
 			iq.withInvitationUsers != nil,
-			iq.withInvitationFriendGroups != nil,
 			iq.withInvitationAcceptances != nil,
 			iq.withInvitationDenials != nil,
 		}
@@ -566,15 +528,6 @@ func (iq *InvitationQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*I
 			return nil, err
 		}
 	}
-	if query := iq.withInvitationFriendGroups; query != nil {
-		if err := iq.loadInvitationFriendGroups(ctx, query, nodes,
-			func(n *Invitation) { n.Edges.InvitationFriendGroups = []*InvitationFriendGroup{} },
-			func(n *Invitation, e *InvitationFriendGroup) {
-				n.Edges.InvitationFriendGroups = append(n.Edges.InvitationFriendGroups, e)
-			}); err != nil {
-			return nil, err
-		}
-	}
 	if query := iq.withInvitationAcceptances; query != nil {
 		if err := iq.loadInvitationAcceptances(ctx, query, nodes,
 			func(n *Invitation) { n.Edges.InvitationAcceptances = []*InvitationAcceptance{} },
@@ -597,13 +550,6 @@ func (iq *InvitationQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*I
 		if err := iq.loadInvitationUsers(ctx, query, nodes,
 			func(n *Invitation) { n.appendNamedInvitationUsers(name) },
 			func(n *Invitation, e *InvitationUser) { n.appendNamedInvitationUsers(name, e) }); err != nil {
-			return nil, err
-		}
-	}
-	for name, query := range iq.withNamedInvitationFriendGroups {
-		if err := iq.loadInvitationFriendGroups(ctx, query, nodes,
-			func(n *Invitation) { n.appendNamedInvitationFriendGroups(name) },
-			func(n *Invitation, e *InvitationFriendGroup) { n.appendNamedInvitationFriendGroups(name, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -667,33 +613,6 @@ func (iq *InvitationQuery) loadInvitationUsers(ctx context.Context, query *Invit
 	}
 	query.Where(predicate.InvitationUser(func(s *sql.Selector) {
 		s.Where(sql.InValues(invitation.InvitationUsersColumn, fks...))
-	}))
-	neighbors, err := query.All(ctx)
-	if err != nil {
-		return err
-	}
-	for _, n := range neighbors {
-		fk := n.InvitationID
-		node, ok := nodeids[fk]
-		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "invitation_id" returned %v for node %v`, fk, n.ID)
-		}
-		assign(node, n)
-	}
-	return nil
-}
-func (iq *InvitationQuery) loadInvitationFriendGroups(ctx context.Context, query *InvitationFriendGroupQuery, nodes []*Invitation, init func(*Invitation), assign func(*Invitation, *InvitationFriendGroup)) error {
-	fks := make([]driver.Value, 0, len(nodes))
-	nodeids := make(map[uuid.UUID]*Invitation)
-	for i := range nodes {
-		fks = append(fks, nodes[i].ID)
-		nodeids[nodes[i].ID] = nodes[i]
-		if init != nil {
-			init(nodes[i])
-		}
-	}
-	query.Where(predicate.InvitationFriendGroup(func(s *sql.Selector) {
-		s.Where(sql.InValues(invitation.InvitationFriendGroupsColumn, fks...))
 	}))
 	neighbors, err := query.All(ctx)
 	if err != nil {
@@ -867,20 +786,6 @@ func (iq *InvitationQuery) WithNamedInvitationUsers(name string, opts ...func(*I
 		iq.withNamedInvitationUsers = make(map[string]*InvitationUserQuery)
 	}
 	iq.withNamedInvitationUsers[name] = query
-	return iq
-}
-
-// WithNamedInvitationFriendGroups tells the query-builder to eager-load the nodes that are connected to the "invitation_friend_groups"
-// edge with the given name. The optional arguments are used to configure the query builder of the edge.
-func (iq *InvitationQuery) WithNamedInvitationFriendGroups(name string, opts ...func(*InvitationFriendGroupQuery)) *InvitationQuery {
-	query := (&InvitationFriendGroupClient{config: iq.config}).Query()
-	for _, opt := range opts {
-		opt(query)
-	}
-	if iq.withNamedInvitationFriendGroups == nil {
-		iq.withNamedInvitationFriendGroups = make(map[string]*InvitationFriendGroupQuery)
-	}
-	iq.withNamedInvitationFriendGroups[name] = query
 	return iq
 }
 

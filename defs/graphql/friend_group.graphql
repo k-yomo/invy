@@ -1,0 +1,35 @@
+
+extend type Mutation {
+    createFriendGroup(input: CreateFriendGroupInput!): CreateFriendGroupPayload! @authRequired
+    updateFriendGroup(input: UpdateFriendGroupInput!): UpdateFriendGroupPayload! @authRequired
+    deleteFriendGroup(friendGroupId: UUID!): DeleteFriendGroupPayload! @authRequired
+}
+
+type FriendGroup implements Node {
+    id: UUID!
+    userId: UUID!
+    name: String!
+    totalCount: Int!
+    friendUsers: [User!]! @goField(forceResolver: true)
+}
+
+input CreateFriendGroupInput {
+    name: String! @constraint(max: 100)
+    friendUserIds: [UUID!]!
+}
+type CreateFriendGroupPayload {
+    friendGroup: FriendGroup!
+}
+
+input UpdateFriendGroupInput {
+    id: UUID!
+    name: String! @constraint(max: 100)
+    friendUserIds: [UUID!]!
+}
+type UpdateFriendGroupPayload {
+    friendGroup: FriendGroup!
+}
+
+type DeleteFriendGroupPayload {
+    deletedFriendGroupId: UUID!
+}

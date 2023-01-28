@@ -16,7 +16,6 @@ import (
 	"github.com/k-yomo/invy/invy_api/ent/invitation"
 	"github.com/k-yomo/invy/invy_api/ent/invitationacceptance"
 	"github.com/k-yomo/invy/invy_api/ent/invitationdenial"
-	"github.com/k-yomo/invy/invy_api/ent/invitationfriendgroup"
 	"github.com/k-yomo/invy/invy_api/ent/invitationuser"
 	"github.com/k-yomo/invy/invy_api/ent/user"
 	"github.com/k-yomo/invy/pkg/pgutil"
@@ -126,21 +125,6 @@ func (ic *InvitationCreate) AddInvitationUsers(i ...*InvitationUser) *Invitation
 		ids[j] = i[j].ID
 	}
 	return ic.AddInvitationUserIDs(ids...)
-}
-
-// AddInvitationFriendGroupIDs adds the "invitation_friend_groups" edge to the InvitationFriendGroup entity by IDs.
-func (ic *InvitationCreate) AddInvitationFriendGroupIDs(ids ...uuid.UUID) *InvitationCreate {
-	ic.mutation.AddInvitationFriendGroupIDs(ids...)
-	return ic
-}
-
-// AddInvitationFriendGroups adds the "invitation_friend_groups" edges to the InvitationFriendGroup entity.
-func (ic *InvitationCreate) AddInvitationFriendGroups(i ...*InvitationFriendGroup) *InvitationCreate {
-	ids := make([]uuid.UUID, len(i))
-	for j := range i {
-		ids[j] = i[j].ID
-	}
-	return ic.AddInvitationFriendGroupIDs(ids...)
 }
 
 // AddInvitationAcceptanceIDs adds the "invitation_acceptances" edge to the InvitationAcceptance entity by IDs.
@@ -352,25 +336,6 @@ func (ic *InvitationCreate) createSpec() (*Invitation, *sqlgraph.CreateSpec) {
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeUUID,
 					Column: invitationuser.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges = append(_spec.Edges, edge)
-	}
-	if nodes := ic.mutation.InvitationFriendGroupsIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: true,
-			Table:   invitation.InvitationFriendGroupsTable,
-			Columns: []string{invitation.InvitationFriendGroupsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeUUID,
-					Column: invitationfriendgroup.FieldID,
 				},
 			},
 		}

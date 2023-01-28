@@ -33,8 +33,6 @@ const (
 	EdgeUser = "user"
 	// EdgeInvitationUsers holds the string denoting the invitation_users edge name in mutations.
 	EdgeInvitationUsers = "invitation_users"
-	// EdgeInvitationFriendGroups holds the string denoting the invitation_friend_groups edge name in mutations.
-	EdgeInvitationFriendGroups = "invitation_friend_groups"
 	// EdgeInvitationAcceptances holds the string denoting the invitation_acceptances edge name in mutations.
 	EdgeInvitationAcceptances = "invitation_acceptances"
 	// EdgeInvitationDenials holds the string denoting the invitation_denials edge name in mutations.
@@ -55,13 +53,6 @@ const (
 	InvitationUsersInverseTable = "invitation_users"
 	// InvitationUsersColumn is the table column denoting the invitation_users relation/edge.
 	InvitationUsersColumn = "invitation_id"
-	// InvitationFriendGroupsTable is the table that holds the invitation_friend_groups relation/edge.
-	InvitationFriendGroupsTable = "invitation_friend_groups"
-	// InvitationFriendGroupsInverseTable is the table name for the InvitationFriendGroup entity.
-	// It exists in this package in order to avoid circular dependency with the "invitationfriendgroup" package.
-	InvitationFriendGroupsInverseTable = "invitation_friend_groups"
-	// InvitationFriendGroupsColumn is the table column denoting the invitation_friend_groups relation/edge.
-	InvitationFriendGroupsColumn = "invitation_id"
 	// InvitationAcceptancesTable is the table that holds the invitation_acceptances relation/edge.
 	InvitationAcceptancesTable = "invitation_acceptances"
 	// InvitationAcceptancesInverseTable is the table name for the InvitationAcceptance entity.

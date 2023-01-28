@@ -13,10 +13,11 @@ import (
 	"github.com/google/uuid"
 	"github.com/k-yomo/invy/invy_api/auth"
 	"github.com/k-yomo/invy/invy_api/ent"
-	"github.com/k-yomo/invy/invy_api/ent/friendgroup"
 	"github.com/k-yomo/invy/invy_api/ent/friendship"
 	"github.com/k-yomo/invy/invy_api/ent/friendshiprequest"
 	"github.com/k-yomo/invy/invy_api/ent/pushnotificationtoken"
+	"github.com/k-yomo/invy/invy_api/ent/userblock"
+	"github.com/k-yomo/invy/invy_api/ent/usermute"
 	"github.com/k-yomo/invy/invy_api/ent/userprofile"
 	"github.com/k-yomo/invy/invy_api/graph/conv"
 	"github.com/k-yomo/invy/invy_api/graph/gqlgen"
@@ -24,19 +25,6 @@ import (
 	"github.com/k-yomo/invy/invy_api/graph/loader"
 	"github.com/k-yomo/invy/pkg/convutil"
 )
-
-// FriendUsers is the resolver for the friendUsers field.
-func (r *friendGroupResolver) FriendUsers(ctx context.Context, obj *gqlmodel.FriendGroup) ([]*gqlmodel.User, error) {
-	dbFriendUsersInGroup, err := r.DB.FriendGroup.Query().
-		Where(friendgroup.ID(obj.ID)).
-		QueryFriendUsers().
-		QueryUserProfile().
-		All(ctx)
-	if err != nil {
-		return nil, err
-	}
-	return convutil.ConvertToList(dbFriendUsersInGroup, conv.ConvertFromDBUserProfile), nil
-}
 
 // FromUser is the resolver for the fromUser field.
 func (r *friendshipRequestResolver) FromUser(ctx context.Context, obj *gqlmodel.FriendshipRequest) (*gqlmodel.User, error) {
@@ -212,102 +200,63 @@ func (r *mutationResolver) DenyFriendshipRequest(ctx context.Context, friendship
 	return &gqlmodel.DenyFriendshipRequestPayload{DeniedFriendshipRequestID: friendshipRequestID}, nil
 }
 
-// CreateFriendGroup is the resolver for the createFriendGroup field.
-func (r *mutationResolver) CreateFriendGroup(ctx context.Context, input gqlmodel.CreateFriendGroupInput) (*gqlmodel.CreateFriendGroupPayload, error) {
+// MuteUser is the resolver for the muteUser field.
+func (r *mutationResolver) MuteUser(ctx context.Context, userID uuid.UUID) (*gqlmodel.MuteUserPayload, error) {
 	authUserID := auth.GetCurrentUserID(ctx)
-	var dbFriendGroup *ent.FriendGroup
-	err := ent.RunInTx(ctx, r.DB, func(tx *ent.Tx) error {
-		var err error
-		dbFriendGroup, err = tx.FriendGroup.Create().
-			SetName(input.Name).
-			SetUserID(authUserID).
-			SetTotalCount(len(input.FriendUserIds)).
-			Save(ctx)
-		if err != nil {
-			return err
-		}
-
-		dbUserFriendGroupCreates := make([]*ent.UserFriendGroupCreate, 0, len(input.FriendUserIds))
-		for _, friendUserID := range input.FriendUserIds {
-			userFriendGroupCreate := tx.UserFriendGroup.Create().
-				SetUserID(friendUserID).
-				SetFriendGroupID(dbFriendGroup.ID)
-			dbUserFriendGroupCreates = append(dbUserFriendGroupCreates, userFriendGroupCreate)
-		}
-		if err := tx.UserFriendGroup.CreateBulk(dbUserFriendGroupCreates...).Exec(ctx); err != nil {
-			return err
-		}
-		return nil
-	})
-	if err != nil {
-		return nil, err
-	}
-	return &gqlmodel.CreateFriendGroupPayload{FriendGroup: conv.ConvertFromDBFriendGroup(dbFriendGroup)}, nil
-}
-
-// UpdateFriendGroup is the resolver for the updateFriendGroup field.
-func (r *mutationResolver) UpdateFriendGroup(ctx context.Context, input gqlmodel.UpdateFriendGroupInput) (*gqlmodel.UpdateFriendGroupPayload, error) {
-	authUserID := auth.GetCurrentUserID(ctx)
-	err := ent.RunInTx(ctx, r.DB, func(tx *ent.Tx) error {
-		// FIXME: remove -diff & add +diff would be better than clear then add
-		updatedNum, err := tx.FriendGroup.Update().
-			Where(friendgroup.ID(input.ID), friendgroup.UserID(authUserID)).
-			SetName(input.Name).
-			SetTotalCount(len(input.FriendUserIds)).
-			ClearFriendUsers().
-			Save(ctx)
-		if err != nil {
-			return err
-		}
-		// no update means the group does not exist or not belonging to the logged in user
-		if updatedNum == 0 {
-			return nil
-		}
-
-		dbUserFriendGroupCreates := make([]*ent.UserFriendGroupCreate, 0, len(input.FriendUserIds))
-		for _, friendUserID := range input.FriendUserIds {
-			userFriendGroupCreate := tx.UserFriendGroup.Create().
-				SetUserID(friendUserID).
-				SetFriendGroupID(input.ID)
-			dbUserFriendGroupCreates = append(dbUserFriendGroupCreates, userFriendGroupCreate)
-		}
-		if err := tx.UserFriendGroup.CreateBulk(dbUserFriendGroupCreates...).Exec(ctx); err != nil {
-			return err
-		}
-		return nil
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	dbFriendGroup, err := r.DB.FriendGroup.Query().
-		Where(friendgroup.ID(input.ID), friendgroup.UserID(authUserID)).
-		Only(ctx)
-	if err != nil {
-		return nil, err
-	}
-	return &gqlmodel.UpdateFriendGroupPayload{FriendGroup: conv.ConvertFromDBFriendGroup(dbFriendGroup)}, nil
-}
-
-// DeleteFriendGroup is the resolver for the deleteFriendGroup field.
-func (r *mutationResolver) DeleteFriendGroup(ctx context.Context, friendGroupID uuid.UUID) (*gqlmodel.DeleteFriendGroupPayload, error) {
-	authUserID := auth.GetCurrentUserID(ctx)
-	_, err := r.DB.FriendGroup.Delete().
-		Where(friendgroup.ID(friendGroupID), friendgroup.UserID(authUserID)).
+	err := r.DB.UserMute.Create().
+		SetUserID(authUserID).
+		SetMuteUserID(userID).
+		OnConflictColumns(usermute.UserColumn, usermute.MuteUserColumn).
+		Ignore().
 		Exec(ctx)
 	if err != nil {
 		return nil, err
 	}
-	return &gqlmodel.DeleteFriendGroupPayload{DeletedFriendGroupID: friendGroupID}, nil
+	return &gqlmodel.MuteUserPayload{MutedUserID: userID}, nil
 }
 
-// FriendGroup returns gqlgen.FriendGroupResolver implementation.
-func (r *Resolver) FriendGroup() gqlgen.FriendGroupResolver { return &friendGroupResolver{r} }
+// UnmuteUser is the resolver for the unmuteUser field.
+func (r *mutationResolver) UnmuteUser(ctx context.Context, userID uuid.UUID) (*gqlmodel.UnmuteUserPayload, error) {
+	authUserID := auth.GetCurrentUserID(ctx)
+	_, err := r.DB.UserMute.Delete().
+		Where(usermute.UserID(authUserID), usermute.MuteUserID(userID)).
+		Exec(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return &gqlmodel.UnmuteUserPayload{UnmutedUserID: userID}, nil
+}
+
+// BlockUser is the resolver for the blockUser field.
+func (r *mutationResolver) BlockUser(ctx context.Context, userID uuid.UUID) (*gqlmodel.BlockUserPayload, error) {
+	authUserID := auth.GetCurrentUserID(ctx)
+	err := r.DB.UserBlock.Create().
+		SetUserID(authUserID).
+		SetBlockUserID(userID).
+		OnConflictColumns(userblock.UserColumn, userblock.BlockUserColumn).
+		Ignore().
+		Exec(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return &gqlmodel.BlockUserPayload{BlockedUserID: userID}, nil
+}
+
+// UnblockUser is the resolver for the unblockUser field.
+func (r *mutationResolver) UnblockUser(ctx context.Context, userID uuid.UUID) (*gqlmodel.UnblockUserPayload, error) {
+	authUserID := auth.GetCurrentUserID(ctx)
+	_, err := r.DB.UserBlock.Delete().
+		Where(userblock.UserID(authUserID), userblock.BlockUserID(userID)).
+		Exec(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return &gqlmodel.UnblockUserPayload{UnblockedUserID: userID}, nil
+}
 
 // FriendshipRequest returns gqlgen.FriendshipRequestResolver implementation.
 func (r *Resolver) FriendshipRequest() gqlgen.FriendshipRequestResolver {
 	return &friendshipRequestResolver{r}
 }
 
-type friendGroupResolver struct{ *Resolver }
 type friendshipRequestResolver struct{ *Resolver }

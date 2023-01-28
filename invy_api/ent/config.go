@@ -34,10 +34,10 @@ type (
 		Invitation            []ent.Hook
 		InvitationAcceptance  []ent.Hook
 		InvitationDenial      []ent.Hook
-		InvitationFriendGroup []ent.Hook
 		InvitationUser        []ent.Hook
 		PushNotificationToken []ent.Hook
 		User                  []ent.Hook
+		UserBlock             []ent.Hook
 		UserFriendGroup       []ent.Hook
 		UserMute              []ent.Hook
 		UserProfile           []ent.Hook
@@ -50,10 +50,10 @@ type (
 		Invitation            []ent.Interceptor
 		InvitationAcceptance  []ent.Interceptor
 		InvitationDenial      []ent.Interceptor
-		InvitationFriendGroup []ent.Interceptor
 		InvitationUser        []ent.Interceptor
 		PushNotificationToken []ent.Interceptor
 		User                  []ent.Interceptor
+		UserBlock             []ent.Interceptor
 		UserFriendGroup       []ent.Interceptor
 		UserMute              []ent.Interceptor
 		UserProfile           []ent.Interceptor

@@ -18,10 +18,10 @@ import (
 	"github.com/k-yomo/invy/invy_api/ent/invitation"
 	"github.com/k-yomo/invy/invy_api/ent/invitationacceptance"
 	"github.com/k-yomo/invy/invy_api/ent/invitationdenial"
-	"github.com/k-yomo/invy/invy_api/ent/invitationfriendgroup"
 	"github.com/k-yomo/invy/invy_api/ent/invitationuser"
 	"github.com/k-yomo/invy/invy_api/ent/pushnotificationtoken"
 	"github.com/k-yomo/invy/invy_api/ent/user"
+	"github.com/k-yomo/invy/invy_api/ent/userblock"
 	"github.com/k-yomo/invy/invy_api/ent/userfriendgroup"
 	"github.com/k-yomo/invy/invy_api/ent/usermute"
 	"github.com/k-yomo/invy/invy_api/ent/userprofile"
@@ -104,7 +104,7 @@ func (fg *FriendGroup) Node(ctx context.Context) (node *Node, err error) {
 		ID:     fg.ID,
 		Type:   "FriendGroup",
 		Fields: make([]*Field, 5),
-		Edges:  make([]*Edge, 4),
+		Edges:  make([]*Edge, 3),
 	}
 	var buf []byte
 	if buf, err = json.Marshal(fg.UserID); err != nil {
@@ -168,22 +168,12 @@ func (fg *FriendGroup) Node(ctx context.Context) (node *Node, err error) {
 		return nil, err
 	}
 	node.Edges[2] = &Edge{
-		Type: "InvitationFriendGroup",
-		Name: "invitation_friend_groups",
-	}
-	err = fg.QueryInvitationFriendGroups().
-		Select(invitationfriendgroup.FieldID).
-		Scan(ctx, &node.Edges[2].IDs)
-	if err != nil {
-		return nil, err
-	}
-	node.Edges[3] = &Edge{
 		Type: "UserFriendGroup",
 		Name: "user_friend_groups",
 	}
 	err = fg.QueryUserFriendGroups().
 		Select(userfriendgroup.FieldID).
-		Scan(ctx, &node.Edges[3].IDs)
+		Scan(ctx, &node.Edges[2].IDs)
 	if err != nil {
 		return nil, err
 	}
@@ -305,7 +295,7 @@ func (i *Invitation) Node(ctx context.Context) (node *Node, err error) {
 		ID:     i.ID,
 		Type:   "Invitation",
 		Fields: make([]*Field, 8),
-		Edges:  make([]*Edge, 5),
+		Edges:  make([]*Edge, 4),
 	}
 	var buf []byte
 	if buf, err = json.Marshal(i.UserID); err != nil {
@@ -393,32 +383,22 @@ func (i *Invitation) Node(ctx context.Context) (node *Node, err error) {
 		return nil, err
 	}
 	node.Edges[2] = &Edge{
-		Type: "InvitationFriendGroup",
-		Name: "invitation_friend_groups",
-	}
-	err = i.QueryInvitationFriendGroups().
-		Select(invitationfriendgroup.FieldID).
-		Scan(ctx, &node.Edges[2].IDs)
-	if err != nil {
-		return nil, err
-	}
-	node.Edges[3] = &Edge{
 		Type: "InvitationAcceptance",
 		Name: "invitation_acceptances",
 	}
 	err = i.QueryInvitationAcceptances().
 		Select(invitationacceptance.FieldID).
-		Scan(ctx, &node.Edges[3].IDs)
+		Scan(ctx, &node.Edges[2].IDs)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[4] = &Edge{
+	node.Edges[3] = &Edge{
 		Type: "InvitationDenial",
 		Name: "invitation_denials",
 	}
 	err = i.QueryInvitationDenials().
 		Select(invitationdenial.FieldID).
-		Scan(ctx, &node.Edges[4].IDs)
+		Scan(ctx, &node.Edges[3].IDs)
 	if err != nil {
 		return nil, err
 	}
@@ -528,61 +508,6 @@ func (id *InvitationDenial) Node(ctx context.Context) (node *Node, err error) {
 	}
 	err = id.QueryInvitation().
 		Select(invitation.FieldID).
-		Scan(ctx, &node.Edges[1].IDs)
-	if err != nil {
-		return nil, err
-	}
-	return node, nil
-}
-
-func (ifg *InvitationFriendGroup) Node(ctx context.Context) (node *Node, err error) {
-	node = &Node{
-		ID:     ifg.ID,
-		Type:   "InvitationFriendGroup",
-		Fields: make([]*Field, 3),
-		Edges:  make([]*Edge, 2),
-	}
-	var buf []byte
-	if buf, err = json.Marshal(ifg.InvitationID); err != nil {
-		return nil, err
-	}
-	node.Fields[0] = &Field{
-		Type:  "uuid.UUID",
-		Name:  "invitation_id",
-		Value: string(buf),
-	}
-	if buf, err = json.Marshal(ifg.FriendGroupID); err != nil {
-		return nil, err
-	}
-	node.Fields[1] = &Field{
-		Type:  "uuid.UUID",
-		Name:  "friend_group_id",
-		Value: string(buf),
-	}
-	if buf, err = json.Marshal(ifg.CreatedAt); err != nil {
-		return nil, err
-	}
-	node.Fields[2] = &Field{
-		Type:  "time.Time",
-		Name:  "created_at",
-		Value: string(buf),
-	}
-	node.Edges[0] = &Edge{
-		Type: "Invitation",
-		Name: "invitation",
-	}
-	err = ifg.QueryInvitation().
-		Select(invitation.FieldID).
-		Scan(ctx, &node.Edges[0].IDs)
-	if err != nil {
-		return nil, err
-	}
-	node.Edges[1] = &Edge{
-		Type: "FriendGroup",
-		Name: "friend_group",
-	}
-	err = ifg.QueryFriendGroup().
-		Select(friendgroup.FieldID).
 		Scan(ctx, &node.Edges[1].IDs)
 	if err != nil {
 		return nil, err
@@ -827,6 +752,61 @@ func (u *User) Node(ctx context.Context) (node *Node, err error) {
 	err = u.QueryUserFriendGroups().
 		Select(userfriendgroup.FieldID).
 		Scan(ctx, &node.Edges[9].IDs)
+	if err != nil {
+		return nil, err
+	}
+	return node, nil
+}
+
+func (ub *UserBlock) Node(ctx context.Context) (node *Node, err error) {
+	node = &Node{
+		ID:     ub.ID,
+		Type:   "UserBlock",
+		Fields: make([]*Field, 3),
+		Edges:  make([]*Edge, 2),
+	}
+	var buf []byte
+	if buf, err = json.Marshal(ub.UserID); err != nil {
+		return nil, err
+	}
+	node.Fields[0] = &Field{
+		Type:  "uuid.UUID",
+		Name:  "user_id",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(ub.BlockUserID); err != nil {
+		return nil, err
+	}
+	node.Fields[1] = &Field{
+		Type:  "uuid.UUID",
+		Name:  "block_user_id",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(ub.CreatedAt); err != nil {
+		return nil, err
+	}
+	node.Fields[2] = &Field{
+		Type:  "time.Time",
+		Name:  "created_at",
+		Value: string(buf),
+	}
+	node.Edges[0] = &Edge{
+		Type: "User",
+		Name: "user",
+	}
+	err = ub.QueryUser().
+		Select(user.FieldID).
+		Scan(ctx, &node.Edges[0].IDs)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[1] = &Edge{
+		Type: "User",
+		Name: "block_user",
+	}
+	err = ub.QueryBlockUser().
+		Select(user.FieldID).
+		Scan(ctx, &node.Edges[1].IDs)
 	if err != nil {
 		return nil, err
 	}
@@ -1162,18 +1142,6 @@ func (c *Client) noder(ctx context.Context, table string, id uuid.UUID) (Noder, 
 			return nil, err
 		}
 		return n, nil
-	case invitationfriendgroup.Table:
-		query := c.InvitationFriendGroup.Query().
-			Where(invitationfriendgroup.ID(id))
-		query, err := query.CollectFields(ctx, "InvitationFriendGroup")
-		if err != nil {
-			return nil, err
-		}
-		n, err := query.Only(ctx)
-		if err != nil {
-			return nil, err
-		}
-		return n, nil
 	case invitationuser.Table:
 		query := c.InvitationUser.Query().
 			Where(invitationuser.ID(id))
@@ -1202,6 +1170,18 @@ func (c *Client) noder(ctx context.Context, table string, id uuid.UUID) (Noder, 
 		query := c.User.Query().
 			Where(user.ID(id))
 		query, err := query.CollectFields(ctx, "User")
+		if err != nil {
+			return nil, err
+		}
+		n, err := query.Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
+	case userblock.Table:
+		query := c.UserBlock.Query().
+			Where(userblock.ID(id))
+		query, err := query.CollectFields(ctx, "UserBlock")
 		if err != nil {
 			return nil, err
 		}
@@ -1431,22 +1411,6 @@ func (c *Client) noders(ctx context.Context, table string, ids []uuid.UUID) ([]N
 				*noder = node
 			}
 		}
-	case invitationfriendgroup.Table:
-		query := c.InvitationFriendGroup.Query().
-			Where(invitationfriendgroup.IDIn(ids...))
-		query, err := query.CollectFields(ctx, "InvitationFriendGroup")
-		if err != nil {
-			return nil, err
-		}
-		nodes, err := query.All(ctx)
-		if err != nil {
-			return nil, err
-		}
-		for _, node := range nodes {
-			for _, noder := range idmap[node.ID] {
-				*noder = node
-			}
-		}
 	case invitationuser.Table:
 		query := c.InvitationUser.Query().
 			Where(invitationuser.IDIn(ids...))
@@ -1483,6 +1447,22 @@ func (c *Client) noders(ctx context.Context, table string, ids []uuid.UUID) ([]N
 		query := c.User.Query().
 			Where(user.IDIn(ids...))
 		query, err := query.CollectFields(ctx, "User")
+		if err != nil {
+			return nil, err
+		}
+		nodes, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, node := range nodes {
+			for _, noder := range idmap[node.ID] {
+				*noder = node
+			}
+		}
+	case userblock.Table:
+		query := c.UserBlock.Query().
+			Where(userblock.IDIn(ids...))
+		query, err := query.CollectFields(ctx, "UserBlock")
 		if err != nil {
 			return nil, err
 		}

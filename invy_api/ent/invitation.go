@@ -46,22 +46,19 @@ type InvitationEdges struct {
 	User *User `json:"user,omitempty"`
 	// InvitationUsers holds the value of the invitation_users edge.
 	InvitationUsers []*InvitationUser `json:"invitation_users,omitempty"`
-	// InvitationFriendGroups holds the value of the invitation_friend_groups edge.
-	InvitationFriendGroups []*InvitationFriendGroup `json:"invitation_friend_groups,omitempty"`
 	// InvitationAcceptances holds the value of the invitation_acceptances edge.
 	InvitationAcceptances []*InvitationAcceptance `json:"invitation_acceptances,omitempty"`
 	// InvitationDenials holds the value of the invitation_denials edge.
 	InvitationDenials []*InvitationDenial `json:"invitation_denials,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [5]bool
+	loadedTypes [4]bool
 	// totalCount holds the count of the edges above.
-	totalCount [5]map[string]int
+	totalCount [4]map[string]int
 
-	namedInvitationUsers        map[string][]*InvitationUser
-	namedInvitationFriendGroups map[string][]*InvitationFriendGroup
-	namedInvitationAcceptances  map[string][]*InvitationAcceptance
-	namedInvitationDenials      map[string][]*InvitationDenial
+	namedInvitationUsers       map[string][]*InvitationUser
+	namedInvitationAcceptances map[string][]*InvitationAcceptance
+	namedInvitationDenials     map[string][]*InvitationDenial
 }
 
 // UserOrErr returns the User value or an error if the edge
@@ -86,19 +83,10 @@ func (e InvitationEdges) InvitationUsersOrErr() ([]*InvitationUser, error) {
 	return nil, &NotLoadedError{edge: "invitation_users"}
 }
 
-// InvitationFriendGroupsOrErr returns the InvitationFriendGroups value or an error if the edge
-// was not loaded in eager-loading.
-func (e InvitationEdges) InvitationFriendGroupsOrErr() ([]*InvitationFriendGroup, error) {
-	if e.loadedTypes[2] {
-		return e.InvitationFriendGroups, nil
-	}
-	return nil, &NotLoadedError{edge: "invitation_friend_groups"}
-}
-
 // InvitationAcceptancesOrErr returns the InvitationAcceptances value or an error if the edge
 // was not loaded in eager-loading.
 func (e InvitationEdges) InvitationAcceptancesOrErr() ([]*InvitationAcceptance, error) {
-	if e.loadedTypes[3] {
+	if e.loadedTypes[2] {
 		return e.InvitationAcceptances, nil
 	}
 	return nil, &NotLoadedError{edge: "invitation_acceptances"}
@@ -107,7 +95,7 @@ func (e InvitationEdges) InvitationAcceptancesOrErr() ([]*InvitationAcceptance, 
 // InvitationDenialsOrErr returns the InvitationDenials value or an error if the edge
 // was not loaded in eager-loading.
 func (e InvitationEdges) InvitationDenialsOrErr() ([]*InvitationDenial, error) {
-	if e.loadedTypes[4] {
+	if e.loadedTypes[3] {
 		return e.InvitationDenials, nil
 	}
 	return nil, &NotLoadedError{edge: "invitation_denials"}
@@ -210,11 +198,6 @@ func (i *Invitation) QueryInvitationUsers() *InvitationUserQuery {
 	return (&InvitationClient{config: i.config}).QueryInvitationUsers(i)
 }
 
-// QueryInvitationFriendGroups queries the "invitation_friend_groups" edge of the Invitation entity.
-func (i *Invitation) QueryInvitationFriendGroups() *InvitationFriendGroupQuery {
-	return (&InvitationClient{config: i.config}).QueryInvitationFriendGroups(i)
-}
-
 // QueryInvitationAcceptances queries the "invitation_acceptances" edge of the Invitation entity.
 func (i *Invitation) QueryInvitationAcceptances() *InvitationAcceptanceQuery {
 	return (&InvitationClient{config: i.config}).QueryInvitationAcceptances(i)
@@ -296,30 +279,6 @@ func (i *Invitation) appendNamedInvitationUsers(name string, edges ...*Invitatio
 		i.Edges.namedInvitationUsers[name] = []*InvitationUser{}
 	} else {
 		i.Edges.namedInvitationUsers[name] = append(i.Edges.namedInvitationUsers[name], edges...)
-	}
-}
-
-// NamedInvitationFriendGroups returns the InvitationFriendGroups named value or an error if the edge was not
-// loaded in eager-loading with this name.
-func (i *Invitation) NamedInvitationFriendGroups(name string) ([]*InvitationFriendGroup, error) {
-	if i.Edges.namedInvitationFriendGroups == nil {
-		return nil, &NotLoadedError{edge: name}
-	}
-	nodes, ok := i.Edges.namedInvitationFriendGroups[name]
-	if !ok {
-		return nil, &NotLoadedError{edge: name}
-	}
-	return nodes, nil
-}
-
-func (i *Invitation) appendNamedInvitationFriendGroups(name string, edges ...*InvitationFriendGroup) {
-	if i.Edges.namedInvitationFriendGroups == nil {
-		i.Edges.namedInvitationFriendGroups = make(map[string][]*InvitationFriendGroup)
-	}
-	if len(edges) == 0 {
-		i.Edges.namedInvitationFriendGroups[name] = []*InvitationFriendGroup{}
-	} else {
-		i.Edges.namedInvitationFriendGroups[name] = append(i.Edges.namedInvitationFriendGroups[name], edges...)
 	}
 }
 

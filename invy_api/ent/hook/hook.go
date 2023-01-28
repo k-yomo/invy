@@ -93,18 +93,6 @@ func (f InvitationDenialFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.V
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.InvitationDenialMutation", m)
 }
 
-// The InvitationFriendGroupFunc type is an adapter to allow the use of ordinary
-// function as InvitationFriendGroup mutator.
-type InvitationFriendGroupFunc func(context.Context, *ent.InvitationFriendGroupMutation) (ent.Value, error)
-
-// Mutate calls f(ctx, m).
-func (f InvitationFriendGroupFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-	if mv, ok := m.(*ent.InvitationFriendGroupMutation); ok {
-		return f(ctx, mv)
-	}
-	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.InvitationFriendGroupMutation", m)
-}
-
 // The InvitationUserFunc type is an adapter to allow the use of ordinary
 // function as InvitationUser mutator.
 type InvitationUserFunc func(context.Context, *ent.InvitationUserMutation) (ent.Value, error)
@@ -139,6 +127,18 @@ func (f UserFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error)
 		return f(ctx, mv)
 	}
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.UserMutation", m)
+}
+
+// The UserBlockFunc type is an adapter to allow the use of ordinary
+// function as UserBlock mutator.
+type UserBlockFunc func(context.Context, *ent.UserBlockMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f UserBlockFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.UserBlockMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.UserBlockMutation", m)
 }
 
 // The UserFriendGroupFunc type is an adapter to allow the use of ordinary

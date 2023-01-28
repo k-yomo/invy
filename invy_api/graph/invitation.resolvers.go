@@ -17,7 +17,6 @@ import (
 	"github.com/k-yomo/invy/invy_api/ent"
 	"github.com/k-yomo/invy/invy_api/ent/invitation"
 	"github.com/k-yomo/invy/invy_api/ent/invitationacceptance"
-	"github.com/k-yomo/invy/invy_api/ent/invitationfriendgroup"
 	"github.com/k-yomo/invy/invy_api/ent/user"
 	"github.com/k-yomo/invy/invy_api/ent/usermute"
 	"github.com/k-yomo/invy/invy_api/ent/userprofile"
@@ -25,10 +24,10 @@ import (
 	"github.com/k-yomo/invy/invy_api/graph/gqlgen"
 	"github.com/k-yomo/invy/invy_api/graph/gqlmodel"
 	"github.com/k-yomo/invy/invy_api/graph/loader"
+	"github.com/k-yomo/invy/invy_api/internal/xerrors"
 	"github.com/k-yomo/invy/pkg/convutil"
 	"github.com/k-yomo/invy/pkg/logging"
 	"github.com/k-yomo/invy/pkg/pgutil"
-	"github.com/k-yomo/invy/pkg/sliceutil"
 	"github.com/twpayne/go-geom"
 	"go.uber.org/zap"
 )
@@ -68,8 +67,18 @@ func (r *mutationResolver) SendInvitation(ctx context.Context, input *gqlmodel.S
 			SetSRID(4326),
 	}
 
+	targetFriendUserIDs, err := r.DBQuery.UserRelation.GetNotBlockedFriendUserIDs(
+		ctx,
+		authUserID,
+		input.TargetFriendUserIds,
+		input.TargetFriendGroupIds,
+	)
+	if err != nil {
+		return nil, err
+	}
+
 	var dbInvitation *ent.Invitation
-	err := ent.RunInTx(ctx, r.DB, func(tx *ent.Tx) error {
+	err = ent.RunInTx(ctx, r.DB, func(tx *ent.Tx) error {
 		var err error
 		dbInvitation, err = tx.Invitation.Create().
 			SetUserID(authUserID).
@@ -82,22 +91,9 @@ func (r *mutationResolver) SendInvitation(ctx context.Context, input *gqlmodel.S
 		if err != nil {
 			return err
 		}
-		invitationFriendGroupCreates := make([]*ent.InvitationFriendGroupCreate, 0, len(input.TargetFriendGroupIds))
-		for _, targetFriendGroupID := range input.TargetFriendGroupIds {
-			invitationFriendGroupCreates = append(
-				invitationFriendGroupCreates,
-				tx.InvitationFriendGroup.Create().
-					SetInvitationID(dbInvitation.ID).
-					SetFriendGroupID(targetFriendGroupID),
-			)
-		}
-		err = tx.InvitationFriendGroup.CreateBulk(invitationFriendGroupCreates...).Exec(ctx)
-		if err != nil {
-			return err
-		}
-		// TODO: We may need to check if they are friends
-		invitationUserCreates := make([]*ent.InvitationUserCreate, 0, len(input.TargetFriendUserIds))
-		for _, targetUserID := range input.TargetFriendUserIds {
+
+		invitationUserCreates := make([]*ent.InvitationUserCreate, 0, len(targetFriendUserIDs))
+		for _, targetUserID := range targetFriendUserIDs {
 			invitationUserCreates = append(
 				invitationUserCreates,
 				tx.InvitationUser.Create().
@@ -122,44 +118,31 @@ func (r *mutationResolver) SendInvitation(ctx context.Context, input *gqlmodel.S
 	if err != nil {
 		return nil, err
 	}
-	whereNotMutedUser := func(s *sql.Selector) {
-		userMuteTable := sql.Table(usermute.Table)
-		s.Where(
-			sql.NotExists(
-				sql.Select().
-					From(userMuteTable).
-					Where(
-						sql.And(
-							sql.ColumnsEQ(userMuteTable.C(usermute.FieldUserID), s.C(user.FieldID)),
-							sql.EQ(userMuteTable.C(usermute.FieldMuteUserID), authUserID),
-						),
-					),
-			),
-		)
-	}
-	targetGroupUserPushNotificationTokens, err := r.DB.InvitationFriendGroup.Query().
-		Where(invitationfriendgroup.FriendGroupIDIn(input.TargetFriendGroupIds...)).
-		QueryFriendGroup().
-		QueryUserFriendGroups().
-		QueryUser().
-		Where(whereNotMutedUser).
-		QueryPushNotificationTokens().
-		All(ctx)
-	if err != nil {
-		return nil, err
-	}
 	targetUserPushNotificationTokens, err := r.DB.User.Query().
 		Where(
-			user.IDIn(input.TargetFriendUserIds...),
-			whereNotMutedUser,
+			user.IDIn(targetFriendUserIDs...),
+			func(s *sql.Selector) {
+				userMuteTable := sql.Table(usermute.Table)
+				s.Where(
+					sql.NotExists(
+						sql.Select().
+							From(userMuteTable).
+							Where(
+								sql.And(
+									sql.ColumnsEQ(userMuteTable.C(usermute.FieldUserID), s.C(user.FieldID)),
+									sql.EQ(userMuteTable.C(usermute.FieldMuteUserID), authUserID),
+								),
+							),
+					),
+				)
+			},
 		).
 		QueryPushNotificationTokens().
 		All(ctx)
 	if err != nil {
 		return nil, err
 	}
-	dedupedPushNotificationTokens := sliceutil.Dedup(append(targetGroupUserPushNotificationTokens, targetUserPushNotificationTokens...))
-	fcmTokens := convutil.ConvertToList(dedupedPushNotificationTokens, func(from *ent.PushNotificationToken) string {
+	fcmTokens := convutil.ConvertToList(targetUserPushNotificationTokens, func(from *ent.PushNotificationToken) string {
 		return from.FcmToken
 	})
 	// TODO: Chunk tokens by 500 (max tokens per multicast)
@@ -192,7 +175,7 @@ func (r *mutationResolver) AcceptInvitation(ctx context.Context, invitationID uu
 		return nil, err
 	}
 	if !isAuthUserInvited {
-		return nil, fmt.Errorf("invitation %q not found", invitationID)
+		return nil, xerrors.NewErrNotFound(fmt.Errorf("invitation %q not found", invitationID))
 	}
 
 	// TODO: Should we check if user already denied?
@@ -271,7 +254,7 @@ func (r *mutationResolver) DenyInvitation(ctx context.Context, invitationID uuid
 		return nil, err
 	}
 	if !isAuthUserInvited {
-		return nil, fmt.Errorf("invitation %q not found", invitationID)
+		return nil, xerrors.NewErrNotFound(fmt.Errorf("invitation %q not found", invitationID))
 	}
 
 	// TODO: Should we check if user already accepted?

@@ -17,6 +17,10 @@ type AcceptInvitationPayload {
   invitation: Invitation!
 }
 
+type BlockUserPayload {
+  blockedUserId: UUID!
+}
+
 type CancelFriendshipRequestPayload {
   canceledFriendshipRequestId: UUID!
 }
@@ -106,10 +110,6 @@ type Mutation {
   signOut: SignOutPayload!
   createUser(input: CreateUserInput!): CreateUserPayload!
   switchUser(userId: UUID!): SwitchUserPayload!
-  requestFriendship(friendUserId: UUID!): RequestFriendshipPayload!
-  cancelFriendshipRequest(friendshipRequestId: UUID!): CancelFriendshipRequestPayload!
-  acceptFriendshipRequest(friendshipRequestId: UUID!): AcceptFriendshipRequestPayload!
-  denyFriendshipRequest(friendshipRequestId: UUID!): DenyFriendshipRequestPayload!
   createFriendGroup(input: CreateFriendGroupInput!): CreateFriendGroupPayload!
   updateFriendGroup(input: UpdateFriendGroupInput!): UpdateFriendGroupPayload!
   deleteFriendGroup(friendGroupId: UUID!): DeleteFriendGroupPayload!
@@ -117,11 +117,17 @@ type Mutation {
   acceptInvitation(invitationId: UUID!): AcceptInvitationPayload!
   denyInvitation(invitationId: UUID!): DenyInvitationPayload!
   registerPushNotificationToken(input: RegisterPushNotificationTokenInput): RegisterPushNotificationTokenPayload!
+  requestFriendship(friendUserId: UUID!): RequestFriendshipPayload!
+  cancelFriendshipRequest(friendshipRequestId: UUID!): CancelFriendshipRequestPayload!
+  acceptFriendshipRequest(friendshipRequestId: UUID!): AcceptFriendshipRequestPayload!
+  denyFriendshipRequest(friendshipRequestId: UUID!): DenyFriendshipRequestPayload!
+  muteUser(userId: UUID!): MuteUserPayload!
+  unmuteUser(userId: UUID!): UnmuteUserPayload!
+  blockUser(userId: UUID!): BlockUserPayload!
+  unblockUser(userId: UUID!): UnblockUserPayload!
   updateAvatar(avatar: Upload!): UpdateAvatarPayload!
   updateNickname(nickname: String!): UpdateNicknamePayload!
   updateScreenId(screenId: String!): UpdateScreenIdPayload!
-  muteUser(userId: UUID!): MuteUserPayload!
-  unmuteUser(userId: UUID!): UnmuteUserPayload!
 }
 
 type MuteUserPayload {
@@ -202,6 +208,10 @@ type SwitchUserPayload {
 }
 
 scalar Time
+
+type UnblockUserPayload {
+  unblockedUserId: UUID!
+}
 
 type UnmuteUserPayload {
   unmutedUserId: UUID!

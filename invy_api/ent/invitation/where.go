@@ -501,33 +501,6 @@ func HasInvitationUsersWith(preds ...predicate.InvitationUser) predicate.Invitat
 	})
 }
 
-// HasInvitationFriendGroups applies the HasEdge predicate on the "invitation_friend_groups" edge.
-func HasInvitationFriendGroups() predicate.Invitation {
-	return predicate.Invitation(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, true, InvitationFriendGroupsTable, InvitationFriendGroupsColumn),
-		)
-		sqlgraph.HasNeighbors(s, step)
-	})
-}
-
-// HasInvitationFriendGroupsWith applies the HasEdge predicate on the "invitation_friend_groups" edge with a given conditions (other predicates).
-func HasInvitationFriendGroupsWith(preds ...predicate.InvitationFriendGroup) predicate.Invitation {
-	return predicate.Invitation(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(InvitationFriendGroupsInverseTable, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, true, InvitationFriendGroupsTable, InvitationFriendGroupsColumn),
-		)
-		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
-			for _, p := range preds {
-				p(s)
-			}
-		})
-	})
-}
-
 // HasInvitationAcceptances applies the HasEdge predicate on the "invitation_acceptances" edge.
 func HasInvitationAcceptances() predicate.Invitation {
 	return predicate.Invitation(func(s *sql.Selector) {

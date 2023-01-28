@@ -5,9 +5,11 @@ extend type Mutation {
     acceptFriendshipRequest(friendshipRequestId: UUID!): AcceptFriendshipRequestPayload! @authRequired
     denyFriendshipRequest(friendshipRequestId: UUID!): DenyFriendshipRequestPayload! @authRequired
 
-    createFriendGroup(input: CreateFriendGroupInput!): CreateFriendGroupPayload! @authRequired
-    updateFriendGroup(input: UpdateFriendGroupInput!): UpdateFriendGroupPayload! @authRequired
-    deleteFriendGroup(friendGroupId: UUID!): DeleteFriendGroupPayload! @authRequired
+    muteUser(userId: UUID!): MuteUserPayload! @authRequired
+    unmuteUser(userId: UUID!): UnmuteUserPayload! @authRequired
+
+    blockUser(userId: UUID!): BlockUserPayload! @authRequired
+    unblockUser(userId: UUID!): UnblockUserPayload! @authRequired
 }
 
 type FriendshipRequest implements Node {
@@ -17,14 +19,6 @@ type FriendshipRequest implements Node {
     toUserId: UUID!
     toUser: User! @goField(forceResolver: true)
     createdAt: Time!
-}
-
-type FriendGroup implements Node {
-    id: UUID!
-    userId: UUID!
-    name: String!
-    totalCount: Int!
-    friendUsers: [User!]! @goField(forceResolver: true)
 }
 
 type RequestFriendshipPayload {
@@ -43,23 +37,18 @@ type DenyFriendshipRequestPayload {
     deniedFriendshipRequestId: UUID!
 }
 
-input CreateFriendGroupInput {
-    name: String! @constraint(max: 100)
-    friendUserIds: [UUID!]!
-}
-type CreateFriendGroupPayload {
-    friendGroup: FriendGroup!
+type MuteUserPayload {
+    mutedUserId: UUID!
 }
 
-input UpdateFriendGroupInput {
-    id: UUID!
-    name: String! @constraint(max: 100)
-    friendUserIds: [UUID!]!
-}
-type UpdateFriendGroupPayload {
-    friendGroup: FriendGroup!
+type UnmuteUserPayload {
+    unmutedUserId: UUID!
 }
 
-type DeleteFriendGroupPayload {
-    deletedFriendGroupId: UUID!
+type BlockUserPayload {
+    blockedUserId: UUID!
+}
+
+type UnblockUserPayload {
+    unblockedUserId: UUID!
 }

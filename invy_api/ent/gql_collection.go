@@ -106,18 +106,6 @@ func (fg *FriendGroupQuery) collectField(ctx context.Context, op *graphql.Operat
 			fg.WithNamedFriendUsers(alias, func(wq *UserQuery) {
 				*wq = *query
 			})
-		case "invitationFriendGroups":
-			var (
-				alias = field.Alias
-				path  = append(path, alias)
-				query = &InvitationFriendGroupQuery{config: fg.config}
-			)
-			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
-				return err
-			}
-			fg.WithNamedInvitationFriendGroups(alias, func(wq *InvitationFriendGroupQuery) {
-				*wq = *query
-			})
 		case "userFriendGroups":
 			var (
 				alias = field.Alias
@@ -355,18 +343,6 @@ func (i *InvitationQuery) collectField(ctx context.Context, op *graphql.Operatio
 			i.WithNamedInvitationUsers(alias, func(wq *InvitationUserQuery) {
 				*wq = *query
 			})
-		case "invitationFriendGroups":
-			var (
-				alias = field.Alias
-				path  = append(path, alias)
-				query = &InvitationFriendGroupQuery{config: i.config}
-			)
-			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
-				return err
-			}
-			i.WithNamedInvitationFriendGroups(alias, func(wq *InvitationFriendGroupQuery) {
-				*wq = *query
-			})
 		case "invitationAcceptances":
 			var (
 				alias = field.Alias
@@ -538,73 +514,6 @@ type invitationdenialPaginateArgs struct {
 
 func newInvitationDenialPaginateArgs(rv map[string]interface{}) *invitationdenialPaginateArgs {
 	args := &invitationdenialPaginateArgs{}
-	if rv == nil {
-		return args
-	}
-	if v := rv[firstField]; v != nil {
-		args.first = v.(*int)
-	}
-	if v := rv[lastField]; v != nil {
-		args.last = v.(*int)
-	}
-	if v := rv[afterField]; v != nil {
-		args.after = v.(*Cursor)
-	}
-	if v := rv[beforeField]; v != nil {
-		args.before = v.(*Cursor)
-	}
-	return args
-}
-
-// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
-func (ifg *InvitationFriendGroupQuery) CollectFields(ctx context.Context, satisfies ...string) (*InvitationFriendGroupQuery, error) {
-	fc := graphql.GetFieldContext(ctx)
-	if fc == nil {
-		return ifg, nil
-	}
-	if err := ifg.collectField(ctx, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
-		return nil, err
-	}
-	return ifg, nil
-}
-
-func (ifg *InvitationFriendGroupQuery) collectField(ctx context.Context, op *graphql.OperationContext, field graphql.CollectedField, path []string, satisfies ...string) error {
-	path = append([]string(nil), path...)
-	for _, field := range graphql.CollectFields(op, field.Selections, satisfies) {
-		switch field.Name {
-		case "invitation":
-			var (
-				alias = field.Alias
-				path  = append(path, alias)
-				query = &InvitationQuery{config: ifg.config}
-			)
-			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
-				return err
-			}
-			ifg.withInvitation = query
-		case "friendGroup":
-			var (
-				alias = field.Alias
-				path  = append(path, alias)
-				query = &FriendGroupQuery{config: ifg.config}
-			)
-			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
-				return err
-			}
-			ifg.withFriendGroup = query
-		}
-	}
-	return nil
-}
-
-type invitationfriendgroupPaginateArgs struct {
-	first, last   *int
-	after, before *Cursor
-	opts          []InvitationFriendGroupPaginateOption
-}
-
-func newInvitationFriendGroupPaginateArgs(rv map[string]interface{}) *invitationfriendgroupPaginateArgs {
-	args := &invitationfriendgroupPaginateArgs{}
 	if rv == nil {
 		return args
 	}
@@ -892,6 +801,73 @@ type userPaginateArgs struct {
 
 func newUserPaginateArgs(rv map[string]interface{}) *userPaginateArgs {
 	args := &userPaginateArgs{}
+	if rv == nil {
+		return args
+	}
+	if v := rv[firstField]; v != nil {
+		args.first = v.(*int)
+	}
+	if v := rv[lastField]; v != nil {
+		args.last = v.(*int)
+	}
+	if v := rv[afterField]; v != nil {
+		args.after = v.(*Cursor)
+	}
+	if v := rv[beforeField]; v != nil {
+		args.before = v.(*Cursor)
+	}
+	return args
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (ub *UserBlockQuery) CollectFields(ctx context.Context, satisfies ...string) (*UserBlockQuery, error) {
+	fc := graphql.GetFieldContext(ctx)
+	if fc == nil {
+		return ub, nil
+	}
+	if err := ub.collectField(ctx, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+		return nil, err
+	}
+	return ub, nil
+}
+
+func (ub *UserBlockQuery) collectField(ctx context.Context, op *graphql.OperationContext, field graphql.CollectedField, path []string, satisfies ...string) error {
+	path = append([]string(nil), path...)
+	for _, field := range graphql.CollectFields(op, field.Selections, satisfies) {
+		switch field.Name {
+		case "user":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = &UserQuery{config: ub.config}
+			)
+			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
+				return err
+			}
+			ub.withUser = query
+		case "blockUser":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = &UserQuery{config: ub.config}
+			)
+			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
+				return err
+			}
+			ub.withBlockUser = query
+		}
+	}
+	return nil
+}
+
+type userblockPaginateArgs struct {
+	first, last   *int
+	after, before *Cursor
+	opts          []UserBlockPaginateOption
+}
+
+func newUserBlockPaginateArgs(rv map[string]interface{}) *userblockPaginateArgs {
+	args := &userblockPaginateArgs{}
 	if rv == nil {
 		return args
 	}

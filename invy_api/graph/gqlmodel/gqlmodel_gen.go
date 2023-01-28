@@ -25,6 +25,10 @@ type AcceptInvitationPayload struct {
 	Invitation *Invitation `json:"invitation"`
 }
 
+type BlockUserPayload struct {
+	BlockedUserID uuid.UUID `json:"blockedUserId"`
+}
+
 type CancelFriendshipRequestPayload struct {
 	CanceledFriendshipRequestID uuid.UUID `json:"canceledFriendshipRequestId"`
 }
@@ -157,6 +161,10 @@ type SignUpPayload struct {
 
 type SwitchUserPayload struct {
 	Viewer *Viewer `json:"viewer"`
+}
+
+type UnblockUserPayload struct {
+	UnblockedUserID uuid.UUID `json:"unblockedUserId"`
 }
 
 type UnmuteUserPayload struct {
