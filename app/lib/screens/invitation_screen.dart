@@ -262,7 +262,7 @@ class LocationSearchModal extends HookConsumerWidget {
                   },
                   onChanged: (text) {
                     if (text.isNotEmpty) {
-                      autoCompleteSearch(text); // 入力される毎に引数にその入力文字を渡し、関数を実行
+                      autoCompleteSearch(text);
                     }
                   },
                 ),

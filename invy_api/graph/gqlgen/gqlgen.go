@@ -218,10 +218,12 @@ type ComplexityRoot struct {
 	User struct {
 		AvatarURL              func(childComplexity int) int
 		ID                     func(childComplexity int) int
+		IsBlocked              func(childComplexity int) int
 		IsFriend               func(childComplexity int) int
 		IsMuted                func(childComplexity int) int
 		IsRequestingFriendship func(childComplexity int) int
 		Nickname               func(childComplexity int) int
+		ScreenID               func(childComplexity int) int
 	}
 
 	UserConnection struct {
@@ -296,6 +298,7 @@ type QueryResolver interface {
 }
 type UserResolver interface {
 	IsMuted(ctx context.Context, obj *gqlmodel.User) (bool, error)
+	IsBlocked(ctx context.Context, obj *gqlmodel.User) (bool, error)
 	IsFriend(ctx context.Context, obj *gqlmodel.User) (bool, error)
 	IsRequestingFriendship(ctx context.Context, obj *gqlmodel.User) (bool, error)
 }
@@ -966,6 +969,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.User.ID(childComplexity), true
 
+	case "User.isBlocked":
+		if e.complexity.User.IsBlocked == nil {
+			break
+		}
+
+		return e.complexity.User.IsBlocked(childComplexity), true
+
 	case "User.isFriend":
 		if e.complexity.User.IsFriend == nil {
 			break
@@ -993,6 +1003,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.User.Nickname(childComplexity), true
+
+	case "User.screenId":
+		if e.complexity.User.ScreenID == nil {
+			break
+		}
+
+		return e.complexity.User.ScreenID(childComplexity), true
 
 	case "UserConnection.edges":
 		if e.complexity.UserConnection.Edges == nil {
@@ -1432,9 +1449,11 @@ type Viewer implements Node {
 # User MUST NOT have private information such as email
 type User implements Node {
     id: UUID!
+    screenId: String!
     nickname: String!
     avatarUrl: String!
     isMuted: Boolean! @goField(forceResolver: true)
+    isBlocked: Boolean! @goField(forceResolver: true)
     isFriend: Boolean! @goField(forceResolver: true)
     isRequestingFriendship: Boolean! @goField(forceResolver: true)
 }
@@ -2844,12 +2863,16 @@ func (ec *executionContext) fieldContext_FriendGroup_friendUsers(ctx context.Con
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_User_id(ctx, field)
+			case "screenId":
+				return ec.fieldContext_User_screenId(ctx, field)
 			case "nickname":
 				return ec.fieldContext_User_nickname(ctx, field)
 			case "avatarUrl":
 				return ec.fieldContext_User_avatarUrl(ctx, field)
 			case "isMuted":
 				return ec.fieldContext_User_isMuted(ctx, field)
+			case "isBlocked":
+				return ec.fieldContext_User_isBlocked(ctx, field)
 			case "isFriend":
 				return ec.fieldContext_User_isFriend(ctx, field)
 			case "isRequestingFriendship":
@@ -2990,12 +3013,16 @@ func (ec *executionContext) fieldContext_FriendshipRequest_fromUser(ctx context.
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_User_id(ctx, field)
+			case "screenId":
+				return ec.fieldContext_User_screenId(ctx, field)
 			case "nickname":
 				return ec.fieldContext_User_nickname(ctx, field)
 			case "avatarUrl":
 				return ec.fieldContext_User_avatarUrl(ctx, field)
 			case "isMuted":
 				return ec.fieldContext_User_isMuted(ctx, field)
+			case "isBlocked":
+				return ec.fieldContext_User_isBlocked(ctx, field)
 			case "isFriend":
 				return ec.fieldContext_User_isFriend(ctx, field)
 			case "isRequestingFriendship":
@@ -3092,12 +3119,16 @@ func (ec *executionContext) fieldContext_FriendshipRequest_toUser(ctx context.Co
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_User_id(ctx, field)
+			case "screenId":
+				return ec.fieldContext_User_screenId(ctx, field)
 			case "nickname":
 				return ec.fieldContext_User_nickname(ctx, field)
 			case "avatarUrl":
 				return ec.fieldContext_User_avatarUrl(ctx, field)
 			case "isMuted":
 				return ec.fieldContext_User_isMuted(ctx, field)
+			case "isBlocked":
+				return ec.fieldContext_User_isBlocked(ctx, field)
 			case "isFriend":
 				return ec.fieldContext_User_isFriend(ctx, field)
 			case "isRequestingFriendship":
@@ -3282,12 +3313,16 @@ func (ec *executionContext) fieldContext_Invitation_user(ctx context.Context, fi
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_User_id(ctx, field)
+			case "screenId":
+				return ec.fieldContext_User_screenId(ctx, field)
 			case "nickname":
 				return ec.fieldContext_User_nickname(ctx, field)
 			case "avatarUrl":
 				return ec.fieldContext_User_avatarUrl(ctx, field)
 			case "isMuted":
 				return ec.fieldContext_User_isMuted(ctx, field)
+			case "isBlocked":
+				return ec.fieldContext_User_isBlocked(ctx, field)
 			case "isFriend":
 				return ec.fieldContext_User_isFriend(ctx, field)
 			case "isRequestingFriendship":
@@ -3566,12 +3601,16 @@ func (ec *executionContext) fieldContext_Invitation_acceptedUsers(ctx context.Co
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_User_id(ctx, field)
+			case "screenId":
+				return ec.fieldContext_User_screenId(ctx, field)
 			case "nickname":
 				return ec.fieldContext_User_nickname(ctx, field)
 			case "avatarUrl":
 				return ec.fieldContext_User_avatarUrl(ctx, field)
 			case "isMuted":
 				return ec.fieldContext_User_isMuted(ctx, field)
+			case "isBlocked":
+				return ec.fieldContext_User_isBlocked(ctx, field)
 			case "isFriend":
 				return ec.fieldContext_User_isFriend(ctx, field)
 			case "isRequestingFriendship":
@@ -5657,12 +5696,16 @@ func (ec *executionContext) fieldContext_Query_user(ctx context.Context, field g
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_User_id(ctx, field)
+			case "screenId":
+				return ec.fieldContext_User_screenId(ctx, field)
 			case "nickname":
 				return ec.fieldContext_User_nickname(ctx, field)
 			case "avatarUrl":
 				return ec.fieldContext_User_avatarUrl(ctx, field)
 			case "isMuted":
 				return ec.fieldContext_User_isMuted(ctx, field)
+			case "isBlocked":
+				return ec.fieldContext_User_isBlocked(ctx, field)
 			case "isFriend":
 				return ec.fieldContext_User_isFriend(ctx, field)
 			case "isRequestingFriendship":
@@ -5746,12 +5789,16 @@ func (ec *executionContext) fieldContext_Query_userByScreenId(ctx context.Contex
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_User_id(ctx, field)
+			case "screenId":
+				return ec.fieldContext_User_screenId(ctx, field)
 			case "nickname":
 				return ec.fieldContext_User_nickname(ctx, field)
 			case "avatarUrl":
 				return ec.fieldContext_User_avatarUrl(ctx, field)
 			case "isMuted":
 				return ec.fieldContext_User_isMuted(ctx, field)
+			case "isBlocked":
+				return ec.fieldContext_User_isBlocked(ctx, field)
 			case "isFriend":
 				return ec.fieldContext_User_isFriend(ctx, field)
 			case "isRequestingFriendship":
@@ -6661,6 +6708,50 @@ func (ec *executionContext) fieldContext_User_id(ctx context.Context, field grap
 	return fc, nil
 }
 
+func (ec *executionContext) _User_screenId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_screenId(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ScreenID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_screenId(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _User_nickname(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.User) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_User_nickname(ctx, field)
 	if err != nil {
@@ -6781,6 +6872,50 @@ func (ec *executionContext) _User_isMuted(ctx context.Context, field graphql.Col
 }
 
 func (ec *executionContext) fieldContext_User_isMuted(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_isBlocked(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_isBlocked(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.User().IsBlocked(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_isBlocked(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "User",
 		Field:      field,
@@ -7070,12 +7205,16 @@ func (ec *executionContext) fieldContext_UserEdge_node(ctx context.Context, fiel
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_User_id(ctx, field)
+			case "screenId":
+				return ec.fieldContext_User_screenId(ctx, field)
 			case "nickname":
 				return ec.fieldContext_User_nickname(ctx, field)
 			case "avatarUrl":
 				return ec.fieldContext_User_avatarUrl(ctx, field)
 			case "isMuted":
 				return ec.fieldContext_User_isMuted(ctx, field)
+			case "isBlocked":
+				return ec.fieldContext_User_isBlocked(ctx, field)
 			case "isFriend":
 				return ec.fieldContext_User_isFriend(ctx, field)
 			case "isRequestingFriendship":
@@ -11419,6 +11558,13 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
 			}
+		case "screenId":
+
+			out.Values[i] = ec._User_screenId(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
 		case "nickname":
 
 			out.Values[i] = ec._User_nickname(ctx, field, obj)
@@ -11443,6 +11589,26 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 					}
 				}()
 				res = ec._User_isMuted(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return innerFunc(ctx)
+
+			})
+		case "isBlocked":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._User_isBlocked(ctx, field, obj)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}

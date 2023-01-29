@@ -1,4 +1,5 @@
 import '../components/friend_list_item_fragment.graphql.dart';
+import '../components/user_profile_modal_fragment.graphql.dart';
 import 'package:flutter/widgets.dart' as widgets;
 import 'package:gql/ast.dart';
 import 'package:graphql/client.dart' as graphql;
@@ -306,6 +307,10 @@ const documentNodeQueryfriendGroupDetailScreenViewer =
                     name: NameNode(value: 'friendListItemFragment'),
                     directives: [],
                   ),
+                  FragmentSpreadNode(
+                    name: NameNode(value: 'userProfileModalFragment'),
+                    directives: [],
+                  ),
                   FieldNode(
                     name: NameNode(value: '__typename'),
                     alias: null,
@@ -343,6 +348,7 @@ const documentNodeQueryfriendGroupDetailScreenViewer =
     ]),
   ),
   fragmentDefinitionfriendListItemFragment,
+  fragmentDefinitionuserProfileModalFragment,
 ]);
 Query$friendGroupDetailScreenViewer
     _parserFn$Query$friendGroupDetailScreenViewer(Map<String, dynamic> data) =>
@@ -644,8 +650,9 @@ class Query$friendGroupDetailScreenViewer$viewer$friendGroup {
       name: (l$name as String),
       totalCount: (l$totalCount as int),
       friendUsers: (l$friendUsers as List<dynamic>)
-          .map((e) => Fragment$friendListItemFragment.fromJson(
-              (e as Map<String, dynamic>)))
+          .map((e) =>
+              Query$friendGroupDetailScreenViewer$viewer$friendGroup$friendUsers
+                  .fromJson((e as Map<String, dynamic>)))
           .toList(),
       $__typename: (l$$__typename as String),
     );
@@ -657,7 +664,8 @@ class Query$friendGroupDetailScreenViewer$viewer$friendGroup {
 
   final int totalCount;
 
-  final List<Fragment$friendListItemFragment> friendUsers;
+  final List<Query$friendGroupDetailScreenViewer$viewer$friendGroup$friendUsers>
+      friendUsers;
 
   final String $__typename;
 
@@ -763,14 +771,15 @@ abstract class CopyWith$Query$friendGroupDetailScreenViewer$viewer$friendGroup<
     String? id,
     String? name,
     int? totalCount,
-    List<Fragment$friendListItemFragment>? friendUsers,
+    List<Query$friendGroupDetailScreenViewer$viewer$friendGroup$friendUsers>?
+        friendUsers,
     String? $__typename,
   });
   TRes friendUsers(
-      Iterable<Fragment$friendListItemFragment> Function(
+      Iterable<Query$friendGroupDetailScreenViewer$viewer$friendGroup$friendUsers> Function(
               Iterable<
-                  CopyWith$Fragment$friendListItemFragment<
-                      Fragment$friendListItemFragment>>)
+                  CopyWith$Query$friendGroupDetailScreenViewer$viewer$friendGroup$friendUsers<
+                      Query$friendGroupDetailScreenViewer$viewer$friendGroup$friendUsers>>)
           _fn);
 }
 
@@ -806,23 +815,24 @@ class _CopyWithImpl$Query$friendGroupDetailScreenViewer$viewer$friendGroup<TRes>
             : (totalCount as int),
         friendUsers: friendUsers == _undefined || friendUsers == null
             ? _instance.friendUsers
-            : (friendUsers as List<Fragment$friendListItemFragment>),
+            : (friendUsers as List<
+                Query$friendGroupDetailScreenViewer$viewer$friendGroup$friendUsers>),
         $__typename: $__typename == _undefined || $__typename == null
             ? _instance.$__typename
             : ($__typename as String),
       ));
   TRes friendUsers(
-          Iterable<Fragment$friendListItemFragment> Function(
+          Iterable<Query$friendGroupDetailScreenViewer$viewer$friendGroup$friendUsers> Function(
                   Iterable<
-                      CopyWith$Fragment$friendListItemFragment<
-                          Fragment$friendListItemFragment>>)
+                      CopyWith$Query$friendGroupDetailScreenViewer$viewer$friendGroup$friendUsers<
+                          Query$friendGroupDetailScreenViewer$viewer$friendGroup$friendUsers>>)
               _fn) =>
       call(
-          friendUsers: _fn(_instance.friendUsers
-              .map((e) => CopyWith$Fragment$friendListItemFragment(
-                    e,
-                    (i) => i,
-                  ))).toList());
+          friendUsers: _fn(_instance.friendUsers.map((e) =>
+              CopyWith$Query$friendGroupDetailScreenViewer$viewer$friendGroup$friendUsers(
+                e,
+                (i) => i,
+              ))).toList());
 }
 
 class _CopyWithStubImpl$Query$friendGroupDetailScreenViewer$viewer$friendGroup<
@@ -838,9 +848,233 @@ class _CopyWithStubImpl$Query$friendGroupDetailScreenViewer$viewer$friendGroup<
     String? id,
     String? name,
     int? totalCount,
-    List<Fragment$friendListItemFragment>? friendUsers,
+    List<Query$friendGroupDetailScreenViewer$viewer$friendGroup$friendUsers>?
+        friendUsers,
     String? $__typename,
   }) =>
       _res;
   friendUsers(_fn) => _res;
+}
+
+class Query$friendGroupDetailScreenViewer$viewer$friendGroup$friendUsers
+    implements
+        Fragment$friendListItemFragment,
+        Fragment$userProfileModalFragment {
+  Query$friendGroupDetailScreenViewer$viewer$friendGroup$friendUsers({
+    required this.id,
+    required this.nickname,
+    required this.avatarUrl,
+    required this.isMuted,
+    required this.$__typename,
+    required this.screenId,
+  });
+
+  factory Query$friendGroupDetailScreenViewer$viewer$friendGroup$friendUsers.fromJson(
+      Map<String, dynamic> json) {
+    final l$id = json['id'];
+    final l$nickname = json['nickname'];
+    final l$avatarUrl = json['avatarUrl'];
+    final l$isMuted = json['isMuted'];
+    final l$$__typename = json['__typename'];
+    final l$screenId = json['screenId'];
+    return Query$friendGroupDetailScreenViewer$viewer$friendGroup$friendUsers(
+      id: (l$id as String),
+      nickname: (l$nickname as String),
+      avatarUrl: (l$avatarUrl as String),
+      isMuted: (l$isMuted as bool),
+      $__typename: (l$$__typename as String),
+      screenId: (l$screenId as String),
+    );
+  }
+
+  final String id;
+
+  final String nickname;
+
+  final String avatarUrl;
+
+  final bool isMuted;
+
+  final String $__typename;
+
+  final String screenId;
+
+  Map<String, dynamic> toJson() {
+    final _resultData = <String, dynamic>{};
+    final l$id = id;
+    _resultData['id'] = l$id;
+    final l$nickname = nickname;
+    _resultData['nickname'] = l$nickname;
+    final l$avatarUrl = avatarUrl;
+    _resultData['avatarUrl'] = l$avatarUrl;
+    final l$isMuted = isMuted;
+    _resultData['isMuted'] = l$isMuted;
+    final l$$__typename = $__typename;
+    _resultData['__typename'] = l$$__typename;
+    final l$screenId = screenId;
+    _resultData['screenId'] = l$screenId;
+    return _resultData;
+  }
+
+  @override
+  int get hashCode {
+    final l$id = id;
+    final l$nickname = nickname;
+    final l$avatarUrl = avatarUrl;
+    final l$isMuted = isMuted;
+    final l$$__typename = $__typename;
+    final l$screenId = screenId;
+    return Object.hashAll([
+      l$id,
+      l$nickname,
+      l$avatarUrl,
+      l$isMuted,
+      l$$__typename,
+      l$screenId,
+    ]);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    if (!(other
+            is Query$friendGroupDetailScreenViewer$viewer$friendGroup$friendUsers) ||
+        runtimeType != other.runtimeType) {
+      return false;
+    }
+    final l$id = id;
+    final lOther$id = other.id;
+    if (l$id != lOther$id) {
+      return false;
+    }
+    final l$nickname = nickname;
+    final lOther$nickname = other.nickname;
+    if (l$nickname != lOther$nickname) {
+      return false;
+    }
+    final l$avatarUrl = avatarUrl;
+    final lOther$avatarUrl = other.avatarUrl;
+    if (l$avatarUrl != lOther$avatarUrl) {
+      return false;
+    }
+    final l$isMuted = isMuted;
+    final lOther$isMuted = other.isMuted;
+    if (l$isMuted != lOther$isMuted) {
+      return false;
+    }
+    final l$$__typename = $__typename;
+    final lOther$$__typename = other.$__typename;
+    if (l$$__typename != lOther$$__typename) {
+      return false;
+    }
+    final l$screenId = screenId;
+    final lOther$screenId = other.screenId;
+    if (l$screenId != lOther$screenId) {
+      return false;
+    }
+    return true;
+  }
+}
+
+extension UtilityExtension$Query$friendGroupDetailScreenViewer$viewer$friendGroup$friendUsers
+    on Query$friendGroupDetailScreenViewer$viewer$friendGroup$friendUsers {
+  CopyWith$Query$friendGroupDetailScreenViewer$viewer$friendGroup$friendUsers<
+          Query$friendGroupDetailScreenViewer$viewer$friendGroup$friendUsers>
+      get copyWith =>
+          CopyWith$Query$friendGroupDetailScreenViewer$viewer$friendGroup$friendUsers(
+            this,
+            (i) => i,
+          );
+}
+
+abstract class CopyWith$Query$friendGroupDetailScreenViewer$viewer$friendGroup$friendUsers<
+    TRes> {
+  factory CopyWith$Query$friendGroupDetailScreenViewer$viewer$friendGroup$friendUsers(
+    Query$friendGroupDetailScreenViewer$viewer$friendGroup$friendUsers instance,
+    TRes Function(
+            Query$friendGroupDetailScreenViewer$viewer$friendGroup$friendUsers)
+        then,
+  ) = _CopyWithImpl$Query$friendGroupDetailScreenViewer$viewer$friendGroup$friendUsers;
+
+  factory CopyWith$Query$friendGroupDetailScreenViewer$viewer$friendGroup$friendUsers.stub(
+          TRes res) =
+      _CopyWithStubImpl$Query$friendGroupDetailScreenViewer$viewer$friendGroup$friendUsers;
+
+  TRes call({
+    String? id,
+    String? nickname,
+    String? avatarUrl,
+    bool? isMuted,
+    String? $__typename,
+    String? screenId,
+  });
+}
+
+class _CopyWithImpl$Query$friendGroupDetailScreenViewer$viewer$friendGroup$friendUsers<
+        TRes>
+    implements
+        CopyWith$Query$friendGroupDetailScreenViewer$viewer$friendGroup$friendUsers<
+            TRes> {
+  _CopyWithImpl$Query$friendGroupDetailScreenViewer$viewer$friendGroup$friendUsers(
+    this._instance,
+    this._then,
+  );
+
+  final Query$friendGroupDetailScreenViewer$viewer$friendGroup$friendUsers
+      _instance;
+
+  final TRes Function(
+      Query$friendGroupDetailScreenViewer$viewer$friendGroup$friendUsers) _then;
+
+  static const _undefined = {};
+
+  TRes call({
+    Object? id = _undefined,
+    Object? nickname = _undefined,
+    Object? avatarUrl = _undefined,
+    Object? isMuted = _undefined,
+    Object? $__typename = _undefined,
+    Object? screenId = _undefined,
+  }) =>
+      _then(Query$friendGroupDetailScreenViewer$viewer$friendGroup$friendUsers(
+        id: id == _undefined || id == null ? _instance.id : (id as String),
+        nickname: nickname == _undefined || nickname == null
+            ? _instance.nickname
+            : (nickname as String),
+        avatarUrl: avatarUrl == _undefined || avatarUrl == null
+            ? _instance.avatarUrl
+            : (avatarUrl as String),
+        isMuted: isMuted == _undefined || isMuted == null
+            ? _instance.isMuted
+            : (isMuted as bool),
+        $__typename: $__typename == _undefined || $__typename == null
+            ? _instance.$__typename
+            : ($__typename as String),
+        screenId: screenId == _undefined || screenId == null
+            ? _instance.screenId
+            : (screenId as String),
+      ));
+}
+
+class _CopyWithStubImpl$Query$friendGroupDetailScreenViewer$viewer$friendGroup$friendUsers<
+        TRes>
+    implements
+        CopyWith$Query$friendGroupDetailScreenViewer$viewer$friendGroup$friendUsers<
+            TRes> {
+  _CopyWithStubImpl$Query$friendGroupDetailScreenViewer$viewer$friendGroup$friendUsers(
+      this._res);
+
+  TRes _res;
+
+  call({
+    String? id,
+    String? nickname,
+    String? avatarUrl,
+    bool? isMuted,
+    String? $__typename,
+    String? screenId,
+  }) =>
+      _res;
 }

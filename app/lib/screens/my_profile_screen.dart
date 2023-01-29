@@ -15,8 +15,8 @@ import 'package:invy/util/toast.dart';
 
 import 'blocked_friend_screen.dart';
 
-class ProfileScreen extends HookConsumerWidget {
-  const ProfileScreen({super.key});
+class MyProfileScreen extends HookConsumerWidget {
+  const MyProfileScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

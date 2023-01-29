@@ -8,6 +8,7 @@ query friendScreenViewer {
             edges {
                 node {
                     ...friendListItemFragment
+                    ...userProfileModalFragment
                 }
             }
             pageInfo {

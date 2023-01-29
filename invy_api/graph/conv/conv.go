@@ -26,6 +26,7 @@ func ConvertFromDBUserProfileToViewer(userProfile *ent.UserProfile) *gqlmodel.Vi
 func ConvertFromDBUserProfile(userProfile *ent.UserProfile) *gqlmodel.User {
 	return &gqlmodel.User{
 		ID:        userProfile.UserID,
+		ScreenID:  userProfile.ScreenID,
 		Nickname:  userProfile.Nickname,
 		AvatarURL: userProfile.AvatarURL,
 	}

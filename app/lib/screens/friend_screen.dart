@@ -5,6 +5,7 @@ import 'package:invy/components/friend_group_list.dart';
 import 'package:invy/components/friend_list.dart';
 import 'package:invy/components/sub_title.dart';
 import 'package:invy/graphql/friend_screen.graphql.dart';
+import 'package:invy/components/user_profile_modal.dart';
 import 'package:invy/services/graphql_client.dart';
 
 import '../components/pending_friendship_request_list.dart';
@@ -88,10 +89,31 @@ class FriendScreen extends HookConsumerWidget {
                           },
                         ),
                         FriendList(
-                            friends: viewer?.friends.edges
-                                    .map((e) => e.node)
-                                    .toList() ??
-                                [])
+                          friends: viewer?.friends.edges
+                                  .map((e) => e.node)
+                                  .toList() ??
+                              [],
+                          onFriendPressed: (friendUserId) {
+                            showModalBottomSheet(
+                              isScrollControlled: true,
+                              context: context,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              builder: (BuildContext context) {
+                                return SizedBox(
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.85,
+                                  child: UserProfileModal(
+                                      user: viewer!.friends.edges
+                                          .singleWhere((edge) =>
+                                              edge.node.id == friendUserId)
+                                          .node),
+                                );
+                              },
+                            );
+                          },
+                        ),
                       ],
                     ),
                   ],

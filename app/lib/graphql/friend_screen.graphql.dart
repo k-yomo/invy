@@ -1,6 +1,7 @@
 import '../components/friend_group_fragment.graphql.dart';
 import '../components/friend_list_item_fragment.graphql.dart';
 import '../components/pending_friendship_request_list_fragment.graphql.dart';
+import '../components/user_profile_modal_fragment.graphql.dart';
 import 'dart:async';
 import 'package:flutter/widgets.dart' as widgets;
 import 'package:gql/ast.dart';
@@ -200,6 +201,10 @@ const documentNodeQueryfriendScreenViewer = DocumentNode(definitions: [
                         name: NameNode(value: 'friendListItemFragment'),
                         directives: [],
                       ),
+                      FragmentSpreadNode(
+                        name: NameNode(value: 'userProfileModalFragment'),
+                        directives: [],
+                      ),
                       FieldNode(
                         name: NameNode(value: '__typename'),
                         alias: null,
@@ -309,6 +314,7 @@ const documentNodeQueryfriendScreenViewer = DocumentNode(definitions: [
   ),
   fragmentDefinitionfriendGroupListItemFragment,
   fragmentDefinitionfriendListItemFragment,
+  fragmentDefinitionuserProfileModalFragment,
   fragmentDefinitionpendingFriendRequestItemFragment,
 ]);
 Query$friendScreenViewer _parserFn$Query$friendScreenViewer(
@@ -869,13 +875,13 @@ class Query$friendScreenViewer$viewer$friends$edges {
     final l$node = json['node'];
     final l$$__typename = json['__typename'];
     return Query$friendScreenViewer$viewer$friends$edges(
-      node: Fragment$friendListItemFragment.fromJson(
+      node: Query$friendScreenViewer$viewer$friends$edges$node.fromJson(
           (l$node as Map<String, dynamic>)),
       $__typename: (l$$__typename as String),
     );
   }
 
-  final Fragment$friendListItemFragment node;
+  final Query$friendScreenViewer$viewer$friends$edges$node node;
 
   final String $__typename;
 
@@ -942,10 +948,10 @@ abstract class CopyWith$Query$friendScreenViewer$viewer$friends$edges<TRes> {
       _CopyWithStubImpl$Query$friendScreenViewer$viewer$friends$edges;
 
   TRes call({
-    Fragment$friendListItemFragment? node,
+    Query$friendScreenViewer$viewer$friends$edges$node? node,
     String? $__typename,
   });
-  CopyWith$Fragment$friendListItemFragment<TRes> get node;
+  CopyWith$Query$friendScreenViewer$viewer$friends$edges$node<TRes> get node;
 }
 
 class _CopyWithImpl$Query$friendScreenViewer$viewer$friends$edges<TRes>
@@ -968,14 +974,14 @@ class _CopyWithImpl$Query$friendScreenViewer$viewer$friends$edges<TRes>
       _then(Query$friendScreenViewer$viewer$friends$edges(
         node: node == _undefined || node == null
             ? _instance.node
-            : (node as Fragment$friendListItemFragment),
+            : (node as Query$friendScreenViewer$viewer$friends$edges$node),
         $__typename: $__typename == _undefined || $__typename == null
             ? _instance.$__typename
             : ($__typename as String),
       ));
-  CopyWith$Fragment$friendListItemFragment<TRes> get node {
+  CopyWith$Query$friendScreenViewer$viewer$friends$edges$node<TRes> get node {
     final local$node = _instance.node;
-    return CopyWith$Fragment$friendListItemFragment(
+    return CopyWith$Query$friendScreenViewer$viewer$friends$edges$node(
         local$node, (e) => call(node: e));
   }
 }
@@ -987,12 +993,226 @@ class _CopyWithStubImpl$Query$friendScreenViewer$viewer$friends$edges<TRes>
   TRes _res;
 
   call({
-    Fragment$friendListItemFragment? node,
+    Query$friendScreenViewer$viewer$friends$edges$node? node,
     String? $__typename,
   }) =>
       _res;
-  CopyWith$Fragment$friendListItemFragment<TRes> get node =>
-      CopyWith$Fragment$friendListItemFragment.stub(_res);
+  CopyWith$Query$friendScreenViewer$viewer$friends$edges$node<TRes> get node =>
+      CopyWith$Query$friendScreenViewer$viewer$friends$edges$node.stub(_res);
+}
+
+class Query$friendScreenViewer$viewer$friends$edges$node
+    implements
+        Fragment$friendListItemFragment,
+        Fragment$userProfileModalFragment {
+  Query$friendScreenViewer$viewer$friends$edges$node({
+    required this.id,
+    required this.nickname,
+    required this.avatarUrl,
+    required this.isMuted,
+    required this.$__typename,
+    required this.screenId,
+  });
+
+  factory Query$friendScreenViewer$viewer$friends$edges$node.fromJson(
+      Map<String, dynamic> json) {
+    final l$id = json['id'];
+    final l$nickname = json['nickname'];
+    final l$avatarUrl = json['avatarUrl'];
+    final l$isMuted = json['isMuted'];
+    final l$$__typename = json['__typename'];
+    final l$screenId = json['screenId'];
+    return Query$friendScreenViewer$viewer$friends$edges$node(
+      id: (l$id as String),
+      nickname: (l$nickname as String),
+      avatarUrl: (l$avatarUrl as String),
+      isMuted: (l$isMuted as bool),
+      $__typename: (l$$__typename as String),
+      screenId: (l$screenId as String),
+    );
+  }
+
+  final String id;
+
+  final String nickname;
+
+  final String avatarUrl;
+
+  final bool isMuted;
+
+  final String $__typename;
+
+  final String screenId;
+
+  Map<String, dynamic> toJson() {
+    final _resultData = <String, dynamic>{};
+    final l$id = id;
+    _resultData['id'] = l$id;
+    final l$nickname = nickname;
+    _resultData['nickname'] = l$nickname;
+    final l$avatarUrl = avatarUrl;
+    _resultData['avatarUrl'] = l$avatarUrl;
+    final l$isMuted = isMuted;
+    _resultData['isMuted'] = l$isMuted;
+    final l$$__typename = $__typename;
+    _resultData['__typename'] = l$$__typename;
+    final l$screenId = screenId;
+    _resultData['screenId'] = l$screenId;
+    return _resultData;
+  }
+
+  @override
+  int get hashCode {
+    final l$id = id;
+    final l$nickname = nickname;
+    final l$avatarUrl = avatarUrl;
+    final l$isMuted = isMuted;
+    final l$$__typename = $__typename;
+    final l$screenId = screenId;
+    return Object.hashAll([
+      l$id,
+      l$nickname,
+      l$avatarUrl,
+      l$isMuted,
+      l$$__typename,
+      l$screenId,
+    ]);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    if (!(other is Query$friendScreenViewer$viewer$friends$edges$node) ||
+        runtimeType != other.runtimeType) {
+      return false;
+    }
+    final l$id = id;
+    final lOther$id = other.id;
+    if (l$id != lOther$id) {
+      return false;
+    }
+    final l$nickname = nickname;
+    final lOther$nickname = other.nickname;
+    if (l$nickname != lOther$nickname) {
+      return false;
+    }
+    final l$avatarUrl = avatarUrl;
+    final lOther$avatarUrl = other.avatarUrl;
+    if (l$avatarUrl != lOther$avatarUrl) {
+      return false;
+    }
+    final l$isMuted = isMuted;
+    final lOther$isMuted = other.isMuted;
+    if (l$isMuted != lOther$isMuted) {
+      return false;
+    }
+    final l$$__typename = $__typename;
+    final lOther$$__typename = other.$__typename;
+    if (l$$__typename != lOther$$__typename) {
+      return false;
+    }
+    final l$screenId = screenId;
+    final lOther$screenId = other.screenId;
+    if (l$screenId != lOther$screenId) {
+      return false;
+    }
+    return true;
+  }
+}
+
+extension UtilityExtension$Query$friendScreenViewer$viewer$friends$edges$node
+    on Query$friendScreenViewer$viewer$friends$edges$node {
+  CopyWith$Query$friendScreenViewer$viewer$friends$edges$node<
+          Query$friendScreenViewer$viewer$friends$edges$node>
+      get copyWith =>
+          CopyWith$Query$friendScreenViewer$viewer$friends$edges$node(
+            this,
+            (i) => i,
+          );
+}
+
+abstract class CopyWith$Query$friendScreenViewer$viewer$friends$edges$node<
+    TRes> {
+  factory CopyWith$Query$friendScreenViewer$viewer$friends$edges$node(
+    Query$friendScreenViewer$viewer$friends$edges$node instance,
+    TRes Function(Query$friendScreenViewer$viewer$friends$edges$node) then,
+  ) = _CopyWithImpl$Query$friendScreenViewer$viewer$friends$edges$node;
+
+  factory CopyWith$Query$friendScreenViewer$viewer$friends$edges$node.stub(
+          TRes res) =
+      _CopyWithStubImpl$Query$friendScreenViewer$viewer$friends$edges$node;
+
+  TRes call({
+    String? id,
+    String? nickname,
+    String? avatarUrl,
+    bool? isMuted,
+    String? $__typename,
+    String? screenId,
+  });
+}
+
+class _CopyWithImpl$Query$friendScreenViewer$viewer$friends$edges$node<TRes>
+    implements
+        CopyWith$Query$friendScreenViewer$viewer$friends$edges$node<TRes> {
+  _CopyWithImpl$Query$friendScreenViewer$viewer$friends$edges$node(
+    this._instance,
+    this._then,
+  );
+
+  final Query$friendScreenViewer$viewer$friends$edges$node _instance;
+
+  final TRes Function(Query$friendScreenViewer$viewer$friends$edges$node) _then;
+
+  static const _undefined = {};
+
+  TRes call({
+    Object? id = _undefined,
+    Object? nickname = _undefined,
+    Object? avatarUrl = _undefined,
+    Object? isMuted = _undefined,
+    Object? $__typename = _undefined,
+    Object? screenId = _undefined,
+  }) =>
+      _then(Query$friendScreenViewer$viewer$friends$edges$node(
+        id: id == _undefined || id == null ? _instance.id : (id as String),
+        nickname: nickname == _undefined || nickname == null
+            ? _instance.nickname
+            : (nickname as String),
+        avatarUrl: avatarUrl == _undefined || avatarUrl == null
+            ? _instance.avatarUrl
+            : (avatarUrl as String),
+        isMuted: isMuted == _undefined || isMuted == null
+            ? _instance.isMuted
+            : (isMuted as bool),
+        $__typename: $__typename == _undefined || $__typename == null
+            ? _instance.$__typename
+            : ($__typename as String),
+        screenId: screenId == _undefined || screenId == null
+            ? _instance.screenId
+            : (screenId as String),
+      ));
+}
+
+class _CopyWithStubImpl$Query$friendScreenViewer$viewer$friends$edges$node<TRes>
+    implements
+        CopyWith$Query$friendScreenViewer$viewer$friends$edges$node<TRes> {
+  _CopyWithStubImpl$Query$friendScreenViewer$viewer$friends$edges$node(
+      this._res);
+
+  TRes _res;
+
+  call({
+    String? id,
+    String? nickname,
+    String? avatarUrl,
+    bool? isMuted,
+    String? $__typename,
+    String? screenId,
+  }) =>
+      _res;
 }
 
 class Query$friendScreenViewer$viewer$friends$pageInfo {

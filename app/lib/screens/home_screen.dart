@@ -127,45 +127,46 @@ class HomeScreen extends HookConsumerWidget {
                                     .toList(),
                               )
                             : Center(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(Icons.edit_calendar,
-                                        size: 50, color: Colors.grey.shade600),
-                                    Container(
-                                      margin: const EdgeInsets.symmetric(
-                                          vertical: 10),
-                                      child: const Text("送信済みの招待はありません",
+                                child: Container(
+                                  margin:
+                                      const EdgeInsets.symmetric(vertical: 30),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(Icons.edit_calendar,
+                                          size: 50,
+                                          color: Colors.grey.shade600),
+                                      const Gap(15),
+                                      const Text("送信済みの招待はありません",
                                           style: TextStyle(
                                               fontWeight: FontWeight.bold)),
-                                    ),
-                                    OutlinedButton(
-                                      onPressed: () {
-                                        ref
-                                                .read(
-                                                    bottomNavigationTabProvider
-                                                        .notifier)
-                                                .state =
-                                            BottomNavigationTab.invitation;
-                                        Navigator.popUntil(
-                                            context, (route) => route.isFirst);
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                        padding: const EdgeInsets.symmetric(
-                                          vertical: 10,
-                                          horizontal: 60,
+                                      const Gap(15),
+                                      TextButton(
+                                        onPressed: () {
+                                          ref
+                                                  .read(
+                                                      bottomNavigationTabProvider
+                                                          .notifier)
+                                                  .state =
+                                              BottomNavigationTab.invitation;
+                                          Navigator.popUntil(context,
+                                              (route) => route.isFirst);
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.black,
+                                          foregroundColor: Colors.white,
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 12, horizontal: 100),
                                         ),
-                                        backgroundColor: Colors.white,
-                                        foregroundColor: Colors.black,
+                                        child: const Text(
+                                          'さそう',
+                                          style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold),
+                                        ),
                                       ),
-                                      child: const Text(
-                                        'さそう',
-                                        style: TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
                               ),
                       )

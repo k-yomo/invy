@@ -195,9 +195,11 @@ type UpdateScreenIDPayload struct {
 
 type User struct {
 	ID                     uuid.UUID `json:"id"`
+	ScreenID               string    `json:"screenId"`
 	Nickname               string    `json:"nickname"`
 	AvatarURL              string    `json:"avatarUrl"`
 	IsMuted                bool      `json:"isMuted"`
+	IsBlocked              bool      `json:"isBlocked"`
 	IsFriend               bool      `json:"isFriend"`
 	IsRequestingFriendship bool      `json:"isRequestingFriendship"`
 }

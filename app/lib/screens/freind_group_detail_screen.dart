@@ -2,6 +2,7 @@ import 'package:graphql/client.dart';
 import 'package:invy/components/friend_list.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:invy/components/user_profile_modal.dart';
 import '../components/app_bar_leading.dart';
 import '../graphql/friend_group_detail_screen.graphql.dart';
 import '../services/graphql_client.dart';
@@ -34,10 +35,25 @@ class FriendGroupDetailScreen extends HookConsumerWidget {
               shape: Border(
                   bottom: BorderSide(color: Colors.grey.shade200, width: 1)),
             ),
-            body: Column(
-              children: [
-                FriendList(friends: viewer?.friendGroup.friendUsers ?? [])
-              ],
+            body: FriendList(
+              friends: viewer?.friendGroup.friendUsers ?? [],
+              onFriendPressed: (String friendUserId) {
+                showModalBottomSheet(
+                  isScrollControlled: true,
+                  context: context,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  builder: (BuildContext context) {
+                    return SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.85,
+                      child: UserProfileModal(
+                          user: viewer!.friendGroup.friendUsers.singleWhere(
+                              (friend) => friend.id == friendUserId)),
+                    );
+                  },
+                );
+              },
             ),
           );
         });

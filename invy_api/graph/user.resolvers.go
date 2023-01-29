@@ -142,6 +142,11 @@ func (r *userResolver) IsMuted(ctx context.Context, obj *gqlmodel.User) (bool, e
 	return true, nil
 }
 
+// IsBlocked is the resolver for the isBlocked field.
+func (r *userResolver) IsBlocked(ctx context.Context, obj *gqlmodel.User) (bool, error) {
+	panic(fmt.Errorf("not implemented: IsBlocked - isBlocked"))
+}
+
 // IsFriend is the resolver for the isFriend field.
 func (r *userResolver) IsFriend(ctx context.Context, obj *gqlmodel.User) (bool, error) {
 	authUserID := auth.GetCurrentUserID(ctx)

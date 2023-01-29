@@ -41,9 +41,11 @@ type Viewer implements Node {
 # User MUST NOT have private information such as email
 type User implements Node {
     id: UUID!
+    screenId: String!
     nickname: String!
     avatarUrl: String!
     isMuted: Boolean! @goField(forceResolver: true)
+    isBlocked: Boolean! @goField(forceResolver: true)
     isFriend: Boolean! @goField(forceResolver: true)
     isRequestingFriendship: Boolean! @goField(forceResolver: true)
 }

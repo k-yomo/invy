@@ -11,7 +11,7 @@ import 'package:invy/state/bottom_navigation.dart';
 import 'screens/friend_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/login_screen.dart';
-import 'screens/profile_screen.dart';
+import 'screens/my_profile_screen.dart';
 import 'state/auth.dart';
 
 class App extends HookConsumerWidget {
@@ -90,7 +90,7 @@ class RootWidget extends HookConsumerWidget {
     HomeScreen(),
     InvitationScreen(),
     FriendScreen(),
-    ProfileScreen(),
+    MyProfileScreen(),
   ];
 
   @override

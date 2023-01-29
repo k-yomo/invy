@@ -1,0 +1,8 @@
+
+fragment userProfileModalFragment on User {
+    id
+    screenId
+    nickname
+    avatarUrl
+    isMuted
+}
