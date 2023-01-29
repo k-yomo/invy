@@ -12,6 +12,7 @@ import (
 
 	"cloud.google.com/go/profiler"
 	gcs "cloud.google.com/go/storage"
+	entsql "entgo.io/ent/dialect/sql"
 	firebase "firebase.google.com/go/v4"
 	firebaseAuth "firebase.google.com/go/v4/auth"
 	"github.com/99designs/gqlgen/graphql/handler"
@@ -35,7 +36,6 @@ import (
 	"github.com/rs/cors"
 	"github.com/uptrace/bun"
 	"github.com/uptrace/bun/dialect/pgdialect"
-	"github.com/uptrace/bun/driver/pgdriver"
 	"go.uber.org/zap"
 	"google.golang.org/api/option"
 )
@@ -64,17 +64,17 @@ func main() {
 		}
 	}
 
-	sql.OpenDB(pgdriver.NewConnector(pgdriver.WithDSN(appConfig.DBConfig.Dsn())))
-	sqldb, err := sql.Open(appConfig.DBConfig.Driver, "file::memory:?cache=shared")
+	db, err := sql.Open(appConfig.DBConfig.Driver, appConfig.DBConfig.Dsn())
 	if err != nil {
 		logger.Fatal("initialize db failed", zap.Error(err))
 	}
-	bunDB := bun.NewDB(sqldb, pgdialect.New())
-	entDB, err := ent.Open(appConfig.DBConfig.Driver, appConfig.DBConfig.Dsn())
-	if err != nil {
-		logger.Fatal("initialize ent db failed", zap.Error(err))
-	}
-	defer entDB.Close()
+	defer db.Close()
+
+	db.SetMaxOpenConns(10)
+	db.SetMaxIdleConns(10)
+	db.SetConnMaxLifetime(5 * time.Minute)
+	bunDB := bun.NewDB(db, pgdialect.New())
+	entDB := ent.NewClient(ent.Driver(entsql.OpenDB(appConfig.DBConfig.Driver, db)))
 	// Run migration.
 	if err := entDB.Schema.Create(ctx); err != nil {
 		logger.Fatal("creating schema resources failed", zap.Error(err))
