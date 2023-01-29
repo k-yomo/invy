@@ -29,8 +29,8 @@ class FriendScreen extends HookConsumerWidget {
           return Scaffold(
             appBar: AppBar(
               title: const Text(
-                'Friends',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                '友達・グループ',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
               ),
               shape: Border(
                   bottom: BorderSide(color: Colors.grey.shade200, width: 1)),

@@ -4,19 +4,19 @@ import 'package:gql/ast.dart';
 import 'package:graphql/client.dart' as graphql;
 import 'package:graphql_flutter/graphql_flutter.dart' as graphql_flutter;
 
-class Variables$Mutation$muteFriend {
-  factory Variables$Mutation$muteFriend({required String userId}) =>
-      Variables$Mutation$muteFriend._({
+class Variables$Mutation$muteUser {
+  factory Variables$Mutation$muteUser({required String userId}) =>
+      Variables$Mutation$muteUser._({
         r'userId': userId,
       });
 
-  Variables$Mutation$muteFriend._(this._$data);
+  Variables$Mutation$muteUser._(this._$data);
 
-  factory Variables$Mutation$muteFriend.fromJson(Map<String, dynamic> data) {
+  factory Variables$Mutation$muteUser.fromJson(Map<String, dynamic> data) {
     final result$data = <String, dynamic>{};
     final l$userId = data['userId'];
     result$data['userId'] = (l$userId as String);
-    return Variables$Mutation$muteFriend._(result$data);
+    return Variables$Mutation$muteUser._(result$data);
   }
 
   Map<String, dynamic> _$data;
@@ -29,8 +29,8 @@ class Variables$Mutation$muteFriend {
     return result$data;
   }
 
-  CopyWith$Variables$Mutation$muteFriend<Variables$Mutation$muteFriend>
-      get copyWith => CopyWith$Variables$Mutation$muteFriend(
+  CopyWith$Variables$Mutation$muteUser<Variables$Mutation$muteUser>
+      get copyWith => CopyWith$Variables$Mutation$muteUser(
             this,
             (i) => i,
           );
@@ -39,7 +39,7 @@ class Variables$Mutation$muteFriend {
     if (identical(this, other)) {
       return true;
     }
-    if (!(other is Variables$Mutation$muteFriend) ||
+    if (!(other is Variables$Mutation$muteUser) ||
         runtimeType != other.runtimeType) {
       return false;
     }
@@ -58,65 +58,65 @@ class Variables$Mutation$muteFriend {
   }
 }
 
-abstract class CopyWith$Variables$Mutation$muteFriend<TRes> {
-  factory CopyWith$Variables$Mutation$muteFriend(
-    Variables$Mutation$muteFriend instance,
-    TRes Function(Variables$Mutation$muteFriend) then,
-  ) = _CopyWithImpl$Variables$Mutation$muteFriend;
+abstract class CopyWith$Variables$Mutation$muteUser<TRes> {
+  factory CopyWith$Variables$Mutation$muteUser(
+    Variables$Mutation$muteUser instance,
+    TRes Function(Variables$Mutation$muteUser) then,
+  ) = _CopyWithImpl$Variables$Mutation$muteUser;
 
-  factory CopyWith$Variables$Mutation$muteFriend.stub(TRes res) =
-      _CopyWithStubImpl$Variables$Mutation$muteFriend;
+  factory CopyWith$Variables$Mutation$muteUser.stub(TRes res) =
+      _CopyWithStubImpl$Variables$Mutation$muteUser;
 
   TRes call({String? userId});
 }
 
-class _CopyWithImpl$Variables$Mutation$muteFriend<TRes>
-    implements CopyWith$Variables$Mutation$muteFriend<TRes> {
-  _CopyWithImpl$Variables$Mutation$muteFriend(
+class _CopyWithImpl$Variables$Mutation$muteUser<TRes>
+    implements CopyWith$Variables$Mutation$muteUser<TRes> {
+  _CopyWithImpl$Variables$Mutation$muteUser(
     this._instance,
     this._then,
   );
 
-  final Variables$Mutation$muteFriend _instance;
+  final Variables$Mutation$muteUser _instance;
 
-  final TRes Function(Variables$Mutation$muteFriend) _then;
+  final TRes Function(Variables$Mutation$muteUser) _then;
 
   static const _undefined = {};
 
   TRes call({Object? userId = _undefined}) =>
-      _then(Variables$Mutation$muteFriend._({
+      _then(Variables$Mutation$muteUser._({
         ..._instance._$data,
         if (userId != _undefined && userId != null)
           'userId': (userId as String),
       }));
 }
 
-class _CopyWithStubImpl$Variables$Mutation$muteFriend<TRes>
-    implements CopyWith$Variables$Mutation$muteFriend<TRes> {
-  _CopyWithStubImpl$Variables$Mutation$muteFriend(this._res);
+class _CopyWithStubImpl$Variables$Mutation$muteUser<TRes>
+    implements CopyWith$Variables$Mutation$muteUser<TRes> {
+  _CopyWithStubImpl$Variables$Mutation$muteUser(this._res);
 
   TRes _res;
 
   call({String? userId}) => _res;
 }
 
-class Mutation$muteFriend {
-  Mutation$muteFriend({
+class Mutation$muteUser {
+  Mutation$muteUser({
     required this.muteUser,
     required this.$__typename,
   });
 
-  factory Mutation$muteFriend.fromJson(Map<String, dynamic> json) {
+  factory Mutation$muteUser.fromJson(Map<String, dynamic> json) {
     final l$muteUser = json['muteUser'];
     final l$$__typename = json['__typename'];
-    return Mutation$muteFriend(
-      muteUser: Mutation$muteFriend$muteUser.fromJson(
+    return Mutation$muteUser(
+      muteUser: Mutation$muteUser$muteUser.fromJson(
           (l$muteUser as Map<String, dynamic>)),
       $__typename: (l$$__typename as String),
     );
   }
 
-  final Mutation$muteFriend$muteUser muteUser;
+  final Mutation$muteUser$muteUser muteUser;
 
   final String $__typename;
 
@@ -144,7 +144,7 @@ class Mutation$muteFriend {
     if (identical(this, other)) {
       return true;
     }
-    if (!(other is Mutation$muteFriend) || runtimeType != other.runtimeType) {
+    if (!(other is Mutation$muteUser) || runtimeType != other.runtimeType) {
       return false;
     }
     final l$muteUser = muteUser;
@@ -161,40 +161,40 @@ class Mutation$muteFriend {
   }
 }
 
-extension UtilityExtension$Mutation$muteFriend on Mutation$muteFriend {
-  CopyWith$Mutation$muteFriend<Mutation$muteFriend> get copyWith =>
-      CopyWith$Mutation$muteFriend(
+extension UtilityExtension$Mutation$muteUser on Mutation$muteUser {
+  CopyWith$Mutation$muteUser<Mutation$muteUser> get copyWith =>
+      CopyWith$Mutation$muteUser(
         this,
         (i) => i,
       );
 }
 
-abstract class CopyWith$Mutation$muteFriend<TRes> {
-  factory CopyWith$Mutation$muteFriend(
-    Mutation$muteFriend instance,
-    TRes Function(Mutation$muteFriend) then,
-  ) = _CopyWithImpl$Mutation$muteFriend;
+abstract class CopyWith$Mutation$muteUser<TRes> {
+  factory CopyWith$Mutation$muteUser(
+    Mutation$muteUser instance,
+    TRes Function(Mutation$muteUser) then,
+  ) = _CopyWithImpl$Mutation$muteUser;
 
-  factory CopyWith$Mutation$muteFriend.stub(TRes res) =
-      _CopyWithStubImpl$Mutation$muteFriend;
+  factory CopyWith$Mutation$muteUser.stub(TRes res) =
+      _CopyWithStubImpl$Mutation$muteUser;
 
   TRes call({
-    Mutation$muteFriend$muteUser? muteUser,
+    Mutation$muteUser$muteUser? muteUser,
     String? $__typename,
   });
-  CopyWith$Mutation$muteFriend$muteUser<TRes> get muteUser;
+  CopyWith$Mutation$muteUser$muteUser<TRes> get muteUser;
 }
 
-class _CopyWithImpl$Mutation$muteFriend<TRes>
-    implements CopyWith$Mutation$muteFriend<TRes> {
-  _CopyWithImpl$Mutation$muteFriend(
+class _CopyWithImpl$Mutation$muteUser<TRes>
+    implements CopyWith$Mutation$muteUser<TRes> {
+  _CopyWithImpl$Mutation$muteUser(
     this._instance,
     this._then,
   );
 
-  final Mutation$muteFriend _instance;
+  final Mutation$muteUser _instance;
 
-  final TRes Function(Mutation$muteFriend) _then;
+  final TRes Function(Mutation$muteUser) _then;
 
   static const _undefined = {};
 
@@ -202,40 +202,40 @@ class _CopyWithImpl$Mutation$muteFriend<TRes>
     Object? muteUser = _undefined,
     Object? $__typename = _undefined,
   }) =>
-      _then(Mutation$muteFriend(
+      _then(Mutation$muteUser(
         muteUser: muteUser == _undefined || muteUser == null
             ? _instance.muteUser
-            : (muteUser as Mutation$muteFriend$muteUser),
+            : (muteUser as Mutation$muteUser$muteUser),
         $__typename: $__typename == _undefined || $__typename == null
             ? _instance.$__typename
             : ($__typename as String),
       ));
-  CopyWith$Mutation$muteFriend$muteUser<TRes> get muteUser {
+  CopyWith$Mutation$muteUser$muteUser<TRes> get muteUser {
     final local$muteUser = _instance.muteUser;
-    return CopyWith$Mutation$muteFriend$muteUser(
+    return CopyWith$Mutation$muteUser$muteUser(
         local$muteUser, (e) => call(muteUser: e));
   }
 }
 
-class _CopyWithStubImpl$Mutation$muteFriend<TRes>
-    implements CopyWith$Mutation$muteFriend<TRes> {
-  _CopyWithStubImpl$Mutation$muteFriend(this._res);
+class _CopyWithStubImpl$Mutation$muteUser<TRes>
+    implements CopyWith$Mutation$muteUser<TRes> {
+  _CopyWithStubImpl$Mutation$muteUser(this._res);
 
   TRes _res;
 
   call({
-    Mutation$muteFriend$muteUser? muteUser,
+    Mutation$muteUser$muteUser? muteUser,
     String? $__typename,
   }) =>
       _res;
-  CopyWith$Mutation$muteFriend$muteUser<TRes> get muteUser =>
-      CopyWith$Mutation$muteFriend$muteUser.stub(_res);
+  CopyWith$Mutation$muteUser$muteUser<TRes> get muteUser =>
+      CopyWith$Mutation$muteUser$muteUser.stub(_res);
 }
 
-const documentNodeMutationmuteFriend = DocumentNode(definitions: [
+const documentNodeMutationmuteUser = DocumentNode(definitions: [
   OperationDefinitionNode(
     type: OperationType.mutation,
-    name: NameNode(value: 'muteFriend'),
+    name: NameNode(value: 'muteUser'),
     variableDefinitions: [
       VariableDefinitionNode(
         variable: VariableNode(name: NameNode(value: 'userId')),
@@ -286,25 +286,25 @@ const documentNodeMutationmuteFriend = DocumentNode(definitions: [
     ]),
   ),
 ]);
-Mutation$muteFriend _parserFn$Mutation$muteFriend(Map<String, dynamic> data) =>
-    Mutation$muteFriend.fromJson(data);
-typedef OnMutationCompleted$Mutation$muteFriend = FutureOr<void> Function(
+Mutation$muteUser _parserFn$Mutation$muteUser(Map<String, dynamic> data) =>
+    Mutation$muteUser.fromJson(data);
+typedef OnMutationCompleted$Mutation$muteUser = FutureOr<void> Function(
   dynamic,
-  Mutation$muteFriend?,
+  Mutation$muteUser?,
 );
 
-class Options$Mutation$muteFriend
-    extends graphql.MutationOptions<Mutation$muteFriend> {
-  Options$Mutation$muteFriend({
+class Options$Mutation$muteUser
+    extends graphql.MutationOptions<Mutation$muteUser> {
+  Options$Mutation$muteUser({
     String? operationName,
-    required Variables$Mutation$muteFriend variables,
+    required Variables$Mutation$muteUser variables,
     graphql.FetchPolicy? fetchPolicy,
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
     Object? optimisticResult,
     graphql.Context? context,
-    OnMutationCompleted$Mutation$muteFriend? onCompleted,
-    graphql.OnMutationUpdate<Mutation$muteFriend>? update,
+    OnMutationCompleted$Mutation$muteUser? onCompleted,
+    graphql.OnMutationUpdate<Mutation$muteUser>? update,
     graphql.OnError? onError,
   })  : onCompletedWithParsed = onCompleted,
         super(
@@ -319,15 +319,15 @@ class Options$Mutation$muteFriend
               ? null
               : (data) => onCompleted(
                     data,
-                    data == null ? null : _parserFn$Mutation$muteFriend(data),
+                    data == null ? null : _parserFn$Mutation$muteUser(data),
                   ),
           update: update,
           onError: onError,
-          document: documentNodeMutationmuteFriend,
-          parserFn: _parserFn$Mutation$muteFriend,
+          document: documentNodeMutationmuteUser,
+          parserFn: _parserFn$Mutation$muteUser,
         );
 
-  final OnMutationCompleted$Mutation$muteFriend? onCompletedWithParsed;
+  final OnMutationCompleted$Mutation$muteUser? onCompletedWithParsed;
 
   @override
   List<Object?> get properties => [
@@ -338,11 +338,11 @@ class Options$Mutation$muteFriend
       ];
 }
 
-class WatchOptions$Mutation$muteFriend
-    extends graphql.WatchQueryOptions<Mutation$muteFriend> {
-  WatchOptions$Mutation$muteFriend({
+class WatchOptions$Mutation$muteUser
+    extends graphql.WatchQueryOptions<Mutation$muteUser> {
+  WatchOptions$Mutation$muteUser({
     String? operationName,
-    required Variables$Mutation$muteFriend variables,
+    required Variables$Mutation$muteUser variables,
     graphql.FetchPolicy? fetchPolicy,
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
@@ -360,40 +360,40 @@ class WatchOptions$Mutation$muteFriend
           cacheRereadPolicy: cacheRereadPolicy,
           optimisticResult: optimisticResult,
           context: context,
-          document: documentNodeMutationmuteFriend,
+          document: documentNodeMutationmuteUser,
           pollInterval: pollInterval,
           eagerlyFetchResults: eagerlyFetchResults,
           carryForwardDataOnException: carryForwardDataOnException,
           fetchResults: fetchResults,
-          parserFn: _parserFn$Mutation$muteFriend,
+          parserFn: _parserFn$Mutation$muteUser,
         );
 }
 
-extension ClientExtension$Mutation$muteFriend on graphql.GraphQLClient {
-  Future<graphql.QueryResult<Mutation$muteFriend>> mutate$muteFriend(
-          Options$Mutation$muteFriend options) async =>
+extension ClientExtension$Mutation$muteUser on graphql.GraphQLClient {
+  Future<graphql.QueryResult<Mutation$muteUser>> mutate$muteUser(
+          Options$Mutation$muteUser options) async =>
       await this.mutate(options);
-  graphql.ObservableQuery<Mutation$muteFriend> watchMutation$muteFriend(
-          WatchOptions$Mutation$muteFriend options) =>
+  graphql.ObservableQuery<Mutation$muteUser> watchMutation$muteUser(
+          WatchOptions$Mutation$muteUser options) =>
       this.watchMutation(options);
 }
 
-class Mutation$muteFriend$HookResult {
-  Mutation$muteFriend$HookResult(
+class Mutation$muteUser$HookResult {
+  Mutation$muteUser$HookResult(
     this.runMutation,
     this.result,
   );
 
-  final RunMutation$Mutation$muteFriend runMutation;
+  final RunMutation$Mutation$muteUser runMutation;
 
-  final graphql.QueryResult<Mutation$muteFriend> result;
+  final graphql.QueryResult<Mutation$muteUser> result;
 }
 
-Mutation$muteFriend$HookResult useMutation$muteFriend(
-    [WidgetOptions$Mutation$muteFriend? options]) {
-  final result = graphql_flutter
-      .useMutation(options ?? WidgetOptions$Mutation$muteFriend());
-  return Mutation$muteFriend$HookResult(
+Mutation$muteUser$HookResult useMutation$muteUser(
+    [WidgetOptions$Mutation$muteUser? options]) {
+  final result =
+      graphql_flutter.useMutation(options ?? WidgetOptions$Mutation$muteUser());
+  return Mutation$muteUser$HookResult(
     (variables, {optimisticResult}) => result.runMutation(
       variables.toJson(),
       optimisticResult: optimisticResult,
@@ -402,21 +402,21 @@ Mutation$muteFriend$HookResult useMutation$muteFriend(
   );
 }
 
-graphql.ObservableQuery<Mutation$muteFriend> useWatchMutation$muteFriend(
-        WatchOptions$Mutation$muteFriend options) =>
+graphql.ObservableQuery<Mutation$muteUser> useWatchMutation$muteUser(
+        WatchOptions$Mutation$muteUser options) =>
     graphql_flutter.useWatchMutation(options);
 
-class WidgetOptions$Mutation$muteFriend
-    extends graphql.MutationOptions<Mutation$muteFriend> {
-  WidgetOptions$Mutation$muteFriend({
+class WidgetOptions$Mutation$muteUser
+    extends graphql.MutationOptions<Mutation$muteUser> {
+  WidgetOptions$Mutation$muteUser({
     String? operationName,
     graphql.FetchPolicy? fetchPolicy,
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
     Object? optimisticResult,
     graphql.Context? context,
-    OnMutationCompleted$Mutation$muteFriend? onCompleted,
-    graphql.OnMutationUpdate<Mutation$muteFriend>? update,
+    OnMutationCompleted$Mutation$muteUser? onCompleted,
+    graphql.OnMutationUpdate<Mutation$muteUser>? update,
     graphql.OnError? onError,
   })  : onCompletedWithParsed = onCompleted,
         super(
@@ -430,15 +430,15 @@ class WidgetOptions$Mutation$muteFriend
               ? null
               : (data) => onCompleted(
                     data,
-                    data == null ? null : _parserFn$Mutation$muteFriend(data),
+                    data == null ? null : _parserFn$Mutation$muteUser(data),
                   ),
           update: update,
           onError: onError,
-          document: documentNodeMutationmuteFriend,
-          parserFn: _parserFn$Mutation$muteFriend,
+          document: documentNodeMutationmuteUser,
+          parserFn: _parserFn$Mutation$muteUser,
         );
 
-  final OnMutationCompleted$Mutation$muteFriend? onCompletedWithParsed;
+  final OnMutationCompleted$Mutation$muteUser? onCompletedWithParsed;
 
   @override
   List<Object?> get properties => [
@@ -449,25 +449,25 @@ class WidgetOptions$Mutation$muteFriend
       ];
 }
 
-typedef RunMutation$Mutation$muteFriend
-    = graphql.MultiSourceResult<Mutation$muteFriend> Function(
-  Variables$Mutation$muteFriend, {
+typedef RunMutation$Mutation$muteUser
+    = graphql.MultiSourceResult<Mutation$muteUser> Function(
+  Variables$Mutation$muteUser, {
   Object? optimisticResult,
 });
-typedef Builder$Mutation$muteFriend = widgets.Widget Function(
-  RunMutation$Mutation$muteFriend,
-  graphql.QueryResult<Mutation$muteFriend>?,
+typedef Builder$Mutation$muteUser = widgets.Widget Function(
+  RunMutation$Mutation$muteUser,
+  graphql.QueryResult<Mutation$muteUser>?,
 );
 
-class Mutation$muteFriend$Widget
-    extends graphql_flutter.Mutation<Mutation$muteFriend> {
-  Mutation$muteFriend$Widget({
+class Mutation$muteUser$Widget
+    extends graphql_flutter.Mutation<Mutation$muteUser> {
+  Mutation$muteUser$Widget({
     widgets.Key? key,
-    WidgetOptions$Mutation$muteFriend? options,
-    required Builder$Mutation$muteFriend builder,
+    WidgetOptions$Mutation$muteUser? options,
+    required Builder$Mutation$muteUser builder,
   }) : super(
           key: key,
-          options: options ?? WidgetOptions$Mutation$muteFriend(),
+          options: options ?? WidgetOptions$Mutation$muteUser(),
           builder: (
             run,
             result,
@@ -486,16 +486,16 @@ class Mutation$muteFriend$Widget
         );
 }
 
-class Mutation$muteFriend$muteUser {
-  Mutation$muteFriend$muteUser({
+class Mutation$muteUser$muteUser {
+  Mutation$muteUser$muteUser({
     required this.mutedUserId,
     required this.$__typename,
   });
 
-  factory Mutation$muteFriend$muteUser.fromJson(Map<String, dynamic> json) {
+  factory Mutation$muteUser$muteUser.fromJson(Map<String, dynamic> json) {
     final l$mutedUserId = json['mutedUserId'];
     final l$$__typename = json['__typename'];
-    return Mutation$muteFriend$muteUser(
+    return Mutation$muteUser$muteUser(
       mutedUserId: (l$mutedUserId as String),
       $__typename: (l$$__typename as String),
     );
@@ -529,7 +529,7 @@ class Mutation$muteFriend$muteUser {
     if (identical(this, other)) {
       return true;
     }
-    if (!(other is Mutation$muteFriend$muteUser) ||
+    if (!(other is Mutation$muteUser$muteUser) ||
         runtimeType != other.runtimeType) {
       return false;
     }
@@ -547,23 +547,23 @@ class Mutation$muteFriend$muteUser {
   }
 }
 
-extension UtilityExtension$Mutation$muteFriend$muteUser
-    on Mutation$muteFriend$muteUser {
-  CopyWith$Mutation$muteFriend$muteUser<Mutation$muteFriend$muteUser>
-      get copyWith => CopyWith$Mutation$muteFriend$muteUser(
+extension UtilityExtension$Mutation$muteUser$muteUser
+    on Mutation$muteUser$muteUser {
+  CopyWith$Mutation$muteUser$muteUser<Mutation$muteUser$muteUser>
+      get copyWith => CopyWith$Mutation$muteUser$muteUser(
             this,
             (i) => i,
           );
 }
 
-abstract class CopyWith$Mutation$muteFriend$muteUser<TRes> {
-  factory CopyWith$Mutation$muteFriend$muteUser(
-    Mutation$muteFriend$muteUser instance,
-    TRes Function(Mutation$muteFriend$muteUser) then,
-  ) = _CopyWithImpl$Mutation$muteFriend$muteUser;
+abstract class CopyWith$Mutation$muteUser$muteUser<TRes> {
+  factory CopyWith$Mutation$muteUser$muteUser(
+    Mutation$muteUser$muteUser instance,
+    TRes Function(Mutation$muteUser$muteUser) then,
+  ) = _CopyWithImpl$Mutation$muteUser$muteUser;
 
-  factory CopyWith$Mutation$muteFriend$muteUser.stub(TRes res) =
-      _CopyWithStubImpl$Mutation$muteFriend$muteUser;
+  factory CopyWith$Mutation$muteUser$muteUser.stub(TRes res) =
+      _CopyWithStubImpl$Mutation$muteUser$muteUser;
 
   TRes call({
     String? mutedUserId,
@@ -571,16 +571,16 @@ abstract class CopyWith$Mutation$muteFriend$muteUser<TRes> {
   });
 }
 
-class _CopyWithImpl$Mutation$muteFriend$muteUser<TRes>
-    implements CopyWith$Mutation$muteFriend$muteUser<TRes> {
-  _CopyWithImpl$Mutation$muteFriend$muteUser(
+class _CopyWithImpl$Mutation$muteUser$muteUser<TRes>
+    implements CopyWith$Mutation$muteUser$muteUser<TRes> {
+  _CopyWithImpl$Mutation$muteUser$muteUser(
     this._instance,
     this._then,
   );
 
-  final Mutation$muteFriend$muteUser _instance;
+  final Mutation$muteUser$muteUser _instance;
 
-  final TRes Function(Mutation$muteFriend$muteUser) _then;
+  final TRes Function(Mutation$muteUser$muteUser) _then;
 
   static const _undefined = {};
 
@@ -588,7 +588,7 @@ class _CopyWithImpl$Mutation$muteFriend$muteUser<TRes>
     Object? mutedUserId = _undefined,
     Object? $__typename = _undefined,
   }) =>
-      _then(Mutation$muteFriend$muteUser(
+      _then(Mutation$muteUser$muteUser(
         mutedUserId: mutedUserId == _undefined || mutedUserId == null
             ? _instance.mutedUserId
             : (mutedUserId as String),
@@ -598,9 +598,9 @@ class _CopyWithImpl$Mutation$muteFriend$muteUser<TRes>
       ));
 }
 
-class _CopyWithStubImpl$Mutation$muteFriend$muteUser<TRes>
-    implements CopyWith$Mutation$muteFriend$muteUser<TRes> {
-  _CopyWithStubImpl$Mutation$muteFriend$muteUser(this._res);
+class _CopyWithStubImpl$Mutation$muteUser$muteUser<TRes>
+    implements CopyWith$Mutation$muteUser$muteUser<TRes> {
+  _CopyWithStubImpl$Mutation$muteUser$muteUser(this._res);
 
   TRes _res;
 
@@ -611,19 +611,19 @@ class _CopyWithStubImpl$Mutation$muteFriend$muteUser<TRes>
       _res;
 }
 
-class Variables$Mutation$unmuteFriend {
-  factory Variables$Mutation$unmuteFriend({required String userId}) =>
-      Variables$Mutation$unmuteFriend._({
+class Variables$Mutation$unmuteUser {
+  factory Variables$Mutation$unmuteUser({required String userId}) =>
+      Variables$Mutation$unmuteUser._({
         r'userId': userId,
       });
 
-  Variables$Mutation$unmuteFriend._(this._$data);
+  Variables$Mutation$unmuteUser._(this._$data);
 
-  factory Variables$Mutation$unmuteFriend.fromJson(Map<String, dynamic> data) {
+  factory Variables$Mutation$unmuteUser.fromJson(Map<String, dynamic> data) {
     final result$data = <String, dynamic>{};
     final l$userId = data['userId'];
     result$data['userId'] = (l$userId as String);
-    return Variables$Mutation$unmuteFriend._(result$data);
+    return Variables$Mutation$unmuteUser._(result$data);
   }
 
   Map<String, dynamic> _$data;
@@ -636,8 +636,8 @@ class Variables$Mutation$unmuteFriend {
     return result$data;
   }
 
-  CopyWith$Variables$Mutation$unmuteFriend<Variables$Mutation$unmuteFriend>
-      get copyWith => CopyWith$Variables$Mutation$unmuteFriend(
+  CopyWith$Variables$Mutation$unmuteUser<Variables$Mutation$unmuteUser>
+      get copyWith => CopyWith$Variables$Mutation$unmuteUser(
             this,
             (i) => i,
           );
@@ -646,7 +646,7 @@ class Variables$Mutation$unmuteFriend {
     if (identical(this, other)) {
       return true;
     }
-    if (!(other is Variables$Mutation$unmuteFriend) ||
+    if (!(other is Variables$Mutation$unmuteUser) ||
         runtimeType != other.runtimeType) {
       return false;
     }
@@ -665,65 +665,65 @@ class Variables$Mutation$unmuteFriend {
   }
 }
 
-abstract class CopyWith$Variables$Mutation$unmuteFriend<TRes> {
-  factory CopyWith$Variables$Mutation$unmuteFriend(
-    Variables$Mutation$unmuteFriend instance,
-    TRes Function(Variables$Mutation$unmuteFriend) then,
-  ) = _CopyWithImpl$Variables$Mutation$unmuteFriend;
+abstract class CopyWith$Variables$Mutation$unmuteUser<TRes> {
+  factory CopyWith$Variables$Mutation$unmuteUser(
+    Variables$Mutation$unmuteUser instance,
+    TRes Function(Variables$Mutation$unmuteUser) then,
+  ) = _CopyWithImpl$Variables$Mutation$unmuteUser;
 
-  factory CopyWith$Variables$Mutation$unmuteFriend.stub(TRes res) =
-      _CopyWithStubImpl$Variables$Mutation$unmuteFriend;
+  factory CopyWith$Variables$Mutation$unmuteUser.stub(TRes res) =
+      _CopyWithStubImpl$Variables$Mutation$unmuteUser;
 
   TRes call({String? userId});
 }
 
-class _CopyWithImpl$Variables$Mutation$unmuteFriend<TRes>
-    implements CopyWith$Variables$Mutation$unmuteFriend<TRes> {
-  _CopyWithImpl$Variables$Mutation$unmuteFriend(
+class _CopyWithImpl$Variables$Mutation$unmuteUser<TRes>
+    implements CopyWith$Variables$Mutation$unmuteUser<TRes> {
+  _CopyWithImpl$Variables$Mutation$unmuteUser(
     this._instance,
     this._then,
   );
 
-  final Variables$Mutation$unmuteFriend _instance;
+  final Variables$Mutation$unmuteUser _instance;
 
-  final TRes Function(Variables$Mutation$unmuteFriend) _then;
+  final TRes Function(Variables$Mutation$unmuteUser) _then;
 
   static const _undefined = {};
 
   TRes call({Object? userId = _undefined}) =>
-      _then(Variables$Mutation$unmuteFriend._({
+      _then(Variables$Mutation$unmuteUser._({
         ..._instance._$data,
         if (userId != _undefined && userId != null)
           'userId': (userId as String),
       }));
 }
 
-class _CopyWithStubImpl$Variables$Mutation$unmuteFriend<TRes>
-    implements CopyWith$Variables$Mutation$unmuteFriend<TRes> {
-  _CopyWithStubImpl$Variables$Mutation$unmuteFriend(this._res);
+class _CopyWithStubImpl$Variables$Mutation$unmuteUser<TRes>
+    implements CopyWith$Variables$Mutation$unmuteUser<TRes> {
+  _CopyWithStubImpl$Variables$Mutation$unmuteUser(this._res);
 
   TRes _res;
 
   call({String? userId}) => _res;
 }
 
-class Mutation$unmuteFriend {
-  Mutation$unmuteFriend({
+class Mutation$unmuteUser {
+  Mutation$unmuteUser({
     required this.unmuteUser,
     required this.$__typename,
   });
 
-  factory Mutation$unmuteFriend.fromJson(Map<String, dynamic> json) {
+  factory Mutation$unmuteUser.fromJson(Map<String, dynamic> json) {
     final l$unmuteUser = json['unmuteUser'];
     final l$$__typename = json['__typename'];
-    return Mutation$unmuteFriend(
-      unmuteUser: Mutation$unmuteFriend$unmuteUser.fromJson(
+    return Mutation$unmuteUser(
+      unmuteUser: Mutation$unmuteUser$unmuteUser.fromJson(
           (l$unmuteUser as Map<String, dynamic>)),
       $__typename: (l$$__typename as String),
     );
   }
 
-  final Mutation$unmuteFriend$unmuteUser unmuteUser;
+  final Mutation$unmuteUser$unmuteUser unmuteUser;
 
   final String $__typename;
 
@@ -751,7 +751,7 @@ class Mutation$unmuteFriend {
     if (identical(this, other)) {
       return true;
     }
-    if (!(other is Mutation$unmuteFriend) || runtimeType != other.runtimeType) {
+    if (!(other is Mutation$unmuteUser) || runtimeType != other.runtimeType) {
       return false;
     }
     final l$unmuteUser = unmuteUser;
@@ -768,40 +768,40 @@ class Mutation$unmuteFriend {
   }
 }
 
-extension UtilityExtension$Mutation$unmuteFriend on Mutation$unmuteFriend {
-  CopyWith$Mutation$unmuteFriend<Mutation$unmuteFriend> get copyWith =>
-      CopyWith$Mutation$unmuteFriend(
+extension UtilityExtension$Mutation$unmuteUser on Mutation$unmuteUser {
+  CopyWith$Mutation$unmuteUser<Mutation$unmuteUser> get copyWith =>
+      CopyWith$Mutation$unmuteUser(
         this,
         (i) => i,
       );
 }
 
-abstract class CopyWith$Mutation$unmuteFriend<TRes> {
-  factory CopyWith$Mutation$unmuteFriend(
-    Mutation$unmuteFriend instance,
-    TRes Function(Mutation$unmuteFriend) then,
-  ) = _CopyWithImpl$Mutation$unmuteFriend;
+abstract class CopyWith$Mutation$unmuteUser<TRes> {
+  factory CopyWith$Mutation$unmuteUser(
+    Mutation$unmuteUser instance,
+    TRes Function(Mutation$unmuteUser) then,
+  ) = _CopyWithImpl$Mutation$unmuteUser;
 
-  factory CopyWith$Mutation$unmuteFriend.stub(TRes res) =
-      _CopyWithStubImpl$Mutation$unmuteFriend;
+  factory CopyWith$Mutation$unmuteUser.stub(TRes res) =
+      _CopyWithStubImpl$Mutation$unmuteUser;
 
   TRes call({
-    Mutation$unmuteFriend$unmuteUser? unmuteUser,
+    Mutation$unmuteUser$unmuteUser? unmuteUser,
     String? $__typename,
   });
-  CopyWith$Mutation$unmuteFriend$unmuteUser<TRes> get unmuteUser;
+  CopyWith$Mutation$unmuteUser$unmuteUser<TRes> get unmuteUser;
 }
 
-class _CopyWithImpl$Mutation$unmuteFriend<TRes>
-    implements CopyWith$Mutation$unmuteFriend<TRes> {
-  _CopyWithImpl$Mutation$unmuteFriend(
+class _CopyWithImpl$Mutation$unmuteUser<TRes>
+    implements CopyWith$Mutation$unmuteUser<TRes> {
+  _CopyWithImpl$Mutation$unmuteUser(
     this._instance,
     this._then,
   );
 
-  final Mutation$unmuteFriend _instance;
+  final Mutation$unmuteUser _instance;
 
-  final TRes Function(Mutation$unmuteFriend) _then;
+  final TRes Function(Mutation$unmuteUser) _then;
 
   static const _undefined = {};
 
@@ -809,40 +809,40 @@ class _CopyWithImpl$Mutation$unmuteFriend<TRes>
     Object? unmuteUser = _undefined,
     Object? $__typename = _undefined,
   }) =>
-      _then(Mutation$unmuteFriend(
+      _then(Mutation$unmuteUser(
         unmuteUser: unmuteUser == _undefined || unmuteUser == null
             ? _instance.unmuteUser
-            : (unmuteUser as Mutation$unmuteFriend$unmuteUser),
+            : (unmuteUser as Mutation$unmuteUser$unmuteUser),
         $__typename: $__typename == _undefined || $__typename == null
             ? _instance.$__typename
             : ($__typename as String),
       ));
-  CopyWith$Mutation$unmuteFriend$unmuteUser<TRes> get unmuteUser {
+  CopyWith$Mutation$unmuteUser$unmuteUser<TRes> get unmuteUser {
     final local$unmuteUser = _instance.unmuteUser;
-    return CopyWith$Mutation$unmuteFriend$unmuteUser(
+    return CopyWith$Mutation$unmuteUser$unmuteUser(
         local$unmuteUser, (e) => call(unmuteUser: e));
   }
 }
 
-class _CopyWithStubImpl$Mutation$unmuteFriend<TRes>
-    implements CopyWith$Mutation$unmuteFriend<TRes> {
-  _CopyWithStubImpl$Mutation$unmuteFriend(this._res);
+class _CopyWithStubImpl$Mutation$unmuteUser<TRes>
+    implements CopyWith$Mutation$unmuteUser<TRes> {
+  _CopyWithStubImpl$Mutation$unmuteUser(this._res);
 
   TRes _res;
 
   call({
-    Mutation$unmuteFriend$unmuteUser? unmuteUser,
+    Mutation$unmuteUser$unmuteUser? unmuteUser,
     String? $__typename,
   }) =>
       _res;
-  CopyWith$Mutation$unmuteFriend$unmuteUser<TRes> get unmuteUser =>
-      CopyWith$Mutation$unmuteFriend$unmuteUser.stub(_res);
+  CopyWith$Mutation$unmuteUser$unmuteUser<TRes> get unmuteUser =>
+      CopyWith$Mutation$unmuteUser$unmuteUser.stub(_res);
 }
 
-const documentNodeMutationunmuteFriend = DocumentNode(definitions: [
+const documentNodeMutationunmuteUser = DocumentNode(definitions: [
   OperationDefinitionNode(
     type: OperationType.mutation,
-    name: NameNode(value: 'unmuteFriend'),
+    name: NameNode(value: 'unmuteUser'),
     variableDefinitions: [
       VariableDefinitionNode(
         variable: VariableNode(name: NameNode(value: 'userId')),
@@ -893,26 +893,25 @@ const documentNodeMutationunmuteFriend = DocumentNode(definitions: [
     ]),
   ),
 ]);
-Mutation$unmuteFriend _parserFn$Mutation$unmuteFriend(
-        Map<String, dynamic> data) =>
-    Mutation$unmuteFriend.fromJson(data);
-typedef OnMutationCompleted$Mutation$unmuteFriend = FutureOr<void> Function(
+Mutation$unmuteUser _parserFn$Mutation$unmuteUser(Map<String, dynamic> data) =>
+    Mutation$unmuteUser.fromJson(data);
+typedef OnMutationCompleted$Mutation$unmuteUser = FutureOr<void> Function(
   dynamic,
-  Mutation$unmuteFriend?,
+  Mutation$unmuteUser?,
 );
 
-class Options$Mutation$unmuteFriend
-    extends graphql.MutationOptions<Mutation$unmuteFriend> {
-  Options$Mutation$unmuteFriend({
+class Options$Mutation$unmuteUser
+    extends graphql.MutationOptions<Mutation$unmuteUser> {
+  Options$Mutation$unmuteUser({
     String? operationName,
-    required Variables$Mutation$unmuteFriend variables,
+    required Variables$Mutation$unmuteUser variables,
     graphql.FetchPolicy? fetchPolicy,
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
     Object? optimisticResult,
     graphql.Context? context,
-    OnMutationCompleted$Mutation$unmuteFriend? onCompleted,
-    graphql.OnMutationUpdate<Mutation$unmuteFriend>? update,
+    OnMutationCompleted$Mutation$unmuteUser? onCompleted,
+    graphql.OnMutationUpdate<Mutation$unmuteUser>? update,
     graphql.OnError? onError,
   })  : onCompletedWithParsed = onCompleted,
         super(
@@ -927,15 +926,15 @@ class Options$Mutation$unmuteFriend
               ? null
               : (data) => onCompleted(
                     data,
-                    data == null ? null : _parserFn$Mutation$unmuteFriend(data),
+                    data == null ? null : _parserFn$Mutation$unmuteUser(data),
                   ),
           update: update,
           onError: onError,
-          document: documentNodeMutationunmuteFriend,
-          parserFn: _parserFn$Mutation$unmuteFriend,
+          document: documentNodeMutationunmuteUser,
+          parserFn: _parserFn$Mutation$unmuteUser,
         );
 
-  final OnMutationCompleted$Mutation$unmuteFriend? onCompletedWithParsed;
+  final OnMutationCompleted$Mutation$unmuteUser? onCompletedWithParsed;
 
   @override
   List<Object?> get properties => [
@@ -946,11 +945,11 @@ class Options$Mutation$unmuteFriend
       ];
 }
 
-class WatchOptions$Mutation$unmuteFriend
-    extends graphql.WatchQueryOptions<Mutation$unmuteFriend> {
-  WatchOptions$Mutation$unmuteFriend({
+class WatchOptions$Mutation$unmuteUser
+    extends graphql.WatchQueryOptions<Mutation$unmuteUser> {
+  WatchOptions$Mutation$unmuteUser({
     String? operationName,
-    required Variables$Mutation$unmuteFriend variables,
+    required Variables$Mutation$unmuteUser variables,
     graphql.FetchPolicy? fetchPolicy,
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
@@ -968,40 +967,40 @@ class WatchOptions$Mutation$unmuteFriend
           cacheRereadPolicy: cacheRereadPolicy,
           optimisticResult: optimisticResult,
           context: context,
-          document: documentNodeMutationunmuteFriend,
+          document: documentNodeMutationunmuteUser,
           pollInterval: pollInterval,
           eagerlyFetchResults: eagerlyFetchResults,
           carryForwardDataOnException: carryForwardDataOnException,
           fetchResults: fetchResults,
-          parserFn: _parserFn$Mutation$unmuteFriend,
+          parserFn: _parserFn$Mutation$unmuteUser,
         );
 }
 
-extension ClientExtension$Mutation$unmuteFriend on graphql.GraphQLClient {
-  Future<graphql.QueryResult<Mutation$unmuteFriend>> mutate$unmuteFriend(
-          Options$Mutation$unmuteFriend options) async =>
+extension ClientExtension$Mutation$unmuteUser on graphql.GraphQLClient {
+  Future<graphql.QueryResult<Mutation$unmuteUser>> mutate$unmuteUser(
+          Options$Mutation$unmuteUser options) async =>
       await this.mutate(options);
-  graphql.ObservableQuery<Mutation$unmuteFriend> watchMutation$unmuteFriend(
-          WatchOptions$Mutation$unmuteFriend options) =>
+  graphql.ObservableQuery<Mutation$unmuteUser> watchMutation$unmuteUser(
+          WatchOptions$Mutation$unmuteUser options) =>
       this.watchMutation(options);
 }
 
-class Mutation$unmuteFriend$HookResult {
-  Mutation$unmuteFriend$HookResult(
+class Mutation$unmuteUser$HookResult {
+  Mutation$unmuteUser$HookResult(
     this.runMutation,
     this.result,
   );
 
-  final RunMutation$Mutation$unmuteFriend runMutation;
+  final RunMutation$Mutation$unmuteUser runMutation;
 
-  final graphql.QueryResult<Mutation$unmuteFriend> result;
+  final graphql.QueryResult<Mutation$unmuteUser> result;
 }
 
-Mutation$unmuteFriend$HookResult useMutation$unmuteFriend(
-    [WidgetOptions$Mutation$unmuteFriend? options]) {
+Mutation$unmuteUser$HookResult useMutation$unmuteUser(
+    [WidgetOptions$Mutation$unmuteUser? options]) {
   final result = graphql_flutter
-      .useMutation(options ?? WidgetOptions$Mutation$unmuteFriend());
-  return Mutation$unmuteFriend$HookResult(
+      .useMutation(options ?? WidgetOptions$Mutation$unmuteUser());
+  return Mutation$unmuteUser$HookResult(
     (variables, {optimisticResult}) => result.runMutation(
       variables.toJson(),
       optimisticResult: optimisticResult,
@@ -1010,21 +1009,21 @@ Mutation$unmuteFriend$HookResult useMutation$unmuteFriend(
   );
 }
 
-graphql.ObservableQuery<Mutation$unmuteFriend> useWatchMutation$unmuteFriend(
-        WatchOptions$Mutation$unmuteFriend options) =>
+graphql.ObservableQuery<Mutation$unmuteUser> useWatchMutation$unmuteUser(
+        WatchOptions$Mutation$unmuteUser options) =>
     graphql_flutter.useWatchMutation(options);
 
-class WidgetOptions$Mutation$unmuteFriend
-    extends graphql.MutationOptions<Mutation$unmuteFriend> {
-  WidgetOptions$Mutation$unmuteFriend({
+class WidgetOptions$Mutation$unmuteUser
+    extends graphql.MutationOptions<Mutation$unmuteUser> {
+  WidgetOptions$Mutation$unmuteUser({
     String? operationName,
     graphql.FetchPolicy? fetchPolicy,
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
     Object? optimisticResult,
     graphql.Context? context,
-    OnMutationCompleted$Mutation$unmuteFriend? onCompleted,
-    graphql.OnMutationUpdate<Mutation$unmuteFriend>? update,
+    OnMutationCompleted$Mutation$unmuteUser? onCompleted,
+    graphql.OnMutationUpdate<Mutation$unmuteUser>? update,
     graphql.OnError? onError,
   })  : onCompletedWithParsed = onCompleted,
         super(
@@ -1038,15 +1037,15 @@ class WidgetOptions$Mutation$unmuteFriend
               ? null
               : (data) => onCompleted(
                     data,
-                    data == null ? null : _parserFn$Mutation$unmuteFriend(data),
+                    data == null ? null : _parserFn$Mutation$unmuteUser(data),
                   ),
           update: update,
           onError: onError,
-          document: documentNodeMutationunmuteFriend,
-          parserFn: _parserFn$Mutation$unmuteFriend,
+          document: documentNodeMutationunmuteUser,
+          parserFn: _parserFn$Mutation$unmuteUser,
         );
 
-  final OnMutationCompleted$Mutation$unmuteFriend? onCompletedWithParsed;
+  final OnMutationCompleted$Mutation$unmuteUser? onCompletedWithParsed;
 
   @override
   List<Object?> get properties => [
@@ -1057,25 +1056,25 @@ class WidgetOptions$Mutation$unmuteFriend
       ];
 }
 
-typedef RunMutation$Mutation$unmuteFriend
-    = graphql.MultiSourceResult<Mutation$unmuteFriend> Function(
-  Variables$Mutation$unmuteFriend, {
+typedef RunMutation$Mutation$unmuteUser
+    = graphql.MultiSourceResult<Mutation$unmuteUser> Function(
+  Variables$Mutation$unmuteUser, {
   Object? optimisticResult,
 });
-typedef Builder$Mutation$unmuteFriend = widgets.Widget Function(
-  RunMutation$Mutation$unmuteFriend,
-  graphql.QueryResult<Mutation$unmuteFriend>?,
+typedef Builder$Mutation$unmuteUser = widgets.Widget Function(
+  RunMutation$Mutation$unmuteUser,
+  graphql.QueryResult<Mutation$unmuteUser>?,
 );
 
-class Mutation$unmuteFriend$Widget
-    extends graphql_flutter.Mutation<Mutation$unmuteFriend> {
-  Mutation$unmuteFriend$Widget({
+class Mutation$unmuteUser$Widget
+    extends graphql_flutter.Mutation<Mutation$unmuteUser> {
+  Mutation$unmuteUser$Widget({
     widgets.Key? key,
-    WidgetOptions$Mutation$unmuteFriend? options,
-    required Builder$Mutation$unmuteFriend builder,
+    WidgetOptions$Mutation$unmuteUser? options,
+    required Builder$Mutation$unmuteUser builder,
   }) : super(
           key: key,
-          options: options ?? WidgetOptions$Mutation$unmuteFriend(),
+          options: options ?? WidgetOptions$Mutation$unmuteUser(),
           builder: (
             run,
             result,
@@ -1094,16 +1093,16 @@ class Mutation$unmuteFriend$Widget
         );
 }
 
-class Mutation$unmuteFriend$unmuteUser {
-  Mutation$unmuteFriend$unmuteUser({
+class Mutation$unmuteUser$unmuteUser {
+  Mutation$unmuteUser$unmuteUser({
     required this.unmutedUserId,
     required this.$__typename,
   });
 
-  factory Mutation$unmuteFriend$unmuteUser.fromJson(Map<String, dynamic> json) {
+  factory Mutation$unmuteUser$unmuteUser.fromJson(Map<String, dynamic> json) {
     final l$unmutedUserId = json['unmutedUserId'];
     final l$$__typename = json['__typename'];
-    return Mutation$unmuteFriend$unmuteUser(
+    return Mutation$unmuteUser$unmuteUser(
       unmutedUserId: (l$unmutedUserId as String),
       $__typename: (l$$__typename as String),
     );
@@ -1137,7 +1136,7 @@ class Mutation$unmuteFriend$unmuteUser {
     if (identical(this, other)) {
       return true;
     }
-    if (!(other is Mutation$unmuteFriend$unmuteUser) ||
+    if (!(other is Mutation$unmuteUser$unmuteUser) ||
         runtimeType != other.runtimeType) {
       return false;
     }
@@ -1155,23 +1154,23 @@ class Mutation$unmuteFriend$unmuteUser {
   }
 }
 
-extension UtilityExtension$Mutation$unmuteFriend$unmuteUser
-    on Mutation$unmuteFriend$unmuteUser {
-  CopyWith$Mutation$unmuteFriend$unmuteUser<Mutation$unmuteFriend$unmuteUser>
-      get copyWith => CopyWith$Mutation$unmuteFriend$unmuteUser(
+extension UtilityExtension$Mutation$unmuteUser$unmuteUser
+    on Mutation$unmuteUser$unmuteUser {
+  CopyWith$Mutation$unmuteUser$unmuteUser<Mutation$unmuteUser$unmuteUser>
+      get copyWith => CopyWith$Mutation$unmuteUser$unmuteUser(
             this,
             (i) => i,
           );
 }
 
-abstract class CopyWith$Mutation$unmuteFriend$unmuteUser<TRes> {
-  factory CopyWith$Mutation$unmuteFriend$unmuteUser(
-    Mutation$unmuteFriend$unmuteUser instance,
-    TRes Function(Mutation$unmuteFriend$unmuteUser) then,
-  ) = _CopyWithImpl$Mutation$unmuteFriend$unmuteUser;
+abstract class CopyWith$Mutation$unmuteUser$unmuteUser<TRes> {
+  factory CopyWith$Mutation$unmuteUser$unmuteUser(
+    Mutation$unmuteUser$unmuteUser instance,
+    TRes Function(Mutation$unmuteUser$unmuteUser) then,
+  ) = _CopyWithImpl$Mutation$unmuteUser$unmuteUser;
 
-  factory CopyWith$Mutation$unmuteFriend$unmuteUser.stub(TRes res) =
-      _CopyWithStubImpl$Mutation$unmuteFriend$unmuteUser;
+  factory CopyWith$Mutation$unmuteUser$unmuteUser.stub(TRes res) =
+      _CopyWithStubImpl$Mutation$unmuteUser$unmuteUser;
 
   TRes call({
     String? unmutedUserId,
@@ -1179,16 +1178,16 @@ abstract class CopyWith$Mutation$unmuteFriend$unmuteUser<TRes> {
   });
 }
 
-class _CopyWithImpl$Mutation$unmuteFriend$unmuteUser<TRes>
-    implements CopyWith$Mutation$unmuteFriend$unmuteUser<TRes> {
-  _CopyWithImpl$Mutation$unmuteFriend$unmuteUser(
+class _CopyWithImpl$Mutation$unmuteUser$unmuteUser<TRes>
+    implements CopyWith$Mutation$unmuteUser$unmuteUser<TRes> {
+  _CopyWithImpl$Mutation$unmuteUser$unmuteUser(
     this._instance,
     this._then,
   );
 
-  final Mutation$unmuteFriend$unmuteUser _instance;
+  final Mutation$unmuteUser$unmuteUser _instance;
 
-  final TRes Function(Mutation$unmuteFriend$unmuteUser) _then;
+  final TRes Function(Mutation$unmuteUser$unmuteUser) _then;
 
   static const _undefined = {};
 
@@ -1196,7 +1195,7 @@ class _CopyWithImpl$Mutation$unmuteFriend$unmuteUser<TRes>
     Object? unmutedUserId = _undefined,
     Object? $__typename = _undefined,
   }) =>
-      _then(Mutation$unmuteFriend$unmuteUser(
+      _then(Mutation$unmuteUser$unmuteUser(
         unmutedUserId: unmutedUserId == _undefined || unmutedUserId == null
             ? _instance.unmutedUserId
             : (unmutedUserId as String),
@@ -1206,9 +1205,9 @@ class _CopyWithImpl$Mutation$unmuteFriend$unmuteUser<TRes>
       ));
 }
 
-class _CopyWithStubImpl$Mutation$unmuteFriend$unmuteUser<TRes>
-    implements CopyWith$Mutation$unmuteFriend$unmuteUser<TRes> {
-  _CopyWithStubImpl$Mutation$unmuteFriend$unmuteUser(this._res);
+class _CopyWithStubImpl$Mutation$unmuteUser$unmuteUser<TRes>
+    implements CopyWith$Mutation$unmuteUser$unmuteUser<TRes> {
+  _CopyWithStubImpl$Mutation$unmuteUser$unmuteUser(this._res);
 
   TRes _res;
 

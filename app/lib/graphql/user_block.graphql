@@ -1,0 +1,6 @@
+
+mutation blockUser($userId: UUID!) {
+    blockUser(userId: $userId) {
+        blockedUserId
+    }
+}

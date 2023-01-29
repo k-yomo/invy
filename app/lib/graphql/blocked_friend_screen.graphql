@@ -1,0 +1,18 @@
+
+query blockedFriendScreenViewer {
+    viewer {
+        blockedFriends(first: 100) {
+            edges {
+                node {
+                    ...friendListItemFragment
+                }
+            }
+        }
+    }
+}
+
+mutation unblockUser($userId: UUID!) {
+    unblockUser(userId:  $userId) {
+        unblockedUserId
+    }
+}

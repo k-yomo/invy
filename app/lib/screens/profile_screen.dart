@@ -12,6 +12,8 @@ import 'package:invy/state/auth.dart';
 import 'package:invy/state/device.dart';
 import 'package:invy/util/toast.dart';
 
+import 'blocked_friend_screen.dart';
+
 class ProfileScreen extends HookConsumerWidget {
   const ProfileScreen({super.key});
 
@@ -104,6 +106,31 @@ class ProfileScreen extends HookConsumerWidget {
           Expanded(
               child: ListView(
             children: [
+              TextButton(
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: Colors.black,
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.zero,
+                  ),
+                ),
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => const BlockedFriendScreen(),
+                    ),
+                  );
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  child: Row(
+                    children: const [
+                      Expanded(child: Text("ブロック中のユーザー")),
+                      Icon(Icons.chevron_right)
+                    ],
+                  ),
+                ),
+              ),
+              const Divider(color: Colors.grey, height: 0),
               TextButton(
                 style: ElevatedButton.styleFrom(
                   foregroundColor: Colors.black,

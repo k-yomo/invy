@@ -3,6 +3,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:invy/graphql/user_mute.graphql.dart';
+import 'package:invy/graphql/user_block.graphql.dart';
 
 import '../services/graphql_client.dart';
 import 'friend_list_item_fragment.graphql.dart';
@@ -35,25 +36,40 @@ class _FriendListItem extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final graphqlClient = ref.read(graphqlClientProvider);
     final friend = useState(this.friend);
+    final isBlocked = useState(false);
 
-    onPressed(BuildContext context) async {
+    onPressedMute(BuildContext context) async {
       if (friend.value.isMuted) {
-        final result = await graphqlClient
-            .mutate$unmuteFriend(Options$Mutation$unmuteFriend(
-          variables: Variables$Mutation$unmuteFriend(userId: friend.value.id),
+        final result =
+            await graphqlClient.mutate$unmuteUser(Options$Mutation$unmuteUser(
+          variables: Variables$Mutation$unmuteUser(userId: friend.value.id),
         ));
         if (result.parsedData?.unmuteUser != null) {
           friend.value = friend.value.copyWith(isMuted: false);
         }
       } else {
         final result =
-            await graphqlClient.mutate$muteFriend(Options$Mutation$muteFriend(
-          variables: Variables$Mutation$muteFriend(userId: friend.value.id),
+            await graphqlClient.mutate$muteUser(Options$Mutation$muteUser(
+          variables: Variables$Mutation$muteUser(userId: friend.value.id),
         ));
         if (result.parsedData?.muteUser != null) {
           friend.value = friend.value.copyWith(isMuted: true);
         }
       }
+    }
+
+    onPressedBlock(BuildContext context) async {
+      final result =
+          await graphqlClient.mutate$blockUser(Options$Mutation$blockUser(
+        variables: Variables$Mutation$blockUser(userId: friend.value.id),
+      ));
+      if (result.parsedData?.blockUser != null) {
+        isBlocked.value = true;
+      }
+    }
+
+    if (isBlocked.value) {
+      return SizedBox();
     }
 
     return Slidable(
@@ -62,11 +78,24 @@ class _FriendListItem extends HookConsumerWidget {
         motion: const ScrollMotion(),
         children: [
           SlidableAction(
-            onPressed: onPressed,
+            onPressed: onPressedMute,
             backgroundColor: const Color(0xFFFE4A49),
             foregroundColor: Colors.white,
             icon: friend.value.isMuted ? Icons.volume_off : Icons.volume_up,
             label: friend.value.isMuted ? 'Unmute' : 'mute',
+          ),
+        ],
+      ),
+      endActionPane: ActionPane(
+        extentRatio: 0.25,
+        motion: const ScrollMotion(),
+        children: [
+          SlidableAction(
+            onPressed: onPressedBlock,
+            backgroundColor: const Color(0xFFFE4A49),
+            foregroundColor: Colors.white,
+            icon: Icons.block,
+            label: 'ブロック',
           ),
         ],
       ),
