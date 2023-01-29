@@ -50,7 +50,7 @@ test: ## Run tests
 .PHONY: fmt
 fmt: ## Format code
 	cd invy_api &&  goimports -w . & \
-	cd app && flutter format . & \
+	cd app && dart format . & \
 	wait
 
 .PHONY: lint

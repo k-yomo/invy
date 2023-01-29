@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:invy/components/divider.dart';
 import 'package:invy/graphql/user_mute.graphql.dart';
 import 'package:invy/graphql/user_block.graphql.dart';
 
@@ -69,7 +70,7 @@ class _FriendListItem extends HookConsumerWidget {
     }
 
     if (isBlocked.value) {
-      return SizedBox();
+      return const SizedBox();
     }
 
     return Slidable(
@@ -124,7 +125,7 @@ class _FriendListItem extends HookConsumerWidget {
               ],
             ),
           ),
-          Divider(height: 0, thickness: 1, color: Colors.grey.shade200),
+          const GreyDivider()
         ],
       ),
     );

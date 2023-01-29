@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:invy/components/divider.dart';
 import 'package:invy/graphql/profile_screen.graphql.dart';
 import 'package:invy/screens/profile_edit_screen.dart';
 import 'package:invy/services/graphql_client.dart';
@@ -123,14 +124,14 @@ class ProfileScreen extends HookConsumerWidget {
                 child: Container(
                   padding: const EdgeInsets.symmetric(vertical: 10),
                   child: Row(
-                    children: const [
-                      Expanded(child: Text("ブロック中のユーザー")),
-                      Icon(Icons.chevron_right)
+                    children: [
+                      const Expanded(child: Text("ブロック中のユーザー")),
+                      Icon(Icons.chevron_right, color: Colors.grey.shade600)
                     ],
                   ),
                 ),
               ),
-              const Divider(color: Colors.grey, height: 0),
+              const GreyDivider(),
               TextButton(
                 style: ElevatedButton.styleFrom(
                   foregroundColor: Colors.black,
@@ -173,14 +174,14 @@ class ProfileScreen extends HookConsumerWidget {
                 child: Container(
                   padding: const EdgeInsets.symmetric(vertical: 10),
                   child: Row(
-                    children: const [
-                      Expanded(child: Text("ログアウト")),
-                      Icon(Icons.chevron_right)
+                    children: [
+                      const Expanded(child: Text("ログアウト")),
+                      Icon(Icons.chevron_right, color: Colors.grey.shade600)
                     ],
                   ),
                 ),
               ),
-              const Divider(color: Colors.grey, height: 0),
+              const GreyDivider(),
               Container(
                 padding: const EdgeInsets.symmetric(vertical: 20),
                 child: Center(child: Text("バージョン ${packageInfo.version}")),

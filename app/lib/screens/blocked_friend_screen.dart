@@ -98,7 +98,7 @@ class _FriendListItem extends HookConsumerWidget {
     }
 
     if (isUnblocked.value) {
-      return SizedBox();
+      return const SizedBox();
     }
     return Column(
       children: [
@@ -125,7 +125,7 @@ class _FriendListItem extends HookConsumerWidget {
                     style:
                         ElevatedButton.styleFrom(foregroundColor: Colors.blue),
                     onPressed: onPressed,
-                    child: Text("解除"),
+                    child: const Text("解除"),
                   ),
                 ),
               )
