@@ -75,7 +75,7 @@ class _FriendListItem extends HookConsumerWidget {
 
     return Slidable(
       startActionPane: ActionPane(
-        extentRatio: 0.25,
+        extentRatio: 0.3,
         motion: const ScrollMotion(),
         children: [
           SlidableAction(
@@ -83,12 +83,12 @@ class _FriendListItem extends HookConsumerWidget {
             backgroundColor: const Color(0xFFFE4A49),
             foregroundColor: Colors.white,
             icon: friend.value.isMuted ? Icons.volume_off : Icons.volume_up,
-            label: friend.value.isMuted ? 'Unmute' : 'mute',
+            label: friend.value.isMuted ? '解除' : 'ミュート',
           ),
         ],
       ),
       endActionPane: ActionPane(
-        extentRatio: 0.25,
+        extentRatio: 0.3,
         motion: const ScrollMotion(),
         children: [
           SlidableAction(
