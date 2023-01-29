@@ -27,7 +27,7 @@ class MyProfileScreen extends HookConsumerWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       body: Center(
-        child: Column(children: <Widget>[
+        child: ListView(padding: EdgeInsets.zero, children: [
           Container(
             height: 200,
             decoration: BoxDecoration(
@@ -104,8 +104,7 @@ class MyProfileScreen extends HookConsumerWidget {
               ],
             ),
           ),
-          Expanded(
-              child: ListView(
+          Column(
             children: [
               TextButton(
                 style: ElevatedButton.styleFrom(
@@ -187,7 +186,7 @@ class MyProfileScreen extends HookConsumerWidget {
                 child: Center(child: Text("バージョン ${packageInfo.version}")),
               )
             ],
-          ))
+          )
         ]),
       ),
     );
