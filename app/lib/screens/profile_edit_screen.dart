@@ -6,12 +6,14 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:http/http.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:invy/components/permission_error_alert_dialog.dart';
 import 'package:invy/graphql/profile_edit_screen.graphql.dart';
 import 'package:invy/graphql/schema.graphql.dart';
 import 'package:invy/services/graphql_client.dart';
 import 'package:invy/state/auth.dart';
 import 'package:invy/util/toast.dart';
 import 'package:mime/mime.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../components/app_bar_leading.dart';
 
@@ -36,6 +38,25 @@ class ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
     final avatarUpdateLoading = useState(false);
 
     onPressedAvatarUpdate() async {
+      var permissionStatus = await Permission.photos.status;
+      if (permissionStatus.isDenied) {
+        permissionStatus = await Permission.photos.request();
+      }
+      if (permissionStatus.isDenied || permissionStatus.isPermanentlyDenied) {
+        if (!context.mounted) {
+          return;
+        }
+        showDialog(
+          context: context,
+          builder: (_) {
+            return const PermissionErrorAlertDialog(
+              permissionName: "写真",
+              requiredPermission: "すべての写真",
+            );
+          },
+        );
+        return;
+      }
       final pickedImage = await picker.pickImage(source: ImageSource.gallery);
       if (pickedImage == null) {
         return;

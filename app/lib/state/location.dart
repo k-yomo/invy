@@ -1,6 +1,7 @@
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 final locationNameProvider = StateProvider<String>((ref) {
   return "";
@@ -19,16 +20,14 @@ Future<LatLng?> getCurrentLocation() async {
     return null;
   }
 
-  permission = await Geolocator.checkPermission();
-  if (permission == LocationPermission.denied) {
-    permission = await Geolocator.requestPermission();
-    if (permission == LocationPermission.denied) {
-      return null;
-    }
+  final locationWhenInUseStatus = await Permission.locationWhenInUse.status;
+  if (locationWhenInUseStatus.isDenied) {
+    await Permission.locationWhenInUse.request();
   }
 
-  if (permission == LocationPermission.deniedForever) {
-    return null;
+  if (locationWhenInUseStatus.isGranted &&
+      await Permission.locationAlways.isDenied) {
+    await Permission.locationAlways.request();
   }
 
   final location = await Geolocator.getCurrentPosition(

@@ -69,7 +69,7 @@
     <key>NSLocationWhenInUseUsageDescription</key>
     <string>開催地の入力補助に利用します。</string>
     <key>NSLocationAlwaysUsageDescription</key>
-    <string>開催地の入力補助に利用します。</string>
+    <string>近くにいる友達を把握するのに利用します。詳細な位置情報は共有されません。</string>
 	<key>NSCameraUsageDescription</key>
 	<string>This app requires to add file to your camera</string>
 	<key>NSMicrophoneUsageDescription</key>

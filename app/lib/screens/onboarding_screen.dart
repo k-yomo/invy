@@ -17,7 +17,6 @@ class OnboardingScreen extends HookConsumerWidget {
           scrollPhysics: const BouncingScrollPhysics(),
           pages: [
             PageViewModel(
-              // \nは改行を意味しているよ！
               title: 'Invyへようこそ!',
               body: 'Invyは気軽に遊びや飲み会などのさそいを送ることができるアプリです。',
               image: Image.asset('assets/images/onboarding_first.png'),
