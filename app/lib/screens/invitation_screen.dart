@@ -48,7 +48,7 @@ class InvitationScreen extends HookConsumerWidget {
     useEffect(() {
       googleMapController.value.future.then((controller) {
         controller.animateCamera(CameraUpdate.newCameraPosition(
-            CameraPosition(target: invitationLocation, zoom: 18)));
+            CameraPosition(target: invitationLocation, zoom: 16)));
       });
       return null;
     }, [invitationLocation]);
@@ -64,7 +64,7 @@ class InvitationScreen extends HookConsumerWidget {
                 GoogleMap(
                   initialCameraPosition: CameraPosition(
                     target: invitationLocation,
-                    zoom: 18,
+                    zoom: 16,
                   ),
                   onMapCreated: (GoogleMapController controller) {
                     googleMapController.value.complete(controller);
