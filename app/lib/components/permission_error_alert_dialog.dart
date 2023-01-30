@@ -5,17 +5,15 @@ class PermissionErrorAlertDialog extends StatelessWidget {
   const PermissionErrorAlertDialog({
     super.key,
     required this.permissionName,
-    required this.requiredPermission,
   });
 
   final String permissionName;
-  final String requiredPermission;
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
       title: Text('"$permissionName"へのアクセスがありません。'),
-      content: Text("設定 ▶ $permissionName ▶ $requiredPermissionを選択してください。"),
+      content: Text("設定から$permissionNameへのアクセスを許可してください。"),
       actions: <Widget>[
         TextButton(
           onPressed: () => Navigator.pop(context),

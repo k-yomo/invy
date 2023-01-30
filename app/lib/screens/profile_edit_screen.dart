@@ -70,7 +70,6 @@ class ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
           builder: (_) {
             return const PermissionErrorAlertDialog(
               permissionName: "写真",
-              requiredPermission: "すべての写真",
             );
           },
         );
