@@ -27,7 +27,8 @@ class FriendGroupIcon extends StatelessWidget {
       ),
       child: CircleAvatar(
         backgroundColor: Colors.transparent,
-        child: Text(groupName.substring(0, 1)),
+        child: Text(groupName.substring(0, 1),
+            style: const TextStyle(color: Colors.white)),
       ),
     );
   }

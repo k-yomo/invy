@@ -38,7 +38,7 @@ class HomeScreen extends HookConsumerWidget {
         badgeCounter.setBadgeCount(viewer.pendingInvitations.length);
 
         return Scaffold(
-          backgroundColor: Colors.grey.shade100,
+          backgroundColor: Colors.white,
           body: SingleChildScrollView(
             child: Container(
               margin: const EdgeInsets.only(
@@ -133,9 +133,7 @@ class HomeScreen extends HookConsumerWidget {
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      Icon(Icons.edit_calendar,
-                                          size: 50,
-                                          color: Colors.grey.shade600),
+                                      Image.asset('assets/images/cat.png'),
                                       const Gap(15),
                                       const Text("送信済みの招待はありません",
                                           style: TextStyle(
