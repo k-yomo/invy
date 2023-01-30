@@ -2,6 +2,7 @@ package query
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/google/uuid"
 	"github.com/uptrace/bun"
@@ -46,10 +47,17 @@ WHERE
     )
 `
 	var notBlockedFriendUserIDs []uuid.UUID
-	err := u.db.NewRaw(query, userID, friendUserIDs, friendGroupIDs, userID).
-		Scan(ctx, &notBlockedFriendUserIDs)
+	err := u.db.NewRaw(
+		query,
+		userID,
+		// FIXME: appending dummy uuid because passing empty slice causes error
+		//  There must be a better way
+		bun.In(append(friendUserIDs, uuid.New())),
+		bun.In(append(friendGroupIDs, uuid.New())),
+		userID,
+	).Scan(ctx, &notBlockedFriendUserIDs)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("not blocked user ids query: %w", err)
 	}
 	return notBlockedFriendUserIDs, nil
 }
