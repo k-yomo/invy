@@ -92,7 +92,7 @@ class FriendScreen extends HookConsumerWidget {
                           },
                         ),
                         FriendList(
-                          friends: sortedFriends.toList(),
+                          friends: sortedFriends.map((f) => f.node).toList(),
                           onFriendPressed: (friendUserId) {
                             showModalBottomSheet(
                               isScrollControlled: true,
