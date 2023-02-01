@@ -47,8 +47,8 @@ dependencies:
   dio_cookie_manager: ^2.0.0
   path_provider: ^2.0.11
   logger: ^1.1.0
-  firebase_auth: ^4.2.4
-  google_sign_in: ^5.4.2
+  firebase_auth: ^4.2.5
+  google_sign_in: ^5.4.4
   flutter_native_splash: ^2.2.14
   flutter_launcher_icons: ^0.11.0
   shimmer: ^2.0.0
@@ -77,6 +77,7 @@ dependencies:
   url_launcher: ^6.1.8
   flutter_local_notifications: ^13.0.0
   permission_handler: ^10.2.0
+  background_locator: ^1.6.12
 
 dev_dependencies:
   flutter_test:
