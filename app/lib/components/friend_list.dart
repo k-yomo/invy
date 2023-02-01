@@ -143,7 +143,7 @@ class _FriendListItem extends HookConsumerWidget {
                       ? Expanded(
                           child: Align(
                             alignment: Alignment.centerRight,
-                            child: Text("${friend.value.distanceKm}以内"),
+                            child: Text("~${friend.value.distanceKm}km"),
                           ),
                         )
                       : const SizedBox(),
