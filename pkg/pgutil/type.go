@@ -9,13 +9,21 @@ import (
 	"github.com/twpayne/go-geom/encoding/ewkb"
 )
 
+var _ driver.Value = &GeoPoint{}
+var _ sql.Scanner = &GeoPoint{}
+
 // GeoPoint defined GeomPoint data type, need to implement driver.Valuer, sql.Scanner interface
 type GeoPoint struct {
 	*geom.Point
 }
 
-var _ driver.Value = &GeoPoint{}
-var _ sql.Scanner = &GeoPoint{}
+func NewGeoPoint(latitude float64, longitude float64) *GeoPoint {
+	return &GeoPoint{
+		Point: geom.NewPoint(geom.XY).
+			MustSetCoords(geom.Coord{longitude, latitude}).
+			SetSRID(4326),
+	}
+}
 
 // Value returns geometry point value, implement driver.Valuer interface
 func (g *GeoPoint) Value() (driver.Value, error) {

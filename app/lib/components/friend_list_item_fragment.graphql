@@ -4,4 +4,5 @@ fragment friendListItemFragment on User {
     nickname
     avatarUrl
     isMuted
+    distanceKm
 }

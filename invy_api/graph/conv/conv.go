@@ -56,8 +56,8 @@ func ConvertFromDBInvitation(invitation *ent.Invitation) *gqlmodel.Invitation {
 		UserID:   invitation.UserID,
 		Location: invitation.Location,
 		Coordinate: &gqlmodel.Coordinate{
-			Latitude:  invitation.Coordinate.Coords().X(),
-			Longitude: invitation.Coordinate.Coords().Y(),
+			Latitude:  invitation.Coordinate.Coords().Y(),
+			Longitude: invitation.Coordinate.Coords().X(),
 		},
 		Comment:   invitation.Comment,
 		StartsAt:  invitation.StartsAt,

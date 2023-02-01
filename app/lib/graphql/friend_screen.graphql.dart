@@ -1010,6 +1010,7 @@ class Query$friendScreenViewer$viewer$friends$edges$node
     required this.nickname,
     required this.avatarUrl,
     required this.isMuted,
+    this.distanceKm,
     required this.$__typename,
     required this.screenId,
   });
@@ -1020,6 +1021,7 @@ class Query$friendScreenViewer$viewer$friends$edges$node
     final l$nickname = json['nickname'];
     final l$avatarUrl = json['avatarUrl'];
     final l$isMuted = json['isMuted'];
+    final l$distanceKm = json['distanceKm'];
     final l$$__typename = json['__typename'];
     final l$screenId = json['screenId'];
     return Query$friendScreenViewer$viewer$friends$edges$node(
@@ -1027,6 +1029,7 @@ class Query$friendScreenViewer$viewer$friends$edges$node
       nickname: (l$nickname as String),
       avatarUrl: (l$avatarUrl as String),
       isMuted: (l$isMuted as bool),
+      distanceKm: (l$distanceKm as int?),
       $__typename: (l$$__typename as String),
       screenId: (l$screenId as String),
     );
@@ -1039,6 +1042,8 @@ class Query$friendScreenViewer$viewer$friends$edges$node
   final String avatarUrl;
 
   final bool isMuted;
+
+  final int? distanceKm;
 
   final String $__typename;
 
@@ -1054,6 +1059,8 @@ class Query$friendScreenViewer$viewer$friends$edges$node
     _resultData['avatarUrl'] = l$avatarUrl;
     final l$isMuted = isMuted;
     _resultData['isMuted'] = l$isMuted;
+    final l$distanceKm = distanceKm;
+    _resultData['distanceKm'] = l$distanceKm;
     final l$$__typename = $__typename;
     _resultData['__typename'] = l$$__typename;
     final l$screenId = screenId;
@@ -1067,6 +1074,7 @@ class Query$friendScreenViewer$viewer$friends$edges$node
     final l$nickname = nickname;
     final l$avatarUrl = avatarUrl;
     final l$isMuted = isMuted;
+    final l$distanceKm = distanceKm;
     final l$$__typename = $__typename;
     final l$screenId = screenId;
     return Object.hashAll([
@@ -1074,6 +1082,7 @@ class Query$friendScreenViewer$viewer$friends$edges$node
       l$nickname,
       l$avatarUrl,
       l$isMuted,
+      l$distanceKm,
       l$$__typename,
       l$screenId,
     ]);
@@ -1106,6 +1115,11 @@ class Query$friendScreenViewer$viewer$friends$edges$node
     final l$isMuted = isMuted;
     final lOther$isMuted = other.isMuted;
     if (l$isMuted != lOther$isMuted) {
+      return false;
+    }
+    final l$distanceKm = distanceKm;
+    final lOther$distanceKm = other.distanceKm;
+    if (l$distanceKm != lOther$distanceKm) {
       return false;
     }
     final l$$__typename = $__typename;
@@ -1149,6 +1163,7 @@ abstract class CopyWith$Query$friendScreenViewer$viewer$friends$edges$node<
     String? nickname,
     String? avatarUrl,
     bool? isMuted,
+    int? distanceKm,
     String? $__typename,
     String? screenId,
   });
@@ -1173,6 +1188,7 @@ class _CopyWithImpl$Query$friendScreenViewer$viewer$friends$edges$node<TRes>
     Object? nickname = _undefined,
     Object? avatarUrl = _undefined,
     Object? isMuted = _undefined,
+    Object? distanceKm = _undefined,
     Object? $__typename = _undefined,
     Object? screenId = _undefined,
   }) =>
@@ -1187,6 +1203,9 @@ class _CopyWithImpl$Query$friendScreenViewer$viewer$friends$edges$node<TRes>
         isMuted: isMuted == _undefined || isMuted == null
             ? _instance.isMuted
             : (isMuted as bool),
+        distanceKm: distanceKm == _undefined
+            ? _instance.distanceKm
+            : (distanceKm as int?),
         $__typename: $__typename == _undefined || $__typename == null
             ? _instance.$__typename
             : ($__typename as String),
@@ -1209,6 +1228,7 @@ class _CopyWithStubImpl$Query$friendScreenViewer$viewer$friends$edges$node<TRes>
     String? nickname,
     String? avatarUrl,
     bool? isMuted,
+    int? distanceKm,
     String? $__typename,
     String? screenId,
   }) =>

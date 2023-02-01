@@ -222,6 +222,7 @@ type ComplexityRoot struct {
 
 	User struct {
 		AvatarURL              func(childComplexity int) int
+		DistanceKm             func(childComplexity int) int
 		ID                     func(childComplexity int) int
 		IsBlocked              func(childComplexity int) int
 		IsFriend               func(childComplexity int) int
@@ -306,6 +307,7 @@ type UserResolver interface {
 	IsMuted(ctx context.Context, obj *gqlmodel.User) (bool, error)
 	IsBlocked(ctx context.Context, obj *gqlmodel.User) (bool, error)
 	IsFriend(ctx context.Context, obj *gqlmodel.User) (bool, error)
+	DistanceKm(ctx context.Context, obj *gqlmodel.User) (*int, error)
 	IsRequestingFriendship(ctx context.Context, obj *gqlmodel.User) (bool, error)
 }
 type ViewerResolver interface {
@@ -987,6 +989,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.User.AvatarURL(childComplexity), true
 
+	case "User.distanceKm":
+		if e.complexity.User.DistanceKm == nil {
+			break
+		}
+
+		return e.complexity.User.DistanceKm(childComplexity), true
+
 	case "User.id":
 		if e.complexity.User.ID == nil {
 			break
@@ -1480,6 +1489,9 @@ type User implements Node {
     isMuted: Boolean! @goField(forceResolver: true)
     isBlocked: Boolean! @goField(forceResolver: true)
     isFriend: Boolean! @goField(forceResolver: true)
+    # This is an approximate distance in kilometer.
+    # It'll be null when not friend or the location tracking is not enabled by the user
+    distanceKm: Int @goField(forceResolver: true)
     isRequestingFriendship: Boolean! @goField(forceResolver: true)
 }
 
@@ -2933,6 +2945,8 @@ func (ec *executionContext) fieldContext_FriendGroup_friendUsers(ctx context.Con
 				return ec.fieldContext_User_isBlocked(ctx, field)
 			case "isFriend":
 				return ec.fieldContext_User_isFriend(ctx, field)
+			case "distanceKm":
+				return ec.fieldContext_User_distanceKm(ctx, field)
 			case "isRequestingFriendship":
 				return ec.fieldContext_User_isRequestingFriendship(ctx, field)
 			}
@@ -3083,6 +3097,8 @@ func (ec *executionContext) fieldContext_FriendshipRequest_fromUser(ctx context.
 				return ec.fieldContext_User_isBlocked(ctx, field)
 			case "isFriend":
 				return ec.fieldContext_User_isFriend(ctx, field)
+			case "distanceKm":
+				return ec.fieldContext_User_distanceKm(ctx, field)
 			case "isRequestingFriendship":
 				return ec.fieldContext_User_isRequestingFriendship(ctx, field)
 			}
@@ -3189,6 +3205,8 @@ func (ec *executionContext) fieldContext_FriendshipRequest_toUser(ctx context.Co
 				return ec.fieldContext_User_isBlocked(ctx, field)
 			case "isFriend":
 				return ec.fieldContext_User_isFriend(ctx, field)
+			case "distanceKm":
+				return ec.fieldContext_User_distanceKm(ctx, field)
 			case "isRequestingFriendship":
 				return ec.fieldContext_User_isRequestingFriendship(ctx, field)
 			}
@@ -3383,6 +3401,8 @@ func (ec *executionContext) fieldContext_Invitation_user(ctx context.Context, fi
 				return ec.fieldContext_User_isBlocked(ctx, field)
 			case "isFriend":
 				return ec.fieldContext_User_isFriend(ctx, field)
+			case "distanceKm":
+				return ec.fieldContext_User_distanceKm(ctx, field)
 			case "isRequestingFriendship":
 				return ec.fieldContext_User_isRequestingFriendship(ctx, field)
 			}
@@ -3671,6 +3691,8 @@ func (ec *executionContext) fieldContext_Invitation_acceptedUsers(ctx context.Co
 				return ec.fieldContext_User_isBlocked(ctx, field)
 			case "isFriend":
 				return ec.fieldContext_User_isFriend(ctx, field)
+			case "distanceKm":
+				return ec.fieldContext_User_distanceKm(ctx, field)
 			case "isRequestingFriendship":
 				return ec.fieldContext_User_isRequestingFriendship(ctx, field)
 			}
@@ -5845,6 +5867,8 @@ func (ec *executionContext) fieldContext_Query_user(ctx context.Context, field g
 				return ec.fieldContext_User_isBlocked(ctx, field)
 			case "isFriend":
 				return ec.fieldContext_User_isFriend(ctx, field)
+			case "distanceKm":
+				return ec.fieldContext_User_distanceKm(ctx, field)
 			case "isRequestingFriendship":
 				return ec.fieldContext_User_isRequestingFriendship(ctx, field)
 			}
@@ -5938,6 +5962,8 @@ func (ec *executionContext) fieldContext_Query_userByScreenId(ctx context.Contex
 				return ec.fieldContext_User_isBlocked(ctx, field)
 			case "isFriend":
 				return ec.fieldContext_User_isFriend(ctx, field)
+			case "distanceKm":
+				return ec.fieldContext_User_distanceKm(ctx, field)
 			case "isRequestingFriendship":
 				return ec.fieldContext_User_isRequestingFriendship(ctx, field)
 			}
@@ -7153,6 +7179,47 @@ func (ec *executionContext) fieldContext_User_isFriend(ctx context.Context, fiel
 	return fc, nil
 }
 
+func (ec *executionContext) _User_distanceKm(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_distanceKm(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.User().DistanceKm(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_distanceKm(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _User_isRequestingFriendship(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.User) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_User_isRequestingFriendship(ctx, field)
 	if err != nil {
@@ -7398,6 +7465,8 @@ func (ec *executionContext) fieldContext_UserEdge_node(ctx context.Context, fiel
 				return ec.fieldContext_User_isBlocked(ctx, field)
 			case "isFriend":
 				return ec.fieldContext_User_isFriend(ctx, field)
+			case "distanceKm":
+				return ec.fieldContext_User_distanceKm(ctx, field)
 			case "isRequestingFriendship":
 				return ec.fieldContext_User_isRequestingFriendship(ctx, field)
 			}
@@ -11850,6 +11919,23 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
+				return res
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return innerFunc(ctx)
+
+			})
+		case "distanceKm":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._User_distanceKm(ctx, field, obj)
 				return res
 			}
 

@@ -138,7 +138,15 @@ class _FriendListItem extends HookConsumerWidget {
                   friend.value.isMuted
                       ? Icon(Icons.volume_off,
                           size: 15, color: Colors.grey.shade600)
-                      : const SizedBox()
+                      : const SizedBox(),
+                  friend.value.distanceKm != null
+                      ? Expanded(
+                          child: Align(
+                            alignment: Alignment.centerRight,
+                            child: Text("${friend.value.distanceKm}以内"),
+                          ),
+                        )
+                      : const SizedBox(),
                 ],
               ),
             ),

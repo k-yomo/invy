@@ -160,6 +160,32 @@ func (r *userResolver) IsFriend(ctx context.Context, obj *gqlmodel.User) (bool, 
 	return true, nil
 }
 
+// DistanceKm is the resolver for the distanceKm field.
+func (r *userResolver) DistanceKm(ctx context.Context, obj *gqlmodel.User) (*int, error) {
+	authUserID := auth.GetCurrentUserID(ctx)
+	distance, err := loader.Get(ctx).FriendDistance.Load(ctx, loader.FriendDistanceKey{UserID: authUserID, FriendUserID: obj.ID})()
+	if err != nil {
+		return nil, err
+	}
+	if distance == nil {
+		return nil, nil
+	}
+	// Not to expose the actual location
+	var approximateDistanceKM int
+	distanceKM := distance.Kilometers()
+	switch {
+	case distanceKM < 3:
+		approximateDistanceKM = 3
+	case distanceKM < 5:
+		approximateDistanceKM = 5
+	case distanceKM < 10:
+		approximateDistanceKM = 10
+	default:
+		approximateDistanceKM = (int(distanceKM) + 10) / 10 * 10
+	}
+	return &approximateDistanceKM, nil
+}
+
 // IsRequestingFriendship is the resolver for the isRequestingFriendship field.
 func (r *userResolver) IsRequestingFriendship(ctx context.Context, obj *gqlmodel.User) (bool, error) {
 	authUserID := auth.GetCurrentUserID(ctx)

@@ -3,6 +3,7 @@ package loader
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/graph-gophers/dataloader/v7"
@@ -10,9 +11,13 @@ import (
 	"github.com/k-yomo/invy/invy_api/ent/friendship"
 	"github.com/k-yomo/invy/invy_api/ent/friendshiprequest"
 	"github.com/k-yomo/invy/invy_api/ent/invitationacceptance"
+	"github.com/k-yomo/invy/invy_api/ent/userlocation"
 	"github.com/k-yomo/invy/invy_api/ent/usermute"
 	"github.com/k-yomo/invy/invy_api/ent/userprofile"
 	"github.com/k-yomo/invy/pkg/convutil"
+	"github.com/k-yomo/invy/pkg/length"
+	"github.com/k-yomo/invy/pkg/location"
+	"github.com/k-yomo/invy/pkg/pgutil"
 )
 
 type Loaders struct {
@@ -21,6 +26,7 @@ type Loaders struct {
 	FriendshipRequest              *dataloader.Loader[FriendshipRequestKey, *ent.FriendshipRequest]
 	UserMute                       *dataloader.Loader[UserMuteKey, *ent.UserMute]
 	InvitationAcceptedUserProfiles *dataloader.Loader[uuid.UUID, []*ent.UserProfile]
+	FriendDistance                 *dataloader.Loader[FriendDistanceKey, *length.Length]
 }
 
 func NewLoaders(db *ent.Client) *Loaders {
@@ -44,6 +50,10 @@ func NewLoaders(db *ent.Client) *Loaders {
 		InvitationAcceptedUserProfiles: dataloader.NewBatchedLoader(
 			NewInvitationAcceptedUserProfileLoader(db),
 			dataloader.WithCache[uuid.UUID, []*ent.UserProfile](&dataloader.NoCache[uuid.UUID, []*ent.UserProfile]{}),
+		),
+		FriendDistance: dataloader.NewBatchedLoader(
+			NewFriendDistanceLoader(db),
+			dataloader.WithCache[FriendDistanceKey, *length.Length](&dataloader.NoCache[FriendDistanceKey, *length.Length]{}),
 		),
 	}
 }
@@ -170,5 +180,56 @@ func NewInvitationAcceptedUserProfileLoader(db *ent.Client) func(context.Context
 			invitationIDProfileMap[ia.InvitationID] = append(invitationIDProfileMap[ia.InvitationID], ia.Edges.User.Edges.UserProfile)
 		}
 		return convertToResults[uuid.UUID, []*ent.UserProfile](invitationIDs, invitationIDProfileMap)
+	}
+}
+
+type FriendDistanceKey struct {
+	UserID       uuid.UUID
+	FriendUserID uuid.UUID
+}
+
+// NewFriendDistanceLoader loads the distance with a friend in meters
+func NewFriendDistanceLoader(db *ent.Client) func(context.Context, []FriendDistanceKey) []*dataloader.Result[*length.Length] {
+	return func(ctx context.Context, friendDistanceKeys []FriendDistanceKey) []*dataloader.Result[*length.Length] {
+		if len(friendDistanceKeys) == 0 {
+			return nil
+		}
+
+		userID := friendDistanceKeys[0].UserID
+
+		friendIDs := make([]uuid.UUID, 0, len(friendDistanceKeys))
+		friendshipLoaderKeys := make([]FriendshipKey, 0, len(friendDistanceKeys))
+		for _, key := range friendDistanceKeys {
+			friendshipLoaderKeys = append(friendshipLoaderKeys, FriendshipKey{UserID: userID, FriendUserID: key.FriendUserID})
+			friendIDs = append(friendIDs, key.FriendUserID)
+		}
+
+		friendships := NewFriendshipLoader(db)(ctx, friendshipLoaderKeys)
+		userLocations, err := db.UserLocation.Query().
+			Where(
+				userlocation.UserIDIn(append(friendIDs, userID)...),
+				userlocation.UpdatedAtGTE(time.Now().Add(-2*time.Hour)),
+			).
+			All(ctx)
+		if err != nil {
+			return convertToErrorResults[*length.Length](fmt.Errorf("load user locations: %w", err), len(friendDistanceKeys))
+		}
+		userIDCoordinateMap := map[uuid.UUID]*pgutil.GeoPoint{}
+		for _, ul := range userLocations {
+			userIDCoordinateMap[ul.UserID] = ul.Coordinate
+		}
+
+		results := make([]*dataloader.Result[*length.Length], 0, len(friendDistanceKeys))
+		for i, key := range friendDistanceKeys {
+			userCoord, ok1 := userIDCoordinateMap[key.UserID]
+			friendCoord, ok2 := userIDCoordinateMap[key.FriendUserID]
+			if !ok1 || !ok2 || friendships[i].Data == nil {
+				results = append(results, &dataloader.Result[*length.Length]{})
+				continue
+			}
+			distance := length.NewMeter(int(location.CalcDistanceMeter(userCoord.Y(), userCoord.X(), friendCoord.Y(), friendCoord.X())))
+			results = append(results, &dataloader.Result[*length.Length]{Data: &distance})
+		}
+		return results
 	}
 }

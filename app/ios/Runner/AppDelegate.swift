@@ -21,3 +21,4 @@ func registerPlugins(registry: FlutterPluginRegistry) {
 
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
+}

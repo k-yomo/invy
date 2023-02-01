@@ -11,21 +11,15 @@ import (
 	"github.com/k-yomo/invy/invy_api/ent/userlocation"
 	"github.com/k-yomo/invy/invy_api/graph/gqlmodel"
 	"github.com/k-yomo/invy/pkg/pgutil"
-	"github.com/twpayne/go-geom"
 )
 
 // UpdateLocation is the resolver for the updateLocation field.
 func (r *mutationResolver) UpdateLocation(ctx context.Context, latitude float64, longitude float64) (*gqlmodel.UpdateLocationPayload, error) {
 	authUserID := auth.GetCurrentUserID(ctx)
 
-	coordinate := pgutil.GeoPoint{
-		Point: geom.NewPoint(geom.XY).
-			MustSetCoords(geom.Coord{latitude, longitude}).
-			SetSRID(4326),
-	}
 	updatedID, err := r.DB.UserLocation.Create().
 		SetUserID(authUserID).
-		SetCoordinate(&coordinate).
+		SetCoordinate(pgutil.NewGeoPoint(latitude, longitude)).
 		OnConflictColumns(userlocation.FieldUserID).
 		UpdateNewValues().
 		ID(ctx)

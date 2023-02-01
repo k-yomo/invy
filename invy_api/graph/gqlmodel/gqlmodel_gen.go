@@ -205,6 +205,7 @@ type User struct {
 	IsMuted                bool      `json:"isMuted"`
 	IsBlocked              bool      `json:"isBlocked"`
 	IsFriend               bool      `json:"isFriend"`
+	DistanceKm             *int      `json:"distanceKm"`
 	IsRequestingFriendship bool      `json:"isRequestingFriendship"`
 }
 

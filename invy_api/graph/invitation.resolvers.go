@@ -28,7 +28,6 @@ import (
 	"github.com/k-yomo/invy/pkg/convutil"
 	"github.com/k-yomo/invy/pkg/logging"
 	"github.com/k-yomo/invy/pkg/pgutil"
-	"github.com/twpayne/go-geom"
 	"go.uber.org/zap"
 )
 
@@ -61,12 +60,6 @@ func (r *mutationResolver) SendInvitation(ctx context.Context, input *gqlmodel.S
 	}
 	authUserID := auth.GetCurrentUserID(ctx)
 
-	coordinate := pgutil.GeoPoint{
-		Point: geom.NewPoint(geom.XY).
-			MustSetCoords(geom.Coord{input.Latitude, input.Longitude}).
-			SetSRID(4326),
-	}
-
 	targetFriendUserIDs, err := r.DBQuery.UserRelation.GetNotBlockedFriendUserIDs(
 		ctx,
 		authUserID,
@@ -83,7 +76,7 @@ func (r *mutationResolver) SendInvitation(ctx context.Context, input *gqlmodel.S
 		dbInvitation, err = tx.Invitation.Create().
 			SetUserID(authUserID).
 			SetLocation(input.Location).
-			SetCoordinate(&coordinate).
+			SetCoordinate(pgutil.NewGeoPoint(input.Latitude, input.Longitude)).
 			SetComment(input.Comment).
 			SetStartsAt(input.StartsAt).
 			SetExpiresAt(input.ExpiresAt).

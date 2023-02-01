@@ -7,6 +7,7 @@ class Fragment$friendListItemFragment {
     required this.nickname,
     required this.avatarUrl,
     required this.isMuted,
+    this.distanceKm,
     required this.$__typename,
   });
 
@@ -15,12 +16,14 @@ class Fragment$friendListItemFragment {
     final l$nickname = json['nickname'];
     final l$avatarUrl = json['avatarUrl'];
     final l$isMuted = json['isMuted'];
+    final l$distanceKm = json['distanceKm'];
     final l$$__typename = json['__typename'];
     return Fragment$friendListItemFragment(
       id: (l$id as String),
       nickname: (l$nickname as String),
       avatarUrl: (l$avatarUrl as String),
       isMuted: (l$isMuted as bool),
+      distanceKm: (l$distanceKm as int?),
       $__typename: (l$$__typename as String),
     );
   }
@@ -32,6 +35,8 @@ class Fragment$friendListItemFragment {
   final String avatarUrl;
 
   final bool isMuted;
+
+  final int? distanceKm;
 
   final String $__typename;
 
@@ -45,6 +50,8 @@ class Fragment$friendListItemFragment {
     _resultData['avatarUrl'] = l$avatarUrl;
     final l$isMuted = isMuted;
     _resultData['isMuted'] = l$isMuted;
+    final l$distanceKm = distanceKm;
+    _resultData['distanceKm'] = l$distanceKm;
     final l$$__typename = $__typename;
     _resultData['__typename'] = l$$__typename;
     return _resultData;
@@ -56,12 +63,14 @@ class Fragment$friendListItemFragment {
     final l$nickname = nickname;
     final l$avatarUrl = avatarUrl;
     final l$isMuted = isMuted;
+    final l$distanceKm = distanceKm;
     final l$$__typename = $__typename;
     return Object.hashAll([
       l$id,
       l$nickname,
       l$avatarUrl,
       l$isMuted,
+      l$distanceKm,
       l$$__typename,
     ]);
   }
@@ -93,6 +102,11 @@ class Fragment$friendListItemFragment {
     final l$isMuted = isMuted;
     final lOther$isMuted = other.isMuted;
     if (l$isMuted != lOther$isMuted) {
+      return false;
+    }
+    final l$distanceKm = distanceKm;
+    final lOther$distanceKm = other.distanceKm;
+    if (l$distanceKm != lOther$distanceKm) {
       return false;
     }
     final l$$__typename = $__typename;
@@ -127,6 +141,7 @@ abstract class CopyWith$Fragment$friendListItemFragment<TRes> {
     String? nickname,
     String? avatarUrl,
     bool? isMuted,
+    int? distanceKm,
     String? $__typename,
   });
 }
@@ -149,6 +164,7 @@ class _CopyWithImpl$Fragment$friendListItemFragment<TRes>
     Object? nickname = _undefined,
     Object? avatarUrl = _undefined,
     Object? isMuted = _undefined,
+    Object? distanceKm = _undefined,
     Object? $__typename = _undefined,
   }) =>
       _then(Fragment$friendListItemFragment(
@@ -162,6 +178,9 @@ class _CopyWithImpl$Fragment$friendListItemFragment<TRes>
         isMuted: isMuted == _undefined || isMuted == null
             ? _instance.isMuted
             : (isMuted as bool),
+        distanceKm: distanceKm == _undefined
+            ? _instance.distanceKm
+            : (distanceKm as int?),
         $__typename: $__typename == _undefined || $__typename == null
             ? _instance.$__typename
             : ($__typename as String),
@@ -179,6 +198,7 @@ class _CopyWithStubImpl$Fragment$friendListItemFragment<TRes>
     String? nickname,
     String? avatarUrl,
     bool? isMuted,
+    int? distanceKm,
     String? $__typename,
   }) =>
       _res;
@@ -216,6 +236,13 @@ const fragmentDefinitionfriendListItemFragment = FragmentDefinitionNode(
     ),
     FieldNode(
       name: NameNode(value: 'isMuted'),
+      alias: null,
+      arguments: [],
+      directives: [],
+      selectionSet: null,
+    ),
+    FieldNode(
+      name: NameNode(value: 'distanceKm'),
       alias: null,
       arguments: [],
       directives: [],

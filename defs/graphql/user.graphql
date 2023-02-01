@@ -47,6 +47,9 @@ type User implements Node {
     isMuted: Boolean! @goField(forceResolver: true)
     isBlocked: Boolean! @goField(forceResolver: true)
     isFriend: Boolean! @goField(forceResolver: true)
+    # This is an approximate distance in kilometer.
+    # It'll be null when not friend or the location tracking is not enabled by the user
+    distanceKm: Int @goField(forceResolver: true)
     isRequestingFriendship: Boolean! @goField(forceResolver: true)
 }
 
