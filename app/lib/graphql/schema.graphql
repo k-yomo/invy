@@ -117,6 +117,7 @@ type Mutation {
   acceptInvitation(invitationId: UUID!): AcceptInvitationPayload!
   denyInvitation(invitationId: UUID!): DenyInvitationPayload!
   registerPushNotificationToken(input: RegisterPushNotificationTokenInput): RegisterPushNotificationTokenPayload!
+  updateLocation(latitude: Float!, longitude: Float!): UpdateLocationPayload!
   requestFriendship(friendUserId: UUID!): RequestFriendshipPayload!
   cancelFriendshipRequest(friendshipRequestId: UUID!): CancelFriendshipRequestPayload!
   acceptFriendshipRequest(friendshipRequestId: UUID!): AcceptFriendshipRequestPayload!
@@ -229,6 +230,10 @@ input UpdateFriendGroupInput {
 
 type UpdateFriendGroupPayload {
   friendGroup: FriendGroup!
+}
+
+type UpdateLocationPayload {
+  updatedUserLocationId: UUID!
 }
 
 type UpdateNicknamePayload {

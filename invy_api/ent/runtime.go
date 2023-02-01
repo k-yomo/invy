@@ -19,6 +19,7 @@ import (
 	"github.com/k-yomo/invy/invy_api/ent/user"
 	"github.com/k-yomo/invy/invy_api/ent/userblock"
 	"github.com/k-yomo/invy/invy_api/ent/userfriendgroup"
+	"github.com/k-yomo/invy/invy_api/ent/userlocation"
 	"github.com/k-yomo/invy/invy_api/ent/usermute"
 	"github.com/k-yomo/invy/invy_api/ent/userprofile"
 )
@@ -169,6 +170,18 @@ func init() {
 	userfriendgroupDescID := userfriendgroupFields[0].Descriptor()
 	// userfriendgroup.DefaultID holds the default value on creation for the id field.
 	userfriendgroup.DefaultID = userfriendgroupDescID.Default.(func() uuid.UUID)
+	userlocationFields := schema.UserLocation{}.Fields()
+	_ = userlocationFields
+	// userlocationDescUpdatedAt is the schema descriptor for updated_at field.
+	userlocationDescUpdatedAt := userlocationFields[3].Descriptor()
+	// userlocation.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	userlocation.DefaultUpdatedAt = userlocationDescUpdatedAt.Default.(func() time.Time)
+	// userlocation.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	userlocation.UpdateDefaultUpdatedAt = userlocationDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// userlocationDescID is the schema descriptor for id field.
+	userlocationDescID := userlocationFields[0].Descriptor()
+	// userlocation.DefaultID holds the default value on creation for the id field.
+	userlocation.DefaultID = userlocationDescID.Default.(func() uuid.UUID)
 	usermuteFields := schema.UserMute{}.Fields()
 	_ = usermuteFields
 	// usermuteDescCreatedAt is the schema descriptor for created_at field.

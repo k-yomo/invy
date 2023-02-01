@@ -23,6 +23,7 @@ import (
 	"github.com/k-yomo/invy/invy_api/ent/user"
 	"github.com/k-yomo/invy/invy_api/ent/userblock"
 	"github.com/k-yomo/invy/invy_api/ent/userfriendgroup"
+	"github.com/k-yomo/invy/invy_api/ent/userlocation"
 	"github.com/k-yomo/invy/invy_api/ent/usermute"
 	"github.com/k-yomo/invy/invy_api/ent/userprofile"
 )
@@ -868,6 +869,51 @@ func (ufg *UserFriendGroup) Node(ctx context.Context) (node *Node, err error) {
 	return node, nil
 }
 
+func (ul *UserLocation) Node(ctx context.Context) (node *Node, err error) {
+	node = &Node{
+		ID:     ul.ID,
+		Type:   "UserLocation",
+		Fields: make([]*Field, 3),
+		Edges:  make([]*Edge, 1),
+	}
+	var buf []byte
+	if buf, err = json.Marshal(ul.UserID); err != nil {
+		return nil, err
+	}
+	node.Fields[0] = &Field{
+		Type:  "uuid.UUID",
+		Name:  "user_id",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(ul.Coordinate); err != nil {
+		return nil, err
+	}
+	node.Fields[1] = &Field{
+		Type:  "*pgutil.GeoPoint",
+		Name:  "coordinate",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(ul.UpdatedAt); err != nil {
+		return nil, err
+	}
+	node.Fields[2] = &Field{
+		Type:  "time.Time",
+		Name:  "updated_at",
+		Value: string(buf),
+	}
+	node.Edges[0] = &Edge{
+		Type: "User",
+		Name: "user",
+	}
+	err = ul.QueryUser().
+		Select(user.FieldID).
+		Scan(ctx, &node.Edges[0].IDs)
+	if err != nil {
+		return nil, err
+	}
+	return node, nil
+}
+
 func (um *UserMute) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     um.ID,
@@ -1202,6 +1248,18 @@ func (c *Client) noder(ctx context.Context, table string, id uuid.UUID) (Noder, 
 			return nil, err
 		}
 		return n, nil
+	case userlocation.Table:
+		query := c.UserLocation.Query().
+			Where(userlocation.ID(id))
+		query, err := query.CollectFields(ctx, "UserLocation")
+		if err != nil {
+			return nil, err
+		}
+		n, err := query.Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
 	case usermute.Table:
 		query := c.UserMute.Query().
 			Where(usermute.ID(id))
@@ -1479,6 +1537,22 @@ func (c *Client) noders(ctx context.Context, table string, ids []uuid.UUID) ([]N
 		query := c.UserFriendGroup.Query().
 			Where(userfriendgroup.IDIn(ids...))
 		query, err := query.CollectFields(ctx, "UserFriendGroup")
+		if err != nil {
+			return nil, err
+		}
+		nodes, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, node := range nodes {
+			for _, noder := range idmap[node.ID] {
+				*noder = node
+			}
+		}
+	case userlocation.Table:
+		query := c.UserLocation.Query().
+			Where(userlocation.IDIn(ids...))
+		query, err := query.CollectFields(ctx, "UserLocation")
 		if err != nil {
 			return nil, err
 		}

@@ -23,6 +23,7 @@ import (
 	"github.com/k-yomo/invy/invy_api/ent/user"
 	"github.com/k-yomo/invy/invy_api/ent/userblock"
 	"github.com/k-yomo/invy/invy_api/ent/userfriendgroup"
+	"github.com/k-yomo/invy/invy_api/ent/userlocation"
 	"github.com/k-yomo/invy/invy_api/ent/usermute"
 	"github.com/k-yomo/invy/invy_api/ent/userprofile"
 
@@ -60,6 +61,8 @@ type Client struct {
 	UserBlock *UserBlockClient
 	// UserFriendGroup is the client for interacting with the UserFriendGroup builders.
 	UserFriendGroup *UserFriendGroupClient
+	// UserLocation is the client for interacting with the UserLocation builders.
+	UserLocation *UserLocationClient
 	// UserMute is the client for interacting with the UserMute builders.
 	UserMute *UserMuteClient
 	// UserProfile is the client for interacting with the UserProfile builders.
@@ -89,6 +92,7 @@ func (c *Client) init() {
 	c.User = NewUserClient(c.config)
 	c.UserBlock = NewUserBlockClient(c.config)
 	c.UserFriendGroup = NewUserFriendGroupClient(c.config)
+	c.UserLocation = NewUserLocationClient(c.config)
 	c.UserMute = NewUserMuteClient(c.config)
 	c.UserProfile = NewUserProfileClient(c.config)
 }
@@ -136,6 +140,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		User:                  NewUserClient(cfg),
 		UserBlock:             NewUserBlockClient(cfg),
 		UserFriendGroup:       NewUserFriendGroupClient(cfg),
+		UserLocation:          NewUserLocationClient(cfg),
 		UserMute:              NewUserMuteClient(cfg),
 		UserProfile:           NewUserProfileClient(cfg),
 	}, nil
@@ -169,6 +174,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		User:                  NewUserClient(cfg),
 		UserBlock:             NewUserBlockClient(cfg),
 		UserFriendGroup:       NewUserFriendGroupClient(cfg),
+		UserLocation:          NewUserLocationClient(cfg),
 		UserMute:              NewUserMuteClient(cfg),
 		UserProfile:           NewUserProfileClient(cfg),
 	}, nil
@@ -211,6 +217,7 @@ func (c *Client) Use(hooks ...Hook) {
 	c.User.Use(hooks...)
 	c.UserBlock.Use(hooks...)
 	c.UserFriendGroup.Use(hooks...)
+	c.UserLocation.Use(hooks...)
 	c.UserMute.Use(hooks...)
 	c.UserProfile.Use(hooks...)
 }
@@ -230,6 +237,7 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 	c.User.Intercept(interceptors...)
 	c.UserBlock.Intercept(interceptors...)
 	c.UserFriendGroup.Intercept(interceptors...)
+	c.UserLocation.Intercept(interceptors...)
 	c.UserMute.Intercept(interceptors...)
 	c.UserProfile.Intercept(interceptors...)
 }
@@ -261,6 +269,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.UserBlock.mutate(ctx, m)
 	case *UserFriendGroupMutation:
 		return c.UserFriendGroup.mutate(ctx, m)
+	case *UserLocationMutation:
+		return c.UserLocation.mutate(ctx, m)
 	case *UserMuteMutation:
 		return c.UserMute.mutate(ctx, m)
 	case *UserProfileMutation:
@@ -2199,6 +2209,139 @@ func (c *UserFriendGroupClient) mutate(ctx context.Context, m *UserFriendGroupMu
 		return (&UserFriendGroupDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown UserFriendGroup mutation op: %q", m.Op())
+	}
+}
+
+// UserLocationClient is a client for the UserLocation schema.
+type UserLocationClient struct {
+	config
+}
+
+// NewUserLocationClient returns a client for the UserLocation from the given config.
+func NewUserLocationClient(c config) *UserLocationClient {
+	return &UserLocationClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `userlocation.Hooks(f(g(h())))`.
+func (c *UserLocationClient) Use(hooks ...Hook) {
+	c.hooks.UserLocation = append(c.hooks.UserLocation, hooks...)
+}
+
+// Use adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `userlocation.Intercept(f(g(h())))`.
+func (c *UserLocationClient) Intercept(interceptors ...Interceptor) {
+	c.inters.UserLocation = append(c.inters.UserLocation, interceptors...)
+}
+
+// Create returns a builder for creating a UserLocation entity.
+func (c *UserLocationClient) Create() *UserLocationCreate {
+	mutation := newUserLocationMutation(c.config, OpCreate)
+	return &UserLocationCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of UserLocation entities.
+func (c *UserLocationClient) CreateBulk(builders ...*UserLocationCreate) *UserLocationCreateBulk {
+	return &UserLocationCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for UserLocation.
+func (c *UserLocationClient) Update() *UserLocationUpdate {
+	mutation := newUserLocationMutation(c.config, OpUpdate)
+	return &UserLocationUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *UserLocationClient) UpdateOne(ul *UserLocation) *UserLocationUpdateOne {
+	mutation := newUserLocationMutation(c.config, OpUpdateOne, withUserLocation(ul))
+	return &UserLocationUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *UserLocationClient) UpdateOneID(id uuid.UUID) *UserLocationUpdateOne {
+	mutation := newUserLocationMutation(c.config, OpUpdateOne, withUserLocationID(id))
+	return &UserLocationUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for UserLocation.
+func (c *UserLocationClient) Delete() *UserLocationDelete {
+	mutation := newUserLocationMutation(c.config, OpDelete)
+	return &UserLocationDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *UserLocationClient) DeleteOne(ul *UserLocation) *UserLocationDeleteOne {
+	return c.DeleteOneID(ul.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *UserLocationClient) DeleteOneID(id uuid.UUID) *UserLocationDeleteOne {
+	builder := c.Delete().Where(userlocation.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &UserLocationDeleteOne{builder}
+}
+
+// Query returns a query builder for UserLocation.
+func (c *UserLocationClient) Query() *UserLocationQuery {
+	return &UserLocationQuery{
+		config: c.config,
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a UserLocation entity by its id.
+func (c *UserLocationClient) Get(ctx context.Context, id uuid.UUID) (*UserLocation, error) {
+	return c.Query().Where(userlocation.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *UserLocationClient) GetX(ctx context.Context, id uuid.UUID) *UserLocation {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryUser queries the user edge of a UserLocation.
+func (c *UserLocationClient) QueryUser(ul *UserLocation) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := ul.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(userlocation.Table, userlocation.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, userlocation.UserTable, userlocation.UserColumn),
+		)
+		fromV = sqlgraph.Neighbors(ul.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *UserLocationClient) Hooks() []Hook {
+	return c.hooks.UserLocation
+}
+
+// Interceptors returns the client interceptors.
+func (c *UserLocationClient) Interceptors() []Interceptor {
+	return c.inters.UserLocation
+}
+
+func (c *UserLocationClient) mutate(ctx context.Context, m *UserLocationMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&UserLocationCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&UserLocationUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&UserLocationUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&UserLocationDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown UserLocation mutation op: %q", m.Op())
 	}
 }
 

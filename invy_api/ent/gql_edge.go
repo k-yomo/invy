@@ -328,6 +328,14 @@ func (ufg *UserFriendGroup) User(ctx context.Context) (*User, error) {
 	return result, err
 }
 
+func (ul *UserLocation) User(ctx context.Context) (*User, error) {
+	result, err := ul.Edges.UserOrErr()
+	if IsNotLoaded(err) {
+		result, err = ul.QueryUser().Only(ctx)
+	}
+	return result, err
+}
+
 func (um *UserMute) User(ctx context.Context) (*User, error) {
 	result, err := um.Edges.UserOrErr()
 	if IsNotLoaded(err) {

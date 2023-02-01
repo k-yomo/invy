@@ -1,4 +1,4 @@
-import background_locator
+import background_locator_2
 import UIKit
 import Flutter
 import GoogleMaps

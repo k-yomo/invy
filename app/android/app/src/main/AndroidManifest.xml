@@ -33,7 +33,7 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-       <service android:name="rekab.app.background_locator.IsolateHolderService"
+       <service android:name="yukams.app.background_locator_2.IsolateHolderService"
                 android:permission="android.permission.FOREGROUND_SERVICE"
                 android:exported="true"
                 android:foregroundServiceType = "location"/>

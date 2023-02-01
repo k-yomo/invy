@@ -185,6 +185,10 @@ type UpdateFriendGroupPayload struct {
 	FriendGroup *FriendGroup `json:"friendGroup"`
 }
 
+type UpdateLocationPayload struct {
+	UpdatedUserLocationID uuid.UUID `json:"updatedUserLocationId"`
+}
+
 type UpdateNicknamePayload struct {
 	Viewer *Viewer `json:"viewer"`
 }

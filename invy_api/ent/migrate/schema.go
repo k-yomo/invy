@@ -344,6 +344,27 @@ var (
 			},
 		},
 	}
+	// UserLocationsColumns holds the columns for the "user_locations" table.
+	UserLocationsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID},
+		{Name: "coordinate", Type: field.TypeOther, SchemaType: map[string]string{"postgres": "geometry(Point,4326)"}},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "user_id", Type: field.TypeUUID},
+	}
+	// UserLocationsTable holds the schema information for the "user_locations" table.
+	UserLocationsTable = &schema.Table{
+		Name:       "user_locations",
+		Columns:    UserLocationsColumns,
+		PrimaryKey: []*schema.Column{UserLocationsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "user_locations_users_user",
+				Columns:    []*schema.Column{UserLocationsColumns[3]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+	}
 	// UserMutesColumns holds the columns for the "user_mutes" table.
 	UserMutesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUUID},
@@ -416,6 +437,7 @@ var (
 		UsersTable,
 		UserBlocksTable,
 		UserFriendGroupsTable,
+		UserLocationsTable,
 		UserMutesTable,
 		UserProfilesTable,
 	}
@@ -440,6 +462,7 @@ func init() {
 	UserBlocksTable.ForeignKeys[1].RefTable = UsersTable
 	UserFriendGroupsTable.ForeignKeys[0].RefTable = FriendGroupsTable
 	UserFriendGroupsTable.ForeignKeys[1].RefTable = UsersTable
+	UserLocationsTable.ForeignKeys[0].RefTable = UsersTable
 	UserMutesTable.ForeignKeys[0].RefTable = UsersTable
 	UserMutesTable.ForeignKeys[1].RefTable = UsersTable
 	UserProfilesTable.ForeignKeys[0].RefTable = UsersTable

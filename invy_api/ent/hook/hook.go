@@ -153,6 +153,18 @@ func (f UserFriendGroupFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Va
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.UserFriendGroupMutation", m)
 }
 
+// The UserLocationFunc type is an adapter to allow the use of ordinary
+// function as UserLocation mutator.
+type UserLocationFunc func(context.Context, *ent.UserLocationMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f UserLocationFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.UserLocationMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.UserLocationMutation", m)
+}
+
 // The UserMuteFunc type is an adapter to allow the use of ordinary
 // function as UserMute mutator.
 type UserMuteFunc func(context.Context, *ent.UserMuteMutation) (ent.Value, error)

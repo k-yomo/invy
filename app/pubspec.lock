@@ -49,14 +49,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.10.0"
-  background_locator:
+  background_locator_2:
     dependency: "direct main"
     description:
-      name: background_locator
-      sha256: dcc4cbe955282979460f9aadd40f4875a6bd0440a1aa47b10ab0950101248ba5
+      name: background_locator_2
+      sha256: "3ff755fbaf32e806d65795c13b31c95a5cb4829b2836a6169bb46eb45a41c5b0"
       url: "https://pub.dev"
     source: hosted
-    version: "1.6.12"
+    version: "2.0.5"
   boolean_selector:
     dependency: transitive
     description:

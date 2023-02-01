@@ -20,9 +20,9 @@ Future<LatLng?> getCurrentLocation() async {
     return null;
   }
 
-  final locationWhenInUseStatus = await Permission.locationWhenInUse.status;
+  var locationWhenInUseStatus = await Permission.locationWhenInUse.status;
   if (locationWhenInUseStatus.isDenied) {
-    await Permission.locationWhenInUse.request();
+    locationWhenInUseStatus = await Permission.locationWhenInUse.request();
   }
 
   if (locationWhenInUseStatus.isGranted &&

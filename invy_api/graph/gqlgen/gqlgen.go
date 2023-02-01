@@ -146,6 +146,7 @@ type ComplexityRoot struct {
 		UnmuteUser                    func(childComplexity int, userID uuid.UUID) int
 		UpdateAvatar                  func(childComplexity int, avatar graphql.Upload) int
 		UpdateFriendGroup             func(childComplexity int, input gqlmodel.UpdateFriendGroupInput) int
+		UpdateLocation                func(childComplexity int, latitude float64, longitude float64) int
 		UpdateNickname                func(childComplexity int, nickname string) int
 		UpdateScreenID                func(childComplexity int, screenID string) int
 	}
@@ -205,6 +206,10 @@ type ComplexityRoot struct {
 
 	UpdateFriendGroupPayload struct {
 		FriendGroup func(childComplexity int) int
+	}
+
+	UpdateLocationPayload struct {
+		UpdatedUserLocationID func(childComplexity int) int
 	}
 
 	UpdateNicknamePayload struct {
@@ -282,6 +287,7 @@ type MutationResolver interface {
 	UpdateAvatar(ctx context.Context, avatar graphql.Upload) (*gqlmodel.UpdateAvatarPayload, error)
 	UpdateNickname(ctx context.Context, nickname string) (*gqlmodel.UpdateNicknamePayload, error)
 	UpdateScreenID(ctx context.Context, screenID string) (*gqlmodel.UpdateScreenIDPayload, error)
+	UpdateLocation(ctx context.Context, latitude float64, longitude float64) (*gqlmodel.UpdateLocationPayload, error)
 	RequestFriendship(ctx context.Context, friendUserID uuid.UUID) (*gqlmodel.RequestFriendshipPayload, error)
 	CancelFriendshipRequest(ctx context.Context, friendshipRequestID uuid.UUID) (*gqlmodel.CancelFriendshipRequestPayload, error)
 	AcceptFriendshipRequest(ctx context.Context, friendshipRequestID uuid.UUID) (*gqlmodel.AcceptFriendshipRequestPayload, error)
@@ -781,6 +787,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.UpdateFriendGroup(childComplexity, args["input"].(gqlmodel.UpdateFriendGroupInput)), true
 
+	case "Mutation.updateLocation":
+		if e.complexity.Mutation.UpdateLocation == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updateLocation_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdateLocation(childComplexity, args["latitude"].(float64), args["longitude"].(float64)), true
+
 	case "Mutation.updateNickname":
 		if e.complexity.Mutation.UpdateNickname == nil {
 			break
@@ -940,6 +958,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.UpdateFriendGroupPayload.FriendGroup(childComplexity), true
+
+	case "UpdateLocationPayload.updatedUserLocationId":
+		if e.complexity.UpdateLocationPayload.UpdatedUserLocationID == nil {
+			break
+		}
+
+		return e.complexity.UpdateLocationPayload.UpdatedUserLocationID(childComplexity), true
 
 	case "UpdateNicknamePayload.viewer":
 		if e.complexity.UpdateNicknamePayload.Viewer == nil {
@@ -1481,6 +1506,15 @@ type UpdateScreenIdPayload {
     viewer: Viewer!
 }
 `, BuiltIn: false},
+	{Name: "../../../defs/graphql/user_location.graphql", Input: `
+extend type Mutation {
+    updateLocation(latitude: Float!, longitude: Float!): UpdateLocationPayload! @authRequired
+}
+
+type UpdateLocationPayload {
+    updatedUserLocationId: UUID!
+}
+`, BuiltIn: false},
 	{Name: "../../../defs/graphql/user_relation.graphql", Input: `
 extend type Mutation {
     requestFriendship(friendUserId: UUID!): RequestFriendshipPayload! @authRequired
@@ -1867,6 +1901,30 @@ func (ec *executionContext) field_Mutation_updateFriendGroup_args(ctx context.Co
 		}
 	}
 	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_updateLocation_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 float64
+	if tmp, ok := rawArgs["latitude"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("latitude"))
+		arg0, err = ec.unmarshalNFloat2float64(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["latitude"] = arg0
+	var arg1 float64
+	if tmp, ok := rawArgs["longitude"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("longitude"))
+		arg1, err = ec.unmarshalNFloat2float64(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["longitude"] = arg1
 	return args, nil
 }
 
@@ -4697,6 +4755,85 @@ func (ec *executionContext) fieldContext_Mutation_updateScreenId(ctx context.Con
 	return fc, nil
 }
 
+func (ec *executionContext) _Mutation_updateLocation(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_updateLocation(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().UpdateLocation(rctx, fc.Args["latitude"].(float64), fc.Args["longitude"].(float64))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.AuthRequired == nil {
+				return nil, errors.New("directive authRequired is not implemented")
+			}
+			return ec.directives.AuthRequired(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*gqlmodel.UpdateLocationPayload); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/k-yomo/invy/invy_api/graph/gqlmodel.UpdateLocationPayload`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.UpdateLocationPayload)
+	fc.Result = res
+	return ec.marshalNUpdateLocationPayload2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐUpdateLocationPayload(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_updateLocation(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "updatedUserLocationId":
+				return ec.fieldContext_UpdateLocationPayload_updatedUserLocationId(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type UpdateLocationPayload", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_updateLocation_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Mutation_requestFriendship(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Mutation_requestFriendship(ctx, field)
 	if err != nil {
@@ -6515,6 +6652,50 @@ func (ec *executionContext) fieldContext_UpdateFriendGroupPayload_friendGroup(ct
 				return ec.fieldContext_FriendGroup_friendUsers(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type FriendGroup", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _UpdateLocationPayload_updatedUserLocationId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.UpdateLocationPayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UpdateLocationPayload_updatedUserLocationId(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UpdatedUserLocationID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(uuid.UUID)
+	fc.Result = res
+	return ec.marshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_UpdateLocationPayload_updatedUserLocationId(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "UpdateLocationPayload",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type UUID does not have child fields")
 		},
 	}
 	return fc, nil
@@ -10940,6 +11121,15 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "updateLocation":
+
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_updateLocation(ctx, field)
+			})
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "requestFriendship":
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
@@ -11470,6 +11660,34 @@ func (ec *executionContext) _UpdateFriendGroupPayload(ctx context.Context, sel a
 		case "friendGroup":
 
 			out.Values[i] = ec._UpdateFriendGroupPayload_friendGroup(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var updateLocationPayloadImplementors = []string{"UpdateLocationPayload"}
+
+func (ec *executionContext) _UpdateLocationPayload(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.UpdateLocationPayload) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, updateLocationPayloadImplementors)
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("UpdateLocationPayload")
+		case "updatedUserLocationId":
+
+			out.Values[i] = ec._UpdateLocationPayload_updatedUserLocationId(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				invalids++
@@ -12910,6 +13128,20 @@ func (ec *executionContext) marshalNUpdateFriendGroupPayload2ᚖgithubᚗcomᚋk
 		return graphql.Null
 	}
 	return ec._UpdateFriendGroupPayload(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNUpdateLocationPayload2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐUpdateLocationPayload(ctx context.Context, sel ast.SelectionSet, v gqlmodel.UpdateLocationPayload) graphql.Marshaler {
+	return ec._UpdateLocationPayload(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNUpdateLocationPayload2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐUpdateLocationPayload(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.UpdateLocationPayload) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._UpdateLocationPayload(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNUpdateNicknamePayload2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐUpdateNicknamePayload(ctx context.Context, sel ast.SelectionSet, v gqlmodel.UpdateNicknamePayload) graphql.Marshaler {

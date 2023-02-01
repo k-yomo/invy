@@ -1,0 +1,6 @@
+
+mutation updateLocation($latitude: Float!, $longitude: Float!) {
+    updateLocation(latitude: $latitude, longitude: $longitude) {
+        updatedUserLocationId
+    }
+}

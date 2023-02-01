@@ -23,6 +23,7 @@ import (
 	"github.com/k-yomo/invy/invy_api/ent/user"
 	"github.com/k-yomo/invy/invy_api/ent/userblock"
 	"github.com/k-yomo/invy/invy_api/ent/userfriendgroup"
+	"github.com/k-yomo/invy/invy_api/ent/userlocation"
 	"github.com/k-yomo/invy/invy_api/ent/usermute"
 	"github.com/k-yomo/invy/invy_api/ent/userprofile"
 )
@@ -63,6 +64,7 @@ func columnChecker(table string) func(string) error {
 		user.Table:                  user.ValidColumn,
 		userblock.Table:             userblock.ValidColumn,
 		userfriendgroup.Table:       userfriendgroup.ValidColumn,
+		userlocation.Table:          userlocation.ValidColumn,
 		usermute.Table:              usermute.ValidColumn,
 		userprofile.Table:           userprofile.ValidColumn,
 	}

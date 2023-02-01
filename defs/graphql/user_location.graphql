@@ -1,0 +1,8 @@
+
+extend type Mutation {
+    updateLocation(latitude: Float!, longitude: Float!): UpdateLocationPayload! @authRequired
+}
+
+type UpdateLocationPayload {
+    updatedUserLocationId: UUID!
+}

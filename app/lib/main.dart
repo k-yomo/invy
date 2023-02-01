@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:background_locator_2/background_locator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
@@ -15,6 +16,7 @@ import 'package:invy/graphql/push_notification.graphql.dart';
 import 'package:invy/services/graphql_client.dart';
 import 'package:invy/state/device.dart';
 import 'package:invy/state/onboarding.dart';
+import 'package:invy/util/background_location.dart';
 import 'package:invy/util/device.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
@@ -25,7 +27,6 @@ import 'state/badge_count.dart';
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Hive.initFlutter();
-  await Firebase.initializeApp();
   if (message.data["type"] ==
       toJson$Enum$PushNotificationType(
           Enum$PushNotificationType.INVITATION_RECEIVED)) {
@@ -83,6 +84,8 @@ Future main() async {
   });
 
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  await BackgroundLocator.initialize();
+  startBackgroundLocationService();
 
   final onboarding = await Onboarding.open();
   final badgeCounter = await BadgeCounter.open();
