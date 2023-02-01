@@ -364,6 +364,13 @@ var (
 				OnDelete:   schema.NoAction,
 			},
 		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "userlocation_user_id",
+				Unique:  true,
+				Columns: []*schema.Column{UserLocationsColumns[3]},
+			},
+		},
 	}
 	// UserMutesColumns holds the columns for the "user_mutes" table.
 	UserMutesColumns = []*schema.Column{

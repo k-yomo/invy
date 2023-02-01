@@ -7,6 +7,7 @@ import (
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
+	"entgo.io/ent/schema/index"
 	"github.com/google/uuid"
 	"github.com/k-yomo/invy/pkg/pgutil"
 )
@@ -42,5 +43,12 @@ func (UserLocation) Edges() []ent.Edge {
 			Unique().
 			Field("user_id").
 			Immutable(),
+	}
+}
+
+func (UserLocation) Indexes() []ent.Index {
+	return []ent.Index{
+		index.Fields("user_id").
+			Unique(),
 	}
 }

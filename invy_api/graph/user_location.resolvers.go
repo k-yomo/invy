@@ -27,7 +27,8 @@ func (r *mutationResolver) UpdateLocation(ctx context.Context, latitude float64,
 		SetUserID(authUserID).
 		SetCoordinate(&coordinate).
 		OnConflictColumns(userlocation.FieldUserID).
-		UpdateNewValues().ID(ctx)
+		UpdateNewValues().
+		ID(ctx)
 	if err != nil {
 		return nil, err
 	}

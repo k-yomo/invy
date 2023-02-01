@@ -31,7 +31,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
       toJson$Enum$PushNotificationType(
           Enum$PushNotificationType.INVITATION_RECEIVED)) {
     final badgeCounter = await BadgeCounter.open();
-    badgeCounter.setBadgeCount(badgeCounter.badgeCount + 1);
+    await badgeCounter.setBadgeCount(badgeCounter.badgeCount + 1);
   }
 }
 
