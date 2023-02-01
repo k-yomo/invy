@@ -6,7 +6,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:invy/components/user_profile_modal_fragment.graphql.dart';
-import 'package:invy/graphql/blocked_friend_screen.graphql.dart';
+import 'package:invy/screens/blocked_friend_screen.graphql.dart';
 import 'package:invy/util/toast.dart';
 
 import '../graphql/user_block.graphql.dart';

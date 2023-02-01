@@ -10,7 +10,7 @@ import 'package:http/http.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:invy/components/permission_error_alert_dialog.dart';
-import 'package:invy/graphql/profile_edit_screen.graphql.dart';
+import 'package:invy/screens/profile_edit_screen.graphql.dart';
 import 'package:invy/graphql/schema.graphql.dart';
 import 'package:invy/services/graphql_client.dart';
 import 'package:invy/state/auth.dart';

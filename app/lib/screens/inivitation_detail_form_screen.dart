@@ -4,7 +4,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:invy/graphql/invitation_screen.graphql.dart';
+import 'package:invy/screens/invitation_screen.graphql.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
 
 import '../components/app_bar_leading.dart';

@@ -1,11 +1,11 @@
 import '../components/friend_group_fragment.graphql.dart';
 import '../components/friend_list_item_fragment.graphql.dart';
+import '../graphql/schema.graphql.dart';
 import 'dart:async';
 import 'package:flutter/widgets.dart' as widgets;
 import 'package:gql/ast.dart';
 import 'package:graphql/client.dart' as graphql;
 import 'package:graphql_flutter/graphql_flutter.dart' as graphql_flutter;
-import 'schema.graphql.dart';
 
 class Query$invitationScreenViewer {
   Query$invitationScreenViewer({

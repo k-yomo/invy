@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:graphql/client.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:invy/graphql/home_screen.graphql.dart';
+import 'package:invy/screens/home_screen.graphql.dart';
 import 'package:invy/services/graphql_client.dart';
 import 'package:invy/state/badge_count.dart';
 

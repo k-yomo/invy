@@ -4,7 +4,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:invy/components/friend_group_list.dart';
 import 'package:invy/components/friend_list.dart';
 import 'package:invy/components/sub_title.dart';
-import 'package:invy/graphql/friend_screen.graphql.dart';
+import 'package:invy/screens/friend_screen.graphql.dart';
 import 'package:invy/components/user_profile_modal.dart';
 import 'package:invy/services/graphql_client.dart';
 

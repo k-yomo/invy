@@ -3,8 +3,8 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:graphql/client.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:invy/components/friend_selection_list.dart';
-import 'package:invy/graphql/friend_group_create_screen.graphql.dart';
-import 'package:invy/graphql/friend_screen.graphql.dart';
+import 'package:invy/screens/friend_group_create_screen.graphql.dart';
+import 'package:invy/screens/friend_screen.graphql.dart';
 import 'package:invy/graphql/schema.graphql.dart';
 
 import '../components/app_bar_leading.dart';

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:invy/graphql/friend_request_screen.graphql.dart';
+import 'package:invy/screens/friend_request_screen.graphql.dart';
 import 'package:invy/services/graphql_client.dart';
 
 import '../components/app_bar_leading.dart';

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:invy/components/user_profile_modal.dart';
 import '../components/app_bar_leading.dart';
-import '../graphql/friend_group_detail_screen.graphql.dart';
+import '../screens/friend_group_detail_screen.graphql.dart';
 import '../services/graphql_client.dart';
 
 class FriendGroupDetailScreen extends HookConsumerWidget {
