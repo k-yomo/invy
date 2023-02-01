@@ -27,6 +27,9 @@ class FriendScreen extends HookConsumerWidget {
         stream: viewerQuery.stream,
         builder: (context, viewerSnapshot) {
           final viewer = viewerSnapshot.data?.parsedData?.viewer;
+          final sortedFriends = viewer?.friends.edges ?? [];
+          sortedFriends.sort((a, b) => (a.node.distanceKm ?? double.nan)
+              .compareTo(b.node.distanceKm ?? double.nan));
           return Scaffold(
             appBar: AppBar(
               title: const Text(
@@ -89,10 +92,7 @@ class FriendScreen extends HookConsumerWidget {
                           },
                         ),
                         FriendList(
-                          friends: viewer?.friends.edges
-                                  .map((e) => e.node)
-                                  .toList() ??
-                              [],
+                          friends: sortedFriends.toList(),
                           onFriendPressed: (friendUserId) {
                             showModalBottomSheet(
                               isScrollControlled: true,
