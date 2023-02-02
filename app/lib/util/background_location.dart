@@ -32,12 +32,12 @@ void callback(LocationDto location) async {
 void startBackgroundLocationService() {
   BackgroundLocator.registerLocationUpdate(callback,
       autoStop: false,
-      iosSettings: const IOSSettings(
-          accuracy: LocationAccuracy.HIGH, distanceFilter: 100),
+      iosSettings:
+          const IOSSettings(accuracy: LocationAccuracy.HIGH, distanceFilter: 0),
       androidSettings: const AndroidSettings(
           accuracy: LocationAccuracy.HIGH,
           interval: 300,
-          distanceFilter: 100,
+          distanceFilter: 0,
           androidNotificationSettings: AndroidNotificationSettings(
             // TODO: Update wording
             notificationChannelName: 'Location tracking',
