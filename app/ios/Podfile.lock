@@ -242,7 +242,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   AppAuth: 8fca6b5563a5baef2c04bee27538025e4ceb2add
-  background_locator_2: 2a860721c64d9b0f1600991dd8e7c786cff79785
+  background_locator_2: bc8a422343ab656d5bd98e08694c6f89fef20418
   connectivity_plus: 413a8857dd5d9f1c399a39130850d02fe0feaf7e
   device_info_plus: e5c5da33f982a436e103237c0c85f9031142abed
   Firebase: f92fc551ead69c94168d36c2b26188263860acd9

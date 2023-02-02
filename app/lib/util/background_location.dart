@@ -17,13 +17,13 @@ void callback(LocationDto location) async {
     await Firebase.initializeApp(options: config.firebaseOptions);
   }
 
-  graphqlClient ??= await initGraphQLClient(
+  final graphqlClient = await initGraphQLClient(
     uri: '${config.apiBaseUrl}/query',
     subscriptionUri: '${config.apiBaseUrl}/subscriptions',
   );
 
   if (FirebaseAuth.instance.currentUser != null) {
-    await graphqlClient!.mutate$updateLocation(Options$Mutation$updateLocation(
+    await graphqlClient.mutate$updateLocation(Options$Mutation$updateLocation(
         variables: Variables$Mutation$updateLocation(
             latitude: location.latitude, longitude: location.longitude)));
   }

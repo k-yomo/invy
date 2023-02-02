@@ -77,7 +77,10 @@ dependencies:
   url_launcher: ^6.1.8
   flutter_local_notifications: ^13.0.0
   permission_handler: ^10.2.0
-  background_locator_2: ^2.0.5
+  background_locator_2:
+    git:
+      url: https://github.com/Yukams/background_locator_fixed.git
+      ref: 2.0.6-dev.2
 
 dev_dependencies:
   flutter_test:

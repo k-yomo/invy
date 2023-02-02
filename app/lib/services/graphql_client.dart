@@ -16,7 +16,6 @@ String? uuidFromObject(Object object) {
   return null;
 }
 
-GraphQLClient? graphqlClient;
 final graphqlClientProvider = Provider<GraphQLClient>((_) {
   throw Exception();
 });
@@ -56,9 +55,8 @@ Future<GraphQLClient> initGraphQLClient({
     link = Link.split((request) => request.isSubscription, websocketLink, link);
   }
 
-  graphqlClient = GraphQLClient(
+  return GraphQLClient(
     cache: GraphQLCache(store: HiveStore()),
     link: link,
   );
-  return graphqlClient!;
 }
