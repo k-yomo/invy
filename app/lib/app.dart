@@ -86,11 +86,11 @@ class App extends HookConsumerWidget {
 class RootWidget extends HookConsumerWidget {
   const RootWidget({super.key});
   // The order must be same BottomNavigationTab
-  static const screens = [
+  static List<HookConsumerWidget> screens = [
     HomeScreen(),
-    InvitationScreen(),
-    FriendScreen(),
-    MyProfileScreen(),
+    const InvitationScreen(),
+    const FriendScreen(),
+    const MyProfileScreen(),
   ];
 
   @override
