@@ -11,7 +11,8 @@ import 'package:invy/services/graphql_client.dart';
 
 import '../config/config.dart';
 
-void callback(LocationDto location) async {
+@pragma('vm:entry-point')
+void locationCallback(LocationDto location) async {
   final config = getConfig();
   if (Firebase.apps.isEmpty) {
     await Firebase.initializeApp(options: config.firebaseOptions);
@@ -30,7 +31,7 @@ void callback(LocationDto location) async {
 }
 
 void startBackgroundLocationService() {
-  BackgroundLocator.registerLocationUpdate(callback,
+  BackgroundLocator.registerLocationUpdate(locationCallback,
       autoStop: false,
       iosSettings:
           const IOSSettings(accuracy: LocationAccuracy.HIGH, distanceFilter: 0),
