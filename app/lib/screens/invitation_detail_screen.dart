@@ -32,6 +32,7 @@ class InvitationDetailScreen extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final invitationLocationMarker = useState(BitmapDescriptor.defaultMarker);
+    final mapDisplayed = invitation.coordinate != null;
 
     useEffect(() {
       BitmapDescriptor.fromAssetImage(
@@ -47,58 +48,73 @@ class InvitationDetailScreen extends HookConsumerWidget {
 
     return Scaffold(
         backgroundColor: Colors.white,
+        appBar: !mapDisplayed
+            ? AppBar(
+                leading: const AppBarLeading(),
+                title: const Text(
+                  '招待の詳細',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                shape: Border(
+                    bottom: BorderSide(color: Colors.grey.shade200, width: 1)),
+              )
+            : null,
         body: Column(
           children: [
-            SizedBox(
-              height: 280,
-              child: Stack(
-                  fit: StackFit.expand,
-                  alignment: Alignment.center,
-                  children: [
-                    GoogleMap(
-                        initialCameraPosition: CameraPosition(
-                          target: LatLng(invitation.coordinate.latitude,
-                              invitation.coordinate.longitude),
-                          zoom: 16,
-                        ),
-                        myLocationEnabled: false,
-                        myLocationButtonEnabled: false,
-                        markers: {
-                          Marker(
-                              markerId: const MarkerId("location"),
-                              position: LatLng(invitation.coordinate.latitude,
-                                  invitation.coordinate.longitude),
-                              icon: invitationLocationMarker.value)
-                        }),
-                    const Positioned(
-                      top: 40,
-                      left: 10,
-                      child: AppBarLeading(),
-                    ),
-                    Positioned(
-                      bottom: 10,
-                      right: 10,
-                      child: TextButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.black,
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                        ),
-                        onPressed: () {
-                          _launchMapApp(invitation.coordinate.latitude,
-                              invitation.coordinate.longitude);
-                        },
-                        child: const Text(
-                          '地図アプリで開く',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
+            invitation.coordinate != null
+                ? SizedBox(
+                    height: 280,
+                    child: Stack(
+                        fit: StackFit.expand,
+                        alignment: Alignment.center,
+                        children: [
+                          GoogleMap(
+                              initialCameraPosition: CameraPosition(
+                                target: LatLng(invitation.coordinate!.latitude,
+                                    invitation.coordinate!.longitude),
+                                zoom: 16,
+                              ),
+                              myLocationEnabled: false,
+                              myLocationButtonEnabled: false,
+                              markers: {
+                                Marker(
+                                    markerId: const MarkerId("location"),
+                                    position: LatLng(
+                                        invitation.coordinate!.latitude,
+                                        invitation.coordinate!.longitude),
+                                    icon: invitationLocationMarker.value)
+                              }),
+                          const Positioned(
+                            top: 40,
+                            left: 10,
+                            child: AppBarLeading(),
                           ),
-                        ),
-                      ),
-                    ),
-                  ]),
-            ),
+                          Positioned(
+                            bottom: 10,
+                            right: 10,
+                            child: TextButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.black,
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 20),
+                              ),
+                              onPressed: () {
+                                _launchMapApp(invitation.coordinate!.latitude,
+                                    invitation.coordinate!.longitude);
+                              },
+                              child: const Text(
+                                '地図アプリで開く',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ]),
+                  )
+                : const SizedBox(height: 10),
             Container(
               margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
               child: Column(

@@ -398,8 +398,8 @@ class Input$SendInvitationInput {
     required DateTime expiresAt,
     required DateTime startsAt,
     required String location,
-    required double latitude,
-    required double longitude,
+    double? latitude,
+    double? longitude,
     required String comment,
   }) =>
       Input$SendInvitationInput._({
@@ -408,8 +408,8 @@ class Input$SendInvitationInput {
         r'expiresAt': expiresAt,
         r'startsAt': startsAt,
         r'location': location,
-        r'latitude': latitude,
-        r'longitude': longitude,
+        if (latitude != null) r'latitude': latitude,
+        if (longitude != null) r'longitude': longitude,
         r'comment': comment,
       });
 
@@ -433,10 +433,14 @@ class Input$SendInvitationInput {
     result$data['startsAt'] = DateTime.parse((l$startsAt as String));
     final l$location = data['location'];
     result$data['location'] = (l$location as String);
-    final l$latitude = data['latitude'];
-    result$data['latitude'] = (l$latitude as num).toDouble();
-    final l$longitude = data['longitude'];
-    result$data['longitude'] = (l$longitude as num).toDouble();
+    if (data.containsKey('latitude')) {
+      final l$latitude = data['latitude'];
+      result$data['latitude'] = (l$latitude as num?)?.toDouble();
+    }
+    if (data.containsKey('longitude')) {
+      final l$longitude = data['longitude'];
+      result$data['longitude'] = (l$longitude as num?)?.toDouble();
+    }
     final l$comment = data['comment'];
     result$data['comment'] = (l$comment as String);
     return Input$SendInvitationInput._(result$data);
@@ -451,8 +455,8 @@ class Input$SendInvitationInput {
   DateTime get expiresAt => (_$data['expiresAt'] as DateTime);
   DateTime get startsAt => (_$data['startsAt'] as DateTime);
   String get location => (_$data['location'] as String);
-  double get latitude => (_$data['latitude'] as double);
-  double get longitude => (_$data['longitude'] as double);
+  double? get latitude => (_$data['latitude'] as double?);
+  double? get longitude => (_$data['longitude'] as double?);
   String get comment => (_$data['comment'] as String);
   Map<String, dynamic> toJson() {
     final result$data = <String, dynamic>{};
@@ -468,10 +472,14 @@ class Input$SendInvitationInput {
     result$data['startsAt'] = l$startsAt.toIso8601String();
     final l$location = location;
     result$data['location'] = l$location;
-    final l$latitude = latitude;
-    result$data['latitude'] = l$latitude;
-    final l$longitude = longitude;
-    result$data['longitude'] = l$longitude;
+    if (_$data.containsKey('latitude')) {
+      final l$latitude = latitude;
+      result$data['latitude'] = l$latitude;
+    }
+    if (_$data.containsKey('longitude')) {
+      final l$longitude = longitude;
+      result$data['longitude'] = l$longitude;
+    }
     final l$comment = comment;
     result$data['comment'] = l$comment;
     return result$data;
@@ -532,11 +540,19 @@ class Input$SendInvitationInput {
     }
     final l$latitude = latitude;
     final lOther$latitude = other.latitude;
+    if (_$data.containsKey('latitude') !=
+        other._$data.containsKey('latitude')) {
+      return false;
+    }
     if (l$latitude != lOther$latitude) {
       return false;
     }
     final l$longitude = longitude;
     final lOther$longitude = other.longitude;
+    if (_$data.containsKey('longitude') !=
+        other._$data.containsKey('longitude')) {
+      return false;
+    }
     if (l$longitude != lOther$longitude) {
       return false;
     }
@@ -564,8 +580,8 @@ class Input$SendInvitationInput {
       l$expiresAt,
       l$startsAt,
       l$location,
-      l$latitude,
-      l$longitude,
+      _$data.containsKey('latitude') ? l$latitude : const {},
+      _$data.containsKey('longitude') ? l$longitude : const {},
       l$comment,
     ]);
   }
@@ -627,10 +643,8 @@ class _CopyWithImpl$Input$SendInvitationInput<TRes>
           'startsAt': (startsAt as DateTime),
         if (location != _undefined && location != null)
           'location': (location as String),
-        if (latitude != _undefined && latitude != null)
-          'latitude': (latitude as double),
-        if (longitude != _undefined && longitude != null)
-          'longitude': (longitude as double),
+        if (latitude != _undefined) 'latitude': (latitude as double?),
+        if (longitude != _undefined) 'longitude': (longitude as double?),
         if (comment != _undefined && comment != null)
           'comment': (comment as String),
       }));

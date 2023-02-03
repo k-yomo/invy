@@ -44,8 +44,8 @@ class InvitationDetailFormScreen extends HookConsumerWidget {
         variables: Variables$Mutation$sendInvitation(
           input: Input$SendInvitationInput(
             location: location,
-            latitude: invitationLocation.latitude,
-            longitude: invitationLocation.longitude,
+            latitude: invitationLocation?.latitude,
+            longitude: invitationLocation?.longitude,
             startsAt: startsAt,
             expiresAt: expiresAt,
             comment: comment ?? '',
@@ -186,6 +186,7 @@ class InvitationDetailFormState extends ConsumerState<InvitationDetailForm> {
 
   @override
   Widget build(BuildContext context) {
+    final invitationLocation = ref.watch(invitationLocationProvider);
     final invitationLocationName = ref.read(locationNameProvider);
     final now = DateTime.now();
 
@@ -230,19 +231,21 @@ class InvitationDetailFormState extends ConsumerState<InvitationDetailForm> {
             const Gap(10),
             Row(
               children: [
-                OutlinedButton(
-                  style: ElevatedButton.styleFrom(
-                    minimumSize: Size.zero,
-                    padding:
-                        const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                    foregroundColor: Colors.black,
-                  ),
-                  onPressed: () {
-                    startsAtController.text =
-                        DateFormat(dateTimeFormat).format(now);
-                  },
-                  child: const Text("開催中"),
-                ),
+                invitationLocation != null
+                    ? OutlinedButton(
+                        style: ElevatedButton.styleFrom(
+                          minimumSize: Size.zero,
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 5, horizontal: 10),
+                          foregroundColor: Colors.black,
+                        ),
+                        onPressed: () {
+                          startsAtController.text =
+                              DateFormat(dateTimeFormat).format(now);
+                        },
+                        child: const Text("開催中"),
+                      )
+                    : const SizedBox(),
                 const Gap(5),
                 OutlinedButton(
                   style: ElevatedButton.styleFrom(

@@ -5,7 +5,7 @@ class Fragment$invitationDetailFragment {
   Fragment$invitationDetailFragment({
     required this.id,
     required this.location,
-    required this.coordinate,
+    this.coordinate,
     required this.comment,
     required this.startsAt,
     required this.expiresAt,
@@ -28,8 +28,10 @@ class Fragment$invitationDetailFragment {
     return Fragment$invitationDetailFragment(
       id: (l$id as String),
       location: (l$location as String),
-      coordinate: Fragment$invitationDetailFragment$coordinate.fromJson(
-          (l$coordinate as Map<String, dynamic>)),
+      coordinate: l$coordinate == null
+          ? null
+          : Fragment$invitationDetailFragment$coordinate.fromJson(
+              (l$coordinate as Map<String, dynamic>)),
       comment: (l$comment as String),
       startsAt: DateTime.parse((l$startsAt as String)),
       expiresAt: DateTime.parse((l$expiresAt as String)),
@@ -47,7 +49,7 @@ class Fragment$invitationDetailFragment {
 
   final String location;
 
-  final Fragment$invitationDetailFragment$coordinate coordinate;
+  final Fragment$invitationDetailFragment$coordinate? coordinate;
 
   final String comment;
 
@@ -68,7 +70,7 @@ class Fragment$invitationDetailFragment {
     final l$location = location;
     _resultData['location'] = l$location;
     final l$coordinate = coordinate;
-    _resultData['coordinate'] = l$coordinate.toJson();
+    _resultData['coordinate'] = l$coordinate?.toJson();
     final l$comment = comment;
     _resultData['comment'] = l$comment;
     final l$startsAt = startsAt;
@@ -242,9 +244,9 @@ class _CopyWithImpl$Fragment$invitationDetailFragment<TRes>
         location: location == _undefined || location == null
             ? _instance.location
             : (location as String),
-        coordinate: coordinate == _undefined || coordinate == null
+        coordinate: coordinate == _undefined
             ? _instance.coordinate
-            : (coordinate as Fragment$invitationDetailFragment$coordinate),
+            : (coordinate as Fragment$invitationDetailFragment$coordinate?),
         comment: comment == _undefined || comment == null
             ? _instance.comment
             : (comment as String),
@@ -267,8 +269,11 @@ class _CopyWithImpl$Fragment$invitationDetailFragment<TRes>
       ));
   CopyWith$Fragment$invitationDetailFragment$coordinate<TRes> get coordinate {
     final local$coordinate = _instance.coordinate;
-    return CopyWith$Fragment$invitationDetailFragment$coordinate(
-        local$coordinate, (e) => call(coordinate: e));
+    return local$coordinate == null
+        ? CopyWith$Fragment$invitationDetailFragment$coordinate.stub(
+            _then(_instance))
+        : CopyWith$Fragment$invitationDetailFragment$coordinate(
+            local$coordinate, (e) => call(coordinate: e));
   }
 
   CopyWith$Fragment$invitationDetailFragment$user<TRes> get user {

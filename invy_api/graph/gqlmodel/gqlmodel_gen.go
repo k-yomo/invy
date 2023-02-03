@@ -136,8 +136,8 @@ type SendInvitationInput struct {
 	ExpiresAt            time.Time   `json:"expiresAt"`
 	StartsAt             time.Time   `json:"startsAt"`
 	Location             string      `json:"location"`
-	Latitude             float64     `json:"latitude"`
-	Longitude            float64     `json:"longitude"`
+	Latitude             *float64    `json:"latitude"`
+	Longitude            *float64    `json:"longitude"`
 	Comment              string      `json:"comment"`
 }
 

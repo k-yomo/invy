@@ -1345,7 +1345,7 @@ type Invitation implements Node {
     userId: UUID!
     user: User! @goField(forceResolver: true)
     location: String!
-    coordinate: Coordinate!
+    coordinate: Coordinate
     comment: String!
     startsAt: Time!
     expiresAt: Time!
@@ -1359,8 +1359,8 @@ input SendInvitationInput {
     expiresAt: Time!
     startsAt: Time!
     location: String!
-    latitude: Float!
-    longitude: Float!
+    latitude: Float
+    longitude: Float
     comment: String!
 }
 type SendInvitationPayload {
@@ -3477,14 +3477,11 @@ func (ec *executionContext) _Invitation_coordinate(ctx context.Context, field gr
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(*gqlmodel.Coordinate)
 	fc.Result = res
-	return ec.marshalNCoordinate2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐCoordinate(ctx, field.Selections, res)
+	return ec.marshalOCoordinate2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐCoordinate(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Invitation_coordinate(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -10248,7 +10245,7 @@ func (ec *executionContext) unmarshalInputSendInvitationInput(ctx context.Contex
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("latitude"))
-			it.Latitude, err = ec.unmarshalNFloat2float64(ctx, v)
+			it.Latitude, err = ec.unmarshalOFloat2ᚖfloat64(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -10256,7 +10253,7 @@ func (ec *executionContext) unmarshalInputSendInvitationInput(ctx context.Contex
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("longitude"))
-			it.Longitude, err = ec.unmarshalNFloat2float64(ctx, v)
+			it.Longitude, err = ec.unmarshalOFloat2ᚖfloat64(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -10990,9 +10987,6 @@ func (ec *executionContext) _Invitation(ctx context.Context, sel ast.SelectionSe
 
 			out.Values[i] = ec._Invitation_coordinate(ctx, field, obj)
 
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&invalids, 1)
-			}
 		case "comment":
 
 			out.Values[i] = ec._Invitation_comment(ctx, field, obj)
@@ -12669,16 +12663,6 @@ func (ec *executionContext) marshalNCancelFriendshipRequestPayload2ᚖgithubᚗc
 	return ec._CancelFriendshipRequestPayload(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNCoordinate2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐCoordinate(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.Coordinate) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
-		}
-		return graphql.Null
-	}
-	return ec._Coordinate(ctx, sel, v)
-}
-
 func (ec *executionContext) unmarshalNCreateFriendGroupInput2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐCreateFriendGroupInput(ctx context.Context, v interface{}) (gqlmodel.CreateFriendGroupInput, error) {
 	res, err := ec.unmarshalInputCreateFriendGroupInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -13708,6 +13692,13 @@ func (ec *executionContext) marshalOConstraintFormat2ᚖgithubᚗcomᚋkᚑyomo�
 	return v
 }
 
+func (ec *executionContext) marshalOCoordinate2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐCoordinate(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.Coordinate) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._Coordinate(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalOCursor2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋentᚐCursor(ctx context.Context, v interface{}) (*ent.Cursor, error) {
 	if v == nil {
 		return nil, nil
@@ -13722,6 +13713,22 @@ func (ec *executionContext) marshalOCursor2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋi
 		return graphql.Null
 	}
 	return v
+}
+
+func (ec *executionContext) unmarshalOFloat2ᚖfloat64(ctx context.Context, v interface{}) (*float64, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := graphql.UnmarshalFloatContext(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOFloat2ᚖfloat64(ctx context.Context, sel ast.SelectionSet, v *float64) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	res := graphql.MarshalFloatContext(*v)
+	return graphql.WrapContextMarshaler(ctx, res)
 }
 
 func (ec *executionContext) unmarshalOInt2ᚖint(ctx context.Context, v interface{}) (*int, error) {

@@ -107,7 +107,7 @@ func (*Invitation) scanValues(columns []string) ([]any, error) {
 	for i := range columns {
 		switch columns[i] {
 		case invitation.FieldCoordinate:
-			values[i] = new(pgutil.GeoPoint)
+			values[i] = &sql.NullScanner{S: new(pgutil.GeoPoint)}
 		case invitation.FieldLocation, invitation.FieldComment:
 			values[i] = new(sql.NullString)
 		case invitation.FieldStartsAt, invitation.FieldExpiresAt, invitation.FieldCreatedAt, invitation.FieldUpdatedAt:
@@ -148,10 +148,10 @@ func (i *Invitation) assignValues(columns []string, values []any) error {
 				i.Location = value.String
 			}
 		case invitation.FieldCoordinate:
-			if value, ok := values[j].(*pgutil.GeoPoint); !ok {
+			if value, ok := values[j].(*sql.NullScanner); !ok {
 				return fmt.Errorf("unexpected type %T for field coordinate", values[j])
-			} else if value != nil {
-				i.Coordinate = value
+			} else if value.Valid {
+				i.Coordinate = value.S.(*pgutil.GeoPoint)
 			}
 		case invitation.FieldComment:
 			if value, ok := values[j].(*sql.NullString); !ok {
@@ -237,8 +237,10 @@ func (i *Invitation) String() string {
 	builder.WriteString("location=")
 	builder.WriteString(i.Location)
 	builder.WriteString(", ")
-	builder.WriteString("coordinate=")
-	builder.WriteString(fmt.Sprintf("%v", i.Coordinate))
+	if v := i.Coordinate; v != nil {
+		builder.WriteString("coordinate=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
 	builder.WriteString(", ")
 	builder.WriteString("comment=")
 	builder.WriteString(i.Comment)

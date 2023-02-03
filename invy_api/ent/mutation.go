@@ -2757,9 +2757,22 @@ func (m *InvitationMutation) OldCoordinate(ctx context.Context) (v *pgutil.GeoPo
 	return oldValue.Coordinate, nil
 }
 
+// ClearCoordinate clears the value of the "coordinate" field.
+func (m *InvitationMutation) ClearCoordinate() {
+	m.coordinate = nil
+	m.clearedFields[invitation.FieldCoordinate] = struct{}{}
+}
+
+// CoordinateCleared returns if the "coordinate" field was cleared in this mutation.
+func (m *InvitationMutation) CoordinateCleared() bool {
+	_, ok := m.clearedFields[invitation.FieldCoordinate]
+	return ok
+}
+
 // ResetCoordinate resets all changes to the "coordinate" field.
 func (m *InvitationMutation) ResetCoordinate() {
 	m.coordinate = nil
+	delete(m.clearedFields, invitation.FieldCoordinate)
 }
 
 // SetComment sets the "comment" field.
@@ -3332,7 +3345,11 @@ func (m *InvitationMutation) AddField(name string, value ent.Value) error {
 // ClearedFields returns all nullable fields that were cleared during this
 // mutation.
 func (m *InvitationMutation) ClearedFields() []string {
-	return nil
+	var fields []string
+	if m.FieldCleared(invitation.FieldCoordinate) {
+		fields = append(fields, invitation.FieldCoordinate)
+	}
+	return fields
 }
 
 // FieldCleared returns a boolean indicating if a field with the given name was
@@ -3345,6 +3362,11 @@ func (m *InvitationMutation) FieldCleared(name string) bool {
 // ClearField clears the value of the field with the given name. It returns an
 // error if the field is not defined in the schema.
 func (m *InvitationMutation) ClearField(name string) error {
+	switch name {
+	case invitation.FieldCoordinate:
+		m.ClearCoordinate()
+		return nil
+	}
 	return fmt.Errorf("unknown Invitation nullable field %s", name)
 }
 

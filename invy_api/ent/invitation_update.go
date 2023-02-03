@@ -45,6 +45,12 @@ func (iu *InvitationUpdate) SetCoordinate(pp *pgutil.GeoPoint) *InvitationUpdate
 	return iu
 }
 
+// ClearCoordinate clears the value of the "coordinate" field.
+func (iu *InvitationUpdate) ClearCoordinate() *InvitationUpdate {
+	iu.mutation.ClearCoordinate()
+	return iu
+}
+
 // SetComment sets the "comment" field.
 func (iu *InvitationUpdate) SetComment(s string) *InvitationUpdate {
 	iu.mutation.SetComment(s)
@@ -253,6 +259,9 @@ func (iu *InvitationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := iu.mutation.Coordinate(); ok {
 		_spec.SetField(invitation.FieldCoordinate, field.TypeOther, value)
 	}
+	if iu.mutation.CoordinateCleared() {
+		_spec.ClearField(invitation.FieldCoordinate, field.TypeOther)
+	}
 	if value, ok := iu.mutation.Comment(); ok {
 		_spec.SetField(invitation.FieldComment, field.TypeString, value)
 	}
@@ -456,6 +465,12 @@ func (iuo *InvitationUpdateOne) SetLocation(s string) *InvitationUpdateOne {
 // SetCoordinate sets the "coordinate" field.
 func (iuo *InvitationUpdateOne) SetCoordinate(pp *pgutil.GeoPoint) *InvitationUpdateOne {
 	iuo.mutation.SetCoordinate(pp)
+	return iuo
+}
+
+// ClearCoordinate clears the value of the "coordinate" field.
+func (iuo *InvitationUpdateOne) ClearCoordinate() *InvitationUpdateOne {
+	iuo.mutation.ClearCoordinate()
 	return iuo
 }
 
@@ -690,6 +705,9 @@ func (iuo *InvitationUpdateOne) sqlSave(ctx context.Context) (_node *Invitation,
 	}
 	if value, ok := iuo.mutation.Coordinate(); ok {
 		_spec.SetField(invitation.FieldCoordinate, field.TypeOther, value)
+	}
+	if iuo.mutation.CoordinateCleared() {
+		_spec.ClearField(invitation.FieldCoordinate, field.TypeOther)
 	}
 	if value, ok := iuo.mutation.Comment(); ok {
 		_spec.SetField(invitation.FieldComment, field.TypeString, value)

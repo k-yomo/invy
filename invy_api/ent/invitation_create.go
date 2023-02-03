@@ -214,9 +214,6 @@ func (ic *InvitationCreate) check() error {
 	if _, ok := ic.mutation.Location(); !ok {
 		return &ValidationError{Name: "location", err: errors.New(`ent: missing required field "Invitation.location"`)}
 	}
-	if _, ok := ic.mutation.Coordinate(); !ok {
-		return &ValidationError{Name: "coordinate", err: errors.New(`ent: missing required field "Invitation.coordinate"`)}
-	}
 	if _, ok := ic.mutation.Comment(); !ok {
 		return &ValidationError{Name: "comment", err: errors.New(`ent: missing required field "Invitation.comment"`)}
 	}
@@ -458,6 +455,12 @@ func (u *InvitationUpsert) UpdateCoordinate() *InvitationUpsert {
 	return u
 }
 
+// ClearCoordinate clears the value of the "coordinate" field.
+func (u *InvitationUpsert) ClearCoordinate() *InvitationUpsert {
+	u.SetNull(invitation.FieldCoordinate)
+	return u
+}
+
 // SetComment sets the "comment" field.
 func (u *InvitationUpsert) SetComment(v string) *InvitationUpsert {
 	u.Set(invitation.FieldComment, v)
@@ -585,6 +588,13 @@ func (u *InvitationUpsertOne) SetCoordinate(v *pgutil.GeoPoint) *InvitationUpser
 func (u *InvitationUpsertOne) UpdateCoordinate() *InvitationUpsertOne {
 	return u.Update(func(s *InvitationUpsert) {
 		s.UpdateCoordinate()
+	})
+}
+
+// ClearCoordinate clears the value of the "coordinate" field.
+func (u *InvitationUpsertOne) ClearCoordinate() *InvitationUpsertOne {
+	return u.Update(func(s *InvitationUpsert) {
+		s.ClearCoordinate()
 	})
 }
 
@@ -886,6 +896,13 @@ func (u *InvitationUpsertBulk) SetCoordinate(v *pgutil.GeoPoint) *InvitationUpse
 func (u *InvitationUpsertBulk) UpdateCoordinate() *InvitationUpsertBulk {
 	return u.Update(func(s *InvitationUpsert) {
 		s.UpdateCoordinate()
+	})
+}
+
+// ClearCoordinate clears the value of the "coordinate" field.
+func (u *InvitationUpsertBulk) ClearCoordinate() *InvitationUpsertBulk {
+	return u.Update(func(s *InvitationUpsert) {
+		s.ClearCoordinate()
 	})
 }
 

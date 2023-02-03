@@ -32,6 +32,7 @@ class HomeScreen extends HookConsumerWidget {
           currentLocation.value = loc;
         }
       });
+      return null;
     }, []);
 
     return StreamBuilder<QueryResult<Query$homeScreenViewer>>(

@@ -26,7 +26,9 @@ func (Invitation) Fields() []ent.Field {
 		field.Other("coordinate", &pgutil.GeoPoint{}).
 			SchemaType(map[string]string{
 				dialect.Postgres: "geometry(Point,4326)",
-			}),
+			}).
+			Nillable().
+			Optional(),
 		field.String("comment"),
 		field.Time("starts_at"),
 		field.Time("expires_at"),

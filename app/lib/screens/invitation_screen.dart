@@ -22,13 +22,17 @@ class InvitationScreen extends HookConsumerWidget {
     final invitationLocation = ref.watch(invitationLocationProvider);
     final invitationLocationNotifier =
         ref.read(invitationLocationProvider.notifier);
-    final locationName = ref.watch(locationNameProvider);
     final locationNameNotifier = ref.read(locationNameProvider.notifier);
 
     useEffect(() {
       getCurrentLocation().then((location) async {
-        if (location != null) {
+        if (location == null) {
+          return null;
+        }
+        currentLocation.value ??= location;
+        if (invitationLocation == null) {
           invitationLocationNotifier.state = location;
+
           final placeMarks = await placemarkFromCoordinates(
               location.latitude, location.longitude);
           if (placeMarks.isEmpty) {
@@ -46,10 +50,12 @@ class InvitationScreen extends HookConsumerWidget {
     }, []);
 
     useEffect(() {
-      googleMapController.value.future.then((controller) {
-        controller.animateCamera(CameraUpdate.newCameraPosition(
-            CameraPosition(target: invitationLocation, zoom: 16)));
-      });
+      if (invitationLocation != null) {
+        googleMapController.value.future.then((controller) {
+          controller.animateCamera(CameraUpdate.newCameraPosition(
+              CameraPosition(target: invitationLocation, zoom: 16)));
+        });
+      }
       return null;
     }, [invitationLocation]);
 
@@ -63,8 +69,10 @@ class InvitationScreen extends HookConsumerWidget {
               children: [
                 GoogleMap(
                   initialCameraPosition: CameraPosition(
-                    target: invitationLocation,
-                    zoom: 16,
+                    // defaults to Shibuya
+                    target: invitationLocation ??
+                        const LatLng(35.6585663, 139.6980641),
+                    zoom: invitationLocation != null ? 16 : 10,
                   ),
                   onMapCreated: (GoogleMapController controller) {
                     googleMapController.value.complete(controller);
@@ -78,7 +86,8 @@ class InvitationScreen extends HookConsumerWidget {
                     }
                     final currentLat = currentLocation.value!.latitude;
                     final currentLng = currentLocation.value!.longitude;
-                    if (currentLat.toStringAsFixed(4) !=
+                    if (invitationLocation == null ||
+                        currentLat.toStringAsFixed(4) !=
                             invitationLocation.latitude.toStringAsFixed(4) ||
                         currentLng.toStringAsFixed(4) !=
                             invitationLocation.longitude.toStringAsFixed(4)) {
@@ -111,104 +120,132 @@ class InvitationScreen extends HookConsumerWidget {
               ],
             ),
           ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Container(
-                margin: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
-                padding:
-                    const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(10),
-                      topRight: Radius.circular(10),
-                      bottomLeft: Radius.circular(10),
-                      bottomRight: Radius.circular(10)),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.2),
-                      spreadRadius: 5,
-                      blurRadius: 5,
-                      offset: const Offset(0, 3), // changes position of shadow
-                    ),
-                  ],
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text("開催地はどこですか？",
-                        style: TextStyle(fontWeight: FontWeight.bold)),
-                    const Gap(10),
-                    TextButton(
-                      onPressed: () {
-                        showModalBottomSheet(
-                          shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.vertical(
-                                top: Radius.circular(20.0)),
-                          ),
-                          isScrollControlled: true,
-                          context: context,
-                          builder: (BuildContext context) {
-                            return const LocationSearchModal();
-                          },
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 15, horizontal: 15),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                          ),
-                          backgroundColor: Colors.grey.shade100,
-                          foregroundColor: Colors.black),
-                      child: Row(
-                        children: [
-                          const Icon(Icons.fmd_good),
-                          Expanded(child: Text(locationName ?? "")),
-                          // Expanded(child: Text("")),
-                          const Text("検索"),
-                          const Icon(Icons.chevron_right, size: 15),
-                        ],
-                      ),
-                    ),
-                    const Gap(10),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: TextButton(
-                            style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.black,
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 12)),
-                            onPressed: () {
-                              Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) =>
-                                    const InvitationFriendSelectScreen(),
-                              ));
-                            },
-                            child: const Text(
-                              '次へすすむ',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
+          const LocationCard(),
           // buildFloatingSearchBar(),
         ],
       ),
+    );
+  }
+}
+
+class LocationCard extends HookConsumerWidget {
+  const LocationCard({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final locationName = ref.watch(locationNameProvider);
+    final locationNameNotifier = ref.read(locationNameProvider.notifier);
+    final invitationLocationNotifier =
+        ref.read(invitationLocationProvider.notifier);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisSize: MainAxisSize.max,
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        Container(
+          margin: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
+          padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(10),
+                topRight: Radius.circular(10),
+                bottomLeft: Radius.circular(10),
+                bottomRight: Radius.circular(10)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.2),
+                spreadRadius: 5,
+                blurRadius: 5,
+                offset: const Offset(0, 3), // changes position of shadow
+              ),
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  const Expanded(
+                    child: Text("開催地はどこですか？",
+                        style: TextStyle(fontWeight: FontWeight.bold)),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      locationNameNotifier.state = "未定";
+                      invitationLocationNotifier.state = null;
+                    },
+                    style: TextButton.styleFrom(
+                        padding: const EdgeInsets.only(right: 25)),
+                    child: const Text("未定",
+                        style: TextStyle(
+                            color: Colors.blue, fontWeight: FontWeight.bold)),
+                  )
+                ],
+              ),
+              const Gap(10),
+              TextButton(
+                onPressed: () {
+                  showModalBottomSheet(
+                    shape: const RoundedRectangleBorder(
+                      borderRadius:
+                          BorderRadius.vertical(top: Radius.circular(20.0)),
+                    ),
+                    isScrollControlled: true,
+                    context: context,
+                    builder: (BuildContext context) {
+                      return const LocationSearchModal();
+                    },
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 15, horizontal: 15),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    backgroundColor: Colors.grey.shade100,
+                    foregroundColor: Colors.black),
+                child: Row(
+                  children: [
+                    const Icon(Icons.fmd_good),
+                    Expanded(child: Text(locationName ?? "")),
+                    const Text("検索"),
+                    const Icon(Icons.chevron_right, size: 15),
+                  ],
+                ),
+              ),
+              const Gap(10),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextButton(
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.black,
+                          padding: const EdgeInsets.symmetric(vertical: 12)),
+                      onPressed: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) =>
+                              const InvitationFriendSelectScreen(),
+                        ));
+                      },
+                      child: const Text(
+                        '次へすすむ',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }
@@ -256,6 +293,9 @@ class LocationSearchModal extends HookConsumerWidget {
                     enabledBorder: const UnderlineInputBorder(
                       borderSide: BorderSide.none,
                     ),
+                    focusedBorder: const UnderlineInputBorder(
+                      borderSide: BorderSide.none,
+                    ),
                   ),
                   validator: (value) {
                     return null;
@@ -267,38 +307,36 @@ class LocationSearchModal extends HookConsumerWidget {
                   },
                 ),
                 const Gap(10),
-                Container(
-                  child: ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: searchResult.value.length,
-                    itemBuilder: (context, index) {
-                      final place = searchResult.value[index];
-                      return Card(
-                        color: Colors.grey.shade100,
-                        shadowColor: Colors.transparent,
-                        child: ListTile(
-                          title: Text(place.structuredFormatting!.mainText!),
-                          subtitle: Text(
-                              place.structuredFormatting?.secondaryText ?? ""),
-                          onTap: () async {
-                            final locations = await locationFromAddress(
-                                place.description.toString());
-                            if (locations.isNotEmpty) {
-                              ref
-                                  .read(invitationLocationProvider.notifier)
-                                  .state = LatLng(
-                                locations.first.latitude,
-                                locations.first.longitude,
-                              );
-                              ref.read(locationNameProvider.notifier).state =
-                                  place.structuredFormatting!.mainText!;
-                            }
-                            Navigator.of(context).pop();
-                          },
-                        ),
-                      );
-                    },
-                  ),
+                ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: searchResult.value.length,
+                  itemBuilder: (context, index) {
+                    final place = searchResult.value[index];
+                    return Card(
+                      color: Colors.grey.shade100,
+                      shadowColor: Colors.transparent,
+                      child: ListTile(
+                        title: Text(place.structuredFormatting!.mainText!),
+                        subtitle: Text(
+                            place.structuredFormatting?.secondaryText ?? ""),
+                        onTap: () async {
+                          final locations = await locationFromAddress(
+                              place.description.toString());
+                          if (locations.isNotEmpty) {
+                            ref
+                                .read(invitationLocationProvider.notifier)
+                                .state = LatLng(
+                              locations.first.latitude,
+                              locations.first.longitude,
+                            );
+                            ref.read(locationNameProvider.notifier).state =
+                                place.structuredFormatting!.mainText!;
+                          }
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    );
+                  },
                 ),
               ],
             ),

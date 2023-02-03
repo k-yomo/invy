@@ -70,13 +70,18 @@ func (r *mutationResolver) SendInvitation(ctx context.Context, input *gqlmodel.S
 		return nil, err
 	}
 
+	var locationCoordinate *pgutil.GeoPoint
+	if input.Latitude != nil && input.Longitude != nil {
+		locationCoordinate = pgutil.NewGeoPoint(*input.Latitude, *input.Longitude)
+	}
+
 	var dbInvitation *ent.Invitation
 	err = ent.RunInTx(ctx, r.DB, func(tx *ent.Tx) error {
 		var err error
 		dbInvitation, err = tx.Invitation.Create().
 			SetUserID(authUserID).
 			SetLocation(input.Location).
-			SetCoordinate(pgutil.NewGeoPoint(input.Latitude, input.Longitude)).
+			SetCoordinate(locationCoordinate).
 			SetComment(input.Comment).
 			SetStartsAt(input.StartsAt).
 			SetExpiresAt(input.ExpiresAt).

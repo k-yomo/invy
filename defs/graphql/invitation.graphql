@@ -14,7 +14,7 @@ type Invitation implements Node {
     userId: UUID!
     user: User! @goField(forceResolver: true)
     location: String!
-    coordinate: Coordinate!
+    coordinate: Coordinate
     comment: String!
     startsAt: Time!
     expiresAt: Time!
@@ -28,8 +28,8 @@ input SendInvitationInput {
     expiresAt: Time!
     startsAt: Time!
     location: String!
-    latitude: Float!
-    longitude: Float!
+    latitude: Float
+    longitude: Float
     comment: String!
 }
 type SendInvitationPayload {

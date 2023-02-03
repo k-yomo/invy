@@ -7,8 +7,8 @@ final locationNameProvider = StateProvider<String>((ref) {
   return "";
 });
 
-final invitationLocationProvider = StateProvider<LatLng>((ref) {
-  return const LatLng(35.6585663, 139.6980641);
+final invitationLocationProvider = StateProvider<LatLng?>((ref) {
+  return null;
 });
 
 Future<LatLng?> getCurrentLocation() async {

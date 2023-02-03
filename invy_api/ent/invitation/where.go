@@ -222,6 +222,16 @@ func CoordinateLTE(v *pgutil.GeoPoint) predicate.Invitation {
 	return predicate.Invitation(sql.FieldLTE(FieldCoordinate, v))
 }
 
+// CoordinateIsNil applies the IsNil predicate on the "coordinate" field.
+func CoordinateIsNil() predicate.Invitation {
+	return predicate.Invitation(sql.FieldIsNull(FieldCoordinate))
+}
+
+// CoordinateNotNil applies the NotNil predicate on the "coordinate" field.
+func CoordinateNotNil() predicate.Invitation {
+	return predicate.Invitation(sql.FieldNotNull(FieldCoordinate))
+}
+
 // CommentEQ applies the EQ predicate on the "comment" field.
 func CommentEQ(v string) predicate.Invitation {
 	return predicate.Invitation(sql.FieldEQ(FieldComment, v))

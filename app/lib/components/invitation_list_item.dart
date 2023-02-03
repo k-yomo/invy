@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:invy/components/invitation_detail_fragment.graphql.dart';
-import 'package:invy/state/location.dart';
 
 import '../screens/invitation_detail_screen.dart';
 
@@ -44,8 +41,8 @@ class InvitationListItem extends StatelessWidget {
       final distance = Geolocator.distanceBetween(
         currentLocation!.latitude,
         currentLocation!.longitude,
-        invitation.coordinate.latitude,
-        invitation.coordinate.longitude,
+        invitation.coordinate!.latitude,
+        invitation.coordinate!.longitude,
       );
       if (distance < 1000) {
         locationDistance = "${distance.round()}m";
@@ -114,7 +111,7 @@ class InvitationListItem extends StatelessWidget {
                                     locationDistance,
                                     style: const TextStyle(fontSize: 12),
                                   )
-                                : SizedBox(),
+                                : const SizedBox(),
                           ],
                         ),
                       ),

@@ -1833,7 +1833,7 @@ class Mutation$sendInvitation$sendInvitation$invitation {
   Mutation$sendInvitation$sendInvitation$invitation({
     required this.id,
     required this.location,
-    required this.coordinate,
+    this.coordinate,
     required this.startsAt,
     required this.expiresAt,
     required this.$__typename,
@@ -1850,9 +1850,10 @@ class Mutation$sendInvitation$sendInvitation$invitation {
     return Mutation$sendInvitation$sendInvitation$invitation(
       id: (l$id as String),
       location: (l$location as String),
-      coordinate:
-          Mutation$sendInvitation$sendInvitation$invitation$coordinate.fromJson(
-              (l$coordinate as Map<String, dynamic>)),
+      coordinate: l$coordinate == null
+          ? null
+          : Mutation$sendInvitation$sendInvitation$invitation$coordinate
+              .fromJson((l$coordinate as Map<String, dynamic>)),
       startsAt: DateTime.parse((l$startsAt as String)),
       expiresAt: DateTime.parse((l$expiresAt as String)),
       $__typename: (l$$__typename as String),
@@ -1863,7 +1864,8 @@ class Mutation$sendInvitation$sendInvitation$invitation {
 
   final String location;
 
-  final Mutation$sendInvitation$sendInvitation$invitation$coordinate coordinate;
+  final Mutation$sendInvitation$sendInvitation$invitation$coordinate?
+      coordinate;
 
   final DateTime startsAt;
 
@@ -1878,7 +1880,7 @@ class Mutation$sendInvitation$sendInvitation$invitation {
     final l$location = location;
     _resultData['location'] = l$location;
     final l$coordinate = coordinate;
-    _resultData['coordinate'] = l$coordinate.toJson();
+    _resultData['coordinate'] = l$coordinate?.toJson();
     final l$startsAt = startsAt;
     _resultData['startsAt'] = l$startsAt.toIso8601String();
     final l$expiresAt = expiresAt;
@@ -2010,10 +2012,10 @@ class _CopyWithImpl$Mutation$sendInvitation$sendInvitation$invitation<TRes>
         location: location == _undefined || location == null
             ? _instance.location
             : (location as String),
-        coordinate: coordinate == _undefined || coordinate == null
+        coordinate: coordinate == _undefined
             ? _instance.coordinate
             : (coordinate
-                as Mutation$sendInvitation$sendInvitation$invitation$coordinate),
+                as Mutation$sendInvitation$sendInvitation$invitation$coordinate?),
         startsAt: startsAt == _undefined || startsAt == null
             ? _instance.startsAt
             : (startsAt as DateTime),
@@ -2027,8 +2029,11 @@ class _CopyWithImpl$Mutation$sendInvitation$sendInvitation$invitation<TRes>
   CopyWith$Mutation$sendInvitation$sendInvitation$invitation$coordinate<TRes>
       get coordinate {
     final local$coordinate = _instance.coordinate;
-    return CopyWith$Mutation$sendInvitation$sendInvitation$invitation$coordinate(
-        local$coordinate, (e) => call(coordinate: e));
+    return local$coordinate == null
+        ? CopyWith$Mutation$sendInvitation$sendInvitation$invitation$coordinate
+            .stub(_then(_instance))
+        : CopyWith$Mutation$sendInvitation$sendInvitation$invitation$coordinate(
+            local$coordinate, (e) => call(coordinate: e));
   }
 }
 
