@@ -2,6 +2,7 @@ import 'dart:io' show Platform;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:invy/graphql/schema.graphql.dart';
 import 'package:invy/util/device.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
@@ -56,7 +57,7 @@ Future<GraphQLClient> initGraphQLClient({
   }
 
   return GraphQLClient(
-    cache: GraphQLCache(store: HiveStore()),
+    cache: GraphQLCache(store: HiveStore(), possibleTypes: possibleTypesMap),
     link: link,
   );
 }
