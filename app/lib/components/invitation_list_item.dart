@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:invy/components/invitation_detail_fragment.graphql.dart';
+import 'package:invy/state/location.dart';
 
 import '../screens/invitation_detail_screen.dart';
 
@@ -16,21 +21,41 @@ String _convertToDisplayTime(DateTime time) {
 }
 
 class InvitationListItem extends StatelessWidget {
-  InvitationListItem({
+  const InvitationListItem({
     super.key,
     required this.invitation,
+    this.currentLocation,
     this.accepted = false,
     this.onAccepted,
     this.onDenied,
   });
 
   final Fragment$invitationDetailFragment invitation;
-  bool accepted;
-  ValueSetter<String>? onAccepted;
-  ValueSetter<String>? onDenied;
+  final LatLng? currentLocation;
+  final bool accepted;
+  final ValueSetter<String>? onAccepted;
+  final ValueSetter<String>? onDenied;
 
   @override
   Widget build(BuildContext context) {
+    String locationDistance = "";
+
+    if (currentLocation != null && invitation.coordinate != null) {
+      final distance = Geolocator.distanceBetween(
+        currentLocation!.latitude,
+        currentLocation!.longitude,
+        invitation.coordinate.latitude,
+        invitation.coordinate.longitude,
+      );
+      if (distance < 1000) {
+        locationDistance = "${distance.round()}m";
+      } else if (distance < 10000) {
+        locationDistance = "${((distance + 1000) / 1000).round()}km";
+      } else {
+        locationDistance = "${((distance + 10000) / 10000).round() * 10}km";
+      }
+    }
+
     return Container(
       decoration: BoxDecoration(
         color: Colors.grey.shade100,
@@ -83,7 +108,13 @@ class InvitationListItem extends StatelessWidget {
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               ],
-                            )
+                            ),
+                            locationDistance.isNotEmpty
+                                ? Text(
+                                    locationDistance,
+                                    style: const TextStyle(fontSize: 12),
+                                  )
+                                : SizedBox(),
                           ],
                         ),
                       ),

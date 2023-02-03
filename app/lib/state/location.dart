@@ -12,11 +12,7 @@ final invitationLocationProvider = StateProvider<LatLng>((ref) {
 });
 
 Future<LatLng?> getCurrentLocation() async {
-  bool serviceEnabled;
-  LocationPermission permission;
-
-  serviceEnabled = await Geolocator.isLocationServiceEnabled();
-  if (!serviceEnabled) {
+  if (!await Geolocator.isLocationServiceEnabled()) {
     return null;
   }
 

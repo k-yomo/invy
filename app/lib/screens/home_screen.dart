@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:graphql/client.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:invy/screens/home_screen.graphql.dart';
 import 'package:invy/services/graphql_client.dart';
 import 'package:invy/state/badge_count.dart';
+import 'package:invy/state/location.dart';
 
 import '../components/invitation_list_item.dart';
 import '../components/sub_title.dart';
@@ -22,6 +25,14 @@ class HomeScreen extends HookConsumerWidget {
       eagerlyFetchResults: true,
     ));
     viewerQuery.startPolling(const Duration(seconds: 30));
+    final currentLocation = useState<LatLng?>(null);
+    useEffect(() {
+      getCurrentLocation().then((loc) {
+        if (loc != null) {
+          currentLocation.value = loc;
+        }
+      });
+    }, []);
 
     return StreamBuilder<QueryResult<Query$homeScreenViewer>>(
       stream: viewerQuery.stream,
@@ -64,6 +75,8 @@ class HomeScreen extends HookConsumerWidget {
                                                         vertical: 5),
                                                 child: InvitationListItem(
                                                   invitation: invitation,
+                                                  currentLocation:
+                                                      currentLocation.value,
                                                   onAccepted:
                                                       (invitationId) async {
                                                     final result = await graphqlClient
@@ -121,6 +134,8 @@ class HomeScreen extends HookConsumerWidget {
                                               vertical: 5),
                                           child: InvitationListItem(
                                             invitation: invitation,
+                                            currentLocation:
+                                                currentLocation.value,
                                             accepted: true,
                                           ),
                                         )))
