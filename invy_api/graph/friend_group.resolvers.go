@@ -11,6 +11,7 @@ import (
 	"github.com/k-yomo/invy/invy_api/auth"
 	"github.com/k-yomo/invy/invy_api/ent"
 	"github.com/k-yomo/invy/invy_api/ent/friendgroup"
+	"github.com/k-yomo/invy/invy_api/ent/userfriendgroup"
 	"github.com/k-yomo/invy/invy_api/graph/conv"
 	"github.com/k-yomo/invy/invy_api/graph/gqlgen"
 	"github.com/k-yomo/invy/invy_api/graph/gqlmodel"
@@ -67,12 +68,10 @@ func (r *mutationResolver) CreateFriendGroup(ctx context.Context, input gqlmodel
 func (r *mutationResolver) UpdateFriendGroup(ctx context.Context, input gqlmodel.UpdateFriendGroupInput) (*gqlmodel.UpdateFriendGroupPayload, error) {
 	authUserID := auth.GetCurrentUserID(ctx)
 	err := ent.RunInTx(ctx, r.DB, func(tx *ent.Tx) error {
-		// FIXME: remove -diff & add +diff would be better than clear then add
 		updatedNum, err := tx.FriendGroup.Update().
 			Where(friendgroup.ID(input.ID), friendgroup.UserID(authUserID)).
 			SetName(input.Name).
 			SetTotalCount(len(input.FriendUserIds)).
-			ClearFriendUsers().
 			Save(ctx)
 		if err != nil {
 			return err
@@ -80,6 +79,13 @@ func (r *mutationResolver) UpdateFriendGroup(ctx context.Context, input gqlmodel
 		// no update means the group does not exist or not belonging to the logged in user
 		if updatedNum == 0 {
 			return nil
+		}
+		// FIXME: remove -diff & add +diff would be better than clear then add
+		_, err = tx.UserFriendGroup.Delete().
+			Where(userfriendgroup.FriendGroupID(input.ID)).
+			Exec(ctx)
+		if err != nil {
+			return err
 		}
 
 		dbUserFriendGroupCreates := make([]*ent.UserFriendGroupCreate, 0, len(input.FriendUserIds))

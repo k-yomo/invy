@@ -1,6 +1,7 @@
 query friendGroupDetailScreenViewer($friendGroupId: UUID!) {
     viewer {
         friendGroup(friendGroupId: $friendGroupId) {
+            ...friendGroupEditScreenFragment,
             id,
             name,
             totalCount,

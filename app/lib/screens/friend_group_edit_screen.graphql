@@ -1,0 +1,38 @@
+fragment friendGroupEditScreenFragment on FriendGroup {
+    id,
+    name,
+    friendUsers {
+        ...friendListItemFragment
+    }
+}
+
+query friendGroupEditScreenViewer {
+    viewer {
+        friends(first: 100) {
+            edges {
+                node {
+                    ...friendListItemFragment
+                }
+            }
+            pageInfo {
+                startCursor
+                endCursor
+                hasNextPage
+                hasPreviousPage
+            }
+        }
+    }
+}
+
+mutation updateFriendGroup($input: UpdateFriendGroupInput!) {
+    updateFriendGroup(input: $input) {
+        friendGroup {
+            id
+            name
+            totalCount
+            friendUsers {
+                ...friendListItemFragment
+            }
+        }
+    }
+}

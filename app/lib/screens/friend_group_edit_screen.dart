@@ -3,36 +3,50 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:graphql/client.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:invy/components/friend_selection_list.dart';
-import 'package:invy/screens/friend_group_create_screen.graphql.dart';
 import 'package:invy/graphql/schema.graphql.dart';
 
 import '../components/app_bar_leading.dart';
 import '../components/friend_list_item_fragment.graphql.dart';
 import '../services/graphql_client.dart';
+import 'friend_group_edit_screen.graphql.dart';
 
-class FriendGroupCreateScreen extends HookConsumerWidget {
-  const FriendGroupCreateScreen({super.key});
+class FriendGroupEditScreen extends HookConsumerWidget {
+  FriendGroupEditScreen({
+    super.key,
+    required this.friendGroup,
+  });
+
+  final Fragment$friendGroupEditScreenFragment friendGroup;
+  final groupNameController = TextEditingController();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final graphqlClient = ref.read(graphqlClientProvider);
-    final groupName = useState<String>('');
-    final selectedFriends = useState<List<Fragment$friendListItemFragment>>([]);
+    final groupName = useState<String>(friendGroup.name);
+    final selectedFriends = useState<List<Fragment$friendListItemFragment>>(
+        friendGroup.friendUsers);
     final selectedCount = selectedFriends.value.length;
+    final isValid = groupName.value.isNotEmpty && selectedCount > 0;
 
-    return FutureBuilder<QueryResult<Query$friendGroupCreateScreenViewer>>(
-        future: graphqlClient.query$friendGroupCreateScreenViewer(),
+    useEffect(() {
+      groupNameController.text = groupName.value;
+      return null;
+    }, []);
+
+    return FutureBuilder<QueryResult<Query$friendGroupEditScreenViewer>>(
+        future: graphqlClient.query$friendGroupEditScreenViewer(),
         builder: (context, snapshot) {
           final viewer = snapshot.data?.parsedData?.viewer;
 
-          onGroupCreateButtonPressed() async {
+          onGroupSaveButtonPressed() async {
             if (groupName.value.isEmpty) {
               return;
             }
-            final result = await graphqlClient.mutate$createFriendGroup(
-              Options$Mutation$createFriendGroup(
-                variables: Variables$Mutation$createFriendGroup(
-                  input: Input$CreateFriendGroupInput(
+            final result = await graphqlClient.mutate$updateFriendGroup(
+              Options$Mutation$updateFriendGroup(
+                variables: Variables$Mutation$updateFriendGroup(
+                  input: Input$UpdateFriendGroupInput(
+                    id: friendGroup.id,
                     name: groupName.value,
                     friendUserIds: selectedFriends.value
                         .map((friend) => friend.id)
@@ -43,6 +57,7 @@ class FriendGroupCreateScreen extends HookConsumerWidget {
             );
             if (result.hasException) {
               // TODO: show error
+              print(result.exception);
               return;
             }
             Navigator.of(context).pop();
@@ -52,19 +67,18 @@ class FriendGroupCreateScreen extends HookConsumerWidget {
               appBar: AppBar(
                 leading: const AppBarLeading(),
                 title: Text(
-                  selectedCount > 0 ? '選択中($selectedCount)' : 'グループ作成',
+                  selectedCount > 0 ? '選択中($selectedCount)' : 'グループ編集',
                   style: const TextStyle(
                       fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 actions: <Widget>[
                   TextButton(
-                    onPressed: onGroupCreateButtonPressed,
+                    onPressed: onGroupSaveButtonPressed,
                     child: Text(
-                      "作成する",
+                      "保存する",
                       style: TextStyle(
                         fontSize: 16,
-                        color:
-                            groupName.value.isEmpty ? Colors.grey : Colors.blue,
+                        color: isValid ? Colors.blue : Colors.grey,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -78,6 +92,7 @@ class FriendGroupCreateScreen extends HookConsumerWidget {
                 child: Column(
                   children: [
                     TextField(
+                      controller: groupNameController,
                       textInputAction: TextInputAction.search,
                       cursorColor: Colors.black,
                       decoration: const InputDecoration(

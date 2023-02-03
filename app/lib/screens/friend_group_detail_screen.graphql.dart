@@ -1,5 +1,6 @@
 import '../components/friend_list_item_fragment.graphql.dart';
 import '../components/user_profile_modal_fragment.graphql.dart';
+import 'friend_group_edit_screen.graphql.dart';
 import 'package:flutter/widgets.dart' as widgets;
 import 'package:gql/ast.dart';
 import 'package:graphql/client.dart' as graphql;
@@ -276,6 +277,10 @@ const documentNodeQueryfriendGroupDetailScreenViewer =
             ],
             directives: [],
             selectionSet: SelectionSetNode(selections: [
+              FragmentSpreadNode(
+                name: NameNode(value: 'friendGroupEditScreenFragment'),
+                directives: [],
+              ),
               FieldNode(
                 name: NameNode(value: 'id'),
                 alias: null,
@@ -347,6 +352,7 @@ const documentNodeQueryfriendGroupDetailScreenViewer =
       ),
     ]),
   ),
+  fragmentDefinitionfriendGroupEditScreenFragment,
   fragmentDefinitionfriendListItemFragment,
   fragmentDefinitionuserProfileModalFragment,
 ]);
@@ -629,32 +635,33 @@ class _CopyWithStubImpl$Query$friendGroupDetailScreenViewer$viewer<TRes>
               _res);
 }
 
-class Query$friendGroupDetailScreenViewer$viewer$friendGroup {
+class Query$friendGroupDetailScreenViewer$viewer$friendGroup
+    implements Fragment$friendGroupEditScreenFragment {
   Query$friendGroupDetailScreenViewer$viewer$friendGroup({
     required this.id,
     required this.name,
-    required this.totalCount,
     required this.friendUsers,
     required this.$__typename,
+    required this.totalCount,
   });
 
   factory Query$friendGroupDetailScreenViewer$viewer$friendGroup.fromJson(
       Map<String, dynamic> json) {
     final l$id = json['id'];
     final l$name = json['name'];
-    final l$totalCount = json['totalCount'];
     final l$friendUsers = json['friendUsers'];
     final l$$__typename = json['__typename'];
+    final l$totalCount = json['totalCount'];
     return Query$friendGroupDetailScreenViewer$viewer$friendGroup(
       id: (l$id as String),
       name: (l$name as String),
-      totalCount: (l$totalCount as int),
       friendUsers: (l$friendUsers as List<dynamic>)
           .map((e) =>
               Query$friendGroupDetailScreenViewer$viewer$friendGroup$friendUsers
                   .fromJson((e as Map<String, dynamic>)))
           .toList(),
       $__typename: (l$$__typename as String),
+      totalCount: (l$totalCount as int),
     );
   }
 
@@ -662,12 +669,12 @@ class Query$friendGroupDetailScreenViewer$viewer$friendGroup {
 
   final String name;
 
-  final int totalCount;
-
   final List<Query$friendGroupDetailScreenViewer$viewer$friendGroup$friendUsers>
       friendUsers;
 
   final String $__typename;
+
+  final int totalCount;
 
   Map<String, dynamic> toJson() {
     final _resultData = <String, dynamic>{};
@@ -675,12 +682,12 @@ class Query$friendGroupDetailScreenViewer$viewer$friendGroup {
     _resultData['id'] = l$id;
     final l$name = name;
     _resultData['name'] = l$name;
-    final l$totalCount = totalCount;
-    _resultData['totalCount'] = l$totalCount;
     final l$friendUsers = friendUsers;
     _resultData['friendUsers'] = l$friendUsers.map((e) => e.toJson()).toList();
     final l$$__typename = $__typename;
     _resultData['__typename'] = l$$__typename;
+    final l$totalCount = totalCount;
+    _resultData['totalCount'] = l$totalCount;
     return _resultData;
   }
 
@@ -688,15 +695,15 @@ class Query$friendGroupDetailScreenViewer$viewer$friendGroup {
   int get hashCode {
     final l$id = id;
     final l$name = name;
-    final l$totalCount = totalCount;
     final l$friendUsers = friendUsers;
     final l$$__typename = $__typename;
+    final l$totalCount = totalCount;
     return Object.hashAll([
       l$id,
       l$name,
-      l$totalCount,
       Object.hashAll(l$friendUsers.map((v) => v)),
       l$$__typename,
+      l$totalCount,
     ]);
   }
 
@@ -719,11 +726,6 @@ class Query$friendGroupDetailScreenViewer$viewer$friendGroup {
     if (l$name != lOther$name) {
       return false;
     }
-    final l$totalCount = totalCount;
-    final lOther$totalCount = other.totalCount;
-    if (l$totalCount != lOther$totalCount) {
-      return false;
-    }
     final l$friendUsers = friendUsers;
     final lOther$friendUsers = other.friendUsers;
     if (l$friendUsers.length != lOther$friendUsers.length) {
@@ -739,6 +741,11 @@ class Query$friendGroupDetailScreenViewer$viewer$friendGroup {
     final l$$__typename = $__typename;
     final lOther$$__typename = other.$__typename;
     if (l$$__typename != lOther$$__typename) {
+      return false;
+    }
+    final l$totalCount = totalCount;
+    final lOther$totalCount = other.totalCount;
+    if (l$totalCount != lOther$totalCount) {
       return false;
     }
     return true;
@@ -770,10 +777,10 @@ abstract class CopyWith$Query$friendGroupDetailScreenViewer$viewer$friendGroup<
   TRes call({
     String? id,
     String? name,
-    int? totalCount,
     List<Query$friendGroupDetailScreenViewer$viewer$friendGroup$friendUsers>?
         friendUsers,
     String? $__typename,
+    int? totalCount,
   });
   TRes friendUsers(
       Iterable<Query$friendGroupDetailScreenViewer$viewer$friendGroup$friendUsers> Function(
@@ -801,18 +808,15 @@ class _CopyWithImpl$Query$friendGroupDetailScreenViewer$viewer$friendGroup<TRes>
   TRes call({
     Object? id = _undefined,
     Object? name = _undefined,
-    Object? totalCount = _undefined,
     Object? friendUsers = _undefined,
     Object? $__typename = _undefined,
+    Object? totalCount = _undefined,
   }) =>
       _then(Query$friendGroupDetailScreenViewer$viewer$friendGroup(
         id: id == _undefined || id == null ? _instance.id : (id as String),
         name: name == _undefined || name == null
             ? _instance.name
             : (name as String),
-        totalCount: totalCount == _undefined || totalCount == null
-            ? _instance.totalCount
-            : (totalCount as int),
         friendUsers: friendUsers == _undefined || friendUsers == null
             ? _instance.friendUsers
             : (friendUsers as List<
@@ -820,6 +824,9 @@ class _CopyWithImpl$Query$friendGroupDetailScreenViewer$viewer$friendGroup<TRes>
         $__typename: $__typename == _undefined || $__typename == null
             ? _instance.$__typename
             : ($__typename as String),
+        totalCount: totalCount == _undefined || totalCount == null
+            ? _instance.totalCount
+            : (totalCount as int),
       ));
   TRes friendUsers(
           Iterable<Query$friendGroupDetailScreenViewer$viewer$friendGroup$friendUsers> Function(
@@ -847,10 +854,10 @@ class _CopyWithStubImpl$Query$friendGroupDetailScreenViewer$viewer$friendGroup<
   call({
     String? id,
     String? name,
-    int? totalCount,
     List<Query$friendGroupDetailScreenViewer$viewer$friendGroup$friendUsers>?
         friendUsers,
     String? $__typename,
+    int? totalCount,
   }) =>
       _res;
   friendUsers(_fn) => _res;

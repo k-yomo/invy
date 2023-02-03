@@ -18,17 +18,18 @@ class FriendSelectionList extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
         children: friends.map((friend) {
-      final isSelected = selectedFriends.contains(friend);
+      final isSelected = selectedFriends.map((f) => f.id).contains(friend.id);
       return Column(
         children: [
           InkWell(
             onTap: () {
+              var updatedSelectedFriends = [...selectedFriends];
               if (isSelected) {
-                selectedFriends.remove(friend);
+                updatedSelectedFriends.removeWhere((f) => f.id == friend.id);
               } else {
-                selectedFriends.add(friend);
+                updatedSelectedFriends.add(friend);
               }
-              onChange(selectedFriends);
+              onChange(updatedSelectedFriends);
             },
             child: FriendListItem(
                 key: Key(friend.id),

@@ -1,8 +1,10 @@
-import 'package:graphql/client.dart';
-import 'package:invy/components/friend_list.dart';
 import 'package:flutter/material.dart';
+import 'package:graphql/client.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:invy/components/friend_list.dart';
 import 'package:invy/components/user_profile_modal.dart';
+import 'package:invy/screens/friend_group_edit_screen.dart';
+
 import '../components/app_bar_leading.dart';
 import '../screens/friend_group_detail_screen.graphql.dart';
 import '../services/graphql_client.dart';
@@ -15,13 +17,16 @@ class FriendGroupDetailScreen extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final graphqlClient = ref.read(graphqlClientProvider);
+    final viewerQuery = graphqlClient.watchQuery$friendGroupDetailScreenViewer(
+        WatchOptions$Query$friendGroupDetailScreenViewer(
+      variables: Variables$Query$friendGroupDetailScreenViewer(
+        friendGroupId: friendGroupId,
+      ),
+      eagerlyFetchResults: true,
+    ));
 
-    return FutureBuilder<QueryResult<Query$friendGroupDetailScreenViewer>>(
-        future: graphqlClient.query$friendGroupDetailScreenViewer(
-            Options$Query$friendGroupDetailScreenViewer(
-                variables: Variables$Query$friendGroupDetailScreenViewer(
-          friendGroupId: friendGroupId,
-        ))),
+    return StreamBuilder<QueryResult<Query$friendGroupDetailScreenViewer>>(
+        stream: viewerQuery.stream,
         builder: (context, snapshot) {
           final viewer = snapshot.data?.parsedData?.viewer;
           return Scaffold(
@@ -32,6 +37,27 @@ class FriendGroupDetailScreen extends HookConsumerWidget {
                 style:
                     const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
               ),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => FriendGroupEditScreen(
+                          friendGroup: viewer!.friendGroup,
+                        ),
+                      ),
+                    );
+                  },
+                  child: const Text(
+                    "編集",
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.blue,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
               shape: Border(
                   bottom: BorderSide(color: Colors.grey.shade200, width: 1)),
             ),

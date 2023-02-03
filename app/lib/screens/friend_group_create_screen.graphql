@@ -1,4 +1,4 @@
-query friendGroupCreateScreenViewer() {
+query friendGroupCreateScreenViewer {
     viewer {
         friends(first: 100) {
             edges {
