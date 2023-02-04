@@ -1,3 +1,11 @@
+query viewer {
+    viewer {
+        id
+        screenId
+        nickname
+        avatarUrl
+    }
+}
 
 mutation signUp($input: SignUpInput!) {
     signUp(input: $input) {

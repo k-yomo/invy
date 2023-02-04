@@ -1,9 +1,0 @@
-
-query viewer {
-    viewer {
-        id
-        screenId
-        nickname
-        avatarUrl
-    }
-}
