@@ -28,6 +28,30 @@ class FriendGroupEditScreen extends HookConsumerWidget {
     final selectedCount = selectedFriends.value.length;
     final isValid = groupName.value.isNotEmpty && selectedCount > 0;
 
+    onGroupSaveButtonPressed() async {
+      if (!isValid) {
+        return;
+      }
+      final result = await graphqlClient.mutate$updateFriendGroup(
+        Options$Mutation$updateFriendGroup(
+          variables: Variables$Mutation$updateFriendGroup(
+            input: Input$UpdateFriendGroupInput(
+              id: friendGroup.id,
+              name: groupName.value,
+              friendUserIds:
+                  selectedFriends.value.map((friend) => friend.id).toList(),
+            ),
+          ),
+        ),
+      );
+      if (result.hasException) {
+        // TODO: show error
+        print(result.exception);
+        return;
+      }
+      Navigator.of(context).pop();
+    }
+
     useEffect(() {
       groupNameController.text = groupName.value;
       return null;
@@ -37,31 +61,6 @@ class FriendGroupEditScreen extends HookConsumerWidget {
         future: graphqlClient.query$friendGroupEditScreenViewer(),
         builder: (context, snapshot) {
           final viewer = snapshot.data?.parsedData?.viewer;
-
-          onGroupSaveButtonPressed() async {
-            if (groupName.value.isEmpty) {
-              return;
-            }
-            final result = await graphqlClient.mutate$updateFriendGroup(
-              Options$Mutation$updateFriendGroup(
-                variables: Variables$Mutation$updateFriendGroup(
-                  input: Input$UpdateFriendGroupInput(
-                    id: friendGroup.id,
-                    name: groupName.value,
-                    friendUserIds: selectedFriends.value
-                        .map((friend) => friend.id)
-                        .toList(),
-                  ),
-                ),
-              ),
-            );
-            if (result.hasException) {
-              // TODO: show error
-              print(result.exception);
-              return;
-            }
-            Navigator.of(context).pop();
-          }
 
           return Scaffold(
               appBar: AppBar(

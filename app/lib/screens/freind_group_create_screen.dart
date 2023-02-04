@@ -20,33 +20,32 @@ class FriendGroupCreateScreen extends HookConsumerWidget {
     final selectedFriends = useState<List<Fragment$friendListItemFragment>>([]);
     final selectedCount = selectedFriends.value.length;
 
+    onGroupCreateButtonPressed() async {
+      if (groupName.value.isEmpty) {
+        return;
+      }
+      final result = await graphqlClient.mutate$createFriendGroup(
+        Options$Mutation$createFriendGroup(
+          variables: Variables$Mutation$createFriendGroup(
+            input: Input$CreateFriendGroupInput(
+              name: groupName.value,
+              friendUserIds:
+                  selectedFriends.value.map((friend) => friend.id).toList(),
+            ),
+          ),
+        ),
+      );
+      if (result.hasException) {
+        // TODO: show error
+        return;
+      }
+      Navigator.of(context).pop();
+    }
+
     return FutureBuilder<QueryResult<Query$friendGroupCreateScreenViewer>>(
         future: graphqlClient.query$friendGroupCreateScreenViewer(),
         builder: (context, snapshot) {
           final viewer = snapshot.data?.parsedData?.viewer;
-
-          onGroupCreateButtonPressed() async {
-            if (groupName.value.isEmpty) {
-              return;
-            }
-            final result = await graphqlClient.mutate$createFriendGroup(
-              Options$Mutation$createFriendGroup(
-                variables: Variables$Mutation$createFriendGroup(
-                  input: Input$CreateFriendGroupInput(
-                    name: groupName.value,
-                    friendUserIds: selectedFriends.value
-                        .map((friend) => friend.id)
-                        .toList(),
-                  ),
-                ),
-              ),
-            );
-            if (result.hasException) {
-              // TODO: show error
-              return;
-            }
-            Navigator.of(context).pop();
-          }
 
           return Scaffold(
               appBar: AppBar(
