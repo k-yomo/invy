@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:invy/screens/sms_login_verification_screen.dart';
@@ -11,6 +12,8 @@ class SMSLoginScreen extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final isLoading = useState(false);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -79,15 +82,16 @@ class SMSLoginScreen extends HookConsumerWidget {
                   const Gap(15),
                   TextButton(
                     style: TextButton.styleFrom(
-                      minimumSize: const Size.fromHeight(30),
+                      minimumSize: const Size.fromHeight(0),
                       padding: const EdgeInsets.symmetric(vertical: 15),
                       backgroundColor: Colors.black,
                       shape: const RoundedRectangleBorder(
                         borderRadius: BorderRadius.zero,
                       ),
                     ),
-                    onPressed: () {
-                      FirebaseAuth.instance.verifyPhoneNumber(
+                    onPressed: () async {
+                      isLoading.value = true;
+                      await FirebaseAuth.instance.verifyPhoneNumber(
                         timeout: const Duration(seconds: 120),
                         phoneNumber: "+81${phoneController.text}",
                         verificationCompleted:
@@ -108,15 +112,25 @@ class SMSLoginScreen extends HookConsumerWidget {
                         },
                         codeAutoRetrievalTimeout: (String verificationId) {},
                       );
+                      isLoading.value = false;
                     },
-                    child: const Text(
-                      "サインイン",
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                    child: isLoading.value
+                        ? const SizedBox(
+                            width: 25,
+                            height: 25,
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                              strokeWidth: 3,
+                            ),
+                          )
+                        : const Text(
+                            "サインイン",
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                   ),
                 ],
               ),

@@ -1,10 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:graphql/client.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:invy/graphql/schema.graphql.dart';
 import 'package:invy/graphql/viewer.graphql.dart';
-import 'package:invy/screens/profile_edit_screen.dart';
 import 'package:invy/services/graphql_client.dart';
 import 'package:invy/state/auth.dart';
 import 'package:invy/state/bottom_navigation.dart';
@@ -19,6 +19,7 @@ class SMSLoginVerificationScreen extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final graphqlClient = ref.read(graphqlClientProvider);
+    final isLoading = useState(false);
 
     final defaultPinTheme = PinTheme(
       textStyle: const TextStyle(fontSize: 40),
@@ -109,17 +110,30 @@ class SMSLoginVerificationScreen extends HookConsumerWidget {
             margin: const EdgeInsets.symmetric(horizontal: 20.0),
             padding: const EdgeInsets.all(30.0),
             child: Pinput(
+              autofocus: true,
               defaultPinTheme: defaultPinTheme,
               focusedPinTheme: focusedPinTheme,
               length: 6,
               onCompleted: (smsCode) async {
+                isLoading.value = true;
                 final credential = PhoneAuthProvider.credential(
                     verificationId: verificationId, smsCode: smsCode);
                 await FirebaseAuth.instance.signInWithCredential(credential);
                 await signInToInvy();
+                isLoading.value = false;
               },
             ),
           ),
+          isLoading.value
+              ? const SizedBox(
+                  width: 50,
+                  height: 50,
+                  child: CircularProgressIndicator(
+                    color: Colors.black,
+                    strokeWidth: 4,
+                  ),
+                )
+              : const SizedBox(),
         ],
       ),
     );

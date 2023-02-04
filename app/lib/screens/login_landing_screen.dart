@@ -42,11 +42,12 @@ class LoginLandingScreen extends HookConsumerWidget {
               const Spacer(),
               const Gap(30),
               Container(
+                width: double.infinity,
                 padding:
                     const EdgeInsets.symmetric(vertical: 30, horizontal: 20),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.7),
-                  borderRadius: BorderRadius.circular(20.0),
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(0),
                 ),
                 child: Column(
                   children: [
@@ -59,14 +60,16 @@ class LoginLandingScreen extends HookConsumerWidget {
                     const Gap(10),
                     TextButton(
                       style: TextButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 15, horizontal: 80),
+                        minimumSize: const Size.fromHeight(0),
+                        padding: const EdgeInsets.symmetric(vertical: 15),
                         backgroundColor: Colors.black,
-                        // padding: const EdgeInsets.symmetric(vertical: 12)
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.zero,
+                        ),
                       ),
                       onPressed: () => _openSignup(context),
                       child: const Text(
-                        "電話番号で登録 / ログイン",
+                        "電話番号で登録 / サインイン",
                         style: TextStyle(
                           fontSize: 14,
                           color: Colors.white,
@@ -74,10 +77,10 @@ class LoginLandingScreen extends HookConsumerWidget {
                         ),
                       ),
                     ),
+                    const SizedBox(height: 60),
                   ],
                 ),
               ),
-              const SizedBox(height: 100),
             ],
           ),
         ));
