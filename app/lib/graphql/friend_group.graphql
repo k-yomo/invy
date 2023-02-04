@@ -1,0 +1,5 @@
+mutation deleteFriendGroup($friendGroupId: UUID!) {
+    deleteFriendGroup(friendGroupId: $friendGroupId) {
+        deletedFriendGroupId
+    }
+}

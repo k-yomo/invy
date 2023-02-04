@@ -141,15 +141,15 @@ class MyProfileScreen extends HookConsumerWidget {
                 onPressed: () {
                   showDialog(
                     context: context,
-                    builder: (_) {
+                    builder: (context) {
                       return AlertDialog(
                         title: const Text("ログアウト"),
                         content: const Text("ログアウトしてもよろしいですか？"),
                         actions: <Widget>[
                           TextButton(
                             onPressed: () => Navigator.pop(context),
-                            style: ElevatedButton.styleFrom(
-                              foregroundColor: Colors.grey,
+                            style: TextButton.styleFrom(
+                              foregroundColor: Colors.grey.shade800,
                             ),
                             child: const Text("キャンセル"),
                           ),
@@ -160,7 +160,7 @@ class MyProfileScreen extends HookConsumerWidget {
                               graphqlClient.cache.store.reset();
                               ref.invalidate(loggedInUserProvider);
                             },
-                            style: ElevatedButton.styleFrom(
+                            style: TextButton.styleFrom(
                               foregroundColor: Colors.blue,
                             ),
                             child: const Text("OK"),
