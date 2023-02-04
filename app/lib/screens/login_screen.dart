@@ -1,5 +1,4 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:gap/gap.dart';
@@ -7,14 +6,11 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:invy/screens/login_screen.graphql.dart';
-import 'package:invy/graphql/push_notification.graphql.dart';
 import 'package:invy/graphql/schema.graphql.dart';
 import 'package:invy/graphql/viewer.graphql.dart';
 import 'package:invy/services/graphql_client.dart';
 import 'package:invy/state/auth.dart';
 import 'package:invy/state/onboarding.dart';
-
-import '../util/device.dart';
 import 'onboarding_screen.dart';
 
 class LoginScreen extends HookConsumerWidget {
@@ -31,17 +27,6 @@ class LoginScreen extends HookConsumerWidget {
         // TODO: show error
         return;
       }
-
-      // Ask notification permission
-      await FirebaseMessaging.instance.requestPermission(
-        alert: true,
-        announcement: false,
-        badge: true,
-        carPlay: false,
-        criticalAlert: false,
-        provisional: false,
-        sound: true,
-      );
 
       final result = await firebaseUser.getIdTokenResult();
       LoggedInUser loggedInUser;
@@ -85,22 +70,6 @@ class LoginScreen extends HookConsumerWidget {
             nickname: user.nickname,
             avatarUrl: user.avatarUrl);
         // TODO: redirect to user profile update page?
-      }
-
-      final fcmToken = await FirebaseMessaging.instance.getToken();
-      if (fcmToken != null) {
-        final deviceInfo = await getDeviceInfo();
-        final result = await graphqlClient.mutate$registerPushNotificationToken(
-            Options$Mutation$registerPushNotificationToken(
-          variables: Variables$Mutation$registerPushNotificationToken(
-              input: Input$RegisterPushNotificationTokenInput(
-            deviceId: deviceInfo.deviceId,
-            fcmToken: fcmToken,
-          )),
-        ));
-        if (result.hasException) {
-          print(result.exception);
-        }
       }
 
       ref.read(loggedInUserProvider.notifier).state = loggedInUser;

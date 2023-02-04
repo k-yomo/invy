@@ -1,5 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:graphql/client.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -7,7 +9,10 @@ import 'package:invy/graphql/viewer.graphql.dart';
 import 'package:invy/screens/invitation_screen.dart';
 import 'package:invy/services/graphql_client.dart';
 import 'package:invy/state/bottom_navigation.dart';
+import 'package:invy/util/device.dart';
 
+import 'graphql/push_notification.graphql.dart';
+import 'graphql/schema.graphql.dart';
 import 'screens/friend_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/login_screen.dart';
@@ -96,6 +101,39 @@ class RootWidget extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final currentTab = ref.watch(bottomNavigationTabProvider);
+    final graphqlClient = ref.read(graphqlClientProvider);
+
+    useEffect(() {
+      FirebaseMessaging.instance
+          .requestPermission(
+        alert: true,
+        announcement: false,
+        badge: true,
+        carPlay: false,
+        criticalAlert: false,
+        provisional: false,
+        sound: true,
+      )
+          .whenComplete(() async {
+        final fcmToken = await FirebaseMessaging.instance.getToken();
+        if (fcmToken != null) {
+          final deviceInfo = await getDeviceInfo();
+          final result =
+              await graphqlClient.mutate$registerPushNotificationToken(
+                  Options$Mutation$registerPushNotificationToken(
+            variables: Variables$Mutation$registerPushNotificationToken(
+                input: Input$RegisterPushNotificationTokenInput(
+              deviceId: deviceInfo.deviceId,
+              fcmToken: fcmToken,
+            )),
+          ));
+          if (result.hasException) {
+            print(result.exception);
+          }
+        }
+      });
+    }, []);
+
     return Scaffold(
         body: screens[currentTab.index],
         bottomNavigationBar: BottomNavigationBar(
