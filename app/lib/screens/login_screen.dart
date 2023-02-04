@@ -9,6 +9,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:invy/screens/login_screen.graphql.dart';
 import 'package:invy/graphql/push_notification.graphql.dart';
 import 'package:invy/graphql/schema.graphql.dart';
+import 'package:invy/graphql/viewer.graphql.dart';
 import 'package:invy/services/graphql_client.dart';
 import 'package:invy/state/auth.dart';
 import 'package:invy/state/onboarding.dart';
