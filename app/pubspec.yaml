@@ -81,6 +81,7 @@ dependencies:
     git:
       url: https://github.com/Yukams/background_locator_fixed.git
       ref: 2.0.6-dev.2
+  pinput: ^2.2.23
 
 dev_dependencies:
   flutter_test:

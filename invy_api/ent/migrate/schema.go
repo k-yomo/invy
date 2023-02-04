@@ -13,6 +13,7 @@ var (
 		{Name: "id", Type: field.TypeUUID},
 		{Name: "auth_id", Type: field.TypeString, Unique: true},
 		{Name: "email", Type: field.TypeString, Unique: true, Nullable: true},
+		{Name: "phone_number", Type: field.TypeString, Unique: true, Nullable: true},
 		{Name: "created_at", Type: field.TypeTime},
 	}
 	// AccountsTable holds the schema information for the "accounts" table.

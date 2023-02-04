@@ -50,6 +50,10 @@ func (r *mutationResolver) SignUp(ctx context.Context, input gqlmodel.SignUpInpu
 	if firebaseUser.EmailVerified && firebaseUser.Email != "" {
 		email = &firebaseUser.Email
 	}
+	var phoneNumber *string
+	if firebaseUser.PhoneNumber != "" {
+		phoneNumber = &firebaseUser.PhoneNumber
+	}
 
 	var dbUser *ent.User
 	var dbUserProfile *ent.UserProfile
@@ -68,6 +72,7 @@ func (r *mutationResolver) SignUp(ctx context.Context, input gqlmodel.SignUpInpu
 		dbAccount, err = tx.Account.Create().
 			SetAuthID(token.UID).
 			SetNillableEmail(email).
+			SetNillablePhoneNumber(phoneNumber).
 			Save(ctx)
 		if err != nil {
 			return err
@@ -93,10 +98,15 @@ func (r *mutationResolver) SignUp(ctx context.Context, input gqlmodel.SignUpInpu
 			}
 		}
 
+		nickname := screenID
+		if input.Nickname != nil {
+			nickname = *input.Nickname
+		}
+
 		dbUserProfile, err = tx.UserProfile.Create().
 			SetUserID(dbUser.ID).
 			SetScreenID(screenID).
-			SetNickname(input.Nickname).
+			SetNickname(nickname).
 			SetAvatarURL(avatarURL).
 			Save(ctx)
 		if err != nil {

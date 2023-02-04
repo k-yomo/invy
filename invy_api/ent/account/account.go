@@ -17,6 +17,8 @@ const (
 	FieldAuthID = "auth_id"
 	// FieldEmail holds the string denoting the email field in the database.
 	FieldEmail = "email"
+	// FieldPhoneNumber holds the string denoting the phone_number field in the database.
+	FieldPhoneNumber = "phone_number"
 	// FieldCreatedAt holds the string denoting the created_at field in the database.
 	FieldCreatedAt = "created_at"
 	// EdgeUsers holds the string denoting the users edge name in mutations.
@@ -37,6 +39,7 @@ var Columns = []string{
 	FieldID,
 	FieldAuthID,
 	FieldEmail,
+	FieldPhoneNumber,
 	FieldCreatedAt,
 }
 

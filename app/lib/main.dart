@@ -26,6 +26,8 @@ import 'state/badge_count.dart';
 
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  print("バックグラウンドでメッセージを受け取りました");
+  print(message.data);
   await Hive.initFlutter();
   if (message.data["type"] ==
       toJson$Enum$PushNotificationType(

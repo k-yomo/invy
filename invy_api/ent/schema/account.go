@@ -26,6 +26,10 @@ func (Account) Fields() []ent.Field {
 			Unique().
 			Nillable().
 			Optional(),
+		field.String("phone_number").
+			Unique().
+			Nillable().
+			Optional(),
 		field.Time("created_at").
 			Immutable().
 			Default(time.Now),

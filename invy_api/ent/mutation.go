@@ -66,6 +66,7 @@ type AccountMutation struct {
 	id            *uuid.UUID
 	auth_id       *string
 	email         *string
+	phone_number  *string
 	created_at    *time.Time
 	clearedFields map[string]struct{}
 	users         map[uuid.UUID]struct{}
@@ -265,6 +266,55 @@ func (m *AccountMutation) ResetEmail() {
 	delete(m.clearedFields, account.FieldEmail)
 }
 
+// SetPhoneNumber sets the "phone_number" field.
+func (m *AccountMutation) SetPhoneNumber(s string) {
+	m.phone_number = &s
+}
+
+// PhoneNumber returns the value of the "phone_number" field in the mutation.
+func (m *AccountMutation) PhoneNumber() (r string, exists bool) {
+	v := m.phone_number
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPhoneNumber returns the old "phone_number" field's value of the Account entity.
+// If the Account object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AccountMutation) OldPhoneNumber(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPhoneNumber is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPhoneNumber requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPhoneNumber: %w", err)
+	}
+	return oldValue.PhoneNumber, nil
+}
+
+// ClearPhoneNumber clears the value of the "phone_number" field.
+func (m *AccountMutation) ClearPhoneNumber() {
+	m.phone_number = nil
+	m.clearedFields[account.FieldPhoneNumber] = struct{}{}
+}
+
+// PhoneNumberCleared returns if the "phone_number" field was cleared in this mutation.
+func (m *AccountMutation) PhoneNumberCleared() bool {
+	_, ok := m.clearedFields[account.FieldPhoneNumber]
+	return ok
+}
+
+// ResetPhoneNumber resets all changes to the "phone_number" field.
+func (m *AccountMutation) ResetPhoneNumber() {
+	m.phone_number = nil
+	delete(m.clearedFields, account.FieldPhoneNumber)
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (m *AccountMutation) SetCreatedAt(t time.Time) {
 	m.created_at = &t
@@ -389,12 +439,15 @@ func (m *AccountMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *AccountMutation) Fields() []string {
-	fields := make([]string, 0, 3)
+	fields := make([]string, 0, 4)
 	if m.auth_id != nil {
 		fields = append(fields, account.FieldAuthID)
 	}
 	if m.email != nil {
 		fields = append(fields, account.FieldEmail)
+	}
+	if m.phone_number != nil {
+		fields = append(fields, account.FieldPhoneNumber)
 	}
 	if m.created_at != nil {
 		fields = append(fields, account.FieldCreatedAt)
@@ -411,6 +464,8 @@ func (m *AccountMutation) Field(name string) (ent.Value, bool) {
 		return m.AuthID()
 	case account.FieldEmail:
 		return m.Email()
+	case account.FieldPhoneNumber:
+		return m.PhoneNumber()
 	case account.FieldCreatedAt:
 		return m.CreatedAt()
 	}
@@ -426,6 +481,8 @@ func (m *AccountMutation) OldField(ctx context.Context, name string) (ent.Value,
 		return m.OldAuthID(ctx)
 	case account.FieldEmail:
 		return m.OldEmail(ctx)
+	case account.FieldPhoneNumber:
+		return m.OldPhoneNumber(ctx)
 	case account.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
 	}
@@ -450,6 +507,13 @@ func (m *AccountMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetEmail(v)
+		return nil
+	case account.FieldPhoneNumber:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPhoneNumber(v)
 		return nil
 	case account.FieldCreatedAt:
 		v, ok := value.(time.Time)
@@ -491,6 +555,9 @@ func (m *AccountMutation) ClearedFields() []string {
 	if m.FieldCleared(account.FieldEmail) {
 		fields = append(fields, account.FieldEmail)
 	}
+	if m.FieldCleared(account.FieldPhoneNumber) {
+		fields = append(fields, account.FieldPhoneNumber)
+	}
 	return fields
 }
 
@@ -508,6 +575,9 @@ func (m *AccountMutation) ClearField(name string) error {
 	case account.FieldEmail:
 		m.ClearEmail()
 		return nil
+	case account.FieldPhoneNumber:
+		m.ClearPhoneNumber()
+		return nil
 	}
 	return fmt.Errorf("unknown Account nullable field %s", name)
 }
@@ -521,6 +591,9 @@ func (m *AccountMutation) ResetField(name string) error {
 		return nil
 	case account.FieldEmail:
 		m.ResetEmail()
+		return nil
+	case account.FieldPhoneNumber:
+		m.ResetPhoneNumber()
 		return nil
 	case account.FieldCreatedAt:
 		m.ResetCreatedAt()

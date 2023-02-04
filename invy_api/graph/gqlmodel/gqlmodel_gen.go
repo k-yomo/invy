@@ -151,7 +151,7 @@ type SignOutPayload struct {
 
 type SignUpInput struct {
 	Email     *string `json:"email"`
-	Nickname  string  `json:"nickname"`
+	Nickname  *string `json:"nickname"`
 	AvatarURL *string `json:"avatarUrl"`
 }
 

@@ -1270,7 +1270,7 @@ var sources = []*ast.Source{
 
 input SignUpInput {
     email: String @constraint(format: EMAIL)
-    nickname: String! @constraint(min: 3)
+    nickname: String @constraint(min: 3)
     avatarUrl: String @constraint(format: URL)
 }
 type SignUpPayload {
@@ -10317,7 +10317,7 @@ func (ec *executionContext) unmarshalInputSignUpInput(ctx context.Context, obj i
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nickname"))
-			directive0 := func(ctx context.Context) (interface{}, error) { return ec.unmarshalNString2string(ctx, v) }
+			directive0 := func(ctx context.Context) (interface{}, error) { return ec.unmarshalOString2ᚖstring(ctx, v) }
 			directive1 := func(ctx context.Context) (interface{}, error) {
 				min, err := ec.unmarshalOInt2ᚖint(ctx, 3)
 				if err != nil {
@@ -10333,10 +10333,12 @@ func (ec *executionContext) unmarshalInputSignUpInput(ctx context.Context, obj i
 			if err != nil {
 				return it, graphql.ErrorOnPath(ctx, err)
 			}
-			if data, ok := tmp.(string); ok {
+			if data, ok := tmp.(*string); ok {
 				it.Nickname = data
+			} else if tmp == nil {
+				it.Nickname = nil
 			} else {
-				err := fmt.Errorf(`unexpected type %T from directive, should be string`, tmp)
+				err := fmt.Errorf(`unexpected type %T from directive, should be *string`, tmp)
 				return it, graphql.ErrorOnPath(ctx, err)
 			}
 		case "avatarUrl":

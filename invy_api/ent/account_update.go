@@ -49,6 +49,26 @@ func (au *AccountUpdate) ClearEmail() *AccountUpdate {
 	return au
 }
 
+// SetPhoneNumber sets the "phone_number" field.
+func (au *AccountUpdate) SetPhoneNumber(s string) *AccountUpdate {
+	au.mutation.SetPhoneNumber(s)
+	return au
+}
+
+// SetNillablePhoneNumber sets the "phone_number" field if the given value is not nil.
+func (au *AccountUpdate) SetNillablePhoneNumber(s *string) *AccountUpdate {
+	if s != nil {
+		au.SetPhoneNumber(*s)
+	}
+	return au
+}
+
+// ClearPhoneNumber clears the value of the "phone_number" field.
+func (au *AccountUpdate) ClearPhoneNumber() *AccountUpdate {
+	au.mutation.ClearPhoneNumber()
+	return au
+}
+
 // AddUserIDs adds the "users" edge to the User entity by IDs.
 func (au *AccountUpdate) AddUserIDs(ids ...uuid.UUID) *AccountUpdate {
 	au.mutation.AddUserIDs(ids...)
@@ -141,6 +161,12 @@ func (au *AccountUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if au.mutation.EmailCleared() {
 		_spec.ClearField(account.FieldEmail, field.TypeString)
 	}
+	if value, ok := au.mutation.PhoneNumber(); ok {
+		_spec.SetField(account.FieldPhoneNumber, field.TypeString, value)
+	}
+	if au.mutation.PhoneNumberCleared() {
+		_spec.ClearField(account.FieldPhoneNumber, field.TypeString)
+	}
 	if au.mutation.UsersCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
@@ -232,6 +258,26 @@ func (auo *AccountUpdateOne) SetNillableEmail(s *string) *AccountUpdateOne {
 // ClearEmail clears the value of the "email" field.
 func (auo *AccountUpdateOne) ClearEmail() *AccountUpdateOne {
 	auo.mutation.ClearEmail()
+	return auo
+}
+
+// SetPhoneNumber sets the "phone_number" field.
+func (auo *AccountUpdateOne) SetPhoneNumber(s string) *AccountUpdateOne {
+	auo.mutation.SetPhoneNumber(s)
+	return auo
+}
+
+// SetNillablePhoneNumber sets the "phone_number" field if the given value is not nil.
+func (auo *AccountUpdateOne) SetNillablePhoneNumber(s *string) *AccountUpdateOne {
+	if s != nil {
+		auo.SetPhoneNumber(*s)
+	}
+	return auo
+}
+
+// ClearPhoneNumber clears the value of the "phone_number" field.
+func (auo *AccountUpdateOne) ClearPhoneNumber() *AccountUpdateOne {
+	auo.mutation.ClearPhoneNumber()
 	return auo
 }
 
@@ -350,6 +396,12 @@ func (auo *AccountUpdateOne) sqlSave(ctx context.Context) (_node *Account, err e
 	}
 	if auo.mutation.EmailCleared() {
 		_spec.ClearField(account.FieldEmail, field.TypeString)
+	}
+	if value, ok := auo.mutation.PhoneNumber(); ok {
+		_spec.SetField(account.FieldPhoneNumber, field.TypeString, value)
+	}
+	if auo.mutation.PhoneNumberCleared() {
+		_spec.ClearField(account.FieldPhoneNumber, field.TypeString)
 	}
 	if auo.mutation.UsersCleared() {
 		edge := &sqlgraph.EdgeSpec{

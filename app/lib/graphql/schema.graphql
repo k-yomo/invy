@@ -196,7 +196,7 @@ type SignOutPayload {
 
 input SignUpInput {
   email: String
-  nickname: String!
+  nickname: String
   avatarUrl: String
 }
 

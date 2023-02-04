@@ -45,6 +45,20 @@ func (ac *AccountCreate) SetNillableEmail(s *string) *AccountCreate {
 	return ac
 }
 
+// SetPhoneNumber sets the "phone_number" field.
+func (ac *AccountCreate) SetPhoneNumber(s string) *AccountCreate {
+	ac.mutation.SetPhoneNumber(s)
+	return ac
+}
+
+// SetNillablePhoneNumber sets the "phone_number" field if the given value is not nil.
+func (ac *AccountCreate) SetNillablePhoneNumber(s *string) *AccountCreate {
+	if s != nil {
+		ac.SetPhoneNumber(*s)
+	}
+	return ac
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (ac *AccountCreate) SetCreatedAt(t time.Time) *AccountCreate {
 	ac.mutation.SetCreatedAt(t)
@@ -191,6 +205,10 @@ func (ac *AccountCreate) createSpec() (*Account, *sqlgraph.CreateSpec) {
 		_spec.SetField(account.FieldEmail, field.TypeString, value)
 		_node.Email = &value
 	}
+	if value, ok := ac.mutation.PhoneNumber(); ok {
+		_spec.SetField(account.FieldPhoneNumber, field.TypeString, value)
+		_node.PhoneNumber = &value
+	}
 	if value, ok := ac.mutation.CreatedAt(); ok {
 		_spec.SetField(account.FieldCreatedAt, field.TypeTime, value)
 		_node.CreatedAt = value
@@ -284,6 +302,24 @@ func (u *AccountUpsert) ClearEmail() *AccountUpsert {
 	return u
 }
 
+// SetPhoneNumber sets the "phone_number" field.
+func (u *AccountUpsert) SetPhoneNumber(v string) *AccountUpsert {
+	u.Set(account.FieldPhoneNumber, v)
+	return u
+}
+
+// UpdatePhoneNumber sets the "phone_number" field to the value that was provided on create.
+func (u *AccountUpsert) UpdatePhoneNumber() *AccountUpsert {
+	u.SetExcluded(account.FieldPhoneNumber)
+	return u
+}
+
+// ClearPhoneNumber clears the value of the "phone_number" field.
+func (u *AccountUpsert) ClearPhoneNumber() *AccountUpsert {
+	u.SetNull(account.FieldPhoneNumber)
+	return u
+}
+
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
@@ -356,6 +392,27 @@ func (u *AccountUpsertOne) UpdateEmail() *AccountUpsertOne {
 func (u *AccountUpsertOne) ClearEmail() *AccountUpsertOne {
 	return u.Update(func(s *AccountUpsert) {
 		s.ClearEmail()
+	})
+}
+
+// SetPhoneNumber sets the "phone_number" field.
+func (u *AccountUpsertOne) SetPhoneNumber(v string) *AccountUpsertOne {
+	return u.Update(func(s *AccountUpsert) {
+		s.SetPhoneNumber(v)
+	})
+}
+
+// UpdatePhoneNumber sets the "phone_number" field to the value that was provided on create.
+func (u *AccountUpsertOne) UpdatePhoneNumber() *AccountUpsertOne {
+	return u.Update(func(s *AccountUpsert) {
+		s.UpdatePhoneNumber()
+	})
+}
+
+// ClearPhoneNumber clears the value of the "phone_number" field.
+func (u *AccountUpsertOne) ClearPhoneNumber() *AccountUpsertOne {
+	return u.Update(func(s *AccountUpsert) {
+		s.ClearPhoneNumber()
 	})
 }
 
@@ -594,6 +651,27 @@ func (u *AccountUpsertBulk) UpdateEmail() *AccountUpsertBulk {
 func (u *AccountUpsertBulk) ClearEmail() *AccountUpsertBulk {
 	return u.Update(func(s *AccountUpsert) {
 		s.ClearEmail()
+	})
+}
+
+// SetPhoneNumber sets the "phone_number" field.
+func (u *AccountUpsertBulk) SetPhoneNumber(v string) *AccountUpsertBulk {
+	return u.Update(func(s *AccountUpsert) {
+		s.SetPhoneNumber(v)
+	})
+}
+
+// UpdatePhoneNumber sets the "phone_number" field to the value that was provided on create.
+func (u *AccountUpsertBulk) UpdatePhoneNumber() *AccountUpsertBulk {
+	return u.Update(func(s *AccountUpsert) {
+		s.UpdatePhoneNumber()
+	})
+}
+
+// ClearPhoneNumber clears the value of the "phone_number" field.
+func (u *AccountUpsertBulk) ClearPhoneNumber() *AccountUpsertBulk {
+	return u.Update(func(s *AccountUpsert) {
+		s.ClearPhoneNumber()
 	})
 }
 

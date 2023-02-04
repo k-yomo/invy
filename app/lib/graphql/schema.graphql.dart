@@ -672,12 +672,12 @@ class _CopyWithStubImpl$Input$SendInvitationInput<TRes>
 class Input$SignUpInput {
   factory Input$SignUpInput({
     String? email,
-    required String nickname,
+    String? nickname,
     String? avatarUrl,
   }) =>
       Input$SignUpInput._({
         if (email != null) r'email': email,
-        r'nickname': nickname,
+        if (nickname != null) r'nickname': nickname,
         if (avatarUrl != null) r'avatarUrl': avatarUrl,
       });
 
@@ -689,8 +689,10 @@ class Input$SignUpInput {
       final l$email = data['email'];
       result$data['email'] = (l$email as String?);
     }
-    final l$nickname = data['nickname'];
-    result$data['nickname'] = (l$nickname as String);
+    if (data.containsKey('nickname')) {
+      final l$nickname = data['nickname'];
+      result$data['nickname'] = (l$nickname as String?);
+    }
     if (data.containsKey('avatarUrl')) {
       final l$avatarUrl = data['avatarUrl'];
       result$data['avatarUrl'] = (l$avatarUrl as String?);
@@ -701,7 +703,7 @@ class Input$SignUpInput {
   Map<String, dynamic> _$data;
 
   String? get email => (_$data['email'] as String?);
-  String get nickname => (_$data['nickname'] as String);
+  String? get nickname => (_$data['nickname'] as String?);
   String? get avatarUrl => (_$data['avatarUrl'] as String?);
   Map<String, dynamic> toJson() {
     final result$data = <String, dynamic>{};
@@ -709,8 +711,10 @@ class Input$SignUpInput {
       final l$email = email;
       result$data['email'] = l$email;
     }
-    final l$nickname = nickname;
-    result$data['nickname'] = l$nickname;
+    if (_$data.containsKey('nickname')) {
+      final l$nickname = nickname;
+      result$data['nickname'] = l$nickname;
+    }
     if (_$data.containsKey('avatarUrl')) {
       final l$avatarUrl = avatarUrl;
       result$data['avatarUrl'] = l$avatarUrl;
@@ -741,6 +745,10 @@ class Input$SignUpInput {
     }
     final l$nickname = nickname;
     final lOther$nickname = other.nickname;
+    if (_$data.containsKey('nickname') !=
+        other._$data.containsKey('nickname')) {
+      return false;
+    }
     if (l$nickname != lOther$nickname) {
       return false;
     }
@@ -763,7 +771,7 @@ class Input$SignUpInput {
     final l$avatarUrl = avatarUrl;
     return Object.hashAll([
       _$data.containsKey('email') ? l$email : const {},
-      l$nickname,
+      _$data.containsKey('nickname') ? l$nickname : const {},
       _$data.containsKey('avatarUrl') ? l$avatarUrl : const {},
     ]);
   }
@@ -806,8 +814,7 @@ class _CopyWithImpl$Input$SignUpInput<TRes>
       _then(Input$SignUpInput._({
         ..._instance._$data,
         if (email != _undefined) 'email': (email as String?),
-        if (nickname != _undefined && nickname != null)
-          'nickname': (nickname as String),
+        if (nickname != _undefined) 'nickname': (nickname as String?),
         if (avatarUrl != _undefined) 'avatarUrl': (avatarUrl as String?),
       }));
 }
