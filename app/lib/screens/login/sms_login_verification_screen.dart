@@ -9,7 +9,7 @@ import 'package:invy/services/graphql_client.dart';
 import 'package:invy/state/auth.dart';
 import 'package:invy/state/bottom_navigation.dart';
 import 'package:pinput/pinput.dart';
-import 'login_screen.graphql.dart';
+import 'sms_login_screen.graphql.dart';
 
 class SMSLoginVerificationScreen extends HookConsumerWidget {
   const SMSLoginVerificationScreen({super.key, required this.verificationId});

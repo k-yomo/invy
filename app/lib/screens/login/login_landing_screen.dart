@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:invy/screens/sms_login_screen.dart';
+import 'package:invy/screens/login/sms_login_screen.dart';
 
-import '../state/onboarding.dart';
-import 'onboarding_screen.dart';
+import '../../state/onboarding.dart';
+import '../onboarding_screen.dart';
 
 class LoginLandingScreen extends HookConsumerWidget {
   const LoginLandingScreen({super.key});

@@ -4,13 +4,13 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:invy/components/friend_group_list.dart';
 import 'package:invy/components/friend_list.dart';
 import 'package:invy/components/sub_title.dart';
-import 'package:invy/screens/friend_screen.graphql.dart';
+import 'package:invy/screens/friend/friend_screen.graphql.dart';
 import 'package:invy/components/user_profile_modal.dart';
 import 'package:invy/services/graphql_client.dart';
 
-import '../components/pending_friendship_request_list.dart';
-import 'freind_group_create_screen.dart';
-import 'friendship_request_screen.dart';
+import '../../components/pending_friendship_request_list.dart';
+import '../friend/freind_group_create_screen.dart';
+import '../friend/friendship_request_screen.dart';
 
 class FriendScreen extends HookConsumerWidget {
   const FriendScreen({super.key});

@@ -6,14 +6,14 @@ import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:invy/components/divider.dart';
-import 'package:invy/screens/my_profile_screen.graphql.dart';
-import 'package:invy/screens/profile_edit_screen.dart';
+import 'package:invy/screens/profile/my_profile_screen.graphql.dart';
+import 'package:invy/screens/profile/profile_edit_screen.dart';
 import 'package:invy/services/graphql_client.dart';
 import 'package:invy/state/auth.dart';
 import 'package:invy/state/device.dart';
 import 'package:invy/util/toast.dart';
 
-import 'blocked_friend_screen.dart';
+import '../friend/blocked_friend_screen.dart';
 
 class MyProfileScreen extends HookConsumerWidget {
   const MyProfileScreen({super.key});

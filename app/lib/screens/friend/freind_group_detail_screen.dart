@@ -3,11 +3,11 @@ import 'package:graphql/client.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:invy/components/friend_list.dart';
 import 'package:invy/components/user_profile_modal.dart';
-import 'package:invy/screens/friend_group_edit_screen.dart';
+import 'package:invy/screens/friend/friend_group_edit_screen.dart';
+import 'package:invy/screens/friend/friend_group_detail_screen.graphql.dart';
 
-import '../components/app_bar_leading.dart';
-import '../screens/friend_group_detail_screen.graphql.dart';
-import '../services/graphql_client.dart';
+import '../../components/app_bar_leading.dart';
+import '../../services/graphql_client.dart';
 
 class FriendGroupDetailScreen extends HookConsumerWidget {
   final String friendGroupId;

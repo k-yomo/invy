@@ -7,10 +7,10 @@ import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_place/google_place.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:invy/screens/invitation_friend_select_screen.dart';
+import 'package:invy/screens/invitation/invitation_friend_select_screen.dart';
 import 'package:invy/state/location.dart';
 
-import '../config/config.dart';
+import '../../config/config.dart';
 
 class InvitationScreen extends HookConsumerWidget {
   const InvitationScreen({super.key});

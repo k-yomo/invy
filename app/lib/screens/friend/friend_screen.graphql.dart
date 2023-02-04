@@ -1,7 +1,7 @@
-import '../components/friend_group_fragment.graphql.dart';
-import '../components/friend_list_item_fragment.graphql.dart';
-import '../components/pending_friendship_request_list_fragment.graphql.dart';
-import '../components/user_profile_modal_fragment.graphql.dart';
+import '../../components/friend_group_fragment.graphql.dart';
+import '../../components/friend_list_item_fragment.graphql.dart';
+import '../../components/pending_friendship_request_list_fragment.graphql.dart';
+import '../../components/user_profile_modal_fragment.graphql.dart';
 import 'dart:async';
 import 'package:flutter/widgets.dart' as widgets;
 import 'package:gql/ast.dart';

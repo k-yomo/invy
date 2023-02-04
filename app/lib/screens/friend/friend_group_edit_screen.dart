@@ -5,10 +5,10 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:invy/components/friend_selection_list.dart';
 import 'package:invy/graphql/schema.graphql.dart';
 
-import '../components/app_bar_leading.dart';
-import '../components/friend_list_item_fragment.graphql.dart';
-import '../services/graphql_client.dart';
-import 'friend_group_edit_screen.graphql.dart';
+import '../../components/app_bar_leading.dart';
+import '../../components/friend_list_item_fragment.graphql.dart';
+import '../../services/graphql_client.dart';
+import '../friend/friend_group_edit_screen.graphql.dart';
 
 class FriendGroupEditScreen extends HookConsumerWidget {
   FriendGroupEditScreen({

@@ -6,17 +6,17 @@ import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:graphql/client.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:invy/graphql/viewer.graphql.dart';
-import 'package:invy/screens/invitation_screen.dart';
-import 'package:invy/screens/login_landing_screen.dart';
+import 'package:invy/screens/invitation/invitation_screen.dart';
+import 'package:invy/screens/login/login_landing_screen.dart';
 import 'package:invy/services/graphql_client.dart';
 import 'package:invy/state/bottom_navigation.dart';
 import 'package:invy/util/device.dart';
 
 import 'graphql/push_notification.graphql.dart';
 import 'graphql/schema.graphql.dart';
-import 'screens/friend_screen.dart';
+import 'screens/friend/friend_screen.dart';
 import 'screens/home_screen.dart';
-import 'screens/my_profile_screen.dart';
+import 'screens/profile/my_profile_screen.dart';
 import 'state/auth.dart';
 
 class App extends HookConsumerWidget {
