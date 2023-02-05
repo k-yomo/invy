@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import 'friend_list_item_fragment.graphql.dart';
@@ -19,7 +20,7 @@ class FriendListItem extends StatelessWidget {
       child: Row(
         children: [
           CircleAvatar(
-            backgroundImage: NetworkImage(friend.avatarUrl),
+            backgroundImage: CachedNetworkImageProvider(friend.avatarUrl),
           ),
           Expanded(
             child: Container(

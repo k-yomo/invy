@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -202,7 +203,7 @@ class ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
                 children: [
                   CircleAvatar(
                     radius: 60.0,
-                    backgroundImage: NetworkImage(user.avatarUrl),
+                    backgroundImage: CachedNetworkImageProvider(user.avatarUrl),
                   ),
                   const Gap(10),
                   OutlinedButton(

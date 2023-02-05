@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -32,7 +33,7 @@ class MyProfileScreen extends HookConsumerWidget {
             height: 200,
             decoration: BoxDecoration(
               image: DecorationImage(
-                image: NetworkImage(user.avatarUrl),
+                image: CachedNetworkImageProvider(user.avatarUrl),
                 fit: BoxFit.cover,
               ),
             ),
@@ -49,7 +50,7 @@ class MyProfileScreen extends HookConsumerWidget {
               children: [
                 CircleAvatar(
                   radius: 60.0,
-                  backgroundImage: NetworkImage(user.avatarUrl),
+                  backgroundImage: CachedNetworkImageProvider(user.avatarUrl),
                 ),
                 Container(
                   margin: const EdgeInsets.symmetric(vertical: 15),

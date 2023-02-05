@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
@@ -115,7 +116,8 @@ class _FriendSearchResult extends HookConsumerWidget {
             margin: const EdgeInsets.symmetric(vertical: 15),
             child: Row(children: [
               CircleAvatar(
-                backgroundImage: NetworkImage(foundUser.value!.avatarUrl),
+                backgroundImage:
+                    CachedNetworkImageProvider(foundUser.value!.avatarUrl),
               ),
               Expanded(
                 child: Container(

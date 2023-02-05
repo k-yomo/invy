@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -81,7 +82,8 @@ class InvitationListItem extends StatelessWidget {
                 Row(
                   children: [
                     CircleAvatar(
-                      backgroundImage: NetworkImage(invitation.user.avatarUrl),
+                      backgroundImage:
+                          CachedNetworkImageProvider(invitation.user.avatarUrl),
                     ),
                     Expanded(
                       child: Container(
@@ -174,7 +176,7 @@ class InvitationListItem extends StatelessWidget {
                                                   children: [
                                                     CircleAvatar(
                                                       backgroundImage:
-                                                          NetworkImage(
+                                                          CachedNetworkImageProvider(
                                                               acceptedUser
                                                                   .avatarUrl),
                                                     ),

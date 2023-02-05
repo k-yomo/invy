@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -122,8 +123,8 @@ class InvitationDetailScreen extends HookConsumerWidget {
                   Row(
                     children: [
                       CircleAvatar(
-                        backgroundImage:
-                            NetworkImage(invitation.user.avatarUrl),
+                        backgroundImage: CachedNetworkImageProvider(
+                            invitation.user.avatarUrl),
                       ),
                       Expanded(
                         child: Container(
@@ -233,7 +234,7 @@ class InvitationDetailScreen extends HookConsumerWidget {
                                                   children: [
                                                     CircleAvatar(
                                                       backgroundImage:
-                                                          NetworkImage(
+                                                          CachedNetworkImageProvider(
                                                               acceptedUser
                                                                   .avatarUrl),
                                                     ),
