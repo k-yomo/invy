@@ -13,7 +13,9 @@ import 'package:invy/services/graphql_client.dart';
 import 'package:invy/state/auth.dart';
 import 'package:invy/state/device.dart';
 import 'package:invy/util/toast.dart';
+import 'package:url_launcher/url_launcher.dart';
 
+import '../../constants/notion_page_urls.dart';
 import '../friend/blocked_friend_screen.dart';
 
 class MyProfileScreen extends HookConsumerWidget {
@@ -107,13 +109,8 @@ class MyProfileScreen extends HookConsumerWidget {
           ),
           Column(
             children: [
-              TextButton(
-                style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.black,
-                  shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.zero,
-                  ),
-                ),
+              SettingItem(
+                title: "ブロック中のユーザー",
                 onPressed: () {
                   Navigator.of(context).push(
                     MaterialPageRoute(
@@ -121,24 +118,10 @@ class MyProfileScreen extends HookConsumerWidget {
                     ),
                   );
                 },
-                child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 10),
-                  child: Row(
-                    children: [
-                      const Expanded(child: Text("ブロック中のユーザー")),
-                      Icon(Icons.chevron_right, color: Colors.grey.shade600)
-                    ],
-                  ),
-                ),
               ),
               const GreyDivider(),
-              TextButton(
-                style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.black,
-                  shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.zero,
-                  ),
-                ),
+              SettingItem(
+                title: "ログアウト",
                 onPressed: () {
                   showDialog(
                     context: context,
@@ -171,15 +154,19 @@ class MyProfileScreen extends HookConsumerWidget {
                     },
                   );
                 },
-                child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 10),
-                  child: Row(
-                    children: [
-                      const Expanded(child: Text("ログアウト")),
-                      Icon(Icons.chevron_right, color: Colors.grey.shade600)
-                    ],
-                  ),
-                ),
+              ),
+              SettingItem(
+                title: "利用規約",
+                onPressed: () async {
+                  await launchUrl(termsOfServiceUrl);
+                },
+              ),
+              const GreyDivider(),
+              SettingItem(
+                title: "プライバシーポリシー",
+                onPressed: () async {
+                  await launchUrl(privacyPolicyUrl);
+                },
               ),
               const GreyDivider(),
               Container(
@@ -189,6 +176,35 @@ class MyProfileScreen extends HookConsumerWidget {
             ],
           )
         ]),
+      ),
+    );
+  }
+}
+
+class SettingItem extends StatelessWidget {
+  const SettingItem({super.key, required this.title, required this.onPressed});
+
+  final String title;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return TextButton(
+      style: ElevatedButton.styleFrom(
+        foregroundColor: Colors.black,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.zero,
+        ),
+      ),
+      onPressed: onPressed,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 10),
+        child: Row(
+          children: [
+            Expanded(child: Text(title)),
+            Icon(Icons.chevron_right, color: Colors.grey.shade600)
+          ],
+        ),
       ),
     );
   }

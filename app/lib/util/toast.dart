@@ -19,6 +19,7 @@ showToast(String msg, ToastLevel level) {
       backgroundColor = Colors.red;
       break;
   }
+  // TODO: Use custom toast to for better design
   Fluttertoast.showToast(
     msg: msg,
     gravity: ToastGravity.TOP,

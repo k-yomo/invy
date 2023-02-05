@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:invy/constants/notion_page_urls.dart';
 import 'package:invy/screens/login/sms_login_screen.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../state/onboarding.dart';
 import '../onboarding_screen.dart';
@@ -44,20 +46,67 @@ class LoginLandingScreen extends HookConsumerWidget {
               Container(
                 width: double.infinity,
                 padding:
-                    const EdgeInsets.symmetric(vertical: 30, horizontal: 20),
+                    const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(0),
                 ),
                 child: Column(
                   children: [
-                    const Text(
-                      "Invyの利用を開始する",
-                      textAlign: TextAlign.center,
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    SizedBox(
+                      width: double.infinity,
+                      child: Row(
+                        children: [
+                          TextButton(
+                            onPressed: () async {
+                              await launchUrl(termsOfServiceUrl);
+                            },
+                            style: TextButton.styleFrom(
+                              padding: const EdgeInsets.all(0),
+                              minimumSize: Size.zero,
+                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            ),
+                            child: const Text(
+                              "利用規約",
+                              style:
+                                  TextStyle(fontSize: 12, color: Colors.blue),
+                            ),
+                          ),
+                          const Text(
+                            "・",
+                            style: TextStyle(fontSize: 12),
+                          ),
+                          TextButton(
+                            onPressed: () async {
+                              await launchUrl(privacyPolicyUrl);
+                            },
+                            style: TextButton.styleFrom(
+                              padding: const EdgeInsets.all(0),
+                              minimumSize: Size.zero,
+                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            ),
+                            child: const Text(
+                              "プライバシーポリシー",
+                              style:
+                                  TextStyle(fontSize: 12, color: Colors.blue),
+                            ),
+                          ),
+                          const Text(
+                            "に同意して",
+                            style: TextStyle(fontSize: 12),
+                          ),
+                        ],
+                      ),
                     ),
-                    const Gap(10),
+                    const SizedBox(
+                      width: double.infinity,
+                      child: Text(
+                        "Invyの利用を開始する",
+                        style: TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    const Gap(15),
                     TextButton(
                       style: TextButton.styleFrom(
                         minimumSize: const Size.fromHeight(0),
@@ -69,7 +118,7 @@ class LoginLandingScreen extends HookConsumerWidget {
                       ),
                       onPressed: () => _openSignup(context),
                       child: const Text(
-                        "電話番号で登録 / サインイン",
+                        "電話番号で登録 / ログイン",
                         style: TextStyle(
                           fontSize: 14,
                           color: Colors.white,

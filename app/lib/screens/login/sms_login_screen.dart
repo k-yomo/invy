@@ -1,9 +1,12 @@
+import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:invy/screens/login/sms_login_verification_screen.dart';
+import 'package:invy/util/toast.dart';
 
 class SMSLoginScreen extends HookConsumerWidget {
   SMSLoginScreen({super.key});
@@ -17,7 +20,7 @@ class SMSLoginScreen extends HookConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'サインイン',
+          '電話番号ログイン',
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
         ),
         shape:
@@ -90,18 +93,27 @@ class SMSLoginScreen extends HookConsumerWidget {
                       ),
                     ),
                     onPressed: () async {
+                      if (isLoading.value) {
+                        return;
+                      }
+
                       isLoading.value = true;
+                      var completer = Completer();
                       await FirebaseAuth.instance.verifyPhoneNumber(
                         timeout: const Duration(seconds: 120),
                         phoneNumber: "+81${phoneController.text}",
                         verificationCompleted:
-                            (PhoneAuthCredential credential) {},
+                            (PhoneAuthCredential credential) {
+                          completer.complete(true);
+                        },
                         verificationFailed: (FirebaseAuthException e) {
+                          completer.complete(true);
                           if (e.code == 'invalid-phone-number') {
-                            print('電話番号が正しくありません。');
+                            showToast("電話番号が正しくありません。", ToastLevel.error);
                           }
                         },
                         codeSent: (String verificationId, int? resendToken) {
+                          completer.complete(true);
                           Navigator.of(context).push(
                             MaterialPageRoute(
                               builder: (context) => SMSLoginVerificationScreen(
@@ -112,21 +124,22 @@ class SMSLoginScreen extends HookConsumerWidget {
                         },
                         codeAutoRetrievalTimeout: (String verificationId) {},
                       );
+                      await completer.future;
                       isLoading.value = false;
                     },
                     child: isLoading.value
                         ? const SizedBox(
-                            width: 25,
-                            height: 25,
+                            width: 20,
+                            height: 20,
                             child: CircularProgressIndicator(
                               color: Colors.white,
                               strokeWidth: 3,
                             ),
                           )
                         : const Text(
-                            "サインイン",
+                            "ログイン",
                             style: TextStyle(
-                              fontSize: 14,
+                              fontSize: 16,
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
                             ),
