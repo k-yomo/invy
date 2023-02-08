@@ -66,18 +66,14 @@
 	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
-	<key>NSCameraUsageDescription</key>
-	<string>This app requires to add file to your camera</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>近くにいる友達との大まかな距離を表示する事に利用します。</string>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>近くにいる友達との大まかな距離を表示する事に利用します。</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>開催地の入力補助に利用します。</string>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>This app requires to add file to your photo library your microphone</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>画像のアップロードに利用します。</string>
+	<string>プロフィール画像のアップロード等に利用します。</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
