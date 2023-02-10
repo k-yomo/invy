@@ -55,6 +55,10 @@ type CreateUserPayload {
 
 scalar Cursor
 
+type DeleteAccountPayload {
+  deletedAccountId: UUID!
+}
+
 type DeleteFriendGroupPayload {
   deletedFriendGroupId: UUID!
 }
@@ -108,6 +112,7 @@ type Invitation implements Node {
 type Mutation {
   signUp(input: SignUpInput!): SignUpPayload!
   signOut: SignOutPayload!
+  deleteAccount: DeleteAccountPayload!
   createUser(input: CreateUserInput!): CreateUserPayload!
   switchUser(userId: UUID!): SwitchUserPayload!
   createFriendGroup(input: CreateFriendGroupInput!): CreateFriendGroupPayload!

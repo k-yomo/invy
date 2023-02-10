@@ -71,6 +71,7 @@ class App extends HookConsumerWidget {
             FlutterNativeSplash.remove();
 
             return MaterialApp(
+              debugShowCheckedModeBanner: false,
               title: 'Invy',
               theme: ThemeData(
                 primarySwatch: materialWhite,

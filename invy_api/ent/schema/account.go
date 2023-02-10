@@ -30,6 +30,9 @@ func (Account) Fields() []ent.Field {
 			Unique().
 			Nillable().
 			Optional(),
+		field.Enum("status").
+			Values("active", "suspended", "deleted").
+			Default("active"),
 		field.Time("created_at").
 			Immutable().
 			Default(time.Now),

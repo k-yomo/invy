@@ -14,6 +14,7 @@ var (
 		{Name: "auth_id", Type: field.TypeString, Unique: true},
 		{Name: "email", Type: field.TypeString, Unique: true, Nullable: true},
 		{Name: "phone_number", Type: field.TypeString, Unique: true, Nullable: true},
+		{Name: "status", Type: field.TypeEnum, Enums: []string{"active", "suspended", "deleted"}, Default: "active"},
 		{Name: "created_at", Type: field.TypeTime},
 	}
 	// AccountsTable holds the schema information for the "accounts" table.
@@ -260,6 +261,7 @@ var (
 	// UsersColumns holds the columns for the "users" table.
 	UsersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUUID},
+		{Name: "status", Type: field.TypeEnum, Enums: []string{"active", "suspended", "deleted"}, Default: "active"},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "account_id", Type: field.TypeUUID},
 	}
@@ -271,7 +273,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "users_accounts_account",
-				Columns:    []*schema.Column{UsersColumns[2]},
+				Columns:    []*schema.Column{UsersColumns[3]},
 				RefColumns: []*schema.Column{AccountsColumns[0]},
 				OnDelete:   schema.NoAction,
 			},

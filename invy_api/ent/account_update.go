@@ -69,6 +69,20 @@ func (au *AccountUpdate) ClearPhoneNumber() *AccountUpdate {
 	return au
 }
 
+// SetStatus sets the "status" field.
+func (au *AccountUpdate) SetStatus(a account.Status) *AccountUpdate {
+	au.mutation.SetStatus(a)
+	return au
+}
+
+// SetNillableStatus sets the "status" field if the given value is not nil.
+func (au *AccountUpdate) SetNillableStatus(a *account.Status) *AccountUpdate {
+	if a != nil {
+		au.SetStatus(*a)
+	}
+	return au
+}
+
 // AddUserIDs adds the "users" edge to the User entity by IDs.
 func (au *AccountUpdate) AddUserIDs(ids ...uuid.UUID) *AccountUpdate {
 	au.mutation.AddUserIDs(ids...)
@@ -137,7 +151,20 @@ func (au *AccountUpdate) ExecX(ctx context.Context) {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (au *AccountUpdate) check() error {
+	if v, ok := au.mutation.Status(); ok {
+		if err := account.StatusValidator(v); err != nil {
+			return &ValidationError{Name: "status", err: fmt.Errorf(`ent: validator failed for field "Account.status": %w`, err)}
+		}
+	}
+	return nil
+}
+
 func (au *AccountUpdate) sqlSave(ctx context.Context) (n int, err error) {
+	if err := au.check(); err != nil {
+		return n, err
+	}
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
 			Table:   account.Table,
@@ -166,6 +193,9 @@ func (au *AccountUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if au.mutation.PhoneNumberCleared() {
 		_spec.ClearField(account.FieldPhoneNumber, field.TypeString)
+	}
+	if value, ok := au.mutation.Status(); ok {
+		_spec.SetField(account.FieldStatus, field.TypeEnum, value)
 	}
 	if au.mutation.UsersCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -281,6 +311,20 @@ func (auo *AccountUpdateOne) ClearPhoneNumber() *AccountUpdateOne {
 	return auo
 }
 
+// SetStatus sets the "status" field.
+func (auo *AccountUpdateOne) SetStatus(a account.Status) *AccountUpdateOne {
+	auo.mutation.SetStatus(a)
+	return auo
+}
+
+// SetNillableStatus sets the "status" field if the given value is not nil.
+func (auo *AccountUpdateOne) SetNillableStatus(a *account.Status) *AccountUpdateOne {
+	if a != nil {
+		auo.SetStatus(*a)
+	}
+	return auo
+}
+
 // AddUserIDs adds the "users" edge to the User entity by IDs.
 func (auo *AccountUpdateOne) AddUserIDs(ids ...uuid.UUID) *AccountUpdateOne {
 	auo.mutation.AddUserIDs(ids...)
@@ -356,7 +400,20 @@ func (auo *AccountUpdateOne) ExecX(ctx context.Context) {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (auo *AccountUpdateOne) check() error {
+	if v, ok := auo.mutation.Status(); ok {
+		if err := account.StatusValidator(v); err != nil {
+			return &ValidationError{Name: "status", err: fmt.Errorf(`ent: validator failed for field "Account.status": %w`, err)}
+		}
+	}
+	return nil
+}
+
 func (auo *AccountUpdateOne) sqlSave(ctx context.Context) (_node *Account, err error) {
+	if err := auo.check(); err != nil {
+		return _node, err
+	}
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
 			Table:   account.Table,
@@ -402,6 +459,9 @@ func (auo *AccountUpdateOne) sqlSave(ctx context.Context) (_node *Account, err e
 	}
 	if auo.mutation.PhoneNumberCleared() {
 		_spec.ClearField(account.FieldPhoneNumber, field.TypeString)
+	}
+	if value, ok := auo.mutation.Status(); ok {
+		_spec.SetField(account.FieldStatus, field.TypeEnum, value)
 	}
 	if auo.mutation.UsersCleared() {
 		edge := &sqlgraph.EdgeSpec{

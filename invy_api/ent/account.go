@@ -23,6 +23,8 @@ type Account struct {
 	Email *string `json:"email,omitempty"`
 	// PhoneNumber holds the value of the "phone_number" field.
 	PhoneNumber *string `json:"phone_number,omitempty"`
+	// Status holds the value of the "status" field.
+	Status account.Status `json:"status,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
@@ -57,7 +59,7 @@ func (*Account) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case account.FieldAuthID, account.FieldEmail, account.FieldPhoneNumber:
+		case account.FieldAuthID, account.FieldEmail, account.FieldPhoneNumber, account.FieldStatus:
 			values[i] = new(sql.NullString)
 		case account.FieldCreatedAt:
 			values[i] = new(sql.NullTime)
@@ -103,6 +105,12 @@ func (a *Account) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				a.PhoneNumber = new(string)
 				*a.PhoneNumber = value.String
+			}
+		case account.FieldStatus:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field status", values[i])
+			} else if value.Valid {
+				a.Status = account.Status(value.String)
 			}
 		case account.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -155,6 +163,9 @@ func (a *Account) String() string {
 		builder.WriteString("phone_number=")
 		builder.WriteString(*v)
 	}
+	builder.WriteString(", ")
+	builder.WriteString("status=")
+	builder.WriteString(fmt.Sprintf("%v", a.Status))
 	builder.WriteString(", ")
 	builder.WriteString("created_at=")
 	builder.WriteString(a.CreatedAt.Format(time.ANSIC))

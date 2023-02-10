@@ -84,6 +84,10 @@ type ComplexityRoot struct {
 		Viewer func(childComplexity int) int
 	}
 
+	DeleteAccountPayload struct {
+		DeletedAccountID func(childComplexity int) int
+	}
+
 	DeleteFriendGroupPayload struct {
 		DeletedFriendGroupID func(childComplexity int) int
 	}
@@ -132,6 +136,7 @@ type ComplexityRoot struct {
 		CancelFriendshipRequest       func(childComplexity int, friendshipRequestID uuid.UUID) int
 		CreateFriendGroup             func(childComplexity int, input gqlmodel.CreateFriendGroupInput) int
 		CreateUser                    func(childComplexity int, input gqlmodel.CreateUserInput) int
+		DeleteAccount                 func(childComplexity int) int
 		DeleteFriendGroup             func(childComplexity int, friendGroupID uuid.UUID) int
 		DenyFriendshipRequest         func(childComplexity int, friendshipRequestID uuid.UUID) int
 		DenyInvitation                func(childComplexity int, invitationID uuid.UUID) int
@@ -276,6 +281,7 @@ type InvitationResolver interface {
 type MutationResolver interface {
 	SignUp(ctx context.Context, input gqlmodel.SignUpInput) (*gqlmodel.SignUpPayload, error)
 	SignOut(ctx context.Context) (*gqlmodel.SignOutPayload, error)
+	DeleteAccount(ctx context.Context) (*gqlmodel.DeleteAccountPayload, error)
 	CreateUser(ctx context.Context, input gqlmodel.CreateUserInput) (*gqlmodel.CreateUserPayload, error)
 	SwitchUser(ctx context.Context, userID uuid.UUID) (*gqlmodel.SwitchUserPayload, error)
 	CreateFriendGroup(ctx context.Context, input gqlmodel.CreateFriendGroupInput) (*gqlmodel.CreateFriendGroupPayload, error)
@@ -392,6 +398,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.CreateUserPayload.Viewer(childComplexity), true
+
+	case "DeleteAccountPayload.deletedAccountId":
+		if e.complexity.DeleteAccountPayload.DeletedAccountID == nil {
+			break
+		}
+
+		return e.complexity.DeleteAccountPayload.DeletedAccountID(childComplexity), true
 
 	case "DeleteFriendGroupPayload.deletedFriendGroupId":
 		if e.complexity.DeleteFriendGroupPayload.DeletedFriendGroupID == nil {
@@ -625,6 +638,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.CreateUser(childComplexity, args["input"].(gqlmodel.CreateUserInput)), true
+
+	case "Mutation.deleteAccount":
+		if e.complexity.Mutation.DeleteAccount == nil {
+			break
+		}
+
+		return e.complexity.Mutation.DeleteAccount(childComplexity), true
 
 	case "Mutation.deleteFriendGroup":
 		if e.complexity.Mutation.DeleteFriendGroup == nil {
@@ -1263,6 +1283,8 @@ var sources = []*ast.Source{
 	{Name: "../../../defs/graphql/auth.graphql", Input: `extend type Mutation {
     signUp(input: SignUpInput!): SignUpPayload!
     signOut: SignOutPayload! @authRequired
+    deleteAccount: DeleteAccountPayload! @authRequired
+
     createUser(input: CreateUserInput!): CreateUserPayload! @authRequired
     switchUser(userId: UUID!): SwitchUserPayload! @authRequired
 }
@@ -1291,6 +1313,10 @@ type CreateUserPayload {
 
 type SwitchUserPayload {
     viewer: Viewer!
+}
+
+type DeleteAccountPayload {
+    deletedAccountId: UUID!
 }
 `, BuiltIn: false},
 	{Name: "../../../defs/graphql/friend_group.graphql", Input: `
@@ -2564,6 +2590,50 @@ func (ec *executionContext) fieldContext_CreateUserPayload_viewer(ctx context.Co
 	return fc, nil
 }
 
+func (ec *executionContext) _DeleteAccountPayload_deletedAccountId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.DeleteAccountPayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_DeleteAccountPayload_deletedAccountId(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DeletedAccountID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(uuid.UUID)
+	fc.Result = res
+	return ec.marshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_DeleteAccountPayload_deletedAccountId(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DeleteAccountPayload",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type UUID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _DeleteFriendGroupPayload_deletedFriendGroupId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.DeleteFriendGroupPayload) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_DeleteFriendGroupPayload_deletedFriendGroupId(ctx, field)
 	if err != nil {
@@ -3821,6 +3891,74 @@ func (ec *executionContext) fieldContext_Mutation_signOut(ctx context.Context, f
 				return ec.fieldContext_SignOutPayload_signedOutUserId(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type SignOutPayload", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_deleteAccount(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_deleteAccount(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().DeleteAccount(rctx)
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.AuthRequired == nil {
+				return nil, errors.New("directive authRequired is not implemented")
+			}
+			return ec.directives.AuthRequired(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*gqlmodel.DeleteAccountPayload); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/k-yomo/invy/invy_api/graph/gqlmodel.DeleteAccountPayload`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.DeleteAccountPayload)
+	fc.Result = res
+	return ec.marshalNDeleteAccountPayload2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐDeleteAccountPayload(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_deleteAccount(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "deletedAccountId":
+				return ec.fieldContext_DeleteAccountPayload_deletedAccountId(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type DeleteAccountPayload", field.Name)
 		},
 	}
 	return fc, nil
@@ -10692,6 +10830,34 @@ func (ec *executionContext) _CreateUserPayload(ctx context.Context, sel ast.Sele
 	return out
 }
 
+var deleteAccountPayloadImplementors = []string{"DeleteAccountPayload"}
+
+func (ec *executionContext) _DeleteAccountPayload(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.DeleteAccountPayload) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, deleteAccountPayloadImplementors)
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("DeleteAccountPayload")
+		case "deletedAccountId":
+
+			out.Values[i] = ec._DeleteAccountPayload_deletedAccountId(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var deleteFriendGroupPayloadImplementors = []string{"DeleteFriendGroupPayload"}
 
 func (ec *executionContext) _DeleteFriendGroupPayload(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.DeleteFriendGroupPayload) graphql.Marshaler {
@@ -11073,6 +11239,15 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_signOut(ctx, field)
+			})
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "deleteAccount":
+
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_deleteAccount(ctx, field)
 			})
 
 			if out.Values[i] == graphql.Null {
@@ -12711,6 +12886,20 @@ func (ec *executionContext) unmarshalNCursor2githubᚗcomᚋkᚑyomoᚋinvyᚋin
 
 func (ec *executionContext) marshalNCursor2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋentᚐCursor(ctx context.Context, sel ast.SelectionSet, v ent.Cursor) graphql.Marshaler {
 	return v
+}
+
+func (ec *executionContext) marshalNDeleteAccountPayload2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐDeleteAccountPayload(ctx context.Context, sel ast.SelectionSet, v gqlmodel.DeleteAccountPayload) graphql.Marshaler {
+	return ec._DeleteAccountPayload(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNDeleteAccountPayload2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐDeleteAccountPayload(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.DeleteAccountPayload) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._DeleteAccountPayload(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNDeleteFriendGroupPayload2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐDeleteFriendGroupPayload(ctx context.Context, sel ast.SelectionSet, v gqlmodel.DeleteFriendGroupPayload) graphql.Marshaler {

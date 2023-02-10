@@ -491,3 +491,499 @@ class _CopyWithStubImpl$Mutation$signOut$signOut<TRes>
   }) =>
       _res;
 }
+
+class Mutation$deleteAccount {
+  Mutation$deleteAccount({
+    required this.deleteAccount,
+    required this.$__typename,
+  });
+
+  factory Mutation$deleteAccount.fromJson(Map<String, dynamic> json) {
+    final l$deleteAccount = json['deleteAccount'];
+    final l$$__typename = json['__typename'];
+    return Mutation$deleteAccount(
+      deleteAccount: Mutation$deleteAccount$deleteAccount.fromJson(
+          (l$deleteAccount as Map<String, dynamic>)),
+      $__typename: (l$$__typename as String),
+    );
+  }
+
+  final Mutation$deleteAccount$deleteAccount deleteAccount;
+
+  final String $__typename;
+
+  Map<String, dynamic> toJson() {
+    final _resultData = <String, dynamic>{};
+    final l$deleteAccount = deleteAccount;
+    _resultData['deleteAccount'] = l$deleteAccount.toJson();
+    final l$$__typename = $__typename;
+    _resultData['__typename'] = l$$__typename;
+    return _resultData;
+  }
+
+  @override
+  int get hashCode {
+    final l$deleteAccount = deleteAccount;
+    final l$$__typename = $__typename;
+    return Object.hashAll([
+      l$deleteAccount,
+      l$$__typename,
+    ]);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    if (!(other is Mutation$deleteAccount) ||
+        runtimeType != other.runtimeType) {
+      return false;
+    }
+    final l$deleteAccount = deleteAccount;
+    final lOther$deleteAccount = other.deleteAccount;
+    if (l$deleteAccount != lOther$deleteAccount) {
+      return false;
+    }
+    final l$$__typename = $__typename;
+    final lOther$$__typename = other.$__typename;
+    if (l$$__typename != lOther$$__typename) {
+      return false;
+    }
+    return true;
+  }
+}
+
+extension UtilityExtension$Mutation$deleteAccount on Mutation$deleteAccount {
+  CopyWith$Mutation$deleteAccount<Mutation$deleteAccount> get copyWith =>
+      CopyWith$Mutation$deleteAccount(
+        this,
+        (i) => i,
+      );
+}
+
+abstract class CopyWith$Mutation$deleteAccount<TRes> {
+  factory CopyWith$Mutation$deleteAccount(
+    Mutation$deleteAccount instance,
+    TRes Function(Mutation$deleteAccount) then,
+  ) = _CopyWithImpl$Mutation$deleteAccount;
+
+  factory CopyWith$Mutation$deleteAccount.stub(TRes res) =
+      _CopyWithStubImpl$Mutation$deleteAccount;
+
+  TRes call({
+    Mutation$deleteAccount$deleteAccount? deleteAccount,
+    String? $__typename,
+  });
+  CopyWith$Mutation$deleteAccount$deleteAccount<TRes> get deleteAccount;
+}
+
+class _CopyWithImpl$Mutation$deleteAccount<TRes>
+    implements CopyWith$Mutation$deleteAccount<TRes> {
+  _CopyWithImpl$Mutation$deleteAccount(
+    this._instance,
+    this._then,
+  );
+
+  final Mutation$deleteAccount _instance;
+
+  final TRes Function(Mutation$deleteAccount) _then;
+
+  static const _undefined = {};
+
+  TRes call({
+    Object? deleteAccount = _undefined,
+    Object? $__typename = _undefined,
+  }) =>
+      _then(Mutation$deleteAccount(
+        deleteAccount: deleteAccount == _undefined || deleteAccount == null
+            ? _instance.deleteAccount
+            : (deleteAccount as Mutation$deleteAccount$deleteAccount),
+        $__typename: $__typename == _undefined || $__typename == null
+            ? _instance.$__typename
+            : ($__typename as String),
+      ));
+  CopyWith$Mutation$deleteAccount$deleteAccount<TRes> get deleteAccount {
+    final local$deleteAccount = _instance.deleteAccount;
+    return CopyWith$Mutation$deleteAccount$deleteAccount(
+        local$deleteAccount, (e) => call(deleteAccount: e));
+  }
+}
+
+class _CopyWithStubImpl$Mutation$deleteAccount<TRes>
+    implements CopyWith$Mutation$deleteAccount<TRes> {
+  _CopyWithStubImpl$Mutation$deleteAccount(this._res);
+
+  TRes _res;
+
+  call({
+    Mutation$deleteAccount$deleteAccount? deleteAccount,
+    String? $__typename,
+  }) =>
+      _res;
+  CopyWith$Mutation$deleteAccount$deleteAccount<TRes> get deleteAccount =>
+      CopyWith$Mutation$deleteAccount$deleteAccount.stub(_res);
+}
+
+const documentNodeMutationdeleteAccount = DocumentNode(definitions: [
+  OperationDefinitionNode(
+    type: OperationType.mutation,
+    name: NameNode(value: 'deleteAccount'),
+    variableDefinitions: [],
+    directives: [],
+    selectionSet: SelectionSetNode(selections: [
+      FieldNode(
+        name: NameNode(value: 'deleteAccount'),
+        alias: null,
+        arguments: [],
+        directives: [],
+        selectionSet: SelectionSetNode(selections: [
+          FieldNode(
+            name: NameNode(value: 'deletedAccountId'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: null,
+          ),
+          FieldNode(
+            name: NameNode(value: '__typename'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: null,
+          ),
+        ]),
+      ),
+      FieldNode(
+        name: NameNode(value: '__typename'),
+        alias: null,
+        arguments: [],
+        directives: [],
+        selectionSet: null,
+      ),
+    ]),
+  ),
+]);
+Mutation$deleteAccount _parserFn$Mutation$deleteAccount(
+        Map<String, dynamic> data) =>
+    Mutation$deleteAccount.fromJson(data);
+typedef OnMutationCompleted$Mutation$deleteAccount = FutureOr<void> Function(
+  dynamic,
+  Mutation$deleteAccount?,
+);
+
+class Options$Mutation$deleteAccount
+    extends graphql.MutationOptions<Mutation$deleteAccount> {
+  Options$Mutation$deleteAccount({
+    String? operationName,
+    graphql.FetchPolicy? fetchPolicy,
+    graphql.ErrorPolicy? errorPolicy,
+    graphql.CacheRereadPolicy? cacheRereadPolicy,
+    Object? optimisticResult,
+    graphql.Context? context,
+    OnMutationCompleted$Mutation$deleteAccount? onCompleted,
+    graphql.OnMutationUpdate<Mutation$deleteAccount>? update,
+    graphql.OnError? onError,
+  })  : onCompletedWithParsed = onCompleted,
+        super(
+          operationName: operationName,
+          fetchPolicy: fetchPolicy,
+          errorPolicy: errorPolicy,
+          cacheRereadPolicy: cacheRereadPolicy,
+          optimisticResult: optimisticResult,
+          context: context,
+          onCompleted: onCompleted == null
+              ? null
+              : (data) => onCompleted(
+                    data,
+                    data == null
+                        ? null
+                        : _parserFn$Mutation$deleteAccount(data),
+                  ),
+          update: update,
+          onError: onError,
+          document: documentNodeMutationdeleteAccount,
+          parserFn: _parserFn$Mutation$deleteAccount,
+        );
+
+  final OnMutationCompleted$Mutation$deleteAccount? onCompletedWithParsed;
+
+  @override
+  List<Object?> get properties => [
+        ...super.onCompleted == null
+            ? super.properties
+            : super.properties.where((property) => property != onCompleted),
+        onCompletedWithParsed,
+      ];
+}
+
+class WatchOptions$Mutation$deleteAccount
+    extends graphql.WatchQueryOptions<Mutation$deleteAccount> {
+  WatchOptions$Mutation$deleteAccount({
+    String? operationName,
+    graphql.FetchPolicy? fetchPolicy,
+    graphql.ErrorPolicy? errorPolicy,
+    graphql.CacheRereadPolicy? cacheRereadPolicy,
+    Object? optimisticResult,
+    graphql.Context? context,
+    Duration? pollInterval,
+    bool? eagerlyFetchResults,
+    bool carryForwardDataOnException = true,
+    bool fetchResults = false,
+  }) : super(
+          operationName: operationName,
+          fetchPolicy: fetchPolicy,
+          errorPolicy: errorPolicy,
+          cacheRereadPolicy: cacheRereadPolicy,
+          optimisticResult: optimisticResult,
+          context: context,
+          document: documentNodeMutationdeleteAccount,
+          pollInterval: pollInterval,
+          eagerlyFetchResults: eagerlyFetchResults,
+          carryForwardDataOnException: carryForwardDataOnException,
+          fetchResults: fetchResults,
+          parserFn: _parserFn$Mutation$deleteAccount,
+        );
+}
+
+extension ClientExtension$Mutation$deleteAccount on graphql.GraphQLClient {
+  Future<graphql.QueryResult<Mutation$deleteAccount>> mutate$deleteAccount(
+          [Options$Mutation$deleteAccount? options]) async =>
+      await this.mutate(options ?? Options$Mutation$deleteAccount());
+  graphql.ObservableQuery<Mutation$deleteAccount> watchMutation$deleteAccount(
+          [WatchOptions$Mutation$deleteAccount? options]) =>
+      this.watchMutation(options ?? WatchOptions$Mutation$deleteAccount());
+}
+
+class Mutation$deleteAccount$HookResult {
+  Mutation$deleteAccount$HookResult(
+    this.runMutation,
+    this.result,
+  );
+
+  final RunMutation$Mutation$deleteAccount runMutation;
+
+  final graphql.QueryResult<Mutation$deleteAccount> result;
+}
+
+Mutation$deleteAccount$HookResult useMutation$deleteAccount(
+    [WidgetOptions$Mutation$deleteAccount? options]) {
+  final result = graphql_flutter
+      .useMutation(options ?? WidgetOptions$Mutation$deleteAccount());
+  return Mutation$deleteAccount$HookResult(
+    ({optimisticResult}) => result.runMutation(
+      const {},
+      optimisticResult: optimisticResult,
+    ),
+    result.result,
+  );
+}
+
+graphql.ObservableQuery<Mutation$deleteAccount> useWatchMutation$deleteAccount(
+        [WatchOptions$Mutation$deleteAccount? options]) =>
+    graphql_flutter
+        .useWatchMutation(options ?? WatchOptions$Mutation$deleteAccount());
+
+class WidgetOptions$Mutation$deleteAccount
+    extends graphql.MutationOptions<Mutation$deleteAccount> {
+  WidgetOptions$Mutation$deleteAccount({
+    String? operationName,
+    graphql.FetchPolicy? fetchPolicy,
+    graphql.ErrorPolicy? errorPolicy,
+    graphql.CacheRereadPolicy? cacheRereadPolicy,
+    Object? optimisticResult,
+    graphql.Context? context,
+    OnMutationCompleted$Mutation$deleteAccount? onCompleted,
+    graphql.OnMutationUpdate<Mutation$deleteAccount>? update,
+    graphql.OnError? onError,
+  })  : onCompletedWithParsed = onCompleted,
+        super(
+          operationName: operationName,
+          fetchPolicy: fetchPolicy,
+          errorPolicy: errorPolicy,
+          cacheRereadPolicy: cacheRereadPolicy,
+          optimisticResult: optimisticResult,
+          context: context,
+          onCompleted: onCompleted == null
+              ? null
+              : (data) => onCompleted(
+                    data,
+                    data == null
+                        ? null
+                        : _parserFn$Mutation$deleteAccount(data),
+                  ),
+          update: update,
+          onError: onError,
+          document: documentNodeMutationdeleteAccount,
+          parserFn: _parserFn$Mutation$deleteAccount,
+        );
+
+  final OnMutationCompleted$Mutation$deleteAccount? onCompletedWithParsed;
+
+  @override
+  List<Object?> get properties => [
+        ...super.onCompleted == null
+            ? super.properties
+            : super.properties.where((property) => property != onCompleted),
+        onCompletedWithParsed,
+      ];
+}
+
+typedef RunMutation$Mutation$deleteAccount
+    = graphql.MultiSourceResult<Mutation$deleteAccount> Function(
+        {Object? optimisticResult});
+typedef Builder$Mutation$deleteAccount = widgets.Widget Function(
+  RunMutation$Mutation$deleteAccount,
+  graphql.QueryResult<Mutation$deleteAccount>?,
+);
+
+class Mutation$deleteAccount$Widget
+    extends graphql_flutter.Mutation<Mutation$deleteAccount> {
+  Mutation$deleteAccount$Widget({
+    widgets.Key? key,
+    WidgetOptions$Mutation$deleteAccount? options,
+    required Builder$Mutation$deleteAccount builder,
+  }) : super(
+          key: key,
+          options: options ?? WidgetOptions$Mutation$deleteAccount(),
+          builder: (
+            run,
+            result,
+          ) =>
+              builder(
+            ({optimisticResult}) => run(
+              const {},
+              optimisticResult: optimisticResult,
+            ),
+            result,
+          ),
+        );
+}
+
+class Mutation$deleteAccount$deleteAccount {
+  Mutation$deleteAccount$deleteAccount({
+    required this.deletedAccountId,
+    required this.$__typename,
+  });
+
+  factory Mutation$deleteAccount$deleteAccount.fromJson(
+      Map<String, dynamic> json) {
+    final l$deletedAccountId = json['deletedAccountId'];
+    final l$$__typename = json['__typename'];
+    return Mutation$deleteAccount$deleteAccount(
+      deletedAccountId: (l$deletedAccountId as String),
+      $__typename: (l$$__typename as String),
+    );
+  }
+
+  final String deletedAccountId;
+
+  final String $__typename;
+
+  Map<String, dynamic> toJson() {
+    final _resultData = <String, dynamic>{};
+    final l$deletedAccountId = deletedAccountId;
+    _resultData['deletedAccountId'] = l$deletedAccountId;
+    final l$$__typename = $__typename;
+    _resultData['__typename'] = l$$__typename;
+    return _resultData;
+  }
+
+  @override
+  int get hashCode {
+    final l$deletedAccountId = deletedAccountId;
+    final l$$__typename = $__typename;
+    return Object.hashAll([
+      l$deletedAccountId,
+      l$$__typename,
+    ]);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    if (!(other is Mutation$deleteAccount$deleteAccount) ||
+        runtimeType != other.runtimeType) {
+      return false;
+    }
+    final l$deletedAccountId = deletedAccountId;
+    final lOther$deletedAccountId = other.deletedAccountId;
+    if (l$deletedAccountId != lOther$deletedAccountId) {
+      return false;
+    }
+    final l$$__typename = $__typename;
+    final lOther$$__typename = other.$__typename;
+    if (l$$__typename != lOther$$__typename) {
+      return false;
+    }
+    return true;
+  }
+}
+
+extension UtilityExtension$Mutation$deleteAccount$deleteAccount
+    on Mutation$deleteAccount$deleteAccount {
+  CopyWith$Mutation$deleteAccount$deleteAccount<
+          Mutation$deleteAccount$deleteAccount>
+      get copyWith => CopyWith$Mutation$deleteAccount$deleteAccount(
+            this,
+            (i) => i,
+          );
+}
+
+abstract class CopyWith$Mutation$deleteAccount$deleteAccount<TRes> {
+  factory CopyWith$Mutation$deleteAccount$deleteAccount(
+    Mutation$deleteAccount$deleteAccount instance,
+    TRes Function(Mutation$deleteAccount$deleteAccount) then,
+  ) = _CopyWithImpl$Mutation$deleteAccount$deleteAccount;
+
+  factory CopyWith$Mutation$deleteAccount$deleteAccount.stub(TRes res) =
+      _CopyWithStubImpl$Mutation$deleteAccount$deleteAccount;
+
+  TRes call({
+    String? deletedAccountId,
+    String? $__typename,
+  });
+}
+
+class _CopyWithImpl$Mutation$deleteAccount$deleteAccount<TRes>
+    implements CopyWith$Mutation$deleteAccount$deleteAccount<TRes> {
+  _CopyWithImpl$Mutation$deleteAccount$deleteAccount(
+    this._instance,
+    this._then,
+  );
+
+  final Mutation$deleteAccount$deleteAccount _instance;
+
+  final TRes Function(Mutation$deleteAccount$deleteAccount) _then;
+
+  static const _undefined = {};
+
+  TRes call({
+    Object? deletedAccountId = _undefined,
+    Object? $__typename = _undefined,
+  }) =>
+      _then(Mutation$deleteAccount$deleteAccount(
+        deletedAccountId:
+            deletedAccountId == _undefined || deletedAccountId == null
+                ? _instance.deletedAccountId
+                : (deletedAccountId as String),
+        $__typename: $__typename == _undefined || $__typename == null
+            ? _instance.$__typename
+            : ($__typename as String),
+      ));
+}
+
+class _CopyWithStubImpl$Mutation$deleteAccount$deleteAccount<TRes>
+    implements CopyWith$Mutation$deleteAccount$deleteAccount<TRes> {
+  _CopyWithStubImpl$Mutation$deleteAccount$deleteAccount(this._res);
+
+  TRes _res;
+
+  call({
+    String? deletedAccountId,
+    String? $__typename,
+  }) =>
+      _res;
+}

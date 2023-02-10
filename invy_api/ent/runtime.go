@@ -31,7 +31,7 @@ func init() {
 	accountFields := schema.Account{}.Fields()
 	_ = accountFields
 	// accountDescCreatedAt is the schema descriptor for created_at field.
-	accountDescCreatedAt := accountFields[4].Descriptor()
+	accountDescCreatedAt := accountFields[5].Descriptor()
 	// account.DefaultCreatedAt holds the default value on creation for the created_at field.
 	account.DefaultCreatedAt = accountDescCreatedAt.Default.(func() time.Time)
 	// accountDescID is the schema descriptor for id field.
@@ -143,7 +143,7 @@ func init() {
 	userFields := schema.User{}.Fields()
 	_ = userFields
 	// userDescCreatedAt is the schema descriptor for created_at field.
-	userDescCreatedAt := userFields[2].Descriptor()
+	userDescCreatedAt := userFields[3].Descriptor()
 	// user.DefaultCreatedAt holds the default value on creation for the created_at field.
 	user.DefaultCreatedAt = userDescCreatedAt.Default.(func() time.Time)
 	// userDescID is the schema descriptor for id field.

@@ -147,7 +147,7 @@ class MyProfileScreen extends HookConsumerWidget {
                             style: TextButton.styleFrom(
                               foregroundColor: Colors.blue,
                             ),
-                            child: const Text("OK"),
+                            child: const Text("ログアウト"),
                           ),
                         ],
                       );
@@ -169,10 +169,48 @@ class MyProfileScreen extends HookConsumerWidget {
                 },
               ),
               const GreyDivider(),
+              SettingItem(
+                title: "退会",
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: const Text("退会"),
+                        content:
+                            const Text("退会するとデータは消去され復元が出来ません。退会してもよろしいですか？"),
+                        actions: <Widget>[
+                          TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            style: TextButton.styleFrom(
+                              foregroundColor: Colors.grey.shade800,
+                            ),
+                            child: const Text("キャンセル"),
+                          ),
+                          TextButton(
+                            onPressed: () async {
+                              await graphqlClient.mutate$deleteAccount();
+                              await FirebaseAuth.instance.signOut();
+                              graphqlClient.cache.store.reset();
+                              ref.invalidate(loggedInUserProvider);
+                            },
+                            style: TextButton.styleFrom(
+                              foregroundColor: Colors.blue,
+                            ),
+                            child: const Text("退会する",
+                                style: TextStyle(color: Colors.red)),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
+              ),
+              const GreyDivider(),
               Container(
                 padding: const EdgeInsets.symmetric(vertical: 20),
                 child: Center(child: Text("バージョン ${packageInfo.version}")),
-              )
+              ),
             ],
           )
         ]),

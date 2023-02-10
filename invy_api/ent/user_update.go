@@ -35,6 +35,20 @@ func (uu *UserUpdate) Where(ps ...predicate.User) *UserUpdate {
 	return uu
 }
 
+// SetStatus sets the "status" field.
+func (uu *UserUpdate) SetStatus(u user.Status) *UserUpdate {
+	uu.mutation.SetStatus(u)
+	return uu
+}
+
+// SetNillableStatus sets the "status" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableStatus(u *user.Status) *UserUpdate {
+	if u != nil {
+		uu.SetStatus(*u)
+	}
+	return uu
+}
+
 // SetUserProfileID sets the "user_profile" edge to the UserProfile entity by ID.
 func (uu *UserUpdate) SetUserProfileID(id uuid.UUID) *UserUpdate {
 	uu.mutation.SetUserProfileID(id)
@@ -382,6 +396,11 @@ func (uu *UserUpdate) ExecX(ctx context.Context) {
 
 // check runs all checks and user-defined validators on the builder.
 func (uu *UserUpdate) check() error {
+	if v, ok := uu.mutation.Status(); ok {
+		if err := user.StatusValidator(v); err != nil {
+			return &ValidationError{Name: "status", err: fmt.Errorf(`ent: validator failed for field "User.status": %w`, err)}
+		}
+	}
 	if _, ok := uu.mutation.AccountID(); uu.mutation.AccountCleared() && !ok {
 		return errors.New(`ent: clearing a required unique edge "User.account"`)
 	}
@@ -408,6 +427,9 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := uu.mutation.Status(); ok {
+		_spec.SetField(user.FieldStatus, field.TypeEnum, value)
 	}
 	if uu.mutation.UserProfileCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -938,6 +960,20 @@ type UserUpdateOne struct {
 	mutation *UserMutation
 }
 
+// SetStatus sets the "status" field.
+func (uuo *UserUpdateOne) SetStatus(u user.Status) *UserUpdateOne {
+	uuo.mutation.SetStatus(u)
+	return uuo
+}
+
+// SetNillableStatus sets the "status" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableStatus(u *user.Status) *UserUpdateOne {
+	if u != nil {
+		uuo.SetStatus(*u)
+	}
+	return uuo
+}
+
 // SetUserProfileID sets the "user_profile" edge to the UserProfile entity by ID.
 func (uuo *UserUpdateOne) SetUserProfileID(id uuid.UUID) *UserUpdateOne {
 	uuo.mutation.SetUserProfileID(id)
@@ -1292,6 +1328,11 @@ func (uuo *UserUpdateOne) ExecX(ctx context.Context) {
 
 // check runs all checks and user-defined validators on the builder.
 func (uuo *UserUpdateOne) check() error {
+	if v, ok := uuo.mutation.Status(); ok {
+		if err := user.StatusValidator(v); err != nil {
+			return &ValidationError{Name: "status", err: fmt.Errorf(`ent: validator failed for field "User.status": %w`, err)}
+		}
+	}
 	if _, ok := uuo.mutation.AccountID(); uuo.mutation.AccountCleared() && !ok {
 		return errors.New(`ent: clearing a required unique edge "User.account"`)
 	}
@@ -1335,6 +1376,9 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := uuo.mutation.Status(); ok {
+		_spec.SetField(user.FieldStatus, field.TypeEnum, value)
 	}
 	if uuo.mutation.UserProfileCleared() {
 		edge := &sqlgraph.EdgeSpec{

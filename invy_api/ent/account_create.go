@@ -59,6 +59,20 @@ func (ac *AccountCreate) SetNillablePhoneNumber(s *string) *AccountCreate {
 	return ac
 }
 
+// SetStatus sets the "status" field.
+func (ac *AccountCreate) SetStatus(a account.Status) *AccountCreate {
+	ac.mutation.SetStatus(a)
+	return ac
+}
+
+// SetNillableStatus sets the "status" field if the given value is not nil.
+func (ac *AccountCreate) SetNillableStatus(a *account.Status) *AccountCreate {
+	if a != nil {
+		ac.SetStatus(*a)
+	}
+	return ac
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (ac *AccountCreate) SetCreatedAt(t time.Time) *AccountCreate {
 	ac.mutation.SetCreatedAt(t)
@@ -137,6 +151,10 @@ func (ac *AccountCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (ac *AccountCreate) defaults() {
+	if _, ok := ac.mutation.Status(); !ok {
+		v := account.DefaultStatus
+		ac.mutation.SetStatus(v)
+	}
 	if _, ok := ac.mutation.CreatedAt(); !ok {
 		v := account.DefaultCreatedAt()
 		ac.mutation.SetCreatedAt(v)
@@ -151,6 +169,14 @@ func (ac *AccountCreate) defaults() {
 func (ac *AccountCreate) check() error {
 	if _, ok := ac.mutation.AuthID(); !ok {
 		return &ValidationError{Name: "auth_id", err: errors.New(`ent: missing required field "Account.auth_id"`)}
+	}
+	if _, ok := ac.mutation.Status(); !ok {
+		return &ValidationError{Name: "status", err: errors.New(`ent: missing required field "Account.status"`)}
+	}
+	if v, ok := ac.mutation.Status(); ok {
+		if err := account.StatusValidator(v); err != nil {
+			return &ValidationError{Name: "status", err: fmt.Errorf(`ent: validator failed for field "Account.status": %w`, err)}
+		}
 	}
 	if _, ok := ac.mutation.CreatedAt(); !ok {
 		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Account.created_at"`)}
@@ -208,6 +234,10 @@ func (ac *AccountCreate) createSpec() (*Account, *sqlgraph.CreateSpec) {
 	if value, ok := ac.mutation.PhoneNumber(); ok {
 		_spec.SetField(account.FieldPhoneNumber, field.TypeString, value)
 		_node.PhoneNumber = &value
+	}
+	if value, ok := ac.mutation.Status(); ok {
+		_spec.SetField(account.FieldStatus, field.TypeEnum, value)
+		_node.Status = value
 	}
 	if value, ok := ac.mutation.CreatedAt(); ok {
 		_spec.SetField(account.FieldCreatedAt, field.TypeTime, value)
@@ -320,6 +350,18 @@ func (u *AccountUpsert) ClearPhoneNumber() *AccountUpsert {
 	return u
 }
 
+// SetStatus sets the "status" field.
+func (u *AccountUpsert) SetStatus(v account.Status) *AccountUpsert {
+	u.Set(account.FieldStatus, v)
+	return u
+}
+
+// UpdateStatus sets the "status" field to the value that was provided on create.
+func (u *AccountUpsert) UpdateStatus() *AccountUpsert {
+	u.SetExcluded(account.FieldStatus)
+	return u
+}
+
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
@@ -413,6 +455,20 @@ func (u *AccountUpsertOne) UpdatePhoneNumber() *AccountUpsertOne {
 func (u *AccountUpsertOne) ClearPhoneNumber() *AccountUpsertOne {
 	return u.Update(func(s *AccountUpsert) {
 		s.ClearPhoneNumber()
+	})
+}
+
+// SetStatus sets the "status" field.
+func (u *AccountUpsertOne) SetStatus(v account.Status) *AccountUpsertOne {
+	return u.Update(func(s *AccountUpsert) {
+		s.SetStatus(v)
+	})
+}
+
+// UpdateStatus sets the "status" field to the value that was provided on create.
+func (u *AccountUpsertOne) UpdateStatus() *AccountUpsertOne {
+	return u.Update(func(s *AccountUpsert) {
+		s.UpdateStatus()
 	})
 }
 
@@ -672,6 +728,20 @@ func (u *AccountUpsertBulk) UpdatePhoneNumber() *AccountUpsertBulk {
 func (u *AccountUpsertBulk) ClearPhoneNumber() *AccountUpsertBulk {
 	return u.Update(func(s *AccountUpsert) {
 		s.ClearPhoneNumber()
+	})
+}
+
+// SetStatus sets the "status" field.
+func (u *AccountUpsertBulk) SetStatus(v account.Status) *AccountUpsertBulk {
+	return u.Update(func(s *AccountUpsert) {
+		s.SetStatus(v)
+	})
+}
+
+// UpdateStatus sets the "status" field to the value that was provided on create.
+func (u *AccountUpsertBulk) UpdateStatus() *AccountUpsertBulk {
+	return u.Update(func(s *AccountUpsert) {
+		s.UpdateStatus()
 	})
 }
 

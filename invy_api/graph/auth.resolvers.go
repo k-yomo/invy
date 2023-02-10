@@ -42,7 +42,7 @@ func (r *mutationResolver) SignUp(ctx context.Context, input gqlmodel.SignUpInpu
 	}
 
 	// TODO: Replace with our own file
-	avatarURL := "https://cdn-icons-png.flaticon.com/512/456/456283.png"
+	avatarURL := defaultAvatarURL
 	if input.AvatarURL != nil {
 		avatarURL = *input.AvatarURL
 	}
@@ -143,6 +143,50 @@ func (r *mutationResolver) SignOut(ctx context.Context) (*gqlmodel.SignOutPayloa
 	return &gqlmodel.SignOutPayload{SignedOutUserID: authUserID}, nil
 }
 
+// DeleteAccount is the resolver for the deleteAccount field.
+func (r *mutationResolver) DeleteAccount(ctx context.Context) (*gqlmodel.DeleteAccountPayload, error) {
+	authAccountID := auth.GetAccountID(ctx)
+	dbAccount, err := r.DB.Account.Query().
+		Where(account.ID(authAccountID)).
+		Only(ctx)
+	if err != nil {
+		return nil, err
+	}
+	userIDs, err := r.DB.Account.Query().QueryUsers().IDs(ctx)
+	if err != nil {
+		return nil, err
+	}
+	err = ent.RunInTx(ctx, r.DB, func(tx *ent.Tx) error {
+		err := tx.Account.Update().
+			Where(account.ID(authAccountID)).
+			SetStatus(account.StatusDeleted).
+			Exec(ctx)
+		if err != nil {
+			return err
+		}
+		err = tx.User.Update().
+			Where(user.AccountID(authAccountID)).
+			SetStatus(user.StatusDeleted).
+			Exec(ctx)
+		err = tx.UserProfile.Update().
+			Where(userprofile.UserIDIn(userIDs...)).
+			SetNickname("削除済みユーザー").
+			SetAvatarURL(defaultAvatarURL).
+			Exec(ctx)
+		if err != nil {
+			return err
+		}
+		if err := r.FirebaseAuthClient.DeleteUser(ctx, dbAccount.AuthID); err != nil {
+			return err
+		}
+		return nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &gqlmodel.DeleteAccountPayload{DeletedAccountID: authAccountID}, nil
+}
+
 // CreateUser is the resolver for the createUser field.
 func (r *mutationResolver) CreateUser(ctx context.Context, input gqlmodel.CreateUserInput) (*gqlmodel.CreateUserPayload, error) {
 	accountID := auth.GetAccountID(ctx)
@@ -225,3 +269,11 @@ func (r *mutationResolver) SwitchUser(ctx context.Context, userID uuid.UUID) (*g
 
 	return &gqlmodel.SwitchUserPayload{Viewer: conv.ConvertFromDBUserProfileToViewer(dbUser.Edges.UserProfile)}, nil
 }
+
+// !!! WARNING !!!
+// The code below was going to be deleted when updating resolvers. It has been copied here so you have
+// one last chance to move it out of harms way if you want. There are two reasons this happens:
+//   - When renaming or deleting a resolver the old code will be put in here. You can safely delete
+//     it when you're done.
+//   - You have helper methods in this file. Move them out to keep these resolver files clean.
+const defaultAvatarURL = "https://cdn-icons-png.flaticon.com/512/456/456283.png"

@@ -3,6 +3,9 @@
 package account
 
 import (
+	"fmt"
+	"io"
+	"strconv"
 	"time"
 
 	"github.com/google/uuid"
@@ -19,6 +22,8 @@ const (
 	FieldEmail = "email"
 	// FieldPhoneNumber holds the string denoting the phone_number field in the database.
 	FieldPhoneNumber = "phone_number"
+	// FieldStatus holds the string denoting the status field in the database.
+	FieldStatus = "status"
 	// FieldCreatedAt holds the string denoting the created_at field in the database.
 	FieldCreatedAt = "created_at"
 	// EdgeUsers holds the string denoting the users edge name in mutations.
@@ -40,6 +45,7 @@ var Columns = []string{
 	FieldAuthID,
 	FieldEmail,
 	FieldPhoneNumber,
+	FieldStatus,
 	FieldCreatedAt,
 }
 
@@ -59,3 +65,48 @@ var (
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() uuid.UUID
 )
+
+// Status defines the type for the "status" enum field.
+type Status string
+
+// StatusActive is the default value of the Status enum.
+const DefaultStatus = StatusActive
+
+// Status values.
+const (
+	StatusActive    Status = "active"
+	StatusSuspended Status = "suspended"
+	StatusDeleted   Status = "deleted"
+)
+
+func (s Status) String() string {
+	return string(s)
+}
+
+// StatusValidator is a validator for the "status" field enum values. It is called by the builders before save.
+func StatusValidator(s Status) error {
+	switch s {
+	case StatusActive, StatusSuspended, StatusDeleted:
+		return nil
+	default:
+		return fmt.Errorf("account: invalid enum value for status field: %q", s)
+	}
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (e Status) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(e.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (e *Status) UnmarshalGQL(val interface{}) error {
+	str, ok := val.(string)
+	if !ok {
+		return fmt.Errorf("enum %T must be a string", val)
+	}
+	*e = Status(str)
+	if err := StatusValidator(*e); err != nil {
+		return fmt.Errorf("%s is not a valid Status", str)
+	}
+	return nil
+}

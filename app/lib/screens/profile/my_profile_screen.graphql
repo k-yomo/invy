@@ -4,3 +4,9 @@ mutation signOut {
         signedOutUserId
     }
 }
+
+mutation deleteAccount {
+    deleteAccount {
+        deletedAccountId
+    }
+}

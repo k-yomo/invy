@@ -56,6 +56,10 @@ type CreateUserPayload struct {
 	Viewer *Viewer `json:"viewer"`
 }
 
+type DeleteAccountPayload struct {
+	DeletedAccountID uuid.UUID `json:"deletedAccountId"`
+}
+
 type DeleteFriendGroupPayload struct {
 	DeletedFriendGroupID uuid.UUID `json:"deletedFriendGroupId"`
 }

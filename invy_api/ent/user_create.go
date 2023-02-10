@@ -38,6 +38,20 @@ func (uc *UserCreate) SetAccountID(u uuid.UUID) *UserCreate {
 	return uc
 }
 
+// SetStatus sets the "status" field.
+func (uc *UserCreate) SetStatus(u user.Status) *UserCreate {
+	uc.mutation.SetStatus(u)
+	return uc
+}
+
+// SetNillableStatus sets the "status" field if the given value is not nil.
+func (uc *UserCreate) SetNillableStatus(u *user.Status) *UserCreate {
+	if u != nil {
+		uc.SetStatus(*u)
+	}
+	return uc
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (uc *UserCreate) SetCreatedAt(t time.Time) *UserCreate {
 	uc.mutation.SetCreatedAt(t)
@@ -245,6 +259,10 @@ func (uc *UserCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (uc *UserCreate) defaults() {
+	if _, ok := uc.mutation.Status(); !ok {
+		v := user.DefaultStatus
+		uc.mutation.SetStatus(v)
+	}
 	if _, ok := uc.mutation.CreatedAt(); !ok {
 		v := user.DefaultCreatedAt()
 		uc.mutation.SetCreatedAt(v)
@@ -259,6 +277,14 @@ func (uc *UserCreate) defaults() {
 func (uc *UserCreate) check() error {
 	if _, ok := uc.mutation.AccountID(); !ok {
 		return &ValidationError{Name: "account_id", err: errors.New(`ent: missing required field "User.account_id"`)}
+	}
+	if _, ok := uc.mutation.Status(); !ok {
+		return &ValidationError{Name: "status", err: errors.New(`ent: missing required field "User.status"`)}
+	}
+	if v, ok := uc.mutation.Status(); ok {
+		if err := user.StatusValidator(v); err != nil {
+			return &ValidationError{Name: "status", err: fmt.Errorf(`ent: validator failed for field "User.status": %w`, err)}
+		}
 	}
 	if _, ok := uc.mutation.CreatedAt(); !ok {
 		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "User.created_at"`)}
@@ -307,6 +333,10 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if id, ok := uc.mutation.ID(); ok {
 		_node.ID = id
 		_spec.ID.Value = &id
+	}
+	if value, ok := uc.mutation.Status(); ok {
+		_spec.SetField(user.FieldStatus, field.TypeEnum, value)
+		_node.Status = value
 	}
 	if value, ok := uc.mutation.CreatedAt(); ok {
 		_spec.SetField(user.FieldCreatedAt, field.TypeTime, value)
@@ -569,6 +599,18 @@ type (
 	}
 )
 
+// SetStatus sets the "status" field.
+func (u *UserUpsert) SetStatus(v user.Status) *UserUpsert {
+	u.Set(user.FieldStatus, v)
+	return u
+}
+
+// UpdateStatus sets the "status" field to the value that was provided on create.
+func (u *UserUpsert) UpdateStatus() *UserUpsert {
+	u.SetExcluded(user.FieldStatus)
+	return u
+}
+
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
@@ -621,6 +663,20 @@ func (u *UserUpsertOne) Update(set func(*UserUpsert)) *UserUpsertOne {
 		set(&UserUpsert{UpdateSet: update})
 	}))
 	return u
+}
+
+// SetStatus sets the "status" field.
+func (u *UserUpsertOne) SetStatus(v user.Status) *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.SetStatus(v)
+	})
+}
+
+// UpdateStatus sets the "status" field to the value that was provided on create.
+func (u *UserUpsertOne) UpdateStatus() *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateStatus()
+	})
 }
 
 // Exec executes the query.
@@ -838,6 +894,20 @@ func (u *UserUpsertBulk) Update(set func(*UserUpsert)) *UserUpsertBulk {
 		set(&UserUpsert{UpdateSet: update})
 	}))
 	return u
+}
+
+// SetStatus sets the "status" field.
+func (u *UserUpsertBulk) SetStatus(v user.Status) *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.SetStatus(v)
+	})
+}
+
+// UpdateStatus sets the "status" field to the value that was provided on create.
+func (u *UserUpsertBulk) UpdateStatus() *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateStatus()
+	})
 }
 
 // Exec executes the query.

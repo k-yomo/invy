@@ -11,6 +11,7 @@ import (
 	"github.com/k-yomo/invy/invy_api/auth"
 	"github.com/k-yomo/invy/invy_api/ent"
 	"github.com/k-yomo/invy/invy_api/ent/friendgroup"
+	"github.com/k-yomo/invy/invy_api/ent/user"
 	"github.com/k-yomo/invy/invy_api/ent/userfriendgroup"
 	"github.com/k-yomo/invy/invy_api/graph/conv"
 	"github.com/k-yomo/invy/invy_api/graph/gqlgen"
@@ -23,6 +24,7 @@ func (r *friendGroupResolver) FriendUsers(ctx context.Context, obj *gqlmodel.Fri
 	dbFriendUsersInGroup, err := r.DB.FriendGroup.Query().
 		Where(friendgroup.ID(obj.ID)).
 		QueryFriendUsers().
+		Where(user.StatusEQ(user.StatusActive)).
 		QueryUserProfile().
 		All(ctx)
 	if err != nil {

@@ -21,6 +21,9 @@ func (User) Fields() []ent.Field {
 			Default(uuid.New),
 		field.UUID("account_id", uuid.UUID{}).
 			Immutable(),
+		field.Enum("status").
+			Values("active", "suspended", "deleted").
+			Default("active"),
 		field.Time("created_at").
 			Immutable().
 			Default(time.Now),

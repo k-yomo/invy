@@ -22,6 +22,7 @@ import (
 	"github.com/k-yomo/invy/invy_api/ent/invitationacceptance"
 	"github.com/k-yomo/invy/invy_api/ent/invitationdenial"
 	"github.com/k-yomo/invy/invy_api/ent/invitationuser"
+	"github.com/k-yomo/invy/invy_api/ent/user"
 	"github.com/k-yomo/invy/invy_api/ent/userblock"
 	"github.com/k-yomo/invy/invy_api/ent/userprofile"
 	"github.com/k-yomo/invy/invy_api/graph/conv"
@@ -110,7 +111,10 @@ func (r *queryResolver) Viewer(ctx context.Context) (*gqlmodel.Viewer, error) {
 
 // User is the resolver for the user field.
 func (r *queryResolver) User(ctx context.Context, userID uuid.UUID) (*gqlmodel.User, error) {
-	dbUserProfile, err := loader.Get(ctx).UserProfile.Load(ctx, userID)()
+	dbUserProfile, err := r.DB.User.Query().
+		Where(user.ID(userID), user.StatusEQ(user.StatusActive)).
+		QueryUserProfile().
+		Only(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -238,6 +242,10 @@ func (r *viewerResolver) Friends(ctx context.Context, obj *gqlmodel.Viewer, afte
 		TotalCount: dbFriendshipConnection.TotalCount,
 	}
 	for _, edge := range dbFriendshipConnection.Edges {
+		// TODO: Exclude deleted user in SQL
+		if edge.Node.Edges.FriendUser.Status == user.StatusDeleted {
+			continue
+		}
 		userConnection.Edges = append(userConnection.Edges, &gqlmodel.UserEdge{
 			Node:   conv.ConvertFromDBUserProfile(edge.Node.Edges.FriendUser.Edges.UserProfile),
 			Cursor: edge.Cursor,
@@ -253,6 +261,7 @@ func (r *viewerResolver) BlockedFriends(ctx context.Context, obj *gqlmodel.Viewe
 		Where(userblock.UserID(authUserID)).
 		QueryBlockUser().
 		QueryUserProfile().
+		WithUser().
 		Paginate(ctx, after, first, before, last)
 	if err != nil {
 		return nil, err
@@ -262,6 +271,10 @@ func (r *viewerResolver) BlockedFriends(ctx context.Context, obj *gqlmodel.Viewe
 		TotalCount: dbUserProfileConnection.TotalCount,
 	}
 	for _, edge := range dbUserProfileConnection.Edges {
+		// TODO: Exclude deleted user in SQL
+		if edge.Node.Edges.User.Status == user.StatusDeleted {
+			continue
+		}
 		userConnection.Edges = append(userConnection.Edges, &gqlmodel.UserEdge{
 			Node:   conv.ConvertFromDBUserProfile(edge.Node),
 			Cursor: edge.Cursor,
