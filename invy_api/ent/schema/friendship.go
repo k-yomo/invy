@@ -3,7 +3,6 @@ package schema
 import (
 	"time"
 
-	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
@@ -24,8 +23,7 @@ func (Friendship) Fields() []ent.Field {
 		field.UUID("friend_user_id", uuid.UUID{}).Immutable(),
 		field.Time("created_at").
 			Immutable().
-			Default(time.Now).
-			Annotations(entgql.OrderField("CREATED_AT")),
+			Default(time.Now),
 	}
 }
 

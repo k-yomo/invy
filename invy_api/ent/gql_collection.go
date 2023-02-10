@@ -213,28 +213,6 @@ func newFriendshipPaginateArgs(rv map[string]interface{}) *friendshipPaginateArg
 	if v := rv[beforeField]; v != nil {
 		args.before = v.(*Cursor)
 	}
-	if v, ok := rv[orderByField]; ok {
-		switch v := v.(type) {
-		case map[string]interface{}:
-			var (
-				err1, err2 error
-				order      = &FriendshipOrder{Field: &FriendshipOrderField{}}
-			)
-			if d, ok := v[directionField]; ok {
-				err1 = order.Direction.UnmarshalGQL(d)
-			}
-			if f, ok := v[fieldField]; ok {
-				err2 = order.Field.UnmarshalGQL(f)
-			}
-			if err1 == nil && err2 == nil {
-				args.opts = append(args.opts, WithFriendshipOrder(order))
-			}
-		case *FriendshipOrder:
-			if v != nil {
-				args.opts = append(args.opts, WithFriendshipOrder(v))
-			}
-		}
-	}
 	return args
 }
 

@@ -915,49 +915,6 @@ func (f *FriendshipQuery) Paginate(
 	return conn, nil
 }
 
-var (
-	// FriendshipOrderFieldCreatedAt orders Friendship by created_at.
-	FriendshipOrderFieldCreatedAt = &FriendshipOrderField{
-		field: friendship.FieldCreatedAt,
-		toCursor: func(f *Friendship) Cursor {
-			return Cursor{
-				ID:    f.ID,
-				Value: f.CreatedAt,
-			}
-		},
-	}
-)
-
-// String implement fmt.Stringer interface.
-func (f FriendshipOrderField) String() string {
-	var str string
-	switch f.field {
-	case friendship.FieldCreatedAt:
-		str = "CREATED_AT"
-	}
-	return str
-}
-
-// MarshalGQL implements graphql.Marshaler interface.
-func (f FriendshipOrderField) MarshalGQL(w io.Writer) {
-	io.WriteString(w, strconv.Quote(f.String()))
-}
-
-// UnmarshalGQL implements graphql.Unmarshaler interface.
-func (f *FriendshipOrderField) UnmarshalGQL(v interface{}) error {
-	str, ok := v.(string)
-	if !ok {
-		return fmt.Errorf("FriendshipOrderField %T must be a string", v)
-	}
-	switch str {
-	case "CREATED_AT":
-		*f = *FriendshipOrderFieldCreatedAt
-	default:
-		return fmt.Errorf("%s is not a valid FriendshipOrderField", str)
-	}
-	return nil
-}
-
 // FriendshipOrderField defines the ordering field of Friendship.
 type FriendshipOrderField struct {
 	field    string

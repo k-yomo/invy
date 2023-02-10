@@ -210,11 +210,7 @@ func (r *userResolver) IsRequestingFriendship(ctx context.Context, obj *gqlmodel
 // Friends is the resolver for the friends field.
 func (r *viewerResolver) Friends(ctx context.Context, obj *gqlmodel.Viewer, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*gqlmodel.UserConnection, error) {
 	authUserID := auth.GetCurrentUserID(ctx)
-	order := &ent.FriendshipOrder{
-		Direction: ent.OrderDirectionDesc,
-		Field:     ent.FriendshipOrderFieldCreatedAt,
-	}
-	dbFriendshipConnection, err := r.DB.Friendship.Query().
+	dbUserProfileConnection, err := r.DB.Friendship.Query().
 		WithFriendUser(func(q *ent.UserQuery) {
 			q.WithUserProfile()
 		}).
@@ -236,21 +232,21 @@ func (r *viewerResolver) Friends(ctx context.Context, obj *gqlmodel.Viewer, afte
 				)
 			},
 		).
-		Paginate(ctx, after, first, before, last, ent.WithFriendshipOrder(order))
+		QueryFriendUser().
+		Where(user.StatusEQ(user.StatusActive)).
+		QueryUserProfile().
+		Order(ent.Asc(userprofile.FieldNickname)).
+		Paginate(ctx, after, first, before, last)
 	if err != nil {
 		return nil, err
 	}
 	userConnection := gqlmodel.UserConnection{
-		PageInfo:   conv.ConvertFromDBPageInfo(&dbFriendshipConnection.PageInfo),
-		TotalCount: dbFriendshipConnection.TotalCount,
+		PageInfo:   conv.ConvertFromDBPageInfo(&dbUserProfileConnection.PageInfo),
+		TotalCount: dbUserProfileConnection.TotalCount,
 	}
-	for _, edge := range dbFriendshipConnection.Edges {
-		// TODO: Exclude deleted user in SQL
-		if edge.Node.Edges.FriendUser.Status == user.StatusDeleted {
-			continue
-		}
+	for _, edge := range dbUserProfileConnection.Edges {
 		userConnection.Edges = append(userConnection.Edges, &gqlmodel.UserEdge{
-			Node:   conv.ConvertFromDBUserProfile(edge.Node.Edges.FriendUser.Edges.UserProfile),
+			Node:   conv.ConvertFromDBUserProfile(edge.Node),
 			Cursor: edge.Cursor,
 		})
 	}
@@ -263,8 +259,9 @@ func (r *viewerResolver) BlockedFriends(ctx context.Context, obj *gqlmodel.Viewe
 	dbUserProfileConnection, err := r.DB.UserBlock.Query().
 		Where(userblock.UserID(authUserID)).
 		QueryBlockUser().
+		Where(user.StatusEQ(user.StatusActive)).
 		QueryUserProfile().
-		WithUser().
+		Order(ent.Asc(userprofile.FieldNickname)).
 		Paginate(ctx, after, first, before, last)
 	if err != nil {
 		return nil, err
@@ -274,10 +271,6 @@ func (r *viewerResolver) BlockedFriends(ctx context.Context, obj *gqlmodel.Viewe
 		TotalCount: dbUserProfileConnection.TotalCount,
 	}
 	for _, edge := range dbUserProfileConnection.Edges {
-		// TODO: Exclude deleted user in SQL
-		if edge.Node.Edges.User.Status == user.StatusDeleted {
-			continue
-		}
 		userConnection.Edges = append(userConnection.Edges, &gqlmodel.UserEdge{
 			Node:   conv.ConvertFromDBUserProfile(edge.Node),
 			Cursor: edge.Cursor,
