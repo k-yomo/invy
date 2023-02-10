@@ -112,7 +112,7 @@ func (r *queryResolver) Viewer(ctx context.Context) (*gqlmodel.Viewer, error) {
 // User is the resolver for the user field.
 func (r *queryResolver) User(ctx context.Context, userID uuid.UUID) (*gqlmodel.User, error) {
 	dbUserProfile, err := r.DB.User.Query().
-		Where(user.ID(userID), user.StatusEQ(user.StatusActive)).
+		Where(user.ID(userID)).
 		QueryUserProfile().
 		Only(ctx)
 	if err != nil {
@@ -123,7 +123,10 @@ func (r *queryResolver) User(ctx context.Context, userID uuid.UUID) (*gqlmodel.U
 
 // UserByScreenID is the resolver for the userByScreenId field.
 func (r *queryResolver) UserByScreenID(ctx context.Context, screenID string) (*gqlmodel.User, error) {
-	dbUserProfile, err := r.DB.UserProfile.Query().Where(userprofile.ScreenID(screenID)).Only(ctx)
+	dbUserProfile, err := r.DB.User.Query().
+		Where(user.StatusEQ(user.StatusActive)).
+		QueryUserProfile().
+		Where(userprofile.ScreenID(screenID)).Only(ctx)
 	if err != nil {
 		return nil, err
 	}
