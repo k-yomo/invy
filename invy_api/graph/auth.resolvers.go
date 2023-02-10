@@ -153,7 +153,10 @@ func (r *mutationResolver) DeleteAccount(ctx context.Context) (*gqlmodel.DeleteA
 	if err != nil {
 		return nil, err
 	}
-	userIDs, err := r.DB.Account.Query().QueryUsers().IDs(ctx)
+	userIDs, err := r.DB.Account.Query().
+		QueryUsers().
+		Where(user.AccountID(authAccountID)).
+		IDs(ctx)
 	if err != nil {
 		return nil, err
 	}
