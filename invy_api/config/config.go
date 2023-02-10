@@ -6,6 +6,8 @@ import (
 	"github.com/kelseyhightower/envconfig"
 )
 
+const DefaultAvatarURL = "https://upload.wikimedia.org/wikipedia/commons/c/cd/Portrait_Placeholder_Square.png"
+
 type Env string
 
 const (

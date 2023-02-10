@@ -203,6 +203,7 @@ class ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
                 children: [
                   CircleAvatar(
                     radius: 60.0,
+                    backgroundColor: Colors.white,
                     backgroundImage: CachedNetworkImageProvider(user.avatarUrl),
                   ),
                   const Gap(10),

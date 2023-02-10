@@ -11,6 +11,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/k-yomo/invy/invy_api/auth"
+	"github.com/k-yomo/invy/invy_api/config"
 	"github.com/k-yomo/invy/invy_api/ent"
 	"github.com/k-yomo/invy/invy_api/ent/account"
 	"github.com/k-yomo/invy/invy_api/ent/pushnotificationtoken"
@@ -42,7 +43,7 @@ func (r *mutationResolver) SignUp(ctx context.Context, input gqlmodel.SignUpInpu
 	}
 
 	// TODO: Replace with our own file
-	avatarURL := defaultAvatarURL
+	avatarURL := config.DefaultAvatarURL
 	if input.AvatarURL != nil {
 		avatarURL = *input.AvatarURL
 	}
@@ -171,7 +172,7 @@ func (r *mutationResolver) DeleteAccount(ctx context.Context) (*gqlmodel.DeleteA
 		err = tx.UserProfile.Update().
 			Where(userprofile.UserIDIn(userIDs...)).
 			SetNickname("削除済みユーザー").
-			SetAvatarURL(defaultAvatarURL).
+			SetAvatarURL(config.DefaultAvatarURL).
 			Exec(ctx)
 		if err != nil {
 			return err
@@ -269,11 +270,3 @@ func (r *mutationResolver) SwitchUser(ctx context.Context, userID uuid.UUID) (*g
 
 	return &gqlmodel.SwitchUserPayload{Viewer: conv.ConvertFromDBUserProfileToViewer(dbUser.Edges.UserProfile)}, nil
 }
-
-// !!! WARNING !!!
-// The code below was going to be deleted when updating resolvers. It has been copied here so you have
-// one last chance to move it out of harms way if you want. There are two reasons this happens:
-//   - When renaming or deleting a resolver the old code will be put in here. You can safely delete
-//     it when you're done.
-//   - You have helper methods in this file. Move them out to keep these resolver files clean.
-const defaultAvatarURL = "https://cdn-icons-png.flaticon.com/512/456/456283.png"
