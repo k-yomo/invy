@@ -116,6 +116,7 @@ class _FriendSearchResult extends HookConsumerWidget {
             margin: const EdgeInsets.symmetric(vertical: 15),
             child: Row(children: [
               CircleAvatar(
+                backgroundColor: Colors.white,
                 backgroundImage:
                     CachedNetworkImageProvider(foundUser.value!.avatarUrl),
               ),

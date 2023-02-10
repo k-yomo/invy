@@ -235,7 +235,6 @@ func (r *viewerResolver) Friends(ctx context.Context, obj *gqlmodel.Viewer, afte
 		QueryFriendUser().
 		Where(user.StatusEQ(user.StatusActive)).
 		QueryUserProfile().
-		Order(ent.Asc(userprofile.FieldNickname)).
 		Paginate(ctx, after, first, before, last)
 	if err != nil {
 		return nil, err
@@ -261,7 +260,6 @@ func (r *viewerResolver) BlockedFriends(ctx context.Context, obj *gqlmodel.Viewe
 		QueryBlockUser().
 		Where(user.StatusEQ(user.StatusActive)).
 		QueryUserProfile().
-		Order(ent.Asc(userprofile.FieldNickname)).
 		Paginate(ctx, after, first, before, last)
 	if err != nil {
 		return nil, err

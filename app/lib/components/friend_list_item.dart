@@ -20,6 +20,7 @@ class FriendListItem extends StatelessWidget {
       child: Row(
         children: [
           CircleAvatar(
+            backgroundColor: Colors.white,
             backgroundImage: CachedNetworkImageProvider(friend.avatarUrl),
           ),
           Expanded(
