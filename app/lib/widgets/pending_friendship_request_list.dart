@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:invy/components/pending_friendship_request_list_fragment.graphql.dart';
+import 'package:invy/widgets/pending_friendship_request_list_fragment.graphql.dart';
 import 'package:invy/screens/friend/friend_screen.graphql.dart';
 
 import '../services/graphql_client.dart';

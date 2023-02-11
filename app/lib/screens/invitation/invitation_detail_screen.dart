@@ -6,8 +6,8 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../components/app_bar_leading.dart';
-import '../../components/invitation_detail_fragment.graphql.dart';
+import '../../widgets/app_bar_leading.dart';
+import '../../widgets/invitation_detail_fragment.graphql.dart';
 
 const dateTimeFormat = 'M月d日 H時m分';
 

@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:graphql/client.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:invy/components/app_bar_leading.dart';
-import 'package:invy/components/friend_list_item_fragment.graphql.dart';
-import 'package:invy/components/friend_selection_list.dart';
+import 'package:invy/widgets/app_bar_leading.dart';
+import 'package:invy/widgets/friend_list_item_fragment.graphql.dart';
+import 'package:invy/widgets/friend_selection_list.dart';
 import 'package:invy/screens/invitation/invitation_screen.graphql.dart';
 
-import '../../components/friend_group_fragment.graphql.dart';
-import '../../components/friend_group_selection_list.dart';
+import '../../widgets/friend_group_fragment.graphql.dart';
+import '../../widgets/friend_group_selection_list.dart';
 import '../../services/graphql_client.dart';
 import 'inivitation_detail_form_screen.dart';
 

@@ -8,10 +8,10 @@ import 'package:intl/intl.dart';
 import 'package:invy/screens/invitation/invitation_screen.graphql.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
 
-import '../../components/app_bar_leading.dart';
-import '../../components/friend_group_fragment.graphql.dart';
-import '../../components/friend_group_icon.dart';
-import '../../components/friend_list_item_fragment.graphql.dart';
+import '../../widgets/app_bar_leading.dart';
+import '../../widgets/friend_group_fragment.graphql.dart';
+import '../../widgets/friend_group_icon.dart';
+import '../../widgets/friend_list_item_fragment.graphql.dart';
 import '../../graphql/schema.graphql.dart';
 import '../../services/graphql_client.dart';
 import '../../state/bottom_navigation.dart';

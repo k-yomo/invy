@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:invy/components/divider.dart';
+import 'package:invy/widgets/divider.dart';
 import 'package:invy/screens/profile/my_profile_screen.graphql.dart';
 import 'package:invy/screens/profile/profile_edit_screen.dart';
 import 'package:invy/services/graphql_client.dart';

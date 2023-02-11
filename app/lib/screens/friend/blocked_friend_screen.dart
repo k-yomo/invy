@@ -6,7 +6,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:invy/screens/friend/blocked_friend_screen.graphql.dart';
 import 'package:invy/services/graphql_client.dart';
 
-import '../../components/friend_list_item_fragment.graphql.dart';
+import '../../widgets/friend_list_item_fragment.graphql.dart';
 
 class BlockedFriendScreen extends HookConsumerWidget {
   const BlockedFriendScreen({super.key});

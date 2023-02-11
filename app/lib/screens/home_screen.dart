@@ -8,8 +8,8 @@ import 'package:invy/services/graphql_client.dart';
 import 'package:invy/state/badge_count.dart';
 import 'package:invy/state/location.dart';
 
-import '../components/invitation_list_item.dart';
-import '../components/sub_title.dart';
+import '../widgets/invitation_list_item.dart';
+import '../widgets/sub_title.dart';
 import '../state/bottom_navigation.dart';
 
 class HomeScreen extends HookConsumerWidget {

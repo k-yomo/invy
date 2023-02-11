@@ -6,7 +6,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:invy/screens/friend/friend_request_screen.graphql.dart';
 import 'package:invy/services/graphql_client.dart';
 
-import '../../components/app_bar_leading.dart';
+import '../../widgets/app_bar_leading.dart';
 import '../../state/auth.dart';
 
 class FriendshipRequestScreen extends HookConsumerWidget {

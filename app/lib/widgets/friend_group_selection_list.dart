@@ -1,5 +1,5 @@
-import 'package:invy/components/friend_group_fragment.graphql.dart';
-import 'package:invy/components/friend_group_icon.dart';
+import 'package:invy/widgets/friend_group_fragment.graphql.dart';
+import 'package:invy/widgets/friend_group_icon.dart';
 import 'package:flutter/material.dart';
 
 class FriendGroupSelectionList extends StatelessWidget {

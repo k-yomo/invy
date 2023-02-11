@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
-import 'package:invy/components/invitation_detail_fragment.graphql.dart';
+import 'package:invy/widgets/invitation_detail_fragment.graphql.dart';
 import 'package:invy/screens/invitation/invitation_detail_screen.dart';
 
 const dateTimeFormat = 'M月d日 H時m分';

@@ -1,4 +1,4 @@
-import '../components/invitation_detail_fragment.graphql.dart';
+import '../widgets/invitation_detail_fragment.graphql.dart';
 import 'dart:async';
 import 'package:flutter/widgets.dart' as widgets;
 import 'package:gql/ast.dart';
