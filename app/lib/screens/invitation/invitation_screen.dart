@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:flutter/material.dart' hide ModalBottomSheetRoute;
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -189,15 +188,13 @@ class LocationCard extends HookConsumerWidget {
               const Gap(10),
               TextButton(
                 onPressed: () {
-                  final showModal = Platform.isIOS
-                      ? showCupertinoModalBottomSheet
-                      : showMaterialModalBottomSheet;
-                  showModal(
+                  showMaterialModalBottomSheet(
+                    context: context,
+                    duration: const Duration(milliseconds: 300),
                     shape: const RoundedRectangleBorder(
                       borderRadius:
                           BorderRadius.vertical(top: Radius.circular(20.0)),
                     ),
-                    context: context,
                     builder: (BuildContext context) {
                       return const LocationSearchModal();
                     },

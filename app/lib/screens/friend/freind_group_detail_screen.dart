@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:graphql/client.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -67,11 +65,9 @@ class FriendGroupDetailScreen extends HookConsumerWidget {
             body: FriendList(
               friends: viewer?.friendGroup.friendUsers ?? [],
               onFriendPressed: (String friendUserId) {
-                final showModal = Platform.isIOS
-                    ? showCupertinoModalBottomSheet
-                    : showMaterialModalBottomSheet;
-                showModal(
+                showMaterialModalBottomSheet(
                   context: context,
+                  duration: const Duration(milliseconds: 300),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
                   ),

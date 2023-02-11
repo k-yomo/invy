@@ -97,11 +97,9 @@ class FriendScreen extends HookConsumerWidget {
                         FriendList(
                           friends: sortedFriends.map((f) => f.node).toList(),
                           onFriendPressed: (friendUserId) {
-                            final showModal = Platform.isIOS
-                                ? showCupertinoModalBottomSheet
-                                : showMaterialModalBottomSheet;
-                            showModal(
+                            showMaterialModalBottomSheet(
                               context: context,
+                              duration: const Duration(milliseconds: 300),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(20),
                               ),
