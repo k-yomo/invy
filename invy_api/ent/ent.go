@@ -17,6 +17,7 @@ import (
 	"github.com/k-yomo/invy/invy_api/ent/friendshiprequest"
 	"github.com/k-yomo/invy/invy_api/ent/invitation"
 	"github.com/k-yomo/invy/invy_api/ent/invitationacceptance"
+	"github.com/k-yomo/invy/invy_api/ent/invitationawaiting"
 	"github.com/k-yomo/invy/invy_api/ent/invitationdenial"
 	"github.com/k-yomo/invy/invy_api/ent/invitationuser"
 	"github.com/k-yomo/invy/invy_api/ent/pushnotificationtoken"
@@ -58,6 +59,7 @@ func columnChecker(table string) func(string) error {
 		friendshiprequest.Table:     friendshiprequest.ValidColumn,
 		invitation.Table:            invitation.ValidColumn,
 		invitationacceptance.Table:  invitationacceptance.ValidColumn,
+		invitationawaiting.Table:    invitationawaiting.ValidColumn,
 		invitationdenial.Table:      invitationdenial.ValidColumn,
 		invitationuser.Table:        invitationuser.ValidColumn,
 		pushnotificationtoken.Table: pushnotificationtoken.ValidColumn,

@@ -24,6 +24,9 @@ type Invitation func(*sql.Selector)
 // InvitationAcceptance is the predicate function for invitationacceptance builders.
 type InvitationAcceptance func(*sql.Selector)
 
+// InvitationAwaiting is the predicate function for invitationawaiting builders.
+type InvitationAwaiting func(*sql.Selector)
+
 // InvitationDenial is the predicate function for invitationdenial builders.
 type InvitationDenial func(*sql.Selector)
 

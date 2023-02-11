@@ -207,6 +207,16 @@ func (r *userResolver) IsRequestingFriendship(ctx context.Context, obj *gqlmodel
 	return true, nil
 }
 
+// InvitationAwaitings is the resolver for the invitationAwaitings field.
+func (r *userResolver) InvitationAwaitings(ctx context.Context, obj *gqlmodel.User) ([]*gqlmodel.InvitationAwaiting, error) {
+	// TODO: We may want to return empty array if auth user is not friend
+	dbInvitationAwaitings, err := loader.Get(ctx).InvitationAwaitings.Load(ctx, obj.ID)()
+	if err != nil {
+		return nil, err
+	}
+	return convutil.ConvertToList(dbInvitationAwaitings, conv.ConvertFromDBInvitationAwaiting), nil
+}
+
 // Friends is the resolver for the friends field.
 func (r *viewerResolver) Friends(ctx context.Context, obj *gqlmodel.Viewer, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*gqlmodel.UserConnection, error) {
 	authUserID := auth.GetCurrentUserID(ctx)
@@ -411,3 +421,13 @@ func (r *Resolver) Viewer() gqlgen.ViewerResolver { return &viewerResolver{r} }
 
 type userResolver struct{ *Resolver }
 type viewerResolver struct{ *Resolver }
+
+// !!! WARNING !!!
+// The code below was going to be deleted when updating resolvers. It has been copied here so you have
+// one last chance to move it out of harms way if you want. There are two reasons this happens:
+//   - When renaming or deleting a resolver the old code will be put in here. You can safely delete
+//     it when you're done.
+//   - You have helper methods in this file. Move them out to keep these resolver files clean.
+func (r *userResolver) IsAwaitingInvitation(ctx context.Context, obj *gqlmodel.User) (bool, error) {
+	panic(fmt.Errorf("not implemented: IsAwaitingInvitation - isAwaitingInvitation"))
+}

@@ -68,3 +68,13 @@ func ConvertFromDBInvitation(invitation *ent.Invitation) *gqlmodel.Invitation {
 		ExpiresAt:  invitation.ExpiresAt,
 	}
 }
+
+func ConvertFromDBInvitationAwaiting(invitationAwaiting *ent.InvitationAwaiting) *gqlmodel.InvitationAwaiting {
+	return &gqlmodel.InvitationAwaiting{
+		ID:       invitationAwaiting.ID,
+		UserID:   invitationAwaiting.UserID,
+		StartsAt: invitationAwaiting.StartsAt,
+		EndsAt:   invitationAwaiting.EndsAt,
+		Comment:  invitationAwaiting.Comment,
+	}
+}

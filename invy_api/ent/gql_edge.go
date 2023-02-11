@@ -144,6 +144,14 @@ func (ia *InvitationAcceptance) Invitation(ctx context.Context) (*Invitation, er
 	return result, err
 }
 
+func (ia *InvitationAwaiting) User(ctx context.Context) (*User, error) {
+	result, err := ia.Edges.UserOrErr()
+	if IsNotLoaded(err) {
+		result, err = ia.QueryUser().Only(ctx)
+	}
+	return result, err
+}
+
 func (id *InvitationDenial) User(ctx context.Context) (*User, error) {
 	result, err := id.Edges.UserOrErr()
 	if IsNotLoaded(err) {

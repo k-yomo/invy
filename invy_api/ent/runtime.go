@@ -12,6 +12,7 @@ import (
 	"github.com/k-yomo/invy/invy_api/ent/friendshiprequest"
 	"github.com/k-yomo/invy/invy_api/ent/invitation"
 	"github.com/k-yomo/invy/invy_api/ent/invitationacceptance"
+	"github.com/k-yomo/invy/invy_api/ent/invitationawaiting"
 	"github.com/k-yomo/invy/invy_api/ent/invitationdenial"
 	"github.com/k-yomo/invy/invy_api/ent/invitationuser"
 	"github.com/k-yomo/invy/invy_api/ent/pushnotificationtoken"
@@ -104,6 +105,22 @@ func init() {
 	invitationacceptanceDescID := invitationacceptanceFields[0].Descriptor()
 	// invitationacceptance.DefaultID holds the default value on creation for the id field.
 	invitationacceptance.DefaultID = invitationacceptanceDescID.Default.(func() uuid.UUID)
+	invitationawaitingFields := schema.InvitationAwaiting{}.Fields()
+	_ = invitationawaitingFields
+	// invitationawaitingDescCreatedAt is the schema descriptor for created_at field.
+	invitationawaitingDescCreatedAt := invitationawaitingFields[5].Descriptor()
+	// invitationawaiting.DefaultCreatedAt holds the default value on creation for the created_at field.
+	invitationawaiting.DefaultCreatedAt = invitationawaitingDescCreatedAt.Default.(func() time.Time)
+	// invitationawaitingDescUpdatedAt is the schema descriptor for updated_at field.
+	invitationawaitingDescUpdatedAt := invitationawaitingFields[6].Descriptor()
+	// invitationawaiting.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	invitationawaiting.DefaultUpdatedAt = invitationawaitingDescUpdatedAt.Default.(func() time.Time)
+	// invitationawaiting.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	invitationawaiting.UpdateDefaultUpdatedAt = invitationawaitingDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// invitationawaitingDescID is the schema descriptor for id field.
+	invitationawaitingDescID := invitationawaitingFields[0].Descriptor()
+	// invitationawaiting.DefaultID holds the default value on creation for the id field.
+	invitationawaiting.DefaultID = invitationawaitingDescID.Default.(func() uuid.UUID)
 	invitationdenialFields := schema.InvitationDenial{}.Fields()
 	_ = invitationdenialFields
 	// invitationdenialDescCreatedAt is the schema descriptor for created_at field.

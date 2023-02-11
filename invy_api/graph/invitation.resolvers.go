@@ -10,15 +10,14 @@ import (
 	"fmt"
 	"time"
 
-	"entgo.io/ent/dialect/sql"
 	fcm "firebase.google.com/go/v4/messaging"
 	"github.com/google/uuid"
 	"github.com/k-yomo/invy/invy_api/auth"
 	"github.com/k-yomo/invy/invy_api/ent"
 	"github.com/k-yomo/invy/invy_api/ent/invitation"
 	"github.com/k-yomo/invy/invy_api/ent/invitationacceptance"
+	"github.com/k-yomo/invy/invy_api/ent/invitationawaiting"
 	"github.com/k-yomo/invy/invy_api/ent/user"
-	"github.com/k-yomo/invy/invy_api/ent/usermute"
 	"github.com/k-yomo/invy/invy_api/ent/userprofile"
 	"github.com/k-yomo/invy/invy_api/graph/conv"
 	"github.com/k-yomo/invy/invy_api/graph/gqlgen"
@@ -28,6 +27,7 @@ import (
 	"github.com/k-yomo/invy/pkg/convutil"
 	"github.com/k-yomo/invy/pkg/logging"
 	"github.com/k-yomo/invy/pkg/pgutil"
+	"github.com/k-yomo/invy/pkg/timeutil"
 	"go.uber.org/zap"
 )
 
@@ -50,6 +50,15 @@ func (r *invitationResolver) AcceptedUsers(ctx context.Context, obj *gqlmodel.In
 		return nil, err
 	}
 	return convutil.ConvertToList(dbAcceptedUserProfiles, conv.ConvertFromDBUserProfile), nil
+}
+
+// User is the resolver for the user field.
+func (r *invitationAwaitingResolver) User(ctx context.Context, obj *gqlmodel.InvitationAwaiting) (*gqlmodel.User, error) {
+	userProfile, err := loader.Get(ctx).UserProfile.Load(ctx, obj.ID)()
+	if err != nil {
+		return nil, err
+	}
+	return conv.ConvertFromDBUserProfile(userProfile), nil
 }
 
 // SendInvitation is the resolver for the sendInvitation field.
@@ -116,37 +125,11 @@ func (r *mutationResolver) SendInvitation(ctx context.Context, input *gqlmodel.S
 	if err != nil {
 		return nil, err
 	}
-	targetUserPushNotificationTokens, err := r.DB.User.Query().
-		Where(
-			user.IDIn(targetFriendUserIDs...),
-			func(s *sql.Selector) {
-				userMuteTable := sql.Table(usermute.Table)
-				s.Where(
-					sql.NotExists(
-						sql.Select().
-							From(userMuteTable).
-							Where(
-								sql.And(
-									sql.ColumnsEQ(userMuteTable.C(usermute.FieldUserID), s.C(user.FieldID)),
-									sql.EQ(userMuteTable.C(usermute.FieldMuteUserID), authUserID),
-								),
-							),
-					),
-				)
-			},
-		).
-		QueryPushNotificationTokens().
-		All(ctx)
-	if err != nil {
-		return nil, err
-	}
-	fcmTokens := convutil.ConvertToList(targetUserPushNotificationTokens, func(from *ent.PushNotificationToken) string {
-		return from.FcmToken
-	})
+	targetUserPushNotificationTokens, err := r.DBQuery.Notification.GetNotifiableFriendUserPushTokens(ctx, authUserID, targetFriendUserIDs)
 	// TODO: Chunk tokens by 500 (max tokens per multicast)
 	// TODO: delete expired tokens
 	_, err = r.FCMClient.SendMulticast(ctx, &fcm.MulticastMessage{
-		Tokens: fcmTokens,
+		Tokens: targetUserPushNotificationTokens,
 		Data: map[string]string{
 			"type":         gqlmodel.PushNotificationTypeInvitationReceived.String(),
 			"invitationId": dbInvitation.ID.String(),
@@ -271,7 +254,86 @@ func (r *mutationResolver) DenyInvitation(ctx context.Context, invitationID uuid
 	return &gqlmodel.DenyInvitationPayload{Invitation: conv.ConvertFromDBInvitation(dbInvitation)}, nil
 }
 
+// RegisterInvitationAwaiting is the resolver for the registerInvitationAwaiting field.
+func (r *mutationResolver) RegisterInvitationAwaiting(ctx context.Context, input gqlmodel.RegisterInvitationAwaitingInput) (*gqlmodel.RegisterInvitationAwaitingPayload, error) {
+	authUserID := auth.GetCurrentUserID(ctx)
+
+	overlappingInvitationAwaitingExists, err := r.DB.InvitationAwaiting.Query().
+		Where(
+			invitationawaiting.UserID(authUserID),
+			invitationawaiting.StartsAtGT(input.EndsAt),
+			invitationawaiting.EndsAtGT(input.StartsAt),
+		).Exist(ctx)
+	if err != nil {
+		return nil, err
+	}
+	if overlappingInvitationAwaitingExists {
+		return nil, xerrors.NewErrInvalidArgument(err)
+	}
+
+	dbInvitationAwaiting, err := r.DB.InvitationAwaiting.Create().
+		SetUserID(authUserID).
+		SetStartsAt(input.StartsAt).
+		SetEndsAt(input.EndsAt).
+		SetComment(input.Comment).
+		Save(ctx)
+
+	// TODO: Send notification async
+	userProfile, err := r.DB.UserProfile.Query().
+		Where(userprofile.UserID(authUserID)).
+		Only(ctx)
+	if err != nil {
+		return nil, err
+	}
+	friendUserIDs, err := r.DB.User.Query().
+		Where(user.ID(authUserID)).
+		QueryFriendUsers().
+		IDs(ctx)
+	if err != nil {
+		return nil, err
+	}
+	targetUserPushNotificationTokens, err := r.DBQuery.Notification.GetNotifiableFriendUserPushTokens(ctx, authUserID, friendUserIDs)
+	// TODO: Chunk tokens by 500 (max tokens per multicast)
+	// TODO: delete expired tokens
+	_, err = r.FCMClient.SendMulticast(ctx, &fcm.MulticastMessage{
+		Tokens: targetUserPushNotificationTokens,
+		Data: map[string]string{
+			"type":                 gqlmodel.PushNotificationTypeInvitationAwaitingReceived.String(),
+			"invitationAwaitingId": dbInvitationAwaiting.ID.String(),
+		},
+		Notification: &fcm.Notification{
+			Body: fmt.Sprintf("%sさんが、%s以降のさそいを待っています。", userProfile.Nickname, dbInvitationAwaiting.StartsAt.In(timeutil.JST).Format("1月2日T15:04分")),
+		},
+		Android: &fcm.AndroidConfig{
+			Priority: "high",
+		},
+	})
+	if err != nil {
+		logging.Logger(ctx).Error(err.Error(), zap.String("invitationAwaitingId", dbInvitationAwaiting.ID.String()))
+	}
+
+	return &gqlmodel.RegisterInvitationAwaitingPayload{InvitationAwaiting: conv.ConvertFromDBInvitationAwaiting(dbInvitationAwaiting)}, nil
+}
+
+// DeleteInvitationAwaiting is the resolver for the deleteInvitationAwaiting field.
+func (r *mutationResolver) DeleteInvitationAwaiting(ctx context.Context, invitationAwaitingID uuid.UUID) (*gqlmodel.DeleteInvitationAwaitingPayload, error) {
+	authUserID := auth.GetCurrentUserID(ctx)
+	_, err := r.DB.InvitationAwaiting.Delete().
+		Where(invitationawaiting.ID(invitationAwaitingID), invitationawaiting.UserID(authUserID)).
+		Exec(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return &gqlmodel.DeleteInvitationAwaitingPayload{DeletedInvitationAwaitingID: invitationAwaitingID}, nil
+}
+
 // Invitation returns gqlgen.InvitationResolver implementation.
 func (r *Resolver) Invitation() gqlgen.InvitationResolver { return &invitationResolver{r} }
 
+// InvitationAwaiting returns gqlgen.InvitationAwaitingResolver implementation.
+func (r *Resolver) InvitationAwaiting() gqlgen.InvitationAwaitingResolver {
+	return &invitationAwaitingResolver{r}
+}
+
 type invitationResolver struct{ *Resolver }
+type invitationAwaitingResolver struct{ *Resolver }

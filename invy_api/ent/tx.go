@@ -24,6 +24,8 @@ type Tx struct {
 	Invitation *InvitationClient
 	// InvitationAcceptance is the client for interacting with the InvitationAcceptance builders.
 	InvitationAcceptance *InvitationAcceptanceClient
+	// InvitationAwaiting is the client for interacting with the InvitationAwaiting builders.
+	InvitationAwaiting *InvitationAwaitingClient
 	// InvitationDenial is the client for interacting with the InvitationDenial builders.
 	InvitationDenial *InvitationDenialClient
 	// InvitationUser is the client for interacting with the InvitationUser builders.
@@ -179,6 +181,7 @@ func (tx *Tx) init() {
 	tx.FriendshipRequest = NewFriendshipRequestClient(tx.config)
 	tx.Invitation = NewInvitationClient(tx.config)
 	tx.InvitationAcceptance = NewInvitationAcceptanceClient(tx.config)
+	tx.InvitationAwaiting = NewInvitationAwaitingClient(tx.config)
 	tx.InvitationDenial = NewInvitationDenialClient(tx.config)
 	tx.InvitationUser = NewInvitationUserClient(tx.config)
 	tx.PushNotificationToken = NewPushNotificationTokenClient(tx.config)

@@ -81,6 +81,18 @@ func (f InvitationAcceptanceFunc) Mutate(ctx context.Context, m ent.Mutation) (e
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.InvitationAcceptanceMutation", m)
 }
 
+// The InvitationAwaitingFunc type is an adapter to allow the use of ordinary
+// function as InvitationAwaiting mutator.
+type InvitationAwaitingFunc func(context.Context, *ent.InvitationAwaitingMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f InvitationAwaitingFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.InvitationAwaitingMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.InvitationAwaitingMutation", m)
+}
+
 // The InvitationDenialFunc type is an adapter to allow the use of ordinary
 // function as InvitationDenial mutator.
 type InvitationDenialFunc func(context.Context, *ent.InvitationDenialMutation) (ent.Value, error)

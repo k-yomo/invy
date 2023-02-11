@@ -17,6 +17,7 @@ import (
 	"github.com/k-yomo/invy/invy_api/ent/friendshiprequest"
 	"github.com/k-yomo/invy/invy_api/ent/invitation"
 	"github.com/k-yomo/invy/invy_api/ent/invitationacceptance"
+	"github.com/k-yomo/invy/invy_api/ent/invitationawaiting"
 	"github.com/k-yomo/invy/invy_api/ent/invitationdenial"
 	"github.com/k-yomo/invy/invy_api/ent/invitationuser"
 	"github.com/k-yomo/invy/invy_api/ent/pushnotificationtoken"
@@ -49,6 +50,8 @@ type Client struct {
 	Invitation *InvitationClient
 	// InvitationAcceptance is the client for interacting with the InvitationAcceptance builders.
 	InvitationAcceptance *InvitationAcceptanceClient
+	// InvitationAwaiting is the client for interacting with the InvitationAwaiting builders.
+	InvitationAwaiting *InvitationAwaitingClient
 	// InvitationDenial is the client for interacting with the InvitationDenial builders.
 	InvitationDenial *InvitationDenialClient
 	// InvitationUser is the client for interacting with the InvitationUser builders.
@@ -86,6 +89,7 @@ func (c *Client) init() {
 	c.FriendshipRequest = NewFriendshipRequestClient(c.config)
 	c.Invitation = NewInvitationClient(c.config)
 	c.InvitationAcceptance = NewInvitationAcceptanceClient(c.config)
+	c.InvitationAwaiting = NewInvitationAwaitingClient(c.config)
 	c.InvitationDenial = NewInvitationDenialClient(c.config)
 	c.InvitationUser = NewInvitationUserClient(c.config)
 	c.PushNotificationToken = NewPushNotificationTokenClient(c.config)
@@ -134,6 +138,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		FriendshipRequest:     NewFriendshipRequestClient(cfg),
 		Invitation:            NewInvitationClient(cfg),
 		InvitationAcceptance:  NewInvitationAcceptanceClient(cfg),
+		InvitationAwaiting:    NewInvitationAwaitingClient(cfg),
 		InvitationDenial:      NewInvitationDenialClient(cfg),
 		InvitationUser:        NewInvitationUserClient(cfg),
 		PushNotificationToken: NewPushNotificationTokenClient(cfg),
@@ -168,6 +173,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		FriendshipRequest:     NewFriendshipRequestClient(cfg),
 		Invitation:            NewInvitationClient(cfg),
 		InvitationAcceptance:  NewInvitationAcceptanceClient(cfg),
+		InvitationAwaiting:    NewInvitationAwaitingClient(cfg),
 		InvitationDenial:      NewInvitationDenialClient(cfg),
 		InvitationUser:        NewInvitationUserClient(cfg),
 		PushNotificationToken: NewPushNotificationTokenClient(cfg),
@@ -211,6 +217,7 @@ func (c *Client) Use(hooks ...Hook) {
 	c.FriendshipRequest.Use(hooks...)
 	c.Invitation.Use(hooks...)
 	c.InvitationAcceptance.Use(hooks...)
+	c.InvitationAwaiting.Use(hooks...)
 	c.InvitationDenial.Use(hooks...)
 	c.InvitationUser.Use(hooks...)
 	c.PushNotificationToken.Use(hooks...)
@@ -231,6 +238,7 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 	c.FriendshipRequest.Intercept(interceptors...)
 	c.Invitation.Intercept(interceptors...)
 	c.InvitationAcceptance.Intercept(interceptors...)
+	c.InvitationAwaiting.Intercept(interceptors...)
 	c.InvitationDenial.Intercept(interceptors...)
 	c.InvitationUser.Intercept(interceptors...)
 	c.PushNotificationToken.Intercept(interceptors...)
@@ -257,6 +265,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.Invitation.mutate(ctx, m)
 	case *InvitationAcceptanceMutation:
 		return c.InvitationAcceptance.mutate(ctx, m)
+	case *InvitationAwaitingMutation:
+		return c.InvitationAwaiting.mutate(ctx, m)
 	case *InvitationDenialMutation:
 		return c.InvitationDenial.mutate(ctx, m)
 	case *InvitationUserMutation:
@@ -1203,6 +1213,139 @@ func (c *InvitationAcceptanceClient) mutate(ctx context.Context, m *InvitationAc
 		return (&InvitationAcceptanceDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown InvitationAcceptance mutation op: %q", m.Op())
+	}
+}
+
+// InvitationAwaitingClient is a client for the InvitationAwaiting schema.
+type InvitationAwaitingClient struct {
+	config
+}
+
+// NewInvitationAwaitingClient returns a client for the InvitationAwaiting from the given config.
+func NewInvitationAwaitingClient(c config) *InvitationAwaitingClient {
+	return &InvitationAwaitingClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `invitationawaiting.Hooks(f(g(h())))`.
+func (c *InvitationAwaitingClient) Use(hooks ...Hook) {
+	c.hooks.InvitationAwaiting = append(c.hooks.InvitationAwaiting, hooks...)
+}
+
+// Use adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `invitationawaiting.Intercept(f(g(h())))`.
+func (c *InvitationAwaitingClient) Intercept(interceptors ...Interceptor) {
+	c.inters.InvitationAwaiting = append(c.inters.InvitationAwaiting, interceptors...)
+}
+
+// Create returns a builder for creating a InvitationAwaiting entity.
+func (c *InvitationAwaitingClient) Create() *InvitationAwaitingCreate {
+	mutation := newInvitationAwaitingMutation(c.config, OpCreate)
+	return &InvitationAwaitingCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of InvitationAwaiting entities.
+func (c *InvitationAwaitingClient) CreateBulk(builders ...*InvitationAwaitingCreate) *InvitationAwaitingCreateBulk {
+	return &InvitationAwaitingCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for InvitationAwaiting.
+func (c *InvitationAwaitingClient) Update() *InvitationAwaitingUpdate {
+	mutation := newInvitationAwaitingMutation(c.config, OpUpdate)
+	return &InvitationAwaitingUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *InvitationAwaitingClient) UpdateOne(ia *InvitationAwaiting) *InvitationAwaitingUpdateOne {
+	mutation := newInvitationAwaitingMutation(c.config, OpUpdateOne, withInvitationAwaiting(ia))
+	return &InvitationAwaitingUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *InvitationAwaitingClient) UpdateOneID(id uuid.UUID) *InvitationAwaitingUpdateOne {
+	mutation := newInvitationAwaitingMutation(c.config, OpUpdateOne, withInvitationAwaitingID(id))
+	return &InvitationAwaitingUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for InvitationAwaiting.
+func (c *InvitationAwaitingClient) Delete() *InvitationAwaitingDelete {
+	mutation := newInvitationAwaitingMutation(c.config, OpDelete)
+	return &InvitationAwaitingDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *InvitationAwaitingClient) DeleteOne(ia *InvitationAwaiting) *InvitationAwaitingDeleteOne {
+	return c.DeleteOneID(ia.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *InvitationAwaitingClient) DeleteOneID(id uuid.UUID) *InvitationAwaitingDeleteOne {
+	builder := c.Delete().Where(invitationawaiting.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &InvitationAwaitingDeleteOne{builder}
+}
+
+// Query returns a query builder for InvitationAwaiting.
+func (c *InvitationAwaitingClient) Query() *InvitationAwaitingQuery {
+	return &InvitationAwaitingQuery{
+		config: c.config,
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a InvitationAwaiting entity by its id.
+func (c *InvitationAwaitingClient) Get(ctx context.Context, id uuid.UUID) (*InvitationAwaiting, error) {
+	return c.Query().Where(invitationawaiting.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *InvitationAwaitingClient) GetX(ctx context.Context, id uuid.UUID) *InvitationAwaiting {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryUser queries the user edge of a InvitationAwaiting.
+func (c *InvitationAwaitingClient) QueryUser(ia *InvitationAwaiting) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := ia.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(invitationawaiting.Table, invitationawaiting.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, invitationawaiting.UserTable, invitationawaiting.UserColumn),
+		)
+		fromV = sqlgraph.Neighbors(ia.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *InvitationAwaitingClient) Hooks() []Hook {
+	return c.hooks.InvitationAwaiting
+}
+
+// Interceptors returns the client interceptors.
+func (c *InvitationAwaitingClient) Interceptors() []Interceptor {
+	return c.inters.InvitationAwaiting
+}
+
+func (c *InvitationAwaitingClient) mutate(ctx context.Context, m *InvitationAwaitingMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&InvitationAwaitingCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&InvitationAwaitingUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&InvitationAwaitingUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&InvitationAwaitingDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown InvitationAwaiting mutation op: %q", m.Op())
 	}
 }
 

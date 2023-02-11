@@ -174,6 +174,30 @@ var (
 			},
 		},
 	}
+	// InvitationAwaitingsColumns holds the columns for the "invitation_awaitings" table.
+	InvitationAwaitingsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID},
+		{Name: "starts_at", Type: field.TypeTime},
+		{Name: "ends_at", Type: field.TypeTime},
+		{Name: "comment", Type: field.TypeString},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "user_id", Type: field.TypeUUID},
+	}
+	// InvitationAwaitingsTable holds the schema information for the "invitation_awaitings" table.
+	InvitationAwaitingsTable = &schema.Table{
+		Name:       "invitation_awaitings",
+		Columns:    InvitationAwaitingsColumns,
+		PrimaryKey: []*schema.Column{InvitationAwaitingsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "invitation_awaitings_users_user",
+				Columns:    []*schema.Column{InvitationAwaitingsColumns[6]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+	}
 	// InvitationDenialsColumns holds the columns for the "invitation_denials" table.
 	InvitationDenialsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUUID},
@@ -441,6 +465,7 @@ var (
 		FriendshipRequestsTable,
 		InvitationsTable,
 		InvitationAcceptancesTable,
+		InvitationAwaitingsTable,
 		InvitationDenialsTable,
 		InvitationUsersTable,
 		PushNotificationTokensTable,
@@ -462,6 +487,7 @@ func init() {
 	InvitationsTable.ForeignKeys[0].RefTable = UsersTable
 	InvitationAcceptancesTable.ForeignKeys[0].RefTable = UsersTable
 	InvitationAcceptancesTable.ForeignKeys[1].RefTable = InvitationsTable
+	InvitationAwaitingsTable.ForeignKeys[0].RefTable = UsersTable
 	InvitationDenialsTable.ForeignKeys[0].RefTable = UsersTable
 	InvitationDenialsTable.ForeignKeys[1].RefTable = InvitationsTable
 	InvitationUsersTable.ForeignKeys[0].RefTable = InvitationsTable

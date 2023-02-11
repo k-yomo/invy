@@ -64,6 +64,10 @@ type DeleteFriendGroupPayload struct {
 	DeletedFriendGroupID uuid.UUID `json:"deletedFriendGroupId"`
 }
 
+type DeleteInvitationAwaitingPayload struct {
+	DeletedInvitationAwaitingID uuid.UUID `json:"deletedInvitationAwaitingId"`
+}
+
 type DenyFriendshipRequestPayload struct {
 	DeniedFriendshipRequestID uuid.UUID `json:"deniedFriendshipRequestId"`
 }
@@ -110,6 +114,18 @@ type Invitation struct {
 func (Invitation) IsNode()               {}
 func (this Invitation) GetID() uuid.UUID { return this.ID }
 
+type InvitationAwaiting struct {
+	ID       uuid.UUID `json:"id"`
+	UserID   uuid.UUID `json:"userId"`
+	User     *User     `json:"user"`
+	StartsAt time.Time `json:"startsAt"`
+	EndsAt   time.Time `json:"endsAt"`
+	Comment  string    `json:"comment"`
+}
+
+func (InvitationAwaiting) IsNode()               {}
+func (this InvitationAwaiting) GetID() uuid.UUID { return this.ID }
+
 type MuteUserPayload struct {
 	MutedUserID uuid.UUID `json:"mutedUserId"`
 }
@@ -119,6 +135,16 @@ type PageInfo struct {
 	EndCursor       *ent.Cursor `json:"endCursor"`
 	HasNextPage     bool        `json:"hasNextPage"`
 	HasPreviousPage bool        `json:"hasPreviousPage"`
+}
+
+type RegisterInvitationAwaitingInput struct {
+	StartsAt time.Time `json:"startsAt"`
+	EndsAt   time.Time `json:"endsAt"`
+	Comment  string    `json:"comment"`
+}
+
+type RegisterInvitationAwaitingPayload struct {
+	InvitationAwaiting *InvitationAwaiting `json:"invitationAwaiting"`
 }
 
 type RegisterPushNotificationTokenInput struct {
@@ -202,15 +228,16 @@ type UpdateScreenIDPayload struct {
 }
 
 type User struct {
-	ID                     uuid.UUID `json:"id"`
-	ScreenID               string    `json:"screenId"`
-	Nickname               string    `json:"nickname"`
-	AvatarURL              string    `json:"avatarUrl"`
-	IsMuted                bool      `json:"isMuted"`
-	IsBlocked              bool      `json:"isBlocked"`
-	IsFriend               bool      `json:"isFriend"`
-	DistanceKm             *int      `json:"distanceKm"`
-	IsRequestingFriendship bool      `json:"isRequestingFriendship"`
+	ID                     uuid.UUID             `json:"id"`
+	ScreenID               string                `json:"screenId"`
+	Nickname               string                `json:"nickname"`
+	AvatarURL              string                `json:"avatarUrl"`
+	IsMuted                bool                  `json:"isMuted"`
+	IsBlocked              bool                  `json:"isBlocked"`
+	IsFriend               bool                  `json:"isFriend"`
+	DistanceKm             *int                  `json:"distanceKm"`
+	IsRequestingFriendship bool                  `json:"isRequestingFriendship"`
+	InvitationAwaitings    []*InvitationAwaiting `json:"invitationAwaitings"`
 }
 
 func (User) IsNode()               {}
@@ -339,10 +366,11 @@ func (e ErrorCode) MarshalGQL(w io.Writer) {
 type PushNotificationType string
 
 const (
-	PushNotificationTypeFriendshipRequestReceived PushNotificationType = "FRIENDSHIP_REQUEST_RECEIVED"
-	PushNotificationTypeFriendshipRequestAccepted PushNotificationType = "FRIENDSHIP_REQUEST_ACCEPTED"
-	PushNotificationTypeInvitationReceived        PushNotificationType = "INVITATION_RECEIVED"
-	PushNotificationTypeInvitationAccepted        PushNotificationType = "INVITATION_ACCEPTED"
+	PushNotificationTypeFriendshipRequestReceived  PushNotificationType = "FRIENDSHIP_REQUEST_RECEIVED"
+	PushNotificationTypeFriendshipRequestAccepted  PushNotificationType = "FRIENDSHIP_REQUEST_ACCEPTED"
+	PushNotificationTypeInvitationReceived         PushNotificationType = "INVITATION_RECEIVED"
+	PushNotificationTypeInvitationAccepted         PushNotificationType = "INVITATION_ACCEPTED"
+	PushNotificationTypeInvitationAwaitingReceived PushNotificationType = "INVITATION_AWAITING_RECEIVED"
 )
 
 var AllPushNotificationType = []PushNotificationType{
@@ -350,11 +378,12 @@ var AllPushNotificationType = []PushNotificationType{
 	PushNotificationTypeFriendshipRequestAccepted,
 	PushNotificationTypeInvitationReceived,
 	PushNotificationTypeInvitationAccepted,
+	PushNotificationTypeInvitationAwaitingReceived,
 }
 
 func (e PushNotificationType) IsValid() bool {
 	switch e {
-	case PushNotificationTypeFriendshipRequestReceived, PushNotificationTypeFriendshipRequestAccepted, PushNotificationTypeInvitationReceived, PushNotificationTypeInvitationAccepted:
+	case PushNotificationTypeFriendshipRequestReceived, PushNotificationTypeFriendshipRequestAccepted, PushNotificationTypeInvitationReceived, PushNotificationTypeInvitationAccepted, PushNotificationTypeInvitationAwaitingReceived:
 		return true
 	}
 	return false

@@ -11,6 +11,7 @@ import (
 	"github.com/k-yomo/invy/invy_api/ent/friendship"
 	"github.com/k-yomo/invy/invy_api/ent/friendshiprequest"
 	"github.com/k-yomo/invy/invy_api/ent/invitationacceptance"
+	"github.com/k-yomo/invy/invy_api/ent/invitationawaiting"
 	"github.com/k-yomo/invy/invy_api/ent/userlocation"
 	"github.com/k-yomo/invy/invy_api/ent/usermute"
 	"github.com/k-yomo/invy/invy_api/ent/userprofile"
@@ -25,7 +26,8 @@ type Loaders struct {
 	Friendship                     *dataloader.Loader[FriendshipKey, *ent.Friendship]
 	FriendshipRequest              *dataloader.Loader[FriendshipRequestKey, *ent.FriendshipRequest]
 	UserMute                       *dataloader.Loader[UserMuteKey, *ent.UserMute]
-	InvitationAcceptedUserProfiles *dataloader.Loader[uuid.UUID, []*ent.UserProfile]
+	InvitationAcceptedUserProfiles *dataloader.Loader[uuid.UUID, ent.UserProfiles]
+	InvitationAwaitings            *dataloader.Loader[uuid.UUID, ent.InvitationAwaitings]
 	FriendDistance                 *dataloader.Loader[FriendDistanceKey, *length.Length]
 }
 
@@ -48,8 +50,12 @@ func NewLoaders(db *ent.Client) *Loaders {
 			dataloader.WithCache[UserMuteKey, *ent.UserMute](&dataloader.NoCache[UserMuteKey, *ent.UserMute]{}),
 		),
 		InvitationAcceptedUserProfiles: dataloader.NewBatchedLoader(
-			NewInvitationAcceptedUserProfileLoader(db),
-			dataloader.WithCache[uuid.UUID, []*ent.UserProfile](&dataloader.NoCache[uuid.UUID, []*ent.UserProfile]{}),
+			NewInvitationAcceptedUserProfilesLoader(db),
+			dataloader.WithCache[uuid.UUID, ent.UserProfiles](&dataloader.NoCache[uuid.UUID, ent.UserProfiles]{}),
+		),
+		InvitationAwaitings: dataloader.NewBatchedLoader(
+			NewInvitationAwaitingsLoader(db),
+			dataloader.WithCache[uuid.UUID, ent.InvitationAwaitings](&dataloader.NoCache[uuid.UUID, ent.InvitationAwaitings]{}),
 		),
 		FriendDistance: dataloader.NewBatchedLoader(
 			NewFriendDistanceLoader(db),
@@ -161,8 +167,8 @@ func NewUserMuteLoader(db *ent.Client) func(context.Context, []UserMuteKey) []*d
 	}
 }
 
-func NewInvitationAcceptedUserProfileLoader(db *ent.Client) func(context.Context, []uuid.UUID) []*dataloader.Result[[]*ent.UserProfile] {
-	return func(ctx context.Context, invitationIDs []uuid.UUID) []*dataloader.Result[[]*ent.UserProfile] {
+func NewInvitationAcceptedUserProfilesLoader(db *ent.Client) func(context.Context, []uuid.UUID) []*dataloader.Result[ent.UserProfiles] {
+	return func(ctx context.Context, invitationIDs []uuid.UUID) []*dataloader.Result[ent.UserProfiles] {
 		if len(invitationIDs) == 0 {
 			return nil
 		}
@@ -173,13 +179,32 @@ func NewInvitationAcceptedUserProfileLoader(db *ent.Client) func(context.Context
 			}).
 			All(ctx)
 		if err != nil {
-			return convertToErrorResults[[]*ent.UserProfile](fmt.Errorf("load accepted user: %w", err), len(invitationIDs))
+			return convertToErrorResults[ent.UserProfiles](fmt.Errorf("load accepted user: %w", err), len(invitationIDs))
 		}
-		invitationIDProfileMap := map[uuid.UUID][]*ent.UserProfile{}
+		invitationIDProfileMap := map[uuid.UUID]ent.UserProfiles{}
 		for _, ia := range invitationAcceptances {
 			invitationIDProfileMap[ia.InvitationID] = append(invitationIDProfileMap[ia.InvitationID], ia.Edges.User.Edges.UserProfile)
 		}
-		return convertToResults[uuid.UUID, []*ent.UserProfile](invitationIDs, invitationIDProfileMap)
+		return convertToResults[uuid.UUID, ent.UserProfiles](invitationIDs, invitationIDProfileMap)
+	}
+}
+
+func NewInvitationAwaitingsLoader(db *ent.Client) func(context.Context, []uuid.UUID) []*dataloader.Result[ent.InvitationAwaitings] {
+	return func(ctx context.Context, userIDs []uuid.UUID) []*dataloader.Result[ent.InvitationAwaitings] {
+		if len(userIDs) == 0 {
+			return nil
+		}
+		invitationAwaitings, err := db.InvitationAwaiting.Query().
+			Where(invitationawaiting.UserIDIn(userIDs...)).
+			All(ctx)
+		if err != nil {
+			return convertToErrorResults[ent.InvitationAwaitings](fmt.Errorf("load accepted user: %w", err), len(userIDs))
+		}
+		userIDInvitationAwaitingsMap := map[uuid.UUID]ent.InvitationAwaitings{}
+		for _, ia := range invitationAwaitings {
+			userIDInvitationAwaitingsMap[ia.UserID] = append(userIDInvitationAwaitingsMap[ia.UserID], ia)
+		}
+		return convertToResults[uuid.UUID, ent.InvitationAwaitings](userIDs, userIDInvitationAwaitingsMap)
 	}
 }
 

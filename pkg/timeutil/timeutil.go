@@ -8,6 +8,8 @@ import (
 
 const RFC3339Milli = "2006-01-02T15:04:05.999Z07:00"
 
+var JST = time.FixedZone("Asia/Tokyo", 9*60*60)
+
 type JSONRFC3339Milli time.Time
 
 func (jt *JSONRFC3339Milli) UnmarshalJSON(data []byte) error {
