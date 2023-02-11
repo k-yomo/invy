@@ -63,6 +63,10 @@ type DeleteFriendGroupPayload {
   deletedFriendGroupId: UUID!
 }
 
+type DeleteInvitationAwaitingPayload {
+  deletedInvitationAwaitingId: UUID!
+}
+
 type DenyFriendshipRequestPayload {
   deniedFriendshipRequestId: UUID!
 }
@@ -109,6 +113,15 @@ type Invitation implements Node {
   acceptedUsers: [User!]!
 }
 
+type InvitationAwaiting implements Node {
+  id: UUID!
+  userId: UUID!
+  user: User!
+  startsAt: Time!
+  endsAt: Time!
+  comment: String!
+}
+
 type Mutation {
   signUp(input: SignUpInput!): SignUpPayload!
   signOut: SignOutPayload!
@@ -121,6 +134,8 @@ type Mutation {
   sendInvitation(input: SendInvitationInput): SendInvitationPayload!
   acceptInvitation(invitationId: UUID!): AcceptInvitationPayload!
   denyInvitation(invitationId: UUID!): DenyInvitationPayload!
+  registerInvitationAwaiting(input: RegisterInvitationAwaitingInput!): RegisterInvitationAwaitingPayload!
+  deleteInvitationAwaiting(invitationAwaitingId: UUID!): DeleteInvitationAwaitingPayload!
   registerPushNotificationToken(input: RegisterPushNotificationTokenInput): RegisterPushNotificationTokenPayload!
   updateLocation(latitude: Float!, longitude: Float!): UpdateLocationPayload!
   requestFriendship(friendUserId: UUID!): RequestFriendshipPayload!
@@ -157,6 +172,7 @@ enum PushNotificationType {
   FRIENDSHIP_REQUEST_ACCEPTED
   INVITATION_RECEIVED
   INVITATION_ACCEPTED
+  INVITATION_AWAITING_RECEIVED
 }
 
 type Query {
@@ -165,6 +181,16 @@ type Query {
 
   """fetch user by screen id"""
   userByScreenId(screenId: String!): User!
+}
+
+input RegisterInvitationAwaitingInput {
+  startsAt: Time!
+  endsAt: Time!
+  comment: String!
+}
+
+type RegisterInvitationAwaitingPayload {
+  invitationAwaiting: InvitationAwaiting!
 }
 
 input RegisterPushNotificationTokenInput {
@@ -270,6 +296,7 @@ type User implements Node {
   """
   distanceKm: Int
   isRequestingFriendship: Boolean!
+  invitationAwaitings: [InvitationAwaiting!]!
 }
 
 type UserConnection {

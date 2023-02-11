@@ -125,6 +125,7 @@ class _FriendListItem extends HookConsumerWidget {
               child: Row(
                 children: [
                   CircleAvatar(
+                    backgroundColor: Colors.transparent,
                     backgroundImage:
                         CachedNetworkImageProvider(friend.value.avatarUrl),
                   ),

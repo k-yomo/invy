@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:graphql/client.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -7,6 +9,7 @@ import 'package:invy/components/sub_title.dart';
 import 'package:invy/screens/friend/friend_screen.graphql.dart';
 import 'package:invy/components/user_profile_modal.dart';
 import 'package:invy/services/graphql_client.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 import '../../components/pending_friendship_request_list.dart';
 import '../friend/freind_group_create_screen.dart';
@@ -94,8 +97,10 @@ class FriendScreen extends HookConsumerWidget {
                         FriendList(
                           friends: sortedFriends.map((f) => f.node).toList(),
                           onFriendPressed: (friendUserId) {
-                            showModalBottomSheet(
-                              isScrollControlled: true,
+                            final showModal = Platform.isIOS
+                                ? showCupertinoModalBottomSheet
+                                : showMaterialModalBottomSheet;
+                            showModal(
                               context: context,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(20),
@@ -139,7 +144,7 @@ class _AddFriendGroup extends StatelessWidget {
               borderRadius: BorderRadius.circular(100),
             ),
             child: const CircleAvatar(
-              backgroundColor: Colors.white,
+              backgroundColor: Colors.transparent,
               child: Icon(Icons.group_add_outlined, color: Colors.black),
             ),
           ),
@@ -171,7 +176,7 @@ class _AddFriend extends StatelessWidget {
               borderRadius: BorderRadius.circular(100),
             ),
             child: const CircleAvatar(
-              backgroundColor: Colors.white,
+              backgroundColor: Colors.transparent,
               child: Icon(Icons.person_add_alt_outlined, color: Colors.black),
             ),
           ),

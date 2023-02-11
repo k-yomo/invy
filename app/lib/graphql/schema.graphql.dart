@@ -263,6 +263,153 @@ class _CopyWithStubImpl$Input$CreateUserInput<TRes>
       _res;
 }
 
+class Input$RegisterInvitationAwaitingInput {
+  factory Input$RegisterInvitationAwaitingInput({
+    required DateTime startsAt,
+    required DateTime endsAt,
+    required String comment,
+  }) =>
+      Input$RegisterInvitationAwaitingInput._({
+        r'startsAt': startsAt,
+        r'endsAt': endsAt,
+        r'comment': comment,
+      });
+
+  Input$RegisterInvitationAwaitingInput._(this._$data);
+
+  factory Input$RegisterInvitationAwaitingInput.fromJson(
+      Map<String, dynamic> data) {
+    final result$data = <String, dynamic>{};
+    final l$startsAt = data['startsAt'];
+    result$data['startsAt'] = DateTime.parse((l$startsAt as String));
+    final l$endsAt = data['endsAt'];
+    result$data['endsAt'] = DateTime.parse((l$endsAt as String));
+    final l$comment = data['comment'];
+    result$data['comment'] = (l$comment as String);
+    return Input$RegisterInvitationAwaitingInput._(result$data);
+  }
+
+  Map<String, dynamic> _$data;
+
+  DateTime get startsAt => (_$data['startsAt'] as DateTime);
+  DateTime get endsAt => (_$data['endsAt'] as DateTime);
+  String get comment => (_$data['comment'] as String);
+  Map<String, dynamic> toJson() {
+    final result$data = <String, dynamic>{};
+    final l$startsAt = startsAt;
+    result$data['startsAt'] = l$startsAt.toIso8601String();
+    final l$endsAt = endsAt;
+    result$data['endsAt'] = l$endsAt.toIso8601String();
+    final l$comment = comment;
+    result$data['comment'] = l$comment;
+    return result$data;
+  }
+
+  CopyWith$Input$RegisterInvitationAwaitingInput<
+          Input$RegisterInvitationAwaitingInput>
+      get copyWith => CopyWith$Input$RegisterInvitationAwaitingInput(
+            this,
+            (i) => i,
+          );
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    if (!(other is Input$RegisterInvitationAwaitingInput) ||
+        runtimeType != other.runtimeType) {
+      return false;
+    }
+    final l$startsAt = startsAt;
+    final lOther$startsAt = other.startsAt;
+    if (l$startsAt != lOther$startsAt) {
+      return false;
+    }
+    final l$endsAt = endsAt;
+    final lOther$endsAt = other.endsAt;
+    if (l$endsAt != lOther$endsAt) {
+      return false;
+    }
+    final l$comment = comment;
+    final lOther$comment = other.comment;
+    if (l$comment != lOther$comment) {
+      return false;
+    }
+    return true;
+  }
+
+  @override
+  int get hashCode {
+    final l$startsAt = startsAt;
+    final l$endsAt = endsAt;
+    final l$comment = comment;
+    return Object.hashAll([
+      l$startsAt,
+      l$endsAt,
+      l$comment,
+    ]);
+  }
+}
+
+abstract class CopyWith$Input$RegisterInvitationAwaitingInput<TRes> {
+  factory CopyWith$Input$RegisterInvitationAwaitingInput(
+    Input$RegisterInvitationAwaitingInput instance,
+    TRes Function(Input$RegisterInvitationAwaitingInput) then,
+  ) = _CopyWithImpl$Input$RegisterInvitationAwaitingInput;
+
+  factory CopyWith$Input$RegisterInvitationAwaitingInput.stub(TRes res) =
+      _CopyWithStubImpl$Input$RegisterInvitationAwaitingInput;
+
+  TRes call({
+    DateTime? startsAt,
+    DateTime? endsAt,
+    String? comment,
+  });
+}
+
+class _CopyWithImpl$Input$RegisterInvitationAwaitingInput<TRes>
+    implements CopyWith$Input$RegisterInvitationAwaitingInput<TRes> {
+  _CopyWithImpl$Input$RegisterInvitationAwaitingInput(
+    this._instance,
+    this._then,
+  );
+
+  final Input$RegisterInvitationAwaitingInput _instance;
+
+  final TRes Function(Input$RegisterInvitationAwaitingInput) _then;
+
+  static const _undefined = {};
+
+  TRes call({
+    Object? startsAt = _undefined,
+    Object? endsAt = _undefined,
+    Object? comment = _undefined,
+  }) =>
+      _then(Input$RegisterInvitationAwaitingInput._({
+        ..._instance._$data,
+        if (startsAt != _undefined && startsAt != null)
+          'startsAt': (startsAt as DateTime),
+        if (endsAt != _undefined && endsAt != null)
+          'endsAt': (endsAt as DateTime),
+        if (comment != _undefined && comment != null)
+          'comment': (comment as String),
+      }));
+}
+
+class _CopyWithStubImpl$Input$RegisterInvitationAwaitingInput<TRes>
+    implements CopyWith$Input$RegisterInvitationAwaitingInput<TRes> {
+  _CopyWithStubImpl$Input$RegisterInvitationAwaitingInput(this._res);
+
+  TRes _res;
+
+  call({
+    DateTime? startsAt,
+    DateTime? endsAt,
+    String? comment,
+  }) =>
+      _res;
+}
+
 class Input$RegisterPushNotificationTokenInput {
   factory Input$RegisterPushNotificationTokenInput({
     required String deviceId,
@@ -1061,6 +1208,7 @@ enum Enum$PushNotificationType {
   FRIENDSHIP_REQUEST_ACCEPTED,
   INVITATION_RECEIVED,
   INVITATION_ACCEPTED,
+  INVITATION_AWAITING_RECEIVED,
   $unknown
 }
 
@@ -1074,6 +1222,8 @@ String toJson$Enum$PushNotificationType(Enum$PushNotificationType e) {
       return r'INVITATION_RECEIVED';
     case Enum$PushNotificationType.INVITATION_ACCEPTED:
       return r'INVITATION_ACCEPTED';
+    case Enum$PushNotificationType.INVITATION_AWAITING_RECEIVED:
+      return r'INVITATION_AWAITING_RECEIVED';
     case Enum$PushNotificationType.$unknown:
       return r'$unknown';
   }
@@ -1089,6 +1239,8 @@ Enum$PushNotificationType fromJson$Enum$PushNotificationType(String value) {
       return Enum$PushNotificationType.INVITATION_RECEIVED;
     case r'INVITATION_ACCEPTED':
       return Enum$PushNotificationType.INVITATION_ACCEPTED;
+    case r'INVITATION_AWAITING_RECEIVED':
+      return Enum$PushNotificationType.INVITATION_AWAITING_RECEIVED;
     default:
       return Enum$PushNotificationType.$unknown;
   }
@@ -1099,6 +1251,7 @@ const possibleTypesMap = {
     'FriendGroup',
     'FriendshipRequest',
     'Invitation',
+    'InvitationAwaiting',
     'User',
     'Viewer',
   }

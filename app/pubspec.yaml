@@ -83,6 +83,11 @@ dependencies:
       ref: 2.0.6-dev.2
   pinput: ^2.2.23
   cached_network_image: ^3.2.3
+  modal_bottom_sheet:
+    git:
+      url: https://github.com/eli1stark/modal_bottom_sheet.git
+      ref: 2b3f9f84f46418c1b337968c88883995f65f47e7
+      path: modal_bottom_sheet
 
 dev_dependencies:
   flutter_test:

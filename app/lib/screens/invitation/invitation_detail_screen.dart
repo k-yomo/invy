@@ -123,6 +123,7 @@ class InvitationDetailScreen extends HookConsumerWidget {
                   Row(
                     children: [
                       CircleAvatar(
+                        backgroundColor: Colors.transparent,
                         backgroundImage: CachedNetworkImageProvider(
                             invitation.user.avatarUrl),
                       ),
@@ -233,6 +234,8 @@ class InvitationDetailScreen extends HookConsumerWidget {
                                                 child: Column(
                                                   children: [
                                                     CircleAvatar(
+                                                      backgroundColor:
+                                                          Colors.transparent,
                                                       backgroundImage:
                                                           CachedNetworkImageProvider(
                                                               acceptedUser

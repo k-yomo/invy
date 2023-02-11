@@ -85,6 +85,7 @@ class InvitationFriendSelectScreen extends HookConsumerWidget {
                       //     Row(
                       //       children: selectedFriends.value.map((friend) =>
                       //           CircleAvatar(
+                      //             backgroundColor: Colors.transparent,
                       //             backgroundImage: NetworkImage(friend.avatarUrl),
                       //           )
                       //       ).toList(),

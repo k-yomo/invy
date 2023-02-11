@@ -90,6 +90,7 @@ class UserProfileModal extends HookConsumerWidget {
               children: [
                 CircleAvatar(
                   radius: 60.0,
+                  backgroundColor: Colors.white,
                   backgroundImage: CachedNetworkImageProvider(user.avatarUrl),
                 ),
                 Row(

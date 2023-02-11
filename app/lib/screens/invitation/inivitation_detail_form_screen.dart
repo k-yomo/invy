@@ -122,6 +122,7 @@ class InvitationDetailFormScreen extends HookConsumerWidget {
                                   child: Column(
                                     children: [
                                       CircleAvatar(
+                                        backgroundColor: Colors.transparent,
                                         backgroundImage:
                                             CachedNetworkImageProvider(
                                                 friend.avatarUrl),

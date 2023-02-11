@@ -82,6 +82,7 @@ class InvitationListItem extends StatelessWidget {
                 Row(
                   children: [
                     CircleAvatar(
+                      backgroundColor: Colors.transparent,
                       backgroundImage:
                           CachedNetworkImageProvider(invitation.user.avatarUrl),
                     ),
@@ -175,6 +176,8 @@ class InvitationListItem extends StatelessWidget {
                                                 child: Column(
                                                   children: [
                                                     CircleAvatar(
+                                                      backgroundColor:
+                                                          Colors.transparent,
                                                       backgroundImage:
                                                           CachedNetworkImageProvider(
                                                               acceptedUser

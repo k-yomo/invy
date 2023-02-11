@@ -1,6 +1,7 @@
 import 'dart:async';
+import 'dart:io';
 
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide ModalBottomSheetRoute;
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
 import 'package:geocoding/geocoding.dart';
@@ -9,6 +10,7 @@ import 'package:google_place/google_place.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:invy/screens/invitation/invitation_friend_select_screen.dart';
 import 'package:invy/state/location.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 import '../../config/config.dart';
 
@@ -187,12 +189,14 @@ class LocationCard extends HookConsumerWidget {
               const Gap(10),
               TextButton(
                 onPressed: () {
-                  showModalBottomSheet(
+                  final showModal = Platform.isIOS
+                      ? showCupertinoModalBottomSheet
+                      : showMaterialModalBottomSheet;
+                  showModal(
                     shape: const RoundedRectangleBorder(
                       borderRadius:
                           BorderRadius.vertical(top: Radius.circular(20.0)),
                     ),
-                    isScrollControlled: true,
                     context: context,
                     builder: (BuildContext context) {
                       return const LocationSearchModal();
