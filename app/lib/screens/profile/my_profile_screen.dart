@@ -156,6 +156,7 @@ class MyProfileScreen extends HookConsumerWidget {
                   );
                 },
               ),
+              const GreyDivider(),
               SettingItem(
                 title: "利用規約",
                 onPressed: () async {
