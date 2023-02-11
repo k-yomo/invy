@@ -1,0 +1,14 @@
+
+fragment invitationAwaitingListItemFragment on InvitationAwaiting {
+    id
+    userId
+    startsAt
+    endsAt
+    comment
+}
+
+mutation deleteInvitationAwaiting($invitationAwaitingId: UUID!) {
+    deleteInvitationAwaiting(invitationAwaitingId: $invitationAwaitingId) {
+        deletedInvitationAwaitingId
+    }
+}

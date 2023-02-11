@@ -29,8 +29,22 @@ class FriendScreen extends HookConsumerWidget {
         builder: (context, viewerSnapshot) {
           final viewer = viewerSnapshot.data?.parsedData?.viewer;
           final sortedFriends = viewer?.friends.edges ?? [];
-          sortedFriends.sort((a, b) => (a.node.distanceKm ?? double.nan)
-              .compareTo(b.node.distanceKm ?? double.nan));
+          // TODO: Sort in backend would be better
+          sortedFriends.sort((a, b) {
+            if (a.node.invitationAwaitings.isNotEmpty &&
+                a.node.invitationAwaitings.isNotEmpty) {
+              final aInvitationAwaiting = a.node.invitationAwaitings.first;
+              final bInvitationAwaiting = b.node.invitationAwaitings.first;
+              return aInvitationAwaiting.startsAt
+                  .compareTo(bInvitationAwaiting.startsAt);
+            } else if (a.node.invitationAwaitings.isNotEmpty ||
+                b.node.invitationAwaitings.isNotEmpty) {
+              return b.node.invitationAwaitings.length
+                  .compareTo(a.node.invitationAwaitings.length);
+            }
+            return (a.node.distanceKm ?? double.nan)
+                .compareTo(b.node.distanceKm ?? double.nan);
+          });
           return Scaffold(
             appBar: AppBar(
               title: const Text(

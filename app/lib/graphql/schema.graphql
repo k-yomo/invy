@@ -81,6 +81,7 @@ enum ErrorCode {
   FORBIDDEN
   NOT_FOUND
   ALREADY_EXISTS
+  CONFLICT
   INTERNAL
 }
 
@@ -338,4 +339,5 @@ type Viewer implements Node {
   sentInvitations: [Invitation!]!
   pendingInvitations: [Invitation!]!
   acceptedInvitations: [Invitation!]!
+  invitationAwaitings: [InvitationAwaiting!]!
 }

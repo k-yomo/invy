@@ -7,6 +7,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/graph-gophers/dataloader/v7"
+	"github.com/k-yomo/invy/invy_api/auth"
 	"github.com/k-yomo/invy/invy_api/ent"
 	"github.com/k-yomo/invy/invy_api/ent/friendship"
 	"github.com/k-yomo/invy/invy_api/ent/friendshiprequest"
@@ -27,8 +28,8 @@ type Loaders struct {
 	FriendshipRequest              *dataloader.Loader[FriendshipRequestKey, *ent.FriendshipRequest]
 	UserMute                       *dataloader.Loader[UserMuteKey, *ent.UserMute]
 	InvitationAcceptedUserProfiles *dataloader.Loader[uuid.UUID, ent.UserProfiles]
-	InvitationAwaitings            *dataloader.Loader[uuid.UUID, ent.InvitationAwaitings]
-	FriendDistance                 *dataloader.Loader[FriendDistanceKey, *length.Length]
+	FriendInvitationAwaitings      *dataloader.Loader[uuid.UUID, ent.InvitationAwaitings]
+	FriendDistance                 *dataloader.Loader[uuid.UUID, *length.Length]
 }
 
 func NewLoaders(db *ent.Client) *Loaders {
@@ -53,13 +54,13 @@ func NewLoaders(db *ent.Client) *Loaders {
 			NewInvitationAcceptedUserProfilesLoader(db),
 			dataloader.WithCache[uuid.UUID, ent.UserProfiles](&dataloader.NoCache[uuid.UUID, ent.UserProfiles]{}),
 		),
-		InvitationAwaitings: dataloader.NewBatchedLoader(
+		FriendInvitationAwaitings: dataloader.NewBatchedLoader(
 			NewInvitationAwaitingsLoader(db),
 			dataloader.WithCache[uuid.UUID, ent.InvitationAwaitings](&dataloader.NoCache[uuid.UUID, ent.InvitationAwaitings]{}),
 		),
 		FriendDistance: dataloader.NewBatchedLoader(
 			NewFriendDistanceLoader(db),
-			dataloader.WithCache[FriendDistanceKey, *length.Length](&dataloader.NoCache[FriendDistanceKey, *length.Length]{}),
+			dataloader.WithCache[uuid.UUID, *length.Length](&dataloader.NoCache[uuid.UUID, *length.Length]{}),
 		),
 	}
 }
@@ -194,8 +195,33 @@ func NewInvitationAwaitingsLoader(db *ent.Client) func(context.Context, []uuid.U
 		if len(userIDs) == 0 {
 			return nil
 		}
+
+		authUserID := auth.GetCurrentUserID(ctx)
+		friendshipLoaderKeys := make([]FriendshipKey, 0, len(userIDs))
+		for _, userID := range userIDs {
+			friendshipLoaderKeys = append(friendshipLoaderKeys, FriendshipKey{UserID: authUserID, FriendUserID: userID})
+		}
+		friendshipLoaderResults := NewFriendshipLoader(db)(ctx, friendshipLoaderKeys)
+		friendUserIDs := make([]uuid.UUID, 0, len(userIDs))
+		for _, result := range friendshipLoaderResults {
+			if result.Error == nil {
+				friendUserIDs = append(friendUserIDs, result.Data.FriendUserID)
+			}
+		}
+
+		now := time.Now()
 		invitationAwaitings, err := db.InvitationAwaiting.Query().
-			Where(invitationawaiting.UserIDIn(userIDs...)).
+			Where(
+				invitationawaiting.UserIDIn(friendUserIDs...),
+				invitationawaiting.Or(
+					invitationawaiting.And(
+						invitationawaiting.StartsAtLTE(now),
+						invitationawaiting.EndsAtGTE(now),
+					),
+					invitationawaiting.StartsAtGTE(now),
+				),
+			).
+			Order(ent.Asc(invitationawaiting.FieldStartsAt), ent.Asc(invitationawaiting.FieldEndsAt)).
 			All(ctx)
 		if err != nil {
 			return convertToErrorResults[ent.InvitationAwaitings](fmt.Errorf("load accepted user: %w", err), len(userIDs))
@@ -208,47 +234,47 @@ func NewInvitationAwaitingsLoader(db *ent.Client) func(context.Context, []uuid.U
 	}
 }
 
-type FriendDistanceKey struct {
-	UserID       uuid.UUID
-	FriendUserID uuid.UUID
-}
-
 // NewFriendDistanceLoader loads the distance with a friend in meters
-func NewFriendDistanceLoader(db *ent.Client) func(context.Context, []FriendDistanceKey) []*dataloader.Result[*length.Length] {
-	return func(ctx context.Context, friendDistanceKeys []FriendDistanceKey) []*dataloader.Result[*length.Length] {
-		if len(friendDistanceKeys) == 0 {
+func NewFriendDistanceLoader(db *ent.Client) func(context.Context, []uuid.UUID) []*dataloader.Result[*length.Length] {
+	return func(ctx context.Context, userIDs []uuid.UUID) []*dataloader.Result[*length.Length] {
+		if len(userIDs) == 0 {
 			return nil
 		}
 
-		userID := friendDistanceKeys[0].UserID
+		authUserID := auth.GetCurrentUserID(ctx)
 
-		friendIDs := make([]uuid.UUID, 0, len(friendDistanceKeys))
-		friendshipLoaderKeys := make([]FriendshipKey, 0, len(friendDistanceKeys))
-		for _, key := range friendDistanceKeys {
-			friendshipLoaderKeys = append(friendshipLoaderKeys, FriendshipKey{UserID: userID, FriendUserID: key.FriendUserID})
-			friendIDs = append(friendIDs, key.FriendUserID)
+		friendshipLoaderKeys := make([]FriendshipKey, 0, len(userIDs))
+		for _, userID := range userIDs {
+			friendshipLoaderKeys = append(friendshipLoaderKeys, FriendshipKey{UserID: authUserID, FriendUserID: userID})
 		}
 
-		friendships := NewFriendshipLoader(db)(ctx, friendshipLoaderKeys)
+		friendshipLoaderResults := NewFriendshipLoader(db)(ctx, friendshipLoaderKeys)
+		friendUserIDs := make([]uuid.UUID, 0, len(userIDs))
+		for _, result := range friendshipLoaderResults {
+			if result.Error == nil {
+				friendUserIDs = append(friendUserIDs, result.Data.FriendUserID)
+			}
+		}
+
 		userLocations, err := db.UserLocation.Query().
 			Where(
-				userlocation.UserIDIn(append(friendIDs, userID)...),
+				userlocation.UserIDIn(append(friendUserIDs, authUserID)...),
 				userlocation.UpdatedAtGTE(time.Now().Add(-2*time.Hour)),
 			).
 			All(ctx)
 		if err != nil {
-			return convertToErrorResults[*length.Length](fmt.Errorf("load user locations: %w", err), len(friendDistanceKeys))
+			return convertToErrorResults[*length.Length](fmt.Errorf("load user locations: %w", err), len(userIDs))
 		}
 		userIDCoordinateMap := map[uuid.UUID]*pgutil.GeoPoint{}
 		for _, ul := range userLocations {
 			userIDCoordinateMap[ul.UserID] = ul.Coordinate
 		}
 
-		results := make([]*dataloader.Result[*length.Length], 0, len(friendDistanceKeys))
-		for i, key := range friendDistanceKeys {
-			userCoord, ok1 := userIDCoordinateMap[key.UserID]
-			friendCoord, ok2 := userIDCoordinateMap[key.FriendUserID]
-			if !ok1 || !ok2 || friendships[i].Data == nil {
+		results := make([]*dataloader.Result[*length.Length], 0, len(userIDs))
+		for _, userID := range userIDs {
+			userCoord, ok1 := userIDCoordinateMap[authUserID]
+			friendCoord, ok2 := userIDCoordinateMap[userID]
+			if !ok1 || !ok2 {
 				results = append(results, &dataloader.Result[*length.Length]{})
 				continue
 			}

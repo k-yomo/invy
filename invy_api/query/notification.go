@@ -21,6 +21,10 @@ func (u *notificationQuery) GetNotifiableFriendUserPushTokens(
 	userID uuid.UUID,
 	friendUserIDs []uuid.UUID,
 ) ([]string, error) {
+	if len(friendUserIDs) == 0 {
+		return nil, nil
+	}
+
 	query := `
 SELECT 
 	pnt.fcm_token
@@ -30,13 +34,13 @@ WHERE
 	u.id IN (?)
     AND u.id NOT IN (
     	SELECT user_id 
-    	FROM user_blocks 
+    	FROM user_blocks ub
     	WHERE
     	    block_user_id = ?
     )
     AND u.id NOT IN (
     	SELECT user_id 
-    	FROM user_mutes 
+    	FROM user_mutes um
     	WHERE
     	    mute_user_id = ?
     )

@@ -261,14 +261,14 @@ func (r *mutationResolver) RegisterInvitationAwaiting(ctx context.Context, input
 	overlappingInvitationAwaitingExists, err := r.DB.InvitationAwaiting.Query().
 		Where(
 			invitationawaiting.UserID(authUserID),
-			invitationawaiting.StartsAtGT(input.EndsAt),
+			invitationawaiting.StartsAtLT(input.EndsAt),
 			invitationawaiting.EndsAtGT(input.StartsAt),
 		).Exist(ctx)
 	if err != nil {
 		return nil, err
 	}
 	if overlappingInvitationAwaitingExists {
-		return nil, xerrors.NewErrInvalidArgument(err)
+		return nil, xerrors.New(errors.New("conflicting with existing invitation awaitings"), gqlmodel.ErrorCodeAlreadyExists)
 	}
 
 	dbInvitationAwaiting, err := r.DB.InvitationAwaiting.Create().
@@ -277,6 +277,9 @@ func (r *mutationResolver) RegisterInvitationAwaiting(ctx context.Context, input
 		SetEndsAt(input.EndsAt).
 		SetComment(input.Comment).
 		Save(ctx)
+	if err != nil {
+		return nil, err
+	}
 
 	// TODO: Send notification async
 	userProfile, err := r.DB.UserProfile.Query().
@@ -295,21 +298,23 @@ func (r *mutationResolver) RegisterInvitationAwaiting(ctx context.Context, input
 	targetUserPushNotificationTokens, err := r.DBQuery.Notification.GetNotifiableFriendUserPushTokens(ctx, authUserID, friendUserIDs)
 	// TODO: Chunk tokens by 500 (max tokens per multicast)
 	// TODO: delete expired tokens
-	_, err = r.FCMClient.SendMulticast(ctx, &fcm.MulticastMessage{
-		Tokens: targetUserPushNotificationTokens,
-		Data: map[string]string{
-			"type":                 gqlmodel.PushNotificationTypeInvitationAwaitingReceived.String(),
-			"invitationAwaitingId": dbInvitationAwaiting.ID.String(),
-		},
-		Notification: &fcm.Notification{
-			Body: fmt.Sprintf("%sさんが、%s以降のさそいを待っています。", userProfile.Nickname, dbInvitationAwaiting.StartsAt.In(timeutil.JST).Format("1月2日T15:04分")),
-		},
-		Android: &fcm.AndroidConfig{
-			Priority: "high",
-		},
-	})
-	if err != nil {
-		logging.Logger(ctx).Error(err.Error(), zap.String("invitationAwaitingId", dbInvitationAwaiting.ID.String()))
+	if len(targetUserPushNotificationTokens) > 0 {
+		_, err = r.FCMClient.SendMulticast(ctx, &fcm.MulticastMessage{
+			Tokens: targetUserPushNotificationTokens,
+			Data: map[string]string{
+				"type":                 gqlmodel.PushNotificationTypeInvitationAwaitingReceived.String(),
+				"invitationAwaitingId": dbInvitationAwaiting.ID.String(),
+			},
+			Notification: &fcm.Notification{
+				Body: fmt.Sprintf("%sさんが、%s以降のさそいを待っています。", userProfile.Nickname, dbInvitationAwaiting.StartsAt.In(timeutil.JST).Format("1月2日T15:04分")),
+			},
+			Android: &fcm.AndroidConfig{
+				Priority: "high",
+			},
+		})
+		if err != nil {
+			logging.Logger(ctx).Error(err.Error(), zap.String("invitationAwaitingId", dbInvitationAwaiting.ID.String()))
+		}
 	}
 
 	return &gqlmodel.RegisterInvitationAwaitingPayload{InvitationAwaiting: conv.ConvertFromDBInvitationAwaiting(dbInvitationAwaiting)}, nil

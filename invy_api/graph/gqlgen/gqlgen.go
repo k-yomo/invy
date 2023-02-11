@@ -277,6 +277,7 @@ type ComplexityRoot struct {
 		FriendGroups                 func(childComplexity int) int
 		Friends                      func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
 		ID                           func(childComplexity int) int
+		InvitationAwaitings          func(childComplexity int) int
 		Nickname                     func(childComplexity int) int
 		PendingFriendshipRequests    func(childComplexity int) int
 		PendingInvitations           func(childComplexity int) int
@@ -353,6 +354,7 @@ type ViewerResolver interface {
 	SentInvitations(ctx context.Context, obj *gqlmodel.Viewer) ([]*gqlmodel.Invitation, error)
 	PendingInvitations(ctx context.Context, obj *gqlmodel.Viewer) ([]*gqlmodel.Invitation, error)
 	AcceptedInvitations(ctx context.Context, obj *gqlmodel.Viewer) ([]*gqlmodel.Invitation, error)
+	InvitationAwaitings(ctx context.Context, obj *gqlmodel.Viewer) ([]*gqlmodel.InvitationAwaiting, error)
 }
 
 type executableSchema struct {
@@ -1278,6 +1280,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Viewer.ID(childComplexity), true
 
+	case "Viewer.invitationAwaitings":
+		if e.complexity.Viewer.InvitationAwaitings == nil {
+			break
+		}
+
+		return e.complexity.Viewer.InvitationAwaitings(childComplexity), true
+
 	case "Viewer.nickname":
 		if e.complexity.Viewer.Nickname == nil {
 			break
@@ -1605,6 +1614,7 @@ enum ErrorCode {
     FORBIDDEN
     NOT_FOUND
     ALREADY_EXISTS
+    CONFLICT
     INTERNAL
 }
 `, BuiltIn: false},
@@ -1645,6 +1655,7 @@ type Viewer implements Node {
     sentInvitations: [Invitation!]!  @goField(forceResolver: true)
     pendingInvitations: [Invitation!]!  @goField(forceResolver: true)
     acceptedInvitations: [Invitation!]! @goField(forceResolver: true)
+    invitationAwaitings: [InvitationAwaiting!]! @goField(forceResolver: true)
 }
 
 # User is a public interface for a user
@@ -2756,6 +2767,8 @@ func (ec *executionContext) fieldContext_CreateUserPayload_viewer(ctx context.Co
 				return ec.fieldContext_Viewer_pendingInvitations(ctx, field)
 			case "acceptedInvitations":
 				return ec.fieldContext_Viewer_acceptedInvitations(ctx, field)
+			case "invitationAwaitings":
+				return ec.fieldContext_Viewer_invitationAwaitings(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Viewer", field.Name)
 		},
@@ -6593,6 +6606,8 @@ func (ec *executionContext) fieldContext_Query_viewer(ctx context.Context, field
 				return ec.fieldContext_Viewer_pendingInvitations(ctx, field)
 			case "acceptedInvitations":
 				return ec.fieldContext_Viewer_acceptedInvitations(ctx, field)
+			case "invitationAwaitings":
+				return ec.fieldContext_Viewer_invitationAwaitings(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Viewer", field.Name)
 		},
@@ -7256,6 +7271,8 @@ func (ec *executionContext) fieldContext_SignUpPayload_viewer(ctx context.Contex
 				return ec.fieldContext_Viewer_pendingInvitations(ctx, field)
 			case "acceptedInvitations":
 				return ec.fieldContext_Viewer_acceptedInvitations(ctx, field)
+			case "invitationAwaitings":
+				return ec.fieldContext_Viewer_invitationAwaitings(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Viewer", field.Name)
 		},
@@ -7328,6 +7345,8 @@ func (ec *executionContext) fieldContext_SwitchUserPayload_viewer(ctx context.Co
 				return ec.fieldContext_Viewer_pendingInvitations(ctx, field)
 			case "acceptedInvitations":
 				return ec.fieldContext_Viewer_acceptedInvitations(ctx, field)
+			case "invitationAwaitings":
+				return ec.fieldContext_Viewer_invitationAwaitings(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Viewer", field.Name)
 		},
@@ -7488,6 +7507,8 @@ func (ec *executionContext) fieldContext_UpdateAvatarPayload_viewer(ctx context.
 				return ec.fieldContext_Viewer_pendingInvitations(ctx, field)
 			case "acceptedInvitations":
 				return ec.fieldContext_Viewer_acceptedInvitations(ctx, field)
+			case "invitationAwaitings":
+				return ec.fieldContext_Viewer_invitationAwaitings(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Viewer", field.Name)
 		},
@@ -7660,6 +7681,8 @@ func (ec *executionContext) fieldContext_UpdateNicknamePayload_viewer(ctx contex
 				return ec.fieldContext_Viewer_pendingInvitations(ctx, field)
 			case "acceptedInvitations":
 				return ec.fieldContext_Viewer_acceptedInvitations(ctx, field)
+			case "invitationAwaitings":
+				return ec.fieldContext_Viewer_invitationAwaitings(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Viewer", field.Name)
 		},
@@ -7732,6 +7755,8 @@ func (ec *executionContext) fieldContext_UpdateScreenIdPayload_viewer(ctx contex
 				return ec.fieldContext_Viewer_pendingInvitations(ctx, field)
 			case "acceptedInvitations":
 				return ec.fieldContext_Viewer_acceptedInvitations(ctx, field)
+			case "invitationAwaitings":
+				return ec.fieldContext_Viewer_invitationAwaitings(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Viewer", field.Name)
 		},
@@ -9176,6 +9201,64 @@ func (ec *executionContext) fieldContext_Viewer_acceptedInvitations(ctx context.
 				return ec.fieldContext_Invitation_acceptedUsers(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Invitation", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Viewer_invitationAwaitings(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Viewer) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Viewer_invitationAwaitings(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Viewer().InvitationAwaitings(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*gqlmodel.InvitationAwaiting)
+	fc.Result = res
+	return ec.marshalNInvitationAwaiting2ᚕᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐInvitationAwaitingᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Viewer_invitationAwaitings(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Viewer",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_InvitationAwaiting_id(ctx, field)
+			case "userId":
+				return ec.fieldContext_InvitationAwaiting_userId(ctx, field)
+			case "user":
+				return ec.fieldContext_InvitationAwaiting_user(ctx, field)
+			case "startsAt":
+				return ec.fieldContext_InvitationAwaiting_startsAt(ctx, field)
+			case "endsAt":
+				return ec.fieldContext_InvitationAwaiting_endsAt(ctx, field)
+			case "comment":
+				return ec.fieldContext_InvitationAwaiting_comment(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type InvitationAwaiting", field.Name)
 		},
 	}
 	return fc, nil
@@ -13444,6 +13527,26 @@ func (ec *executionContext) _Viewer(ctx context.Context, sel ast.SelectionSet, o
 					}
 				}()
 				res = ec._Viewer_acceptedInvitations(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return innerFunc(ctx)
+
+			})
+		case "invitationAwaitings":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Viewer_invitationAwaitings(ctx, field, obj)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}

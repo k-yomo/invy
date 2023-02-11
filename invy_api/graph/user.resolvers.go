@@ -20,6 +20,7 @@ import (
 	"github.com/k-yomo/invy/invy_api/ent/friendshiprequest"
 	"github.com/k-yomo/invy/invy_api/ent/invitation"
 	"github.com/k-yomo/invy/invy_api/ent/invitationacceptance"
+	"github.com/k-yomo/invy/invy_api/ent/invitationawaiting"
 	"github.com/k-yomo/invy/invy_api/ent/invitationdenial"
 	"github.com/k-yomo/invy/invy_api/ent/invitationuser"
 	"github.com/k-yomo/invy/invy_api/ent/user"
@@ -169,8 +170,7 @@ func (r *userResolver) IsFriend(ctx context.Context, obj *gqlmodel.User) (bool, 
 
 // DistanceKm is the resolver for the distanceKm field.
 func (r *userResolver) DistanceKm(ctx context.Context, obj *gqlmodel.User) (*int, error) {
-	authUserID := auth.GetCurrentUserID(ctx)
-	distance, err := loader.Get(ctx).FriendDistance.Load(ctx, loader.FriendDistanceKey{UserID: authUserID, FriendUserID: obj.ID})()
+	distance, err := loader.Get(ctx).FriendDistance.Load(ctx, obj.ID)()
 	if err != nil {
 		return nil, err
 	}
@@ -209,9 +209,8 @@ func (r *userResolver) IsRequestingFriendship(ctx context.Context, obj *gqlmodel
 
 // InvitationAwaitings is the resolver for the invitationAwaitings field.
 func (r *userResolver) InvitationAwaitings(ctx context.Context, obj *gqlmodel.User) ([]*gqlmodel.InvitationAwaiting, error) {
-	// TODO: We may want to return empty array if auth user is not friend
-	dbInvitationAwaitings, err := loader.Get(ctx).InvitationAwaitings.Load(ctx, obj.ID)()
-	if err != nil {
+	dbInvitationAwaitings, err := loader.Get(ctx).FriendInvitationAwaitings.Load(ctx, obj.ID)()
+	if err != nil && !errors.Is(err, loader.ErrNotFound) {
 		return nil, err
 	}
 	return convutil.ConvertToList(dbInvitationAwaitings, conv.ConvertFromDBInvitationAwaiting), nil
@@ -411,6 +410,29 @@ func (r *viewerResolver) AcceptedInvitations(ctx context.Context, obj *gqlmodel.
 		return nil, err
 	}
 	return convutil.ConvertToList(dbInvitations, conv.ConvertFromDBInvitation), nil
+}
+
+// InvitationAwaitings is the resolver for the invitationAwaitings field.
+func (r *viewerResolver) InvitationAwaitings(ctx context.Context, obj *gqlmodel.Viewer) ([]*gqlmodel.InvitationAwaiting, error) {
+	authUserID := auth.GetCurrentUserID(ctx)
+	now := time.Now()
+	dbInvitationAwaitings, err := r.DB.InvitationAwaiting.Query().
+		Where(
+			invitationawaiting.UserID(authUserID),
+			invitationawaiting.Or(
+				invitationawaiting.And(
+					invitationawaiting.StartsAtLTE(now),
+					invitationawaiting.EndsAtGTE(now),
+				),
+				invitationawaiting.StartsAtGTE(now),
+			),
+		).
+		Order(ent.Asc(invitationawaiting.FieldStartsAt), ent.Asc(invitationawaiting.FieldEndsAt)).
+		All(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return convutil.ConvertToList(dbInvitationAwaitings, conv.ConvertFromDBInvitationAwaiting), nil
 }
 
 // User returns gqlgen.UserResolver implementation.

@@ -12,6 +12,9 @@ query homeScreenViewer {
         acceptedInvitations {
             ...invitationDetailFragment
         }
+        invitationAwaitings {
+            ...invitationAwaitingListItemFragment
+        }
     }
 }
 

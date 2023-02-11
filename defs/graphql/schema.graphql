@@ -40,5 +40,6 @@ enum ErrorCode {
     FORBIDDEN
     NOT_FOUND
     ALREADY_EXISTS
+    CONFLICT
     INTERNAL
 }

@@ -18,12 +18,12 @@ class OnboardingScreen extends HookConsumerWidget {
           pages: [
             PageViewModel(
               title: 'Invyへようこそ!',
-              body: 'Invyは気軽に遊びや飲み会などのさそいを送ることができるアプリです。',
+              body: 'Invyは気軽に遊びや飲み会などのおさそいを送ることができるアプリです。',
               image: Image.asset('assets/images/onboarding_first.png'),
             ),
             PageViewModel(
-              title: '10秒でさそいを送信！',
-              body: '指定したグループや友達に一括でさそいを送ることができます。',
+              title: '10秒でおさそいを送信！',
+              body: '指定したグループや友達に一括でおさそいを送ることができます。',
               image: Image.asset('assets/images/onboarding_second.png'),
             ),
             PageViewModel(

@@ -6,6 +6,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:invy/widgets/invitation_awaiting_list_carousel.dart';
+import 'package:invy/widgets/sub_title.dart';
 import 'package:invy/widgets/user_profile_modal_fragment.graphql.dart';
 import 'package:invy/screens/friend/blocked_friend_screen.graphql.dart';
 import 'package:invy/util/toast.dart';
@@ -148,6 +150,16 @@ class UserProfileModal extends HookConsumerWidget {
                     ),
                   ],
                 ),
+                user.invitationAwaitings.isNotEmpty
+                    ? Column(
+                        children: [
+                          const SubTitle(text: "おさそい待ちの時間帯"),
+                          const Gap(10),
+                          InvitationAwaitingListCarousel(
+                              invitationAwaitings: user.invitationAwaitings),
+                        ],
+                      )
+                    : const SizedBox(),
               ],
             ),
           ),

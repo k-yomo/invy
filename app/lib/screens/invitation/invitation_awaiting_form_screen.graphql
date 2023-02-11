@@ -1,0 +1,12 @@
+
+mutation registerInvitationAwaiting($input: RegisterInvitationAwaitingInput!) {
+    registerInvitationAwaiting(input: $input) {
+        invitationAwaiting {
+            id
+            userId
+            startsAt
+            endsAt
+            comment
+        }
+    }
+}

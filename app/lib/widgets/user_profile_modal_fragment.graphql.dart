@@ -1,3 +1,4 @@
+import 'invitation_awaiting_list_item.graphql.dart';
 import 'package:gql/ast.dart';
 import 'package:graphql/client.dart' as graphql;
 
@@ -8,6 +9,7 @@ class Fragment$userProfileModalFragment {
     required this.nickname,
     required this.avatarUrl,
     required this.isMuted,
+    required this.invitationAwaitings,
     required this.$__typename,
   });
 
@@ -18,6 +20,7 @@ class Fragment$userProfileModalFragment {
     final l$nickname = json['nickname'];
     final l$avatarUrl = json['avatarUrl'];
     final l$isMuted = json['isMuted'];
+    final l$invitationAwaitings = json['invitationAwaitings'];
     final l$$__typename = json['__typename'];
     return Fragment$userProfileModalFragment(
       id: (l$id as String),
@@ -25,6 +28,10 @@ class Fragment$userProfileModalFragment {
       nickname: (l$nickname as String),
       avatarUrl: (l$avatarUrl as String),
       isMuted: (l$isMuted as bool),
+      invitationAwaitings: (l$invitationAwaitings as List<dynamic>)
+          .map((e) => Fragment$invitationAwaitingListItemFragment.fromJson(
+              (e as Map<String, dynamic>)))
+          .toList(),
       $__typename: (l$$__typename as String),
     );
   }
@@ -38,6 +45,8 @@ class Fragment$userProfileModalFragment {
   final String avatarUrl;
 
   final bool isMuted;
+
+  final List<Fragment$invitationAwaitingListItemFragment> invitationAwaitings;
 
   final String $__typename;
 
@@ -53,6 +62,9 @@ class Fragment$userProfileModalFragment {
     _resultData['avatarUrl'] = l$avatarUrl;
     final l$isMuted = isMuted;
     _resultData['isMuted'] = l$isMuted;
+    final l$invitationAwaitings = invitationAwaitings;
+    _resultData['invitationAwaitings'] =
+        l$invitationAwaitings.map((e) => e.toJson()).toList();
     final l$$__typename = $__typename;
     _resultData['__typename'] = l$$__typename;
     return _resultData;
@@ -65,6 +77,7 @@ class Fragment$userProfileModalFragment {
     final l$nickname = nickname;
     final l$avatarUrl = avatarUrl;
     final l$isMuted = isMuted;
+    final l$invitationAwaitings = invitationAwaitings;
     final l$$__typename = $__typename;
     return Object.hashAll([
       l$id,
@@ -72,6 +85,7 @@ class Fragment$userProfileModalFragment {
       l$nickname,
       l$avatarUrl,
       l$isMuted,
+      Object.hashAll(l$invitationAwaitings.map((v) => v)),
       l$$__typename,
     ]);
   }
@@ -110,6 +124,18 @@ class Fragment$userProfileModalFragment {
     if (l$isMuted != lOther$isMuted) {
       return false;
     }
+    final l$invitationAwaitings = invitationAwaitings;
+    final lOther$invitationAwaitings = other.invitationAwaitings;
+    if (l$invitationAwaitings.length != lOther$invitationAwaitings.length) {
+      return false;
+    }
+    for (int i = 0; i < l$invitationAwaitings.length; i++) {
+      final l$invitationAwaitings$entry = l$invitationAwaitings[i];
+      final lOther$invitationAwaitings$entry = lOther$invitationAwaitings[i];
+      if (l$invitationAwaitings$entry != lOther$invitationAwaitings$entry) {
+        return false;
+      }
+    }
     final l$$__typename = $__typename;
     final lOther$$__typename = other.$__typename;
     if (l$$__typename != lOther$$__typename) {
@@ -143,8 +169,15 @@ abstract class CopyWith$Fragment$userProfileModalFragment<TRes> {
     String? nickname,
     String? avatarUrl,
     bool? isMuted,
+    List<Fragment$invitationAwaitingListItemFragment>? invitationAwaitings,
     String? $__typename,
   });
+  TRes invitationAwaitings(
+      Iterable<Fragment$invitationAwaitingListItemFragment> Function(
+              Iterable<
+                  CopyWith$Fragment$invitationAwaitingListItemFragment<
+                      Fragment$invitationAwaitingListItemFragment>>)
+          _fn);
 }
 
 class _CopyWithImpl$Fragment$userProfileModalFragment<TRes>
@@ -166,6 +199,7 @@ class _CopyWithImpl$Fragment$userProfileModalFragment<TRes>
     Object? nickname = _undefined,
     Object? avatarUrl = _undefined,
     Object? isMuted = _undefined,
+    Object? invitationAwaitings = _undefined,
     Object? $__typename = _undefined,
   }) =>
       _then(Fragment$userProfileModalFragment(
@@ -182,10 +216,27 @@ class _CopyWithImpl$Fragment$userProfileModalFragment<TRes>
         isMuted: isMuted == _undefined || isMuted == null
             ? _instance.isMuted
             : (isMuted as bool),
+        invitationAwaitings:
+            invitationAwaitings == _undefined || invitationAwaitings == null
+                ? _instance.invitationAwaitings
+                : (invitationAwaitings
+                    as List<Fragment$invitationAwaitingListItemFragment>),
         $__typename: $__typename == _undefined || $__typename == null
             ? _instance.$__typename
             : ($__typename as String),
       ));
+  TRes invitationAwaitings(
+          Iterable<Fragment$invitationAwaitingListItemFragment> Function(
+                  Iterable<
+                      CopyWith$Fragment$invitationAwaitingListItemFragment<
+                          Fragment$invitationAwaitingListItemFragment>>)
+              _fn) =>
+      call(
+          invitationAwaitings: _fn(_instance.invitationAwaitings
+              .map((e) => CopyWith$Fragment$invitationAwaitingListItemFragment(
+                    e,
+                    (i) => i,
+                  ))).toList());
 }
 
 class _CopyWithStubImpl$Fragment$userProfileModalFragment<TRes>
@@ -200,9 +251,11 @@ class _CopyWithStubImpl$Fragment$userProfileModalFragment<TRes>
     String? nickname,
     String? avatarUrl,
     bool? isMuted,
+    List<Fragment$invitationAwaitingListItemFragment>? invitationAwaitings,
     String? $__typename,
   }) =>
       _res;
+  invitationAwaitings(_fn) => _res;
 }
 
 const fragmentDefinitionuserProfileModalFragment = FragmentDefinitionNode(
@@ -250,6 +303,25 @@ const fragmentDefinitionuserProfileModalFragment = FragmentDefinitionNode(
       selectionSet: null,
     ),
     FieldNode(
+      name: NameNode(value: 'invitationAwaitings'),
+      alias: null,
+      arguments: [],
+      directives: [],
+      selectionSet: SelectionSetNode(selections: [
+        FragmentSpreadNode(
+          name: NameNode(value: 'invitationAwaitingListItemFragment'),
+          directives: [],
+        ),
+        FieldNode(
+          name: NameNode(value: '__typename'),
+          alias: null,
+          arguments: [],
+          directives: [],
+          selectionSet: null,
+        ),
+      ]),
+    ),
+    FieldNode(
       name: NameNode(value: '__typename'),
       alias: null,
       arguments: [],
@@ -260,6 +332,7 @@ const fragmentDefinitionuserProfileModalFragment = FragmentDefinitionNode(
 );
 const documentNodeFragmentuserProfileModalFragment = DocumentNode(definitions: [
   fragmentDefinitionuserProfileModalFragment,
+  fragmentDefinitioninvitationAwaitingListItemFragment,
 ]);
 
 extension ClientExtension$Fragment$userProfileModalFragment

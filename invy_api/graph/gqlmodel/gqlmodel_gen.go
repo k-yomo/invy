@@ -255,19 +255,20 @@ type UserEdge struct {
 }
 
 type Viewer struct {
-	ID                           uuid.UUID            `json:"id"`
-	ScreenID                     string               `json:"screenId"`
-	Nickname                     string               `json:"nickname"`
-	AvatarURL                    string               `json:"avatarUrl"`
-	Friends                      *UserConnection      `json:"friends"`
-	BlockedFriends               *UserConnection      `json:"blockedFriends"`
-	PendingFriendshipRequests    []*FriendshipRequest `json:"pendingFriendshipRequests"`
-	RequestingFriendshipRequests []*FriendshipRequest `json:"requestingFriendshipRequests"`
-	FriendGroup                  *FriendGroup         `json:"friendGroup"`
-	FriendGroups                 []*FriendGroup       `json:"friendGroups"`
-	SentInvitations              []*Invitation        `json:"sentInvitations"`
-	PendingInvitations           []*Invitation        `json:"pendingInvitations"`
-	AcceptedInvitations          []*Invitation        `json:"acceptedInvitations"`
+	ID                           uuid.UUID             `json:"id"`
+	ScreenID                     string                `json:"screenId"`
+	Nickname                     string                `json:"nickname"`
+	AvatarURL                    string                `json:"avatarUrl"`
+	Friends                      *UserConnection       `json:"friends"`
+	BlockedFriends               *UserConnection       `json:"blockedFriends"`
+	PendingFriendshipRequests    []*FriendshipRequest  `json:"pendingFriendshipRequests"`
+	RequestingFriendshipRequests []*FriendshipRequest  `json:"requestingFriendshipRequests"`
+	FriendGroup                  *FriendGroup          `json:"friendGroup"`
+	FriendGroups                 []*FriendGroup        `json:"friendGroups"`
+	SentInvitations              []*Invitation         `json:"sentInvitations"`
+	PendingInvitations           []*Invitation         `json:"pendingInvitations"`
+	AcceptedInvitations          []*Invitation         `json:"acceptedInvitations"`
+	InvitationAwaitings          []*InvitationAwaiting `json:"invitationAwaitings"`
 }
 
 func (Viewer) IsNode()               {}
@@ -322,6 +323,7 @@ const (
 	ErrorCodeForbidden       ErrorCode = "FORBIDDEN"
 	ErrorCodeNotFound        ErrorCode = "NOT_FOUND"
 	ErrorCodeAlreadyExists   ErrorCode = "ALREADY_EXISTS"
+	ErrorCodeConflict        ErrorCode = "CONFLICT"
 	ErrorCodeInternal        ErrorCode = "INTERNAL"
 )
 
@@ -331,12 +333,13 @@ var AllErrorCode = []ErrorCode{
 	ErrorCodeForbidden,
 	ErrorCodeNotFound,
 	ErrorCodeAlreadyExists,
+	ErrorCodeConflict,
 	ErrorCodeInternal,
 }
 
 func (e ErrorCode) IsValid() bool {
 	switch e {
-	case ErrorCodeInvalidArgument, ErrorCodeUnauthenticated, ErrorCodeForbidden, ErrorCodeNotFound, ErrorCodeAlreadyExists, ErrorCodeInternal:
+	case ErrorCodeInvalidArgument, ErrorCodeUnauthenticated, ErrorCodeForbidden, ErrorCodeNotFound, ErrorCodeAlreadyExists, ErrorCodeConflict, ErrorCodeInternal:
 		return true
 	}
 	return false

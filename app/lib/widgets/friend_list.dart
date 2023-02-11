@@ -2,10 +2,12 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:invy/widgets/divider.dart';
 import 'package:invy/graphql/user_block.graphql.dart';
 import 'package:invy/graphql/user_mute.graphql.dart';
+import 'package:invy/widgets/divider.dart';
+
 import '../services/graphql_client.dart';
 import 'friend_list_item_fragment.graphql.dart';
 
@@ -124,18 +126,42 @@ class _FriendListItem extends HookConsumerWidget {
               margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
               child: Row(
                 children: [
-                  CircleAvatar(
-                    backgroundColor: Colors.transparent,
-                    backgroundImage:
-                        CachedNetworkImageProvider(friend.value.avatarUrl),
+                  Container(
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        begin: Alignment.topRight,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          Colors.purple,
+                          Colors.pink,
+                          Colors.orange,
+                        ],
+                      ),
+                      borderRadius: BorderRadius.circular(100),
+                    ),
+                    child: CircleAvatar(
+                      backgroundColor: Colors.white,
+                      backgroundImage:
+                          CachedNetworkImageProvider(friend.value.avatarUrl),
+                    ),
                   ),
                   Container(
                     margin: const EdgeInsets.only(left: 10, right: 5),
-                    child: Text(
-                      friend.value.nickname,
-                      style: const TextStyle(
-                          fontSize: 14, fontWeight: FontWeight.bold),
-                      overflow: TextOverflow.ellipsis,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          friend.value.nickname,
+                          style: const TextStyle(
+                              fontSize: 14, fontWeight: FontWeight.bold),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        friend.value.invitationAwaitings.isNotEmpty
+                            ? InvitationAwaitingIconText(
+                                invitationAwaiting:
+                                    friend.value.invitationAwaitings.first)
+                            : const SizedBox()
+                      ],
                     ),
                   ),
                   friend.value.isMuted
@@ -157,6 +183,58 @@ class _FriendListItem extends HookConsumerWidget {
           const GreyDivider()
         ],
       ),
+    );
+  }
+}
+
+class InvitationAwaitingIconText extends StatelessWidget {
+  const InvitationAwaitingIconText({
+    super.key,
+    required this.invitationAwaiting,
+  });
+
+  final Fragment$friendListItemFragment$invitationAwaitings invitationAwaiting;
+
+  @override
+  Widget build(BuildContext context) {
+    final now = DateTime.now().toLocal();
+    final startsAt = invitationAwaiting.startsAt.toLocal();
+    final endsAt = invitationAwaiting.endsAt.toLocal();
+    final endOfDay = DateTime(now.year, now.month, now.day + 1)
+        .add(const Duration(milliseconds: -1));
+    String displayText;
+    if (startsAt.isBefore(now) && endsAt.isBefore(endOfDay)) {
+      displayText = "${endsAt.hour}時まで";
+    } else if (startsAt.isBefore(endOfDay)) {
+      displayText = "${startsAt.hour}〜${endsAt.hour}時";
+    } else {
+      displayText =
+          "${startsAt.day}日${startsAt.hour}時〜${endsAt.day}日${endsAt.hour}時";
+    }
+    return Row(
+      children: [
+        ShaderMask(
+          child: const Icon(
+            Icons.emoji_people,
+            size: 20,
+            color: Colors.white,
+          ),
+          shaderCallback: (Rect rect) {
+            return const LinearGradient(
+              begin: Alignment.topRight,
+              end: Alignment.bottomRight,
+              colors: [
+                Colors.purple,
+                Colors.pink,
+                Colors.orange,
+              ],
+            ).createShader(rect);
+          },
+        ),
+        const Gap(1),
+        Text(displayText,
+            style: TextStyle(color: Colors.grey.shade800, fontSize: 12)),
+      ],
     );
   }
 }

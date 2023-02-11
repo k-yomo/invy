@@ -5,4 +5,7 @@ fragment userProfileModalFragment on User {
     nickname
     avatarUrl
     isMuted
+    invitationAwaitings {
+        ...invitationAwaitingListItemFragment
+    }
 }
