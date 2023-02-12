@@ -313,7 +313,7 @@ func (r *mutationResolver) RegisterInvitationAwaiting(ctx context.Context, input
 				"invitationAwaitingId": dbInvitationAwaiting.ID.String(),
 			},
 			Notification: &fcm.Notification{
-				Body: fmt.Sprintf("%sさんが、%s以降のおさそいを待っています。", userProfile.Nickname, dbInvitationAwaiting.StartsAt.In(timeutil.JST).Format("1月2日T15:04分")),
+				Body: fmt.Sprintf("%sさんが、%s以降のおさそいを待っています。", userProfile.Nickname, dbInvitationAwaiting.StartsAt.In(timeutil.JST).Format("1月2日 15時04分")),
 			},
 			Android: &fcm.AndroidConfig{
 				Priority: "high",

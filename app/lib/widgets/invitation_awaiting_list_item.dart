@@ -21,18 +21,8 @@ class InvitationAwaitingListItem extends HookConsumerWidget {
         invitationAwaiting.userId == ref.read(loggedInUserProvider)?.id;
     final isDeleted = useState(false);
 
-    final now = DateTime.now().toLocal();
-    final endOfDay = DateTime(now.year, now.month, now.day + 1)
-        .add(const Duration(milliseconds: -1));
     final startsAt = invitationAwaiting.startsAt.toLocal();
     final endsAt = invitationAwaiting.endsAt.toLocal();
-    String displayText;
-    if (endsAt.isBefore(endOfDay)) {
-      displayText = "${startsAt.hour}〜${endsAt.hour}時";
-    } else {
-      displayText =
-          "${startsAt.day}日${startsAt.hour}時〜${endsAt.day}日${endsAt.hour}時";
-    }
 
     onPressedDeleteButton() async {
       final result = await graphqlClient.mutate$deleteInvitationAwaiting(
@@ -62,7 +52,8 @@ class InvitationAwaitingListItem extends HookConsumerWidget {
             color: Colors.grey.shade100,
             borderRadius: BorderRadius.circular(5),
           ),
-          child: Text(displayText),
+          child: Text(
+              "${startsAt.day}日${startsAt.hour}時〜${endsAt.day}日${endsAt.hour}時"),
         ),
         isLoggedInUserItem
             ? CircleAvatar(

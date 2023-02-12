@@ -368,6 +368,7 @@ class InvitationAwaitingFormState
                 fillColor: Colors.grey.shade100,
                 border: InputBorder.none,
               ),
+              maxLength: 30,
               onSaved: (value) {
                 comment = value;
               },

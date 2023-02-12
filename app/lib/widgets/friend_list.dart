@@ -211,6 +211,9 @@ class InvitationAwaitingIconText extends StatelessWidget {
       displayText =
           "${startsAt.day}日${startsAt.hour}時〜${endsAt.day}日${endsAt.hour}時";
     }
+    if (invitationAwaiting.comment.isNotEmpty) {
+      displayText = "$displayText / ${invitationAwaiting.comment}";
+    }
     return Row(
       children: [
         ShaderMask(
