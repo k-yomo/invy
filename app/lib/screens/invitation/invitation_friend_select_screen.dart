@@ -36,7 +36,7 @@ class InvitationFriendSelectScreen extends HookConsumerWidget {
           // TODO: Sort in backend would be better
           sortedFriends.sort((a, b) {
             if (a.node.invitationAwaitings.isNotEmpty &&
-                a.node.invitationAwaitings.isNotEmpty) {
+                b.node.invitationAwaitings.isNotEmpty) {
               final aInvitationAwaiting = a.node.invitationAwaitings.first;
               final bInvitationAwaiting = b.node.invitationAwaitings.first;
               return aInvitationAwaiting.startsAt
