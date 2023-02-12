@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:gap/gap.dart';
 import 'package:graphql/client.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:invy/graphql/schema.graphql.dart';
@@ -8,6 +9,8 @@ import 'package:invy/graphql/viewer.graphql.dart';
 import 'package:invy/services/graphql_client.dart';
 import 'package:invy/state/auth.dart';
 import 'package:invy/state/bottom_navigation.dart';
+import 'package:invy/util/toast.dart';
+import 'package:invy/widgets/sub_title.dart';
 import 'package:pinput/pinput.dart';
 import 'sms_login_screen.graphql.dart';
 
@@ -103,38 +106,55 @@ class SMSLoginVerificationScreen extends HookConsumerWidget {
         shape:
             Border(bottom: BorderSide(color: Colors.grey.shade200, width: 1)),
       ),
-      body: Column(
-        children: [
-          Container(
-            width: double.infinity,
-            margin: const EdgeInsets.symmetric(horizontal: 20.0),
-            padding: const EdgeInsets.all(30.0),
-            child: Pinput(
-              autofocus: true,
-              defaultPinTheme: defaultPinTheme,
-              focusedPinTheme: focusedPinTheme,
-              length: 6,
-              onCompleted: (smsCode) async {
-                isLoading.value = true;
-                final credential = PhoneAuthProvider.credential(
-                    verificationId: verificationId, smsCode: smsCode);
-                await FirebaseAuth.instance.signInWithCredential(credential);
-                await signInToInvy();
-                isLoading.value = false;
-              },
-            ),
+      body: Container(
+        width: double.infinity,
+        margin: const EdgeInsets.symmetric(horizontal: 20.0),
+        padding: const EdgeInsets.all(30.0),
+        child: SizedBox(
+          child: Column(
+            children: [
+              const SubTitle(text: "認証コードを入力"),
+              const Gap(15),
+              SizedBox(
+                width: double.infinity,
+                child: Pinput(
+                  autofocus: true,
+                  defaultPinTheme: defaultPinTheme,
+                  focusedPinTheme: focusedPinTheme,
+                  length: 6,
+                  onCompleted: (smsCode) async {
+                    isLoading.value = true;
+                    try {
+                      final credential = PhoneAuthProvider.credential(
+                          verificationId: verificationId, smsCode: smsCode);
+                      await FirebaseAuth.instance
+                          .signInWithCredential(credential);
+                      await signInToInvy();
+                    } on FirebaseAuthException catch (e) {
+                      if (e.code == "invalid-verification-code") {
+                        showToast(
+                            "認証コードを確認出来ませんでした。再度ご入力ください。", ToastLevel.error);
+                      }
+                    } finally {
+                      isLoading.value = false;
+                    }
+                  },
+                ),
+              ),
+              const Gap(15),
+              isLoading.value
+                  ? const SizedBox(
+                      width: 40,
+                      height: 40,
+                      child: CircularProgressIndicator(
+                        color: Colors.black,
+                        strokeWidth: 5,
+                      ),
+                    )
+                  : const SizedBox(),
+            ],
           ),
-          isLoading.value
-              ? const SizedBox(
-                  width: 50,
-                  height: 50,
-                  child: CircularProgressIndicator(
-                    color: Colors.black,
-                    strokeWidth: 4,
-                  ),
-                )
-              : const SizedBox(),
-        ],
+        ),
       ),
     );
   }

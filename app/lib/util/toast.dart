@@ -5,6 +5,7 @@ enum ToastLevel { info, success, warning, error }
 
 showToast(String msg, ToastLevel level) {
   Color backgroundColor;
+  Toast toastLength = Toast.LENGTH_SHORT;
   switch (level) {
     case ToastLevel.info:
       backgroundColor = Colors.black;
@@ -14,16 +15,18 @@ showToast(String msg, ToastLevel level) {
       break;
     case ToastLevel.warning:
       backgroundColor = Colors.amber;
+      toastLength = Toast.LENGTH_LONG;
       break;
     case ToastLevel.error:
       backgroundColor = Colors.red;
+      toastLength = Toast.LENGTH_LONG;
       break;
   }
   // TODO: Use custom toast to for better design
   Fluttertoast.showToast(
     msg: msg,
     gravity: ToastGravity.TOP,
-    toastLength: Toast.LENGTH_SHORT,
+    toastLength: toastLength,
     timeInSecForIosWeb: 1,
     backgroundColor: backgroundColor,
     textColor: Colors.white,
