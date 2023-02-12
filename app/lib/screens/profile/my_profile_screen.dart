@@ -1,21 +1,17 @@
 import 'dart:ui';
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:invy/screens/settings_screen.dart';
 import 'package:invy/widgets/divider.dart';
-import 'package:invy/screens/profile/my_profile_screen.graphql.dart';
 import 'package:invy/screens/profile/profile_edit_screen.dart';
-import 'package:invy/services/graphql_client.dart';
 import 'package:invy/state/auth.dart';
-import 'package:invy/state/device.dart';
 import 'package:invy/util/toast.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:invy/widgets/setting_item.dart';
 
-import '../../constants/notion_page_urls.dart';
 import '../friend/blocked_friend_screen.dart';
 
 class MyProfileScreen extends HookConsumerWidget {
@@ -23,9 +19,7 @@ class MyProfileScreen extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final graphqlClient = ref.read(graphqlClientProvider);
     final user = ref.watch(loggedInUserProvider)!;
-    final packageInfo = ref.read(packageInfoProvider);
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -111,6 +105,7 @@ class MyProfileScreen extends HookConsumerWidget {
           Column(
             children: [
               SettingItem(
+                icon: Icons.do_not_disturb_on_outlined,
                 title: "ブロック中のユーザー",
                 onPressed: () {
                   Navigator.of(context).push(
@@ -122,129 +117,18 @@ class MyProfileScreen extends HookConsumerWidget {
               ),
               const GreyDivider(),
               SettingItem(
-                title: "ログアウト",
+                icon: Icons.settings,
+                title: "設定",
                 onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (context) {
-                      return AlertDialog(
-                        title: const Text("ログアウト"),
-                        content: const Text("ログアウトしてもよろしいですか？"),
-                        actions: <Widget>[
-                          TextButton(
-                            onPressed: () => Navigator.pop(context),
-                            style: TextButton.styleFrom(
-                              foregroundColor: Colors.grey.shade800,
-                            ),
-                            child: const Text("キャンセル"),
-                          ),
-                          TextButton(
-                            onPressed: () async {
-                              await graphqlClient.mutate$signOut();
-                              await FirebaseAuth.instance.signOut();
-                              graphqlClient.cache.store.reset();
-                              ref.invalidate(loggedInUserProvider);
-                            },
-                            style: TextButton.styleFrom(
-                              foregroundColor: Colors.blue,
-                            ),
-                            child: const Text("ログアウト"),
-                          ),
-                        ],
-                      );
-                    },
-                  );
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => const SettingsScreen(),
+                  ));
                 },
               ),
               const GreyDivider(),
-              SettingItem(
-                title: "利用規約",
-                onPressed: () async {
-                  await launchUrl(termsOfServiceUrl);
-                },
-              ),
-              const GreyDivider(),
-              SettingItem(
-                title: "プライバシーポリシー",
-                onPressed: () async {
-                  await launchUrl(privacyPolicyUrl);
-                },
-              ),
-              const GreyDivider(),
-              SettingItem(
-                title: "退会",
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (context) {
-                      return AlertDialog(
-                        title: const Text("退会"),
-                        content:
-                            const Text("退会するとデータは消去され復元が出来ません。退会してもよろしいですか？"),
-                        actions: <Widget>[
-                          TextButton(
-                            onPressed: () => Navigator.pop(context),
-                            style: TextButton.styleFrom(
-                              foregroundColor: Colors.grey.shade800,
-                            ),
-                            child: const Text("キャンセル"),
-                          ),
-                          TextButton(
-                            onPressed: () async {
-                              await graphqlClient.mutate$deleteAccount();
-                              await FirebaseAuth.instance.signOut();
-                              graphqlClient.cache.store.reset();
-                              ref.invalidate(loggedInUserProvider);
-                            },
-                            style: TextButton.styleFrom(
-                              foregroundColor: Colors.blue,
-                            ),
-                            child: const Text("退会する",
-                                style: TextStyle(color: Colors.red)),
-                          ),
-                        ],
-                      );
-                    },
-                  );
-                },
-              ),
-              const GreyDivider(),
-              Container(
-                padding: const EdgeInsets.symmetric(vertical: 20),
-                child: Center(child: Text("バージョン ${packageInfo.version}")),
-              ),
             ],
           )
         ]),
-      ),
-    );
-  }
-}
-
-class SettingItem extends StatelessWidget {
-  const SettingItem({super.key, required this.title, required this.onPressed});
-
-  final String title;
-  final VoidCallback onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    return TextButton(
-      style: ElevatedButton.styleFrom(
-        foregroundColor: Colors.black,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.zero,
-        ),
-      ),
-      onPressed: onPressed,
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 10),
-        child: Row(
-          children: [
-            Expanded(child: Text(title)),
-            Icon(Icons.chevron_right, color: Colors.grey.shade600)
-          ],
-        ),
       ),
     );
   }
