@@ -118,7 +118,7 @@ class FriendScreen extends HookConsumerWidget {
                               builder: (BuildContext context) {
                                 return SizedBox(
                                   height:
-                                      MediaQuery.of(context).size.height * 0.85,
+                                      MediaQuery.of(context).size.height * 0.9,
                                   child: UserProfileModal(
                                       user: viewer!.friends.edges
                                           .singleWhere((edge) =>

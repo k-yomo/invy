@@ -6,11 +6,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:invy/screens/friend/blocked_friend_screen.graphql.dart';
+import 'package:invy/util/toast.dart';
 import 'package:invy/widgets/invitation_awaiting_list_carousel.dart';
 import 'package:invy/widgets/sub_title.dart';
 import 'package:invy/widgets/user_profile_modal_fragment.graphql.dart';
-import 'package:invy/screens/friend/blocked_friend_screen.graphql.dart';
-import 'package:invy/util/toast.dart';
 
 import '../graphql/user_block.graphql.dart';
 import '../graphql/user_mute.graphql.dart';
@@ -151,58 +151,59 @@ class UserProfileModal extends HookConsumerWidget {
                   ],
                 ),
                 user.invitationAwaitings.isNotEmpty
-                    ? Column(
-                        children: [
-                          const SubTitle(text: "おさそい待ちの時間帯"),
-                          const Gap(10),
-                          InvitationAwaitingListCarousel(
-                              invitationAwaitings: user.invitationAwaitings),
-                        ],
+                    ? Container(
+                        transform: Matrix4.translationValues(0.0, -20.0, 0.0),
+                        child: Column(
+                          children: [
+                            const SubTitle(text: "おさそい待ちの時間帯"),
+                            const Gap(10),
+                            InvitationAwaitingListCarousel(
+                                invitationAwaitings: user.invitationAwaitings),
+                          ],
+                        ),
                       )
                     : const SizedBox(),
               ],
             ),
           ),
-          Expanded(
-            child: Container(
-              transform: Matrix4.translationValues(0.0, -70.0, 0.0),
-              padding: const EdgeInsets.symmetric(horizontal: 15),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: TextButton.icon(
-                      style: TextButton.styleFrom(
-                        backgroundColor: Colors.orange,
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
+          Container(
+            transform: Matrix4.translationValues(0.0, -50.0, 0.0),
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextButton.icon(
+                    style: TextButton.styleFrom(
+                      backgroundColor: Colors.orange,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
                       ),
-                      icon: Icon(
-                          isMuted.value ? Icons.volume_up : Icons.volume_off),
-                      label: Text(isMuted.value ? "ミュート解除" : "ミュート"),
-                      onPressed: onPressedMute,
                     ),
+                    icon: Icon(
+                        isMuted.value ? Icons.volume_up : Icons.volume_off),
+                    label: Text(isMuted.value ? "ミュート解除" : "ミュート"),
+                    onPressed: onPressedMute,
                   ),
-                  const Gap(10),
-                  Expanded(
-                    child: TextButton.icon(
-                      style: TextButton.styleFrom(
-                        backgroundColor: Colors.red,
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
+                ),
+                const Gap(10),
+                Expanded(
+                  child: TextButton.icon(
+                    style: TextButton.styleFrom(
+                      backgroundColor: Colors.red,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
                       ),
-                      icon: Icon(isBlocked.value
-                          ? Icons.do_not_disturb_off
-                          : Icons.do_not_disturb_on),
-                      label: Text(isBlocked.value ? "ブロック解除" : "ブロック"),
-                      onPressed: onPressedBlock,
                     ),
-                  )
-                ],
-              ),
+                    icon: Icon(isBlocked.value
+                        ? Icons.do_not_disturb_off
+                        : Icons.do_not_disturb_on),
+                    label: Text(isBlocked.value ? "ブロック解除" : "ブロック"),
+                    onPressed: onPressedBlock,
+                  ),
+                )
+              ],
             ),
           )
         ]),
