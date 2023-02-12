@@ -278,7 +278,7 @@ class InvitationAwaitingFormState
                       foregroundColor: Colors.black),
                   onPressed: () {
                     endsAtController.text = DateFormat(dateTimeFormat)
-                        .format(now.add(const Duration(hours: 1)));
+                        .format(now.add(const Duration(hours: 2)));
                   },
                   child: const Text("2時間後"),
                 ),
@@ -291,9 +291,9 @@ class InvitationAwaitingFormState
                       foregroundColor: Colors.black),
                   onPressed: () {
                     endsAtController.text = DateFormat(dateTimeFormat)
-                        .format(now.add(const Duration(hours: 3)));
+                        .format(now.add(const Duration(hours: 6)));
                   },
-                  child: const Text("5時間後"),
+                  child: const Text("6時間後"),
                 ),
                 const Gap(5),
                 OutlinedButton(
