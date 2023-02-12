@@ -167,7 +167,7 @@ class UserProfileModal extends HookConsumerWidget {
             ),
           ),
           Container(
-            transform: Matrix4.translationValues(0.0, -50.0, 0.0),
+            transform: Matrix4.translationValues(0.0, -30.0, 0.0),
             padding: const EdgeInsets.symmetric(horizontal: 10),
             child: Row(
               children: [
