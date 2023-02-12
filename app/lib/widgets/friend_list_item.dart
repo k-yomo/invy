@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:invy/widgets/invitation_awaiting_icon_text.dart';
 
 import 'friend_list_item_fragment.graphql.dart';
 
@@ -26,11 +27,20 @@ class FriendListItem extends StatelessWidget {
           Expanded(
             child: Container(
               margin: const EdgeInsets.only(left: 10, right: 2),
-              child: Text(
-                friend.nickname,
-                style:
-                    const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                overflow: TextOverflow.ellipsis,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    friend.nickname,
+                    style: const TextStyle(
+                        fontSize: 14, fontWeight: FontWeight.bold),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  friend.invitationAwaitings.isNotEmpty
+                      ? InvitationAwaitingIconText(
+                          invitationAwaiting: friend.invitationAwaitings.first)
+                      : const SizedBox()
+                ],
               ),
             ),
           ),

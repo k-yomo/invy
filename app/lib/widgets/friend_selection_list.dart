@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'friend_list_item_fragment.graphql.dart';
+
 import 'friend_list_item.dart';
+import 'friend_list_item_fragment.graphql.dart';
 
 class FriendSelectionList extends StatelessWidget {
   const FriendSelectionList({
@@ -34,8 +35,17 @@ class FriendSelectionList extends StatelessWidget {
             child: FriendListItem(
                 key: Key(friend.id),
                 friend: friend,
-                rightWidget:
-                    isSelected ? const Icon(Icons.check) : const SizedBox()),
+                rightWidget: Row(
+                  children: [
+                    friend.distanceKm != null
+                        ? Align(
+                            alignment: Alignment.centerRight,
+                            child: Text("~${friend.distanceKm}km"),
+                          )
+                        : const SizedBox(),
+                    isSelected ? const Icon(Icons.check) : const SizedBox(),
+                  ],
+                )),
           ),
           Divider(height: 0, thickness: 1, color: Colors.grey.shade200),
         ],

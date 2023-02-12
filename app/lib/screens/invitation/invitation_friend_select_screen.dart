@@ -31,6 +31,25 @@ class InvitationFriendSelectScreen extends HookConsumerWidget {
         stream: viewerQuery.stream,
         builder: (context, snapshot) {
           final viewer = snapshot.data?.parsedData?.viewer;
+
+          final sortedFriends = viewer?.friends.edges ?? [];
+          // TODO: Sort in backend would be better
+          sortedFriends.sort((a, b) {
+            if (a.node.invitationAwaitings.isNotEmpty &&
+                a.node.invitationAwaitings.isNotEmpty) {
+              final aInvitationAwaiting = a.node.invitationAwaitings.first;
+              final bInvitationAwaiting = b.node.invitationAwaitings.first;
+              return aInvitationAwaiting.startsAt
+                  .compareTo(bInvitationAwaiting.startsAt);
+            } else if (a.node.invitationAwaitings.isNotEmpty ||
+                b.node.invitationAwaitings.isNotEmpty) {
+              return b.node.invitationAwaitings.length
+                  .compareTo(a.node.invitationAwaitings.length);
+            }
+            return (a.node.distanceKm ?? double.nan)
+                .compareTo(b.node.distanceKm ?? double.nan);
+          });
+
           return Scaffold(
             appBar: AppBar(
               leading: const AppBarLeading(),
@@ -106,10 +125,7 @@ class InvitationFriendSelectScreen extends HookConsumerWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       FriendSelectionList(
-                          friends: viewer?.friends.edges
-                                  .map((e) => e.node)
-                                  .toList() ??
-                              [],
+                          friends: sortedFriends.map((e) => e.node).toList(),
                           selectedFriends: selectedFriends.value,
                           onChange: (list) {
                             selectedFriends.value = list;
