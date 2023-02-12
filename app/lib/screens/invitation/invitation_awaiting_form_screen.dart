@@ -29,6 +29,10 @@ class InvitationAwaitingFormScreen extends HookConsumerWidget {
       required DateTime endsAt,
       String? comment,
     }) async {
+      if (endsAt.isBefore(startsAt)) {
+        showToast("終了時間を開始時間よりも後に設定してください", ToastLevel.error);
+        return;
+      }
       if (await Permission.locationAlways.isDenied) {
         await showDialog(
           context: context,

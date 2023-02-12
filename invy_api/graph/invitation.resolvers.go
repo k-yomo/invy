@@ -135,7 +135,7 @@ func (r *mutationResolver) SendInvitation(ctx context.Context, input *gqlmodel.S
 			"invitationId": dbInvitation.ID.String(),
 		},
 		Notification: &fcm.Notification{
-			Body: fmt.Sprintf("%sさんから、%s開催のさそいが届きました。", inviterProfile.Nickname, dbInvitation.Location),
+			Body: fmt.Sprintf("%sさんから、%s開催のおさそいが届きました。", inviterProfile.Nickname, dbInvitation.Location),
 		},
 		Android: &fcm.AndroidConfig{
 			Priority: "high",
@@ -209,7 +209,7 @@ func (r *mutationResolver) AcceptInvitation(ctx context.Context, invitationID uu
 			"invitationId": invitationID.String(),
 		},
 		Notification: &fcm.Notification{
-			Body: fmt.Sprintf("%sさんがさそいを承諾しました。", acceptedUserProfile.Nickname),
+			Body: fmt.Sprintf("%sさんがおさそいを承諾しました。", acceptedUserProfile.Nickname),
 		},
 		Android: &fcm.AndroidConfig{
 			Priority: "high",
@@ -256,8 +256,15 @@ func (r *mutationResolver) DenyInvitation(ctx context.Context, invitationID uuid
 
 // RegisterInvitationAwaiting is the resolver for the registerInvitationAwaiting field.
 func (r *mutationResolver) RegisterInvitationAwaiting(ctx context.Context, input gqlmodel.RegisterInvitationAwaitingInput) (*gqlmodel.RegisterInvitationAwaitingPayload, error) {
-	authUserID := auth.GetCurrentUserID(ctx)
+	now := time.Now()
+	if input.EndsAt.Before(now) {
+		return nil, xerrors.NewErrInvalidArgument(errors.New("endsAt must be future date time"))
+	}
+	if input.EndsAt.Before(input.StartsAt) {
+		return nil, xerrors.NewErrInvalidArgument(errors.New("endsAt must be after startsAt"))
+	}
 
+	authUserID := auth.GetCurrentUserID(ctx)
 	overlappingInvitationAwaitingExists, err := r.DB.InvitationAwaiting.Query().
 		Where(
 			invitationawaiting.UserID(authUserID),
@@ -306,7 +313,7 @@ func (r *mutationResolver) RegisterInvitationAwaiting(ctx context.Context, input
 				"invitationAwaitingId": dbInvitationAwaiting.ID.String(),
 			},
 			Notification: &fcm.Notification{
-				Body: fmt.Sprintf("%sさんが、%s以降のさそいを待っています。", userProfile.Nickname, dbInvitationAwaiting.StartsAt.In(timeutil.JST).Format("1月2日T15:04分")),
+				Body: fmt.Sprintf("%sさんが、%s以降のおさそいを待っています。", userProfile.Nickname, dbInvitationAwaiting.StartsAt.In(timeutil.JST).Format("1月2日T15:04分")),
 			},
 			Android: &fcm.AndroidConfig{
 				Priority: "high",
