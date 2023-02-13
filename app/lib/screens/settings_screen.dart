@@ -18,6 +18,12 @@ class SettingsScreen extends HookConsumerWidget {
     final graphqlClient = ref.read(graphqlClientProvider);
     final packageInfo = ref.read(packageInfoProvider);
 
+    clientLogout() async {
+      await FirebaseAuth.instance.signOut();
+      graphqlClient.cache.store.reset();
+      ref.read(loggedInUserProvider.notifier).state = null;
+    }
+
     return Scaffold(
         appBar: AppBar(
           title: const Text(
@@ -51,9 +57,7 @@ class SettingsScreen extends HookConsumerWidget {
                           TextButton(
                             onPressed: () async {
                               await graphqlClient.mutate$signOut();
-                              await FirebaseAuth.instance.signOut();
-                              graphqlClient.cache.store.reset();
-                              ref.invalidate(loggedInUserProvider);
+                              clientLogout();
                             },
                             style: TextButton.styleFrom(
                               foregroundColor: Colors.blue,
@@ -102,9 +106,7 @@ class SettingsScreen extends HookConsumerWidget {
                           TextButton(
                             onPressed: () async {
                               await graphqlClient.mutate$deleteAccount();
-                              await FirebaseAuth.instance.signOut();
-                              graphqlClient.cache.store.reset();
-                              ref.invalidate(loggedInUserProvider);
+                              clientLogout();
                             },
                             style: TextButton.styleFrom(
                               foregroundColor: Colors.blue,
