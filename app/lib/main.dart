@@ -19,6 +19,7 @@ import 'package:invy/state/onboarding.dart';
 import 'package:invy/util/background_location.dart';
 import 'package:invy/util/device.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 import 'app.dart';
 import 'graphql/schema.graphql.dart';
@@ -92,13 +93,26 @@ Future main() async {
   final onboarding = await Onboarding.open();
   final badgeCounter = await BadgeCounter.open();
 
-  runApp(
-    ProviderScope(overrides: [
-      graphqlClientProvider.overrideWithValue(graphqlClient),
-      onboardingProvider.overrideWithValue(onboarding),
-      pushNotificationBadgeCounter.overrideWithValue(badgeCounter),
-      deviceInfoProvider.overrideWithValue(deviceInfo),
-      packageInfoProvider.overrideWithValue(packageInfo),
-    ], child: const App()),
+  await SentryFlutter.init(
+    (options) {
+      options.dsn =
+          'https://bc241da02a4b48858c55b5b790efcf14@o4504672984498176.ingest.sentry.io/4504672985874432';
+      if (config.environment == Environment.Local) {
+        options.tracesSampleRate = 0.0;
+      } else {
+        options.tracesSampleRate = 1.0;
+      }
+      options.environment = config.environment.name.toLowerCase();
+      options.release = "${packageInfo.version}+${packageInfo.buildNumber}";
+    },
+    appRunner: () => runApp(
+      ProviderScope(overrides: [
+        graphqlClientProvider.overrideWithValue(graphqlClient),
+        onboardingProvider.overrideWithValue(onboarding),
+        pushNotificationBadgeCounter.overrideWithValue(badgeCounter),
+        deviceInfoProvider.overrideWithValue(deviceInfo),
+        packageInfoProvider.overrideWithValue(packageInfo),
+      ], child: const App()),
+    ),
   );
 }

@@ -6,6 +6,7 @@ list(APPEND FLUTTER_PLUGIN_LIST
   connectivity_plus
   geolocator_windows
   permission_handler_windows
+  sentry_flutter
   smart_auth
   url_launcher_windows
 )

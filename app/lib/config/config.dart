@@ -6,7 +6,10 @@ import 'package:universal_platform/universal_platform.dart';
 
 const googleApiKey = String.fromEnvironment('GOOGLE_API_KEY');
 
+enum Environment { Prod, Dev, Local }
+
 abstract class AppConfig {
+  Environment get environment;
   String get apiBaseUrl;
 
   FirebaseOptions get firebaseOptions;
@@ -26,6 +29,9 @@ AppConfig getConfig() {
 
 class ProdConfig implements AppConfig {
   @override
+  Environment get environment => Environment.Prod;
+
+  @override
   String get apiBaseUrl => 'https://api.invy-app.com';
 
   @override
@@ -35,6 +41,9 @@ class ProdConfig implements AppConfig {
 
 class DevConfig implements AppConfig {
   @override
+  Environment get environment => Environment.Dev;
+
+  @override
   String get apiBaseUrl => 'https://api.invy-app.dev';
 
   @override
@@ -43,6 +52,9 @@ class DevConfig implements AppConfig {
 }
 
 class LocalConfig implements AppConfig {
+  @override
+  Environment get environment => Environment.Local;
+
   @override
   String get apiBaseUrl {
     return 'http://$_host:8000';

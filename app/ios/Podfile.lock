@@ -147,6 +147,11 @@ PODS:
   - PromisesObjC (2.1.1)
   - ReachabilitySwift (5.0.0)
   - SAMKeychain (1.5.3)
+  - Sentry/HybridSDK (7.31.5)
+  - sentry_flutter (0.0.1):
+    - Flutter
+    - FlutterMacOS
+    - Sentry/HybridSDK (= 7.31.5)
   - smart_auth (0.0.1):
     - Flutter
   - sqflite (0.0.2):
@@ -178,6 +183,7 @@ DEPENDENCIES:
   - package_info_plus (from `.symlinks/plugins/package_info_plus/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/ios`)
   - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
+  - sentry_flutter (from `.symlinks/plugins/sentry_flutter/ios`)
   - smart_auth (from `.symlinks/plugins/smart_auth/ios`)
   - sqflite (from `.symlinks/plugins/sqflite/ios`)
   - url_launcher_ios (from `.symlinks/plugins/url_launcher_ios/ios`)
@@ -203,6 +209,7 @@ SPEC REPOS:
     - PromisesObjC
     - ReachabilitySwift
     - SAMKeychain
+    - Sentry
     - Toast
 
 EXTERNAL SOURCES:
@@ -248,6 +255,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/path_provider_foundation/ios"
   permission_handler_apple:
     :path: ".symlinks/plugins/permission_handler_apple/ios"
+  sentry_flutter:
+    :path: ".symlinks/plugins/sentry_flutter/ios"
   smart_auth:
     :path: ".symlinks/plugins/smart_auth/ios"
   sqflite:
@@ -296,6 +305,8 @@ SPEC CHECKSUMS:
   PromisesObjC: ab77feca74fa2823e7af4249b8326368e61014cb
   ReachabilitySwift: 985039c6f7b23a1da463388634119492ff86c825
   SAMKeychain: 483e1c9f32984d50ca961e26818a534283b4cd5c
+  Sentry: 4c9babff9034785067c896fd580b1f7de44da020
+  sentry_flutter: b10ae7a5ddcbc7f04648eeb2672b5747230172f1
   smart_auth: 4bedbc118723912d0e45a07e8ab34039c19e04f2
   sqflite: 6d358c025f5b867b29ed92fc697fd34924e11904
   Toast: 91b396c56ee72a5790816f40d3a94dd357abc196
