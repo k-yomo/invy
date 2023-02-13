@@ -11,6 +11,7 @@ import 'package:invy/screens/login/login_landing_screen.dart';
 import 'package:invy/services/graphql_client.dart';
 import 'package:invy/state/bottom_navigation.dart';
 import 'package:invy/util/device.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 import 'graphql/push_notification.graphql.dart';
 import 'graphql/schema.graphql.dart';
@@ -102,10 +103,16 @@ class RootWidget extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final user = ref.read(loggedInUserProvider)!;
     final currentTab = ref.watch(bottomNavigationTabProvider);
     final graphqlClient = ref.read(graphqlClientProvider);
 
     useEffect(() {
+      Sentry.configureScope(
+        (scope) {
+          scope.setUser(SentryUser(id: user.id));
+        },
+      );
       FirebaseMessaging.instance
           .requestPermission(
         alert: true,

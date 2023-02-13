@@ -8,6 +8,7 @@ import 'package:invy/state/auth.dart';
 import 'package:invy/state/device.dart';
 import 'package:invy/widgets/divider.dart';
 import 'package:invy/widgets/setting_item.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SettingsScreen extends HookConsumerWidget {
@@ -22,6 +23,9 @@ class SettingsScreen extends HookConsumerWidget {
       await FirebaseAuth.instance.signOut();
       graphqlClient.cache.store.reset();
       ref.read(loggedInUserProvider.notifier).state = null;
+      Sentry.configureScope(
+        (scope) => scope.setUser(null),
+      );
     }
 
     return Scaffold(
