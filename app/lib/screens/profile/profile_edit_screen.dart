@@ -10,9 +10,8 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:http/http.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:invy/widgets/permission_error_alert_dialog.dart';
-import 'package:invy/screens/profile/profile_edit_screen.graphql.dart';
 import 'package:invy/graphql/schema.graphql.dart';
+import 'package:invy/screens/profile/profile_edit_screen.graphql.dart';
 import 'package:invy/services/graphql_client.dart';
 import 'package:invy/state/auth.dart';
 import 'package:invy/util/toast.dart';
@@ -69,8 +68,27 @@ class ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
         showDialog(
           context: context,
           builder: (_) {
-            return const PermissionErrorAlertDialog(
-              permissionName: "写真",
+            return AlertDialog(
+              title: const Text('"写真"へのアクセスがありません。'),
+              content: const Text('プロフィール写真を変更するには、設定から"写真"へのアクセスを許可してください。'),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.grey,
+                  ),
+                  child: const Text("キャンセル"),
+                ),
+                TextButton(
+                  onPressed: () async {
+                    await openAppSettings();
+                  },
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.blue,
+                  ),
+                  child: const Text("設定に移動する"),
+                ),
+              ],
             );
           },
         );
