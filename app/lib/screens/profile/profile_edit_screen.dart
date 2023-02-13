@@ -60,7 +60,9 @@ class ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
         if (permissionStatus.isDenied) {
           final status = await Permission.photos.request();
           // Don't show alert right after user denied to allow the permission
-          if (!status.isGranted) {
+          if (status.isGranted) {
+            permissionStatus = status;
+          } else {
             showToast('プロフィール写真の変更には、"写真"へのアクセス許可が必要です。', ToastLevel.error);
             return;
           }
