@@ -6,6 +6,7 @@ import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:invy/screens/invitation/invitation_screen.graphql.dart';
+import 'package:invy/util/custom_date_time_picker.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
 
 import '../../widgets/app_bar_leading.dart';
@@ -192,6 +193,9 @@ class InvitationDetailFormState extends ConsumerState<InvitationDetailForm> {
     final invitationLocation = ref.watch(invitationLocationProvider);
     final invitationLocationName = ref.read(locationNameProvider);
     final now = DateTime.now();
+    final next30MinutesTime = now.minute <= 30
+        ? DateTime(now.year, now.month, now.day, now.hour, 30)
+        : DateTime(now.year, now.month, now.day, now.hour + 1);
 
     // form values
     String location = '';
@@ -257,10 +261,12 @@ class InvitationDetailFormState extends ConsumerState<InvitationDetailForm> {
                           vertical: 5, horizontal: 10),
                       foregroundColor: Colors.black),
                   onPressed: () {
-                    startsAtController.text = DateFormat(dateTimeFormat)
-                        .format(now.add(const Duration(hours: 1)));
+                    startsAtController.text = DateFormat(dateTimeFormat).format(
+                        now
+                            .add(const Duration(hours: 1))
+                            .subtract(Duration(minutes: now.minute)));
                   },
-                  child: const Text("1時間後"),
+                  child: Text("${now.add(const Duration(hours: 1)).hour}時"),
                 ),
                 const Gap(5),
                 OutlinedButton(
@@ -270,10 +276,12 @@ class InvitationDetailFormState extends ConsumerState<InvitationDetailForm> {
                           vertical: 5, horizontal: 10),
                       foregroundColor: Colors.black),
                   onPressed: () {
-                    startsAtController.text = DateFormat(dateTimeFormat)
-                        .format(now.add(const Duration(hours: 3)));
+                    startsAtController.text = DateFormat(dateTimeFormat).format(
+                        now
+                            .add(const Duration(hours: 3))
+                            .subtract(Duration(minutes: now.minute)));
                   },
-                  child: const Text("3時間後"),
+                  child: Text("${now.add(const Duration(hours: 3)).hour}時"),
                 ),
                 const Gap(5),
                 OutlinedButton(
@@ -283,10 +291,12 @@ class InvitationDetailFormState extends ConsumerState<InvitationDetailForm> {
                           vertical: 5, horizontal: 10),
                       foregroundColor: Colors.black),
                   onPressed: () {
-                    startsAtController.text = DateFormat(dateTimeFormat)
-                        .format(now.add(const Duration(hours: 12)));
+                    startsAtController.text = DateFormat(dateTimeFormat).format(
+                        now
+                            .add(const Duration(hours: 6))
+                            .subtract(Duration(minutes: now.minute)));
                   },
-                  child: const Text("12時間後"),
+                  child: Text("${now.add(const Duration(hours: 6)).hour}時"),
                 ),
               ],
             ),
@@ -296,20 +306,22 @@ class InvitationDetailFormState extends ConsumerState<InvitationDetailForm> {
                 controller: startsAtController,
                 readOnly: true,
                 onTap: () {
-                  DatePicker.showDateTimePicker(
+                  DatePicker.showPicker(
+                    pickerModel: CustomDateTimePickerModel(
+                      minTime: now,
+                      maxTime: now.add(const Duration(days: 7)),
+                      currentTime: startsAtController.text.isNotEmpty
+                          ? DateFormat(dateTimeFormat)
+                              .parse(startsAtController.text)
+                          : next30MinutesTime,
+                      locale: LocaleType.jp,
+                    ),
                     context,
                     showTitleActions: true,
-                    minTime: now,
-                    maxTime: now.add(const Duration(days: 7)),
                     onConfirm: (date) {
                       startsAtController.text =
                           DateFormat(dateTimeFormat).format(date);
                     },
-                    currentTime: startsAtController.text.isNotEmpty
-                        ? DateFormat(dateTimeFormat)
-                            .parse(startsAtController.text)
-                        : now,
-                    locale: LocaleType.jp,
                   );
                 },
                 decoration: InputDecoration(
@@ -359,9 +371,11 @@ class InvitationDetailFormState extends ConsumerState<InvitationDetailForm> {
                       foregroundColor: Colors.black),
                   onPressed: () {
                     expiresAtController.text = DateFormat(dateTimeFormat)
-                        .format(now.add(const Duration(hours: 1)));
+                        .format(now
+                            .add(const Duration(hours: 1))
+                            .subtract(Duration(minutes: now.minute)));
                   },
-                  child: const Text("1時間後"),
+                  child: Text("${now.add(const Duration(hours: 1)).hour}時"),
                 ),
                 const Gap(5),
                 OutlinedButton(
@@ -385,20 +399,21 @@ class InvitationDetailFormState extends ConsumerState<InvitationDetailForm> {
                 controller: expiresAtController,
                 readOnly: true,
                 onTap: () {
-                  DatePicker.showDateTimePicker(
+                  DatePicker.showPicker(
+                    pickerModel: CustomDateTimePickerModel(
+                      minTime: now.add(const Duration(minutes: 30)),
+                      maxTime: now.add(const Duration(days: 7)),
+                      currentTime: expiresAtController.text.isNotEmpty
+                          ? DateFormat(dateTimeFormat)
+                              .parse(expiresAtController.text)
+                          : next30MinutesTime,
+                      locale: LocaleType.jp,
+                    ),
                     context,
-                    showTitleActions: true,
-                    minTime: now.add(const Duration(minutes: 30)),
-                    maxTime: now.add(const Duration(days: 7)),
                     onConfirm: (date) {
                       expiresAtController.text =
                           DateFormat(dateTimeFormat).format(date);
                     },
-                    currentTime: expiresAtController.text.isNotEmpty
-                        ? DateFormat(dateTimeFormat)
-                            .parse(expiresAtController.text)
-                        : now.add(const Duration(minutes: 30)),
-                    locale: LocaleType.jp,
                   );
                 },
                 decoration: InputDecoration(
