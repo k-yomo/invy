@@ -212,7 +212,7 @@ class InvitationListItem extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text("回答期限: ",
+                      const Text("返答期限: ",
                           style: TextStyle(fontWeight: FontWeight.bold)),
                       Text(_convertToDisplayTime(invitation.expiresAt)),
                     ],

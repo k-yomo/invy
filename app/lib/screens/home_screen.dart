@@ -82,7 +82,7 @@ class HomeScreen extends HookConsumerWidget {
                                   children: viewer.pendingInvitations.isEmpty
                                       ? []
                                       : [
-                                          const SubTitle(text: "届いているさそい"),
+                                          const SubTitle(text: "届いているおさそい"),
                                           const Gap(10),
                                           Container(
                                             margin: const EdgeInsets.symmetric(
@@ -194,7 +194,7 @@ class HomeScreen extends HookConsumerWidget {
                                               Image.asset(
                                                   'assets/images/cat.png'),
                                               const Gap(15),
-                                              const Text("送信済みの招待はありません",
+                                              const Text("参加予定のイベントはありません",
                                                   style: TextStyle(
                                                       fontWeight:
                                                           FontWeight.bold)),

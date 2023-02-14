@@ -31,7 +31,7 @@ class InvitationAwaitingFormScreen extends HookConsumerWidget {
       String? comment,
     }) async {
       if (endsAt.isBefore(startsAt)) {
-        showToast("終了時間を開始時間よりも後に設定してください", ToastLevel.error);
+        showToast("終了日時を開始日時よりも後に設定してください", ToastLevel.error);
         return;
       }
       if (await Permission.locationAlways.isDenied) {
@@ -332,7 +332,7 @@ class InvitationAwaitingFormState
                 );
               },
               decoration: InputDecoration(
-                labelText: '終了時間(何時まで空いているか)',
+                labelText: '終了日時(何時まで空いているか)',
                 labelStyle: TextStyle(color: Colors.grey.shade600),
                 filled: true,
                 fillColor: Colors.grey.shade100,
@@ -340,7 +340,7 @@ class InvitationAwaitingFormState
               ),
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return '終了時間を設定してください';
+                  return '終了日時を設定してください';
                 }
                 try {
                   DateFormat(dateTimeFormat).parse(value);

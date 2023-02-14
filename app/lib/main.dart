@@ -98,7 +98,7 @@ Future main() async {
       final isLocal = config.environment == Environment.Local;
       if (isLocal) {
         options.debug = true;
-        options.dsn = 'invalid';
+        options.dsn = 'invalid'; // Not to send error report
       } else {
         options.dsn =
             'https://bc241da02a4b48858c55b5b790efcf14@o4504672984498176.ingest.sentry.io/4504672985874432';
