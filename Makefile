@@ -43,6 +43,10 @@ run-app-dev: ## Run app with connecting to dev env
 run-db:
 	docker-compose up -d db
 
+.PHONY: connect-db
+connect-db:
+	PGPASSWORD=password psql -h 127.0.0.1 -p 15432 --user postgres -d invy
+
 .PHONY: test
 test: ## Run tests
 	gotestsum -- -v -race -coverprofile=coverage.out ./...

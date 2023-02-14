@@ -1,1 +1,46 @@
 # invy
+
+## Architecture
+- Infra
+  - GCP 
+  - [Terraform](https://github.com/k-yomo/invy-terraform)
+  - Cloud Run
+- Backend
+  - Go v1.19 
+  - GraphQL (gqlgen)
+  - PostgreSQL 13.0
+  - Ent
+- Mobile
+  - Flutter v3.7
+- CI
+  - Github Actions (backend)
+  - Codemagic (mobile)
+
+## Prerequisites
+- Go v1.19
+- Flutter v3.7.x
+- Docker
+
+## Setup
+```sh
+make setup
+```
+
+## Development
+```shell
+docker-compose up -d
+make run-api
+make run-app
+```
+
+
+## Test accounts
+SMS confirmation code is `123456` for all the accounts.
+- Local
+  - 080-1234-5678
+- Prod
+  - 00-1234-5678
+  - 11-1234-5678
+  - 22-1234-5678
+
+※ If you need to add new account, you can register phone number for test [here](https://console.firebase.google.com/u/0/project/invy-prod/authentication/providers).
