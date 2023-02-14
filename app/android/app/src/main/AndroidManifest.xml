@@ -46,7 +46,7 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
-       <!-- TOOD: Use env var
+       <!-- TODO: Use env var
             https://zenn.dev/taitai9847/articles/0be7298408b7c8 -->
        <meta-data android:name="com.google.android.geo.API_KEY"
                   android:value="AIzaSyC5-1sT3hduoMlGnrBTVTaQo-Al0GpRC_Q"/>
