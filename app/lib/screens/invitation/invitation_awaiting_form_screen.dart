@@ -93,7 +93,7 @@ class InvitationAwaitingFormScreen extends HookConsumerWidget {
       appBar: AppBar(
         leading: const AppBarLeading(),
         title: const Text(
-          '時間帯の設定',
+          '空き時間帯の設定',
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
         shape:
@@ -239,7 +239,7 @@ class InvitationAwaitingFormState
                 );
               },
               decoration: InputDecoration(
-                labelText: '開始日時',
+                labelText: '空き時間の開始日時',
                 labelStyle: TextStyle(color: Colors.grey.shade600),
                 filled: true,
                 fillColor: Colors.grey.shade100,
@@ -332,7 +332,7 @@ class InvitationAwaitingFormState
                 );
               },
               decoration: InputDecoration(
-                labelText: '終了日時(何時まで空いているか)',
+                labelText: '空き時間の終了日時',
                 labelStyle: TextStyle(color: Colors.grey.shade600),
                 filled: true,
                 fillColor: Colors.grey.shade100,
