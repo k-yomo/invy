@@ -21,10 +21,10 @@ class InvitationScreen extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final googleMapController = useState(Completer<GoogleMapController>());
-    final currentLocation = ref.watch(invitationLocationProvider);
+    final currentLocation = ref.watch(currentPinLocationProvider);
     final lastUpdatedLocation = useState<LatLng?>(null);
     final currentPinLocationNotifier =
-        ref.read(invitationLocationProvider.notifier);
+        ref.read(currentPinLocationProvider.notifier);
     final invitationLocation = ref.watch(invitationLocationProvider);
     final locationNameNotifier = ref.read(locationNameProvider.notifier);
 
@@ -58,6 +58,16 @@ class InvitationScreen extends HookConsumerWidget {
       });
       return null;
     }, []);
+
+    useEffect(() {
+      if (invitationLocation != null) {
+        googleMapController.value.future.then((controller) {
+          controller.animateCamera(CameraUpdate.newCameraPosition(
+              CameraPosition(target: invitationLocation, zoom: 16)));
+        });
+      }
+      return null;
+    }, [invitationLocation]);
 
     return Scaffold(
       body: Column(
@@ -266,6 +276,19 @@ class LocationSearchModal extends HookConsumerWidget {
       }
     }
 
+    onTapSearchResult(AutocompletePrediction place) async {
+      final locations = await locationFromAddress(place.description.toString());
+      if (locations.isNotEmpty) {
+        ref.read(invitationLocationProvider.notifier).state = LatLng(
+          locations.first.latitude,
+          locations.first.longitude,
+        );
+        ref.read(locationNameProvider.notifier).state =
+            place.structuredFormatting!.mainText!;
+      }
+      Navigator.of(context).pop();
+    }
+
     return SizedBox(
       height: 700,
       child: Column(
@@ -316,21 +339,7 @@ class LocationSearchModal extends HookConsumerWidget {
                         title: Text(place.structuredFormatting!.mainText!),
                         subtitle: Text(
                             place.structuredFormatting?.secondaryText ?? ""),
-                        onTap: () async {
-                          final locations = await locationFromAddress(
-                              place.description.toString());
-                          if (locations.isNotEmpty) {
-                            ref
-                                .read(invitationLocationProvider.notifier)
-                                .state = LatLng(
-                              locations.first.latitude,
-                              locations.first.longitude,
-                            );
-                            ref.read(locationNameProvider.notifier).state =
-                                place.structuredFormatting!.mainText!;
-                          }
-                          Navigator.of(context).pop();
-                        },
+                        onTap: () => onTapSearchResult(place),
                       ),
                     );
                   },
