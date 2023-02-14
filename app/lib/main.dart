@@ -114,7 +114,7 @@ Future main() async {
                 notificationChannel.id,
                 notificationChannel.name,
                 channelDescription: notificationChannel.description,
-                icon: android?.smallIcon,
+                icon: "ic_notification",
                 // other properties...
               ),
             ));
