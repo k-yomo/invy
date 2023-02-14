@@ -79,8 +79,11 @@ dependencies:
   permission_handler: ^10.2.0
   background_locator_2:
     git:
-      url: https://github.com/Yukams/background_locator_fixed.git
-      ref: 2.0.6-dev.2
+      # TODO: Use background_locator_fixed once the below PR is merged
+      # https://github.com/Yukams/background_locator_fixed/pull/66
+      # url: https://github.com/Yukams/background_locator_fixed.git
+      url: https://github.com/tulioccalazans/background_locator_fixed
+      ref: master
   pinput: ^2.2.23
   cached_network_image: ^3.2.3
   modal_bottom_sheet:

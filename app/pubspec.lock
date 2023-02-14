@@ -53,11 +53,11 @@ packages:
     dependency: "direct main"
     description:
       path: "."
-      ref: "2.0.6-dev.2"
-      resolved-ref: "273525cc15bc72daa57252188a78b5952e43d669"
-      url: "https://github.com/Yukams/background_locator_fixed.git"
+      ref: master
+      resolved-ref: "3392a1309367619c86098d49f1b4a77dfdc0a3d9"
+      url: "https://github.com/tulioccalazans/background_locator_fixed"
     source: git
-    version: "2.0.6-dev.2"
+    version: "2.0.6"
   boolean_selector:
     dependency: transitive
     description:
