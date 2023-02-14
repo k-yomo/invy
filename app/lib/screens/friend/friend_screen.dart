@@ -107,6 +107,7 @@ class FriendScreen extends HookConsumerWidget {
                           },
                         ),
                         FriendList(
+                          disableScroll: true,
                           friends: sortedFriends.map((f) => f.node).toList(),
                           onFriendPressed: (friendUserId) {
                             showMaterialModalBottomSheet(

@@ -16,15 +16,18 @@ class FriendList extends HookConsumerWidget {
     super.key,
     required this.friends,
     required this.onFriendPressed,
+    this.disableScroll = false,
   });
 
   final List<Fragment$friendListItemFragment> friends;
   final Function(String friendUserId) onFriendPressed;
+  final bool disableScroll;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return ListView.builder(
         key: UniqueKey(),
+        primary: !disableScroll,
         shrinkWrap: true,
         itemCount: friends.length,
         itemBuilder: (context, index) {
@@ -123,7 +126,7 @@ class _FriendListItem extends HookConsumerWidget {
               onPressed(friend.value.id);
             },
             child: Container(
-              margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
+              margin: const EdgeInsets.symmetric(horizontal: 5),
               child: Row(
                 children: [
                   Container(

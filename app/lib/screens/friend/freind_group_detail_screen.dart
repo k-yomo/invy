@@ -62,25 +62,28 @@ class FriendGroupDetailScreen extends HookConsumerWidget {
               shape: Border(
                   bottom: BorderSide(color: Colors.grey.shade200, width: 1)),
             ),
-            body: FriendList(
-              friends: viewer?.friendGroup.friendUsers ?? [],
-              onFriendPressed: (String friendUserId) {
-                showMaterialModalBottomSheet(
-                  context: context,
-                  duration: const Duration(milliseconds: 300),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  builder: (BuildContext context) {
-                    return SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.9,
-                      child: UserProfileModal(
-                          user: viewer!.friendGroup.friendUsers.singleWhere(
-                              (friend) => friend.id == friendUserId)),
-                    );
-                  },
-                );
-              },
+            body: Container(
+              height: double.infinity,
+              child: FriendList(
+                friends: viewer?.friendGroup.friendUsers ?? [],
+                onFriendPressed: (String friendUserId) {
+                  showMaterialModalBottomSheet(
+                    context: context,
+                    duration: const Duration(milliseconds: 300),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    builder: (BuildContext context) {
+                      return SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.9,
+                        child: UserProfileModal(
+                            user: viewer!.friendGroup.friendUsers.singleWhere(
+                                (friend) => friend.id == friendUserId)),
+                      );
+                    },
+                  );
+                },
+              ),
             ),
           );
         });
