@@ -13,52 +13,51 @@ import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 import '../../config/config.dart';
 
+const locationUndecided = "未定";
+
 class InvitationScreen extends HookConsumerWidget {
   const InvitationScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final googleMapController = useState(Completer<GoogleMapController>());
-    final currentLocation = useState<LatLng?>(null);
-    final invitationLocation = ref.watch(invitationLocationProvider);
-    final invitationLocationNotifier =
+    final currentLocation = ref.watch(invitationLocationProvider);
+    final lastUpdatedLocation = useState<LatLng?>(null);
+    final currentPinLocationNotifier =
         ref.read(invitationLocationProvider.notifier);
+    final invitationLocation = ref.watch(invitationLocationProvider);
     final locationNameNotifier = ref.read(locationNameProvider.notifier);
+
+    updateLocationName(LatLng location) async {
+      final placeMarks =
+          await placemarkFromCoordinates(location.latitude, location.longitude);
+      if (placeMarks.isEmpty) {
+        locationNameNotifier.state = "";
+      } else if (placeMarks.first.locality != null &&
+          placeMarks.first.street != null) {
+        locationNameNotifier.state =
+            placeMarks.first.locality! + placeMarks.first.street!;
+      } else if (placeMarks.first.name != null) {
+        locationNameNotifier.state = placeMarks.first.name!;
+      }
+    }
 
     useEffect(() {
       getCurrentLocation().then((location) async {
         if (location == null) {
           return null;
         }
-        currentLocation.value ??= location;
+        currentPinLocationNotifier.state ??= location;
+        await updateLocationName(location);
         if (invitationLocation == null) {
-          invitationLocationNotifier.state = location;
-
-          final placeMarks = await placemarkFromCoordinates(
-              location.latitude, location.longitude);
-          if (placeMarks.isEmpty) {
-            locationNameNotifier.state = "";
-          } else if (placeMarks.first.locality != null &&
-              placeMarks.first.street != null) {
-            locationNameNotifier.state =
-                placeMarks.first.locality! + placeMarks.first.street!;
-          } else if (placeMarks.first.name != null) {
-            locationNameNotifier.state = placeMarks.first.name!;
-          }
+          googleMapController.value.future.then((controller) {
+            controller.animateCamera(CameraUpdate.newCameraPosition(
+                CameraPosition(target: location, zoom: 16)));
+          });
         }
       });
       return null;
     }, []);
-
-    useEffect(() {
-      if (invitationLocation != null) {
-        googleMapController.value.future.then((controller) {
-          controller.animateCamera(CameraUpdate.newCameraPosition(
-              CameraPosition(target: invitationLocation, zoom: 16)));
-        });
-      }
-      return null;
-    }, [invitationLocation]);
 
     return Scaffold(
       body: Column(
@@ -79,33 +78,23 @@ class InvitationScreen extends HookConsumerWidget {
                     googleMapController.value.complete(controller);
                   },
                   onCameraMove: (position) {
-                    currentLocation.value = position.target;
+                    currentPinLocationNotifier.state = position.target;
                   },
                   onCameraIdle: () async {
-                    if (currentLocation.value == null) {
+                    if (currentLocation == null) {
                       return;
                     }
-                    final currentLat = currentLocation.value!.latitude;
-                    final currentLng = currentLocation.value!.longitude;
-                    if (invitationLocation == null ||
+                    final currentLat = currentLocation.latitude;
+                    final currentLng = currentLocation.longitude;
+                    if (lastUpdatedLocation.value == null ||
                         currentLat.toStringAsFixed(4) !=
-                            invitationLocation.latitude.toStringAsFixed(4) ||
+                            lastUpdatedLocation.value!.latitude
+                                .toStringAsFixed(4) ||
                         currentLng.toStringAsFixed(4) !=
-                            invitationLocation.longitude.toStringAsFixed(4)) {
-                      invitationLocationNotifier.state =
-                          LatLng(currentLat, currentLng);
-                      final placeMarks = await placemarkFromCoordinates(
-                          currentLat, currentLng);
-                      if (placeMarks.isEmpty) {
-                        locationNameNotifier.state = "";
-                      } else if (placeMarks.first.locality != null &&
-                          placeMarks.first.street != null) {
-                        locationNameNotifier.state =
-                            placeMarks.first.locality! +
-                                placeMarks.first.street!;
-                      } else if (placeMarks.first.name != null) {
-                        locationNameNotifier.state = placeMarks.first.name!;
-                      }
+                            lastUpdatedLocation.value!.longitude
+                                .toStringAsFixed(4)) {
+                      lastUpdatedLocation.value = currentLocation;
+                      await updateLocationName(currentLocation);
                     }
                   },
                   mapType: MapType.normal,
@@ -134,6 +123,7 @@ class LocationCard extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final currentPinLocation = ref.watch(invitationLocationProvider);
     final locationName = ref.watch(locationNameProvider);
     final locationNameNotifier = ref.read(locationNameProvider.notifier);
     final invitationLocationNotifier =
@@ -179,7 +169,7 @@ class LocationCard extends HookConsumerWidget {
                     },
                     style: TextButton.styleFrom(
                         padding: const EdgeInsets.only(right: 25)),
-                    child: const Text("未定",
+                    child: const Text(locationUndecided,
                         style: TextStyle(
                             color: Colors.blue, fontWeight: FontWeight.bold)),
                   )
@@ -226,6 +216,12 @@ class LocationCard extends HookConsumerWidget {
                           backgroundColor: Colors.black,
                           padding: const EdgeInsets.symmetric(vertical: 12)),
                       onPressed: () {
+                        if (locationName != locationUndecided &&
+                            currentPinLocation != null) {
+                          invitationLocationNotifier.state = LatLng(
+                              currentPinLocation.latitude,
+                              currentPinLocation.longitude);
+                        }
                         Navigator.of(context).push(MaterialPageRoute(
                           builder: (context) =>
                               const InvitationFriendSelectScreen(),

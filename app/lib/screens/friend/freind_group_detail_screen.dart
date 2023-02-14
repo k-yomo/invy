@@ -62,7 +62,7 @@ class FriendGroupDetailScreen extends HookConsumerWidget {
               shape: Border(
                   bottom: BorderSide(color: Colors.grey.shade200, width: 1)),
             ),
-            body: Container(
+            body: SizedBox(
               height: double.infinity,
               child: FriendList(
                 friends: viewer?.friendGroup.friendUsers ?? [],

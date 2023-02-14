@@ -7,6 +7,10 @@ final locationNameProvider = StateProvider<String>((ref) {
   return "";
 });
 
+final currentPinLocationProvider = StateProvider<LatLng?>((ref) {
+  return null;
+});
+
 final invitationLocationProvider = StateProvider<LatLng?>((ref) {
   return null;
 });
