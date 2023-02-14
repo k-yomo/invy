@@ -50,5 +50,9 @@
             https://zenn.dev/taitai9847/articles/0be7298408b7c8 -->
        <meta-data android:name="com.google.android.geo.API_KEY"
                   android:value="AIzaSyC5-1sT3hduoMlGnrBTVTaQo-Al0GpRC_Q"/>
-    </application>
+       <meta-data
+               android:name="com.google.firebase.messaging.default_notification_channel_id"
+               android:value="high_importance_channel" />
+
+   </application>
 </manifest>
