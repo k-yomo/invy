@@ -22,6 +22,7 @@ import 'package:invy/util/device.dart';
 import 'package:invy/util/notification.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:universal_platform/universal_platform.dart';
 
 import 'app.dart';
 import 'graphql/schema.graphql.dart';
@@ -95,28 +96,31 @@ Future main() async {
     badge: true,
     sound: true,
   );
-  final flutterLocalNotificationsPlugin =
-      await createHighImportanceNotificationChannel();
-  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-    final notification = message.notification;
-    final android = message.notification?.android;
 
-    if (notification != null && android != null) {
-      flutterLocalNotificationsPlugin.show(
-          notification.hashCode,
-          notification.title,
-          notification.body,
-          NotificationDetails(
-            android: AndroidNotificationDetails(
-              notificationChannel.id,
-              notificationChannel.name,
-              channelDescription: notificationChannel.description,
-              icon: android?.smallIcon,
-              // other properties...
-            ),
-          ));
-    }
-  });
+  if (UniversalPlatform.isAndroid) {
+    final flutterLocalNotificationsPlugin =
+        await createHighImportanceNotificationChannel();
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      final notification = message.notification;
+      final android = message.notification?.android;
+
+      if (notification != null && android != null) {
+        flutterLocalNotificationsPlugin.show(
+            notification.hashCode,
+            notification.title,
+            notification.body,
+            NotificationDetails(
+              android: AndroidNotificationDetails(
+                notificationChannel.id,
+                notificationChannel.name,
+                channelDescription: notificationChannel.description,
+                icon: android?.smallIcon,
+                // other properties...
+              ),
+            ));
+      }
+    });
+  }
 
   await BackgroundLocator.initialize();
   startBackgroundLocationService();
