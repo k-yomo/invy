@@ -297,6 +297,8 @@ type User implements Node {
   """
   distanceKm: Int
   isRequestingFriendship: Boolean!
+
+  """It'll be empty when not friend"""
   invitationAwaitings: [InvitationAwaiting!]!
 }
 

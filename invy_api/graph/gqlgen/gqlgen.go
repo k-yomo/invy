@@ -1672,6 +1672,7 @@ type User implements Node {
     # It'll be null when not friend or the location tracking is not enabled by the user
     distanceKm: Int @goField(forceResolver: true)
     isRequestingFriendship: Boolean! @goField(forceResolver: true)
+    # It'll be empty when not friend
     invitationAwaitings: [InvitationAwaiting!]! @goField(forceResolver: true)
 }
 

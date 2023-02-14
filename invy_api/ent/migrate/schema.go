@@ -12,8 +12,8 @@ var (
 	AccountsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUUID},
 		{Name: "auth_id", Type: field.TypeString, Unique: true},
-		{Name: "email", Type: field.TypeString, Unique: true, Nullable: true},
-		{Name: "phone_number", Type: field.TypeString, Unique: true, Nullable: true},
+		{Name: "email", Type: field.TypeString, Nullable: true},
+		{Name: "phone_number", Type: field.TypeString, Nullable: true},
 		{Name: "status", Type: field.TypeEnum, Enums: []string{"active", "suspended", "deleted"}, Default: "active"},
 		{Name: "created_at", Type: field.TypeTime},
 	}
@@ -22,6 +22,13 @@ var (
 		Name:       "accounts",
 		Columns:    AccountsColumns,
 		PrimaryKey: []*schema.Column{AccountsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "account_phone_number_status",
+				Unique:  true,
+				Columns: []*schema.Column{AccountsColumns[3], AccountsColumns[4]},
+			},
+		},
 	}
 	// FriendGroupsColumns holds the columns for the "friend_groups" table.
 	FriendGroupsColumns = []*schema.Column{
