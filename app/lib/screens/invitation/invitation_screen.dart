@@ -45,11 +45,14 @@ class InvitationScreen extends HookConsumerWidget {
     useEffect(() {
       getCurrentLocation().then((location) async {
         if (location == null) {
+          // defaults to Shibuya if location is not enabled
+          currentPinLocationNotifier.state ??=
+              const LatLng(35.6585663, 139.6980641);
           return null;
         }
         currentPinLocationNotifier.state ??= location;
         await updateLocationName(location);
-        if (invitationLocation == null) {
+        if (currentLocation == null) {
           googleMapController.value.future.then((controller) {
             controller.animateCamera(CameraUpdate.newCameraPosition(
                 CameraPosition(target: location, zoom: 16)));
@@ -69,6 +72,10 @@ class InvitationScreen extends HookConsumerWidget {
       return null;
     }, [invitationLocation]);
 
+    if (currentLocation == null) {
+      return const SizedBox();
+    }
+
     return Scaffold(
       body: Column(
         children: [
@@ -78,12 +85,8 @@ class InvitationScreen extends HookConsumerWidget {
               alignment: Alignment.center,
               children: [
                 GoogleMap(
-                  initialCameraPosition: CameraPosition(
-                    // defaults to Shibuya
-                    target: invitationLocation ??
-                        const LatLng(35.6585663, 139.6980641),
-                    zoom: invitationLocation != null ? 16 : 10,
-                  ),
+                  initialCameraPosition:
+                      CameraPosition(target: currentLocation, zoom: 16),
                   onMapCreated: (GoogleMapController controller) {
                     googleMapController.value.complete(controller);
                   },
@@ -91,18 +94,22 @@ class InvitationScreen extends HookConsumerWidget {
                     currentPinLocationNotifier.state = position.target;
                   },
                   onCameraIdle: () async {
-                    if (currentLocation == null) {
-                      return;
-                    }
                     final currentLat = currentLocation.latitude;
                     final currentLng = currentLocation.longitude;
-                    if (lastUpdatedLocation.value == null ||
-                        currentLat.toStringAsFixed(4) !=
-                            lastUpdatedLocation.value!.latitude
-                                .toStringAsFixed(4) ||
-                        currentLng.toStringAsFixed(4) !=
-                            lastUpdatedLocation.value!.longitude
-                                .toStringAsFixed(4)) {
+                    if ((lastUpdatedLocation.value == null ||
+                            currentLat.toStringAsFixed(4) !=
+                                lastUpdatedLocation.value!.latitude
+                                    .toStringAsFixed(4) ||
+                            currentLng.toStringAsFixed(4) !=
+                                lastUpdatedLocation.value!.longitude
+                                    .toStringAsFixed(4)) &&
+                        (invitationLocation == null ||
+                            currentLat.toStringAsFixed(4) !=
+                                invitationLocation.latitude
+                                    .toStringAsFixed(4) ||
+                            currentLng.toStringAsFixed(4) !=
+                                invitationLocation.longitude
+                                    .toStringAsFixed(4))) {
                       lastUpdatedLocation.value = currentLocation;
                       await updateLocationName(currentLocation);
                     }
