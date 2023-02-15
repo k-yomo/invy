@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:device_info_plus/device_info_plus.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide ModalBottomSheetRoute;
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
 import 'package:graphql/client.dart';
@@ -16,6 +16,7 @@ import 'package:invy/services/graphql_client.dart';
 import 'package:invy/state/auth.dart';
 import 'package:invy/util/toast.dart';
 import 'package:mime/mime.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../../widgets/app_bar_leading.dart';
@@ -39,6 +40,8 @@ class ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
     final graphqlClient = ref.read(graphqlClientProvider);
     final user = ref.watch(loggedInUserProvider)!;
     final avatarUpdateLoading = useState(false);
+    final nicknameController = TextEditingController(text: user.nickname);
+    final screenIdController = TextEditingController(text: user.screenId);
 
     onPressedAvatarUpdate() async {
       PermissionStatus permissionStatus;
@@ -143,13 +146,14 @@ class ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
       return null;
     }
 
-    onNicknameSubmitted(String nickname) async {
+    Future<bool> onNicknameSubmitted() async {
+      final nickname = nicknameController.text;
       if (validateNickname(nickname) != null) {
-        return;
+        return false;
       }
       if (nickname == user.nickname) {
         // no change
-        return;
+        return true;
       }
       final result = await graphqlClient.mutate$updateNickname(
           Options$Mutation$updateNickname(
@@ -157,12 +161,13 @@ class ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
                   Variables$Mutation$updateNickname(nickname: nickname)));
       if (result.hasException) {
         print(result.exception);
-        // TODO: show error;
-        return;
+        showToast("ユーザーIDの更新に失敗しました。時間を置いて再度お試しください。", ToastLevel.error);
+        return false;
       }
       ref.read(loggedInUserProvider.notifier).state =
           user.copyWith(nickname: nickname);
-      showToast("ニックネームを更新しました", ToastLevel.success);
+      showToast("ニックネームを更新しました。", ToastLevel.success);
+      return true;
     }
 
     validateScreenId(value) {
@@ -179,13 +184,14 @@ class ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
       return null;
     }
 
-    onScreenIdSubmitted(String screenId) async {
+    Future<bool> onScreenIdSubmitted() async {
+      final screenId = screenIdController.text;
       if (validateScreenId(screenId) != null) {
-        return;
+        return false;
       }
       if (screenId == user.screenId) {
         // no change
-        return;
+        return true;
       }
       final result = await graphqlClient.mutate$updateScreenId(
           Options$Mutation$updateScreenId(
@@ -195,16 +201,17 @@ class ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
         if (result.exception?.graphqlErrors.first.extensions != null) {
           if (result.exception!.graphqlErrors.first.extensions!["code"] ==
               toJson$Enum$ErrorCode(Enum$ErrorCode.ALREADY_EXISTS)) {
-            showToast("入力されたユーザーIDは既に使用されています", ToastLevel.error);
-            return;
+            showToast("入力されたユーザーIDは既に使用されています。", ToastLevel.error);
+            return false;
           }
         }
-        showToast("ユーザーIDの更新に失敗しました", ToastLevel.error);
-        return;
+        showToast("ユーザーIDの更新に失敗しました。時間を置いて再度お試しください。", ToastLevel.error);
+        return false;
       }
       ref.read(loggedInUserProvider.notifier).state =
           user.copyWith(screenId: screenId);
-      showToast("ユーザーIDを更新しました", ToastLevel.success);
+      showToast("ユーザーIDを更新しました。", ToastLevel.success);
+      return true;
     }
 
     return Scaffold(
@@ -247,11 +254,8 @@ class ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
                             style: TextStyle(color: Colors.black)),
                   ),
                   const Gap(20),
-                  Form(
-                    key: _nicknameFormKey,
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                    child: TextFormField(
-                      controller: TextEditingController(text: user.nickname),
+                  TextFormField(
+                      controller: nicknameController,
                       cursorColor: Colors.grey.shade600,
                       decoration: InputDecoration(
                         labelText: 'ニックネーム',
@@ -260,29 +264,155 @@ class ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
                         fillColor: Colors.grey.shade100,
                         border: InputBorder.none,
                       ),
-                      maxLength: 50,
-                      validator: validateNickname,
-                      onFieldSubmitted: onNicknameSubmitted,
-                    ),
-                  ),
+                      readOnly: true,
+                      onTap: () {
+                        showMaterialModalBottomSheet(
+                          context: context,
+                          duration: const Duration(milliseconds: 300),
+                          builder: (BuildContext context) {
+                            return Container(
+                              height: MediaQuery.of(context).size.height * 0.9,
+                              padding: const EdgeInsets.only(
+                                  top: 60, left: 15, right: 15, bottom: 15),
+                              child: Column(
+                                children: [
+                                  Expanded(
+                                    child: Form(
+                                      key: _nicknameFormKey,
+                                      autovalidateMode:
+                                          AutovalidateMode.onUserInteraction,
+                                      child: TextFormField(
+                                        autofocus: true,
+                                        controller: nicknameController,
+                                        cursorColor: Colors.grey.shade600,
+                                        decoration: InputDecoration(
+                                          labelText: 'ニックネーム',
+                                          labelStyle: TextStyle(
+                                              color: Colors.grey.shade600),
+                                          filled: true,
+                                          fillColor: Colors.grey.shade100,
+                                          border: InputBorder.none,
+                                        ),
+                                        maxLength: 50,
+                                        validator: validateNickname,
+                                      ),
+                                    ),
+                                  ),
+                                  SingleChildScrollView(
+                                    controller:
+                                        ModalScrollController.of(context),
+                                    padding: EdgeInsets.only(
+                                        bottom: MediaQuery.of(context)
+                                            .viewInsets
+                                            .bottom),
+                                    child: TextButton(
+                                      onPressed: () async {
+                                        final isSuccessful =
+                                            await onNicknameSubmitted();
+                                        if (isSuccessful) {
+                                          Navigator.pop(context);
+                                        }
+                                      },
+                                      style: TextButton.styleFrom(
+                                        minimumSize: const Size.fromHeight(0),
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 12),
+                                        backgroundColor: Colors.black,
+                                        foregroundColor: Colors.white,
+                                      ),
+                                      child: const Text(
+                                        '更新する',
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        );
+                      }),
                   const Gap(20),
-                  Form(
-                    key: _screenIdFormKey,
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                    child: TextFormField(
-                      controller: TextEditingController(text: user.screenId),
-                      cursorColor: Colors.grey.shade600,
-                      decoration: InputDecoration(
-                        labelText: 'ユーザーID',
-                        labelStyle: TextStyle(color: Colors.grey.shade600),
-                        filled: true,
-                        fillColor: Colors.grey.shade100,
-                        border: InputBorder.none,
-                      ),
-                      maxLength: 15,
-                      validator: validateScreenId,
-                      onFieldSubmitted: onScreenIdSubmitted,
+                  TextFormField(
+                    controller: screenIdController,
+                    decoration: InputDecoration(
+                      labelText: 'ユーザーID',
+                      labelStyle: TextStyle(color: Colors.grey.shade600),
+                      filled: true,
+                      fillColor: Colors.grey.shade100,
+                      border: InputBorder.none,
                     ),
+                    readOnly: true,
+                    onTap: () {
+                      showMaterialModalBottomSheet(
+                        context: context,
+                        duration: const Duration(milliseconds: 300),
+                        builder: (BuildContext context) {
+                          return Container(
+                            height: MediaQuery.of(context).size.height * 0.9,
+                            padding: const EdgeInsets.only(
+                                top: 60, left: 15, right: 15, bottom: 15),
+                            child: Column(
+                              children: [
+                                Expanded(
+                                  child: Form(
+                                    key: _screenIdFormKey,
+                                    autovalidateMode:
+                                        AutovalidateMode.onUserInteraction,
+                                    child: TextFormField(
+                                      autofocus: true,
+                                      controller: screenIdController,
+                                      cursorColor: Colors.grey.shade600,
+                                      decoration: InputDecoration(
+                                        labelText: 'ユーザーID',
+                                        labelStyle: TextStyle(
+                                            color: Colors.grey.shade600),
+                                        filled: true,
+                                        fillColor: Colors.grey.shade100,
+                                        border: InputBorder.none,
+                                      ),
+                                      maxLength: 15,
+                                      validator: validateScreenId,
+                                    ),
+                                  ),
+                                ),
+                                SingleChildScrollView(
+                                  controller: ModalScrollController.of(context),
+                                  padding: EdgeInsets.only(
+                                      bottom: MediaQuery.of(context)
+                                          .viewInsets
+                                          .bottom),
+                                  child: TextButton(
+                                    onPressed: () async {
+                                      final isSuccessful =
+                                          await onScreenIdSubmitted();
+                                      if (isSuccessful) {
+                                        Navigator.pop(context);
+                                      }
+                                    },
+                                    style: TextButton.styleFrom(
+                                      minimumSize: const Size.fromHeight(0),
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 12),
+                                      backgroundColor: Colors.black,
+                                      foregroundColor: Colors.white,
+                                    ),
+                                    child: const Text(
+                                      '更新する',
+                                      style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      );
+                    },
                   ),
                 ],
               ),

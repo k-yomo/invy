@@ -85,15 +85,15 @@ func (r *mutationResolver) UpdateScreenID(ctx context.Context, screenID string) 
 		SetScreenID(screenID).
 		Exec(ctx)
 	if err != nil {
+		if ent.IsConstraintError(err) {
+			return nil, xerrors.New(err, gqlmodel.ErrorCodeAlreadyExists)
+		}
 		return nil, err
 	}
 	dbUserProfile, err := r.DB.UserProfile.Query().
 		Where(userprofile.UserID(authUserID)).
 		Only(ctx)
 	if err != nil {
-		if ent.IsConstraintError(err) {
-			return nil, xerrors.New(err, gqlmodel.ErrorCodeAlreadyExists)
-		}
 		return nil, err
 	}
 	return &gqlmodel.UpdateScreenIDPayload{Viewer: conv.ConvertFromDBUserProfileToViewer(dbUserProfile)}, nil
