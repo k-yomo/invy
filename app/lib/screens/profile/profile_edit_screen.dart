@@ -357,25 +357,33 @@ class ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
                             child: Column(
                               children: [
                                 Expanded(
-                                  child: Form(
-                                    key: _screenIdFormKey,
-                                    autovalidateMode:
-                                        AutovalidateMode.onUserInteraction,
-                                    child: TextFormField(
-                                      autofocus: true,
-                                      controller: screenIdController,
-                                      cursorColor: Colors.grey.shade600,
-                                      decoration: InputDecoration(
-                                        labelText: 'ユーザーID',
-                                        labelStyle: TextStyle(
-                                            color: Colors.grey.shade600),
-                                        filled: true,
-                                        fillColor: Colors.grey.shade100,
-                                        border: InputBorder.none,
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Form(
+                                        key: _screenIdFormKey,
+                                        autovalidateMode:
+                                            AutovalidateMode.onUserInteraction,
+                                        child: TextFormField(
+                                          autofocus: true,
+                                          controller: screenIdController,
+                                          cursorColor: Colors.grey.shade600,
+                                          decoration: InputDecoration(
+                                            labelText: 'ユーザーID',
+                                            labelStyle: TextStyle(
+                                                color: Colors.grey.shade600),
+                                            filled: true,
+                                            fillColor: Colors.grey.shade100,
+                                            border: InputBorder.none,
+                                          ),
+                                          maxLength: 15,
+                                          validator: validateScreenId,
+                                        ),
                                       ),
-                                      maxLength: 15,
-                                      validator: validateScreenId,
-                                    ),
+                                      const Text("英数字、アンダースコア（_）のみ使用可能です。",
+                                          style: TextStyle(fontSize: 12))
+                                    ],
                                   ),
                                 ),
                                 SingleChildScrollView(
