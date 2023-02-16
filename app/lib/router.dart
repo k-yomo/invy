@@ -75,7 +75,7 @@ GoRouter router(RouterRef ref) => GoRouter(
           builder: (context, state, child) {
             calcIndex() {
               final String location = GoRouterState.of(context).location;
-              if (location.startsWith('invitation/new')) {
+              if (location.startsWith('/invitation/new')) {
                 return 1;
               } else if (location.startsWith('/friends')) {
                 return 2;
