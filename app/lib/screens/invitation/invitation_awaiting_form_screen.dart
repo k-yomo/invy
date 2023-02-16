@@ -1,3 +1,4 @@
+import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:gap/gap.dart';
@@ -43,35 +44,7 @@ class InvitationAwaitingFormScreen extends HookConsumerWidget {
         showToast("終了日時を開始日時よりも後に設定してください", ToastLevel.error);
         return;
       }
-      if (await Permission.locationAlways.isDenied) {
-        await showDialog(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              title: const Text('おおまかな位置情報を共有しますか'),
-              content: const Text("おおまかな位置情報を共有すると、近くにいる人からのさそわれやすくなります。"),
-              actions: <Widget>[
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.grey,
-                  ),
-                  child: const Text("キャンセル"),
-                ),
-                TextButton(
-                  onPressed: () async {
-                    await openAppSettings();
-                  },
-                  style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.blue,
-                  ),
-                  child: const Text("設定に移動する"),
-                ),
-              ],
-            );
-          },
-        );
-      }
+
       final result = await graphqlClient.mutate$registerInvitationAwaiting(
           Options$Mutation$registerInvitationAwaiting(
         variables: Variables$Mutation$registerInvitationAwaiting(
@@ -92,6 +65,21 @@ class InvitationAwaitingFormScreen extends HookConsumerWidget {
         }
         // TODO: Show error
         return;
+      }
+
+      final locationPermissionStatus =
+          await Permission.locationAlways.serviceStatus;
+      if (locationPermissionStatus == PermissionStatus.denied ||
+          locationPermissionStatus == PermissionStatus.permanentlyDenied) {
+        final result = await showOkCancelAlertDialog(
+          context: context,
+          title: "おおまかな位置情報を共有しますか",
+          message: "おおまかな位置情報を共有すると、近くにいる人からのさそわれやすくなります。",
+          cancelLabel: "キャンセル",
+        );
+        if (result == OkCancelResult.ok) {
+          await openAppSettings();
+        }
       }
       const HomeRoute().go(context);
     }

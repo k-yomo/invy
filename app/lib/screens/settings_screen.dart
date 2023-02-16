@@ -1,3 +1,4 @@
+import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -52,35 +53,17 @@ class SettingsScreen extends HookConsumerWidget {
             children: [
               SettingItem(
                 title: "ログアウト",
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (context) {
-                      return AlertDialog(
-                        title: const Text("ログアウト"),
-                        content: const Text("ログアウトしてもよろしいですか？"),
-                        actions: <Widget>[
-                          TextButton(
-                            onPressed: () => Navigator.pop(context),
-                            style: TextButton.styleFrom(
-                              foregroundColor: Colors.grey.shade800,
-                            ),
-                            child: const Text("キャンセル"),
-                          ),
-                          TextButton(
-                            onPressed: () async {
-                              await graphqlClient.mutate$signOut();
-                              clientLogout();
-                            },
-                            style: TextButton.styleFrom(
-                              foregroundColor: Colors.blue,
-                            ),
-                            child: const Text("ログアウト"),
-                          ),
-                        ],
-                      );
-                    },
-                  );
+                onPressed: () async {
+                  final result = await showOkCancelAlertDialog(
+                      context: context,
+                      title: "ログアウト",
+                      message: "ログアウトしてもよろしいですか？",
+                      cancelLabel: "キャンセル",
+                      isDestructiveAction: true);
+                  if (result == OkCancelResult.ok) {
+                    await graphqlClient.mutate$signOut();
+                    clientLogout();
+                  }
                 },
               ),
               const GreyDivider(),
@@ -100,37 +83,18 @@ class SettingsScreen extends HookConsumerWidget {
               const GreyDivider(),
               SettingItem(
                 title: "退会",
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (context) {
-                      return AlertDialog(
-                        title: const Text("退会"),
-                        content:
-                            const Text("退会するとデータは消去され復元が出来ません。退会してもよろしいですか？"),
-                        actions: <Widget>[
-                          TextButton(
-                            onPressed: () => Navigator.pop(context),
-                            style: TextButton.styleFrom(
-                              foregroundColor: Colors.grey.shade800,
-                            ),
-                            child: const Text("キャンセル"),
-                          ),
-                          TextButton(
-                            onPressed: () async {
-                              await graphqlClient.mutate$deleteAccount();
-                              clientLogout();
-                            },
-                            style: TextButton.styleFrom(
-                              foregroundColor: Colors.blue,
-                            ),
-                            child: const Text("退会する",
-                                style: TextStyle(color: Colors.red)),
-                          ),
-                        ],
-                      );
-                    },
-                  );
+                onPressed: () async {
+                  final result = await showOkCancelAlertDialog(
+                      context: context,
+                      title: "退会",
+                      message: "退会するとデータは消去され復元が出来ません。退会してもよろしいですか？",
+                      cancelLabel: "キャンセル",
+                      okLabel: "退会",
+                      isDestructiveAction: true);
+                  if (result == OkCancelResult.ok) {
+                    await graphqlClient.mutate$deleteAccount();
+                    clientLogout();
+                  }
                 },
               ),
               const GreyDivider(),

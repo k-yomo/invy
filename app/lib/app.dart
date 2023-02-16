@@ -1,6 +1,7 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:graphql/client.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -14,24 +15,32 @@ import 'graphql/push_notification.graphql.dart';
 import 'graphql/schema.graphql.dart';
 import 'state/auth.dart';
 
+const materialWhite = MaterialColor(
+  0xFFFFFFFF,
+  <int, Color>{
+    50: Color(0xFFFFFFFF),
+    100: Color(0xFFFFFFFF),
+    200: Color(0xFFFFFFFF),
+    300: Color(0xFFFFFFFF),
+    400: Color(0xFFFFFFFF),
+    500: Color(0xFFFFFFFF),
+    600: Color(0xFFFFFFFF),
+    700: Color(0xFFFFFFFF),
+    800: Color(0xFFFFFFFF),
+    900: Color(0xFFFFFFFF),
+  },
+);
+
+ThemeData lightTheme() => ThemeData.from(
+      colorScheme: ColorScheme.fromSeed(
+        primary: Colors.blue.shade500,
+        seedColor: materialWhite,
+      ),
+      useMaterial3: true,
+    );
+
 class App extends HookConsumerWidget {
   const App({super.key});
-
-  final MaterialColor materialWhite = const MaterialColor(
-    0xFFFFFFFF,
-    <int, Color>{
-      50: Color(0xFFFFFFFF),
-      100: Color(0xFFFFFFFF),
-      200: Color(0xFFFFFFFF),
-      300: Color(0xFFFFFFFF),
-      400: Color(0xFFFFFFFF),
-      500: Color(0xFFFFFFFF),
-      600: Color(0xFFFFFFFF),
-      700: Color(0xFFFFFFFF),
-      800: Color(0xFFFFFFFF),
-      900: Color(0xFFFFFFFF),
-    },
-  );
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -104,14 +113,15 @@ class App extends HookConsumerWidget {
             return MaterialApp.router(
               debugShowCheckedModeBanner: false,
               title: 'Invy',
-              theme: ThemeData(
-                primarySwatch: materialWhite,
-                useMaterial3: true,
-              ),
-              // TODO: support dark mode
-              // darkTheme: ThemeData.dark(),
+              theme: lightTheme(),
+              // TODO: Dark theme
               themeMode: ThemeMode.system,
               routerConfig: router,
+              localizationsDelegates: const [
+                GlobalMaterialLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
+              ],
             );
           },
         );

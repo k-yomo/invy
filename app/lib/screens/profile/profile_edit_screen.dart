@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart' hide ModalBottomSheetRoute;
@@ -84,33 +85,16 @@ class ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
         if (!context.mounted) {
           return;
         }
-        showDialog(
+        final result = await showOkCancelAlertDialog(
           context: context,
-          builder: (_) {
-            return AlertDialog(
-              title: const Text('"写真"へのアクセスがありません。'),
-              content: const Text('プロフィール写真を変更するには、設定から"写真"へのアクセスを許可してください。'),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.grey,
-                  ),
-                  child: const Text("キャンセル"),
-                ),
-                TextButton(
-                  onPressed: () async {
-                    await openAppSettings();
-                  },
-                  style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.blue,
-                  ),
-                  child: const Text("設定に移動する"),
-                ),
-              ],
-            );
-          },
+          title: '"写真"へのアクセスがありません。',
+          message: 'プロフィール写真を変更するには、設定から"写真"へのアクセスを許可してください。',
+          cancelLabel: "キャンセル",
+          okLabel: "設定に移動",
         );
+        if (result == OkCancelResult.ok) {
+          await openAppSettings();
+        }
         return;
       }
 
