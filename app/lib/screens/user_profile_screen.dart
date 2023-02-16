@@ -10,20 +10,42 @@ import 'package:invy/screens/friend/blocked_friends_screen.graphql.dart';
 import 'package:invy/util/toast.dart';
 import 'package:invy/widgets/invitation_awaiting_list_carousel.dart';
 import 'package:invy/widgets/sub_title.dart';
-import 'package:invy/widgets/user_profile_modal_fragment.graphql.dart';
+import 'package:invy/screens/user_profile_screen.graphql.dart';
 
 import '../graphql/user_block.graphql.dart';
 import '../graphql/user_mute.graphql.dart';
 import '../services/graphql_client.dart';
 
-class UserProfileModal extends HookConsumerWidget {
-  const UserProfileModal({super.key, required this.user});
+class UserProfileScreen extends HookConsumerWidget {
+  const UserProfileScreen({super.key, required this.userId, this.user});
 
-  final Fragment$userProfileModalFragment user;
+  final String userId;
+  final Fragment$userProfileScreenFragment? user;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final graphqlClient = ref.read(graphqlClientProvider);
+    final fetchUser = useMemoized(() async {
+      if (this.user != null) {
+        return this.user!;
+      }
+      final resp = await graphqlClient
+          .query$userProfileScreenUser(Options$Query$userProfileScreenUser(
+              variables: Variables$Query$userProfileScreenUser(
+        userId: userId,
+      )));
+      if (resp.hasException) {
+        throw resp.exception.toString();
+      }
+      return resp.parsedData!.user;
+    });
+    final snapshot = useFuture(fetchUser);
+
+    if (!snapshot.hasData) {
+      return const SizedBox();
+    }
+
+    final user = snapshot.data!;
     final isMuted = useState(user.isMuted);
     final isBlocked = useState(false);
 

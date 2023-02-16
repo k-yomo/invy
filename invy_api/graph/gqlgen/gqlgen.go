@@ -1531,7 +1531,6 @@ type Invitation implements Node {
     expiresAt: Time!
 
     acceptedUsers: [User!]! @goField(forceResolver: true)
-    # true will be returned for invitation sender too
     isAccepted: Boolean! @goField(forceResolver: true)
 }
 

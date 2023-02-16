@@ -14,6 +14,8 @@ import 'package:invy/screens/login/login_landing_screen.dart';
 import 'package:invy/screens/profile/my_profile_screen.dart';
 import 'package:invy/screens/profile/profile_edit_screen.dart';
 import 'package:invy/screens/settings_screen.dart';
+import 'package:invy/screens/user_profile_screen.dart';
+import 'package:invy/screens/user_profile_screen.graphql.dart';
 import 'package:invy/state/auth.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -168,6 +170,21 @@ class FriendsRoute extends GoRouteData {
   CustomTransitionPage<void> buildPage(
           BuildContext context, GoRouterState state) =>
       const NoTransitionPage(child: FriendsScreen());
+}
+
+@TypedGoRoute<UserProfileRoute>(
+  path: '/users/:userId',
+  routes: [],
+)
+class UserProfileRoute extends GoRouteData {
+  const UserProfileRoute(this.userId, {this.$extra});
+
+  final String userId;
+  final Fragment$userProfileScreenFragment? $extra;
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      UserProfileScreen(userId: userId, user: $extra);
 }
 
 @TypedGoRoute<MyProfileRoute>(

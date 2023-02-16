@@ -7,7 +7,7 @@ query friendGroupDetailScreenViewer($friendGroupId: UUID!) {
             totalCount,
             friendUsers {
                 ...friendListItemFragment
-                ...userProfileModalFragment
+                ...userProfileScreenFragment
             }
         }
     }

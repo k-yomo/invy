@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:graphql/client.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:invy/router.dart';
+import 'package:invy/screens/friend/friends_screen.graphql.dart';
+import 'package:invy/screens/user_profile_screen.dart';
+import 'package:invy/services/graphql_client.dart';
 import 'package:invy/widgets/friend_group_list.dart';
 import 'package:invy/widgets/friend_list.dart';
 import 'package:invy/widgets/sub_title.dart';
-import 'package:invy/screens/friend/friends_screen.graphql.dart';
-import 'package:invy/widgets/user_profile_modal.dart';
-import 'package:invy/services/graphql_client.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 import '../../widgets/pending_friendship_request_list.dart';
@@ -112,15 +112,17 @@ class FriendsScreen extends HookConsumerWidget {
                                 borderRadius: BorderRadius.circular(20),
                               ),
                               builder: (BuildContext context) {
+                                final user = viewer!.friends.edges
+                                    .singleWhere(
+                                        (edge) => edge.node.id == friendUserId)
+                                    .node;
                                 return SizedBox(
-                                  height:
-                                      MediaQuery.of(context).size.height * 0.9,
-                                  child: UserProfileModal(
-                                      user: viewer!.friends.edges
-                                          .singleWhere((edge) =>
-                                              edge.node.id == friendUserId)
-                                          .node),
-                                );
+                                    height: MediaQuery.of(context).size.height *
+                                        0.9,
+                                    child: UserProfileScreen(
+                                      userId: user.id,
+                                      user: user,
+                                    ));
                               },
                             );
                           },

@@ -112,8 +112,6 @@ type Invitation implements Node {
   startsAt: Time!
   expiresAt: Time!
   acceptedUsers: [User!]!
-
-  """true will be returned for invitation sender too"""
   isAccepted: Boolean!
 }
 

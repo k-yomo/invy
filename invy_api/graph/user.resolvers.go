@@ -152,7 +152,18 @@ func (r *userResolver) IsMuted(ctx context.Context, obj *gqlmodel.User) (bool, e
 
 // IsBlocked is the resolver for the isBlocked field.
 func (r *userResolver) IsBlocked(ctx context.Context, obj *gqlmodel.User) (bool, error) {
-	panic(fmt.Errorf("not implemented: IsBlocked - isBlocked"))
+	authUserID := auth.GetCurrentUserID(ctx)
+	_, err := loader.Get(ctx).UserBlock.Load(
+		ctx,
+		loader.UserBlockKey{UserID: authUserID, BlockUserID: obj.ID},
+	)()
+	if err != nil && !errors.Is(err, loader.ErrNotFound) {
+		return false, err
+	}
+	if errors.Is(err, loader.ErrNotFound) {
+		return false, nil
+	}
+	return true, nil
 }
 
 // IsFriend is the resolver for the isFriend field.

@@ -2,7 +2,7 @@ import '../../widgets/friend_group_fragment.graphql.dart';
 import '../../widgets/friend_list_item_fragment.graphql.dart';
 import '../../widgets/invitation_awaiting_list_item.graphql.dart';
 import '../../widgets/pending_friendship_request_list_fragment.graphql.dart';
-import '../../widgets/user_profile_modal_fragment.graphql.dart';
+import '../user_profile_screen.graphql.dart';
 import 'dart:async';
 import 'package:flutter/widgets.dart' as widgets;
 import 'package:gql/ast.dart';
@@ -203,7 +203,7 @@ const documentNodeQueryfriendScreenViewer = DocumentNode(definitions: [
                         directives: [],
                       ),
                       FragmentSpreadNode(
-                        name: NameNode(value: 'userProfileModalFragment'),
+                        name: NameNode(value: 'userProfileScreenFragment'),
                         directives: [],
                       ),
                       FieldNode(
@@ -315,7 +315,7 @@ const documentNodeQueryfriendScreenViewer = DocumentNode(definitions: [
   ),
   fragmentDefinitionfriendGroupListItemFragment,
   fragmentDefinitionfriendListItemFragment,
-  fragmentDefinitionuserProfileModalFragment,
+  fragmentDefinitionuserProfileScreenFragment,
   fragmentDefinitioninvitationAwaitingListItemFragment,
   fragmentDefinitionpendingFriendRequestItemFragment,
 ]);
@@ -1006,7 +1006,7 @@ class _CopyWithStubImpl$Query$friendScreenViewer$viewer$friends$edges<TRes>
 class Query$friendScreenViewer$viewer$friends$edges$node
     implements
         Fragment$friendListItemFragment,
-        Fragment$userProfileModalFragment {
+        Fragment$userProfileScreenFragment {
   Query$friendScreenViewer$viewer$friends$edges$node({
     required this.id,
     required this.nickname,
@@ -1016,6 +1016,8 @@ class Query$friendScreenViewer$viewer$friends$edges$node
     required this.invitationAwaitings,
     required this.$__typename,
     required this.screenId,
+    required this.isFriend,
+    required this.isBlocked,
   });
 
   factory Query$friendScreenViewer$viewer$friends$edges$node.fromJson(
@@ -1028,6 +1030,8 @@ class Query$friendScreenViewer$viewer$friends$edges$node
     final l$invitationAwaitings = json['invitationAwaitings'];
     final l$$__typename = json['__typename'];
     final l$screenId = json['screenId'];
+    final l$isFriend = json['isFriend'];
+    final l$isBlocked = json['isBlocked'];
     return Query$friendScreenViewer$viewer$friends$edges$node(
       id: (l$id as String),
       nickname: (l$nickname as String),
@@ -1041,6 +1045,8 @@ class Query$friendScreenViewer$viewer$friends$edges$node
           .toList(),
       $__typename: (l$$__typename as String),
       screenId: (l$screenId as String),
+      isFriend: (l$isFriend as bool),
+      isBlocked: (l$isBlocked as bool),
     );
   }
 
@@ -1062,6 +1068,10 @@ class Query$friendScreenViewer$viewer$friends$edges$node
 
   final String screenId;
 
+  final bool isFriend;
+
+  final bool isBlocked;
+
   Map<String, dynamic> toJson() {
     final _resultData = <String, dynamic>{};
     final l$id = id;
@@ -1081,6 +1091,10 @@ class Query$friendScreenViewer$viewer$friends$edges$node
     _resultData['__typename'] = l$$__typename;
     final l$screenId = screenId;
     _resultData['screenId'] = l$screenId;
+    final l$isFriend = isFriend;
+    _resultData['isFriend'] = l$isFriend;
+    final l$isBlocked = isBlocked;
+    _resultData['isBlocked'] = l$isBlocked;
     return _resultData;
   }
 
@@ -1094,6 +1108,8 @@ class Query$friendScreenViewer$viewer$friends$edges$node
     final l$invitationAwaitings = invitationAwaitings;
     final l$$__typename = $__typename;
     final l$screenId = screenId;
+    final l$isFriend = isFriend;
+    final l$isBlocked = isBlocked;
     return Object.hashAll([
       l$id,
       l$nickname,
@@ -1103,6 +1119,8 @@ class Query$friendScreenViewer$viewer$friends$edges$node
       Object.hashAll(l$invitationAwaitings.map((v) => v)),
       l$$__typename,
       l$screenId,
+      l$isFriend,
+      l$isBlocked,
     ]);
   }
 
@@ -1162,6 +1180,16 @@ class Query$friendScreenViewer$viewer$friends$edges$node
     if (l$screenId != lOther$screenId) {
       return false;
     }
+    final l$isFriend = isFriend;
+    final lOther$isFriend = other.isFriend;
+    if (l$isFriend != lOther$isFriend) {
+      return false;
+    }
+    final l$isBlocked = isBlocked;
+    final lOther$isBlocked = other.isBlocked;
+    if (l$isBlocked != lOther$isBlocked) {
+      return false;
+    }
     return true;
   }
 }
@@ -1198,6 +1226,8 @@ abstract class CopyWith$Query$friendScreenViewer$viewer$friends$edges$node<
         invitationAwaitings,
     String? $__typename,
     String? screenId,
+    bool? isFriend,
+    bool? isBlocked,
   });
   TRes invitationAwaitings(
       Iterable<Query$friendScreenViewer$viewer$friends$edges$node$invitationAwaitings> Function(
@@ -1230,6 +1260,8 @@ class _CopyWithImpl$Query$friendScreenViewer$viewer$friends$edges$node<TRes>
     Object? invitationAwaitings = _undefined,
     Object? $__typename = _undefined,
     Object? screenId = _undefined,
+    Object? isFriend = _undefined,
+    Object? isBlocked = _undefined,
   }) =>
       _then(Query$friendScreenViewer$viewer$friends$edges$node(
         id: id == _undefined || id == null ? _instance.id : (id as String),
@@ -1256,6 +1288,12 @@ class _CopyWithImpl$Query$friendScreenViewer$viewer$friends$edges$node<TRes>
         screenId: screenId == _undefined || screenId == null
             ? _instance.screenId
             : (screenId as String),
+        isFriend: isFriend == _undefined || isFriend == null
+            ? _instance.isFriend
+            : (isFriend as bool),
+        isBlocked: isBlocked == _undefined || isBlocked == null
+            ? _instance.isBlocked
+            : (isBlocked as bool),
       ));
   TRes invitationAwaitings(
           Iterable<Query$friendScreenViewer$viewer$friends$edges$node$invitationAwaitings> Function(
@@ -1289,6 +1327,8 @@ class _CopyWithStubImpl$Query$friendScreenViewer$viewer$friends$edges$node<TRes>
         invitationAwaitings,
     String? $__typename,
     String? screenId,
+    bool? isFriend,
+    bool? isBlocked,
   }) =>
       _res;
   invitationAwaitings(_fn) => _res;

@@ -1,0 +1,19 @@
+
+query userProfileScreenUser($userId: UUID!) {
+    user(userId: $userId) {
+        ...userProfileScreenFragment
+    }
+}
+
+fragment userProfileScreenFragment on User {
+    id
+    screenId
+    nickname
+    avatarUrl
+    isMuted
+    isFriend
+    isBlocked
+    invitationAwaitings {
+        ...invitationAwaitingListItemFragment
+    }
+}

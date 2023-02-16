@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:graphql/client.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:invy/screens/user_profile_screen.dart';
 import 'package:invy/widgets/friend_list.dart';
-import 'package:invy/widgets/user_profile_modal.dart';
 import 'package:invy/screens/friend/friend_group_edit_screen.dart';
 import 'package:invy/screens/friend/friend_group_detail_screen.graphql.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
@@ -87,12 +87,14 @@ class FriendGroupDetailScreen extends HookConsumerWidget {
                       borderRadius: BorderRadius.circular(20),
                     ),
                     builder: (BuildContext context) {
+                      final user = viewer!.friendGroup.friendUsers
+                          .singleWhere((friend) => friend.id == friendUserId);
                       return SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.9,
-                        child: UserProfileModal(
-                            user: viewer!.friendGroup.friendUsers.singleWhere(
-                                (friend) => friend.id == friendUserId)),
-                      );
+                          height: MediaQuery.of(context).size.height * 0.9,
+                          child: UserProfileScreen(
+                            userId: user.id,
+                            user: user,
+                          ));
                     },
                   );
                 },

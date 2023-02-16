@@ -10,6 +10,7 @@ List<GoRoute> get $appRoutes => [
       $homeRoute,
       $invitationRoute,
       $friendsRoute,
+      $userProfileRoute,
       $myProfileRoute,
       $loginRoute,
     ];
@@ -152,6 +153,26 @@ extension $FriendshipRequestRouteExtension on FriendshipRequestRoute {
 
   String get location => GoRouteData.$location(
         '/friends/request',
+      );
+
+  void go(BuildContext context) => context.go(location, extra: this);
+
+  void push(BuildContext context) => context.push(location, extra: this);
+}
+
+GoRoute get $userProfileRoute => GoRouteData.$route(
+      path: '/users/:userId',
+      factory: $UserProfileRouteExtension._fromState,
+    );
+
+extension $UserProfileRouteExtension on UserProfileRoute {
+  static UserProfileRoute _fromState(GoRouterState state) => UserProfileRoute(
+        state.params['userId']!,
+        $extra: state.extra as dynamic,
+      );
+
+  String get location => GoRouteData.$location(
+        '/users/${Uri.encodeComponent(userId)}',
       );
 
   void go(BuildContext context) => context.go(location, extra: this);
