@@ -14,8 +14,8 @@ import '../../widgets/pending_friendship_request_list.dart';
 import '../friend/freind_group_create_screen.dart';
 import '../friend/friendship_request_screen.dart';
 
-class FriendScreen extends HookConsumerWidget {
-  const FriendScreen({super.key});
+class FriendsScreen extends HookConsumerWidget {
+  const FriendsScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

@@ -53,6 +53,18 @@ final tabs = [
   ),
 ];
 
+CustomTransitionPage<T> buildPageWithoutAnimation<T>({
+  required BuildContext context,
+  required GoRouterState state,
+  required Widget child,
+}) {
+  return CustomTransitionPage<T>(
+      key: state.pageKey,
+      child: child,
+      transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+          child);
+}
+
 @riverpod
 GoRouter router(RouterRef ref) => GoRouter(
     navigatorKey: _rootNavigatorKey,
@@ -63,7 +75,7 @@ GoRouter router(RouterRef ref) => GoRouter(
           builder: (context, state, child) {
             calcIndex() {
               final String location = GoRouterState.of(context).location;
-              if (location.startsWith('/invitations')) {
+              if (location.startsWith('invitation/new')) {
                 return 1;
               } else if (location.startsWith('/friends')) {
                 return 2;
@@ -98,7 +110,7 @@ GoRouter router(RouterRef ref) => GoRouter(
     redirect: (BuildContext context, GoRouterState state) {
       final user = ref.watch(loggedInUserProvider);
       if (user == null) {
-        return const LoginRoute().location;
+        return LoginRoute(from: state.subloc).location;
       }
       return null;
     });
@@ -110,7 +122,7 @@ GoRouter router(RouterRef ref) => GoRouter(
       path: 'invitations/:invitationId',
     ),
     TypedGoRoute<InvitationAwaitingFormRoute>(
-      path: 'invitation_awaitings/new',
+      path: 'invitation_awaiting/new',
     )
   ],
 )
@@ -118,25 +130,28 @@ class HomeRoute extends GoRouteData {
   const HomeRoute();
 
   @override
-  Widget build(BuildContext context, GoRouterState state) => HomeScreen();
+  CustomTransitionPage<void> buildPage(
+          BuildContext context, GoRouterState state) =>
+      NoTransitionPage(child: HomeScreen());
 }
 
 @TypedGoRoute<InvitationRoute>(
-  path: '/invitations/new',
+  path: '/invitation/new',
 )
 class InvitationRoute extends GoRouteData {
   const InvitationRoute();
 
   @override
-  Widget build(BuildContext context, GoRouterState state) =>
-      const InvitationScreen();
+  CustomTransitionPage<void> buildPage(
+          BuildContext context, GoRouterState state) =>
+      const NoTransitionPage(child: InvitationScreen());
 }
 
 @TypedGoRoute<FriendsRoute>(
   path: '/friends',
   routes: [
     TypedGoRoute<FriendGroupCreateRoute>(
-      path: 'groups/new',
+      path: 'group/new',
     ),
     TypedGoRoute<FriendGroupDetailRoute>(
       path: 'groups/:friendGroupId',
@@ -150,8 +165,9 @@ class FriendsRoute extends GoRouteData {
   const FriendsRoute();
 
   @override
-  Widget build(BuildContext context, GoRouterState state) =>
-      const FriendScreen();
+  CustomTransitionPage<void> buildPage(
+          BuildContext context, GoRouterState state) =>
+      const NoTransitionPage(child: FriendsScreen());
 }
 
 @TypedGoRoute<MyProfileRoute>(
@@ -172,17 +188,21 @@ class MyProfileRoute extends GoRouteData {
   const MyProfileRoute();
 
   @override
-  Widget build(BuildContext context, GoRouterState state) =>
-      const MyProfileScreen();
+  CustomTransitionPage<void> buildPage(
+          BuildContext context, GoRouterState state) =>
+      const NoTransitionPage(child: MyProfileScreen());
 }
 
 @TypedGoRoute<LoginRoute>(
   path: '/login',
 )
 class LoginRoute extends GoRouteData {
-  const LoginRoute();
+  const LoginRoute({this.from});
+
+  final String? from;
 
   @override
-  Widget build(BuildContext context, GoRouterState state) =>
-      const LoginLandingScreen();
+  CustomTransitionPage<void> buildPage(
+          BuildContext context, GoRouterState state) =>
+      const NoTransitionPage(child: LoginLandingScreen());
 }

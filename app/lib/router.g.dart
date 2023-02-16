@@ -23,7 +23,7 @@ GoRoute get $homeRoute => GoRouteData.$route(
           factory: $InvitationDetailRouteExtension._fromState,
         ),
         GoRouteData.$route(
-          path: 'invitation_awaitings/new',
+          path: 'invitation_awaiting/new',
           factory: $InvitationAwaitingFormRouteExtension._fromState,
         ),
       ],
@@ -61,7 +61,7 @@ extension $InvitationAwaitingFormRouteExtension on InvitationAwaitingFormRoute {
       const InvitationAwaitingFormRoute();
 
   String get location => GoRouteData.$location(
-        '/invitation_awaitings/new',
+        '/invitation_awaiting/new',
       );
 
   void go(BuildContext context) => context.go(location, extra: this);
@@ -70,7 +70,7 @@ extension $InvitationAwaitingFormRouteExtension on InvitationAwaitingFormRoute {
 }
 
 GoRoute get $invitationRoute => GoRouteData.$route(
-      path: '/invitations/new',
+      path: '/invitation/new',
       factory: $InvitationRouteExtension._fromState,
     );
 
@@ -79,7 +79,7 @@ extension $InvitationRouteExtension on InvitationRoute {
       const InvitationRoute();
 
   String get location => GoRouteData.$location(
-        '/invitations/new',
+        '/invitation/new',
       );
 
   void go(BuildContext context) => context.go(location, extra: this);
@@ -92,7 +92,7 @@ GoRoute get $friendsRoute => GoRouteData.$route(
       factory: $FriendsRouteExtension._fromState,
       routes: [
         GoRouteData.$route(
-          path: 'groups/new',
+          path: 'group/new',
           factory: $FriendGroupCreateRouteExtension._fromState,
         ),
         GoRouteData.$route(
@@ -123,7 +123,7 @@ extension $FriendGroupCreateRouteExtension on FriendGroupCreateRoute {
       const FriendGroupCreateRoute();
 
   String get location => GoRouteData.$location(
-        '/friends/groups/new',
+        '/friends/group/new',
       );
 
   void go(BuildContext context) => context.go(location, extra: this);
@@ -235,10 +235,15 @@ GoRoute get $loginRoute => GoRouteData.$route(
     );
 
 extension $LoginRouteExtension on LoginRoute {
-  static LoginRoute _fromState(GoRouterState state) => const LoginRoute();
+  static LoginRoute _fromState(GoRouterState state) => LoginRoute(
+        from: state.queryParams['from'],
+      );
 
   String get location => GoRouteData.$location(
         '/login',
+        queryParams: {
+          if (from != null) 'from': from!,
+        },
       );
 
   void go(BuildContext context) => context.go(location, extra: this);
@@ -273,7 +278,7 @@ class _SystemHash {
   }
 }
 
-String _$routerHash() => r'ea0b44918531c503778c5697c97c3759dfacc843';
+String _$routerHash() => r'5e4a8a0d09ce4ba76e9e1f7ecb2bec1b35d03b04';
 
 /// See also [router].
 final routerProvider = AutoDisposeProvider<GoRouter>(
