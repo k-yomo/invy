@@ -52,6 +52,20 @@ func (r *invitationResolver) AcceptedUsers(ctx context.Context, obj *gqlmodel.In
 	return convutil.ConvertToList(dbAcceptedUserProfiles, conv.ConvertFromDBUserProfile), nil
 }
 
+// IsAccepted is the resolver for the isAccepted field.
+func (r *invitationResolver) IsAccepted(ctx context.Context, obj *gqlmodel.Invitation) (bool, error) {
+	authUserID := auth.GetCurrentUserID(ctx)
+	if authUserID == obj.UserID {
+		return true, nil
+	}
+	// TODO: Use data loader
+	return r.DB.InvitationAcceptance.Query().
+		Where(
+			invitationacceptance.InvitationID(obj.ID),
+			invitationacceptance.UserID(authUserID),
+		).Exist(ctx)
+}
+
 // User is the resolver for the user field.
 func (r *invitationAwaitingResolver) User(ctx context.Context, obj *gqlmodel.InvitationAwaiting) (*gqlmodel.User, error) {
 	userProfile, err := loader.Get(ctx).UserProfile.Load(ctx, obj.ID)()
@@ -337,6 +351,28 @@ func (r *mutationResolver) DeleteInvitationAwaiting(ctx context.Context, invitat
 		return nil, err
 	}
 	return &gqlmodel.DeleteInvitationAwaitingPayload{DeletedInvitationAwaitingID: invitationAwaitingID}, nil
+}
+
+// Invitation is the resolver for the invitation field.
+func (r *queryResolver) Invitation(ctx context.Context, id uuid.UUID) (*gqlmodel.Invitation, error) {
+	authUserID := auth.GetCurrentUserID(ctx)
+	dbInvitation, err := r.DB.Invitation.Get(ctx, id)
+	if err != nil {
+		if ent.IsNotFound(err) {
+			return nil, xerrors.NewErrNotFound(fmt.Errorf("invitation %q not found", id))
+		}
+		return nil, err
+	}
+
+	isAuthUserInvited, err := IsAuthUserIncludedInTheInvitation(ctx, r.DB, id)
+	if err != nil {
+		return nil, err
+	}
+	if authUserID != dbInvitation.UserID && !isAuthUserInvited {
+		return nil, xerrors.NewErrNotFound(fmt.Errorf("invitation %q not found", id))
+	}
+
+	return conv.ConvertFromDBInvitation(dbInvitation), nil
 }
 
 // Invitation returns gqlgen.InvitationResolver implementation.

@@ -6,9 +6,9 @@ import 'package:graphql/client.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:invy/graphql/schema.graphql.dart';
 import 'package:invy/graphql/viewer.graphql.dart';
+import 'package:invy/router.dart';
 import 'package:invy/services/graphql_client.dart';
 import 'package:invy/state/auth.dart';
-import 'package:invy/state/bottom_navigation.dart';
 import 'package:invy/util/toast.dart';
 import 'package:invy/widgets/sub_title.dart';
 import 'package:pinput/pinput.dart';
@@ -90,11 +90,11 @@ class SMSLoginVerificationScreen extends HookConsumerWidget {
         // TODO: redirect to user profile update page?
       }
 
-      if (!accountExists) {
-        ref.read(bottomNavigationTabProvider.notifier).state =
-            BottomNavigationTab.profile;
-      }
       ref.read(loggedInUserProvider.notifier).state = loggedInUser;
+      if (!accountExists) {
+        // TODO: route user to user profile registration instead
+        const MyProfileRoute().go(context);
+      }
     }
 
     return Scaffold(

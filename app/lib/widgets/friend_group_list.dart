@@ -1,6 +1,7 @@
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:invy/router.dart';
 import 'package:invy/widgets/friend_group_fragment.graphql.dart';
 import 'package:invy/widgets/friend_group_icon.dart';
 import 'package:invy/graphql/friend_group.graphql.dart';
@@ -25,12 +26,7 @@ class FriendGroupList extends StatelessWidget {
                   children: [
                     InkWell(
                       onTap: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => FriendGroupDetailScreen(
-                                friendGroupId: friendGroup.id),
-                          ),
-                        );
+                        FriendGroupDetailRoute(friendGroup.id).go(context);
                       },
                       child: _FriendGroupListItem(friendGroup: friendGroup),
                     ),

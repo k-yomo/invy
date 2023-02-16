@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:graphql/client.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:invy/widgets/friend_list.dart';
@@ -9,6 +10,18 @@ import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 import '../../widgets/app_bar_leading.dart';
 import '../../services/graphql_client.dart';
+
+class FriendGroupDetailRoute extends GoRouteData {
+  const FriendGroupDetailRoute(
+    this.friendGroupId,
+  );
+
+  final String friendGroupId;
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      FriendGroupDetailScreen(friendGroupId: friendGroupId);
+}
 
 class FriendGroupDetailScreen extends HookConsumerWidget {
   final String friendGroupId;

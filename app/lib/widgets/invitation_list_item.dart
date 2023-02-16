@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:invy/router.dart';
 import 'package:invy/widgets/invitation_detail_fragment.graphql.dart';
 import 'package:invy/screens/invitation/invitation_detail_screen.dart';
 
@@ -70,12 +71,7 @@ class InvitationListItem extends StatelessWidget {
               padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
             ),
             onPressed: () {
-              Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => InvitationDetailScreen(
-                  invitation: invitation,
-                  accepted: accepted,
-                ),
-              ));
+              InvitationDetailRoute(invitation.id).go(context);
             },
             child: Column(
               children: [

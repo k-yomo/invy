@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:invy/router.dart';
 import 'package:invy/screens/invitation/invitation_awaiting_form_screen.graphql.dart';
 import 'package:invy/util/custom_date_time_picker.dart';
 import 'package:invy/util/toast.dart';
@@ -11,10 +13,17 @@ import 'package:permission_handler/permission_handler.dart';
 
 import '../../graphql/schema.graphql.dart';
 import '../../services/graphql_client.dart';
-import '../../state/bottom_navigation.dart';
 import '../../widgets/app_bar_leading.dart';
 
 const dateTimeFormat = 'yyyy年MM月dd日 HH時mm分';
+
+class InvitationAwaitingFormRoute extends GoRouteData {
+  const InvitationAwaitingFormRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      const InvitationAwaitingFormScreen();
+}
 
 class InvitationAwaitingFormScreen extends HookConsumerWidget {
   const InvitationAwaitingFormScreen({
@@ -84,9 +93,7 @@ class InvitationAwaitingFormScreen extends HookConsumerWidget {
         // TODO: Show error
         return;
       }
-      ref.read(bottomNavigationTabProvider.notifier).state =
-          BottomNavigationTab.home;
-      Navigator.popUntil(context, (route) => route.isFirst);
+      const HomeRoute().go(context);
     }
 
     return Scaffold(

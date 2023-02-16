@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:graphql/client.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:invy/router.dart';
 import 'package:invy/widgets/friend_group_list.dart';
 import 'package:invy/widgets/friend_list.dart';
 import 'package:invy/widgets/sub_title.dart';
-import 'package:invy/screens/friend/friend_screen.graphql.dart';
+import 'package:invy/screens/friend/friends_screen.graphql.dart';
 import 'package:invy/widgets/user_profile_modal.dart';
 import 'package:invy/services/graphql_client.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
@@ -66,13 +67,7 @@ class FriendScreen extends HookConsumerWidget {
                         const SubTitle(text: "グループ"),
                         InkWell(
                           onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                fullscreenDialog: true,
-                                builder: (context) =>
-                                    const FriendGroupCreateScreen(),
-                              ),
-                            );
+                            const FriendGroupCreateRoute().go(context);
                           },
                           child: const _AddFriendGroup(),
                         ),

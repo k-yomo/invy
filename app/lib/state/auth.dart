@@ -42,3 +42,10 @@ void setViewerToLoggedInUser(WidgetRef ref, Query$viewer$viewer viewer) {
     avatarUrl: viewer.avatarUrl,
   );
 }
+
+class _AuthStateNotifier extends ValueNotifier<LoggedInUser?> {
+  _AuthStateNotifier() : super(null);
+  void change(LoggedInUser? v) => value = v;
+}
+
+final authStateNotifier = _AuthStateNotifier();

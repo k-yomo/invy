@@ -109,6 +109,7 @@ type Invitation struct {
 	StartsAt      time.Time   `json:"startsAt"`
 	ExpiresAt     time.Time   `json:"expiresAt"`
 	AcceptedUsers []*User     `json:"acceptedUsers"`
+	IsAccepted    bool        `json:"isAccepted"`
 }
 
 func (Invitation) IsNode()               {}

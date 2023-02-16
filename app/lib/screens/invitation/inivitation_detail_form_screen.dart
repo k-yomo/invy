@@ -5,6 +5,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:invy/router.dart';
 import 'package:invy/screens/invitation/invitation_screen.graphql.dart';
 import 'package:invy/util/custom_date_time_picker.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
@@ -15,7 +16,6 @@ import '../../widgets/friend_group_icon.dart';
 import '../../widgets/friend_list_item_fragment.graphql.dart';
 import '../../graphql/schema.graphql.dart';
 import '../../services/graphql_client.dart';
-import '../../state/bottom_navigation.dart';
 import '../../state/location.dart';
 
 const dateTimeFormat = 'yyyy年MM月dd日 HH時mm分';
@@ -62,9 +62,7 @@ class InvitationDetailFormScreen extends HookConsumerWidget {
         // TODO: Show error
         return;
       }
-      ref.read(bottomNavigationTabProvider.notifier).state =
-          BottomNavigationTab.home;
-      Navigator.popUntil(context, (route) => route.isFirst);
+      const HomeRoute().go(context);
     }
 
     return Scaffold(

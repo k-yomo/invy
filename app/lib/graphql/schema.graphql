@@ -112,6 +112,9 @@ type Invitation implements Node {
   startsAt: Time!
   expiresAt: Time!
   acceptedUsers: [User!]!
+
+  """true will be returned for invitation sender too"""
+  isAccepted: Boolean!
 }
 
 type InvitationAwaiting implements Node {
@@ -177,6 +180,7 @@ enum PushNotificationType {
 }
 
 type Query {
+  invitation(id: UUID!): Invitation!
   viewer: Viewer!
   user(userId: UUID!): User!
 

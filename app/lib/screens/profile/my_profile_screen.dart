@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:invy/router.dart';
 import 'package:invy/screens/settings_screen.dart';
 import 'package:invy/widgets/divider.dart';
 import 'package:invy/screens/profile/profile_edit_screen.dart';
@@ -12,7 +13,7 @@ import 'package:invy/state/auth.dart';
 import 'package:invy/util/toast.dart';
 import 'package:invy/widgets/setting_item.dart';
 
-import '../friend/blocked_friend_screen.dart';
+import '../friend/blocked_friends_screen.dart';
 
 class MyProfileScreen extends HookConsumerWidget {
   const MyProfileScreen({super.key});
@@ -92,9 +93,7 @@ class MyProfileScreen extends HookConsumerWidget {
                 const Gap(10),
                 OutlinedButton(
                   onPressed: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => const ProfileEditScreen(),
-                    ));
+                    const ProfileEditRoute().go(context);
                   },
                   child: const Text("プロフィールを編集",
                       style: TextStyle(color: Colors.black)),
@@ -108,11 +107,7 @@ class MyProfileScreen extends HookConsumerWidget {
                 icon: Icons.do_not_disturb_on_outlined,
                 title: "ブロック中のユーザー",
                 onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => const BlockedFriendScreen(),
-                    ),
-                  );
+                  const BlockedFriendsRoute().go(context);
                 },
               ),
               const GreyDivider(),
@@ -120,9 +115,7 @@ class MyProfileScreen extends HookConsumerWidget {
                 icon: Icons.settings,
                 title: "設定",
                 onPressed: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => const SettingsScreen(),
-                  ));
+                  const SettingsRoute().go(context);
                 },
               ),
               const GreyDivider(),

@@ -140,7 +140,7 @@ class LocationCard extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final currentPinLocation = ref.watch(invitationLocationProvider);
+    final currentPinLocation = ref.watch(currentPinLocationProvider);
     final locationName = ref.watch(locationNameProvider);
     final locationNameNotifier = ref.read(locationNameProvider.notifier);
     final invitationLocationNotifier =

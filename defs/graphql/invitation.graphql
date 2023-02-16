@@ -1,3 +1,7 @@
+extend type Query {
+    invitation(id: UUID!): Invitation! @authRequired
+}
+
 extend type Mutation {
     sendInvitation(input: SendInvitationInput): SendInvitationPayload! @authRequired
     acceptInvitation(invitationId: UUID!): AcceptInvitationPayload! @authRequired
@@ -23,6 +27,7 @@ type Invitation implements Node {
     expiresAt: Time!
 
     acceptedUsers: [User!]! @goField(forceResolver: true)
+    isAccepted: Boolean! @goField(forceResolver: true)
 }
 
 input SendInvitationInput {

@@ -3,11 +3,11 @@ import 'package:gap/gap.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:graphql/client.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:invy/router.dart';
 import 'package:invy/screens/home_screen.graphql.dart';
 import 'package:invy/screens/invitation/invitation_awaiting_form_screen.dart';
 import 'package:invy/services/graphql_client.dart';
 import 'package:invy/state/badge_count.dart';
-import 'package:invy/state/bottom_navigation.dart';
 import 'package:invy/state/location.dart';
 import 'package:invy/widgets/invitation_awaiting_list_carousel.dart';
 
@@ -232,12 +232,7 @@ class HomeScreen extends HookConsumerWidget {
                             children: [
                               TextButton(
                                 onPressed: () {
-                                  ref
-                                      .read(
-                                          bottomNavigationTabProvider.notifier)
-                                      .state = BottomNavigationTab.invitation;
-                                  Navigator.popUntil(
-                                      context, (route) => route.isFirst);
+                                  const InvitationRoute().go(context);
                                 },
                                 style: TextButton.styleFrom(
                                   minimumSize: const Size.fromHeight(0),
@@ -256,10 +251,8 @@ class HomeScreen extends HookConsumerWidget {
                               const Gap(10),
                               OutlinedButton(
                                 onPressed: () {
-                                  Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) =>
-                                        const InvitationAwaitingFormScreen(),
-                                  ));
+                                  const InvitationAwaitingFormRoute()
+                                      .go(context);
                                 },
                                 style: TextButton.styleFrom(
                                   minimumSize: const Size.fromHeight(0),
