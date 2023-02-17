@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:go_router/go_router.dart';
 import 'package:graphql/client.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:invy/widgets/app_bar_leading.dart';
+import 'package:invy/widgets/dynamic_links_manager.dart';
 import 'package:invy/widgets/friend_list_item_fragment.graphql.dart';
 import 'package:invy/widgets/friend_selection_list.dart';
 import 'package:invy/screens/invitation/invitation_screen.graphql.dart';
@@ -11,6 +13,14 @@ import '../../widgets/friend_group_fragment.graphql.dart';
 import '../../widgets/friend_group_selection_list.dart';
 import '../../services/graphql_client.dart';
 import 'inivitation_detail_form_screen.dart';
+
+class InvitationFriendSelectRoute extends GoRouteData {
+  const InvitationFriendSelectRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      const DynamicLinksManager(child: InvitationFriendSelectScreen());
+}
 
 class InvitationFriendSelectScreen extends HookConsumerWidget {
   const InvitationFriendSelectScreen({super.key});

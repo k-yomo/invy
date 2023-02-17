@@ -129,6 +129,8 @@ Future main() async {
   final onboarding = await Onboarding.open();
   final badgeCounter = await BadgeCounter.open();
 
+  // Need to start listening before getInitialLink
+  FirebaseDynamicLinks.instance.onLink.listen((dynamicLinkData) {});
   final PendingDynamicLinkData? initialLink =
       await FirebaseDynamicLinks.instance.getInitialLink();
 
@@ -136,7 +138,7 @@ Future main() async {
     (options) {
       final isLocal = config.environment == Environment.Local;
       if (isLocal) {
-        options.debug = true;
+        // options.debug = true;
         options.dsn = 'invalid'; // Not to send error report
       } else {
         options.dsn =

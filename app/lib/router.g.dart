@@ -73,6 +73,12 @@ extension $InvitationAwaitingFormRouteExtension on InvitationAwaitingFormRoute {
 GoRoute get $invitationRoute => GoRouteData.$route(
       path: '/invitation/new',
       factory: $InvitationRouteExtension._fromState,
+      routes: [
+        GoRouteData.$route(
+          path: 'friend_select',
+          factory: $InvitationFriendSelectRouteExtension._fromState,
+        ),
+      ],
     );
 
 extension $InvitationRouteExtension on InvitationRoute {
@@ -81,6 +87,19 @@ extension $InvitationRouteExtension on InvitationRoute {
 
   String get location => GoRouteData.$location(
         '/invitation/new',
+      );
+
+  void go(BuildContext context) => context.go(location, extra: this);
+
+  void push(BuildContext context) => context.push(location, extra: this);
+}
+
+extension $InvitationFriendSelectRouteExtension on InvitationFriendSelectRoute {
+  static InvitationFriendSelectRoute _fromState(GoRouterState state) =>
+      const InvitationFriendSelectRoute();
+
+  String get location => GoRouteData.$location(
+        '/invitation/new/friend_select',
       );
 
   void go(BuildContext context) => context.go(location, extra: this);
@@ -299,7 +318,7 @@ class _SystemHash {
   }
 }
 
-String _$routerHash() => r'd50bf52959e17b8b446910a821f392b9f0730baf';
+String _$routerHash() => r'8f6fa936b9e6abb65722e63d37e135fc9d638707';
 
 /// See also [router].
 class RouterProvider extends AutoDisposeProvider<GoRouter> {

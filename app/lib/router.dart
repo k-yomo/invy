@@ -1,3 +1,4 @@
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -9,6 +10,7 @@ import 'package:invy/screens/friend/friendship_request_screen.dart';
 import 'package:invy/screens/home_screen.dart';
 import 'package:invy/screens/invitation/invitation_awaiting_form_screen.dart';
 import 'package:invy/screens/invitation/invitation_detail_screen.dart';
+import 'package:invy/screens/invitation/invitation_friend_select_screen.dart';
 import 'package:invy/screens/invitation/invitation_screen.dart';
 import 'package:invy/screens/login/login_landing_screen.dart';
 import 'package:invy/screens/profile/my_profile_screen.dart';
@@ -76,8 +78,8 @@ GoRouter router(RouterRef ref, {Uri? initialRoute}) => GoRouter(
       ShellRoute(
           navigatorKey: _shellNavigatorKey,
           builder: (context, state, child) {
+            final String location = GoRouterState.of(context).location;
             calcIndex() {
-              final String location = GoRouterState.of(context).location;
               if (location.startsWith('/invitation/new')) {
                 return 1;
               } else if (location.startsWith('/friends')) {
@@ -86,6 +88,16 @@ GoRouter router(RouterRef ref, {Uri? initialRoute}) => GoRouter(
                 return 3;
               }
               return 0;
+            }
+
+            final screensWithBottomNavigation = [
+              "/",
+              "/invitation/new",
+              "/friends",
+              "/me"
+            ];
+            if (!screensWithBottomNavigation.contains(location)) {
+              return child;
             }
 
             final currentIndex = calcIndex();
@@ -138,9 +150,11 @@ class HomeRoute extends GoRouteData {
       NoTransitionPage(child: DynamicLinksManager(child: HomeScreen()));
 }
 
-@TypedGoRoute<InvitationRoute>(
-  path: '/invitation/new',
-)
+@TypedGoRoute<InvitationRoute>(path: '/invitation/new', routes: [
+  TypedGoRoute<InvitationFriendSelectRoute>(
+    path: 'friend_select',
+  ),
+])
 class InvitationRoute extends GoRouteData {
   const InvitationRoute();
 

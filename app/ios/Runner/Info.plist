@@ -65,6 +65,11 @@
 			</array>
 		</dict>
 	</array>
+	<key>FirebaseDynamicLinksCustomDomains</key>
+    <array>
+        <string>https://link.invy-app.com</string>
+        <string>https://link.invy-app.dev</string>
+    </array>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>ITSAppUsesNonExemptEncryption</key>

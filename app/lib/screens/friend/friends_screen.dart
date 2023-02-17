@@ -3,12 +3,10 @@ import 'package:graphql/client.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:invy/router.dart';
 import 'package:invy/screens/friend/friends_screen.graphql.dart';
-import 'package:invy/screens/user_profile_screen.dart';
 import 'package:invy/services/graphql_client.dart';
 import 'package:invy/widgets/friend_group_list.dart';
 import 'package:invy/widgets/friend_list.dart';
 import 'package:invy/widgets/sub_title.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 import '../../widgets/pending_friendship_request_list.dart';
 import '../friend/freind_group_create_screen.dart';
@@ -105,26 +103,12 @@ class FriendsScreen extends HookConsumerWidget {
                           disableScroll: true,
                           friends: sortedFriends.map((f) => f.node).toList(),
                           onFriendPressed: (friendUserId) {
-                            showMaterialModalBottomSheet(
-                              context: context,
-                              duration: const Duration(milliseconds: 300),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              builder: (BuildContext context) {
-                                final user = viewer!.friends.edges
-                                    .singleWhere(
-                                        (edge) => edge.node.id == friendUserId)
-                                    .node;
-                                return SizedBox(
-                                    height: MediaQuery.of(context).size.height *
-                                        0.9,
-                                    child: UserProfileScreen(
-                                      userId: user.id,
-                                      user: user,
-                                    ));
-                              },
-                            );
+                            UserProfileRoute(
+                              friendUserId,
+                              $extra: sortedFriends
+                                  .singleWhere((f) => f.node.id == friendUserId)
+                                  .node,
+                            ).push(context);
                           },
                         ),
                       ],

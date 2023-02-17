@@ -7,6 +7,7 @@ import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_place/google_place.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:invy/router.dart';
 import 'package:invy/screens/invitation/invitation_friend_select_screen.dart';
 import 'package:invy/state/location.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
@@ -239,10 +240,7 @@ class LocationCard extends HookConsumerWidget {
                               currentPinLocation.latitude,
                               currentPinLocation.longitude);
                         }
-                        Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) =>
-                              const InvitationFriendSelectScreen(),
-                        ));
+                        const InvitationFriendSelectRoute().go(context);
                       },
                       child: const Text(
                         '次へすすむ',
