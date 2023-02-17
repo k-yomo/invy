@@ -57,7 +57,7 @@ class UserProfileScreen extends HookConsumerWidget {
     final user = snapshot.data!;
     final isMuted = useState(user.isMuted);
     final isBlocked = useState(user.isBlocked);
-    final isRequestingFriendship = useState(true);
+    final isRequestingFriendship = useState(user.isRequestingFriendship);
 
     onPressedMute() async {
       if (isMuted.value) {
