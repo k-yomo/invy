@@ -140,7 +140,7 @@ flutter:
 
 flutter_native_splash:
   image: "assets/images/splash.png"
-  color: "#ffffff"
+  color: "#000000"
   fullscreen: true
 
 flutter_icons:
