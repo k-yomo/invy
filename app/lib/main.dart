@@ -4,6 +4,7 @@ import 'package:background_locator_2/background_locator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -128,6 +129,9 @@ Future main() async {
   final onboarding = await Onboarding.open();
   final badgeCounter = await BadgeCounter.open();
 
+  final PendingDynamicLinkData? initialLink =
+      await FirebaseDynamicLinks.instance.getInitialLink();
+
   await SentryFlutter.init(
     (options) {
       final isLocal = config.environment == Environment.Local;
@@ -149,7 +153,7 @@ Future main() async {
         pushNotificationBadgeCounter.overrideWithValue(badgeCounter),
         deviceInfoProvider.overrideWithValue(deviceInfo),
         packageInfoProvider.overrideWithValue(packageInfo),
-      ], child: const App()),
+      ], child: App(initialRoute: initialLink?.link)),
     ),
   );
 }

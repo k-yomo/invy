@@ -299,13 +299,72 @@ class _SystemHash {
   }
 }
 
-String _$routerHash() => r'6eea51efd8d155b812cd2b1ebfe9e8214150a84a';
+String _$routerHash() => r'd50bf52959e17b8b446910a821f392b9f0730baf';
 
 /// See also [router].
-final routerProvider = AutoDisposeProvider<GoRouter>(
-  router,
-  name: r'routerProvider',
-  debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product') ? null : _$routerHash,
-);
+class RouterProvider extends AutoDisposeProvider<GoRouter> {
+  RouterProvider({
+    this.initialRoute,
+  }) : super(
+          (ref) => router(
+            ref,
+            initialRoute: initialRoute,
+          ),
+          from: routerProvider,
+          name: r'routerProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$routerHash,
+        );
+
+  final Uri? initialRoute;
+
+  @override
+  bool operator ==(Object other) {
+    return other is RouterProvider && other.initialRoute == initialRoute;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, initialRoute.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
 typedef RouterRef = AutoDisposeProviderRef<GoRouter>;
+
+/// See also [router].
+final routerProvider = RouterFamily();
+
+class RouterFamily extends Family<GoRouter> {
+  RouterFamily();
+
+  RouterProvider call({
+    Uri? initialRoute,
+  }) {
+    return RouterProvider(
+      initialRoute: initialRoute,
+    );
+  }
+
+  @override
+  AutoDisposeProvider<GoRouter> getProviderOverride(
+    covariant RouterProvider provider,
+  ) {
+    return call(
+      initialRoute: provider.initialRoute,
+    );
+  }
+
+  @override
+  List<ProviderOrFamily>? get allTransitiveDependencies => null;
+
+  @override
+  List<ProviderOrFamily>? get dependencies => null;
+
+  @override
+  String? get name => r'routerProvider';
+}

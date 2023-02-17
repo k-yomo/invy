@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:invy/constants/notion_page_urls.dart';
+import 'package:invy/constants/urls.dart';
 import 'package:invy/screens/login/sms_login_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 

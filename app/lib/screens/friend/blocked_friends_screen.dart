@@ -6,6 +6,7 @@ import 'package:graphql/client.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:invy/screens/friend/blocked_friends_screen.graphql.dart';
 import 'package:invy/services/graphql_client.dart';
+import 'package:invy/widgets/dynamic_links_manager.dart';
 
 import '../../widgets/friend_list_item_fragment.graphql.dart';
 
@@ -14,7 +15,7 @@ class BlockedFriendsRoute extends GoRouteData {
 
   @override
   Widget build(BuildContext context, GoRouterState state) =>
-      const BlockedFriendsScreen();
+      const DynamicLinksManager(child: BlockedFriendsScreen());
 }
 
 class BlockedFriendsScreen extends HookConsumerWidget {

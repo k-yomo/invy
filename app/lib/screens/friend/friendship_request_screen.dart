@@ -6,6 +6,7 @@ import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:invy/screens/friend/friend_request_screen.graphql.dart';
 import 'package:invy/services/graphql_client.dart';
+import 'package:invy/widgets/dynamic_links_manager.dart';
 
 import '../../widgets/app_bar_leading.dart';
 import '../../state/auth.dart';
@@ -15,7 +16,7 @@ class FriendshipRequestRoute extends GoRouteData {
 
   @override
   Widget build(BuildContext context, GoRouterState state) =>
-      const FriendshipRequestScreen();
+      const DynamicLinksManager(child: FriendshipRequestScreen());
 }
 
 class FriendshipRequestScreen extends HookConsumerWidget {

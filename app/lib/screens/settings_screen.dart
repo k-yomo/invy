@@ -3,12 +3,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:invy/constants/notion_page_urls.dart';
+import 'package:invy/constants/urls.dart';
 import 'package:invy/screens/profile/my_profile_screen.graphql.dart';
 import 'package:invy/services/graphql_client.dart';
 import 'package:invy/state/auth.dart';
 import 'package:invy/state/device.dart';
 import 'package:invy/widgets/divider.dart';
+import 'package:invy/widgets/dynamic_links_manager.dart';
 import 'package:invy/widgets/setting_item.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -18,7 +19,7 @@ class SettingsRoute extends GoRouteData {
 
   @override
   Widget build(BuildContext context, GoRouterState state) =>
-      const SettingsScreen();
+      const DynamicLinksManager(child: SettingsScreen());
 }
 
 class SettingsScreen extends HookConsumerWidget {

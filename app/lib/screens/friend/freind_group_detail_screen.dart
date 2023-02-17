@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:graphql/client.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:invy/screens/user_profile_screen.dart';
+import 'package:invy/widgets/dynamic_links_manager.dart';
 import 'package:invy/widgets/friend_list.dart';
 import 'package:invy/screens/friend/friend_group_edit_screen.dart';
 import 'package:invy/screens/friend/friend_group_detail_screen.graphql.dart';
@@ -20,7 +21,8 @@ class FriendGroupDetailRoute extends GoRouteData {
 
   @override
   Widget build(BuildContext context, GoRouterState state) =>
-      FriendGroupDetailScreen(friendGroupId: friendGroupId);
+      DynamicLinksManager(
+          child: FriendGroupDetailScreen(friendGroupId: friendGroupId));
 }
 
 class FriendGroupDetailScreen extends HookConsumerWidget {

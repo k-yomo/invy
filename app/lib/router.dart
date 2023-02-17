@@ -17,6 +17,7 @@ import 'package:invy/screens/settings_screen.dart';
 import 'package:invy/screens/user_profile_screen.dart';
 import 'package:invy/screens/user_profile_screen.graphql.dart';
 import 'package:invy/state/auth.dart';
+import 'package:invy/widgets/dynamic_links_manager.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'router.g.dart';
@@ -68,9 +69,9 @@ CustomTransitionPage<T> buildPageWithoutAnimation<T>({
 }
 
 @riverpod
-GoRouter router(RouterRef ref) => GoRouter(
+GoRouter router(RouterRef ref, {Uri? initialRoute}) => GoRouter(
     navigatorKey: _rootNavigatorKey,
-    initialLocation: '/',
+    initialLocation: initialRoute != null ? initialRoute.path : '/',
     routes: [
       ShellRoute(
           navigatorKey: _shellNavigatorKey,
@@ -134,7 +135,7 @@ class HomeRoute extends GoRouteData {
   @override
   CustomTransitionPage<void> buildPage(
           BuildContext context, GoRouterState state) =>
-      NoTransitionPage(child: HomeScreen());
+      NoTransitionPage(child: DynamicLinksManager(child: HomeScreen()));
 }
 
 @TypedGoRoute<InvitationRoute>(
@@ -146,7 +147,8 @@ class InvitationRoute extends GoRouteData {
   @override
   CustomTransitionPage<void> buildPage(
           BuildContext context, GoRouterState state) =>
-      const NoTransitionPage(child: InvitationScreen());
+      const NoTransitionPage(
+          child: DynamicLinksManager(child: InvitationScreen()));
 }
 
 @TypedGoRoute<FriendsRoute>(
@@ -169,7 +171,12 @@ class FriendsRoute extends GoRouteData {
   @override
   CustomTransitionPage<void> buildPage(
           BuildContext context, GoRouterState state) =>
-      const NoTransitionPage(child: FriendsScreen());
+      const NoTransitionPage(
+          child: DynamicLinksManager(child: FriendsScreen()));
+}
+
+Uri buildUserProfileLink(String userId) {
+  return Uri.parse("https://invy-app.com/users/$userId");
 }
 
 @TypedGoRoute<UserProfileRoute>(
@@ -184,7 +191,8 @@ class UserProfileRoute extends GoRouteData {
 
   @override
   Widget build(BuildContext context, GoRouterState state) =>
-      UserProfileScreen(userId: userId, user: $extra);
+      DynamicLinksManager(
+          child: UserProfileScreen(userId: userId, user: $extra));
 }
 
 @TypedGoRoute<MyProfileRoute>(
@@ -207,7 +215,8 @@ class MyProfileRoute extends GoRouteData {
   @override
   CustomTransitionPage<void> buildPage(
           BuildContext context, GoRouterState state) =>
-      const NoTransitionPage(child: MyProfileScreen());
+      const NoTransitionPage(
+          child: DynamicLinksManager(child: MyProfileScreen()));
 }
 
 @TypedGoRoute<LoginRoute>(

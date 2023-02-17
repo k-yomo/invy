@@ -11,6 +11,10 @@ enum Environment { Prod, Dev, Local }
 abstract class AppConfig {
   Environment get environment;
   String get apiBaseUrl;
+  String get iosBundleId;
+  String get androidPackageName;
+
+  String get dynamicLinkUriPrefix;
 
   FirebaseOptions get firebaseOptions;
 }
@@ -35,6 +39,14 @@ class ProdConfig implements AppConfig {
   String get apiBaseUrl => 'https://api.invy-app.com';
 
   @override
+  String get iosBundleId => 'com.invy-app';
+  @override
+  String get androidPackageName => 'com.invy_app';
+
+  @override
+  String get dynamicLinkUriPrefix => 'https://link.invy-app.com';
+
+  @override
   FirebaseOptions get firebaseOptions =>
       prod.DefaultFirebaseOptions.currentPlatform;
 }
@@ -45,6 +57,14 @@ class DevConfig implements AppConfig {
 
   @override
   String get apiBaseUrl => 'https://api.invy-app.dev';
+
+  @override
+  String get iosBundleId => 'com.invy-app.dev';
+  @override
+  String get androidPackageName => 'com.invy_app.dev';
+
+  @override
+  String get dynamicLinkUriPrefix => 'https://link.invy-app.dev';
 
   @override
   FirebaseOptions get firebaseOptions =>
@@ -59,6 +79,14 @@ class LocalConfig implements AppConfig {
   String get apiBaseUrl {
     return 'http://$_host:8000';
   }
+
+  @override
+  String get iosBundleId => 'com.invy-app.local';
+  @override
+  String get androidPackageName => 'com.invy_app.local';
+
+  @override
+  String get dynamicLinkUriPrefix => 'https://invylocal.page.link';
 
   @override
   FirebaseOptions get firebaseOptions =>

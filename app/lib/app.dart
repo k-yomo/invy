@@ -40,11 +40,13 @@ ThemeData lightTheme() => ThemeData.from(
     );
 
 class App extends HookConsumerWidget {
-  const App({super.key});
+  const App({super.key, this.initialRoute});
+
+  final Uri? initialRoute;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final router = ref.watch(routerProvider);
+    final router = ref.watch(routerProvider.call(initialRoute: initialRoute));
     final isLoggedIn = ref.watch(isLoggedInProvider);
 
     return StreamBuilder<User?>(

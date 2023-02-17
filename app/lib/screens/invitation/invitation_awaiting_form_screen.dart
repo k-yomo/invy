@@ -9,6 +9,7 @@ import 'package:invy/router.dart';
 import 'package:invy/screens/invitation/invitation_awaiting_form_screen.graphql.dart';
 import 'package:invy/util/custom_date_time_picker.dart';
 import 'package:invy/util/toast.dart';
+import 'package:invy/widgets/dynamic_links_manager.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -23,7 +24,7 @@ class InvitationAwaitingFormRoute extends GoRouteData {
 
   @override
   Widget build(BuildContext context, GoRouterState state) =>
-      const InvitationAwaitingFormScreen();
+      const DynamicLinksManager(child: InvitationAwaitingFormScreen());
 }
 
 class InvitationAwaitingFormScreen extends HookConsumerWidget {

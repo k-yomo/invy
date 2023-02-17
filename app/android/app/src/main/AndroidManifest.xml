@@ -32,6 +32,14 @@
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+            <meta-data android:name="flutter_deeplinking_enabled" android:value="true" />
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="https" android:host="link.invy-app.com" />
+                <data android:scheme="invy"  />
+            </intent-filter>
         </activity>
        <service android:name="yukams.app.background_locator_2.IsolateHolderService"
                 android:permission="android.permission.FOREGROUND_SERVICE"

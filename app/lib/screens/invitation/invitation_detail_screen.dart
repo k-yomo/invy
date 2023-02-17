@@ -8,6 +8,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:invy/screens/invitation/invitation_detail_screen.graphql.dart';
 import 'package:invy/services/graphql_client.dart';
+import 'package:invy/widgets/dynamic_links_manager.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../widgets/app_bar_leading.dart';
@@ -32,7 +33,8 @@ class InvitationDetailRoute extends GoRouteData {
 
   @override
   Widget build(BuildContext context, GoRouterState state) =>
-      InvitationDetailScreen(invitationId: invitationId);
+      DynamicLinksManager(
+          child: InvitationDetailScreen(invitationId: invitationId));
 }
 
 class InvitationDetailScreen extends HookConsumerWidget {

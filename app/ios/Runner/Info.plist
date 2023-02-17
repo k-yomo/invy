@@ -24,6 +24,16 @@
 	<string>????</string>
 	<key>CFBundleURLTypes</key>
 	<array>
+         <dict>
+            <key>CFBundleTypeRole</key>
+            <string>Editor</string>
+            <key>CFBundleURLName</key>
+            <string>Invy</string>
+            <key>CFBundleURLSchemes</key>
+            <array>
+                <string>invy$(APP_ID_SUFFIX)</string>
+            </array>
+        </dict>
 		<dict>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>

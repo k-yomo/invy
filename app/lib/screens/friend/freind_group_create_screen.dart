@@ -3,6 +3,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:graphql/client.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:invy/widgets/dynamic_links_manager.dart';
 import 'package:invy/widgets/friend_selection_list.dart';
 import 'package:invy/screens/friend/friend_group_create_screen.graphql.dart';
 import 'package:invy/graphql/schema.graphql.dart';
@@ -16,7 +17,7 @@ class FriendGroupCreateRoute extends GoRouteData {
 
   @override
   Widget build(BuildContext context, GoRouterState state) =>
-      const FriendGroupCreateScreen();
+      const DynamicLinksManager(child: FriendGroupCreateScreen());
 }
 
 class FriendGroupCreateScreen extends HookConsumerWidget {
