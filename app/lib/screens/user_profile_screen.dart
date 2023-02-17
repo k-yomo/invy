@@ -238,38 +238,42 @@ class UserProfileScreen extends HookConsumerWidget {
             ),
           ),
         ]),
-        Positioned(
-          top: 220,
-          right: 20,
-          child: IconButton(
-            icon: const Icon(Icons.settings),
-            onPressed: () async {
-              final result = await showModalActionSheet(
-                  context: context,
-                  cancelLabel: "キャンセル",
-                  actions: [
-                    SheetAction(
-                      key: 'mute',
-                      icon: isMuted.value ? Icons.volume_up : Icons.volume_off,
-                      label: isMuted.value ? "ミュート解除" : "ミュート",
-                    ),
-                    SheetAction(
-                      key: 'block',
-                      icon: isBlocked.value
-                          ? Icons.do_not_disturb_off
-                          : Icons.do_not_disturb_on,
-                      label: isBlocked.value ? "ブロック解除" : "ブロック",
-                      isDestructiveAction: true,
-                    ),
-                  ]);
-              if (result == "mute") {
-                await onPressedMute();
-              } else if (result == "block") {
-                await onPressedBlock();
-              }
-            },
-          ),
-        ),
+        user.isFriend
+            ? Positioned(
+                top: 220,
+                right: 20,
+                child: IconButton(
+                  icon: const Icon(Icons.settings),
+                  onPressed: () async {
+                    final result = await showModalActionSheet(
+                        context: context,
+                        cancelLabel: "キャンセル",
+                        actions: [
+                          SheetAction(
+                            key: 'mute',
+                            icon: isMuted.value
+                                ? Icons.volume_up
+                                : Icons.volume_off,
+                            label: isMuted.value ? "ミュート解除" : "ミュート",
+                          ),
+                          SheetAction(
+                            key: 'block',
+                            icon: isBlocked.value
+                                ? Icons.do_not_disturb_off
+                                : Icons.do_not_disturb_on,
+                            label: isBlocked.value ? "ブロック解除" : "ブロック",
+                            isDestructiveAction: true,
+                          ),
+                        ]);
+                    if (result == "mute") {
+                      await onPressedMute();
+                    } else if (result == "block") {
+                      await onPressedBlock();
+                    }
+                  },
+                ),
+              )
+            : const SizedBox(),
       ]),
     );
   }
