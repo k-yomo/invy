@@ -30,7 +30,11 @@ Future<LatLng?> getCurrentLocation() async {
     await Permission.locationAlways.request();
   }
 
-  final location = await Geolocator.getCurrentPosition(
-      desiredAccuracy: LocationAccuracy.high);
-  return LatLng(location.latitude, location.longitude);
+  try {
+    final location = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+    return LatLng(location.latitude, location.longitude);
+  } catch (e) {
+    return null;
+  }
 }

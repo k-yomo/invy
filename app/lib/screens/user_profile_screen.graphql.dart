@@ -10,8 +10,9 @@ class Fragment$userProfileScreenFragment {
     required this.screenId,
     required this.nickname,
     required this.avatarUrl,
-    required this.isMuted,
+    required this.isRequestingFriendship,
     required this.isFriend,
+    required this.isMuted,
     required this.isBlocked,
     required this.invitationAwaitings,
     required this.$__typename,
@@ -23,8 +24,9 @@ class Fragment$userProfileScreenFragment {
     final l$screenId = json['screenId'];
     final l$nickname = json['nickname'];
     final l$avatarUrl = json['avatarUrl'];
-    final l$isMuted = json['isMuted'];
+    final l$isRequestingFriendship = json['isRequestingFriendship'];
     final l$isFriend = json['isFriend'];
+    final l$isMuted = json['isMuted'];
     final l$isBlocked = json['isBlocked'];
     final l$invitationAwaitings = json['invitationAwaitings'];
     final l$$__typename = json['__typename'];
@@ -33,8 +35,9 @@ class Fragment$userProfileScreenFragment {
       screenId: (l$screenId as String),
       nickname: (l$nickname as String),
       avatarUrl: (l$avatarUrl as String),
-      isMuted: (l$isMuted as bool),
+      isRequestingFriendship: (l$isRequestingFriendship as bool),
       isFriend: (l$isFriend as bool),
+      isMuted: (l$isMuted as bool),
       isBlocked: (l$isBlocked as bool),
       invitationAwaitings: (l$invitationAwaitings as List<dynamic>)
           .map((e) => Fragment$invitationAwaitingListItemFragment.fromJson(
@@ -52,9 +55,11 @@ class Fragment$userProfileScreenFragment {
 
   final String avatarUrl;
 
-  final bool isMuted;
+  final bool isRequestingFriendship;
 
   final bool isFriend;
+
+  final bool isMuted;
 
   final bool isBlocked;
 
@@ -72,10 +77,12 @@ class Fragment$userProfileScreenFragment {
     _resultData['nickname'] = l$nickname;
     final l$avatarUrl = avatarUrl;
     _resultData['avatarUrl'] = l$avatarUrl;
-    final l$isMuted = isMuted;
-    _resultData['isMuted'] = l$isMuted;
+    final l$isRequestingFriendship = isRequestingFriendship;
+    _resultData['isRequestingFriendship'] = l$isRequestingFriendship;
     final l$isFriend = isFriend;
     _resultData['isFriend'] = l$isFriend;
+    final l$isMuted = isMuted;
+    _resultData['isMuted'] = l$isMuted;
     final l$isBlocked = isBlocked;
     _resultData['isBlocked'] = l$isBlocked;
     final l$invitationAwaitings = invitationAwaitings;
@@ -92,8 +99,9 @@ class Fragment$userProfileScreenFragment {
     final l$screenId = screenId;
     final l$nickname = nickname;
     final l$avatarUrl = avatarUrl;
-    final l$isMuted = isMuted;
+    final l$isRequestingFriendship = isRequestingFriendship;
     final l$isFriend = isFriend;
+    final l$isMuted = isMuted;
     final l$isBlocked = isBlocked;
     final l$invitationAwaitings = invitationAwaitings;
     final l$$__typename = $__typename;
@@ -102,8 +110,9 @@ class Fragment$userProfileScreenFragment {
       l$screenId,
       l$nickname,
       l$avatarUrl,
-      l$isMuted,
+      l$isRequestingFriendship,
       l$isFriend,
+      l$isMuted,
       l$isBlocked,
       Object.hashAll(l$invitationAwaitings.map((v) => v)),
       l$$__typename,
@@ -139,14 +148,19 @@ class Fragment$userProfileScreenFragment {
     if (l$avatarUrl != lOther$avatarUrl) {
       return false;
     }
-    final l$isMuted = isMuted;
-    final lOther$isMuted = other.isMuted;
-    if (l$isMuted != lOther$isMuted) {
+    final l$isRequestingFriendship = isRequestingFriendship;
+    final lOther$isRequestingFriendship = other.isRequestingFriendship;
+    if (l$isRequestingFriendship != lOther$isRequestingFriendship) {
       return false;
     }
     final l$isFriend = isFriend;
     final lOther$isFriend = other.isFriend;
     if (l$isFriend != lOther$isFriend) {
+      return false;
+    }
+    final l$isMuted = isMuted;
+    final lOther$isMuted = other.isMuted;
+    if (l$isMuted != lOther$isMuted) {
       return false;
     }
     final l$isBlocked = isBlocked;
@@ -199,8 +213,9 @@ abstract class CopyWith$Fragment$userProfileScreenFragment<TRes> {
     String? screenId,
     String? nickname,
     String? avatarUrl,
-    bool? isMuted,
+    bool? isRequestingFriendship,
     bool? isFriend,
+    bool? isMuted,
     bool? isBlocked,
     List<Fragment$invitationAwaitingListItemFragment>? invitationAwaitings,
     String? $__typename,
@@ -231,8 +246,9 @@ class _CopyWithImpl$Fragment$userProfileScreenFragment<TRes>
     Object? screenId = _undefined,
     Object? nickname = _undefined,
     Object? avatarUrl = _undefined,
-    Object? isMuted = _undefined,
+    Object? isRequestingFriendship = _undefined,
     Object? isFriend = _undefined,
+    Object? isMuted = _undefined,
     Object? isBlocked = _undefined,
     Object? invitationAwaitings = _undefined,
     Object? $__typename = _undefined,
@@ -248,12 +264,16 @@ class _CopyWithImpl$Fragment$userProfileScreenFragment<TRes>
         avatarUrl: avatarUrl == _undefined || avatarUrl == null
             ? _instance.avatarUrl
             : (avatarUrl as String),
-        isMuted: isMuted == _undefined || isMuted == null
-            ? _instance.isMuted
-            : (isMuted as bool),
+        isRequestingFriendship: isRequestingFriendship == _undefined ||
+                isRequestingFriendship == null
+            ? _instance.isRequestingFriendship
+            : (isRequestingFriendship as bool),
         isFriend: isFriend == _undefined || isFriend == null
             ? _instance.isFriend
             : (isFriend as bool),
+        isMuted: isMuted == _undefined || isMuted == null
+            ? _instance.isMuted
+            : (isMuted as bool),
         isBlocked: isBlocked == _undefined || isBlocked == null
             ? _instance.isBlocked
             : (isBlocked as bool),
@@ -291,8 +311,9 @@ class _CopyWithStubImpl$Fragment$userProfileScreenFragment<TRes>
     String? screenId,
     String? nickname,
     String? avatarUrl,
-    bool? isMuted,
+    bool? isRequestingFriendship,
     bool? isFriend,
+    bool? isMuted,
     bool? isBlocked,
     List<Fragment$invitationAwaitingListItemFragment>? invitationAwaitings,
     String? $__typename,
@@ -339,7 +360,7 @@ const fragmentDefinitionuserProfileScreenFragment = FragmentDefinitionNode(
       selectionSet: null,
     ),
     FieldNode(
-      name: NameNode(value: 'isMuted'),
+      name: NameNode(value: 'isRequestingFriendship'),
       alias: null,
       arguments: [],
       directives: [],
@@ -347,6 +368,13 @@ const fragmentDefinitionuserProfileScreenFragment = FragmentDefinitionNode(
     ),
     FieldNode(
       name: NameNode(value: 'isFriend'),
+      alias: null,
+      arguments: [],
+      directives: [],
+      selectionSet: null,
+    ),
+    FieldNode(
+      name: NameNode(value: 'isMuted'),
       alias: null,
       arguments: [],
       directives: [],

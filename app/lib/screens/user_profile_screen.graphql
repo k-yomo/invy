@@ -10,8 +10,9 @@ fragment userProfileScreenFragment on User {
     screenId
     nickname
     avatarUrl
-    isMuted
+    isRequestingFriendship
     isFriend
+    isMuted
     isBlocked
     invitationAwaitings {
         ...invitationAwaitingListItemFragment

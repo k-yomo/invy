@@ -878,6 +878,7 @@ class Query$friendGroupDetailScreenViewer$viewer$friendGroup$friendUsers
     required this.invitationAwaitings,
     required this.$__typename,
     required this.screenId,
+    required this.isRequestingFriendship,
     required this.isFriend,
     required this.isBlocked,
   });
@@ -892,6 +893,7 @@ class Query$friendGroupDetailScreenViewer$viewer$friendGroup$friendUsers
     final l$invitationAwaitings = json['invitationAwaitings'];
     final l$$__typename = json['__typename'];
     final l$screenId = json['screenId'];
+    final l$isRequestingFriendship = json['isRequestingFriendship'];
     final l$isFriend = json['isFriend'];
     final l$isBlocked = json['isBlocked'];
     return Query$friendGroupDetailScreenViewer$viewer$friendGroup$friendUsers(
@@ -907,6 +909,7 @@ class Query$friendGroupDetailScreenViewer$viewer$friendGroup$friendUsers
           .toList(),
       $__typename: (l$$__typename as String),
       screenId: (l$screenId as String),
+      isRequestingFriendship: (l$isRequestingFriendship as bool),
       isFriend: (l$isFriend as bool),
       isBlocked: (l$isBlocked as bool),
     );
@@ -929,6 +932,8 @@ class Query$friendGroupDetailScreenViewer$viewer$friendGroup$friendUsers
   final String $__typename;
 
   final String screenId;
+
+  final bool isRequestingFriendship;
 
   final bool isFriend;
 
@@ -953,6 +958,8 @@ class Query$friendGroupDetailScreenViewer$viewer$friendGroup$friendUsers
     _resultData['__typename'] = l$$__typename;
     final l$screenId = screenId;
     _resultData['screenId'] = l$screenId;
+    final l$isRequestingFriendship = isRequestingFriendship;
+    _resultData['isRequestingFriendship'] = l$isRequestingFriendship;
     final l$isFriend = isFriend;
     _resultData['isFriend'] = l$isFriend;
     final l$isBlocked = isBlocked;
@@ -970,6 +977,7 @@ class Query$friendGroupDetailScreenViewer$viewer$friendGroup$friendUsers
     final l$invitationAwaitings = invitationAwaitings;
     final l$$__typename = $__typename;
     final l$screenId = screenId;
+    final l$isRequestingFriendship = isRequestingFriendship;
     final l$isFriend = isFriend;
     final l$isBlocked = isBlocked;
     return Object.hashAll([
@@ -981,6 +989,7 @@ class Query$friendGroupDetailScreenViewer$viewer$friendGroup$friendUsers
       Object.hashAll(l$invitationAwaitings.map((v) => v)),
       l$$__typename,
       l$screenId,
+      l$isRequestingFriendship,
       l$isFriend,
       l$isBlocked,
     ]);
@@ -1043,6 +1052,11 @@ class Query$friendGroupDetailScreenViewer$viewer$friendGroup$friendUsers
     if (l$screenId != lOther$screenId) {
       return false;
     }
+    final l$isRequestingFriendship = isRequestingFriendship;
+    final lOther$isRequestingFriendship = other.isRequestingFriendship;
+    if (l$isRequestingFriendship != lOther$isRequestingFriendship) {
+      return false;
+    }
     final l$isFriend = isFriend;
     final lOther$isFriend = other.isFriend;
     if (l$isFriend != lOther$isFriend) {
@@ -1091,6 +1105,7 @@ abstract class CopyWith$Query$friendGroupDetailScreenViewer$viewer$friendGroup$f
         invitationAwaitings,
     String? $__typename,
     String? screenId,
+    bool? isRequestingFriendship,
     bool? isFriend,
     bool? isBlocked,
   });
@@ -1129,6 +1144,7 @@ class _CopyWithImpl$Query$friendGroupDetailScreenViewer$viewer$friendGroup$frien
     Object? invitationAwaitings = _undefined,
     Object? $__typename = _undefined,
     Object? screenId = _undefined,
+    Object? isRequestingFriendship = _undefined,
     Object? isFriend = _undefined,
     Object? isBlocked = _undefined,
   }) =>
@@ -1157,6 +1173,10 @@ class _CopyWithImpl$Query$friendGroupDetailScreenViewer$viewer$friendGroup$frien
         screenId: screenId == _undefined || screenId == null
             ? _instance.screenId
             : (screenId as String),
+        isRequestingFriendship: isRequestingFriendship == _undefined ||
+                isRequestingFriendship == null
+            ? _instance.isRequestingFriendship
+            : (isRequestingFriendship as bool),
         isFriend: isFriend == _undefined || isFriend == null
             ? _instance.isFriend
             : (isFriend as bool),
@@ -1198,6 +1218,7 @@ class _CopyWithStubImpl$Query$friendGroupDetailScreenViewer$viewer$friendGroup$f
         invitationAwaitings,
     String? $__typename,
     String? screenId,
+    bool? isRequestingFriendship,
     bool? isFriend,
     bool? isBlocked,
   }) =>
