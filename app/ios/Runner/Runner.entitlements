@@ -8,5 +8,11 @@
 	<array>
 		<string>Default</string>
 	</array>
+	<key>com.apple.developer.associated-domains</key>
+	<array>
+		<string>applinks:link.invy-app.com</string>
+		<string>applinks:link.invy-app.dev</string>
+		<string>applinks:invylocal.page.link</string>
+	</array>
 </dict>
 </plist>

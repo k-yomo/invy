@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:graphql/client.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:invy/graphql/schema.graphql.dart';
@@ -9,6 +10,7 @@ import 'package:invy/graphql/viewer.graphql.dart';
 import 'package:invy/router.dart';
 import 'package:invy/services/graphql_client.dart';
 import 'package:invy/state/auth.dart';
+import 'package:invy/state/post_login_redict.dart';
 import 'package:invy/util/toast.dart';
 import 'package:invy/widgets/sub_title.dart';
 import 'package:pinput/pinput.dart';
@@ -91,9 +93,15 @@ class SMSLoginVerificationScreen extends HookConsumerWidget {
       }
 
       ref.read(loggedInUserProvider.notifier).state = loggedInUser;
-      if (!accountExists) {
-        // TODO: route user to user profile registration instead
-        const MyProfileRoute().go(context);
+      final postLoginRedirectScreen = ref.read(postLoginRedirectProvider);
+      if (postLoginRedirectScreen != null) {
+        ref.read(postLoginRedirectProvider.notifier).state = null;
+        GoRouter.of(context).go(postLoginRedirectScreen);
+      } else {
+        if (!accountExists) {
+          // TODO: route user to user profile registration instead
+          const MyProfileRoute().go(context);
+        }
       }
     }
 

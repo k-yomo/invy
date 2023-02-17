@@ -7,9 +7,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:invy/router.dart';
 import 'package:invy/screens/friend/blocked_friends_screen.graphql.dart';
 import 'package:invy/screens/friend/friend_request_screen.graphql.dart';
 import 'package:invy/screens/user_profile_screen.graphql.dart';
+import 'package:invy/state/auth.dart';
 import 'package:invy/util/toast.dart';
 import 'package:invy/widgets/invitation_awaiting_list_carousel.dart';
 import 'package:invy/widgets/sub_title.dart';
@@ -26,6 +28,7 @@ class UserProfileScreen extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final loggedInUser = ref.read(loggedInUserProvider);
     final graphqlClient = ref.read(graphqlClientProvider);
     final fetchUser = useMemoized(() async {
       if (this.user != null) {
@@ -39,7 +42,11 @@ class UserProfileScreen extends HookConsumerWidget {
       if (resp.hasException) {
         throw resp.exception.toString();
       }
-      return resp.parsedData!.user;
+      final user = resp.parsedData!.user;
+      if (user.id == loggedInUser?.id) {
+        const MyProfileRoute().go(context);
+      }
+      return user;
     });
     final snapshot = useFuture(fetchUser);
 

@@ -16,8 +16,7 @@ class _DynamicLinksManagerState extends State<DynamicLinksManager> {
   void initState() {
     super.initState();
     FirebaseDynamicLinks.instance.onLink.listen((dynamicLinkData) {
-      String goingTo = dynamicLinkData.link.path;
-      GoRouter.of(context).go(goingTo);
+      GoRouter.of(context).push(dynamicLinkData.link.path);
     }).onError((error) {
       // TODO: Error handling
     });

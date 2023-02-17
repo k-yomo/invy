@@ -1,15 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:invy/constants/urls.dart';
+import 'package:invy/router.dart';
 import 'package:invy/screens/login/sms_login_screen.dart';
+import 'package:invy/state/post_login_redict.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../state/onboarding.dart';
 import '../onboarding_screen.dart';
 
 class LoginLandingScreen extends HookConsumerWidget {
-  const LoginLandingScreen({super.key});
+  const LoginLandingScreen({super.key, this.from});
+
+  final String? from;
 
   Future<void> _openSignup(BuildContext context) async {
     await Navigator.of(context).push(
@@ -29,6 +34,13 @@ class LoginLandingScreen extends HookConsumerWidget {
         ));
       }
     });
+
+    useEffect(() {
+      if (from != null && from != const LoginRoute().location) {
+        ref.read(postLoginRedirectProvider.notifier).state = from;
+      }
+      return null;
+    }, []);
 
     return Scaffold(
         backgroundColor: Colors.white,

@@ -230,5 +230,5 @@ class LoginRoute extends GoRouteData {
   @override
   CustomTransitionPage<void> buildPage(
           BuildContext context, GoRouterState state) =>
-      const NoTransitionPage(child: LoginLandingScreen());
+      NoTransitionPage(child: LoginLandingScreen(from: from));
 }
