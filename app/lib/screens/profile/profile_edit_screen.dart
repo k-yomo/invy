@@ -32,26 +32,15 @@ class ProfileEditRoute extends GoRouteData {
       const DynamicLinksManager(child: ProfileEditScreen());
 }
 
-class ProfileEditScreen extends StatefulHookConsumerWidget {
+class ProfileEditScreen extends HookConsumerWidget {
   const ProfileEditScreen({super.key});
 
   @override
-  ProfileEditScreenState createState() {
-    return ProfileEditScreenState();
-  }
-}
-
-class ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
-  final _nicknameFormKey = GlobalKey<FormState>();
-  final _screenIdFormKey = GlobalKey<FormState>();
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final picker = ImagePicker();
     final graphqlClient = ref.read(graphqlClientProvider);
     final user = ref.watch(loggedInUserProvider)!;
     final avatarUpdateLoading = useState(false);
-    final nicknameController = TextEditingController(text: user.nickname);
     final screenIdController = TextEditingController(text: user.screenId);
 
     onPressedAvatarUpdate() async {
@@ -130,84 +119,6 @@ class ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
       showToast("プロフィール写真を更新しました", ToastLevel.success);
     }
 
-    validateNickname(value) {
-      if (value == null || value.isEmpty) {
-        return 'ニックネームを入力してください';
-      }
-      if (value.length < 3) {
-        return '3文字以上入力してください';
-      }
-      return null;
-    }
-
-    Future<bool> onNicknameSubmitted() async {
-      final nickname = nicknameController.text;
-      if (validateNickname(nickname) != null) {
-        return false;
-      }
-      if (nickname == user.nickname) {
-        // no change
-        return true;
-      }
-      final result = await graphqlClient.mutate$updateNickname(
-          Options$Mutation$updateNickname(
-              variables:
-                  Variables$Mutation$updateNickname(nickname: nickname)));
-      if (result.hasException) {
-        print(result.exception);
-        showToast("ユーザーIDの更新に失敗しました。時間を置いて再度お試しください。", ToastLevel.error);
-        return false;
-      }
-      ref.read(loggedInUserProvider.notifier).state =
-          user.copyWith(nickname: nickname);
-      showToast("ニックネームを更新しました。", ToastLevel.success);
-      return true;
-    }
-
-    validateScreenId(value) {
-      final screenIdRegex = RegExp(r'(^[a-zA-Z0-9_]*$)');
-      if (value == null || value.isEmpty) {
-        return 'ユーザーIDを入力してください';
-      }
-      if (value.length < 3) {
-        return '3文字以上入力してください';
-      }
-      if (!screenIdRegex.hasMatch(value)) {
-        return '英数字、アンダースコア（_）のみ使用可能です';
-      }
-      return null;
-    }
-
-    Future<bool> onScreenIdSubmitted() async {
-      final screenId = screenIdController.text;
-      if (validateScreenId(screenId) != null) {
-        return false;
-      }
-      if (screenId == user.screenId) {
-        // no change
-        return true;
-      }
-      final result = await graphqlClient.mutate$updateScreenId(
-          Options$Mutation$updateScreenId(
-              variables:
-                  Variables$Mutation$updateScreenId(screenId: screenId)));
-      if (result.hasException) {
-        if (result.exception?.graphqlErrors.first.extensions != null) {
-          if (result.exception!.graphqlErrors.first.extensions!["code"] ==
-              toJson$Enum$ErrorCode(Enum$ErrorCode.ALREADY_EXISTS)) {
-            showToast("入力されたユーザーIDは既に使用されています。", ToastLevel.error);
-            return false;
-          }
-        }
-        showToast("ユーザーIDの更新に失敗しました。時間を置いて再度お試しください。", ToastLevel.error);
-        return false;
-      }
-      ref.read(loggedInUserProvider.notifier).state =
-          user.copyWith(screenId: screenId);
-      showToast("ユーザーIDを更新しました。", ToastLevel.success);
-      return true;
-    }
-
     return Scaffold(
       appBar: AppBar(
         leading: const AppBarLeading(),
@@ -249,7 +160,7 @@ class ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
                   ),
                   const Gap(20),
                   TextFormField(
-                      controller: nicknameController,
+                      controller: TextEditingController(text: user.nickname),
                       cursorColor: Colors.grey.shade600,
                       decoration: InputDecoration(
                         labelText: 'ニックネーム',
@@ -261,72 +172,16 @@ class ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
                       readOnly: true,
                       onTap: () {
                         showMaterialModalBottomSheet(
-                          context: context,
-                          duration: const Duration(milliseconds: 300),
-                          builder: (BuildContext context) {
-                            return Container(
-                              height: MediaQuery.of(context).size.height * 0.9,
-                              padding: const EdgeInsets.only(
-                                  top: 60, left: 15, right: 15, bottom: 15),
-                              child: Column(
-                                children: [
-                                  Expanded(
-                                    child: Form(
-                                      key: _nicknameFormKey,
-                                      autovalidateMode:
-                                          AutovalidateMode.onUserInteraction,
-                                      child: TextFormField(
-                                        autofocus: true,
-                                        controller: nicknameController,
-                                        cursorColor: Colors.grey.shade600,
-                                        decoration: InputDecoration(
-                                          labelText: 'ニックネーム',
-                                          labelStyle: TextStyle(
-                                              color: Colors.grey.shade600),
-                                          filled: true,
-                                          fillColor: Colors.grey.shade100,
-                                          border: InputBorder.none,
-                                        ),
-                                        maxLength: 50,
-                                        validator: validateNickname,
-                                      ),
-                                    ),
-                                  ),
-                                  SingleChildScrollView(
-                                    controller:
-                                        ModalScrollController.of(context),
-                                    padding: EdgeInsets.only(
-                                        bottom: MediaQuery.of(context)
-                                            .viewInsets
-                                            .bottom),
-                                    child: TextButton(
-                                      onPressed: () async {
-                                        final isSuccessful =
-                                            await onNicknameSubmitted();
-                                        if (isSuccessful) {
-                                          Navigator.pop(context);
-                                        }
-                                      },
-                                      style: TextButton.styleFrom(
-                                        minimumSize: const Size.fromHeight(0),
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 12),
-                                        backgroundColor: Colors.black,
-                                        foregroundColor: Colors.white,
-                                      ),
-                                      child: const Text(
-                                        '更新する',
-                                        style: TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            );
-                          },
-                        );
+                            context: context,
+                            duration: const Duration(milliseconds: 300),
+                            builder: (BuildContext context) => Container(
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.9,
+                                  padding: const EdgeInsets.only(
+                                      top: 60, left: 15, right: 15, bottom: 15),
+                                  child:
+                                      NicknameEditForm(nickname: user.nickname),
+                                ));
                       }),
                   const Gap(20),
                   TextFormField(
@@ -348,69 +203,7 @@ class ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
                             height: MediaQuery.of(context).size.height * 0.9,
                             padding: const EdgeInsets.only(
                                 top: 60, left: 15, right: 15, bottom: 15),
-                            child: Column(
-                              children: [
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Form(
-                                        key: _screenIdFormKey,
-                                        autovalidateMode:
-                                            AutovalidateMode.onUserInteraction,
-                                        child: TextFormField(
-                                          autofocus: true,
-                                          controller: screenIdController,
-                                          cursorColor: Colors.grey.shade600,
-                                          decoration: InputDecoration(
-                                            labelText: 'ユーザーID',
-                                            labelStyle: TextStyle(
-                                                color: Colors.grey.shade600),
-                                            filled: true,
-                                            fillColor: Colors.grey.shade100,
-                                            border: InputBorder.none,
-                                          ),
-                                          maxLength: 15,
-                                          validator: validateScreenId,
-                                        ),
-                                      ),
-                                      const Text("英数字、アンダースコア（_）のみ使用可能です。",
-                                          style: TextStyle(fontSize: 12))
-                                    ],
-                                  ),
-                                ),
-                                SingleChildScrollView(
-                                  controller: ModalScrollController.of(context),
-                                  padding: EdgeInsets.only(
-                                      bottom: MediaQuery.of(context)
-                                          .viewInsets
-                                          .bottom),
-                                  child: TextButton(
-                                    onPressed: () async {
-                                      final isSuccessful =
-                                          await onScreenIdSubmitted();
-                                      if (isSuccessful) {
-                                        Navigator.pop(context);
-                                      }
-                                    },
-                                    style: TextButton.styleFrom(
-                                      minimumSize: const Size.fromHeight(0),
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 12),
-                                      backgroundColor: Colors.black,
-                                      foregroundColor: Colors.white,
-                                    ),
-                                    child: const Text(
-                                      '更新する',
-                                      style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
+                            child: ScreenIdEditForm(screenId: user.screenId),
                           );
                         },
                       );
@@ -422,6 +215,215 @@ class ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
           ]),
         ),
       ),
+    );
+  }
+}
+
+class NicknameEditForm extends HookConsumerWidget {
+  const NicknameEditForm({super.key, this.nickname});
+
+  final String? nickname;
+
+  String? validateNickname(value) {
+    if (value == null || value.isEmpty) {
+      return 'ニックネームを入力してください';
+    }
+    if (value.length < 3) {
+      return '3文字以上入力してください';
+    }
+    return null;
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final graphqlClient = ref.read(graphqlClientProvider);
+    final nicknameFormKey = useMemoized(() => GlobalKey<FormState>());
+    final nicknameController = TextEditingController(text: nickname);
+
+    Future<bool> onNicknameSubmitted() async {
+      final nickname = nicknameController.text;
+      if (validateNickname(nickname) != null) {
+        return false;
+      }
+      if (nickname == this.nickname) {
+        // no change
+        return true;
+      }
+      final result = await graphqlClient.mutate$updateNickname(
+          Options$Mutation$updateNickname(
+              variables:
+                  Variables$Mutation$updateNickname(nickname: nickname)));
+      if (result.hasException) {
+        print(result.exception);
+        showToast("ユーザーIDの更新に失敗しました。時間を置いて再度お試しください。", ToastLevel.error);
+        return false;
+      }
+      ref.read(loggedInUserProvider.notifier).update((state) {
+        return state!.copyWith(nickname: nickname);
+      });
+      showToast("ニックネームを更新しました。", ToastLevel.success);
+      return true;
+    }
+
+    return Column(
+      children: [
+        Expanded(
+          child: Form(
+            key: nicknameFormKey,
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+            child: TextFormField(
+              autofocus: true,
+              controller: nicknameController,
+              cursorColor: Colors.grey.shade600,
+              decoration: InputDecoration(
+                labelText: 'ニックネーム',
+                labelStyle: TextStyle(color: Colors.grey.shade600),
+                filled: true,
+                fillColor: Colors.grey.shade100,
+                border: InputBorder.none,
+              ),
+              maxLength: 50,
+              validator: validateNickname,
+            ),
+          ),
+        ),
+        SingleChildScrollView(
+          controller: ModalScrollController.of(context),
+          padding:
+              EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+          child: TextButton(
+            onPressed: () async {
+              final isSuccessful = await onNicknameSubmitted();
+              if (isSuccessful) {
+                Navigator.pop(context);
+              }
+            },
+            style: TextButton.styleFrom(
+              minimumSize: const Size.fromHeight(0),
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              backgroundColor: Colors.black,
+              foregroundColor: Colors.white,
+            ),
+            child: const Text(
+              '更新する',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class ScreenIdEditForm extends HookConsumerWidget {
+  const ScreenIdEditForm({super.key, this.screenId});
+
+  final String? screenId;
+
+  String? validateScreenId(value) {
+    final screenIdRegex = RegExp(r'(^[a-zA-Z0-9_]*$)');
+    if (value == null || value.isEmpty) {
+      return 'ユーザーIDを入力してください';
+    }
+    if (value.length < 3) {
+      return '3文字以上入力してください';
+    }
+    if (!screenIdRegex.hasMatch(value)) {
+      return '英数字、アンダースコア（_）のみ使用可能です';
+    }
+    return null;
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final graphqlClient = ref.read(graphqlClientProvider);
+    final screenIdFormKey = useMemoized(() => GlobalKey<FormState>());
+    final screenIdController = TextEditingController(text: screenId);
+
+    Future<bool> onScreenIdSubmitted() async {
+      final screenId = screenIdController.text;
+      if (validateScreenId(screenId) != null) {
+        return false;
+      }
+      if (screenId == this.screenId) {
+        // no change
+        return true;
+      }
+      final result = await graphqlClient.mutate$updateScreenId(
+          Options$Mutation$updateScreenId(
+              variables:
+                  Variables$Mutation$updateScreenId(screenId: screenId)));
+      if (result.hasException) {
+        if (result.exception?.graphqlErrors.first.extensions != null) {
+          if (result.exception!.graphqlErrors.first.extensions!["code"] ==
+              toJson$Enum$ErrorCode(Enum$ErrorCode.ALREADY_EXISTS)) {
+            showToast("入力されたユーザーIDは既に使用されています。", ToastLevel.error);
+            return false;
+          }
+        }
+        showToast("ユーザーIDの更新に失敗しました。時間を置いて再度お試しください。", ToastLevel.error);
+        return false;
+      }
+      ref.read(loggedInUserProvider.notifier).update((state) {
+        return state!.copyWith(screenId: screenId);
+      });
+      showToast("ユーザーIDを更新しました。", ToastLevel.success);
+      return true;
+    }
+
+    return Column(
+      children: [
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Form(
+                key: screenIdFormKey,
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                child: TextFormField(
+                  autofocus: true,
+                  controller: screenIdController,
+                  cursorColor: Colors.grey.shade600,
+                  decoration: InputDecoration(
+                    labelText: 'ユーザーID',
+                    labelStyle: TextStyle(color: Colors.grey.shade600),
+                    filled: true,
+                    fillColor: Colors.grey.shade100,
+                    border: InputBorder.none,
+                  ),
+                  maxLength: 15,
+                  validator: validateScreenId,
+                ),
+              ),
+              const Text("英数字、アンダースコア（_）のみ使用可能です。",
+                  style: TextStyle(fontSize: 12))
+            ],
+          ),
+        ),
+        SingleChildScrollView(
+          controller: ModalScrollController.of(context),
+          padding:
+              EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+          child: TextButton(
+            onPressed: () async {
+              final isSuccessful = await onScreenIdSubmitted();
+              if (isSuccessful) {
+                Navigator.pop(context);
+              }
+            },
+            style: TextButton.styleFrom(
+              minimumSize: const Size.fromHeight(0),
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              backgroundColor: Colors.black,
+              foregroundColor: Colors.white,
+            ),
+            child: const Text(
+              '更新する',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

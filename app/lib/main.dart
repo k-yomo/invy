@@ -31,15 +31,35 @@ import 'state/badge_count.dart';
 
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  print("バックグラウンドでメッセージを受け取りました");
-  print(message.data);
   await Hive.initFlutter();
   if (message.data["type"] ==
       toJson$Enum$PushNotificationType(
           Enum$PushNotificationType.INVITATION_RECEIVED)) {
     final badgeCounter = await BadgeCounter.open();
     await badgeCounter.setBadgeCount(badgeCounter.badgeCount + 1);
+  } else {
+    // TODO: Remove sentry logging once we confirm behaviour
+    SentryFlutter.init(configureSentryOptions);
+    Sentry.captureMessage(
+        "unhandled message in background, type: ${message.data["type"]}",
+        params: [message.data.toString()]);
   }
+}
+
+configureSentryOptions(options) async {
+  final config = getConfig();
+  final packageInfo = await PackageInfo.fromPlatform();
+  final isLocal = config.environment == Environment.Local;
+  if (isLocal) {
+// options.debug = true;
+    options.dsn = 'invalid'; // Not to send error report
+  } else {
+    options.dsn =
+        'https://bc241da02a4b48858c55b5b790efcf14@o4504672984498176.ingest.sentry.io/4504672985874432';
+    options.tracesSampleRate = 1.0;
+  }
+  options.environment = config.environment.name.toLowerCase();
+  options.release = "${packageInfo.version}+${packageInfo.buildNumber}";
 }
 
 Future main() async {
@@ -135,19 +155,7 @@ Future main() async {
       await FirebaseDynamicLinks.instance.getInitialLink();
 
   await SentryFlutter.init(
-    (options) {
-      final isLocal = config.environment == Environment.Local;
-      if (isLocal) {
-        // options.debug = true;
-        options.dsn = 'invalid'; // Not to send error report
-      } else {
-        options.dsn =
-            'https://bc241da02a4b48858c55b5b790efcf14@o4504672984498176.ingest.sentry.io/4504672985874432';
-        options.tracesSampleRate = 1.0;
-      }
-      options.environment = config.environment.name.toLowerCase();
-      options.release = "${packageInfo.version}+${packageInfo.buildNumber}";
-    },
+    configureSentryOptions,
     appRunner: () => runApp(
       ProviderScope(overrides: [
         graphqlClientProvider.overrideWithValue(graphqlClient),

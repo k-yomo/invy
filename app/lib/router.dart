@@ -1,4 +1,3 @@
-import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -123,8 +122,8 @@ GoRouter router(RouterRef ref, {Uri? initialRoute}) => GoRouter(
     ],
     debugLogDiagnostics: kDebugMode,
     redirect: (BuildContext context, GoRouterState state) {
-      final user = ref.watch(loggedInUserProvider);
-      if (user == null) {
+      final isLoggedIn = ref.watch(isLoggedInProvider);
+      if (!isLoggedIn) {
         return LoginRoute(from: state.subloc).location;
       }
       return null;
