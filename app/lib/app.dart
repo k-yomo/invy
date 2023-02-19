@@ -76,7 +76,7 @@ class App extends HookConsumerWidget {
                     scope.setUser(SentryUser(id: viewer.parsedData!.viewer.id));
                   },
                 );
-                FirebaseMessaging.instance
+                await FirebaseMessaging.instance
                     .requestPermission(
                   alert: true,
                   announcement: false,
