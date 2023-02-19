@@ -43,11 +43,7 @@ class UserProfileScreen extends HookConsumerWidget {
       if (resp.hasException) {
         throw resp.exception.toString();
       }
-      final user = resp.parsedData!.user;
-      if (user.id == loggedInUser?.id) {
-        const MyProfileRoute().go(context);
-      }
-      return user;
+      return resp.parsedData!.user;
     });
     final snapshot = useFuture(fetchUser);
 
@@ -56,6 +52,7 @@ class UserProfileScreen extends HookConsumerWidget {
     }
 
     final user = snapshot.data!;
+    final isUserLoggedInUser = user.id == loggedInUser?.id;
     final isMuted = useState(user.isMuted);
     final isBlocked = useState(user.isBlocked);
     final isRequestingFriendship = useState(user.isRequestingFriendship);
@@ -224,7 +221,7 @@ class UserProfileScreen extends HookConsumerWidget {
                   ],
                 ),
                 const Gap(2),
-                !user.isFriend
+                !user.isFriend && !isUserLoggedInUser
                     ? Container(
                         margin: const EdgeInsets.symmetric(
                             vertical: 10, horizontal: 60),
@@ -248,7 +245,8 @@ class UserProfileScreen extends HookConsumerWidget {
                         ),
                       )
                     : const SizedBox(),
-                user.isFriend && user.invitationAwaitings.isNotEmpty
+                (user.isFriend || isUserLoggedInUser) &&
+                        user.invitationAwaitings.isNotEmpty
                     ? Container(
                         transform: Matrix4.translationValues(0.0, -20.0, 0.0),
                         child: Column(
