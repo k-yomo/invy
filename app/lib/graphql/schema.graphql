@@ -184,6 +184,9 @@ type Query {
 
   """fetch user by screen id"""
   userByScreenId(screenId: String!): User!
+
+  """It'll be empty when not friend"""
+  userFriends(userId: UUID!, after: Cursor, first: Int, before: Cursor, last: Int): UserConnection!
 }
 
 input RegisterInvitationAwaitingInput {

@@ -76,7 +76,7 @@ class FriendsScreen extends HookConsumerWidget {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const SubTitle(text: "友だち"),
+                        const SubTitle(text: "友建"),
                         InkWell(
                           onTap: () {
                             Navigator.of(context).push(
@@ -175,7 +175,7 @@ class _AddFriend extends StatelessWidget {
           Container(
             margin: const EdgeInsets.only(left: 10, right: 2),
             child: const Text(
-              "友だちを追加する",
+              "友達を追加する",
               style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
               overflow: TextOverflow.ellipsis,
             ),

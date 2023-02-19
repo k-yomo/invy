@@ -2,7 +2,7 @@ import '../../widgets/friend_group_fragment.graphql.dart';
 import '../../widgets/friend_list_item_fragment.graphql.dart';
 import '../../widgets/invitation_awaiting_list_item.graphql.dart';
 import '../../widgets/pending_friendship_request_list_fragment.graphql.dart';
-import '../user_profile_screen.graphql.dart';
+import '../user/user_profile_screen.graphql.dart';
 import 'dart:async';
 import 'package:flutter/widgets.dart' as widgets;
 import 'package:gql/ast.dart';

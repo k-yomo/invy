@@ -10,15 +10,16 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:invy/router.dart';
 import 'package:invy/screens/friend/blocked_friends_screen.graphql.dart';
 import 'package:invy/screens/friend/friend_request_screen.graphql.dart';
-import 'package:invy/screens/user_profile_screen.graphql.dart';
+import 'package:invy/screens/user/user_profile_screen.graphql.dart';
 import 'package:invy/state/auth.dart';
 import 'package:invy/util/toast.dart';
+import 'package:invy/widgets/app_bar_leading.dart';
 import 'package:invy/widgets/invitation_awaiting_list_carousel.dart';
 import 'package:invy/widgets/sub_title.dart';
 
-import '../graphql/user_block.graphql.dart';
-import '../graphql/user_mute.graphql.dart';
-import '../services/graphql_client.dart';
+import '../../../graphql/user_block.graphql.dart';
+import '../../../graphql/user_mute.graphql.dart';
+import '../../../services/graphql_client.dart';
 
 class UserProfileScreen extends HookConsumerWidget {
   const UserProfileScreen({super.key, required this.userId, this.user});
@@ -112,7 +113,7 @@ class UserProfileScreen extends HookConsumerWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       body: Stack(children: [
-        Column(children: <Widget>[
+        Column(children: [
           Container(
             height: 200,
             decoration: BoxDecoration(
@@ -191,12 +192,38 @@ class UserProfileScreen extends HookConsumerWidget {
                               Text("友達",
                                   style: TextStyle(
                                       color: Colors.grey.shade700,
-                                      fontSize: 16))
+                                      fontSize: 16)),
+                              const Gap(10),
+                              TextButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.black,
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 5, horizontal: 20),
+                                  minimumSize: Size.zero,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(5),
+                                  ),
+                                ),
+                                onPressed: () {
+                                  UserFriendsRoute(userId,
+                                          userNickname: user.nickname)
+                                      .push(context);
+                                },
+                                child: const Text(
+                                  "友達一覧",
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              )
                             ],
                           )
                         : const SizedBox(),
                   ],
                 ),
+                const Gap(2),
                 !user.isFriend
                     ? Container(
                         margin: const EdgeInsets.symmetric(
@@ -238,6 +265,11 @@ class UserProfileScreen extends HookConsumerWidget {
             ),
           ),
         ]),
+        const Positioned(
+          top: 50,
+          left: 10,
+          child: AppBarLeading(),
+        ),
         user.isFriend
             ? Positioned(
                 top: 220,

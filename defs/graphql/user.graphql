@@ -4,6 +4,8 @@ extend type Query {
     user(userId: UUID!): User! @authRequired
     # fetch user by screen id
     userByScreenId(screenId: String!): User! @authRequired
+    # It'll be empty when not friend
+    userFriends(userId: UUID!, after: Cursor, first: Int, before: Cursor, last: Int): UserConnection!
 }
 
 extend type Mutation {

@@ -15,8 +15,9 @@ import 'package:invy/screens/login/login_landing_screen.dart';
 import 'package:invy/screens/profile/my_profile_screen.dart';
 import 'package:invy/screens/profile/profile_edit_screen.dart';
 import 'package:invy/screens/settings_screen.dart';
-import 'package:invy/screens/user_profile_screen.dart';
-import 'package:invy/screens/user_profile_screen.graphql.dart';
+import 'package:invy/screens/user/user_friends_screen.dart';
+import 'package:invy/screens/user/user_profile_screen.dart';
+import 'package:invy/screens/user/user_profile_screen.graphql.dart';
 import 'package:invy/state/auth.dart';
 import 'package:invy/widgets/dynamic_links_manager.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -93,7 +94,7 @@ GoRouter router(RouterRef ref, {Uri? initialRoute}) => GoRouter(
               "/",
               "/invitation/new",
               "/friends",
-              "/me"
+              "/me",
             ];
             if (!screensWithBottomNavigation.contains(location)) {
               return child;
@@ -194,7 +195,6 @@ Uri buildUserProfileLink(String userId) {
 
 @TypedGoRoute<UserProfileRoute>(
   path: '/users/:userId',
-  routes: [],
 )
 class UserProfileRoute extends GoRouteData {
   const UserProfileRoute(this.userId, {this.$extra});
@@ -206,6 +206,21 @@ class UserProfileRoute extends GoRouteData {
   Widget build(BuildContext context, GoRouterState state) =>
       DynamicLinksManager(
           child: UserProfileScreen(userId: userId, user: $extra));
+}
+
+@TypedGoRoute<UserFriendsRoute>(
+  path: '/users/:userId/friends',
+)
+class UserFriendsRoute extends GoRouteData {
+  const UserFriendsRoute(this.userId, {this.userNickname});
+
+  final String userId;
+  final String? userNickname;
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      DynamicLinksManager(
+          child: UserFriendsScreen(userId: userId, userNickname: userNickname));
 }
 
 @TypedGoRoute<MyProfileRoute>(

@@ -1,4 +1,4 @@
-import '../widgets/invitation_awaiting_list_item.graphql.dart';
+import '../../widgets/invitation_awaiting_list_item.graphql.dart';
 import 'package:flutter/widgets.dart' as widgets;
 import 'package:gql/ast.dart';
 import 'package:graphql/client.dart' as graphql;

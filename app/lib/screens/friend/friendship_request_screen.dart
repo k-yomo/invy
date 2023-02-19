@@ -32,7 +32,7 @@ class FriendshipRequestScreen extends HookConsumerWidget {
       appBar: AppBar(
         leading: const AppBarLeading(),
         title: const Text(
-          '友だち追加',
+          '友達追加',
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
         ),
         shape:
@@ -60,7 +60,7 @@ class FriendshipRequestScreen extends HookConsumerWidget {
                       width: 2,
                     ),
                   ),
-                  hintText: '友だちのユーザーIDで検索',
+                  hintText: '友達のユーザーIDで検索',
                 ),
                 autofocus: true,
                 onChanged: (_) {

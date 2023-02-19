@@ -23,6 +23,7 @@ import (
 	"github.com/k-yomo/invy/invy_api/config"
 	"github.com/k-yomo/invy/invy_api/device"
 	"github.com/k-yomo/invy/invy_api/ent"
+	_ "github.com/k-yomo/invy/invy_api/ent/runtime"
 	"github.com/k-yomo/invy/invy_api/graph"
 	"github.com/k-yomo/invy/invy_api/graph/directive"
 	"github.com/k-yomo/invy/invy_api/graph/gqlgen"

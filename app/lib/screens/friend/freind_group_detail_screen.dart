@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:graphql/client.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:invy/screens/user_profile_screen.dart';
+import 'package:invy/screens/user/user_profile_screen.dart';
 import 'package:invy/widgets/dynamic_links_manager.dart';
 import 'package:invy/widgets/friend_list.dart';
 import 'package:invy/screens/friend/friend_group_edit_screen.dart';

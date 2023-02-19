@@ -1,6 +1,6 @@
 import '../../widgets/friend_list_item_fragment.graphql.dart';
 import '../../widgets/invitation_awaiting_list_item.graphql.dart';
-import '../user_profile_screen.graphql.dart';
+import '../user/user_profile_screen.graphql.dart';
 import 'friend_group_edit_screen.graphql.dart';
 import 'package:flutter/widgets.dart' as widgets;
 import 'package:gql/ast.dart';

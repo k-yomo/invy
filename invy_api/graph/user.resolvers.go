@@ -125,13 +125,71 @@ func (r *queryResolver) User(ctx context.Context, userID uuid.UUID) (*gqlmodel.U
 // UserByScreenID is the resolver for the userByScreenId field.
 func (r *queryResolver) UserByScreenID(ctx context.Context, screenID string) (*gqlmodel.User, error) {
 	dbUserProfile, err := r.DB.User.Query().
-		Where(user.StatusEQ(user.StatusActive)).
 		QueryUserProfile().
 		Where(userprofile.ScreenID(screenID)).Only(ctx)
 	if err != nil {
 		return nil, err
 	}
 	return conv.ConvertFromDBUserProfile(dbUserProfile), nil
+}
+
+// UserFriends is the resolver for the userFriends field.
+func (r *queryResolver) UserFriends(ctx context.Context, userID uuid.UUID, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*gqlmodel.UserConnection, error) {
+	authUserID := auth.GetCurrentUserID(ctx)
+	isFriend, err := r.DB.Friendship.Query().
+		Where(friendship.UserID(authUserID), friendship.FriendUserID(userID)).
+		Exist(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	// Friend list can be only seen by friend
+	if userID != authUserID && !isFriend {
+		return &gqlmodel.UserConnection{
+			PageInfo: &gqlmodel.PageInfo{},
+		}, nil
+	}
+
+	dbUserProfileConnection, err := r.DB.Friendship.Query().
+		WithFriendUser(func(q *ent.UserQuery) {
+			q.WithUserProfile()
+		}).
+		Where(
+			friendship.UserID(userID),
+			func(s *sql.Selector) {
+				userBlockTable := sql.Table(userblock.Table)
+				s.Where(
+					sql.NotExists(
+						sql.Select().
+							From(userBlockTable).
+							Where(
+								sql.And(
+									sql.EQ(userBlockTable.C(userblock.FieldUserID), userID),
+									sql.ColumnsEQ(userBlockTable.C(userblock.FieldBlockUserID), s.C(friendship.FieldFriendUserID)),
+								),
+							),
+					),
+				)
+			},
+		).
+		QueryFriendUser().
+		Where(user.StatusEQ(user.StatusActive)).
+		QueryUserProfile().
+		Paginate(ctx, after, first, before, last)
+	if err != nil {
+		return nil, err
+	}
+	userConnection := gqlmodel.UserConnection{
+		PageInfo:   conv.ConvertFromDBPageInfo(&dbUserProfileConnection.PageInfo),
+		TotalCount: dbUserProfileConnection.TotalCount,
+	}
+	for _, edge := range dbUserProfileConnection.Edges {
+		userConnection.Edges = append(userConnection.Edges, &gqlmodel.UserEdge{
+			Node:   conv.ConvertFromDBUserProfile(edge.Node),
+			Cursor: edge.Cursor,
+		})
+	}
+	return &userConnection, nil
 }
 
 // IsMuted is the resolver for the isMuted field.

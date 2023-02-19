@@ -123,7 +123,7 @@ class InvitationDetailScreen extends HookConsumerWidget {
                                           icon: invitationLocationMarker.value)
                                     }),
                                 const Positioned(
-                                  top: 40,
+                                  top: 50,
                                   left: 10,
                                   child: AppBarLeading(),
                                 ),

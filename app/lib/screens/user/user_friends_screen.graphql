@@ -1,0 +1,16 @@
+
+query userFriendsScreenUserFriends($userId: UUID!, $after: Cursor) {
+    userFriends(userId: $userId, after: $after) {
+        edges {
+            node {
+                ...userProfileScreenFragment
+                ...friendListItemFragment
+            }
+        }
+        pageInfo {
+            hasNextPage
+            endCursor
+        }
+    }
+}
+

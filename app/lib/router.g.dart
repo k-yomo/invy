@@ -11,6 +11,7 @@ List<GoRoute> get $appRoutes => [
       $invitationRoute,
       $friendsRoute,
       $userProfileRoute,
+      $userFriendsRoute,
       $myProfileRoute,
       $loginRoute,
     ];
@@ -199,6 +200,29 @@ extension $UserProfileRouteExtension on UserProfileRoute {
   void push(BuildContext context) => context.push(location, extra: this);
 }
 
+GoRoute get $userFriendsRoute => GoRouteData.$route(
+      path: '/users/:userId/friends',
+      factory: $UserFriendsRouteExtension._fromState,
+    );
+
+extension $UserFriendsRouteExtension on UserFriendsRoute {
+  static UserFriendsRoute _fromState(GoRouterState state) => UserFriendsRoute(
+        state.params['userId']!,
+        userNickname: state.queryParams['user-nickname'],
+      );
+
+  String get location => GoRouteData.$location(
+        '/users/${Uri.encodeComponent(userId)}/friends',
+        queryParams: {
+          if (userNickname != null) 'user-nickname': userNickname!,
+        },
+      );
+
+  void go(BuildContext context) => context.go(location, extra: this);
+
+  void push(BuildContext context) => context.push(location, extra: this);
+}
+
 GoRoute get $myProfileRoute => GoRouteData.$route(
       path: '/me',
       factory: $MyProfileRouteExtension._fromState,
@@ -318,7 +342,7 @@ class _SystemHash {
   }
 }
 
-String _$routerHash() => r'8f6fa936b9e6abb65722e63d37e135fc9d638707';
+String _$routerHash() => r'903795acfae993814894e8cf3274285a8c1e8edb';
 
 /// See also [router].
 class RouterProvider extends AutoDisposeProvider<GoRouter> {

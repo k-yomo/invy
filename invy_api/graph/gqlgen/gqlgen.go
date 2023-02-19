@@ -188,6 +188,7 @@ type ComplexityRoot struct {
 		Invitation     func(childComplexity int, id uuid.UUID) int
 		User           func(childComplexity int, userID uuid.UUID) int
 		UserByScreenID func(childComplexity int, screenID string) int
+		UserFriends    func(childComplexity int, userID uuid.UUID, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
 		Viewer         func(childComplexity int) int
 	}
 
@@ -339,6 +340,7 @@ type QueryResolver interface {
 	Viewer(ctx context.Context) (*gqlmodel.Viewer, error)
 	User(ctx context.Context, userID uuid.UUID) (*gqlmodel.User, error)
 	UserByScreenID(ctx context.Context, screenID string) (*gqlmodel.User, error)
+	UserFriends(ctx context.Context, userID uuid.UUID, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*gqlmodel.UserConnection, error)
 }
 type UserResolver interface {
 	IsMuted(ctx context.Context, obj *gqlmodel.User) (bool, error)
@@ -1029,6 +1031,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.UserByScreenID(childComplexity, args["screenId"].(string)), true
 
+	case "Query.userFriends":
+		if e.complexity.Query.UserFriends == nil {
+			break
+		}
+
+		args, err := ec.field_Query_userFriends_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.UserFriends(childComplexity, args["userId"].(uuid.UUID), args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int)), true
+
 	case "Query.viewer":
 		if e.complexity.Query.Viewer == nil {
 			break
@@ -1652,6 +1666,8 @@ extend type Query {
     user(userId: UUID!): User! @authRequired
     # fetch user by screen id
     userByScreenId(screenId: String!): User! @authRequired
+    # It'll be empty when not friend
+    userFriends(userId: UUID!, after: Cursor, first: Int, before: Cursor, last: Int): UserConnection!
 }
 
 extend type Mutation {
@@ -2251,6 +2267,57 @@ func (ec *executionContext) field_Query_userByScreenId_args(ctx context.Context,
 		}
 	}
 	args["screenId"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_userFriends_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 uuid.UUID
+	if tmp, ok := rawArgs["userId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userId"))
+		arg0, err = ec.unmarshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["userId"] = arg0
+	var arg1 *ent.Cursor
+	if tmp, ok := rawArgs["after"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("after"))
+		arg1, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋentᚐCursor(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["after"] = arg1
+	var arg2 *int
+	if tmp, ok := rawArgs["first"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("first"))
+		arg2, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["first"] = arg2
+	var arg3 *ent.Cursor
+	if tmp, ok := rawArgs["before"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("before"))
+		arg3, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋentᚐCursor(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["before"] = arg3
+	var arg4 *int
+	if tmp, ok := rawArgs["last"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("last"))
+		arg4, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["last"] = arg4
 	return args, nil
 }
 
@@ -6992,6 +7059,69 @@ func (ec *executionContext) fieldContext_Query_userByScreenId(ctx context.Contex
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_userByScreenId_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_userFriends(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_userFriends(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().UserFriends(rctx, fc.Args["userId"].(uuid.UUID), fc.Args["after"].(*ent.Cursor), fc.Args["first"].(*int), fc.Args["before"].(*ent.Cursor), fc.Args["last"].(*int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.UserConnection)
+	fc.Result = res
+	return ec.marshalNUserConnection2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐUserConnection(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_userFriends(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "edges":
+				return ec.fieldContext_UserConnection_edges(ctx, field)
+			case "pageInfo":
+				return ec.fieldContext_UserConnection_pageInfo(ctx, field)
+			case "totalCount":
+				return ec.fieldContext_UserConnection_totalCount(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type UserConnection", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_userFriends_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return
 	}
@@ -12888,6 +13018,29 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_userByScreenId(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return rrm(innerCtx)
+			})
+		case "userFriends":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_userFriends(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
