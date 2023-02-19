@@ -96,15 +96,14 @@ class InvitationDetailScreen extends HookConsumerWidget {
                               color: Colors.grey.shade200, width: 1)),
                     )
                   : null,
-              body: Column(
+              body: Stack(
                 children: [
-                  invitation.coordinate != null
-                      ? SizedBox(
-                          height: 280,
-                          child: Stack(
-                              fit: StackFit.expand,
-                              alignment: Alignment.center,
-                              children: [
+                  Column(
+                    children: [
+                      invitation.coordinate != null
+                          ? SizedBox(
+                              height: 280,
+                              child: Stack(children: [
                                 GoogleMap(
                                     initialCameraPosition: CameraPosition(
                                       target: LatLng(
@@ -122,11 +121,6 @@ class InvitationDetailScreen extends HookConsumerWidget {
                                               invitation.coordinate!.longitude),
                                           icon: invitationLocationMarker.value)
                                     }),
-                                const Positioned(
-                                  top: 50,
-                                  left: 10,
-                                  child: AppBarLeading(),
-                                ),
                                 Positioned(
                                   bottom: 10,
                                   right: 10,
@@ -152,164 +146,173 @@ class InvitationDetailScreen extends HookConsumerWidget {
                                   ),
                                 ),
                               ]),
-                        )
-                      : const SizedBox(height: 10),
-                  Container(
-                    margin: const EdgeInsets.symmetric(
-                        vertical: 10, horizontal: 15),
-                    child: Column(
-                      children: [
-                        Row(
+                            )
+                          : const SizedBox(height: 10),
+                      Container(
+                        margin: const EdgeInsets.symmetric(
+                            vertical: 10, horizontal: 15),
+                        child: Column(
                           children: [
-                            CircleAvatar(
-                              backgroundColor: Colors.transparent,
-                              backgroundImage: CachedNetworkImageProvider(
-                                  invitation.user.avatarUrl),
-                            ),
-                            Expanded(
-                              child: Container(
-                                margin:
-                                    const EdgeInsets.only(left: 10, right: 5),
-                                child: Text(
-                                  invitation.user.nickname,
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.bold),
-                                  overflow: TextOverflow.ellipsis,
+                            Row(
+                              children: [
+                                CircleAvatar(
+                                  backgroundColor: Colors.transparent,
+                                  backgroundImage: CachedNetworkImageProvider(
+                                      invitation.user.avatarUrl),
                                 ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        Container(
-                          margin: const EdgeInsets.only(top: 10, bottom: 5),
-                          width: double.infinity,
-                          child: Column(
-                            children: [
-                              Row(
-                                children: [
-                                  Container(
-                                    child: const Text(
-                                      "開催日時",
-                                      style: TextStyle(
-                                          fontSize: 12,
+                                Expanded(
+                                  child: Container(
+                                    margin: const EdgeInsets.only(
+                                        left: 10, right: 5),
+                                    child: Text(
+                                      invitation.user.nickname,
+                                      style: const TextStyle(
                                           fontWeight: FontWeight.bold),
+                                      overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
-                                ],
-                              ),
-                              SizedBox(
-                                width: double.infinity,
-                                child: Text(
-                                  "${_convertToDisplayTime(invitation.startsAt)}〜",
-                                  style: const TextStyle(fontSize: 16),
                                 ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Container(
-                          margin: const EdgeInsets.only(top: 10, bottom: 5),
-                          width: double.infinity,
-                          child: Column(
-                            children: [
-                              Row(
+                              ],
+                            ),
+                            Container(
+                              margin: const EdgeInsets.only(top: 10, bottom: 5),
+                              width: double.infinity,
+                              child: Column(
                                 children: [
-                                  Container(
-                                    child: const Text(
-                                      "開催場所",
-                                      style: TextStyle(
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(
-                                width: double.infinity,
-                                child: Text(
-                                  invitation.location,
-                                  style: const TextStyle(fontSize: 16),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        invitation.comment.isNotEmpty
-                            ? Container(
-                                margin:
-                                    const EdgeInsets.symmetric(vertical: 10),
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const Icon(Icons.notes, size: 20),
-                                    Container(
-                                      margin: const EdgeInsets.only(left: 5),
-                                      child: Text(
-                                        invitation.comment,
-                                        style: const TextStyle(fontSize: 12),
-                                        overflow: TextOverflow.ellipsis,
+                                  Row(
+                                    children: [
+                                      Container(
+                                        child: const Text(
+                                          "開催日時",
+                                          style: TextStyle(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.bold),
+                                        ),
                                       ),
-                                    )
-                                  ],
-                                ),
-                              )
-                            : const SizedBox(),
-                        Column(
-                          children: invitation.acceptedUsers.isNotEmpty
-                              ? [
-                                  Container(
-                                    width: double.infinity,
-                                    margin: const EdgeInsets.only(top: 10),
-                                    child: const Text("参加者",
-                                        style: TextStyle(
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.bold)),
+                                    ],
                                   ),
                                   SizedBox(
                                     width: double.infinity,
-                                    child: SingleChildScrollView(
-                                      scrollDirection: Axis.horizontal,
-                                      child: Row(
-                                        children: [
-                                          Row(
-                                            children: invitation.acceptedUsers
-                                                .map((acceptedUser) => SizedBox(
-                                                      width: 50,
-                                                      child: Column(
-                                                        children: [
-                                                          CircleAvatar(
-                                                            backgroundColor:
-                                                                Colors
-                                                                    .transparent,
-                                                            backgroundImage:
-                                                                CachedNetworkImageProvider(
-                                                                    acceptedUser
-                                                                        .avatarUrl),
-                                                          ),
-                                                          Text(
-                                                            acceptedUser
-                                                                .nickname,
-                                                            style:
-                                                                const TextStyle(
-                                                                    fontSize:
-                                                                        10),
-                                                            overflow:
-                                                                TextOverflow
-                                                                    .ellipsis,
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ))
-                                                .toList(),
-                                          ),
-                                        ],
-                                      ),
+                                    child: Text(
+                                      "${_convertToDisplayTime(invitation.startsAt)}〜",
+                                      style: const TextStyle(fontSize: 16),
                                     ),
                                   ),
-                                ]
-                              : [],
+                                ],
+                              ),
+                            ),
+                            Container(
+                              margin: const EdgeInsets.only(top: 10, bottom: 5),
+                              width: double.infinity,
+                              child: Column(
+                                children: [
+                                  Row(
+                                    children: [
+                                      Container(
+                                        child: const Text(
+                                          "開催場所",
+                                          style: TextStyle(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    width: double.infinity,
+                                    child: Text(
+                                      invitation.location,
+                                      style: const TextStyle(fontSize: 16),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            invitation.comment.isNotEmpty
+                                ? Container(
+                                    margin: const EdgeInsets.symmetric(
+                                        vertical: 10),
+                                    child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        const Icon(Icons.notes, size: 20),
+                                        Container(
+                                          margin:
+                                              const EdgeInsets.only(left: 5),
+                                          child: Text(
+                                            invitation.comment,
+                                            style:
+                                                const TextStyle(fontSize: 12),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  )
+                                : const SizedBox(),
+                            Column(
+                              children: invitation.acceptedUsers.isNotEmpty
+                                  ? [
+                                      Container(
+                                        width: double.infinity,
+                                        margin: const EdgeInsets.only(top: 10),
+                                        child: const Text("参加者",
+                                            style: TextStyle(
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.bold)),
+                                      ),
+                                      SizedBox(
+                                        width: double.infinity,
+                                        child: SingleChildScrollView(
+                                          scrollDirection: Axis.horizontal,
+                                          child: Row(
+                                            children: [
+                                              Row(
+                                                children:
+                                                    invitation.acceptedUsers
+                                                        .map(
+                                                            (acceptedUser) =>
+                                                                SizedBox(
+                                                                  width: 50,
+                                                                  child: Column(
+                                                                    children: [
+                                                                      CircleAvatar(
+                                                                        backgroundColor:
+                                                                            Colors.transparent,
+                                                                        backgroundImage:
+                                                                            CachedNetworkImageProvider(acceptedUser.avatarUrl),
+                                                                      ),
+                                                                      Text(
+                                                                        acceptedUser
+                                                                            .nickname,
+                                                                        style: const TextStyle(
+                                                                            fontSize:
+                                                                                10),
+                                                                        overflow:
+                                                                            TextOverflow.ellipsis,
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ))
+                                                        .toList(),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ]
+                                  : [],
+                            ),
+                          ],
                         ),
-                      ],
+                      ),
+                    ],
+                  ),
+                  const SafeArea(
+                    child: Padding(
+                      padding: EdgeInsets.only(top: 5, left: 5),
+                      child: AppBarLeading(),
                     ),
                   ),
                 ],

@@ -263,10 +263,11 @@ class UserProfileScreen extends HookConsumerWidget {
             ),
           ),
         ]),
-        const Positioned(
-          top: 50,
-          left: 10,
-          child: AppBarLeading(),
+        const SafeArea(
+          child: Padding(
+            padding: EdgeInsets.only(top: 5, left: 5),
+            child: AppBarLeading(),
+          ),
         ),
         user.isFriend
             ? Positioned(
