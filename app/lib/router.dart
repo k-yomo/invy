@@ -1,3 +1,4 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -74,6 +75,9 @@ CustomTransitionPage<T> buildPageWithoutAnimation<T>({
 GoRouter router(RouterRef ref, {Uri? initialRoute}) => GoRouter(
     navigatorKey: _rootNavigatorKey,
     initialLocation: initialRoute != null ? initialRoute.path : '/',
+    observers: [
+      FirebaseAnalyticsObserver(analytics: FirebaseAnalytics.instance)
+    ],
     routes: [
       ShellRoute(
           navigatorKey: _shellNavigatorKey,
