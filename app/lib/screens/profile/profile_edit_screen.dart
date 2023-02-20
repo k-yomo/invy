@@ -41,7 +41,6 @@ class ProfileEditScreen extends HookConsumerWidget {
     final graphqlClient = ref.read(graphqlClientProvider);
     final user = ref.watch(loggedInUserProvider)!;
     final avatarUpdateLoading = useState(false);
-    final screenIdController = TextEditingController(text: user.screenId);
 
     onPressedAvatarUpdate() async {
       PermissionStatus permissionStatus;
@@ -185,7 +184,7 @@ class ProfileEditScreen extends HookConsumerWidget {
                       }),
                   const Gap(20),
                   TextFormField(
-                    controller: screenIdController,
+                    controller: TextEditingController(text: user.screenId),
                     decoration: InputDecoration(
                       labelText: 'ユーザーID',
                       labelStyle: TextStyle(color: Colors.grey.shade600),
@@ -219,10 +218,25 @@ class ProfileEditScreen extends HookConsumerWidget {
   }
 }
 
-class NicknameEditForm extends HookConsumerWidget {
+class NicknameEditForm extends StatefulHookConsumerWidget {
   const NicknameEditForm({super.key, this.nickname});
-
   final String? nickname;
+
+  @override
+  ConsumerState<NicknameEditForm> createState() => NicknameEditFormState();
+}
+
+class NicknameEditFormState extends ConsumerState<NicknameEditForm> {
+  late TextEditingController _nicknameController;
+
+  @override
+  void initState() {
+    super.initState();
+    _nicknameController = TextEditingController(text: widget.nickname);
+    _nicknameController.selection = TextSelection.fromPosition(
+      TextPosition(offset: widget.nickname?.length ?? 0),
+    );
+  }
 
   String? validateNickname(value) {
     if (value == null || value.isEmpty) {
@@ -235,17 +249,16 @@ class NicknameEditForm extends HookConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final graphqlClient = ref.read(graphqlClientProvider);
     final nicknameFormKey = useMemoized(() => GlobalKey<FormState>());
-    final nicknameController = TextEditingController(text: nickname);
 
     Future<bool> onNicknameSubmitted() async {
-      final nickname = nicknameController.text;
+      final nickname = _nicknameController.text;
       if (validateNickname(nickname) != null) {
         return false;
       }
-      if (nickname == this.nickname) {
+      if (nickname == widget.nickname) {
         // no change
         return true;
       }
@@ -273,7 +286,7 @@ class NicknameEditForm extends HookConsumerWidget {
             autovalidateMode: AutovalidateMode.onUserInteraction,
             child: TextFormField(
               autofocus: true,
-              controller: nicknameController,
+              controller: _nicknameController,
               cursorColor: Colors.grey.shade600,
               decoration: InputDecoration(
                 labelText: 'ニックネーム',
@@ -284,6 +297,12 @@ class NicknameEditForm extends HookConsumerWidget {
               ),
               maxLength: 50,
               validator: validateNickname,
+              onEditingComplete: () async {
+                final isSuccessful = await onNicknameSubmitted();
+                if (isSuccessful) {
+                  Navigator.pop(context);
+                }
+              },
             ),
           ),
         ),
@@ -315,10 +334,25 @@ class NicknameEditForm extends HookConsumerWidget {
   }
 }
 
-class ScreenIdEditForm extends HookConsumerWidget {
+class ScreenIdEditForm extends StatefulHookConsumerWidget {
   const ScreenIdEditForm({super.key, this.screenId});
-
   final String? screenId;
+
+  @override
+  ConsumerState<ScreenIdEditForm> createState() => ScreenIdEditFormState();
+}
+
+class ScreenIdEditFormState extends ConsumerState<ScreenIdEditForm> {
+  late TextEditingController _screenIdController;
+
+  @override
+  void initState() {
+    super.initState();
+    _screenIdController = TextEditingController(text: widget.screenId);
+    _screenIdController.selection = TextSelection.fromPosition(
+      TextPosition(offset: widget.screenId?.length ?? 0),
+    );
+  }
 
   String? validateScreenId(value) {
     final screenIdRegex = RegExp(r'(^[a-zA-Z0-9_]*$)');
@@ -335,17 +369,16 @@ class ScreenIdEditForm extends HookConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final graphqlClient = ref.read(graphqlClientProvider);
     final screenIdFormKey = useMemoized(() => GlobalKey<FormState>());
-    final screenIdController = TextEditingController(text: screenId);
 
     Future<bool> onScreenIdSubmitted() async {
-      final screenId = screenIdController.text;
+      final screenId = _screenIdController.text;
       if (validateScreenId(screenId) != null) {
         return false;
       }
-      if (screenId == this.screenId) {
+      if (screenId == widget.screenId) {
         // no change
         return true;
       }
@@ -382,7 +415,7 @@ class ScreenIdEditForm extends HookConsumerWidget {
                 autovalidateMode: AutovalidateMode.onUserInteraction,
                 child: TextFormField(
                   autofocus: true,
-                  controller: screenIdController,
+                  controller: _screenIdController,
                   cursorColor: Colors.grey.shade600,
                   decoration: InputDecoration(
                     labelText: 'ユーザーID',
@@ -393,6 +426,12 @@ class ScreenIdEditForm extends HookConsumerWidget {
                   ),
                   maxLength: 15,
                   validator: validateScreenId,
+                  onEditingComplete: () async {
+                    final isSuccessful = await onScreenIdSubmitted();
+                    if (isSuccessful) {
+                      Navigator.pop(context);
+                    }
+                  },
                 ),
               ),
               const Text("英数字、アンダースコア（_）のみ使用可能です。",
