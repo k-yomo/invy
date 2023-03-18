@@ -9,7 +9,7 @@ import 'package:graphql_flutter/graphql_flutter.dart' as graphql_flutter;
 class Query$homeScreenViewer {
   Query$homeScreenViewer({
     required this.viewer,
-    required this.$__typename,
+    this.$__typename = 'Query',
   });
 
   factory Query$homeScreenViewer.fromJson(Map<String, dynamic> json) {
@@ -103,7 +103,7 @@ class _CopyWithImpl$Query$homeScreenViewer<TRes>
 
   final TRes Function(Query$homeScreenViewer) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? viewer = _undefined,
@@ -252,6 +252,10 @@ const documentNodeQueryhomeScreenViewer = DocumentNode(definitions: [
 Query$homeScreenViewer _parserFn$Query$homeScreenViewer(
         Map<String, dynamic> data) =>
     Query$homeScreenViewer.fromJson(data);
+typedef OnQueryComplete$Query$homeScreenViewer = FutureOr<void> Function(
+  Map<String, dynamic>?,
+  Query$homeScreenViewer?,
+);
 
 class Options$Query$homeScreenViewer
     extends graphql.QueryOptions<Query$homeScreenViewer> {
@@ -261,19 +265,42 @@ class Options$Query$homeScreenViewer
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
     Object? optimisticResult,
+    Query$homeScreenViewer? typedOptimisticResult,
     Duration? pollInterval,
     graphql.Context? context,
-  }) : super(
+    OnQueryComplete$Query$homeScreenViewer? onComplete,
+    graphql.OnQueryError? onError,
+  })  : onCompleteWithParsed = onComplete,
+        super(
           operationName: operationName,
           fetchPolicy: fetchPolicy,
           errorPolicy: errorPolicy,
           cacheRereadPolicy: cacheRereadPolicy,
-          optimisticResult: optimisticResult,
+          optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
           pollInterval: pollInterval,
           context: context,
+          onComplete: onComplete == null
+              ? null
+              : (data) => onComplete(
+                    data,
+                    data == null
+                        ? null
+                        : _parserFn$Query$homeScreenViewer(data),
+                  ),
+          onError: onError,
           document: documentNodeQueryhomeScreenViewer,
           parserFn: _parserFn$Query$homeScreenViewer,
         );
+
+  final OnQueryComplete$Query$homeScreenViewer? onCompleteWithParsed;
+
+  @override
+  List<Object?> get properties => [
+        ...super.onComplete == null
+            ? super.properties
+            : super.properties.where((property) => property != onComplete),
+        onCompleteWithParsed,
+      ];
 }
 
 class WatchOptions$Query$homeScreenViewer
@@ -284,6 +311,7 @@ class WatchOptions$Query$homeScreenViewer
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
     Object? optimisticResult,
+    Query$homeScreenViewer? typedOptimisticResult,
     graphql.Context? context,
     Duration? pollInterval,
     bool? eagerlyFetchResults,
@@ -294,7 +322,7 @@ class WatchOptions$Query$homeScreenViewer
           fetchPolicy: fetchPolicy,
           errorPolicy: errorPolicy,
           cacheRereadPolicy: cacheRereadPolicy,
-          optimisticResult: optimisticResult,
+          optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
           context: context,
           document: documentNodeQueryhomeScreenViewer,
           pollInterval: pollInterval,
@@ -370,7 +398,7 @@ class Query$homeScreenViewer$viewer {
     required this.pendingInvitations,
     required this.acceptedInvitations,
     required this.invitationAwaitings,
-    required this.$__typename,
+    this.$__typename = 'Viewer',
   });
 
   factory Query$homeScreenViewer$viewer.fromJson(Map<String, dynamic> json) {
@@ -573,7 +601,7 @@ class _CopyWithImpl$Query$homeScreenViewer$viewer<TRes>
 
   final TRes Function(Query$homeScreenViewer$viewer) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? sentInvitations = _undefined,
@@ -753,7 +781,7 @@ class _CopyWithImpl$Variables$Mutation$acceptInvitation<TRes>
 
   final TRes Function(Variables$Mutation$acceptInvitation) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({Object? invitationId = _undefined}) =>
       _then(Variables$Mutation$acceptInvitation._({
@@ -775,7 +803,7 @@ class _CopyWithStubImpl$Variables$Mutation$acceptInvitation<TRes>
 class Mutation$acceptInvitation {
   Mutation$acceptInvitation({
     required this.acceptInvitation,
-    required this.$__typename,
+    this.$__typename = 'Mutation',
   });
 
   factory Mutation$acceptInvitation.fromJson(Map<String, dynamic> json) {
@@ -871,7 +899,7 @@ class _CopyWithImpl$Mutation$acceptInvitation<TRes>
 
   final TRes Function(Mutation$acceptInvitation) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? acceptInvitation = _undefined,
@@ -981,7 +1009,7 @@ Mutation$acceptInvitation _parserFn$Mutation$acceptInvitation(
         Map<String, dynamic> data) =>
     Mutation$acceptInvitation.fromJson(data);
 typedef OnMutationCompleted$Mutation$acceptInvitation = FutureOr<void> Function(
-  dynamic,
+  Map<String, dynamic>?,
   Mutation$acceptInvitation?,
 );
 
@@ -994,6 +1022,7 @@ class Options$Mutation$acceptInvitation
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
     Object? optimisticResult,
+    Mutation$acceptInvitation? typedOptimisticResult,
     graphql.Context? context,
     OnMutationCompleted$Mutation$acceptInvitation? onCompleted,
     graphql.OnMutationUpdate<Mutation$acceptInvitation>? update,
@@ -1005,7 +1034,7 @@ class Options$Mutation$acceptInvitation
           fetchPolicy: fetchPolicy,
           errorPolicy: errorPolicy,
           cacheRereadPolicy: cacheRereadPolicy,
-          optimisticResult: optimisticResult,
+          optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
           context: context,
           onCompleted: onCompleted == null
               ? null
@@ -1041,6 +1070,7 @@ class WatchOptions$Mutation$acceptInvitation
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
     Object? optimisticResult,
+    Mutation$acceptInvitation? typedOptimisticResult,
     graphql.Context? context,
     Duration? pollInterval,
     bool? eagerlyFetchResults,
@@ -1052,7 +1082,7 @@ class WatchOptions$Mutation$acceptInvitation
           fetchPolicy: fetchPolicy,
           errorPolicy: errorPolicy,
           cacheRereadPolicy: cacheRereadPolicy,
-          optimisticResult: optimisticResult,
+          optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
           context: context,
           document: documentNodeMutationacceptInvitation,
           pollInterval: pollInterval,
@@ -1090,9 +1120,10 @@ Mutation$acceptInvitation$HookResult useMutation$acceptInvitation(
   final result = graphql_flutter
       .useMutation(options ?? WidgetOptions$Mutation$acceptInvitation());
   return Mutation$acceptInvitation$HookResult(
-    (variables, {optimisticResult}) => result.runMutation(
+    (variables, {optimisticResult, typedOptimisticResult}) =>
+        result.runMutation(
       variables.toJson(),
-      optimisticResult: optimisticResult,
+      optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
     ),
     result.result,
   );
@@ -1111,6 +1142,7 @@ class WidgetOptions$Mutation$acceptInvitation
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
     Object? optimisticResult,
+    Mutation$acceptInvitation? typedOptimisticResult,
     graphql.Context? context,
     OnMutationCompleted$Mutation$acceptInvitation? onCompleted,
     graphql.OnMutationUpdate<Mutation$acceptInvitation>? update,
@@ -1121,7 +1153,7 @@ class WidgetOptions$Mutation$acceptInvitation
           fetchPolicy: fetchPolicy,
           errorPolicy: errorPolicy,
           cacheRereadPolicy: cacheRereadPolicy,
-          optimisticResult: optimisticResult,
+          optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
           context: context,
           onCompleted: onCompleted == null
               ? null
@@ -1152,6 +1184,7 @@ typedef RunMutation$Mutation$acceptInvitation
     = graphql.MultiSourceResult<Mutation$acceptInvitation> Function(
   Variables$Mutation$acceptInvitation, {
   Object? optimisticResult,
+  Mutation$acceptInvitation? typedOptimisticResult,
 });
 typedef Builder$Mutation$acceptInvitation = widgets.Widget Function(
   RunMutation$Mutation$acceptInvitation,
@@ -1175,10 +1208,12 @@ class Mutation$acceptInvitation$Widget
             (
               variables, {
               optimisticResult,
+              typedOptimisticResult,
             }) =>
                 run(
               variables.toJson(),
-              optimisticResult: optimisticResult,
+              optimisticResult:
+                  optimisticResult ?? typedOptimisticResult?.toJson(),
             ),
             result,
           ),
@@ -1188,7 +1223,7 @@ class Mutation$acceptInvitation$Widget
 class Mutation$acceptInvitation$acceptInvitation {
   Mutation$acceptInvitation$acceptInvitation({
     required this.invitation,
-    required this.$__typename,
+    this.$__typename = 'AcceptInvitationPayload',
   });
 
   factory Mutation$acceptInvitation$acceptInvitation.fromJson(
@@ -1285,7 +1320,7 @@ class _CopyWithImpl$Mutation$acceptInvitation$acceptInvitation<TRes>
 
   final TRes Function(Mutation$acceptInvitation$acceptInvitation) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? invitation = _undefined,
@@ -1399,7 +1434,7 @@ class _CopyWithImpl$Variables$Mutation$denyInvitation<TRes>
 
   final TRes Function(Variables$Mutation$denyInvitation) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({Object? invitationId = _undefined}) =>
       _then(Variables$Mutation$denyInvitation._({
@@ -1421,7 +1456,7 @@ class _CopyWithStubImpl$Variables$Mutation$denyInvitation<TRes>
 class Mutation$denyInvitation {
   Mutation$denyInvitation({
     required this.denyInvitation,
-    required this.$__typename,
+    this.$__typename = 'Mutation',
   });
 
   factory Mutation$denyInvitation.fromJson(Map<String, dynamic> json) {
@@ -1515,7 +1550,7 @@ class _CopyWithImpl$Mutation$denyInvitation<TRes>
 
   final TRes Function(Mutation$denyInvitation) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? denyInvitation = _undefined,
@@ -1624,7 +1659,7 @@ Mutation$denyInvitation _parserFn$Mutation$denyInvitation(
         Map<String, dynamic> data) =>
     Mutation$denyInvitation.fromJson(data);
 typedef OnMutationCompleted$Mutation$denyInvitation = FutureOr<void> Function(
-  dynamic,
+  Map<String, dynamic>?,
   Mutation$denyInvitation?,
 );
 
@@ -1637,6 +1672,7 @@ class Options$Mutation$denyInvitation
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
     Object? optimisticResult,
+    Mutation$denyInvitation? typedOptimisticResult,
     graphql.Context? context,
     OnMutationCompleted$Mutation$denyInvitation? onCompleted,
     graphql.OnMutationUpdate<Mutation$denyInvitation>? update,
@@ -1648,7 +1684,7 @@ class Options$Mutation$denyInvitation
           fetchPolicy: fetchPolicy,
           errorPolicy: errorPolicy,
           cacheRereadPolicy: cacheRereadPolicy,
-          optimisticResult: optimisticResult,
+          optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
           context: context,
           onCompleted: onCompleted == null
               ? null
@@ -1684,6 +1720,7 @@ class WatchOptions$Mutation$denyInvitation
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
     Object? optimisticResult,
+    Mutation$denyInvitation? typedOptimisticResult,
     graphql.Context? context,
     Duration? pollInterval,
     bool? eagerlyFetchResults,
@@ -1695,7 +1732,7 @@ class WatchOptions$Mutation$denyInvitation
           fetchPolicy: fetchPolicy,
           errorPolicy: errorPolicy,
           cacheRereadPolicy: cacheRereadPolicy,
-          optimisticResult: optimisticResult,
+          optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
           context: context,
           document: documentNodeMutationdenyInvitation,
           pollInterval: pollInterval,
@@ -1731,9 +1768,10 @@ Mutation$denyInvitation$HookResult useMutation$denyInvitation(
   final result = graphql_flutter
       .useMutation(options ?? WidgetOptions$Mutation$denyInvitation());
   return Mutation$denyInvitation$HookResult(
-    (variables, {optimisticResult}) => result.runMutation(
+    (variables, {optimisticResult, typedOptimisticResult}) =>
+        result.runMutation(
       variables.toJson(),
-      optimisticResult: optimisticResult,
+      optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
     ),
     result.result,
   );
@@ -1752,6 +1790,7 @@ class WidgetOptions$Mutation$denyInvitation
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
     Object? optimisticResult,
+    Mutation$denyInvitation? typedOptimisticResult,
     graphql.Context? context,
     OnMutationCompleted$Mutation$denyInvitation? onCompleted,
     graphql.OnMutationUpdate<Mutation$denyInvitation>? update,
@@ -1762,7 +1801,7 @@ class WidgetOptions$Mutation$denyInvitation
           fetchPolicy: fetchPolicy,
           errorPolicy: errorPolicy,
           cacheRereadPolicy: cacheRereadPolicy,
-          optimisticResult: optimisticResult,
+          optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
           context: context,
           onCompleted: onCompleted == null
               ? null
@@ -1793,6 +1832,7 @@ typedef RunMutation$Mutation$denyInvitation
     = graphql.MultiSourceResult<Mutation$denyInvitation> Function(
   Variables$Mutation$denyInvitation, {
   Object? optimisticResult,
+  Mutation$denyInvitation? typedOptimisticResult,
 });
 typedef Builder$Mutation$denyInvitation = widgets.Widget Function(
   RunMutation$Mutation$denyInvitation,
@@ -1816,10 +1856,12 @@ class Mutation$denyInvitation$Widget
             (
               variables, {
               optimisticResult,
+              typedOptimisticResult,
             }) =>
                 run(
               variables.toJson(),
-              optimisticResult: optimisticResult,
+              optimisticResult:
+                  optimisticResult ?? typedOptimisticResult?.toJson(),
             ),
             result,
           ),
@@ -1829,7 +1871,7 @@ class Mutation$denyInvitation$Widget
 class Mutation$denyInvitation$denyInvitation {
   Mutation$denyInvitation$denyInvitation({
     required this.invitation,
-    required this.$__typename,
+    this.$__typename = 'DenyInvitationPayload',
   });
 
   factory Mutation$denyInvitation$denyInvitation.fromJson(
@@ -1927,7 +1969,7 @@ class _CopyWithImpl$Mutation$denyInvitation$denyInvitation<TRes>
 
   final TRes Function(Mutation$denyInvitation$denyInvitation) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? invitation = _undefined,
@@ -1968,7 +2010,7 @@ class _CopyWithStubImpl$Mutation$denyInvitation$denyInvitation<TRes>
 class Mutation$denyInvitation$denyInvitation$invitation {
   Mutation$denyInvitation$denyInvitation$invitation({
     required this.id,
-    required this.$__typename,
+    this.$__typename = 'Invitation',
   });
 
   factory Mutation$denyInvitation$denyInvitation$invitation.fromJson(
@@ -2067,7 +2109,7 @@ class _CopyWithImpl$Mutation$denyInvitation$denyInvitation$invitation<TRes>
 
   final TRes Function(Mutation$denyInvitation$denyInvitation$invitation) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? id = _undefined,

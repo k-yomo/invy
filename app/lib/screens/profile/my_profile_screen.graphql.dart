@@ -7,7 +7,7 @@ import 'package:graphql_flutter/graphql_flutter.dart' as graphql_flutter;
 class Mutation$signOut {
   Mutation$signOut({
     required this.signOut,
-    required this.$__typename,
+    this.$__typename = 'Mutation',
   });
 
   factory Mutation$signOut.fromJson(Map<String, dynamic> json) {
@@ -100,7 +100,7 @@ class _CopyWithImpl$Mutation$signOut<TRes>
 
   final TRes Function(Mutation$signOut) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? signOut = _undefined,
@@ -178,7 +178,7 @@ const documentNodeMutationsignOut = DocumentNode(definitions: [
 Mutation$signOut _parserFn$Mutation$signOut(Map<String, dynamic> data) =>
     Mutation$signOut.fromJson(data);
 typedef OnMutationCompleted$Mutation$signOut = FutureOr<void> Function(
-  dynamic,
+  Map<String, dynamic>?,
   Mutation$signOut?,
 );
 
@@ -190,6 +190,7 @@ class Options$Mutation$signOut
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
     Object? optimisticResult,
+    Mutation$signOut? typedOptimisticResult,
     graphql.Context? context,
     OnMutationCompleted$Mutation$signOut? onCompleted,
     graphql.OnMutationUpdate<Mutation$signOut>? update,
@@ -200,7 +201,7 @@ class Options$Mutation$signOut
           fetchPolicy: fetchPolicy,
           errorPolicy: errorPolicy,
           cacheRereadPolicy: cacheRereadPolicy,
-          optimisticResult: optimisticResult,
+          optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
           context: context,
           onCompleted: onCompleted == null
               ? null
@@ -233,6 +234,7 @@ class WatchOptions$Mutation$signOut
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
     Object? optimisticResult,
+    Mutation$signOut? typedOptimisticResult,
     graphql.Context? context,
     Duration? pollInterval,
     bool? eagerlyFetchResults,
@@ -243,7 +245,7 @@ class WatchOptions$Mutation$signOut
           fetchPolicy: fetchPolicy,
           errorPolicy: errorPolicy,
           cacheRereadPolicy: cacheRereadPolicy,
-          optimisticResult: optimisticResult,
+          optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
           context: context,
           document: documentNodeMutationsignOut,
           pollInterval: pollInterval,
@@ -279,9 +281,9 @@ Mutation$signOut$HookResult useMutation$signOut(
   final result =
       graphql_flutter.useMutation(options ?? WidgetOptions$Mutation$signOut());
   return Mutation$signOut$HookResult(
-    ({optimisticResult}) => result.runMutation(
+    ({optimisticResult, typedOptimisticResult}) => result.runMutation(
       const {},
-      optimisticResult: optimisticResult,
+      optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
     ),
     result.result,
   );
@@ -300,6 +302,7 @@ class WidgetOptions$Mutation$signOut
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
     Object? optimisticResult,
+    Mutation$signOut? typedOptimisticResult,
     graphql.Context? context,
     OnMutationCompleted$Mutation$signOut? onCompleted,
     graphql.OnMutationUpdate<Mutation$signOut>? update,
@@ -310,7 +313,7 @@ class WidgetOptions$Mutation$signOut
           fetchPolicy: fetchPolicy,
           errorPolicy: errorPolicy,
           cacheRereadPolicy: cacheRereadPolicy,
-          optimisticResult: optimisticResult,
+          optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
           context: context,
           onCompleted: onCompleted == null
               ? null
@@ -336,8 +339,10 @@ class WidgetOptions$Mutation$signOut
 }
 
 typedef RunMutation$Mutation$signOut
-    = graphql.MultiSourceResult<Mutation$signOut> Function(
-        {Object? optimisticResult});
+    = graphql.MultiSourceResult<Mutation$signOut> Function({
+  Object? optimisticResult,
+  Mutation$signOut? typedOptimisticResult,
+});
 typedef Builder$Mutation$signOut = widgets.Widget Function(
   RunMutation$Mutation$signOut,
   graphql.QueryResult<Mutation$signOut>?,
@@ -357,9 +362,14 @@ class Mutation$signOut$Widget
             result,
           ) =>
               builder(
-            ({optimisticResult}) => run(
+            ({
+              optimisticResult,
+              typedOptimisticResult,
+            }) =>
+                run(
               const {},
-              optimisticResult: optimisticResult,
+              optimisticResult:
+                  optimisticResult ?? typedOptimisticResult?.toJson(),
             ),
             result,
           ),
@@ -369,7 +379,7 @@ class Mutation$signOut$Widget
 class Mutation$signOut$signOut {
   Mutation$signOut$signOut({
     required this.signedOutUserId,
-    required this.$__typename,
+    this.$__typename = 'SignOutPayload',
   });
 
   factory Mutation$signOut$signOut.fromJson(Map<String, dynamic> json) {
@@ -462,7 +472,7 @@ class _CopyWithImpl$Mutation$signOut$signOut<TRes>
 
   final TRes Function(Mutation$signOut$signOut) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? signedOutUserId = _undefined,
@@ -495,7 +505,7 @@ class _CopyWithStubImpl$Mutation$signOut$signOut<TRes>
 class Mutation$deleteAccount {
   Mutation$deleteAccount({
     required this.deleteAccount,
-    required this.$__typename,
+    this.$__typename = 'Mutation',
   });
 
   factory Mutation$deleteAccount.fromJson(Map<String, dynamic> json) {
@@ -589,7 +599,7 @@ class _CopyWithImpl$Mutation$deleteAccount<TRes>
 
   final TRes Function(Mutation$deleteAccount) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? deleteAccount = _undefined,
@@ -668,7 +678,7 @@ Mutation$deleteAccount _parserFn$Mutation$deleteAccount(
         Map<String, dynamic> data) =>
     Mutation$deleteAccount.fromJson(data);
 typedef OnMutationCompleted$Mutation$deleteAccount = FutureOr<void> Function(
-  dynamic,
+  Map<String, dynamic>?,
   Mutation$deleteAccount?,
 );
 
@@ -680,6 +690,7 @@ class Options$Mutation$deleteAccount
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
     Object? optimisticResult,
+    Mutation$deleteAccount? typedOptimisticResult,
     graphql.Context? context,
     OnMutationCompleted$Mutation$deleteAccount? onCompleted,
     graphql.OnMutationUpdate<Mutation$deleteAccount>? update,
@@ -690,7 +701,7 @@ class Options$Mutation$deleteAccount
           fetchPolicy: fetchPolicy,
           errorPolicy: errorPolicy,
           cacheRereadPolicy: cacheRereadPolicy,
-          optimisticResult: optimisticResult,
+          optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
           context: context,
           onCompleted: onCompleted == null
               ? null
@@ -725,6 +736,7 @@ class WatchOptions$Mutation$deleteAccount
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
     Object? optimisticResult,
+    Mutation$deleteAccount? typedOptimisticResult,
     graphql.Context? context,
     Duration? pollInterval,
     bool? eagerlyFetchResults,
@@ -735,7 +747,7 @@ class WatchOptions$Mutation$deleteAccount
           fetchPolicy: fetchPolicy,
           errorPolicy: errorPolicy,
           cacheRereadPolicy: cacheRereadPolicy,
-          optimisticResult: optimisticResult,
+          optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
           context: context,
           document: documentNodeMutationdeleteAccount,
           pollInterval: pollInterval,
@@ -771,9 +783,9 @@ Mutation$deleteAccount$HookResult useMutation$deleteAccount(
   final result = graphql_flutter
       .useMutation(options ?? WidgetOptions$Mutation$deleteAccount());
   return Mutation$deleteAccount$HookResult(
-    ({optimisticResult}) => result.runMutation(
+    ({optimisticResult, typedOptimisticResult}) => result.runMutation(
       const {},
-      optimisticResult: optimisticResult,
+      optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
     ),
     result.result,
   );
@@ -792,6 +804,7 @@ class WidgetOptions$Mutation$deleteAccount
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
     Object? optimisticResult,
+    Mutation$deleteAccount? typedOptimisticResult,
     graphql.Context? context,
     OnMutationCompleted$Mutation$deleteAccount? onCompleted,
     graphql.OnMutationUpdate<Mutation$deleteAccount>? update,
@@ -802,7 +815,7 @@ class WidgetOptions$Mutation$deleteAccount
           fetchPolicy: fetchPolicy,
           errorPolicy: errorPolicy,
           cacheRereadPolicy: cacheRereadPolicy,
-          optimisticResult: optimisticResult,
+          optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
           context: context,
           onCompleted: onCompleted == null
               ? null
@@ -830,8 +843,10 @@ class WidgetOptions$Mutation$deleteAccount
 }
 
 typedef RunMutation$Mutation$deleteAccount
-    = graphql.MultiSourceResult<Mutation$deleteAccount> Function(
-        {Object? optimisticResult});
+    = graphql.MultiSourceResult<Mutation$deleteAccount> Function({
+  Object? optimisticResult,
+  Mutation$deleteAccount? typedOptimisticResult,
+});
 typedef Builder$Mutation$deleteAccount = widgets.Widget Function(
   RunMutation$Mutation$deleteAccount,
   graphql.QueryResult<Mutation$deleteAccount>?,
@@ -851,9 +866,14 @@ class Mutation$deleteAccount$Widget
             result,
           ) =>
               builder(
-            ({optimisticResult}) => run(
+            ({
+              optimisticResult,
+              typedOptimisticResult,
+            }) =>
+                run(
               const {},
-              optimisticResult: optimisticResult,
+              optimisticResult:
+                  optimisticResult ?? typedOptimisticResult?.toJson(),
             ),
             result,
           ),
@@ -863,7 +883,7 @@ class Mutation$deleteAccount$Widget
 class Mutation$deleteAccount$deleteAccount {
   Mutation$deleteAccount$deleteAccount({
     required this.deletedAccountId,
-    required this.$__typename,
+    this.$__typename = 'DeleteAccountPayload',
   });
 
   factory Mutation$deleteAccount$deleteAccount.fromJson(
@@ -958,7 +978,7 @@ class _CopyWithImpl$Mutation$deleteAccount$deleteAccount<TRes>
 
   final TRes Function(Mutation$deleteAccount$deleteAccount) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? deletedAccountId = _undefined,

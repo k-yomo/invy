@@ -10,7 +10,7 @@ import 'package:graphql_flutter/graphql_flutter.dart' as graphql_flutter;
 class Query$invitationScreenViewer {
   Query$invitationScreenViewer({
     required this.viewer,
-    required this.$__typename,
+    this.$__typename = 'Query',
   });
 
   factory Query$invitationScreenViewer.fromJson(Map<String, dynamic> json) {
@@ -105,7 +105,7 @@ class _CopyWithImpl$Query$invitationScreenViewer<TRes>
 
   final TRes Function(Query$invitationScreenViewer) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? viewer = _undefined,
@@ -294,6 +294,10 @@ const documentNodeQueryinvitationScreenViewer = DocumentNode(definitions: [
 Query$invitationScreenViewer _parserFn$Query$invitationScreenViewer(
         Map<String, dynamic> data) =>
     Query$invitationScreenViewer.fromJson(data);
+typedef OnQueryComplete$Query$invitationScreenViewer = FutureOr<void> Function(
+  Map<String, dynamic>?,
+  Query$invitationScreenViewer?,
+);
 
 class Options$Query$invitationScreenViewer
     extends graphql.QueryOptions<Query$invitationScreenViewer> {
@@ -303,19 +307,42 @@ class Options$Query$invitationScreenViewer
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
     Object? optimisticResult,
+    Query$invitationScreenViewer? typedOptimisticResult,
     Duration? pollInterval,
     graphql.Context? context,
-  }) : super(
+    OnQueryComplete$Query$invitationScreenViewer? onComplete,
+    graphql.OnQueryError? onError,
+  })  : onCompleteWithParsed = onComplete,
+        super(
           operationName: operationName,
           fetchPolicy: fetchPolicy,
           errorPolicy: errorPolicy,
           cacheRereadPolicy: cacheRereadPolicy,
-          optimisticResult: optimisticResult,
+          optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
           pollInterval: pollInterval,
           context: context,
+          onComplete: onComplete == null
+              ? null
+              : (data) => onComplete(
+                    data,
+                    data == null
+                        ? null
+                        : _parserFn$Query$invitationScreenViewer(data),
+                  ),
+          onError: onError,
           document: documentNodeQueryinvitationScreenViewer,
           parserFn: _parserFn$Query$invitationScreenViewer,
         );
+
+  final OnQueryComplete$Query$invitationScreenViewer? onCompleteWithParsed;
+
+  @override
+  List<Object?> get properties => [
+        ...super.onComplete == null
+            ? super.properties
+            : super.properties.where((property) => property != onComplete),
+        onCompleteWithParsed,
+      ];
 }
 
 class WatchOptions$Query$invitationScreenViewer
@@ -326,6 +353,7 @@ class WatchOptions$Query$invitationScreenViewer
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
     Object? optimisticResult,
+    Query$invitationScreenViewer? typedOptimisticResult,
     graphql.Context? context,
     Duration? pollInterval,
     bool? eagerlyFetchResults,
@@ -336,7 +364,7 @@ class WatchOptions$Query$invitationScreenViewer
           fetchPolicy: fetchPolicy,
           errorPolicy: errorPolicy,
           cacheRereadPolicy: cacheRereadPolicy,
-          optimisticResult: optimisticResult,
+          optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
           context: context,
           document: documentNodeQueryinvitationScreenViewer,
           pollInterval: pollInterval,
@@ -420,7 +448,7 @@ class Query$invitationScreenViewer$viewer {
   Query$invitationScreenViewer$viewer({
     required this.friendGroups,
     required this.friends,
-    required this.$__typename,
+    this.$__typename = 'Viewer',
   });
 
   factory Query$invitationScreenViewer$viewer.fromJson(
@@ -548,7 +576,7 @@ class _CopyWithImpl$Query$invitationScreenViewer$viewer<TRes>
 
   final TRes Function(Query$invitationScreenViewer$viewer) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? friendGroups = _undefined,
@@ -606,7 +634,7 @@ class Query$invitationScreenViewer$viewer$friends {
   Query$invitationScreenViewer$viewer$friends({
     required this.edges,
     required this.pageInfo,
-    required this.$__typename,
+    this.$__typename = 'UserConnection',
   });
 
   factory Query$invitationScreenViewer$viewer$friends.fromJson(
@@ -735,7 +763,7 @@ class _CopyWithImpl$Query$invitationScreenViewer$viewer$friends<TRes>
 
   final TRes Function(Query$invitationScreenViewer$viewer$friends) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? edges = _undefined,
@@ -797,7 +825,7 @@ class _CopyWithStubImpl$Query$invitationScreenViewer$viewer$friends<TRes>
 class Query$invitationScreenViewer$viewer$friends$edges {
   Query$invitationScreenViewer$viewer$friends$edges({
     required this.node,
-    required this.$__typename,
+    this.$__typename = 'UserEdge',
   });
 
   factory Query$invitationScreenViewer$viewer$friends$edges.fromJson(
@@ -898,7 +926,7 @@ class _CopyWithImpl$Query$invitationScreenViewer$viewer$friends$edges<TRes>
 
   final TRes Function(Query$invitationScreenViewer$viewer$friends$edges) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? node = _undefined,
@@ -942,7 +970,7 @@ class Query$invitationScreenViewer$viewer$friends$pageInfo {
     this.endCursor,
     required this.hasNextPage,
     required this.hasPreviousPage,
-    required this.$__typename,
+    this.$__typename = 'PageInfo',
   });
 
   factory Query$invitationScreenViewer$viewer$friends$pageInfo.fromJson(
@@ -1084,7 +1112,7 @@ class _CopyWithImpl$Query$invitationScreenViewer$viewer$friends$pageInfo<TRes>
   final TRes Function(Query$invitationScreenViewer$viewer$friends$pageInfo)
       _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? startCursor = _undefined,
@@ -1213,7 +1241,7 @@ class _CopyWithImpl$Variables$Mutation$sendInvitation<TRes>
 
   final TRes Function(Variables$Mutation$sendInvitation) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({Object? input = _undefined}) =>
       _then(Variables$Mutation$sendInvitation._({
@@ -1235,7 +1263,7 @@ class _CopyWithStubImpl$Variables$Mutation$sendInvitation<TRes>
 class Mutation$sendInvitation {
   Mutation$sendInvitation({
     required this.sendInvitation,
-    required this.$__typename,
+    this.$__typename = 'Mutation',
   });
 
   factory Mutation$sendInvitation.fromJson(Map<String, dynamic> json) {
@@ -1329,7 +1357,7 @@ class _CopyWithImpl$Mutation$sendInvitation<TRes>
 
   final TRes Function(Mutation$sendInvitation) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? sendInvitation = _undefined,
@@ -1488,7 +1516,7 @@ Mutation$sendInvitation _parserFn$Mutation$sendInvitation(
         Map<String, dynamic> data) =>
     Mutation$sendInvitation.fromJson(data);
 typedef OnMutationCompleted$Mutation$sendInvitation = FutureOr<void> Function(
-  dynamic,
+  Map<String, dynamic>?,
   Mutation$sendInvitation?,
 );
 
@@ -1501,6 +1529,7 @@ class Options$Mutation$sendInvitation
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
     Object? optimisticResult,
+    Mutation$sendInvitation? typedOptimisticResult,
     graphql.Context? context,
     OnMutationCompleted$Mutation$sendInvitation? onCompleted,
     graphql.OnMutationUpdate<Mutation$sendInvitation>? update,
@@ -1512,7 +1541,7 @@ class Options$Mutation$sendInvitation
           fetchPolicy: fetchPolicy,
           errorPolicy: errorPolicy,
           cacheRereadPolicy: cacheRereadPolicy,
-          optimisticResult: optimisticResult,
+          optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
           context: context,
           onCompleted: onCompleted == null
               ? null
@@ -1548,6 +1577,7 @@ class WatchOptions$Mutation$sendInvitation
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
     Object? optimisticResult,
+    Mutation$sendInvitation? typedOptimisticResult,
     graphql.Context? context,
     Duration? pollInterval,
     bool? eagerlyFetchResults,
@@ -1559,7 +1589,7 @@ class WatchOptions$Mutation$sendInvitation
           fetchPolicy: fetchPolicy,
           errorPolicy: errorPolicy,
           cacheRereadPolicy: cacheRereadPolicy,
-          optimisticResult: optimisticResult,
+          optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
           context: context,
           document: documentNodeMutationsendInvitation,
           pollInterval: pollInterval,
@@ -1595,9 +1625,10 @@ Mutation$sendInvitation$HookResult useMutation$sendInvitation(
   final result = graphql_flutter
       .useMutation(options ?? WidgetOptions$Mutation$sendInvitation());
   return Mutation$sendInvitation$HookResult(
-    (variables, {optimisticResult}) => result.runMutation(
+    (variables, {optimisticResult, typedOptimisticResult}) =>
+        result.runMutation(
       variables.toJson(),
-      optimisticResult: optimisticResult,
+      optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
     ),
     result.result,
   );
@@ -1616,6 +1647,7 @@ class WidgetOptions$Mutation$sendInvitation
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
     Object? optimisticResult,
+    Mutation$sendInvitation? typedOptimisticResult,
     graphql.Context? context,
     OnMutationCompleted$Mutation$sendInvitation? onCompleted,
     graphql.OnMutationUpdate<Mutation$sendInvitation>? update,
@@ -1626,7 +1658,7 @@ class WidgetOptions$Mutation$sendInvitation
           fetchPolicy: fetchPolicy,
           errorPolicy: errorPolicy,
           cacheRereadPolicy: cacheRereadPolicy,
-          optimisticResult: optimisticResult,
+          optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
           context: context,
           onCompleted: onCompleted == null
               ? null
@@ -1657,6 +1689,7 @@ typedef RunMutation$Mutation$sendInvitation
     = graphql.MultiSourceResult<Mutation$sendInvitation> Function(
   Variables$Mutation$sendInvitation, {
   Object? optimisticResult,
+  Mutation$sendInvitation? typedOptimisticResult,
 });
 typedef Builder$Mutation$sendInvitation = widgets.Widget Function(
   RunMutation$Mutation$sendInvitation,
@@ -1680,10 +1713,12 @@ class Mutation$sendInvitation$Widget
             (
               variables, {
               optimisticResult,
+              typedOptimisticResult,
             }) =>
                 run(
               variables.toJson(),
-              optimisticResult: optimisticResult,
+              optimisticResult:
+                  optimisticResult ?? typedOptimisticResult?.toJson(),
             ),
             result,
           ),
@@ -1693,7 +1728,7 @@ class Mutation$sendInvitation$Widget
 class Mutation$sendInvitation$sendInvitation {
   Mutation$sendInvitation$sendInvitation({
     required this.invitation,
-    required this.$__typename,
+    this.$__typename = 'SendInvitationPayload',
   });
 
   factory Mutation$sendInvitation$sendInvitation.fromJson(
@@ -1791,7 +1826,7 @@ class _CopyWithImpl$Mutation$sendInvitation$sendInvitation<TRes>
 
   final TRes Function(Mutation$sendInvitation$sendInvitation) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? invitation = _undefined,
@@ -1836,7 +1871,7 @@ class Mutation$sendInvitation$sendInvitation$invitation {
     this.coordinate,
     required this.startsAt,
     required this.expiresAt,
-    required this.$__typename,
+    this.$__typename = 'Invitation',
   });
 
   factory Mutation$sendInvitation$sendInvitation$invitation.fromJson(
@@ -1997,7 +2032,7 @@ class _CopyWithImpl$Mutation$sendInvitation$sendInvitation$invitation<TRes>
 
   final TRes Function(Mutation$sendInvitation$sendInvitation$invitation) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? id = _undefined,
@@ -2064,7 +2099,7 @@ class Mutation$sendInvitation$sendInvitation$invitation$coordinate {
   Mutation$sendInvitation$sendInvitation$invitation$coordinate({
     required this.latitude,
     required this.longitude,
-    required this.$__typename,
+    this.$__typename = 'Coordinate',
   });
 
   factory Mutation$sendInvitation$sendInvitation$invitation$coordinate.fromJson(
@@ -2182,7 +2217,7 @@ class _CopyWithImpl$Mutation$sendInvitation$sendInvitation$invitation$coordinate
   final TRes Function(
       Mutation$sendInvitation$sendInvitation$invitation$coordinate) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? latitude = _undefined,

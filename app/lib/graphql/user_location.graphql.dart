@@ -103,7 +103,7 @@ class _CopyWithImpl$Variables$Mutation$updateLocation<TRes>
 
   final TRes Function(Variables$Mutation$updateLocation) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? latitude = _undefined,
@@ -134,7 +134,7 @@ class _CopyWithStubImpl$Variables$Mutation$updateLocation<TRes>
 class Mutation$updateLocation {
   Mutation$updateLocation({
     required this.updateLocation,
-    required this.$__typename,
+    this.$__typename = 'Mutation',
   });
 
   factory Mutation$updateLocation.fromJson(Map<String, dynamic> json) {
@@ -228,7 +228,7 @@ class _CopyWithImpl$Mutation$updateLocation<TRes>
 
   final TRes Function(Mutation$updateLocation) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? updateLocation = _undefined,
@@ -335,7 +335,7 @@ Mutation$updateLocation _parserFn$Mutation$updateLocation(
         Map<String, dynamic> data) =>
     Mutation$updateLocation.fromJson(data);
 typedef OnMutationCompleted$Mutation$updateLocation = FutureOr<void> Function(
-  dynamic,
+  Map<String, dynamic>?,
   Mutation$updateLocation?,
 );
 
@@ -348,6 +348,7 @@ class Options$Mutation$updateLocation
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
     Object? optimisticResult,
+    Mutation$updateLocation? typedOptimisticResult,
     graphql.Context? context,
     OnMutationCompleted$Mutation$updateLocation? onCompleted,
     graphql.OnMutationUpdate<Mutation$updateLocation>? update,
@@ -359,7 +360,7 @@ class Options$Mutation$updateLocation
           fetchPolicy: fetchPolicy,
           errorPolicy: errorPolicy,
           cacheRereadPolicy: cacheRereadPolicy,
-          optimisticResult: optimisticResult,
+          optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
           context: context,
           onCompleted: onCompleted == null
               ? null
@@ -395,6 +396,7 @@ class WatchOptions$Mutation$updateLocation
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
     Object? optimisticResult,
+    Mutation$updateLocation? typedOptimisticResult,
     graphql.Context? context,
     Duration? pollInterval,
     bool? eagerlyFetchResults,
@@ -406,7 +408,7 @@ class WatchOptions$Mutation$updateLocation
           fetchPolicy: fetchPolicy,
           errorPolicy: errorPolicy,
           cacheRereadPolicy: cacheRereadPolicy,
-          optimisticResult: optimisticResult,
+          optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
           context: context,
           document: documentNodeMutationupdateLocation,
           pollInterval: pollInterval,
@@ -442,9 +444,10 @@ Mutation$updateLocation$HookResult useMutation$updateLocation(
   final result = graphql_flutter
       .useMutation(options ?? WidgetOptions$Mutation$updateLocation());
   return Mutation$updateLocation$HookResult(
-    (variables, {optimisticResult}) => result.runMutation(
+    (variables, {optimisticResult, typedOptimisticResult}) =>
+        result.runMutation(
       variables.toJson(),
-      optimisticResult: optimisticResult,
+      optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
     ),
     result.result,
   );
@@ -463,6 +466,7 @@ class WidgetOptions$Mutation$updateLocation
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
     Object? optimisticResult,
+    Mutation$updateLocation? typedOptimisticResult,
     graphql.Context? context,
     OnMutationCompleted$Mutation$updateLocation? onCompleted,
     graphql.OnMutationUpdate<Mutation$updateLocation>? update,
@@ -473,7 +477,7 @@ class WidgetOptions$Mutation$updateLocation
           fetchPolicy: fetchPolicy,
           errorPolicy: errorPolicy,
           cacheRereadPolicy: cacheRereadPolicy,
-          optimisticResult: optimisticResult,
+          optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
           context: context,
           onCompleted: onCompleted == null
               ? null
@@ -504,6 +508,7 @@ typedef RunMutation$Mutation$updateLocation
     = graphql.MultiSourceResult<Mutation$updateLocation> Function(
   Variables$Mutation$updateLocation, {
   Object? optimisticResult,
+  Mutation$updateLocation? typedOptimisticResult,
 });
 typedef Builder$Mutation$updateLocation = widgets.Widget Function(
   RunMutation$Mutation$updateLocation,
@@ -527,10 +532,12 @@ class Mutation$updateLocation$Widget
             (
               variables, {
               optimisticResult,
+              typedOptimisticResult,
             }) =>
                 run(
               variables.toJson(),
-              optimisticResult: optimisticResult,
+              optimisticResult:
+                  optimisticResult ?? typedOptimisticResult?.toJson(),
             ),
             result,
           ),
@@ -540,7 +547,7 @@ class Mutation$updateLocation$Widget
 class Mutation$updateLocation$updateLocation {
   Mutation$updateLocation$updateLocation({
     required this.updatedUserLocationId,
-    required this.$__typename,
+    this.$__typename = 'UpdateLocationPayload',
   });
 
   factory Mutation$updateLocation$updateLocation.fromJson(
@@ -635,7 +642,7 @@ class _CopyWithImpl$Mutation$updateLocation$updateLocation<TRes>
 
   final TRes Function(Mutation$updateLocation$updateLocation) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? updatedUserLocationId = _undefined,

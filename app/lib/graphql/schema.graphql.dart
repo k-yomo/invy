@@ -104,7 +104,7 @@ class _CopyWithImpl$Input$CreateFriendGroupInput<TRes>
 
   final TRes Function(Input$CreateFriendGroupInput) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? name = _undefined,
@@ -236,7 +236,7 @@ class _CopyWithImpl$Input$CreateUserInput<TRes>
 
   final TRes Function(Input$CreateUserInput) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? nickname = _undefined,
@@ -378,7 +378,7 @@ class _CopyWithImpl$Input$RegisterInvitationAwaitingInput<TRes>
 
   final TRes Function(Input$RegisterInvitationAwaitingInput) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? startsAt = _undefined,
@@ -510,7 +510,7 @@ class _CopyWithImpl$Input$RegisterPushNotificationTokenInput<TRes>
 
   final TRes Function(Input$RegisterPushNotificationTokenInput) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? deviceId = _undefined,
@@ -766,7 +766,7 @@ class _CopyWithImpl$Input$SendInvitationInput<TRes>
 
   final TRes Function(Input$SendInvitationInput) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? targetFriendGroupIds = _undefined,
@@ -951,7 +951,7 @@ class _CopyWithImpl$Input$SignUpInput<TRes>
 
   final TRes Function(Input$SignUpInput) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? email = _undefined,
@@ -1101,7 +1101,7 @@ class _CopyWithImpl$Input$UpdateFriendGroupInput<TRes>
 
   final TRes Function(Input$UpdateFriendGroupInput) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? id = _undefined,
@@ -1251,7 +1251,7 @@ Enum$PushNotificationType fromJson$Enum$PushNotificationType(String value) {
   }
 }
 
-const possibleTypesMap = {
+const possibleTypesMap = <String, Set<String>>{
   'Node': {
     'FriendGroup',
     'FriendshipRequest',

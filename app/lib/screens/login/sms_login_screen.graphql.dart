@@ -83,7 +83,7 @@ class _CopyWithImpl$Variables$Mutation$signUp<TRes>
 
   final TRes Function(Variables$Mutation$signUp) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({Object? input = _undefined}) => _then(Variables$Mutation$signUp._({
         ..._instance._$data,
@@ -104,7 +104,7 @@ class _CopyWithStubImpl$Variables$Mutation$signUp<TRes>
 class Mutation$signUp {
   Mutation$signUp({
     required this.signUp,
-    required this.$__typename,
+    this.$__typename = 'Mutation',
   });
 
   factory Mutation$signUp.fromJson(Map<String, dynamic> json) {
@@ -197,7 +197,7 @@ class _CopyWithImpl$Mutation$signUp<TRes>
 
   final TRes Function(Mutation$signUp) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? signUp = _undefined,
@@ -326,7 +326,7 @@ const documentNodeMutationsignUp = DocumentNode(definitions: [
 Mutation$signUp _parserFn$Mutation$signUp(Map<String, dynamic> data) =>
     Mutation$signUp.fromJson(data);
 typedef OnMutationCompleted$Mutation$signUp = FutureOr<void> Function(
-  dynamic,
+  Map<String, dynamic>?,
   Mutation$signUp?,
 );
 
@@ -338,6 +338,7 @@ class Options$Mutation$signUp extends graphql.MutationOptions<Mutation$signUp> {
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
     Object? optimisticResult,
+    Mutation$signUp? typedOptimisticResult,
     graphql.Context? context,
     OnMutationCompleted$Mutation$signUp? onCompleted,
     graphql.OnMutationUpdate<Mutation$signUp>? update,
@@ -349,7 +350,7 @@ class Options$Mutation$signUp extends graphql.MutationOptions<Mutation$signUp> {
           fetchPolicy: fetchPolicy,
           errorPolicy: errorPolicy,
           cacheRereadPolicy: cacheRereadPolicy,
-          optimisticResult: optimisticResult,
+          optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
           context: context,
           onCompleted: onCompleted == null
               ? null
@@ -383,6 +384,7 @@ class WatchOptions$Mutation$signUp
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
     Object? optimisticResult,
+    Mutation$signUp? typedOptimisticResult,
     graphql.Context? context,
     Duration? pollInterval,
     bool? eagerlyFetchResults,
@@ -394,7 +396,7 @@ class WatchOptions$Mutation$signUp
           fetchPolicy: fetchPolicy,
           errorPolicy: errorPolicy,
           cacheRereadPolicy: cacheRereadPolicy,
-          optimisticResult: optimisticResult,
+          optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
           context: context,
           document: documentNodeMutationsignUp,
           pollInterval: pollInterval,
@@ -430,9 +432,10 @@ Mutation$signUp$HookResult useMutation$signUp(
   final result =
       graphql_flutter.useMutation(options ?? WidgetOptions$Mutation$signUp());
   return Mutation$signUp$HookResult(
-    (variables, {optimisticResult}) => result.runMutation(
+    (variables, {optimisticResult, typedOptimisticResult}) =>
+        result.runMutation(
       variables.toJson(),
-      optimisticResult: optimisticResult,
+      optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
     ),
     result.result,
   );
@@ -450,6 +453,7 @@ class WidgetOptions$Mutation$signUp
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
     Object? optimisticResult,
+    Mutation$signUp? typedOptimisticResult,
     graphql.Context? context,
     OnMutationCompleted$Mutation$signUp? onCompleted,
     graphql.OnMutationUpdate<Mutation$signUp>? update,
@@ -460,7 +464,7 @@ class WidgetOptions$Mutation$signUp
           fetchPolicy: fetchPolicy,
           errorPolicy: errorPolicy,
           cacheRereadPolicy: cacheRereadPolicy,
-          optimisticResult: optimisticResult,
+          optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
           context: context,
           onCompleted: onCompleted == null
               ? null
@@ -489,6 +493,7 @@ typedef RunMutation$Mutation$signUp = graphql.MultiSourceResult<Mutation$signUp>
     Function(
   Variables$Mutation$signUp, {
   Object? optimisticResult,
+  Mutation$signUp? typedOptimisticResult,
 });
 typedef Builder$Mutation$signUp = widgets.Widget Function(
   RunMutation$Mutation$signUp,
@@ -511,10 +516,12 @@ class Mutation$signUp$Widget extends graphql_flutter.Mutation<Mutation$signUp> {
             (
               variables, {
               optimisticResult,
+              typedOptimisticResult,
             }) =>
                 run(
               variables.toJson(),
-              optimisticResult: optimisticResult,
+              optimisticResult:
+                  optimisticResult ?? typedOptimisticResult?.toJson(),
             ),
             result,
           ),
@@ -524,7 +531,7 @@ class Mutation$signUp$Widget extends graphql_flutter.Mutation<Mutation$signUp> {
 class Mutation$signUp$signUp {
   Mutation$signUp$signUp({
     required this.viewer,
-    required this.$__typename,
+    this.$__typename = 'SignUpPayload',
   });
 
   factory Mutation$signUp$signUp.fromJson(Map<String, dynamic> json) {
@@ -618,7 +625,7 @@ class _CopyWithImpl$Mutation$signUp$signUp<TRes>
 
   final TRes Function(Mutation$signUp$signUp) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? viewer = _undefined,
@@ -660,7 +667,7 @@ class Mutation$signUp$signUp$viewer {
     required this.screenId,
     required this.nickname,
     required this.avatarUrl,
-    required this.$__typename,
+    this.$__typename = 'Viewer',
   });
 
   factory Mutation$signUp$signUp$viewer.fromJson(Map<String, dynamic> json) {
@@ -795,7 +802,7 @@ class _CopyWithImpl$Mutation$signUp$signUp$viewer<TRes>
 
   final TRes Function(Mutation$signUp$signUp$viewer) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? id = _undefined,

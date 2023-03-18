@@ -81,7 +81,7 @@ class _CopyWithImpl$Variables$Mutation$blockUser<TRes>
 
   final TRes Function(Variables$Mutation$blockUser) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({Object? userId = _undefined}) =>
       _then(Variables$Mutation$blockUser._({
@@ -103,7 +103,7 @@ class _CopyWithStubImpl$Variables$Mutation$blockUser<TRes>
 class Mutation$blockUser {
   Mutation$blockUser({
     required this.blockUser,
-    required this.$__typename,
+    this.$__typename = 'Mutation',
   });
 
   factory Mutation$blockUser.fromJson(Map<String, dynamic> json) {
@@ -196,7 +196,7 @@ class _CopyWithImpl$Mutation$blockUser<TRes>
 
   final TRes Function(Mutation$blockUser) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? blockUser = _undefined,
@@ -289,7 +289,7 @@ const documentNodeMutationblockUser = DocumentNode(definitions: [
 Mutation$blockUser _parserFn$Mutation$blockUser(Map<String, dynamic> data) =>
     Mutation$blockUser.fromJson(data);
 typedef OnMutationCompleted$Mutation$blockUser = FutureOr<void> Function(
-  dynamic,
+  Map<String, dynamic>?,
   Mutation$blockUser?,
 );
 
@@ -302,6 +302,7 @@ class Options$Mutation$blockUser
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
     Object? optimisticResult,
+    Mutation$blockUser? typedOptimisticResult,
     graphql.Context? context,
     OnMutationCompleted$Mutation$blockUser? onCompleted,
     graphql.OnMutationUpdate<Mutation$blockUser>? update,
@@ -313,7 +314,7 @@ class Options$Mutation$blockUser
           fetchPolicy: fetchPolicy,
           errorPolicy: errorPolicy,
           cacheRereadPolicy: cacheRereadPolicy,
-          optimisticResult: optimisticResult,
+          optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
           context: context,
           onCompleted: onCompleted == null
               ? null
@@ -347,6 +348,7 @@ class WatchOptions$Mutation$blockUser
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
     Object? optimisticResult,
+    Mutation$blockUser? typedOptimisticResult,
     graphql.Context? context,
     Duration? pollInterval,
     bool? eagerlyFetchResults,
@@ -358,7 +360,7 @@ class WatchOptions$Mutation$blockUser
           fetchPolicy: fetchPolicy,
           errorPolicy: errorPolicy,
           cacheRereadPolicy: cacheRereadPolicy,
-          optimisticResult: optimisticResult,
+          optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
           context: context,
           document: documentNodeMutationblockUser,
           pollInterval: pollInterval,
@@ -394,9 +396,10 @@ Mutation$blockUser$HookResult useMutation$blockUser(
   final result = graphql_flutter
       .useMutation(options ?? WidgetOptions$Mutation$blockUser());
   return Mutation$blockUser$HookResult(
-    (variables, {optimisticResult}) => result.runMutation(
+    (variables, {optimisticResult, typedOptimisticResult}) =>
+        result.runMutation(
       variables.toJson(),
-      optimisticResult: optimisticResult,
+      optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
     ),
     result.result,
   );
@@ -414,6 +417,7 @@ class WidgetOptions$Mutation$blockUser
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
     Object? optimisticResult,
+    Mutation$blockUser? typedOptimisticResult,
     graphql.Context? context,
     OnMutationCompleted$Mutation$blockUser? onCompleted,
     graphql.OnMutationUpdate<Mutation$blockUser>? update,
@@ -424,7 +428,7 @@ class WidgetOptions$Mutation$blockUser
           fetchPolicy: fetchPolicy,
           errorPolicy: errorPolicy,
           cacheRereadPolicy: cacheRereadPolicy,
-          optimisticResult: optimisticResult,
+          optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
           context: context,
           onCompleted: onCompleted == null
               ? null
@@ -453,6 +457,7 @@ typedef RunMutation$Mutation$blockUser
     = graphql.MultiSourceResult<Mutation$blockUser> Function(
   Variables$Mutation$blockUser, {
   Object? optimisticResult,
+  Mutation$blockUser? typedOptimisticResult,
 });
 typedef Builder$Mutation$blockUser = widgets.Widget Function(
   RunMutation$Mutation$blockUser,
@@ -476,10 +481,12 @@ class Mutation$blockUser$Widget
             (
               variables, {
               optimisticResult,
+              typedOptimisticResult,
             }) =>
                 run(
               variables.toJson(),
-              optimisticResult: optimisticResult,
+              optimisticResult:
+                  optimisticResult ?? typedOptimisticResult?.toJson(),
             ),
             result,
           ),
@@ -489,7 +496,7 @@ class Mutation$blockUser$Widget
 class Mutation$blockUser$blockUser {
   Mutation$blockUser$blockUser({
     required this.blockedUserId,
-    required this.$__typename,
+    this.$__typename = 'BlockUserPayload',
   });
 
   factory Mutation$blockUser$blockUser.fromJson(Map<String, dynamic> json) {
@@ -582,7 +589,7 @@ class _CopyWithImpl$Mutation$blockUser$blockUser<TRes>
 
   final TRes Function(Mutation$blockUser$blockUser) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? blockedUserId = _undefined,

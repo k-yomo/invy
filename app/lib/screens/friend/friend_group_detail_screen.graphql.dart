@@ -1,6 +1,7 @@
 import '../../widgets/friend_list_item_fragment.graphql.dart';
 import '../../widgets/invitation_awaiting_list_item.graphql.dart';
 import '../user/user_profile_screen.graphql.dart';
+import 'dart:async';
 import 'friend_group_edit_screen.graphql.dart';
 import 'package:flutter/widgets.dart' as widgets;
 import 'package:gql/ast.dart';
@@ -88,7 +89,7 @@ class _CopyWithImpl$Variables$Query$friendGroupDetailScreenViewer<TRes>
 
   final TRes Function(Variables$Query$friendGroupDetailScreenViewer) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({Object? friendGroupId = _undefined}) =>
       _then(Variables$Query$friendGroupDetailScreenViewer._({
@@ -110,7 +111,7 @@ class _CopyWithStubImpl$Variables$Query$friendGroupDetailScreenViewer<TRes>
 class Query$friendGroupDetailScreenViewer {
   Query$friendGroupDetailScreenViewer({
     required this.viewer,
-    required this.$__typename,
+    this.$__typename = 'Query',
   });
 
   factory Query$friendGroupDetailScreenViewer.fromJson(
@@ -207,7 +208,7 @@ class _CopyWithImpl$Query$friendGroupDetailScreenViewer<TRes>
 
   final TRes Function(Query$friendGroupDetailScreenViewer) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? viewer = _undefined,
@@ -361,6 +362,11 @@ const documentNodeQueryfriendGroupDetailScreenViewer =
 Query$friendGroupDetailScreenViewer
     _parserFn$Query$friendGroupDetailScreenViewer(Map<String, dynamic> data) =>
         Query$friendGroupDetailScreenViewer.fromJson(data);
+typedef OnQueryComplete$Query$friendGroupDetailScreenViewer = FutureOr<void>
+    Function(
+  Map<String, dynamic>?,
+  Query$friendGroupDetailScreenViewer?,
+);
 
 class Options$Query$friendGroupDetailScreenViewer
     extends graphql.QueryOptions<Query$friendGroupDetailScreenViewer> {
@@ -371,20 +377,44 @@ class Options$Query$friendGroupDetailScreenViewer
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
     Object? optimisticResult,
+    Query$friendGroupDetailScreenViewer? typedOptimisticResult,
     Duration? pollInterval,
     graphql.Context? context,
-  }) : super(
+    OnQueryComplete$Query$friendGroupDetailScreenViewer? onComplete,
+    graphql.OnQueryError? onError,
+  })  : onCompleteWithParsed = onComplete,
+        super(
           variables: variables.toJson(),
           operationName: operationName,
           fetchPolicy: fetchPolicy,
           errorPolicy: errorPolicy,
           cacheRereadPolicy: cacheRereadPolicy,
-          optimisticResult: optimisticResult,
+          optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
           pollInterval: pollInterval,
           context: context,
+          onComplete: onComplete == null
+              ? null
+              : (data) => onComplete(
+                    data,
+                    data == null
+                        ? null
+                        : _parserFn$Query$friendGroupDetailScreenViewer(data),
+                  ),
+          onError: onError,
           document: documentNodeQueryfriendGroupDetailScreenViewer,
           parserFn: _parserFn$Query$friendGroupDetailScreenViewer,
         );
+
+  final OnQueryComplete$Query$friendGroupDetailScreenViewer?
+      onCompleteWithParsed;
+
+  @override
+  List<Object?> get properties => [
+        ...super.onComplete == null
+            ? super.properties
+            : super.properties.where((property) => property != onComplete),
+        onCompleteWithParsed,
+      ];
 }
 
 class WatchOptions$Query$friendGroupDetailScreenViewer
@@ -396,6 +426,7 @@ class WatchOptions$Query$friendGroupDetailScreenViewer
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
     Object? optimisticResult,
+    Query$friendGroupDetailScreenViewer? typedOptimisticResult,
     graphql.Context? context,
     Duration? pollInterval,
     bool? eagerlyFetchResults,
@@ -407,7 +438,7 @@ class WatchOptions$Query$friendGroupDetailScreenViewer
           fetchPolicy: fetchPolicy,
           errorPolicy: errorPolicy,
           cacheRereadPolicy: cacheRereadPolicy,
-          optimisticResult: optimisticResult,
+          optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
           context: context,
           document: documentNodeQueryfriendGroupDetailScreenViewer,
           pollInterval: pollInterval,
@@ -498,7 +529,7 @@ class Query$friendGroupDetailScreenViewer$Widget
 class Query$friendGroupDetailScreenViewer$viewer {
   Query$friendGroupDetailScreenViewer$viewer({
     required this.friendGroup,
-    required this.$__typename,
+    this.$__typename = 'Viewer',
   });
 
   factory Query$friendGroupDetailScreenViewer$viewer.fromJson(
@@ -597,7 +628,7 @@ class _CopyWithImpl$Query$friendGroupDetailScreenViewer$viewer<TRes>
 
   final TRes Function(Query$friendGroupDetailScreenViewer$viewer) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? friendGroup = _undefined,
@@ -643,7 +674,7 @@ class Query$friendGroupDetailScreenViewer$viewer$friendGroup
     required this.id,
     required this.name,
     required this.friendUsers,
-    required this.$__typename,
+    this.$__typename = 'FriendGroup',
     required this.totalCount,
   });
 
@@ -805,7 +836,7 @@ class _CopyWithImpl$Query$friendGroupDetailScreenViewer$viewer$friendGroup<TRes>
   final TRes Function(Query$friendGroupDetailScreenViewer$viewer$friendGroup)
       _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? id = _undefined,
@@ -876,7 +907,7 @@ class Query$friendGroupDetailScreenViewer$viewer$friendGroup$friendUsers
     required this.isMuted,
     this.distanceKm,
     required this.invitationAwaitings,
-    required this.$__typename,
+    this.$__typename = 'User',
     required this.screenId,
     required this.isRequestingFriendship,
     required this.isFriend,
@@ -1133,7 +1164,7 @@ class _CopyWithImpl$Query$friendGroupDetailScreenViewer$viewer$friendGroup$frien
   final TRes Function(
       Query$friendGroupDetailScreenViewer$viewer$friendGroup$friendUsers) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? id = _undefined,
@@ -1234,7 +1265,7 @@ class Query$friendGroupDetailScreenViewer$viewer$friendGroup$friendUsers$invitat
     required this.startsAt,
     required this.endsAt,
     required this.comment,
-    required this.$__typename,
+    this.$__typename = 'InvitationAwaiting',
     required this.id,
     required this.userId,
   });
@@ -1400,7 +1431,7 @@ class _CopyWithImpl$Query$friendGroupDetailScreenViewer$viewer$friendGroup$frien
           Query$friendGroupDetailScreenViewer$viewer$friendGroup$friendUsers$invitationAwaitings)
       _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? startsAt = _undefined,

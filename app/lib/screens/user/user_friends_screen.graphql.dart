@@ -1,5 +1,6 @@
 import '../../widgets/friend_list_item_fragment.graphql.dart';
 import '../../widgets/invitation_awaiting_list_item.graphql.dart';
+import 'dart:async';
 import 'package:flutter/widgets.dart' as widgets;
 import 'package:gql/ast.dart';
 import 'package:graphql/client.dart' as graphql;
@@ -113,7 +114,7 @@ class _CopyWithImpl$Variables$Query$userFriendsScreenUserFriends<TRes>
 
   final TRes Function(Variables$Query$userFriendsScreenUserFriends) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? userId = _undefined,
@@ -143,7 +144,7 @@ class _CopyWithStubImpl$Variables$Query$userFriendsScreenUserFriends<TRes>
 class Query$userFriendsScreenUserFriends {
   Query$userFriendsScreenUserFriends({
     required this.userFriends,
-    required this.$__typename,
+    this.$__typename = 'Query',
   });
 
   factory Query$userFriendsScreenUserFriends.fromJson(
@@ -240,7 +241,7 @@ class _CopyWithImpl$Query$userFriendsScreenUserFriends<TRes>
 
   final TRes Function(Query$userFriendsScreenUserFriends) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? userFriends = _undefined,
@@ -412,6 +413,11 @@ const documentNodeQueryuserFriendsScreenUserFriends =
 Query$userFriendsScreenUserFriends _parserFn$Query$userFriendsScreenUserFriends(
         Map<String, dynamic> data) =>
     Query$userFriendsScreenUserFriends.fromJson(data);
+typedef OnQueryComplete$Query$userFriendsScreenUserFriends = FutureOr<void>
+    Function(
+  Map<String, dynamic>?,
+  Query$userFriendsScreenUserFriends?,
+);
 
 class Options$Query$userFriendsScreenUserFriends
     extends graphql.QueryOptions<Query$userFriendsScreenUserFriends> {
@@ -422,20 +428,44 @@ class Options$Query$userFriendsScreenUserFriends
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
     Object? optimisticResult,
+    Query$userFriendsScreenUserFriends? typedOptimisticResult,
     Duration? pollInterval,
     graphql.Context? context,
-  }) : super(
+    OnQueryComplete$Query$userFriendsScreenUserFriends? onComplete,
+    graphql.OnQueryError? onError,
+  })  : onCompleteWithParsed = onComplete,
+        super(
           variables: variables.toJson(),
           operationName: operationName,
           fetchPolicy: fetchPolicy,
           errorPolicy: errorPolicy,
           cacheRereadPolicy: cacheRereadPolicy,
-          optimisticResult: optimisticResult,
+          optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
           pollInterval: pollInterval,
           context: context,
+          onComplete: onComplete == null
+              ? null
+              : (data) => onComplete(
+                    data,
+                    data == null
+                        ? null
+                        : _parserFn$Query$userFriendsScreenUserFriends(data),
+                  ),
+          onError: onError,
           document: documentNodeQueryuserFriendsScreenUserFriends,
           parserFn: _parserFn$Query$userFriendsScreenUserFriends,
         );
+
+  final OnQueryComplete$Query$userFriendsScreenUserFriends?
+      onCompleteWithParsed;
+
+  @override
+  List<Object?> get properties => [
+        ...super.onComplete == null
+            ? super.properties
+            : super.properties.where((property) => property != onComplete),
+        onCompleteWithParsed,
+      ];
 }
 
 class WatchOptions$Query$userFriendsScreenUserFriends
@@ -447,6 +477,7 @@ class WatchOptions$Query$userFriendsScreenUserFriends
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
     Object? optimisticResult,
+    Query$userFriendsScreenUserFriends? typedOptimisticResult,
     graphql.Context? context,
     Duration? pollInterval,
     bool? eagerlyFetchResults,
@@ -458,7 +489,7 @@ class WatchOptions$Query$userFriendsScreenUserFriends
           fetchPolicy: fetchPolicy,
           errorPolicy: errorPolicy,
           cacheRereadPolicy: cacheRereadPolicy,
-          optimisticResult: optimisticResult,
+          optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
           context: context,
           document: documentNodeQueryuserFriendsScreenUserFriends,
           pollInterval: pollInterval,
@@ -550,7 +581,7 @@ class Query$userFriendsScreenUserFriends$userFriends {
   Query$userFriendsScreenUserFriends$userFriends({
     required this.edges,
     required this.pageInfo,
-    required this.$__typename,
+    this.$__typename = 'UserConnection',
   });
 
   factory Query$userFriendsScreenUserFriends$userFriends.fromJson(
@@ -681,7 +712,7 @@ class _CopyWithImpl$Query$userFriendsScreenUserFriends$userFriends<TRes>
 
   final TRes Function(Query$userFriendsScreenUserFriends$userFriends) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? edges = _undefined,
@@ -743,7 +774,7 @@ class _CopyWithStubImpl$Query$userFriendsScreenUserFriends$userFriends<TRes>
 class Query$userFriendsScreenUserFriends$userFriends$edges {
   Query$userFriendsScreenUserFriends$userFriends$edges({
     required this.node,
-    required this.$__typename,
+    this.$__typename = 'UserEdge',
   });
 
   factory Query$userFriendsScreenUserFriends$userFriends$edges.fromJson(
@@ -846,7 +877,7 @@ class _CopyWithImpl$Query$userFriendsScreenUserFriends$userFriends$edges<TRes>
   final TRes Function(Query$userFriendsScreenUserFriends$userFriends$edges)
       _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? node = _undefined,
@@ -903,7 +934,7 @@ class Query$userFriendsScreenUserFriends$userFriends$edges$node
     required this.isMuted,
     required this.isBlocked,
     required this.invitationAwaitings,
-    required this.$__typename,
+    this.$__typename = 'User',
     this.distanceKm,
   });
 
@@ -1154,7 +1185,7 @@ class _CopyWithImpl$Query$userFriendsScreenUserFriends$userFriends$edges$node<
   final TRes Function(Query$userFriendsScreenUserFriends$userFriends$edges$node)
       _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? id = _undefined,
@@ -1257,7 +1288,7 @@ class Query$userFriendsScreenUserFriends$userFriends$edges$node$invitationAwaiti
     required this.startsAt,
     required this.endsAt,
     required this.comment,
-    required this.$__typename,
+    this.$__typename = 'InvitationAwaiting',
   });
 
   factory Query$userFriendsScreenUserFriends$userFriends$edges$node$invitationAwaitings.fromJson(
@@ -1421,7 +1452,7 @@ class _CopyWithImpl$Query$userFriendsScreenUserFriends$userFriends$edges$node$in
           Query$userFriendsScreenUserFriends$userFriends$edges$node$invitationAwaitings)
       _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? id = _undefined,
@@ -1477,7 +1508,7 @@ class Query$userFriendsScreenUserFriends$userFriends$pageInfo {
   Query$userFriendsScreenUserFriends$userFriends$pageInfo({
     required this.hasNextPage,
     this.endCursor,
-    required this.$__typename,
+    this.$__typename = 'PageInfo',
   });
 
   factory Query$userFriendsScreenUserFriends$userFriends$pageInfo.fromJson(
@@ -1592,7 +1623,7 @@ class _CopyWithImpl$Query$userFriendsScreenUserFriends$userFriends$pageInfo<
   final TRes Function(Query$userFriendsScreenUserFriends$userFriends$pageInfo)
       _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? hasNextPage = _undefined,

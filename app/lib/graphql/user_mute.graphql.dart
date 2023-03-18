@@ -81,7 +81,7 @@ class _CopyWithImpl$Variables$Mutation$muteUser<TRes>
 
   final TRes Function(Variables$Mutation$muteUser) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({Object? userId = _undefined}) =>
       _then(Variables$Mutation$muteUser._({
@@ -103,7 +103,7 @@ class _CopyWithStubImpl$Variables$Mutation$muteUser<TRes>
 class Mutation$muteUser {
   Mutation$muteUser({
     required this.muteUser,
-    required this.$__typename,
+    this.$__typename = 'Mutation',
   });
 
   factory Mutation$muteUser.fromJson(Map<String, dynamic> json) {
@@ -196,7 +196,7 @@ class _CopyWithImpl$Mutation$muteUser<TRes>
 
   final TRes Function(Mutation$muteUser) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? muteUser = _undefined,
@@ -289,7 +289,7 @@ const documentNodeMutationmuteUser = DocumentNode(definitions: [
 Mutation$muteUser _parserFn$Mutation$muteUser(Map<String, dynamic> data) =>
     Mutation$muteUser.fromJson(data);
 typedef OnMutationCompleted$Mutation$muteUser = FutureOr<void> Function(
-  dynamic,
+  Map<String, dynamic>?,
   Mutation$muteUser?,
 );
 
@@ -302,6 +302,7 @@ class Options$Mutation$muteUser
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
     Object? optimisticResult,
+    Mutation$muteUser? typedOptimisticResult,
     graphql.Context? context,
     OnMutationCompleted$Mutation$muteUser? onCompleted,
     graphql.OnMutationUpdate<Mutation$muteUser>? update,
@@ -313,7 +314,7 @@ class Options$Mutation$muteUser
           fetchPolicy: fetchPolicy,
           errorPolicy: errorPolicy,
           cacheRereadPolicy: cacheRereadPolicy,
-          optimisticResult: optimisticResult,
+          optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
           context: context,
           onCompleted: onCompleted == null
               ? null
@@ -347,6 +348,7 @@ class WatchOptions$Mutation$muteUser
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
     Object? optimisticResult,
+    Mutation$muteUser? typedOptimisticResult,
     graphql.Context? context,
     Duration? pollInterval,
     bool? eagerlyFetchResults,
@@ -358,7 +360,7 @@ class WatchOptions$Mutation$muteUser
           fetchPolicy: fetchPolicy,
           errorPolicy: errorPolicy,
           cacheRereadPolicy: cacheRereadPolicy,
-          optimisticResult: optimisticResult,
+          optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
           context: context,
           document: documentNodeMutationmuteUser,
           pollInterval: pollInterval,
@@ -394,9 +396,10 @@ Mutation$muteUser$HookResult useMutation$muteUser(
   final result =
       graphql_flutter.useMutation(options ?? WidgetOptions$Mutation$muteUser());
   return Mutation$muteUser$HookResult(
-    (variables, {optimisticResult}) => result.runMutation(
+    (variables, {optimisticResult, typedOptimisticResult}) =>
+        result.runMutation(
       variables.toJson(),
-      optimisticResult: optimisticResult,
+      optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
     ),
     result.result,
   );
@@ -414,6 +417,7 @@ class WidgetOptions$Mutation$muteUser
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
     Object? optimisticResult,
+    Mutation$muteUser? typedOptimisticResult,
     graphql.Context? context,
     OnMutationCompleted$Mutation$muteUser? onCompleted,
     graphql.OnMutationUpdate<Mutation$muteUser>? update,
@@ -424,7 +428,7 @@ class WidgetOptions$Mutation$muteUser
           fetchPolicy: fetchPolicy,
           errorPolicy: errorPolicy,
           cacheRereadPolicy: cacheRereadPolicy,
-          optimisticResult: optimisticResult,
+          optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
           context: context,
           onCompleted: onCompleted == null
               ? null
@@ -453,6 +457,7 @@ typedef RunMutation$Mutation$muteUser
     = graphql.MultiSourceResult<Mutation$muteUser> Function(
   Variables$Mutation$muteUser, {
   Object? optimisticResult,
+  Mutation$muteUser? typedOptimisticResult,
 });
 typedef Builder$Mutation$muteUser = widgets.Widget Function(
   RunMutation$Mutation$muteUser,
@@ -476,10 +481,12 @@ class Mutation$muteUser$Widget
             (
               variables, {
               optimisticResult,
+              typedOptimisticResult,
             }) =>
                 run(
               variables.toJson(),
-              optimisticResult: optimisticResult,
+              optimisticResult:
+                  optimisticResult ?? typedOptimisticResult?.toJson(),
             ),
             result,
           ),
@@ -489,7 +496,7 @@ class Mutation$muteUser$Widget
 class Mutation$muteUser$muteUser {
   Mutation$muteUser$muteUser({
     required this.mutedUserId,
-    required this.$__typename,
+    this.$__typename = 'MuteUserPayload',
   });
 
   factory Mutation$muteUser$muteUser.fromJson(Map<String, dynamic> json) {
@@ -582,7 +589,7 @@ class _CopyWithImpl$Mutation$muteUser$muteUser<TRes>
 
   final TRes Function(Mutation$muteUser$muteUser) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? mutedUserId = _undefined,
@@ -688,7 +695,7 @@ class _CopyWithImpl$Variables$Mutation$unmuteUser<TRes>
 
   final TRes Function(Variables$Mutation$unmuteUser) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({Object? userId = _undefined}) =>
       _then(Variables$Mutation$unmuteUser._({
@@ -710,7 +717,7 @@ class _CopyWithStubImpl$Variables$Mutation$unmuteUser<TRes>
 class Mutation$unmuteUser {
   Mutation$unmuteUser({
     required this.unmuteUser,
-    required this.$__typename,
+    this.$__typename = 'Mutation',
   });
 
   factory Mutation$unmuteUser.fromJson(Map<String, dynamic> json) {
@@ -803,7 +810,7 @@ class _CopyWithImpl$Mutation$unmuteUser<TRes>
 
   final TRes Function(Mutation$unmuteUser) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? unmuteUser = _undefined,
@@ -896,7 +903,7 @@ const documentNodeMutationunmuteUser = DocumentNode(definitions: [
 Mutation$unmuteUser _parserFn$Mutation$unmuteUser(Map<String, dynamic> data) =>
     Mutation$unmuteUser.fromJson(data);
 typedef OnMutationCompleted$Mutation$unmuteUser = FutureOr<void> Function(
-  dynamic,
+  Map<String, dynamic>?,
   Mutation$unmuteUser?,
 );
 
@@ -909,6 +916,7 @@ class Options$Mutation$unmuteUser
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
     Object? optimisticResult,
+    Mutation$unmuteUser? typedOptimisticResult,
     graphql.Context? context,
     OnMutationCompleted$Mutation$unmuteUser? onCompleted,
     graphql.OnMutationUpdate<Mutation$unmuteUser>? update,
@@ -920,7 +928,7 @@ class Options$Mutation$unmuteUser
           fetchPolicy: fetchPolicy,
           errorPolicy: errorPolicy,
           cacheRereadPolicy: cacheRereadPolicy,
-          optimisticResult: optimisticResult,
+          optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
           context: context,
           onCompleted: onCompleted == null
               ? null
@@ -954,6 +962,7 @@ class WatchOptions$Mutation$unmuteUser
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
     Object? optimisticResult,
+    Mutation$unmuteUser? typedOptimisticResult,
     graphql.Context? context,
     Duration? pollInterval,
     bool? eagerlyFetchResults,
@@ -965,7 +974,7 @@ class WatchOptions$Mutation$unmuteUser
           fetchPolicy: fetchPolicy,
           errorPolicy: errorPolicy,
           cacheRereadPolicy: cacheRereadPolicy,
-          optimisticResult: optimisticResult,
+          optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
           context: context,
           document: documentNodeMutationunmuteUser,
           pollInterval: pollInterval,
@@ -1001,9 +1010,10 @@ Mutation$unmuteUser$HookResult useMutation$unmuteUser(
   final result = graphql_flutter
       .useMutation(options ?? WidgetOptions$Mutation$unmuteUser());
   return Mutation$unmuteUser$HookResult(
-    (variables, {optimisticResult}) => result.runMutation(
+    (variables, {optimisticResult, typedOptimisticResult}) =>
+        result.runMutation(
       variables.toJson(),
-      optimisticResult: optimisticResult,
+      optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
     ),
     result.result,
   );
@@ -1021,6 +1031,7 @@ class WidgetOptions$Mutation$unmuteUser
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
     Object? optimisticResult,
+    Mutation$unmuteUser? typedOptimisticResult,
     graphql.Context? context,
     OnMutationCompleted$Mutation$unmuteUser? onCompleted,
     graphql.OnMutationUpdate<Mutation$unmuteUser>? update,
@@ -1031,7 +1042,7 @@ class WidgetOptions$Mutation$unmuteUser
           fetchPolicy: fetchPolicy,
           errorPolicy: errorPolicy,
           cacheRereadPolicy: cacheRereadPolicy,
-          optimisticResult: optimisticResult,
+          optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
           context: context,
           onCompleted: onCompleted == null
               ? null
@@ -1060,6 +1071,7 @@ typedef RunMutation$Mutation$unmuteUser
     = graphql.MultiSourceResult<Mutation$unmuteUser> Function(
   Variables$Mutation$unmuteUser, {
   Object? optimisticResult,
+  Mutation$unmuteUser? typedOptimisticResult,
 });
 typedef Builder$Mutation$unmuteUser = widgets.Widget Function(
   RunMutation$Mutation$unmuteUser,
@@ -1083,10 +1095,12 @@ class Mutation$unmuteUser$Widget
             (
               variables, {
               optimisticResult,
+              typedOptimisticResult,
             }) =>
                 run(
               variables.toJson(),
-              optimisticResult: optimisticResult,
+              optimisticResult:
+                  optimisticResult ?? typedOptimisticResult?.toJson(),
             ),
             result,
           ),
@@ -1096,7 +1110,7 @@ class Mutation$unmuteUser$Widget
 class Mutation$unmuteUser$unmuteUser {
   Mutation$unmuteUser$unmuteUser({
     required this.unmutedUserId,
-    required this.$__typename,
+    this.$__typename = 'UnmuteUserPayload',
   });
 
   factory Mutation$unmuteUser$unmuteUser.fromJson(Map<String, dynamic> json) {
@@ -1189,7 +1203,7 @@ class _CopyWithImpl$Mutation$unmuteUser$unmuteUser<TRes>
 
   final TRes Function(Mutation$unmuteUser$unmuteUser) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? unmutedUserId = _undefined,

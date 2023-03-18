@@ -81,7 +81,7 @@ class _CopyWithImpl$Variables$Query$searchUser<TRes>
 
   final TRes Function(Variables$Query$searchUser) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({Object? userScreenId = _undefined}) =>
       _then(Variables$Query$searchUser._({
@@ -103,7 +103,7 @@ class _CopyWithStubImpl$Variables$Query$searchUser<TRes>
 class Query$searchUser {
   Query$searchUser({
     required this.userByScreenId,
-    required this.$__typename,
+    this.$__typename = 'Query',
   });
 
   factory Query$searchUser.fromJson(Map<String, dynamic> json) {
@@ -196,7 +196,7 @@ class _CopyWithImpl$Query$searchUser<TRes>
 
   final TRes Function(Query$searchUser) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? userByScreenId = _undefined,
@@ -316,6 +316,10 @@ const documentNodeQuerysearchUser = DocumentNode(definitions: [
 ]);
 Query$searchUser _parserFn$Query$searchUser(Map<String, dynamic> data) =>
     Query$searchUser.fromJson(data);
+typedef OnQueryComplete$Query$searchUser = FutureOr<void> Function(
+  Map<String, dynamic>?,
+  Query$searchUser?,
+);
 
 class Options$Query$searchUser extends graphql.QueryOptions<Query$searchUser> {
   Options$Query$searchUser({
@@ -325,20 +329,41 @@ class Options$Query$searchUser extends graphql.QueryOptions<Query$searchUser> {
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
     Object? optimisticResult,
+    Query$searchUser? typedOptimisticResult,
     Duration? pollInterval,
     graphql.Context? context,
-  }) : super(
+    OnQueryComplete$Query$searchUser? onComplete,
+    graphql.OnQueryError? onError,
+  })  : onCompleteWithParsed = onComplete,
+        super(
           variables: variables.toJson(),
           operationName: operationName,
           fetchPolicy: fetchPolicy,
           errorPolicy: errorPolicy,
           cacheRereadPolicy: cacheRereadPolicy,
-          optimisticResult: optimisticResult,
+          optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
           pollInterval: pollInterval,
           context: context,
+          onComplete: onComplete == null
+              ? null
+              : (data) => onComplete(
+                    data,
+                    data == null ? null : _parserFn$Query$searchUser(data),
+                  ),
+          onError: onError,
           document: documentNodeQuerysearchUser,
           parserFn: _parserFn$Query$searchUser,
         );
+
+  final OnQueryComplete$Query$searchUser? onCompleteWithParsed;
+
+  @override
+  List<Object?> get properties => [
+        ...super.onComplete == null
+            ? super.properties
+            : super.properties.where((property) => property != onComplete),
+        onCompleteWithParsed,
+      ];
 }
 
 class WatchOptions$Query$searchUser
@@ -350,6 +375,7 @@ class WatchOptions$Query$searchUser
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
     Object? optimisticResult,
+    Query$searchUser? typedOptimisticResult,
     graphql.Context? context,
     Duration? pollInterval,
     bool? eagerlyFetchResults,
@@ -361,7 +387,7 @@ class WatchOptions$Query$searchUser
           fetchPolicy: fetchPolicy,
           errorPolicy: errorPolicy,
           cacheRereadPolicy: cacheRereadPolicy,
-          optimisticResult: optimisticResult,
+          optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
           context: context,
           document: documentNodeQuerysearchUser,
           pollInterval: pollInterval,
@@ -444,7 +470,7 @@ class Query$searchUser$userByScreenId {
     required this.avatarUrl,
     required this.isFriend,
     required this.isRequestingFriendship,
-    required this.$__typename,
+    this.$__typename = 'User',
   });
 
   factory Query$searchUser$userByScreenId.fromJson(Map<String, dynamic> json) {
@@ -593,7 +619,7 @@ class _CopyWithImpl$Query$searchUser$userByScreenId<TRes>
 
   final TRes Function(Query$searchUser$userByScreenId) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? id = _undefined,
@@ -720,7 +746,7 @@ class _CopyWithImpl$Variables$Mutation$requestFriendship<TRes>
 
   final TRes Function(Variables$Mutation$requestFriendship) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({Object? userId = _undefined}) =>
       _then(Variables$Mutation$requestFriendship._({
@@ -742,7 +768,7 @@ class _CopyWithStubImpl$Variables$Mutation$requestFriendship<TRes>
 class Mutation$requestFriendship {
   Mutation$requestFriendship({
     required this.requestFriendship,
-    required this.$__typename,
+    this.$__typename = 'Mutation',
   });
 
   factory Mutation$requestFriendship.fromJson(Map<String, dynamic> json) {
@@ -838,7 +864,7 @@ class _CopyWithImpl$Mutation$requestFriendship<TRes>
 
   final TRes Function(Mutation$requestFriendship) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? requestFriendship = _undefined,
@@ -952,7 +978,7 @@ Mutation$requestFriendship _parserFn$Mutation$requestFriendship(
     Mutation$requestFriendship.fromJson(data);
 typedef OnMutationCompleted$Mutation$requestFriendship = FutureOr<void>
     Function(
-  dynamic,
+  Map<String, dynamic>?,
   Mutation$requestFriendship?,
 );
 
@@ -965,6 +991,7 @@ class Options$Mutation$requestFriendship
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
     Object? optimisticResult,
+    Mutation$requestFriendship? typedOptimisticResult,
     graphql.Context? context,
     OnMutationCompleted$Mutation$requestFriendship? onCompleted,
     graphql.OnMutationUpdate<Mutation$requestFriendship>? update,
@@ -976,7 +1003,7 @@ class Options$Mutation$requestFriendship
           fetchPolicy: fetchPolicy,
           errorPolicy: errorPolicy,
           cacheRereadPolicy: cacheRereadPolicy,
-          optimisticResult: optimisticResult,
+          optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
           context: context,
           onCompleted: onCompleted == null
               ? null
@@ -1012,6 +1039,7 @@ class WatchOptions$Mutation$requestFriendship
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
     Object? optimisticResult,
+    Mutation$requestFriendship? typedOptimisticResult,
     graphql.Context? context,
     Duration? pollInterval,
     bool? eagerlyFetchResults,
@@ -1023,7 +1051,7 @@ class WatchOptions$Mutation$requestFriendship
           fetchPolicy: fetchPolicy,
           errorPolicy: errorPolicy,
           cacheRereadPolicy: cacheRereadPolicy,
-          optimisticResult: optimisticResult,
+          optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
           context: context,
           document: documentNodeMutationrequestFriendship,
           pollInterval: pollInterval,
@@ -1061,9 +1089,10 @@ Mutation$requestFriendship$HookResult useMutation$requestFriendship(
   final result = graphql_flutter
       .useMutation(options ?? WidgetOptions$Mutation$requestFriendship());
   return Mutation$requestFriendship$HookResult(
-    (variables, {optimisticResult}) => result.runMutation(
+    (variables, {optimisticResult, typedOptimisticResult}) =>
+        result.runMutation(
       variables.toJson(),
-      optimisticResult: optimisticResult,
+      optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
     ),
     result.result,
   );
@@ -1082,6 +1111,7 @@ class WidgetOptions$Mutation$requestFriendship
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
     Object? optimisticResult,
+    Mutation$requestFriendship? typedOptimisticResult,
     graphql.Context? context,
     OnMutationCompleted$Mutation$requestFriendship? onCompleted,
     graphql.OnMutationUpdate<Mutation$requestFriendship>? update,
@@ -1092,7 +1122,7 @@ class WidgetOptions$Mutation$requestFriendship
           fetchPolicy: fetchPolicy,
           errorPolicy: errorPolicy,
           cacheRereadPolicy: cacheRereadPolicy,
-          optimisticResult: optimisticResult,
+          optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
           context: context,
           onCompleted: onCompleted == null
               ? null
@@ -1123,6 +1153,7 @@ typedef RunMutation$Mutation$requestFriendship
     = graphql.MultiSourceResult<Mutation$requestFriendship> Function(
   Variables$Mutation$requestFriendship, {
   Object? optimisticResult,
+  Mutation$requestFriendship? typedOptimisticResult,
 });
 typedef Builder$Mutation$requestFriendship = widgets.Widget Function(
   RunMutation$Mutation$requestFriendship,
@@ -1146,10 +1177,12 @@ class Mutation$requestFriendship$Widget
             (
               variables, {
               optimisticResult,
+              typedOptimisticResult,
             }) =>
                 run(
               variables.toJson(),
-              optimisticResult: optimisticResult,
+              optimisticResult:
+                  optimisticResult ?? typedOptimisticResult?.toJson(),
             ),
             result,
           ),
@@ -1159,7 +1192,7 @@ class Mutation$requestFriendship$Widget
 class Mutation$requestFriendship$requestFriendship {
   Mutation$requestFriendship$requestFriendship({
     required this.friendShipRequest,
-    required this.$__typename,
+    this.$__typename = 'RequestFriendshipPayload',
   });
 
   factory Mutation$requestFriendship$requestFriendship.fromJson(
@@ -1260,7 +1293,7 @@ class _CopyWithImpl$Mutation$requestFriendship$requestFriendship<TRes>
 
   final TRes Function(Mutation$requestFriendship$requestFriendship) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? friendShipRequest = _undefined,
@@ -1305,7 +1338,7 @@ class _CopyWithStubImpl$Mutation$requestFriendship$requestFriendship<TRes>
 class Mutation$requestFriendship$requestFriendship$friendShipRequest {
   Mutation$requestFriendship$requestFriendship$friendShipRequest({
     required this.id,
-    required this.$__typename,
+    this.$__typename = 'FriendshipRequest',
   });
 
   factory Mutation$requestFriendship$requestFriendship$friendShipRequest.fromJson(
@@ -1411,7 +1444,7 @@ class _CopyWithImpl$Mutation$requestFriendship$requestFriendship$friendShipReque
   final TRes Function(
       Mutation$requestFriendship$requestFriendship$friendShipRequest) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? id = _undefined,

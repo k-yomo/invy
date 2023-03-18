@@ -12,7 +12,7 @@ import 'package:graphql_flutter/graphql_flutter.dart' as graphql_flutter;
 class Query$friendScreenViewer {
   Query$friendScreenViewer({
     required this.viewer,
-    required this.$__typename,
+    this.$__typename = 'Query',
   });
 
   factory Query$friendScreenViewer.fromJson(Map<String, dynamic> json) {
@@ -107,7 +107,7 @@ class _CopyWithImpl$Query$friendScreenViewer<TRes>
 
   final TRes Function(Query$friendScreenViewer) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? viewer = _undefined,
@@ -322,6 +322,10 @@ const documentNodeQueryfriendScreenViewer = DocumentNode(definitions: [
 Query$friendScreenViewer _parserFn$Query$friendScreenViewer(
         Map<String, dynamic> data) =>
     Query$friendScreenViewer.fromJson(data);
+typedef OnQueryComplete$Query$friendScreenViewer = FutureOr<void> Function(
+  Map<String, dynamic>?,
+  Query$friendScreenViewer?,
+);
 
 class Options$Query$friendScreenViewer
     extends graphql.QueryOptions<Query$friendScreenViewer> {
@@ -331,19 +335,42 @@ class Options$Query$friendScreenViewer
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
     Object? optimisticResult,
+    Query$friendScreenViewer? typedOptimisticResult,
     Duration? pollInterval,
     graphql.Context? context,
-  }) : super(
+    OnQueryComplete$Query$friendScreenViewer? onComplete,
+    graphql.OnQueryError? onError,
+  })  : onCompleteWithParsed = onComplete,
+        super(
           operationName: operationName,
           fetchPolicy: fetchPolicy,
           errorPolicy: errorPolicy,
           cacheRereadPolicy: cacheRereadPolicy,
-          optimisticResult: optimisticResult,
+          optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
           pollInterval: pollInterval,
           context: context,
+          onComplete: onComplete == null
+              ? null
+              : (data) => onComplete(
+                    data,
+                    data == null
+                        ? null
+                        : _parserFn$Query$friendScreenViewer(data),
+                  ),
+          onError: onError,
           document: documentNodeQueryfriendScreenViewer,
           parserFn: _parserFn$Query$friendScreenViewer,
         );
+
+  final OnQueryComplete$Query$friendScreenViewer? onCompleteWithParsed;
+
+  @override
+  List<Object?> get properties => [
+        ...super.onComplete == null
+            ? super.properties
+            : super.properties.where((property) => property != onComplete),
+        onCompleteWithParsed,
+      ];
 }
 
 class WatchOptions$Query$friendScreenViewer
@@ -354,6 +381,7 @@ class WatchOptions$Query$friendScreenViewer
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
     Object? optimisticResult,
+    Query$friendScreenViewer? typedOptimisticResult,
     graphql.Context? context,
     Duration? pollInterval,
     bool? eagerlyFetchResults,
@@ -364,7 +392,7 @@ class WatchOptions$Query$friendScreenViewer
           fetchPolicy: fetchPolicy,
           errorPolicy: errorPolicy,
           cacheRereadPolicy: cacheRereadPolicy,
-          optimisticResult: optimisticResult,
+          optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
           context: context,
           document: documentNodeQueryfriendScreenViewer,
           pollInterval: pollInterval,
@@ -444,7 +472,7 @@ class Query$friendScreenViewer$viewer {
     required this.friendGroups,
     required this.friends,
     required this.pendingFriendshipRequests,
-    required this.$__typename,
+    this.$__typename = 'Viewer',
   });
 
   factory Query$friendScreenViewer$viewer.fromJson(Map<String, dynamic> json) {
@@ -605,7 +633,7 @@ class _CopyWithImpl$Query$friendScreenViewer$viewer<TRes>
 
   final TRes Function(Query$friendScreenViewer$viewer) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? friendGroups = _undefined,
@@ -684,7 +712,7 @@ class Query$friendScreenViewer$viewer$friends {
   Query$friendScreenViewer$viewer$friends({
     required this.edges,
     required this.pageInfo,
-    required this.$__typename,
+    this.$__typename = 'UserConnection',
   });
 
   factory Query$friendScreenViewer$viewer$friends.fromJson(
@@ -811,7 +839,7 @@ class _CopyWithImpl$Query$friendScreenViewer$viewer$friends<TRes>
 
   final TRes Function(Query$friendScreenViewer$viewer$friends) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? edges = _undefined,
@@ -869,7 +897,7 @@ class _CopyWithStubImpl$Query$friendScreenViewer$viewer$friends<TRes>
 class Query$friendScreenViewer$viewer$friends$edges {
   Query$friendScreenViewer$viewer$friends$edges({
     required this.node,
-    required this.$__typename,
+    this.$__typename = 'UserEdge',
   });
 
   factory Query$friendScreenViewer$viewer$friends$edges.fromJson(
@@ -967,7 +995,7 @@ class _CopyWithImpl$Query$friendScreenViewer$viewer$friends$edges<TRes>
 
   final TRes Function(Query$friendScreenViewer$viewer$friends$edges) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? node = _undefined,
@@ -1014,7 +1042,7 @@ class Query$friendScreenViewer$viewer$friends$edges$node
     required this.isMuted,
     this.distanceKm,
     required this.invitationAwaitings,
-    required this.$__typename,
+    this.$__typename = 'User',
     required this.screenId,
     required this.isRequestingFriendship,
     required this.isFriend,
@@ -1264,7 +1292,7 @@ class _CopyWithImpl$Query$friendScreenViewer$viewer$friends$edges$node<TRes>
 
   final TRes Function(Query$friendScreenViewer$viewer$friends$edges$node) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? id = _undefined,
@@ -1363,7 +1391,7 @@ class Query$friendScreenViewer$viewer$friends$edges$node$invitationAwaitings
     required this.startsAt,
     required this.endsAt,
     required this.comment,
-    required this.$__typename,
+    this.$__typename = 'InvitationAwaiting',
     required this.id,
     required this.userId,
   });
@@ -1529,7 +1557,7 @@ class _CopyWithImpl$Query$friendScreenViewer$viewer$friends$edges$node$invitatio
           Query$friendScreenViewer$viewer$friends$edges$node$invitationAwaitings)
       _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? startsAt = _undefined,
@@ -1587,7 +1615,7 @@ class Query$friendScreenViewer$viewer$friends$pageInfo {
     this.endCursor,
     required this.hasNextPage,
     required this.hasPreviousPage,
-    required this.$__typename,
+    this.$__typename = 'PageInfo',
   });
 
   factory Query$friendScreenViewer$viewer$friends$pageInfo.fromJson(
@@ -1725,7 +1753,7 @@ class _CopyWithImpl$Query$friendScreenViewer$viewer$friends$pageInfo<TRes>
 
   final TRes Function(Query$friendScreenViewer$viewer$friends$pageInfo) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? startCursor = _undefined,
@@ -1850,7 +1878,7 @@ class _CopyWithImpl$Variables$Mutation$acceptFriendshipRequest<TRes>
 
   final TRes Function(Variables$Mutation$acceptFriendshipRequest) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({Object? friendshipRequestId = _undefined}) =>
       _then(Variables$Mutation$acceptFriendshipRequest._({
@@ -1872,7 +1900,7 @@ class _CopyWithStubImpl$Variables$Mutation$acceptFriendshipRequest<TRes>
 class Mutation$acceptFriendshipRequest {
   Mutation$acceptFriendshipRequest({
     required this.acceptFriendshipRequest,
-    required this.$__typename,
+    this.$__typename = 'Mutation',
   });
 
   factory Mutation$acceptFriendshipRequest.fromJson(Map<String, dynamic> json) {
@@ -1971,7 +1999,7 @@ class _CopyWithImpl$Mutation$acceptFriendshipRequest<TRes>
 
   final TRes Function(Mutation$acceptFriendshipRequest) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? acceptFriendshipRequest = _undefined,
@@ -2072,7 +2100,7 @@ Mutation$acceptFriendshipRequest _parserFn$Mutation$acceptFriendshipRequest(
     Mutation$acceptFriendshipRequest.fromJson(data);
 typedef OnMutationCompleted$Mutation$acceptFriendshipRequest = FutureOr<void>
     Function(
-  dynamic,
+  Map<String, dynamic>?,
   Mutation$acceptFriendshipRequest?,
 );
 
@@ -2085,6 +2113,7 @@ class Options$Mutation$acceptFriendshipRequest
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
     Object? optimisticResult,
+    Mutation$acceptFriendshipRequest? typedOptimisticResult,
     graphql.Context? context,
     OnMutationCompleted$Mutation$acceptFriendshipRequest? onCompleted,
     graphql.OnMutationUpdate<Mutation$acceptFriendshipRequest>? update,
@@ -2096,7 +2125,7 @@ class Options$Mutation$acceptFriendshipRequest
           fetchPolicy: fetchPolicy,
           errorPolicy: errorPolicy,
           cacheRereadPolicy: cacheRereadPolicy,
-          optimisticResult: optimisticResult,
+          optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
           context: context,
           onCompleted: onCompleted == null
               ? null
@@ -2133,6 +2162,7 @@ class WatchOptions$Mutation$acceptFriendshipRequest
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
     Object? optimisticResult,
+    Mutation$acceptFriendshipRequest? typedOptimisticResult,
     graphql.Context? context,
     Duration? pollInterval,
     bool? eagerlyFetchResults,
@@ -2144,7 +2174,7 @@ class WatchOptions$Mutation$acceptFriendshipRequest
           fetchPolicy: fetchPolicy,
           errorPolicy: errorPolicy,
           cacheRereadPolicy: cacheRereadPolicy,
-          optimisticResult: optimisticResult,
+          optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
           context: context,
           document: documentNodeMutationacceptFriendshipRequest,
           pollInterval: pollInterval,
@@ -2183,9 +2213,10 @@ Mutation$acceptFriendshipRequest$HookResult useMutation$acceptFriendshipRequest(
   final result = graphql_flutter
       .useMutation(options ?? WidgetOptions$Mutation$acceptFriendshipRequest());
   return Mutation$acceptFriendshipRequest$HookResult(
-    (variables, {optimisticResult}) => result.runMutation(
+    (variables, {optimisticResult, typedOptimisticResult}) =>
+        result.runMutation(
       variables.toJson(),
-      optimisticResult: optimisticResult,
+      optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
     ),
     result.result,
   );
@@ -2204,6 +2235,7 @@ class WidgetOptions$Mutation$acceptFriendshipRequest
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
     Object? optimisticResult,
+    Mutation$acceptFriendshipRequest? typedOptimisticResult,
     graphql.Context? context,
     OnMutationCompleted$Mutation$acceptFriendshipRequest? onCompleted,
     graphql.OnMutationUpdate<Mutation$acceptFriendshipRequest>? update,
@@ -2214,7 +2246,7 @@ class WidgetOptions$Mutation$acceptFriendshipRequest
           fetchPolicy: fetchPolicy,
           errorPolicy: errorPolicy,
           cacheRereadPolicy: cacheRereadPolicy,
-          optimisticResult: optimisticResult,
+          optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
           context: context,
           onCompleted: onCompleted == null
               ? null
@@ -2246,6 +2278,7 @@ typedef RunMutation$Mutation$acceptFriendshipRequest
     = graphql.MultiSourceResult<Mutation$acceptFriendshipRequest> Function(
   Variables$Mutation$acceptFriendshipRequest, {
   Object? optimisticResult,
+  Mutation$acceptFriendshipRequest? typedOptimisticResult,
 });
 typedef Builder$Mutation$acceptFriendshipRequest = widgets.Widget Function(
   RunMutation$Mutation$acceptFriendshipRequest,
@@ -2269,10 +2302,12 @@ class Mutation$acceptFriendshipRequest$Widget
             (
               variables, {
               optimisticResult,
+              typedOptimisticResult,
             }) =>
                 run(
               variables.toJson(),
-              optimisticResult: optimisticResult,
+              optimisticResult:
+                  optimisticResult ?? typedOptimisticResult?.toJson(),
             ),
             result,
           ),
@@ -2282,7 +2317,7 @@ class Mutation$acceptFriendshipRequest$Widget
 class Mutation$acceptFriendshipRequest$acceptFriendshipRequest {
   Mutation$acceptFriendshipRequest$acceptFriendshipRequest({
     required this.acceptedFriendshipRequestId,
-    required this.$__typename,
+    this.$__typename = 'AcceptFriendshipRequestPayload',
   });
 
   factory Mutation$acceptFriendshipRequest$acceptFriendshipRequest.fromJson(
@@ -2386,7 +2421,7 @@ class _CopyWithImpl$Mutation$acceptFriendshipRequest$acceptFriendshipRequest<
   final TRes Function(Mutation$acceptFriendshipRequest$acceptFriendshipRequest)
       _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? acceptedFriendshipRequestId = _undefined,
@@ -2501,7 +2536,7 @@ class _CopyWithImpl$Variables$Mutation$denyFriendshipRequest<TRes>
 
   final TRes Function(Variables$Mutation$denyFriendshipRequest) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({Object? friendshipRequestId = _undefined}) =>
       _then(Variables$Mutation$denyFriendshipRequest._({
@@ -2523,7 +2558,7 @@ class _CopyWithStubImpl$Variables$Mutation$denyFriendshipRequest<TRes>
 class Mutation$denyFriendshipRequest {
   Mutation$denyFriendshipRequest({
     required this.denyFriendshipRequest,
-    required this.$__typename,
+    this.$__typename = 'Mutation',
   });
 
   factory Mutation$denyFriendshipRequest.fromJson(Map<String, dynamic> json) {
@@ -2621,7 +2656,7 @@ class _CopyWithImpl$Mutation$denyFriendshipRequest<TRes>
 
   final TRes Function(Mutation$denyFriendshipRequest) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? denyFriendshipRequest = _undefined,
@@ -2721,7 +2756,7 @@ Mutation$denyFriendshipRequest _parserFn$Mutation$denyFriendshipRequest(
     Mutation$denyFriendshipRequest.fromJson(data);
 typedef OnMutationCompleted$Mutation$denyFriendshipRequest = FutureOr<void>
     Function(
-  dynamic,
+  Map<String, dynamic>?,
   Mutation$denyFriendshipRequest?,
 );
 
@@ -2734,6 +2769,7 @@ class Options$Mutation$denyFriendshipRequest
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
     Object? optimisticResult,
+    Mutation$denyFriendshipRequest? typedOptimisticResult,
     graphql.Context? context,
     OnMutationCompleted$Mutation$denyFriendshipRequest? onCompleted,
     graphql.OnMutationUpdate<Mutation$denyFriendshipRequest>? update,
@@ -2745,7 +2781,7 @@ class Options$Mutation$denyFriendshipRequest
           fetchPolicy: fetchPolicy,
           errorPolicy: errorPolicy,
           cacheRereadPolicy: cacheRereadPolicy,
-          optimisticResult: optimisticResult,
+          optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
           context: context,
           onCompleted: onCompleted == null
               ? null
@@ -2782,6 +2818,7 @@ class WatchOptions$Mutation$denyFriendshipRequest
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
     Object? optimisticResult,
+    Mutation$denyFriendshipRequest? typedOptimisticResult,
     graphql.Context? context,
     Duration? pollInterval,
     bool? eagerlyFetchResults,
@@ -2793,7 +2830,7 @@ class WatchOptions$Mutation$denyFriendshipRequest
           fetchPolicy: fetchPolicy,
           errorPolicy: errorPolicy,
           cacheRereadPolicy: cacheRereadPolicy,
-          optimisticResult: optimisticResult,
+          optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
           context: context,
           document: documentNodeMutationdenyFriendshipRequest,
           pollInterval: pollInterval,
@@ -2832,9 +2869,10 @@ Mutation$denyFriendshipRequest$HookResult useMutation$denyFriendshipRequest(
   final result = graphql_flutter
       .useMutation(options ?? WidgetOptions$Mutation$denyFriendshipRequest());
   return Mutation$denyFriendshipRequest$HookResult(
-    (variables, {optimisticResult}) => result.runMutation(
+    (variables, {optimisticResult, typedOptimisticResult}) =>
+        result.runMutation(
       variables.toJson(),
-      optimisticResult: optimisticResult,
+      optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
     ),
     result.result,
   );
@@ -2853,6 +2891,7 @@ class WidgetOptions$Mutation$denyFriendshipRequest
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
     Object? optimisticResult,
+    Mutation$denyFriendshipRequest? typedOptimisticResult,
     graphql.Context? context,
     OnMutationCompleted$Mutation$denyFriendshipRequest? onCompleted,
     graphql.OnMutationUpdate<Mutation$denyFriendshipRequest>? update,
@@ -2863,7 +2902,7 @@ class WidgetOptions$Mutation$denyFriendshipRequest
           fetchPolicy: fetchPolicy,
           errorPolicy: errorPolicy,
           cacheRereadPolicy: cacheRereadPolicy,
-          optimisticResult: optimisticResult,
+          optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
           context: context,
           onCompleted: onCompleted == null
               ? null
@@ -2895,6 +2934,7 @@ typedef RunMutation$Mutation$denyFriendshipRequest
     = graphql.MultiSourceResult<Mutation$denyFriendshipRequest> Function(
   Variables$Mutation$denyFriendshipRequest, {
   Object? optimisticResult,
+  Mutation$denyFriendshipRequest? typedOptimisticResult,
 });
 typedef Builder$Mutation$denyFriendshipRequest = widgets.Widget Function(
   RunMutation$Mutation$denyFriendshipRequest,
@@ -2918,10 +2958,12 @@ class Mutation$denyFriendshipRequest$Widget
             (
               variables, {
               optimisticResult,
+              typedOptimisticResult,
             }) =>
                 run(
               variables.toJson(),
-              optimisticResult: optimisticResult,
+              optimisticResult:
+                  optimisticResult ?? typedOptimisticResult?.toJson(),
             ),
             result,
           ),
@@ -2931,7 +2973,7 @@ class Mutation$denyFriendshipRequest$Widget
 class Mutation$denyFriendshipRequest$denyFriendshipRequest {
   Mutation$denyFriendshipRequest$denyFriendshipRequest({
     required this.deniedFriendshipRequestId,
-    required this.$__typename,
+    this.$__typename = 'DenyFriendshipRequestPayload',
   });
 
   factory Mutation$denyFriendshipRequest$denyFriendshipRequest.fromJson(
@@ -3031,7 +3073,7 @@ class _CopyWithImpl$Mutation$denyFriendshipRequest$denyFriendshipRequest<TRes>
   final TRes Function(Mutation$denyFriendshipRequest$denyFriendshipRequest)
       _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? deniedFriendshipRequestId = _undefined,

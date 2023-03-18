@@ -44,15 +44,15 @@ dependencies:
   flutter_hooks: ^0.18.5+1
   universal_platform: ^1.0.0+1
   hooks_riverpod: ^2.1.1
-  dio: ^4.0.6
+  dio: ^5.0.3
   cookie_jar: ^3.0.1
   dio_cookie_manager: ^2.0.0
   path_provider: ^2.0.11
   logger: ^1.1.0
   firebase_auth: ^4.2.5
-  google_sign_in: ^5.4.4
+  google_sign_in: ^6.0.2
   flutter_native_splash: ^2.2.14
-  flutter_launcher_icons: ^0.11.0
+  flutter_launcher_icons: ^0.12.0
   shimmer: ^2.0.0
   flutter_slidable: ^2.0.0
   nil: ^1.1.1
@@ -81,10 +81,7 @@ dependencies:
   permission_handler: ^10.2.0
   background_locator_2:
     git:
-      # TODO: Use background_locator_fixed once the below PR is merged
-      # https://github.com/Yukams/background_locator_fixed/pull/66
-      # url: https://github.com/Yukams/background_locator_fixed.git
-      url: https://github.com/tulioccalazans/background_locator_fixed
+      url: https://github.com/Yukams/background_locator_fixed.git
       ref: master
   pinput: ^2.2.23
   cached_network_image: ^3.2.3
@@ -93,9 +90,9 @@ dependencies:
       url: https://github.com/eli1stark/modal_bottom_sheet.git
       ref: 2b3f9f84f46418c1b337968c88883995f65f47e7
       path: modal_bottom_sheet
-  sentry_flutter: ^6.20.1
+  sentry_flutter: ^7.1.0
   go_router: ^6.0.7
-  riverpod_annotation: ^1.2.1
+  riverpod_annotation: ^2.0.2
   freezed_annotation: ^2.2.0
   adaptive_dialog: ^1.8.2
   firebase_dynamic_links: ^5.0.13
@@ -116,7 +113,7 @@ dev_dependencies:
   graphql_codegen: ^0.12.0-beta.7
   build_runner: ^2.2.0
   go_router_builder: ^1.1.0
-  riverpod_generator: ^1.1.1
+  riverpod_generator: ^2.1.4
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

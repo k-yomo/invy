@@ -38,9 +38,12 @@ extension $HomeRouteExtension on HomeRoute {
         '/',
       );
 
-  void go(BuildContext context) => context.go(location, extra: this);
+  void go(BuildContext context) => context.go(location);
 
-  void push(BuildContext context) => context.push(location, extra: this);
+  void push(BuildContext context) => context.push(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
 }
 
 extension $InvitationDetailRouteExtension on InvitationDetailRoute {
@@ -53,9 +56,12 @@ extension $InvitationDetailRouteExtension on InvitationDetailRoute {
         '/invitations/${Uri.encodeComponent(invitationId)}',
       );
 
-  void go(BuildContext context) => context.go(location, extra: this);
+  void go(BuildContext context) => context.go(location);
 
-  void push(BuildContext context) => context.push(location, extra: this);
+  void push(BuildContext context) => context.push(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
 }
 
 extension $InvitationAwaitingFormRouteExtension on InvitationAwaitingFormRoute {
@@ -66,9 +72,12 @@ extension $InvitationAwaitingFormRouteExtension on InvitationAwaitingFormRoute {
         '/invitation_awaiting/new',
       );
 
-  void go(BuildContext context) => context.go(location, extra: this);
+  void go(BuildContext context) => context.go(location);
 
-  void push(BuildContext context) => context.push(location, extra: this);
+  void push(BuildContext context) => context.push(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
 }
 
 GoRoute get $invitationRoute => GoRouteData.$route(
@@ -90,9 +99,12 @@ extension $InvitationRouteExtension on InvitationRoute {
         '/invitation/new',
       );
 
-  void go(BuildContext context) => context.go(location, extra: this);
+  void go(BuildContext context) => context.go(location);
 
-  void push(BuildContext context) => context.push(location, extra: this);
+  void push(BuildContext context) => context.push(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
 }
 
 extension $InvitationFriendSelectRouteExtension on InvitationFriendSelectRoute {
@@ -103,9 +115,12 @@ extension $InvitationFriendSelectRouteExtension on InvitationFriendSelectRoute {
         '/invitation/new/friend_select',
       );
 
-  void go(BuildContext context) => context.go(location, extra: this);
+  void go(BuildContext context) => context.go(location);
 
-  void push(BuildContext context) => context.push(location, extra: this);
+  void push(BuildContext context) => context.push(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
 }
 
 GoRoute get $friendsRoute => GoRouteData.$route(
@@ -134,9 +149,12 @@ extension $FriendsRouteExtension on FriendsRoute {
         '/friends',
       );
 
-  void go(BuildContext context) => context.go(location, extra: this);
+  void go(BuildContext context) => context.go(location);
 
-  void push(BuildContext context) => context.push(location, extra: this);
+  void push(BuildContext context) => context.push(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
 }
 
 extension $FriendGroupCreateRouteExtension on FriendGroupCreateRoute {
@@ -147,9 +165,12 @@ extension $FriendGroupCreateRouteExtension on FriendGroupCreateRoute {
         '/friends/group/new',
       );
 
-  void go(BuildContext context) => context.go(location, extra: this);
+  void go(BuildContext context) => context.go(location);
 
-  void push(BuildContext context) => context.push(location, extra: this);
+  void push(BuildContext context) => context.push(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
 }
 
 extension $FriendGroupDetailRouteExtension on FriendGroupDetailRoute {
@@ -162,9 +183,12 @@ extension $FriendGroupDetailRouteExtension on FriendGroupDetailRoute {
         '/friends/groups/${Uri.encodeComponent(friendGroupId)}',
       );
 
-  void go(BuildContext context) => context.go(location, extra: this);
+  void go(BuildContext context) => context.go(location);
 
-  void push(BuildContext context) => context.push(location, extra: this);
+  void push(BuildContext context) => context.push(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
 }
 
 extension $FriendshipRequestRouteExtension on FriendshipRequestRoute {
@@ -175,9 +199,12 @@ extension $FriendshipRequestRouteExtension on FriendshipRequestRoute {
         '/friends/request',
       );
 
-  void go(BuildContext context) => context.go(location, extra: this);
+  void go(BuildContext context) => context.go(location);
 
-  void push(BuildContext context) => context.push(location, extra: this);
+  void push(BuildContext context) => context.push(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
 }
 
 GoRoute get $userProfileRoute => GoRouteData.$route(
@@ -195,9 +222,12 @@ extension $UserProfileRouteExtension on UserProfileRoute {
         '/users/${Uri.encodeComponent(userId)}',
       );
 
-  void go(BuildContext context) => context.go(location, extra: this);
+  void go(BuildContext context) => context.go(location, extra: $extra);
 
-  void push(BuildContext context) => context.push(location, extra: this);
+  void push(BuildContext context) => context.push(location, extra: $extra);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location, extra: $extra);
 }
 
 GoRoute get $userFriendsRoute => GoRouteData.$route(
@@ -214,13 +244,16 @@ extension $UserFriendsRouteExtension on UserFriendsRoute {
   String get location => GoRouteData.$location(
         '/users/${Uri.encodeComponent(userId)}/friends',
         queryParams: {
-          if (userNickname != null) 'user-nickname': userNickname!,
+          if (userNickname != null) 'user-nickname': userNickname,
         },
       );
 
-  void go(BuildContext context) => context.go(location, extra: this);
+  void go(BuildContext context) => context.go(location);
 
-  void push(BuildContext context) => context.push(location, extra: this);
+  void push(BuildContext context) => context.push(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
 }
 
 GoRoute get $myProfileRoute => GoRouteData.$route(
@@ -250,9 +283,12 @@ extension $MyProfileRouteExtension on MyProfileRoute {
         '/me',
       );
 
-  void go(BuildContext context) => context.go(location, extra: this);
+  void go(BuildContext context) => context.go(location);
 
-  void push(BuildContext context) => context.push(location, extra: this);
+  void push(BuildContext context) => context.push(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
 }
 
 extension $ProfileEditRouteExtension on ProfileEditRoute {
@@ -263,9 +299,12 @@ extension $ProfileEditRouteExtension on ProfileEditRoute {
         '/me/edit',
       );
 
-  void go(BuildContext context) => context.go(location, extra: this);
+  void go(BuildContext context) => context.go(location);
 
-  void push(BuildContext context) => context.push(location, extra: this);
+  void push(BuildContext context) => context.push(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
 }
 
 extension $BlockedFriendsRouteExtension on BlockedFriendsRoute {
@@ -276,9 +315,12 @@ extension $BlockedFriendsRouteExtension on BlockedFriendsRoute {
         '/me/blocked_friends',
       );
 
-  void go(BuildContext context) => context.go(location, extra: this);
+  void go(BuildContext context) => context.go(location);
 
-  void push(BuildContext context) => context.push(location, extra: this);
+  void push(BuildContext context) => context.push(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
 }
 
 extension $SettingsRouteExtension on SettingsRoute {
@@ -288,9 +330,12 @@ extension $SettingsRouteExtension on SettingsRoute {
         '/me/settings',
       );
 
-  void go(BuildContext context) => context.go(location, extra: this);
+  void go(BuildContext context) => context.go(location);
 
-  void push(BuildContext context) => context.push(location, extra: this);
+  void push(BuildContext context) => context.push(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
 }
 
 GoRoute get $loginRoute => GoRouteData.$route(
@@ -306,20 +351,23 @@ extension $LoginRouteExtension on LoginRoute {
   String get location => GoRouteData.$location(
         '/login',
         queryParams: {
-          if (from != null) 'from': from!,
+          if (from != null) 'from': from,
         },
       );
 
-  void go(BuildContext context) => context.go(location, extra: this);
+  void go(BuildContext context) => context.go(location);
 
-  void push(BuildContext context) => context.push(location, extra: this);
+  void push(BuildContext context) => context.push(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
 }
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-// ignore_for_file: avoid_private_typedef_functions, non_constant_identifier_names, subtype_of_sealed_class, invalid_use_of_internal_member, unused_element, constant_identifier_names, unnecessary_raw_strings, library_private_types_in_public_api
+String _$routerHash() => r'7ce6adbc1b29f472302789bd2ef1b7c47fd5e2bb';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -342,13 +390,56 @@ class _SystemHash {
   }
 }
 
-String _$routerHash() => r'903795acfae993814894e8cf3274285a8c1e8edb';
+typedef RouterRef = AutoDisposeProviderRef<GoRouter>;
+
+/// See also [router].
+@ProviderFor(router)
+const routerProvider = RouterFamily();
+
+/// See also [router].
+class RouterFamily extends Family<GoRouter> {
+  /// See also [router].
+  const RouterFamily();
+
+  /// See also [router].
+  RouterProvider call({
+    Uri? initialRoute,
+  }) {
+    return RouterProvider(
+      initialRoute: initialRoute,
+    );
+  }
+
+  @override
+  RouterProvider getProviderOverride(
+    covariant RouterProvider provider,
+  ) {
+    return call(
+      initialRoute: provider.initialRoute,
+    );
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'routerProvider';
+}
 
 /// See also [router].
 class RouterProvider extends AutoDisposeProvider<GoRouter> {
+  /// See also [router].
   RouterProvider({
     this.initialRoute,
-  }) : super(
+  }) : super.internal(
           (ref) => router(
             ref,
             initialRoute: initialRoute,
@@ -359,6 +450,8 @@ class RouterProvider extends AutoDisposeProvider<GoRouter> {
               const bool.fromEnvironment('dart.vm.product')
                   ? null
                   : _$routerHash,
+          dependencies: RouterFamily._dependencies,
+          allTransitiveDependencies: RouterFamily._allTransitiveDependencies,
         );
 
   final Uri? initialRoute;
@@ -376,38 +469,4 @@ class RouterProvider extends AutoDisposeProvider<GoRouter> {
     return _SystemHash.finish(hash);
   }
 }
-
-typedef RouterRef = AutoDisposeProviderRef<GoRouter>;
-
-/// See also [router].
-final routerProvider = RouterFamily();
-
-class RouterFamily extends Family<GoRouter> {
-  RouterFamily();
-
-  RouterProvider call({
-    Uri? initialRoute,
-  }) {
-    return RouterProvider(
-      initialRoute: initialRoute,
-    );
-  }
-
-  @override
-  AutoDisposeProvider<GoRouter> getProviderOverride(
-    covariant RouterProvider provider,
-  ) {
-    return call(
-      initialRoute: provider.initialRoute,
-    );
-  }
-
-  @override
-  List<ProviderOrFamily>? get allTransitiveDependencies => null;
-
-  @override
-  List<ProviderOrFamily>? get dependencies => null;
-
-  @override
-  String? get name => r'routerProvider';
-}
+// ignore_for_file: unnecessary_raw_strings, subtype_of_sealed_class, invalid_use_of_internal_member, do_not_use_environment, prefer_const_constructors, public_member_api_docs, avoid_private_typedef_functions

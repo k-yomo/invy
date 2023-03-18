@@ -88,7 +88,7 @@ class _CopyWithImpl$Variables$Mutation$registerInvitationAwaiting<TRes>
 
   final TRes Function(Variables$Mutation$registerInvitationAwaiting) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({Object? input = _undefined}) =>
       _then(Variables$Mutation$registerInvitationAwaiting._({
@@ -110,7 +110,7 @@ class _CopyWithStubImpl$Variables$Mutation$registerInvitationAwaiting<TRes>
 class Mutation$registerInvitationAwaiting {
   Mutation$registerInvitationAwaiting({
     required this.registerInvitationAwaiting,
-    required this.$__typename,
+    this.$__typename = 'Mutation',
   });
 
   factory Mutation$registerInvitationAwaiting.fromJson(
@@ -212,7 +212,7 @@ class _CopyWithImpl$Mutation$registerInvitationAwaiting<TRes>
 
   final TRes Function(Mutation$registerInvitationAwaiting) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? registerInvitationAwaiting = _undefined,
@@ -359,7 +359,7 @@ Mutation$registerInvitationAwaiting
         Mutation$registerInvitationAwaiting.fromJson(data);
 typedef OnMutationCompleted$Mutation$registerInvitationAwaiting = FutureOr<void>
     Function(
-  dynamic,
+  Map<String, dynamic>?,
   Mutation$registerInvitationAwaiting?,
 );
 
@@ -372,6 +372,7 @@ class Options$Mutation$registerInvitationAwaiting
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
     Object? optimisticResult,
+    Mutation$registerInvitationAwaiting? typedOptimisticResult,
     graphql.Context? context,
     OnMutationCompleted$Mutation$registerInvitationAwaiting? onCompleted,
     graphql.OnMutationUpdate<Mutation$registerInvitationAwaiting>? update,
@@ -383,7 +384,7 @@ class Options$Mutation$registerInvitationAwaiting
           fetchPolicy: fetchPolicy,
           errorPolicy: errorPolicy,
           cacheRereadPolicy: cacheRereadPolicy,
-          optimisticResult: optimisticResult,
+          optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
           context: context,
           onCompleted: onCompleted == null
               ? null
@@ -420,6 +421,7 @@ class WatchOptions$Mutation$registerInvitationAwaiting
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
     Object? optimisticResult,
+    Mutation$registerInvitationAwaiting? typedOptimisticResult,
     graphql.Context? context,
     Duration? pollInterval,
     bool? eagerlyFetchResults,
@@ -431,7 +433,7 @@ class WatchOptions$Mutation$registerInvitationAwaiting
           fetchPolicy: fetchPolicy,
           errorPolicy: errorPolicy,
           cacheRereadPolicy: cacheRereadPolicy,
-          optimisticResult: optimisticResult,
+          optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
           context: context,
           document: documentNodeMutationregisterInvitationAwaiting,
           pollInterval: pollInterval,
@@ -471,9 +473,10 @@ Mutation$registerInvitationAwaiting$HookResult
   final result = graphql_flutter.useMutation(
       options ?? WidgetOptions$Mutation$registerInvitationAwaiting());
   return Mutation$registerInvitationAwaiting$HookResult(
-    (variables, {optimisticResult}) => result.runMutation(
+    (variables, {optimisticResult, typedOptimisticResult}) =>
+        result.runMutation(
       variables.toJson(),
-      optimisticResult: optimisticResult,
+      optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
     ),
     result.result,
   );
@@ -492,6 +495,7 @@ class WidgetOptions$Mutation$registerInvitationAwaiting
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
     Object? optimisticResult,
+    Mutation$registerInvitationAwaiting? typedOptimisticResult,
     graphql.Context? context,
     OnMutationCompleted$Mutation$registerInvitationAwaiting? onCompleted,
     graphql.OnMutationUpdate<Mutation$registerInvitationAwaiting>? update,
@@ -502,7 +506,7 @@ class WidgetOptions$Mutation$registerInvitationAwaiting
           fetchPolicy: fetchPolicy,
           errorPolicy: errorPolicy,
           cacheRereadPolicy: cacheRereadPolicy,
-          optimisticResult: optimisticResult,
+          optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
           context: context,
           onCompleted: onCompleted == null
               ? null
@@ -534,6 +538,7 @@ typedef RunMutation$Mutation$registerInvitationAwaiting
     = graphql.MultiSourceResult<Mutation$registerInvitationAwaiting> Function(
   Variables$Mutation$registerInvitationAwaiting, {
   Object? optimisticResult,
+  Mutation$registerInvitationAwaiting? typedOptimisticResult,
 });
 typedef Builder$Mutation$registerInvitationAwaiting = widgets.Widget Function(
   RunMutation$Mutation$registerInvitationAwaiting,
@@ -558,10 +563,12 @@ class Mutation$registerInvitationAwaiting$Widget
             (
               variables, {
               optimisticResult,
+              typedOptimisticResult,
             }) =>
                 run(
               variables.toJson(),
-              optimisticResult: optimisticResult,
+              optimisticResult:
+                  optimisticResult ?? typedOptimisticResult?.toJson(),
             ),
             result,
           ),
@@ -571,7 +578,7 @@ class Mutation$registerInvitationAwaiting$Widget
 class Mutation$registerInvitationAwaiting$registerInvitationAwaiting {
   Mutation$registerInvitationAwaiting$registerInvitationAwaiting({
     required this.invitationAwaiting,
-    required this.$__typename,
+    this.$__typename = 'RegisterInvitationAwaitingPayload',
   });
 
   factory Mutation$registerInvitationAwaiting$registerInvitationAwaiting.fromJson(
@@ -683,7 +690,7 @@ class _CopyWithImpl$Mutation$registerInvitationAwaiting$registerInvitationAwaiti
   final TRes Function(
       Mutation$registerInvitationAwaiting$registerInvitationAwaiting) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? invitationAwaiting = _undefined,
@@ -737,7 +744,7 @@ class Mutation$registerInvitationAwaiting$registerInvitationAwaiting$invitationA
     required this.startsAt,
     required this.endsAt,
     required this.comment,
-    required this.$__typename,
+    this.$__typename = 'InvitationAwaiting',
   });
 
   factory Mutation$registerInvitationAwaiting$registerInvitationAwaiting$invitationAwaiting.fromJson(
@@ -901,7 +908,7 @@ class _CopyWithImpl$Mutation$registerInvitationAwaiting$registerInvitationAwaiti
           Mutation$registerInvitationAwaiting$registerInvitationAwaiting$invitationAwaiting)
       _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? id = _undefined,

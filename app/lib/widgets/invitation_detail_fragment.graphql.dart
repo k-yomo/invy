@@ -11,7 +11,7 @@ class Fragment$invitationDetailFragment {
     required this.expiresAt,
     required this.user,
     required this.acceptedUsers,
-    required this.$__typename,
+    this.$__typename = 'Invitation',
   });
 
   factory Fragment$invitationDetailFragment.fromJson(
@@ -226,7 +226,7 @@ class _CopyWithImpl$Fragment$invitationDetailFragment<TRes>
 
   final TRes Function(Fragment$invitationDetailFragment) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? id = _undefined,
@@ -521,7 +521,7 @@ class Fragment$invitationDetailFragment$coordinate {
   Fragment$invitationDetailFragment$coordinate({
     required this.latitude,
     required this.longitude,
-    required this.$__typename,
+    this.$__typename = 'Coordinate',
   });
 
   factory Fragment$invitationDetailFragment$coordinate.fromJson(
@@ -630,7 +630,7 @@ class _CopyWithImpl$Fragment$invitationDetailFragment$coordinate<TRes>
 
   final TRes Function(Fragment$invitationDetailFragment$coordinate) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? latitude = _undefined,
@@ -669,7 +669,7 @@ class Fragment$invitationDetailFragment$user {
     required this.id,
     required this.nickname,
     required this.avatarUrl,
-    required this.$__typename,
+    this.$__typename = 'User',
   });
 
   factory Fragment$invitationDetailFragment$user.fromJson(
@@ -792,7 +792,7 @@ class _CopyWithImpl$Fragment$invitationDetailFragment$user<TRes>
 
   final TRes Function(Fragment$invitationDetailFragment$user) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? id = _undefined,
@@ -834,7 +834,7 @@ class Fragment$invitationDetailFragment$acceptedUsers {
     required this.id,
     required this.nickname,
     required this.avatarUrl,
-    required this.$__typename,
+    this.$__typename = 'User',
   });
 
   factory Fragment$invitationDetailFragment$acceptedUsers.fromJson(
@@ -958,7 +958,7 @@ class _CopyWithImpl$Fragment$invitationDetailFragment$acceptedUsers<TRes>
 
   final TRes Function(Fragment$invitationDetailFragment$acceptedUsers) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? id = _undefined,

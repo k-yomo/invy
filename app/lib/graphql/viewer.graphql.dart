@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/widgets.dart' as widgets;
 import 'package:gql/ast.dart';
 import 'package:graphql/client.dart' as graphql;
@@ -6,7 +7,7 @@ import 'package:graphql_flutter/graphql_flutter.dart' as graphql_flutter;
 class Query$viewer {
   Query$viewer({
     required this.viewer,
-    required this.$__typename,
+    this.$__typename = 'Query',
   });
 
   factory Query$viewer.fromJson(Map<String, dynamic> json) {
@@ -95,7 +96,7 @@ class _CopyWithImpl$Query$viewer<TRes> implements CopyWith$Query$viewer<TRes> {
 
   final TRes Function(Query$viewer) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? viewer = _undefined,
@@ -192,6 +193,10 @@ const documentNodeQueryviewer = DocumentNode(definitions: [
 ]);
 Query$viewer _parserFn$Query$viewer(Map<String, dynamic> data) =>
     Query$viewer.fromJson(data);
+typedef OnQueryComplete$Query$viewer = FutureOr<void> Function(
+  Map<String, dynamic>?,
+  Query$viewer?,
+);
 
 class Options$Query$viewer extends graphql.QueryOptions<Query$viewer> {
   Options$Query$viewer({
@@ -200,19 +205,40 @@ class Options$Query$viewer extends graphql.QueryOptions<Query$viewer> {
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
     Object? optimisticResult,
+    Query$viewer? typedOptimisticResult,
     Duration? pollInterval,
     graphql.Context? context,
-  }) : super(
+    OnQueryComplete$Query$viewer? onComplete,
+    graphql.OnQueryError? onError,
+  })  : onCompleteWithParsed = onComplete,
+        super(
           operationName: operationName,
           fetchPolicy: fetchPolicy,
           errorPolicy: errorPolicy,
           cacheRereadPolicy: cacheRereadPolicy,
-          optimisticResult: optimisticResult,
+          optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
           pollInterval: pollInterval,
           context: context,
+          onComplete: onComplete == null
+              ? null
+              : (data) => onComplete(
+                    data,
+                    data == null ? null : _parserFn$Query$viewer(data),
+                  ),
+          onError: onError,
           document: documentNodeQueryviewer,
           parserFn: _parserFn$Query$viewer,
         );
+
+  final OnQueryComplete$Query$viewer? onCompleteWithParsed;
+
+  @override
+  List<Object?> get properties => [
+        ...super.onComplete == null
+            ? super.properties
+            : super.properties.where((property) => property != onComplete),
+        onCompleteWithParsed,
+      ];
 }
 
 class WatchOptions$Query$viewer
@@ -223,6 +249,7 @@ class WatchOptions$Query$viewer
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
     Object? optimisticResult,
+    Query$viewer? typedOptimisticResult,
     graphql.Context? context,
     Duration? pollInterval,
     bool? eagerlyFetchResults,
@@ -233,7 +260,7 @@ class WatchOptions$Query$viewer
           fetchPolicy: fetchPolicy,
           errorPolicy: errorPolicy,
           cacheRereadPolicy: cacheRereadPolicy,
-          optimisticResult: optimisticResult,
+          optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
           context: context,
           document: documentNodeQueryviewer,
           pollInterval: pollInterval,
@@ -304,7 +331,7 @@ class Query$viewer$viewer {
     required this.screenId,
     required this.nickname,
     required this.avatarUrl,
-    required this.$__typename,
+    this.$__typename = 'Viewer',
   });
 
   factory Query$viewer$viewer.fromJson(Map<String, dynamic> json) {
@@ -437,7 +464,7 @@ class _CopyWithImpl$Query$viewer$viewer<TRes>
 
   final TRes Function(Query$viewer$viewer) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? id = _undefined,

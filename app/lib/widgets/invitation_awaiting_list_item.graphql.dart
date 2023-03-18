@@ -11,7 +11,7 @@ class Fragment$invitationAwaitingListItemFragment {
     required this.startsAt,
     required this.endsAt,
     required this.comment,
-    required this.$__typename,
+    this.$__typename = 'InvitationAwaiting',
   });
 
   factory Fragment$invitationAwaitingListItemFragment.fromJson(
@@ -162,7 +162,7 @@ class _CopyWithImpl$Fragment$invitationAwaitingListItemFragment<TRes>
 
   final TRes Function(Fragment$invitationAwaitingListItemFragment) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? id = _undefined,
@@ -387,7 +387,7 @@ class _CopyWithImpl$Variables$Mutation$deleteInvitationAwaiting<TRes>
 
   final TRes Function(Variables$Mutation$deleteInvitationAwaiting) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({Object? invitationAwaitingId = _undefined}) =>
       _then(Variables$Mutation$deleteInvitationAwaiting._({
@@ -409,7 +409,7 @@ class _CopyWithStubImpl$Variables$Mutation$deleteInvitationAwaiting<TRes>
 class Mutation$deleteInvitationAwaiting {
   Mutation$deleteInvitationAwaiting({
     required this.deleteInvitationAwaiting,
-    required this.$__typename,
+    this.$__typename = 'Mutation',
   });
 
   factory Mutation$deleteInvitationAwaiting.fromJson(
@@ -510,7 +510,7 @@ class _CopyWithImpl$Mutation$deleteInvitationAwaiting<TRes>
 
   final TRes Function(Mutation$deleteInvitationAwaiting) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? deleteInvitationAwaiting = _undefined,
@@ -612,7 +612,7 @@ Mutation$deleteInvitationAwaiting _parserFn$Mutation$deleteInvitationAwaiting(
     Mutation$deleteInvitationAwaiting.fromJson(data);
 typedef OnMutationCompleted$Mutation$deleteInvitationAwaiting = FutureOr<void>
     Function(
-  dynamic,
+  Map<String, dynamic>?,
   Mutation$deleteInvitationAwaiting?,
 );
 
@@ -625,6 +625,7 @@ class Options$Mutation$deleteInvitationAwaiting
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
     Object? optimisticResult,
+    Mutation$deleteInvitationAwaiting? typedOptimisticResult,
     graphql.Context? context,
     OnMutationCompleted$Mutation$deleteInvitationAwaiting? onCompleted,
     graphql.OnMutationUpdate<Mutation$deleteInvitationAwaiting>? update,
@@ -636,7 +637,7 @@ class Options$Mutation$deleteInvitationAwaiting
           fetchPolicy: fetchPolicy,
           errorPolicy: errorPolicy,
           cacheRereadPolicy: cacheRereadPolicy,
-          optimisticResult: optimisticResult,
+          optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
           context: context,
           onCompleted: onCompleted == null
               ? null
@@ -673,6 +674,7 @@ class WatchOptions$Mutation$deleteInvitationAwaiting
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
     Object? optimisticResult,
+    Mutation$deleteInvitationAwaiting? typedOptimisticResult,
     graphql.Context? context,
     Duration? pollInterval,
     bool? eagerlyFetchResults,
@@ -684,7 +686,7 @@ class WatchOptions$Mutation$deleteInvitationAwaiting
           fetchPolicy: fetchPolicy,
           errorPolicy: errorPolicy,
           cacheRereadPolicy: cacheRereadPolicy,
-          optimisticResult: optimisticResult,
+          optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
           context: context,
           document: documentNodeMutationdeleteInvitationAwaiting,
           pollInterval: pollInterval,
@@ -724,9 +726,10 @@ Mutation$deleteInvitationAwaiting$HookResult
   final result = graphql_flutter.useMutation(
       options ?? WidgetOptions$Mutation$deleteInvitationAwaiting());
   return Mutation$deleteInvitationAwaiting$HookResult(
-    (variables, {optimisticResult}) => result.runMutation(
+    (variables, {optimisticResult, typedOptimisticResult}) =>
+        result.runMutation(
       variables.toJson(),
-      optimisticResult: optimisticResult,
+      optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
     ),
     result.result,
   );
@@ -745,6 +748,7 @@ class WidgetOptions$Mutation$deleteInvitationAwaiting
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
     Object? optimisticResult,
+    Mutation$deleteInvitationAwaiting? typedOptimisticResult,
     graphql.Context? context,
     OnMutationCompleted$Mutation$deleteInvitationAwaiting? onCompleted,
     graphql.OnMutationUpdate<Mutation$deleteInvitationAwaiting>? update,
@@ -755,7 +759,7 @@ class WidgetOptions$Mutation$deleteInvitationAwaiting
           fetchPolicy: fetchPolicy,
           errorPolicy: errorPolicy,
           cacheRereadPolicy: cacheRereadPolicy,
-          optimisticResult: optimisticResult,
+          optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
           context: context,
           onCompleted: onCompleted == null
               ? null
@@ -787,6 +791,7 @@ typedef RunMutation$Mutation$deleteInvitationAwaiting
     = graphql.MultiSourceResult<Mutation$deleteInvitationAwaiting> Function(
   Variables$Mutation$deleteInvitationAwaiting, {
   Object? optimisticResult,
+  Mutation$deleteInvitationAwaiting? typedOptimisticResult,
 });
 typedef Builder$Mutation$deleteInvitationAwaiting = widgets.Widget Function(
   RunMutation$Mutation$deleteInvitationAwaiting,
@@ -810,10 +815,12 @@ class Mutation$deleteInvitationAwaiting$Widget
             (
               variables, {
               optimisticResult,
+              typedOptimisticResult,
             }) =>
                 run(
               variables.toJson(),
-              optimisticResult: optimisticResult,
+              optimisticResult:
+                  optimisticResult ?? typedOptimisticResult?.toJson(),
             ),
             result,
           ),
@@ -823,7 +830,7 @@ class Mutation$deleteInvitationAwaiting$Widget
 class Mutation$deleteInvitationAwaiting$deleteInvitationAwaiting {
   Mutation$deleteInvitationAwaiting$deleteInvitationAwaiting({
     required this.deletedInvitationAwaitingId,
-    required this.$__typename,
+    this.$__typename = 'DeleteInvitationAwaitingPayload',
   });
 
   factory Mutation$deleteInvitationAwaiting$deleteInvitationAwaiting.fromJson(
@@ -928,7 +935,7 @@ class _CopyWithImpl$Mutation$deleteInvitationAwaiting$deleteInvitationAwaiting<
   final TRes Function(
       Mutation$deleteInvitationAwaiting$deleteInvitationAwaiting) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? deletedInvitationAwaitingId = _undefined,

@@ -9,7 +9,7 @@ import 'package:graphql_flutter/graphql_flutter.dart' as graphql_flutter;
 class Query$friendGroupCreateScreenViewer {
   Query$friendGroupCreateScreenViewer({
     required this.viewer,
-    required this.$__typename,
+    this.$__typename = 'Query',
   });
 
   factory Query$friendGroupCreateScreenViewer.fromJson(
@@ -106,7 +106,7 @@ class _CopyWithImpl$Query$friendGroupCreateScreenViewer<TRes>
 
   final TRes Function(Query$friendGroupCreateScreenViewer) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? viewer = _undefined,
@@ -276,6 +276,11 @@ const documentNodeQueryfriendGroupCreateScreenViewer =
 Query$friendGroupCreateScreenViewer
     _parserFn$Query$friendGroupCreateScreenViewer(Map<String, dynamic> data) =>
         Query$friendGroupCreateScreenViewer.fromJson(data);
+typedef OnQueryComplete$Query$friendGroupCreateScreenViewer = FutureOr<void>
+    Function(
+  Map<String, dynamic>?,
+  Query$friendGroupCreateScreenViewer?,
+);
 
 class Options$Query$friendGroupCreateScreenViewer
     extends graphql.QueryOptions<Query$friendGroupCreateScreenViewer> {
@@ -285,19 +290,43 @@ class Options$Query$friendGroupCreateScreenViewer
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
     Object? optimisticResult,
+    Query$friendGroupCreateScreenViewer? typedOptimisticResult,
     Duration? pollInterval,
     graphql.Context? context,
-  }) : super(
+    OnQueryComplete$Query$friendGroupCreateScreenViewer? onComplete,
+    graphql.OnQueryError? onError,
+  })  : onCompleteWithParsed = onComplete,
+        super(
           operationName: operationName,
           fetchPolicy: fetchPolicy,
           errorPolicy: errorPolicy,
           cacheRereadPolicy: cacheRereadPolicy,
-          optimisticResult: optimisticResult,
+          optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
           pollInterval: pollInterval,
           context: context,
+          onComplete: onComplete == null
+              ? null
+              : (data) => onComplete(
+                    data,
+                    data == null
+                        ? null
+                        : _parserFn$Query$friendGroupCreateScreenViewer(data),
+                  ),
+          onError: onError,
           document: documentNodeQueryfriendGroupCreateScreenViewer,
           parserFn: _parserFn$Query$friendGroupCreateScreenViewer,
         );
+
+  final OnQueryComplete$Query$friendGroupCreateScreenViewer?
+      onCompleteWithParsed;
+
+  @override
+  List<Object?> get properties => [
+        ...super.onComplete == null
+            ? super.properties
+            : super.properties.where((property) => property != onComplete),
+        onCompleteWithParsed,
+      ];
 }
 
 class WatchOptions$Query$friendGroupCreateScreenViewer
@@ -308,6 +337,7 @@ class WatchOptions$Query$friendGroupCreateScreenViewer
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
     Object? optimisticResult,
+    Query$friendGroupCreateScreenViewer? typedOptimisticResult,
     graphql.Context? context,
     Duration? pollInterval,
     bool? eagerlyFetchResults,
@@ -318,7 +348,7 @@ class WatchOptions$Query$friendGroupCreateScreenViewer
           fetchPolicy: fetchPolicy,
           errorPolicy: errorPolicy,
           cacheRereadPolicy: cacheRereadPolicy,
-          optimisticResult: optimisticResult,
+          optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
           context: context,
           document: documentNodeQueryfriendGroupCreateScreenViewer,
           pollInterval: pollInterval,
@@ -404,7 +434,7 @@ class Query$friendGroupCreateScreenViewer$Widget
 class Query$friendGroupCreateScreenViewer$viewer {
   Query$friendGroupCreateScreenViewer$viewer({
     required this.friends,
-    required this.$__typename,
+    this.$__typename = 'Viewer',
   });
 
   factory Query$friendGroupCreateScreenViewer$viewer.fromJson(
@@ -501,7 +531,7 @@ class _CopyWithImpl$Query$friendGroupCreateScreenViewer$viewer<TRes>
 
   final TRes Function(Query$friendGroupCreateScreenViewer$viewer) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? friends = _undefined,
@@ -544,7 +574,7 @@ class Query$friendGroupCreateScreenViewer$viewer$friends {
   Query$friendGroupCreateScreenViewer$viewer$friends({
     required this.edges,
     required this.pageInfo,
-    required this.$__typename,
+    this.$__typename = 'UserConnection',
   });
 
   factory Query$friendGroupCreateScreenViewer$viewer$friends.fromJson(
@@ -678,7 +708,7 @@ class _CopyWithImpl$Query$friendGroupCreateScreenViewer$viewer$friends<TRes>
 
   final TRes Function(Query$friendGroupCreateScreenViewer$viewer$friends) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? edges = _undefined,
@@ -742,7 +772,7 @@ class _CopyWithStubImpl$Query$friendGroupCreateScreenViewer$viewer$friends<TRes>
 class Query$friendGroupCreateScreenViewer$viewer$friends$edges {
   Query$friendGroupCreateScreenViewer$viewer$friends$edges({
     required this.node,
-    required this.$__typename,
+    this.$__typename = 'UserEdge',
   });
 
   factory Query$friendGroupCreateScreenViewer$viewer$friends$edges.fromJson(
@@ -847,7 +877,7 @@ class _CopyWithImpl$Query$friendGroupCreateScreenViewer$viewer$friends$edges<
   final TRes Function(Query$friendGroupCreateScreenViewer$viewer$friends$edges)
       _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? node = _undefined,
@@ -893,7 +923,7 @@ class Query$friendGroupCreateScreenViewer$viewer$friends$pageInfo {
     this.endCursor,
     required this.hasNextPage,
     required this.hasPreviousPage,
-    required this.$__typename,
+    this.$__typename = 'PageInfo',
   });
 
   factory Query$friendGroupCreateScreenViewer$viewer$friends$pageInfo.fromJson(
@@ -1039,7 +1069,7 @@ class _CopyWithImpl$Query$friendGroupCreateScreenViewer$viewer$friends$pageInfo<
   final TRes Function(
       Query$friendGroupCreateScreenViewer$viewer$friends$pageInfo) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? startCursor = _undefined,
@@ -1170,7 +1200,7 @@ class _CopyWithImpl$Variables$Mutation$createFriendGroup<TRes>
 
   final TRes Function(Variables$Mutation$createFriendGroup) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({Object? input = _undefined}) =>
       _then(Variables$Mutation$createFriendGroup._({
@@ -1192,7 +1222,7 @@ class _CopyWithStubImpl$Variables$Mutation$createFriendGroup<TRes>
 class Mutation$createFriendGroup {
   Mutation$createFriendGroup({
     required this.createFriendGroup,
-    required this.$__typename,
+    this.$__typename = 'Mutation',
   });
 
   factory Mutation$createFriendGroup.fromJson(Map<String, dynamic> json) {
@@ -1288,7 +1318,7 @@ class _CopyWithImpl$Mutation$createFriendGroup<TRes>
 
   final TRes Function(Mutation$createFriendGroup) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? createFriendGroup = _undefined,
@@ -1402,7 +1432,7 @@ Mutation$createFriendGroup _parserFn$Mutation$createFriendGroup(
     Mutation$createFriendGroup.fromJson(data);
 typedef OnMutationCompleted$Mutation$createFriendGroup = FutureOr<void>
     Function(
-  dynamic,
+  Map<String, dynamic>?,
   Mutation$createFriendGroup?,
 );
 
@@ -1415,6 +1445,7 @@ class Options$Mutation$createFriendGroup
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
     Object? optimisticResult,
+    Mutation$createFriendGroup? typedOptimisticResult,
     graphql.Context? context,
     OnMutationCompleted$Mutation$createFriendGroup? onCompleted,
     graphql.OnMutationUpdate<Mutation$createFriendGroup>? update,
@@ -1426,7 +1457,7 @@ class Options$Mutation$createFriendGroup
           fetchPolicy: fetchPolicy,
           errorPolicy: errorPolicy,
           cacheRereadPolicy: cacheRereadPolicy,
-          optimisticResult: optimisticResult,
+          optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
           context: context,
           onCompleted: onCompleted == null
               ? null
@@ -1462,6 +1493,7 @@ class WatchOptions$Mutation$createFriendGroup
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
     Object? optimisticResult,
+    Mutation$createFriendGroup? typedOptimisticResult,
     graphql.Context? context,
     Duration? pollInterval,
     bool? eagerlyFetchResults,
@@ -1473,7 +1505,7 @@ class WatchOptions$Mutation$createFriendGroup
           fetchPolicy: fetchPolicy,
           errorPolicy: errorPolicy,
           cacheRereadPolicy: cacheRereadPolicy,
-          optimisticResult: optimisticResult,
+          optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
           context: context,
           document: documentNodeMutationcreateFriendGroup,
           pollInterval: pollInterval,
@@ -1511,9 +1543,10 @@ Mutation$createFriendGroup$HookResult useMutation$createFriendGroup(
   final result = graphql_flutter
       .useMutation(options ?? WidgetOptions$Mutation$createFriendGroup());
   return Mutation$createFriendGroup$HookResult(
-    (variables, {optimisticResult}) => result.runMutation(
+    (variables, {optimisticResult, typedOptimisticResult}) =>
+        result.runMutation(
       variables.toJson(),
-      optimisticResult: optimisticResult,
+      optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
     ),
     result.result,
   );
@@ -1532,6 +1565,7 @@ class WidgetOptions$Mutation$createFriendGroup
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
     Object? optimisticResult,
+    Mutation$createFriendGroup? typedOptimisticResult,
     graphql.Context? context,
     OnMutationCompleted$Mutation$createFriendGroup? onCompleted,
     graphql.OnMutationUpdate<Mutation$createFriendGroup>? update,
@@ -1542,7 +1576,7 @@ class WidgetOptions$Mutation$createFriendGroup
           fetchPolicy: fetchPolicy,
           errorPolicy: errorPolicy,
           cacheRereadPolicy: cacheRereadPolicy,
-          optimisticResult: optimisticResult,
+          optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
           context: context,
           onCompleted: onCompleted == null
               ? null
@@ -1573,6 +1607,7 @@ typedef RunMutation$Mutation$createFriendGroup
     = graphql.MultiSourceResult<Mutation$createFriendGroup> Function(
   Variables$Mutation$createFriendGroup, {
   Object? optimisticResult,
+  Mutation$createFriendGroup? typedOptimisticResult,
 });
 typedef Builder$Mutation$createFriendGroup = widgets.Widget Function(
   RunMutation$Mutation$createFriendGroup,
@@ -1596,10 +1631,12 @@ class Mutation$createFriendGroup$Widget
             (
               variables, {
               optimisticResult,
+              typedOptimisticResult,
             }) =>
                 run(
               variables.toJson(),
-              optimisticResult: optimisticResult,
+              optimisticResult:
+                  optimisticResult ?? typedOptimisticResult?.toJson(),
             ),
             result,
           ),
@@ -1609,7 +1646,7 @@ class Mutation$createFriendGroup$Widget
 class Mutation$createFriendGroup$createFriendGroup {
   Mutation$createFriendGroup$createFriendGroup({
     required this.friendGroup,
-    required this.$__typename,
+    this.$__typename = 'CreateFriendGroupPayload',
   });
 
   factory Mutation$createFriendGroup$createFriendGroup.fromJson(
@@ -1708,7 +1745,7 @@ class _CopyWithImpl$Mutation$createFriendGroup$createFriendGroup<TRes>
 
   final TRes Function(Mutation$createFriendGroup$createFriendGroup) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? friendGroup = _undefined,
@@ -1751,7 +1788,7 @@ class _CopyWithStubImpl$Mutation$createFriendGroup$createFriendGroup<TRes>
 class Mutation$createFriendGroup$createFriendGroup$friendGroup {
   Mutation$createFriendGroup$createFriendGroup$friendGroup({
     required this.id,
-    required this.$__typename,
+    this.$__typename = 'FriendGroup',
   });
 
   factory Mutation$createFriendGroup$createFriendGroup$friendGroup.fromJson(
@@ -1854,7 +1891,7 @@ class _CopyWithImpl$Mutation$createFriendGroup$createFriendGroup$friendGroup<
   final TRes Function(Mutation$createFriendGroup$createFriendGroup$friendGroup)
       _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? id = _undefined,

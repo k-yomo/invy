@@ -9,7 +9,7 @@ class Fragment$friendListItemFragment {
     required this.isMuted,
     this.distanceKm,
     required this.invitationAwaitings,
-    required this.$__typename,
+    this.$__typename = 'User',
   });
 
   factory Fragment$friendListItemFragment.fromJson(Map<String, dynamic> json) {
@@ -192,7 +192,7 @@ class _CopyWithImpl$Fragment$friendListItemFragment<TRes>
 
   final TRes Function(Fragment$friendListItemFragment) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? id = _undefined,
@@ -396,7 +396,7 @@ class Fragment$friendListItemFragment$invitationAwaitings {
     required this.startsAt,
     required this.endsAt,
     required this.comment,
-    required this.$__typename,
+    this.$__typename = 'InvitationAwaiting',
   });
 
   factory Fragment$friendListItemFragment$invitationAwaitings.fromJson(
@@ -524,7 +524,7 @@ class _CopyWithImpl$Fragment$friendListItemFragment$invitationAwaitings<TRes>
   final TRes Function(Fragment$friendListItemFragment$invitationAwaitings)
       _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? startsAt = _undefined,

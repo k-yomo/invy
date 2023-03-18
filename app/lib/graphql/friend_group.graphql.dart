@@ -84,7 +84,7 @@ class _CopyWithImpl$Variables$Mutation$deleteFriendGroup<TRes>
 
   final TRes Function(Variables$Mutation$deleteFriendGroup) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({Object? friendGroupId = _undefined}) =>
       _then(Variables$Mutation$deleteFriendGroup._({
@@ -106,7 +106,7 @@ class _CopyWithStubImpl$Variables$Mutation$deleteFriendGroup<TRes>
 class Mutation$deleteFriendGroup {
   Mutation$deleteFriendGroup({
     required this.deleteFriendGroup,
-    required this.$__typename,
+    this.$__typename = 'Mutation',
   });
 
   factory Mutation$deleteFriendGroup.fromJson(Map<String, dynamic> json) {
@@ -202,7 +202,7 @@ class _CopyWithImpl$Mutation$deleteFriendGroup<TRes>
 
   final TRes Function(Mutation$deleteFriendGroup) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? deleteFriendGroup = _undefined,
@@ -301,7 +301,7 @@ Mutation$deleteFriendGroup _parserFn$Mutation$deleteFriendGroup(
     Mutation$deleteFriendGroup.fromJson(data);
 typedef OnMutationCompleted$Mutation$deleteFriendGroup = FutureOr<void>
     Function(
-  dynamic,
+  Map<String, dynamic>?,
   Mutation$deleteFriendGroup?,
 );
 
@@ -314,6 +314,7 @@ class Options$Mutation$deleteFriendGroup
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
     Object? optimisticResult,
+    Mutation$deleteFriendGroup? typedOptimisticResult,
     graphql.Context? context,
     OnMutationCompleted$Mutation$deleteFriendGroup? onCompleted,
     graphql.OnMutationUpdate<Mutation$deleteFriendGroup>? update,
@@ -325,7 +326,7 @@ class Options$Mutation$deleteFriendGroup
           fetchPolicy: fetchPolicy,
           errorPolicy: errorPolicy,
           cacheRereadPolicy: cacheRereadPolicy,
-          optimisticResult: optimisticResult,
+          optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
           context: context,
           onCompleted: onCompleted == null
               ? null
@@ -361,6 +362,7 @@ class WatchOptions$Mutation$deleteFriendGroup
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
     Object? optimisticResult,
+    Mutation$deleteFriendGroup? typedOptimisticResult,
     graphql.Context? context,
     Duration? pollInterval,
     bool? eagerlyFetchResults,
@@ -372,7 +374,7 @@ class WatchOptions$Mutation$deleteFriendGroup
           fetchPolicy: fetchPolicy,
           errorPolicy: errorPolicy,
           cacheRereadPolicy: cacheRereadPolicy,
-          optimisticResult: optimisticResult,
+          optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
           context: context,
           document: documentNodeMutationdeleteFriendGroup,
           pollInterval: pollInterval,
@@ -410,9 +412,10 @@ Mutation$deleteFriendGroup$HookResult useMutation$deleteFriendGroup(
   final result = graphql_flutter
       .useMutation(options ?? WidgetOptions$Mutation$deleteFriendGroup());
   return Mutation$deleteFriendGroup$HookResult(
-    (variables, {optimisticResult}) => result.runMutation(
+    (variables, {optimisticResult, typedOptimisticResult}) =>
+        result.runMutation(
       variables.toJson(),
-      optimisticResult: optimisticResult,
+      optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
     ),
     result.result,
   );
@@ -431,6 +434,7 @@ class WidgetOptions$Mutation$deleteFriendGroup
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
     Object? optimisticResult,
+    Mutation$deleteFriendGroup? typedOptimisticResult,
     graphql.Context? context,
     OnMutationCompleted$Mutation$deleteFriendGroup? onCompleted,
     graphql.OnMutationUpdate<Mutation$deleteFriendGroup>? update,
@@ -441,7 +445,7 @@ class WidgetOptions$Mutation$deleteFriendGroup
           fetchPolicy: fetchPolicy,
           errorPolicy: errorPolicy,
           cacheRereadPolicy: cacheRereadPolicy,
-          optimisticResult: optimisticResult,
+          optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
           context: context,
           onCompleted: onCompleted == null
               ? null
@@ -472,6 +476,7 @@ typedef RunMutation$Mutation$deleteFriendGroup
     = graphql.MultiSourceResult<Mutation$deleteFriendGroup> Function(
   Variables$Mutation$deleteFriendGroup, {
   Object? optimisticResult,
+  Mutation$deleteFriendGroup? typedOptimisticResult,
 });
 typedef Builder$Mutation$deleteFriendGroup = widgets.Widget Function(
   RunMutation$Mutation$deleteFriendGroup,
@@ -495,10 +500,12 @@ class Mutation$deleteFriendGroup$Widget
             (
               variables, {
               optimisticResult,
+              typedOptimisticResult,
             }) =>
                 run(
               variables.toJson(),
-              optimisticResult: optimisticResult,
+              optimisticResult:
+                  optimisticResult ?? typedOptimisticResult?.toJson(),
             ),
             result,
           ),
@@ -508,7 +515,7 @@ class Mutation$deleteFriendGroup$Widget
 class Mutation$deleteFriendGroup$deleteFriendGroup {
   Mutation$deleteFriendGroup$deleteFriendGroup({
     required this.deletedFriendGroupId,
-    required this.$__typename,
+    this.$__typename = 'DeleteFriendGroupPayload',
   });
 
   factory Mutation$deleteFriendGroup$deleteFriendGroup.fromJson(
@@ -603,7 +610,7 @@ class _CopyWithImpl$Mutation$deleteFriendGroup$deleteFriendGroup<TRes>
 
   final TRes Function(Mutation$deleteFriendGroup$deleteFriendGroup) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? deletedFriendGroupId = _undefined,

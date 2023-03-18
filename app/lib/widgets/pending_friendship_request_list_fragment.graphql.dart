@@ -6,7 +6,7 @@ class Fragment$pendingFriendRequestItemFragment {
   Fragment$pendingFriendRequestItemFragment({
     required this.id,
     required this.fromUser,
-    required this.$__typename,
+    this.$__typename = 'FriendshipRequest',
   });
 
   factory Fragment$pendingFriendRequestItemFragment.fromJson(
@@ -117,7 +117,7 @@ class _CopyWithImpl$Fragment$pendingFriendRequestItemFragment<TRes>
 
   final TRes Function(Fragment$pendingFriendRequestItemFragment) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? id = _undefined,

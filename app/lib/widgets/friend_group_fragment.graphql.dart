@@ -6,7 +6,7 @@ class Fragment$friendGroupListItemFragment {
     required this.id,
     required this.name,
     required this.totalCount,
-    required this.$__typename,
+    this.$__typename = 'FriendGroup',
   });
 
   factory Fragment$friendGroupListItemFragment.fromJson(
@@ -129,7 +129,7 @@ class _CopyWithImpl$Fragment$friendGroupListItemFragment<TRes>
 
   final TRes Function(Fragment$friendGroupListItemFragment) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? id = _undefined,

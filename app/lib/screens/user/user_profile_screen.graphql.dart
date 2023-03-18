@@ -1,4 +1,5 @@
 import '../../widgets/invitation_awaiting_list_item.graphql.dart';
+import 'dart:async';
 import 'package:flutter/widgets.dart' as widgets;
 import 'package:gql/ast.dart';
 import 'package:graphql/client.dart' as graphql;
@@ -15,7 +16,7 @@ class Fragment$userProfileScreenFragment {
     required this.isMuted,
     required this.isBlocked,
     required this.invitationAwaitings,
-    required this.$__typename,
+    this.$__typename = 'User',
   });
 
   factory Fragment$userProfileScreenFragment.fromJson(
@@ -239,7 +240,7 @@ class _CopyWithImpl$Fragment$userProfileScreenFragment<TRes>
 
   final TRes Function(Fragment$userProfileScreenFragment) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? id = _undefined,
@@ -538,7 +539,7 @@ class _CopyWithImpl$Variables$Query$userProfileScreenUser<TRes>
 
   final TRes Function(Variables$Query$userProfileScreenUser) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({Object? userId = _undefined}) =>
       _then(Variables$Query$userProfileScreenUser._({
@@ -560,7 +561,7 @@ class _CopyWithStubImpl$Variables$Query$userProfileScreenUser<TRes>
 class Query$userProfileScreenUser {
   Query$userProfileScreenUser({
     required this.user,
-    required this.$__typename,
+    this.$__typename = 'Query',
   });
 
   factory Query$userProfileScreenUser.fromJson(Map<String, dynamic> json) {
@@ -655,7 +656,7 @@ class _CopyWithImpl$Query$userProfileScreenUser<TRes>
 
   final TRes Function(Query$userProfileScreenUser) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? user = _undefined,
@@ -747,6 +748,10 @@ const documentNodeQueryuserProfileScreenUser = DocumentNode(definitions: [
 Query$userProfileScreenUser _parserFn$Query$userProfileScreenUser(
         Map<String, dynamic> data) =>
     Query$userProfileScreenUser.fromJson(data);
+typedef OnQueryComplete$Query$userProfileScreenUser = FutureOr<void> Function(
+  Map<String, dynamic>?,
+  Query$userProfileScreenUser?,
+);
 
 class Options$Query$userProfileScreenUser
     extends graphql.QueryOptions<Query$userProfileScreenUser> {
@@ -757,20 +762,43 @@ class Options$Query$userProfileScreenUser
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
     Object? optimisticResult,
+    Query$userProfileScreenUser? typedOptimisticResult,
     Duration? pollInterval,
     graphql.Context? context,
-  }) : super(
+    OnQueryComplete$Query$userProfileScreenUser? onComplete,
+    graphql.OnQueryError? onError,
+  })  : onCompleteWithParsed = onComplete,
+        super(
           variables: variables.toJson(),
           operationName: operationName,
           fetchPolicy: fetchPolicy,
           errorPolicy: errorPolicy,
           cacheRereadPolicy: cacheRereadPolicy,
-          optimisticResult: optimisticResult,
+          optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
           pollInterval: pollInterval,
           context: context,
+          onComplete: onComplete == null
+              ? null
+              : (data) => onComplete(
+                    data,
+                    data == null
+                        ? null
+                        : _parserFn$Query$userProfileScreenUser(data),
+                  ),
+          onError: onError,
           document: documentNodeQueryuserProfileScreenUser,
           parserFn: _parserFn$Query$userProfileScreenUser,
         );
+
+  final OnQueryComplete$Query$userProfileScreenUser? onCompleteWithParsed;
+
+  @override
+  List<Object?> get properties => [
+        ...super.onComplete == null
+            ? super.properties
+            : super.properties.where((property) => property != onComplete),
+        onCompleteWithParsed,
+      ];
 }
 
 class WatchOptions$Query$userProfileScreenUser
@@ -782,6 +810,7 @@ class WatchOptions$Query$userProfileScreenUser
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
     Object? optimisticResult,
+    Query$userProfileScreenUser? typedOptimisticResult,
     graphql.Context? context,
     Duration? pollInterval,
     bool? eagerlyFetchResults,
@@ -793,7 +822,7 @@ class WatchOptions$Query$userProfileScreenUser
           fetchPolicy: fetchPolicy,
           errorPolicy: errorPolicy,
           cacheRereadPolicy: cacheRereadPolicy,
-          optimisticResult: optimisticResult,
+          optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
           context: context,
           document: documentNodeQueryuserProfileScreenUser,
           pollInterval: pollInterval,

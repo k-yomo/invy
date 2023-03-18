@@ -88,7 +88,7 @@ class _CopyWithImpl$Variables$Mutation$registerPushNotificationToken<TRes>
 
   final TRes Function(Variables$Mutation$registerPushNotificationToken) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({Object? input = _undefined}) =>
       _then(Variables$Mutation$registerPushNotificationToken._({
@@ -110,7 +110,7 @@ class _CopyWithStubImpl$Variables$Mutation$registerPushNotificationToken<TRes>
 class Mutation$registerPushNotificationToken {
   Mutation$registerPushNotificationToken({
     required this.registerPushNotificationToken,
-    required this.$__typename,
+    this.$__typename = 'Mutation',
   });
 
   factory Mutation$registerPushNotificationToken.fromJson(
@@ -216,7 +216,7 @@ class _CopyWithImpl$Mutation$registerPushNotificationToken<TRes>
 
   final TRes Function(Mutation$registerPushNotificationToken) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? registerPushNotificationToken = _undefined,
@@ -323,7 +323,7 @@ Mutation$registerPushNotificationToken
         Mutation$registerPushNotificationToken.fromJson(data);
 typedef OnMutationCompleted$Mutation$registerPushNotificationToken
     = FutureOr<void> Function(
-  dynamic,
+  Map<String, dynamic>?,
   Mutation$registerPushNotificationToken?,
 );
 
@@ -336,6 +336,7 @@ class Options$Mutation$registerPushNotificationToken
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
     Object? optimisticResult,
+    Mutation$registerPushNotificationToken? typedOptimisticResult,
     graphql.Context? context,
     OnMutationCompleted$Mutation$registerPushNotificationToken? onCompleted,
     graphql.OnMutationUpdate<Mutation$registerPushNotificationToken>? update,
@@ -347,7 +348,7 @@ class Options$Mutation$registerPushNotificationToken
           fetchPolicy: fetchPolicy,
           errorPolicy: errorPolicy,
           cacheRereadPolicy: cacheRereadPolicy,
-          optimisticResult: optimisticResult,
+          optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
           context: context,
           onCompleted: onCompleted == null
               ? null
@@ -385,6 +386,7 @@ class WatchOptions$Mutation$registerPushNotificationToken
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
     Object? optimisticResult,
+    Mutation$registerPushNotificationToken? typedOptimisticResult,
     graphql.Context? context,
     Duration? pollInterval,
     bool? eagerlyFetchResults,
@@ -396,7 +398,7 @@ class WatchOptions$Mutation$registerPushNotificationToken
           fetchPolicy: fetchPolicy,
           errorPolicy: errorPolicy,
           cacheRereadPolicy: cacheRereadPolicy,
-          optimisticResult: optimisticResult,
+          optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
           context: context,
           document: documentNodeMutationregisterPushNotificationToken,
           pollInterval: pollInterval,
@@ -436,9 +438,10 @@ Mutation$registerPushNotificationToken$HookResult
   final result = graphql_flutter.useMutation(
       options ?? WidgetOptions$Mutation$registerPushNotificationToken());
   return Mutation$registerPushNotificationToken$HookResult(
-    (variables, {optimisticResult}) => result.runMutation(
+    (variables, {optimisticResult, typedOptimisticResult}) =>
+        result.runMutation(
       variables.toJson(),
-      optimisticResult: optimisticResult,
+      optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
     ),
     result.result,
   );
@@ -457,6 +460,7 @@ class WidgetOptions$Mutation$registerPushNotificationToken
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
     Object? optimisticResult,
+    Mutation$registerPushNotificationToken? typedOptimisticResult,
     graphql.Context? context,
     OnMutationCompleted$Mutation$registerPushNotificationToken? onCompleted,
     graphql.OnMutationUpdate<Mutation$registerPushNotificationToken>? update,
@@ -467,7 +471,7 @@ class WidgetOptions$Mutation$registerPushNotificationToken
           fetchPolicy: fetchPolicy,
           errorPolicy: errorPolicy,
           cacheRereadPolicy: cacheRereadPolicy,
-          optimisticResult: optimisticResult,
+          optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
           context: context,
           onCompleted: onCompleted == null
               ? null
@@ -501,6 +505,7 @@ typedef RunMutation$Mutation$registerPushNotificationToken
         Function(
   Variables$Mutation$registerPushNotificationToken, {
   Object? optimisticResult,
+  Mutation$registerPushNotificationToken? typedOptimisticResult,
 });
 typedef Builder$Mutation$registerPushNotificationToken = widgets.Widget
     Function(
@@ -526,10 +531,12 @@ class Mutation$registerPushNotificationToken$Widget
             (
               variables, {
               optimisticResult,
+              typedOptimisticResult,
             }) =>
                 run(
               variables.toJson(),
-              optimisticResult: optimisticResult,
+              optimisticResult:
+                  optimisticResult ?? typedOptimisticResult?.toJson(),
             ),
             result,
           ),
@@ -539,7 +546,7 @@ class Mutation$registerPushNotificationToken$Widget
 class Mutation$registerPushNotificationToken$registerPushNotificationToken {
   Mutation$registerPushNotificationToken$registerPushNotificationToken({
     required this.registeredPushNotificationTokenId,
-    required this.$__typename,
+    this.$__typename = 'RegisterPushNotificationTokenPayload',
   });
 
   factory Mutation$registerPushNotificationToken$registerPushNotificationToken.fromJson(
@@ -655,7 +662,7 @@ class _CopyWithImpl$Mutation$registerPushNotificationToken$registerPushNotificat
           Mutation$registerPushNotificationToken$registerPushNotificationToken)
       _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? registeredPushNotificationTokenId = _undefined,

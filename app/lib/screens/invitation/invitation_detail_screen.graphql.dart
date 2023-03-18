@@ -1,4 +1,5 @@
 import '../../widgets/invitation_detail_fragment.graphql.dart';
+import 'dart:async';
 import 'package:flutter/widgets.dart' as widgets;
 import 'package:gql/ast.dart';
 import 'package:graphql/client.dart' as graphql;
@@ -81,7 +82,7 @@ class _CopyWithImpl$Variables$Query$invitationDetail<TRes>
 
   final TRes Function(Variables$Query$invitationDetail) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({Object? id = _undefined}) =>
       _then(Variables$Query$invitationDetail._({
@@ -102,7 +103,7 @@ class _CopyWithStubImpl$Variables$Query$invitationDetail<TRes>
 class Query$invitationDetail {
   Query$invitationDetail({
     required this.invitation,
-    required this.$__typename,
+    this.$__typename = 'Query',
   });
 
   factory Query$invitationDetail.fromJson(Map<String, dynamic> json) {
@@ -196,7 +197,7 @@ class _CopyWithImpl$Query$invitationDetail<TRes>
 
   final TRes Function(Query$invitationDetail) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? invitation = _undefined,
@@ -294,6 +295,10 @@ const documentNodeQueryinvitationDetail = DocumentNode(definitions: [
 Query$invitationDetail _parserFn$Query$invitationDetail(
         Map<String, dynamic> data) =>
     Query$invitationDetail.fromJson(data);
+typedef OnQueryComplete$Query$invitationDetail = FutureOr<void> Function(
+  Map<String, dynamic>?,
+  Query$invitationDetail?,
+);
 
 class Options$Query$invitationDetail
     extends graphql.QueryOptions<Query$invitationDetail> {
@@ -304,20 +309,43 @@ class Options$Query$invitationDetail
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
     Object? optimisticResult,
+    Query$invitationDetail? typedOptimisticResult,
     Duration? pollInterval,
     graphql.Context? context,
-  }) : super(
+    OnQueryComplete$Query$invitationDetail? onComplete,
+    graphql.OnQueryError? onError,
+  })  : onCompleteWithParsed = onComplete,
+        super(
           variables: variables.toJson(),
           operationName: operationName,
           fetchPolicy: fetchPolicy,
           errorPolicy: errorPolicy,
           cacheRereadPolicy: cacheRereadPolicy,
-          optimisticResult: optimisticResult,
+          optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
           pollInterval: pollInterval,
           context: context,
+          onComplete: onComplete == null
+              ? null
+              : (data) => onComplete(
+                    data,
+                    data == null
+                        ? null
+                        : _parserFn$Query$invitationDetail(data),
+                  ),
+          onError: onError,
           document: documentNodeQueryinvitationDetail,
           parserFn: _parserFn$Query$invitationDetail,
         );
+
+  final OnQueryComplete$Query$invitationDetail? onCompleteWithParsed;
+
+  @override
+  List<Object?> get properties => [
+        ...super.onComplete == null
+            ? super.properties
+            : super.properties.where((property) => property != onComplete),
+        onCompleteWithParsed,
+      ];
 }
 
 class WatchOptions$Query$invitationDetail
@@ -329,6 +357,7 @@ class WatchOptions$Query$invitationDetail
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
     Object? optimisticResult,
+    Query$invitationDetail? typedOptimisticResult,
     graphql.Context? context,
     Duration? pollInterval,
     bool? eagerlyFetchResults,
@@ -340,7 +369,7 @@ class WatchOptions$Query$invitationDetail
           fetchPolicy: fetchPolicy,
           errorPolicy: errorPolicy,
           cacheRereadPolicy: cacheRereadPolicy,
-          optimisticResult: optimisticResult,
+          optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
           context: context,
           document: documentNodeQueryinvitationDetail,
           pollInterval: pollInterval,
@@ -430,7 +459,7 @@ class Query$invitationDetail$invitation
     required this.expiresAt,
     required this.user,
     required this.acceptedUsers,
-    required this.$__typename,
+    this.$__typename = 'Invitation',
     required this.isAccepted,
   });
 
@@ -660,7 +689,7 @@ class _CopyWithImpl$Query$invitationDetail$invitation<TRes>
 
   final TRes Function(Query$invitationDetail$invitation) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? id = _undefined,
@@ -765,7 +794,7 @@ class Query$invitationDetail$invitation$coordinate
   Query$invitationDetail$invitation$coordinate({
     required this.latitude,
     required this.longitude,
-    required this.$__typename,
+    this.$__typename = 'Coordinate',
   });
 
   factory Query$invitationDetail$invitation$coordinate.fromJson(
@@ -874,7 +903,7 @@ class _CopyWithImpl$Query$invitationDetail$invitation$coordinate<TRes>
 
   final TRes Function(Query$invitationDetail$invitation$coordinate) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? latitude = _undefined,
@@ -914,7 +943,7 @@ class Query$invitationDetail$invitation$user
     required this.id,
     required this.nickname,
     required this.avatarUrl,
-    required this.$__typename,
+    this.$__typename = 'User',
   });
 
   factory Query$invitationDetail$invitation$user.fromJson(
@@ -1037,7 +1066,7 @@ class _CopyWithImpl$Query$invitationDetail$invitation$user<TRes>
 
   final TRes Function(Query$invitationDetail$invitation$user) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? id = _undefined,
@@ -1080,7 +1109,7 @@ class Query$invitationDetail$invitation$acceptedUsers
     required this.id,
     required this.nickname,
     required this.avatarUrl,
-    required this.$__typename,
+    this.$__typename = 'User',
   });
 
   factory Query$invitationDetail$invitation$acceptedUsers.fromJson(
@@ -1204,7 +1233,7 @@ class _CopyWithImpl$Query$invitationDetail$invitation$acceptedUsers<TRes>
 
   final TRes Function(Query$invitationDetail$invitation$acceptedUsers) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? id = _undefined,

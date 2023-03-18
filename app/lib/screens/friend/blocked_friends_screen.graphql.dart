@@ -8,7 +8,7 @@ import 'package:graphql_flutter/graphql_flutter.dart' as graphql_flutter;
 class Query$blockedFriendScreenViewer {
   Query$blockedFriendScreenViewer({
     required this.viewer,
-    required this.$__typename,
+    this.$__typename = 'Query',
   });
 
   factory Query$blockedFriendScreenViewer.fromJson(Map<String, dynamic> json) {
@@ -103,7 +103,7 @@ class _CopyWithImpl$Query$blockedFriendScreenViewer<TRes>
 
   final TRes Function(Query$blockedFriendScreenViewer) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? viewer = _undefined,
@@ -229,6 +229,11 @@ const documentNodeQueryblockedFriendScreenViewer = DocumentNode(definitions: [
 Query$blockedFriendScreenViewer _parserFn$Query$blockedFriendScreenViewer(
         Map<String, dynamic> data) =>
     Query$blockedFriendScreenViewer.fromJson(data);
+typedef OnQueryComplete$Query$blockedFriendScreenViewer = FutureOr<void>
+    Function(
+  Map<String, dynamic>?,
+  Query$blockedFriendScreenViewer?,
+);
 
 class Options$Query$blockedFriendScreenViewer
     extends graphql.QueryOptions<Query$blockedFriendScreenViewer> {
@@ -238,19 +243,42 @@ class Options$Query$blockedFriendScreenViewer
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
     Object? optimisticResult,
+    Query$blockedFriendScreenViewer? typedOptimisticResult,
     Duration? pollInterval,
     graphql.Context? context,
-  }) : super(
+    OnQueryComplete$Query$blockedFriendScreenViewer? onComplete,
+    graphql.OnQueryError? onError,
+  })  : onCompleteWithParsed = onComplete,
+        super(
           operationName: operationName,
           fetchPolicy: fetchPolicy,
           errorPolicy: errorPolicy,
           cacheRereadPolicy: cacheRereadPolicy,
-          optimisticResult: optimisticResult,
+          optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
           pollInterval: pollInterval,
           context: context,
+          onComplete: onComplete == null
+              ? null
+              : (data) => onComplete(
+                    data,
+                    data == null
+                        ? null
+                        : _parserFn$Query$blockedFriendScreenViewer(data),
+                  ),
+          onError: onError,
           document: documentNodeQueryblockedFriendScreenViewer,
           parserFn: _parserFn$Query$blockedFriendScreenViewer,
         );
+
+  final OnQueryComplete$Query$blockedFriendScreenViewer? onCompleteWithParsed;
+
+  @override
+  List<Object?> get properties => [
+        ...super.onComplete == null
+            ? super.properties
+            : super.properties.where((property) => property != onComplete),
+        onCompleteWithParsed,
+      ];
 }
 
 class WatchOptions$Query$blockedFriendScreenViewer
@@ -261,6 +289,7 @@ class WatchOptions$Query$blockedFriendScreenViewer
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
     Object? optimisticResult,
+    Query$blockedFriendScreenViewer? typedOptimisticResult,
     graphql.Context? context,
     Duration? pollInterval,
     bool? eagerlyFetchResults,
@@ -271,7 +300,7 @@ class WatchOptions$Query$blockedFriendScreenViewer
           fetchPolicy: fetchPolicy,
           errorPolicy: errorPolicy,
           cacheRereadPolicy: cacheRereadPolicy,
-          optimisticResult: optimisticResult,
+          optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
           context: context,
           document: documentNodeQueryblockedFriendScreenViewer,
           pollInterval: pollInterval,
@@ -357,7 +386,7 @@ class Query$blockedFriendScreenViewer$Widget
 class Query$blockedFriendScreenViewer$viewer {
   Query$blockedFriendScreenViewer$viewer({
     required this.blockedFriends,
-    required this.$__typename,
+    this.$__typename = 'Viewer',
   });
 
   factory Query$blockedFriendScreenViewer$viewer.fromJson(
@@ -456,7 +485,7 @@ class _CopyWithImpl$Query$blockedFriendScreenViewer$viewer<TRes>
 
   final TRes Function(Query$blockedFriendScreenViewer$viewer) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? blockedFriends = _undefined,
@@ -499,7 +528,7 @@ class _CopyWithStubImpl$Query$blockedFriendScreenViewer$viewer<TRes>
 class Query$blockedFriendScreenViewer$viewer$blockedFriends {
   Query$blockedFriendScreenViewer$viewer$blockedFriends({
     required this.edges,
-    required this.$__typename,
+    this.$__typename = 'UserConnection',
   });
 
   factory Query$blockedFriendScreenViewer$viewer$blockedFriends.fromJson(
@@ -616,7 +645,7 @@ class _CopyWithImpl$Query$blockedFriendScreenViewer$viewer$blockedFriends<TRes>
   final TRes Function(Query$blockedFriendScreenViewer$viewer$blockedFriends)
       _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? edges = _undefined,
@@ -665,7 +694,7 @@ class _CopyWithStubImpl$Query$blockedFriendScreenViewer$viewer$blockedFriends<
 class Query$blockedFriendScreenViewer$viewer$blockedFriends$edges {
   Query$blockedFriendScreenViewer$viewer$blockedFriends$edges({
     required this.node,
-    required this.$__typename,
+    this.$__typename = 'UserEdge',
   });
 
   factory Query$blockedFriendScreenViewer$viewer$blockedFriends$edges.fromJson(
@@ -771,7 +800,7 @@ class _CopyWithImpl$Query$blockedFriendScreenViewer$viewer$blockedFriends$edges<
   final TRes Function(
       Query$blockedFriendScreenViewer$viewer$blockedFriends$edges) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? node = _undefined,
@@ -888,7 +917,7 @@ class _CopyWithImpl$Variables$Mutation$unblockUser<TRes>
 
   final TRes Function(Variables$Mutation$unblockUser) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({Object? userId = _undefined}) =>
       _then(Variables$Mutation$unblockUser._({
@@ -910,7 +939,7 @@ class _CopyWithStubImpl$Variables$Mutation$unblockUser<TRes>
 class Mutation$unblockUser {
   Mutation$unblockUser({
     required this.unblockUser,
-    required this.$__typename,
+    this.$__typename = 'Mutation',
   });
 
   factory Mutation$unblockUser.fromJson(Map<String, dynamic> json) {
@@ -1003,7 +1032,7 @@ class _CopyWithImpl$Mutation$unblockUser<TRes>
 
   final TRes Function(Mutation$unblockUser) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? unblockUser = _undefined,
@@ -1097,7 +1126,7 @@ Mutation$unblockUser _parserFn$Mutation$unblockUser(
         Map<String, dynamic> data) =>
     Mutation$unblockUser.fromJson(data);
 typedef OnMutationCompleted$Mutation$unblockUser = FutureOr<void> Function(
-  dynamic,
+  Map<String, dynamic>?,
   Mutation$unblockUser?,
 );
 
@@ -1110,6 +1139,7 @@ class Options$Mutation$unblockUser
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
     Object? optimisticResult,
+    Mutation$unblockUser? typedOptimisticResult,
     graphql.Context? context,
     OnMutationCompleted$Mutation$unblockUser? onCompleted,
     graphql.OnMutationUpdate<Mutation$unblockUser>? update,
@@ -1121,7 +1151,7 @@ class Options$Mutation$unblockUser
           fetchPolicy: fetchPolicy,
           errorPolicy: errorPolicy,
           cacheRereadPolicy: cacheRereadPolicy,
-          optimisticResult: optimisticResult,
+          optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
           context: context,
           onCompleted: onCompleted == null
               ? null
@@ -1155,6 +1185,7 @@ class WatchOptions$Mutation$unblockUser
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
     Object? optimisticResult,
+    Mutation$unblockUser? typedOptimisticResult,
     graphql.Context? context,
     Duration? pollInterval,
     bool? eagerlyFetchResults,
@@ -1166,7 +1197,7 @@ class WatchOptions$Mutation$unblockUser
           fetchPolicy: fetchPolicy,
           errorPolicy: errorPolicy,
           cacheRereadPolicy: cacheRereadPolicy,
-          optimisticResult: optimisticResult,
+          optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
           context: context,
           document: documentNodeMutationunblockUser,
           pollInterval: pollInterval,
@@ -1202,9 +1233,10 @@ Mutation$unblockUser$HookResult useMutation$unblockUser(
   final result = graphql_flutter
       .useMutation(options ?? WidgetOptions$Mutation$unblockUser());
   return Mutation$unblockUser$HookResult(
-    (variables, {optimisticResult}) => result.runMutation(
+    (variables, {optimisticResult, typedOptimisticResult}) =>
+        result.runMutation(
       variables.toJson(),
-      optimisticResult: optimisticResult,
+      optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
     ),
     result.result,
   );
@@ -1222,6 +1254,7 @@ class WidgetOptions$Mutation$unblockUser
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
     Object? optimisticResult,
+    Mutation$unblockUser? typedOptimisticResult,
     graphql.Context? context,
     OnMutationCompleted$Mutation$unblockUser? onCompleted,
     graphql.OnMutationUpdate<Mutation$unblockUser>? update,
@@ -1232,7 +1265,7 @@ class WidgetOptions$Mutation$unblockUser
           fetchPolicy: fetchPolicy,
           errorPolicy: errorPolicy,
           cacheRereadPolicy: cacheRereadPolicy,
-          optimisticResult: optimisticResult,
+          optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
           context: context,
           onCompleted: onCompleted == null
               ? null
@@ -1261,6 +1294,7 @@ typedef RunMutation$Mutation$unblockUser
     = graphql.MultiSourceResult<Mutation$unblockUser> Function(
   Variables$Mutation$unblockUser, {
   Object? optimisticResult,
+  Mutation$unblockUser? typedOptimisticResult,
 });
 typedef Builder$Mutation$unblockUser = widgets.Widget Function(
   RunMutation$Mutation$unblockUser,
@@ -1284,10 +1318,12 @@ class Mutation$unblockUser$Widget
             (
               variables, {
               optimisticResult,
+              typedOptimisticResult,
             }) =>
                 run(
               variables.toJson(),
-              optimisticResult: optimisticResult,
+              optimisticResult:
+                  optimisticResult ?? typedOptimisticResult?.toJson(),
             ),
             result,
           ),
@@ -1297,7 +1333,7 @@ class Mutation$unblockUser$Widget
 class Mutation$unblockUser$unblockUser {
   Mutation$unblockUser$unblockUser({
     required this.unblockedUserId,
-    required this.$__typename,
+    this.$__typename = 'UnblockUserPayload',
   });
 
   factory Mutation$unblockUser$unblockUser.fromJson(Map<String, dynamic> json) {
@@ -1390,7 +1426,7 @@ class _CopyWithImpl$Mutation$unblockUser$unblockUser<TRes>
 
   final TRes Function(Mutation$unblockUser$unblockUser) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? unblockedUserId = _undefined,

@@ -11,7 +11,7 @@ class Fragment$friendGroupEditScreenFragment {
     required this.id,
     required this.name,
     required this.friendUsers,
-    required this.$__typename,
+    this.$__typename = 'FriendGroup',
   });
 
   factory Fragment$friendGroupEditScreenFragment.fromJson(
@@ -150,7 +150,7 @@ class _CopyWithImpl$Fragment$friendGroupEditScreenFragment<TRes>
 
   final TRes Function(Fragment$friendGroupEditScreenFragment) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? id = _undefined,
@@ -299,7 +299,7 @@ extension ClientExtension$Fragment$friendGroupEditScreenFragment
 class Query$friendGroupEditScreenViewer {
   Query$friendGroupEditScreenViewer({
     required this.viewer,
-    required this.$__typename,
+    this.$__typename = 'Query',
   });
 
   factory Query$friendGroupEditScreenViewer.fromJson(
@@ -395,7 +395,7 @@ class _CopyWithImpl$Query$friendGroupEditScreenViewer<TRes>
 
   final TRes Function(Query$friendGroupEditScreenViewer) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? viewer = _undefined,
@@ -564,6 +564,11 @@ const documentNodeQueryfriendGroupEditScreenViewer = DocumentNode(definitions: [
 Query$friendGroupEditScreenViewer _parserFn$Query$friendGroupEditScreenViewer(
         Map<String, dynamic> data) =>
     Query$friendGroupEditScreenViewer.fromJson(data);
+typedef OnQueryComplete$Query$friendGroupEditScreenViewer = FutureOr<void>
+    Function(
+  Map<String, dynamic>?,
+  Query$friendGroupEditScreenViewer?,
+);
 
 class Options$Query$friendGroupEditScreenViewer
     extends graphql.QueryOptions<Query$friendGroupEditScreenViewer> {
@@ -573,19 +578,42 @@ class Options$Query$friendGroupEditScreenViewer
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
     Object? optimisticResult,
+    Query$friendGroupEditScreenViewer? typedOptimisticResult,
     Duration? pollInterval,
     graphql.Context? context,
-  }) : super(
+    OnQueryComplete$Query$friendGroupEditScreenViewer? onComplete,
+    graphql.OnQueryError? onError,
+  })  : onCompleteWithParsed = onComplete,
+        super(
           operationName: operationName,
           fetchPolicy: fetchPolicy,
           errorPolicy: errorPolicy,
           cacheRereadPolicy: cacheRereadPolicy,
-          optimisticResult: optimisticResult,
+          optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
           pollInterval: pollInterval,
           context: context,
+          onComplete: onComplete == null
+              ? null
+              : (data) => onComplete(
+                    data,
+                    data == null
+                        ? null
+                        : _parserFn$Query$friendGroupEditScreenViewer(data),
+                  ),
+          onError: onError,
           document: documentNodeQueryfriendGroupEditScreenViewer,
           parserFn: _parserFn$Query$friendGroupEditScreenViewer,
         );
+
+  final OnQueryComplete$Query$friendGroupEditScreenViewer? onCompleteWithParsed;
+
+  @override
+  List<Object?> get properties => [
+        ...super.onComplete == null
+            ? super.properties
+            : super.properties.where((property) => property != onComplete),
+        onCompleteWithParsed,
+      ];
 }
 
 class WatchOptions$Query$friendGroupEditScreenViewer
@@ -596,6 +624,7 @@ class WatchOptions$Query$friendGroupEditScreenViewer
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
     Object? optimisticResult,
+    Query$friendGroupEditScreenViewer? typedOptimisticResult,
     graphql.Context? context,
     Duration? pollInterval,
     bool? eagerlyFetchResults,
@@ -606,7 +635,7 @@ class WatchOptions$Query$friendGroupEditScreenViewer
           fetchPolicy: fetchPolicy,
           errorPolicy: errorPolicy,
           cacheRereadPolicy: cacheRereadPolicy,
-          optimisticResult: optimisticResult,
+          optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
           context: context,
           document: documentNodeQueryfriendGroupEditScreenViewer,
           pollInterval: pollInterval,
@@ -692,7 +721,7 @@ class Query$friendGroupEditScreenViewer$Widget
 class Query$friendGroupEditScreenViewer$viewer {
   Query$friendGroupEditScreenViewer$viewer({
     required this.friends,
-    required this.$__typename,
+    this.$__typename = 'Viewer',
   });
 
   factory Query$friendGroupEditScreenViewer$viewer.fromJson(
@@ -789,7 +818,7 @@ class _CopyWithImpl$Query$friendGroupEditScreenViewer$viewer<TRes>
 
   final TRes Function(Query$friendGroupEditScreenViewer$viewer) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? friends = _undefined,
@@ -829,7 +858,7 @@ class Query$friendGroupEditScreenViewer$viewer$friends {
   Query$friendGroupEditScreenViewer$viewer$friends({
     required this.edges,
     required this.pageInfo,
-    required this.$__typename,
+    this.$__typename = 'UserConnection',
   });
 
   factory Query$friendGroupEditScreenViewer$viewer$friends.fromJson(
@@ -960,7 +989,7 @@ class _CopyWithImpl$Query$friendGroupEditScreenViewer$viewer$friends<TRes>
 
   final TRes Function(Query$friendGroupEditScreenViewer$viewer$friends) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? edges = _undefined,
@@ -1022,7 +1051,7 @@ class _CopyWithStubImpl$Query$friendGroupEditScreenViewer$viewer$friends<TRes>
 class Query$friendGroupEditScreenViewer$viewer$friends$edges {
   Query$friendGroupEditScreenViewer$viewer$friends$edges({
     required this.node,
-    required this.$__typename,
+    this.$__typename = 'UserEdge',
   });
 
   factory Query$friendGroupEditScreenViewer$viewer$friends$edges.fromJson(
@@ -1124,7 +1153,7 @@ class _CopyWithImpl$Query$friendGroupEditScreenViewer$viewer$friends$edges<TRes>
   final TRes Function(Query$friendGroupEditScreenViewer$viewer$friends$edges)
       _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? node = _undefined,
@@ -1169,7 +1198,7 @@ class Query$friendGroupEditScreenViewer$viewer$friends$pageInfo {
     this.endCursor,
     required this.hasNextPage,
     required this.hasPreviousPage,
-    required this.$__typename,
+    this.$__typename = 'PageInfo',
   });
 
   factory Query$friendGroupEditScreenViewer$viewer$friends$pageInfo.fromJson(
@@ -1314,7 +1343,7 @@ class _CopyWithImpl$Query$friendGroupEditScreenViewer$viewer$friends$pageInfo<
   final TRes Function(Query$friendGroupEditScreenViewer$viewer$friends$pageInfo)
       _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? startCursor = _undefined,
@@ -1445,7 +1474,7 @@ class _CopyWithImpl$Variables$Mutation$updateFriendGroup<TRes>
 
   final TRes Function(Variables$Mutation$updateFriendGroup) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({Object? input = _undefined}) =>
       _then(Variables$Mutation$updateFriendGroup._({
@@ -1467,7 +1496,7 @@ class _CopyWithStubImpl$Variables$Mutation$updateFriendGroup<TRes>
 class Mutation$updateFriendGroup {
   Mutation$updateFriendGroup({
     required this.updateFriendGroup,
-    required this.$__typename,
+    this.$__typename = 'Mutation',
   });
 
   factory Mutation$updateFriendGroup.fromJson(Map<String, dynamic> json) {
@@ -1563,7 +1592,7 @@ class _CopyWithImpl$Mutation$updateFriendGroup<TRes>
 
   final TRes Function(Mutation$updateFriendGroup) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? updateFriendGroup = _undefined,
@@ -1711,7 +1740,7 @@ Mutation$updateFriendGroup _parserFn$Mutation$updateFriendGroup(
     Mutation$updateFriendGroup.fromJson(data);
 typedef OnMutationCompleted$Mutation$updateFriendGroup = FutureOr<void>
     Function(
-  dynamic,
+  Map<String, dynamic>?,
   Mutation$updateFriendGroup?,
 );
 
@@ -1724,6 +1753,7 @@ class Options$Mutation$updateFriendGroup
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
     Object? optimisticResult,
+    Mutation$updateFriendGroup? typedOptimisticResult,
     graphql.Context? context,
     OnMutationCompleted$Mutation$updateFriendGroup? onCompleted,
     graphql.OnMutationUpdate<Mutation$updateFriendGroup>? update,
@@ -1735,7 +1765,7 @@ class Options$Mutation$updateFriendGroup
           fetchPolicy: fetchPolicy,
           errorPolicy: errorPolicy,
           cacheRereadPolicy: cacheRereadPolicy,
-          optimisticResult: optimisticResult,
+          optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
           context: context,
           onCompleted: onCompleted == null
               ? null
@@ -1771,6 +1801,7 @@ class WatchOptions$Mutation$updateFriendGroup
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
     Object? optimisticResult,
+    Mutation$updateFriendGroup? typedOptimisticResult,
     graphql.Context? context,
     Duration? pollInterval,
     bool? eagerlyFetchResults,
@@ -1782,7 +1813,7 @@ class WatchOptions$Mutation$updateFriendGroup
           fetchPolicy: fetchPolicy,
           errorPolicy: errorPolicy,
           cacheRereadPolicy: cacheRereadPolicy,
-          optimisticResult: optimisticResult,
+          optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
           context: context,
           document: documentNodeMutationupdateFriendGroup,
           pollInterval: pollInterval,
@@ -1820,9 +1851,10 @@ Mutation$updateFriendGroup$HookResult useMutation$updateFriendGroup(
   final result = graphql_flutter
       .useMutation(options ?? WidgetOptions$Mutation$updateFriendGroup());
   return Mutation$updateFriendGroup$HookResult(
-    (variables, {optimisticResult}) => result.runMutation(
+    (variables, {optimisticResult, typedOptimisticResult}) =>
+        result.runMutation(
       variables.toJson(),
-      optimisticResult: optimisticResult,
+      optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
     ),
     result.result,
   );
@@ -1841,6 +1873,7 @@ class WidgetOptions$Mutation$updateFriendGroup
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
     Object? optimisticResult,
+    Mutation$updateFriendGroup? typedOptimisticResult,
     graphql.Context? context,
     OnMutationCompleted$Mutation$updateFriendGroup? onCompleted,
     graphql.OnMutationUpdate<Mutation$updateFriendGroup>? update,
@@ -1851,7 +1884,7 @@ class WidgetOptions$Mutation$updateFriendGroup
           fetchPolicy: fetchPolicy,
           errorPolicy: errorPolicy,
           cacheRereadPolicy: cacheRereadPolicy,
-          optimisticResult: optimisticResult,
+          optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
           context: context,
           onCompleted: onCompleted == null
               ? null
@@ -1882,6 +1915,7 @@ typedef RunMutation$Mutation$updateFriendGroup
     = graphql.MultiSourceResult<Mutation$updateFriendGroup> Function(
   Variables$Mutation$updateFriendGroup, {
   Object? optimisticResult,
+  Mutation$updateFriendGroup? typedOptimisticResult,
 });
 typedef Builder$Mutation$updateFriendGroup = widgets.Widget Function(
   RunMutation$Mutation$updateFriendGroup,
@@ -1905,10 +1939,12 @@ class Mutation$updateFriendGroup$Widget
             (
               variables, {
               optimisticResult,
+              typedOptimisticResult,
             }) =>
                 run(
               variables.toJson(),
-              optimisticResult: optimisticResult,
+              optimisticResult:
+                  optimisticResult ?? typedOptimisticResult?.toJson(),
             ),
             result,
           ),
@@ -1918,7 +1954,7 @@ class Mutation$updateFriendGroup$Widget
 class Mutation$updateFriendGroup$updateFriendGroup {
   Mutation$updateFriendGroup$updateFriendGroup({
     required this.friendGroup,
-    required this.$__typename,
+    this.$__typename = 'UpdateFriendGroupPayload',
   });
 
   factory Mutation$updateFriendGroup$updateFriendGroup.fromJson(
@@ -2017,7 +2053,7 @@ class _CopyWithImpl$Mutation$updateFriendGroup$updateFriendGroup<TRes>
 
   final TRes Function(Mutation$updateFriendGroup$updateFriendGroup) _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? friendGroup = _undefined,
@@ -2063,7 +2099,7 @@ class Mutation$updateFriendGroup$updateFriendGroup$friendGroup {
     required this.name,
     required this.totalCount,
     required this.friendUsers,
-    required this.$__typename,
+    this.$__typename = 'FriendGroup',
   });
 
   factory Mutation$updateFriendGroup$updateFriendGroup$friendGroup.fromJson(
@@ -2224,7 +2260,7 @@ class _CopyWithImpl$Mutation$updateFriendGroup$updateFriendGroup$friendGroup<
   final TRes Function(Mutation$updateFriendGroup$updateFriendGroup$friendGroup)
       _then;
 
-  static const _undefined = {};
+  static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? id = _undefined,
