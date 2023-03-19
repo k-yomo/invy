@@ -87,6 +87,11 @@ func ExpiresAt(v time.Time) predicate.Invitation {
 	return predicate.Invitation(sql.FieldEQ(FieldExpiresAt, v))
 }
 
+// ChatRoomID applies equality check predicate on the "chat_room_id" field. It's identical to ChatRoomIDEQ.
+func ChatRoomID(v uuid.UUID) predicate.Invitation {
+	return predicate.Invitation(sql.FieldEQ(FieldChatRoomID, v))
+}
+
 // CreatedAt applies equality check predicate on the "created_at" field. It's identical to CreatedAtEQ.
 func CreatedAt(v time.Time) predicate.Invitation {
 	return predicate.Invitation(sql.FieldEQ(FieldCreatedAt, v))
@@ -375,6 +380,56 @@ func ExpiresAtLT(v time.Time) predicate.Invitation {
 // ExpiresAtLTE applies the LTE predicate on the "expires_at" field.
 func ExpiresAtLTE(v time.Time) predicate.Invitation {
 	return predicate.Invitation(sql.FieldLTE(FieldExpiresAt, v))
+}
+
+// ChatRoomIDEQ applies the EQ predicate on the "chat_room_id" field.
+func ChatRoomIDEQ(v uuid.UUID) predicate.Invitation {
+	return predicate.Invitation(sql.FieldEQ(FieldChatRoomID, v))
+}
+
+// ChatRoomIDNEQ applies the NEQ predicate on the "chat_room_id" field.
+func ChatRoomIDNEQ(v uuid.UUID) predicate.Invitation {
+	return predicate.Invitation(sql.FieldNEQ(FieldChatRoomID, v))
+}
+
+// ChatRoomIDIn applies the In predicate on the "chat_room_id" field.
+func ChatRoomIDIn(vs ...uuid.UUID) predicate.Invitation {
+	return predicate.Invitation(sql.FieldIn(FieldChatRoomID, vs...))
+}
+
+// ChatRoomIDNotIn applies the NotIn predicate on the "chat_room_id" field.
+func ChatRoomIDNotIn(vs ...uuid.UUID) predicate.Invitation {
+	return predicate.Invitation(sql.FieldNotIn(FieldChatRoomID, vs...))
+}
+
+// ChatRoomIDGT applies the GT predicate on the "chat_room_id" field.
+func ChatRoomIDGT(v uuid.UUID) predicate.Invitation {
+	return predicate.Invitation(sql.FieldGT(FieldChatRoomID, v))
+}
+
+// ChatRoomIDGTE applies the GTE predicate on the "chat_room_id" field.
+func ChatRoomIDGTE(v uuid.UUID) predicate.Invitation {
+	return predicate.Invitation(sql.FieldGTE(FieldChatRoomID, v))
+}
+
+// ChatRoomIDLT applies the LT predicate on the "chat_room_id" field.
+func ChatRoomIDLT(v uuid.UUID) predicate.Invitation {
+	return predicate.Invitation(sql.FieldLT(FieldChatRoomID, v))
+}
+
+// ChatRoomIDLTE applies the LTE predicate on the "chat_room_id" field.
+func ChatRoomIDLTE(v uuid.UUID) predicate.Invitation {
+	return predicate.Invitation(sql.FieldLTE(FieldChatRoomID, v))
+}
+
+// ChatRoomIDIsNil applies the IsNil predicate on the "chat_room_id" field.
+func ChatRoomIDIsNil() predicate.Invitation {
+	return predicate.Invitation(sql.FieldIsNull(FieldChatRoomID))
+}
+
+// ChatRoomIDNotNil applies the NotNil predicate on the "chat_room_id" field.
+func ChatRoomIDNotNil() predicate.Invitation {
+	return predicate.Invitation(sql.FieldNotNull(FieldChatRoomID))
 }
 
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.

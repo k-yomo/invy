@@ -32,6 +32,10 @@ func (Invitation) Fields() []ent.Field {
 		field.String("comment"),
 		field.Time("starts_at"),
 		field.Time("expires_at"),
+		field.UUID("chat_room_id", uuid.UUID{}).
+			Immutable().
+			Nillable().
+			Optional(),
 		field.Time("created_at").
 			Immutable().
 			Default(time.Now),

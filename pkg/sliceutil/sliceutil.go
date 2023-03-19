@@ -34,3 +34,12 @@ func Dedup[T comparable](list []T) []T {
 	}
 	return dedupedSlice
 }
+
+func Includes[T comparable](list []T, value T) bool {
+	for _, v := range list {
+		if v == value {
+			return true
+		}
+	}
+	return false
+}

@@ -1,6 +1,7 @@
 package graph
 
 import (
+	"cloud.google.com/go/firestore"
 	firebaseAuth "firebase.google.com/go/v4/auth"
 	fcm "firebase.google.com/go/v4/messaging"
 	"github.com/k-yomo/invy/invy_api/ent"
@@ -17,8 +18,10 @@ type Resolver struct {
 	// Use DB for mutation / simple query
 	DB *ent.Client
 	// Use DBQuery to work with complex query
-	DBQuery            *query.Query
-	FirebaseAuthClient *firebaseAuth.Client
-	FCMClient          *fcm.Client
-	AvatarUploader     storage.FileUploader
+	DBQuery                  *query.Query
+	FirebaseAuthClient       *firebaseAuth.Client
+	FirestoreClient          *firestore.Client
+	FCMClient                *fcm.Client
+	AvatarUploader           storage.FileUploader
+	ChatMessageImageUploader storage.FileUploader
 }

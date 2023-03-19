@@ -10,6 +10,7 @@ import (
 	"syscall"
 	"time"
 
+	"cloud.google.com/go/firestore"
 	"cloud.google.com/go/profiler"
 	gcs "cloud.google.com/go/storage"
 	entsql "entgo.io/ent/dialect/sql"
@@ -94,12 +95,17 @@ func main() {
 	if err != nil {
 		logger.Fatal("initializing firebase auth client failed", zap.Error(err))
 	}
+	firestoreClient, err := firestore.NewClient(ctx, appConfig.GCPProjectID)
+	if err != nil {
+		logger.Fatal("initializing firestore client failed", zap.Error(err))
+	}
 	fcmClient, err := firebaseApp.Messaging(ctx)
 	if err != nil {
 		logger.Fatal("initializing FCM client failed", zap.Error(err))
 	}
 
 	var avatarUploader storage.FileUploader
+	var chatMessageImageUploader storage.FileUploader
 	if appConfig.Env.IsDeployed() {
 		gcsClient, err := gcs.NewClient(context.Background())
 		if err != nil {
@@ -108,18 +114,22 @@ func main() {
 		defer gcsClient.Close()
 
 		avatarUploader = storage.NewGCSFileUploader(gcsClient, appConfig.GCSAvatarImageBucketName)
+		chatMessageImageUploader = storage.NewGCSFileUploader(gcsClient, appConfig.GCSChatMessageImageBucketName)
 	} else {
 		// TODO: Don't use mock and use GCS for local development.
 		avatarUploader = storage.NewMockFileUploader()
+		chatMessageImageUploader = storage.NewMockFileUploader()
 	}
 
 	gqlConfig := gqlgen.Config{
 		Resolvers: &graph.Resolver{
-			DB:                 entDB,
-			DBQuery:            query.NewQuery(bunDB),
-			FirebaseAuthClient: firebaseAuthClient,
-			FCMClient:          fcmClient,
-			AvatarUploader:     avatarUploader,
+			DB:                       entDB,
+			DBQuery:                  query.NewQuery(bunDB),
+			FirebaseAuthClient:       firebaseAuthClient,
+			FirestoreClient:          firestoreClient,
+			FCMClient:                fcmClient,
+			AvatarUploader:           avatarUploader,
+			ChatMessageImageUploader: chatMessageImageUploader,
 		},
 		Directives: gqlgen.DirectiveRoot{
 			AuthRequired: directive.AuthRequired,

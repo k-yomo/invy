@@ -271,6 +271,9 @@ func (iu *InvitationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := iu.mutation.ExpiresAt(); ok {
 		_spec.SetField(invitation.FieldExpiresAt, field.TypeTime, value)
 	}
+	if iu.mutation.ChatRoomIDCleared() {
+		_spec.ClearField(invitation.FieldChatRoomID, field.TypeUUID)
+	}
 	if value, ok := iu.mutation.UpdatedAt(); ok {
 		_spec.SetField(invitation.FieldUpdatedAt, field.TypeTime, value)
 	}
@@ -717,6 +720,9 @@ func (iuo *InvitationUpdateOne) sqlSave(ctx context.Context) (_node *Invitation,
 	}
 	if value, ok := iuo.mutation.ExpiresAt(); ok {
 		_spec.SetField(invitation.FieldExpiresAt, field.TypeTime, value)
+	}
+	if iuo.mutation.ChatRoomIDCleared() {
+		_spec.ClearField(invitation.FieldChatRoomID, field.TypeUUID)
 	}
 	if value, ok := iuo.mutation.UpdatedAt(); ok {
 		_spec.SetField(invitation.FieldUpdatedAt, field.TypeTime, value)

@@ -66,6 +66,7 @@ func ConvertFromDBInvitation(invitation *ent.Invitation) *gqlmodel.Invitation {
 		Comment:    invitation.Comment,
 		StartsAt:   invitation.StartsAt,
 		ExpiresAt:  invitation.ExpiresAt,
+		ChatRoomID: invitation.ChatRoomID,
 	}
 }
 

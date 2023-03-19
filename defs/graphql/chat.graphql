@@ -1,0 +1,52 @@
+
+extend type Mutation {
+    SendChatMessageText(input: SendChatMessageTextInput): SendChatMessageTextPayload! @authRequired
+    SendChatMessageImage(input: SendChatMessageImageInput): SendChatMessageImagePayload! @authRequired
+}
+
+
+type ChatRoom implements Node {
+    id: UUID!
+    userIds: [UUID!]!
+    createdAt: Time!
+}
+
+type ChatMessageBodyText {
+    text: String!
+}
+
+type ChatMessageBodyImage {
+    url: String!
+}
+
+enum ChatMessageKind {
+    TEXT
+    IMAGE
+}
+
+union ChatMessageBody = ChatMessageBodyText | ChatMessageBodyImage
+
+type ChatMessage implements Node {
+    id: UUID!
+    chatRoomId: UUID!
+    userId: UUID!
+    kind: ChatMessageKind!
+    body: ChatMessageBody!
+    createdAt: Time!
+}
+
+input SendChatMessageTextInput {
+    chatRoomId: UUID!
+    text: String!
+}
+type SendChatMessageTextPayload {
+    chatMessage: ChatMessage!
+}
+
+input SendChatMessageImageInput {
+    chatRoomId: UUID!
+    image: Upload!
+}
+type SendChatMessageImagePayload {
+    chatMessage: ChatMessage!
+}

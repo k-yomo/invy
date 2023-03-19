@@ -65,6 +65,20 @@ func (ic *InvitationCreate) SetExpiresAt(t time.Time) *InvitationCreate {
 	return ic
 }
 
+// SetChatRoomID sets the "chat_room_id" field.
+func (ic *InvitationCreate) SetChatRoomID(u uuid.UUID) *InvitationCreate {
+	ic.mutation.SetChatRoomID(u)
+	return ic
+}
+
+// SetNillableChatRoomID sets the "chat_room_id" field if the given value is not nil.
+func (ic *InvitationCreate) SetNillableChatRoomID(u *uuid.UUID) *InvitationCreate {
+	if u != nil {
+		ic.SetChatRoomID(*u)
+	}
+	return ic
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (ic *InvitationCreate) SetCreatedAt(t time.Time) *InvitationCreate {
 	ic.mutation.SetCreatedAt(t)
@@ -293,6 +307,10 @@ func (ic *InvitationCreate) createSpec() (*Invitation, *sqlgraph.CreateSpec) {
 	if value, ok := ic.mutation.ExpiresAt(); ok {
 		_spec.SetField(invitation.FieldExpiresAt, field.TypeTime, value)
 		_node.ExpiresAt = value
+	}
+	if value, ok := ic.mutation.ChatRoomID(); ok {
+		_spec.SetField(invitation.FieldChatRoomID, field.TypeUUID, value)
+		_node.ChatRoomID = &value
 	}
 	if value, ok := ic.mutation.CreatedAt(); ok {
 		_spec.SetField(invitation.FieldCreatedAt, field.TypeTime, value)
@@ -528,6 +546,9 @@ func (u *InvitationUpsertOne) UpdateNewValues() *InvitationUpsertOne {
 		}
 		if _, exists := u.create.mutation.UserID(); exists {
 			s.SetIgnore(invitation.FieldUserID)
+		}
+		if _, exists := u.create.mutation.ChatRoomID(); exists {
+			s.SetIgnore(invitation.FieldChatRoomID)
 		}
 		if _, exists := u.create.mutation.CreatedAt(); exists {
 			s.SetIgnore(invitation.FieldCreatedAt)
@@ -835,6 +856,9 @@ func (u *InvitationUpsertBulk) UpdateNewValues() *InvitationUpsertBulk {
 			}
 			if _, exists := b.mutation.UserID(); exists {
 				s.SetIgnore(invitation.FieldUserID)
+			}
+			if _, exists := b.mutation.ChatRoomID(); exists {
+				s.SetIgnore(invitation.FieldChatRoomID)
 			}
 			if _, exists := b.mutation.CreatedAt(); exists {
 				s.SetIgnore(invitation.FieldCreatedAt)

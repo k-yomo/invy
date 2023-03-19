@@ -1,3 +1,5 @@
+import 'package:invy/graphql/scalars.dart';
+
 class Input$CreateFriendGroupInput {
   factory Input$CreateFriendGroupInput({
     required String name,
@@ -534,6 +536,257 @@ class _CopyWithStubImpl$Input$RegisterPushNotificationTokenInput<TRes>
   call({
     String? deviceId,
     String? fcmToken,
+  }) =>
+      _res;
+}
+
+class Input$SendChatMessageImageInput {
+  factory Input$SendChatMessageImageInput({
+    required String chatRoomId,
+    required MultipartFile image,
+  }) =>
+      Input$SendChatMessageImageInput._({
+        r'chatRoomId': chatRoomId,
+        r'image': image,
+      });
+
+  Input$SendChatMessageImageInput._(this._$data);
+
+  factory Input$SendChatMessageImageInput.fromJson(Map<String, dynamic> data) {
+    final result$data = <String, dynamic>{};
+    final l$chatRoomId = data['chatRoomId'];
+    result$data['chatRoomId'] = (l$chatRoomId as String);
+    final l$image = data['image'];
+    result$data['image'] = fileFromJson(l$image);
+    return Input$SendChatMessageImageInput._(result$data);
+  }
+
+  Map<String, dynamic> _$data;
+
+  String get chatRoomId => (_$data['chatRoomId'] as String);
+  MultipartFile get image => (_$data['image'] as MultipartFile);
+  Map<String, dynamic> toJson() {
+    final result$data = <String, dynamic>{};
+    final l$chatRoomId = chatRoomId;
+    result$data['chatRoomId'] = l$chatRoomId;
+    final l$image = image;
+    result$data['image'] = fileToJson(l$image);
+    return result$data;
+  }
+
+  CopyWith$Input$SendChatMessageImageInput<Input$SendChatMessageImageInput>
+      get copyWith => CopyWith$Input$SendChatMessageImageInput(
+            this,
+            (i) => i,
+          );
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    if (!(other is Input$SendChatMessageImageInput) ||
+        runtimeType != other.runtimeType) {
+      return false;
+    }
+    final l$chatRoomId = chatRoomId;
+    final lOther$chatRoomId = other.chatRoomId;
+    if (l$chatRoomId != lOther$chatRoomId) {
+      return false;
+    }
+    final l$image = image;
+    final lOther$image = other.image;
+    if (l$image != lOther$image) {
+      return false;
+    }
+    return true;
+  }
+
+  @override
+  int get hashCode {
+    final l$chatRoomId = chatRoomId;
+    final l$image = image;
+    return Object.hashAll([
+      l$chatRoomId,
+      l$image,
+    ]);
+  }
+}
+
+abstract class CopyWith$Input$SendChatMessageImageInput<TRes> {
+  factory CopyWith$Input$SendChatMessageImageInput(
+    Input$SendChatMessageImageInput instance,
+    TRes Function(Input$SendChatMessageImageInput) then,
+  ) = _CopyWithImpl$Input$SendChatMessageImageInput;
+
+  factory CopyWith$Input$SendChatMessageImageInput.stub(TRes res) =
+      _CopyWithStubImpl$Input$SendChatMessageImageInput;
+
+  TRes call({
+    String? chatRoomId,
+    MultipartFile? image,
+  });
+}
+
+class _CopyWithImpl$Input$SendChatMessageImageInput<TRes>
+    implements CopyWith$Input$SendChatMessageImageInput<TRes> {
+  _CopyWithImpl$Input$SendChatMessageImageInput(
+    this._instance,
+    this._then,
+  );
+
+  final Input$SendChatMessageImageInput _instance;
+
+  final TRes Function(Input$SendChatMessageImageInput) _then;
+
+  static const _undefined = <dynamic, dynamic>{};
+
+  TRes call({
+    Object? chatRoomId = _undefined,
+    Object? image = _undefined,
+  }) =>
+      _then(Input$SendChatMessageImageInput._({
+        ..._instance._$data,
+        if (chatRoomId != _undefined && chatRoomId != null)
+          'chatRoomId': (chatRoomId as String),
+        if (image != _undefined && image != null)
+          'image': (image as MultipartFile),
+      }));
+}
+
+class _CopyWithStubImpl$Input$SendChatMessageImageInput<TRes>
+    implements CopyWith$Input$SendChatMessageImageInput<TRes> {
+  _CopyWithStubImpl$Input$SendChatMessageImageInput(this._res);
+
+  TRes _res;
+
+  call({
+    String? chatRoomId,
+    MultipartFile? image,
+  }) =>
+      _res;
+}
+
+class Input$SendChatMessageTextInput {
+  factory Input$SendChatMessageTextInput({
+    required String chatRoomId,
+    required String text,
+  }) =>
+      Input$SendChatMessageTextInput._({
+        r'chatRoomId': chatRoomId,
+        r'text': text,
+      });
+
+  Input$SendChatMessageTextInput._(this._$data);
+
+  factory Input$SendChatMessageTextInput.fromJson(Map<String, dynamic> data) {
+    final result$data = <String, dynamic>{};
+    final l$chatRoomId = data['chatRoomId'];
+    result$data['chatRoomId'] = (l$chatRoomId as String);
+    final l$text = data['text'];
+    result$data['text'] = (l$text as String);
+    return Input$SendChatMessageTextInput._(result$data);
+  }
+
+  Map<String, dynamic> _$data;
+
+  String get chatRoomId => (_$data['chatRoomId'] as String);
+  String get text => (_$data['text'] as String);
+  Map<String, dynamic> toJson() {
+    final result$data = <String, dynamic>{};
+    final l$chatRoomId = chatRoomId;
+    result$data['chatRoomId'] = l$chatRoomId;
+    final l$text = text;
+    result$data['text'] = l$text;
+    return result$data;
+  }
+
+  CopyWith$Input$SendChatMessageTextInput<Input$SendChatMessageTextInput>
+      get copyWith => CopyWith$Input$SendChatMessageTextInput(
+            this,
+            (i) => i,
+          );
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    if (!(other is Input$SendChatMessageTextInput) ||
+        runtimeType != other.runtimeType) {
+      return false;
+    }
+    final l$chatRoomId = chatRoomId;
+    final lOther$chatRoomId = other.chatRoomId;
+    if (l$chatRoomId != lOther$chatRoomId) {
+      return false;
+    }
+    final l$text = text;
+    final lOther$text = other.text;
+    if (l$text != lOther$text) {
+      return false;
+    }
+    return true;
+  }
+
+  @override
+  int get hashCode {
+    final l$chatRoomId = chatRoomId;
+    final l$text = text;
+    return Object.hashAll([
+      l$chatRoomId,
+      l$text,
+    ]);
+  }
+}
+
+abstract class CopyWith$Input$SendChatMessageTextInput<TRes> {
+  factory CopyWith$Input$SendChatMessageTextInput(
+    Input$SendChatMessageTextInput instance,
+    TRes Function(Input$SendChatMessageTextInput) then,
+  ) = _CopyWithImpl$Input$SendChatMessageTextInput;
+
+  factory CopyWith$Input$SendChatMessageTextInput.stub(TRes res) =
+      _CopyWithStubImpl$Input$SendChatMessageTextInput;
+
+  TRes call({
+    String? chatRoomId,
+    String? text,
+  });
+}
+
+class _CopyWithImpl$Input$SendChatMessageTextInput<TRes>
+    implements CopyWith$Input$SendChatMessageTextInput<TRes> {
+  _CopyWithImpl$Input$SendChatMessageTextInput(
+    this._instance,
+    this._then,
+  );
+
+  final Input$SendChatMessageTextInput _instance;
+
+  final TRes Function(Input$SendChatMessageTextInput) _then;
+
+  static const _undefined = <dynamic, dynamic>{};
+
+  TRes call({
+    Object? chatRoomId = _undefined,
+    Object? text = _undefined,
+  }) =>
+      _then(Input$SendChatMessageTextInput._({
+        ..._instance._$data,
+        if (chatRoomId != _undefined && chatRoomId != null)
+          'chatRoomId': (chatRoomId as String),
+        if (text != _undefined && text != null) 'text': (text as String),
+      }));
+}
+
+class _CopyWithStubImpl$Input$SendChatMessageTextInput<TRes>
+    implements CopyWith$Input$SendChatMessageTextInput<TRes> {
+  _CopyWithStubImpl$Input$SendChatMessageTextInput(this._res);
+
+  TRes _res;
+
+  call({
+    String? chatRoomId,
+    String? text,
   }) =>
       _res;
 }
@@ -1131,6 +1384,30 @@ class _CopyWithStubImpl$Input$UpdateFriendGroupInput<TRes>
       _res;
 }
 
+enum Enum$ChatMessageKind { TEXT, IMAGE, $unknown }
+
+String toJson$Enum$ChatMessageKind(Enum$ChatMessageKind e) {
+  switch (e) {
+    case Enum$ChatMessageKind.TEXT:
+      return r'TEXT';
+    case Enum$ChatMessageKind.IMAGE:
+      return r'IMAGE';
+    case Enum$ChatMessageKind.$unknown:
+      return r'$unknown';
+  }
+}
+
+Enum$ChatMessageKind fromJson$Enum$ChatMessageKind(String value) {
+  switch (value) {
+    case r'TEXT':
+      return Enum$ChatMessageKind.TEXT;
+    case r'IMAGE':
+      return Enum$ChatMessageKind.IMAGE;
+    default:
+      return Enum$ChatMessageKind.$unknown;
+  }
+}
+
 enum Enum$ConstraintFormat { EMAIL, URL, $unknown }
 
 String toJson$Enum$ConstraintFormat(Enum$ConstraintFormat e) {
@@ -1253,11 +1530,17 @@ Enum$PushNotificationType fromJson$Enum$PushNotificationType(String value) {
 
 const possibleTypesMap = <String, Set<String>>{
   'Node': {
+    'ChatMessage',
+    'ChatRoom',
     'FriendGroup',
     'FriendshipRequest',
     'Invitation',
     'InvitationAwaiting',
     'User',
     'Viewer',
-  }
+  },
+  'ChatMessageBody': {
+    'ChatMessageBodyText',
+    'ChatMessageBodyImage',
+  },
 };

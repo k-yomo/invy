@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"time"
 
+	"cloud.google.com/go/firestore"
 	fcm "firebase.google.com/go/v4/messaging"
 	"github.com/google/uuid"
 	"github.com/k-yomo/invy/invy_api/auth"
@@ -100,6 +101,7 @@ func (r *mutationResolver) SendInvitation(ctx context.Context, input *gqlmodel.S
 
 	var dbInvitation *ent.Invitation
 	err = ent.RunInTx(ctx, r.DB, func(tx *ent.Tx) error {
+		chatRoomID := uuid.New()
 		var err error
 		dbInvitation, err = tx.Invitation.Create().
 			SetUserID(authUserID).
@@ -108,6 +110,7 @@ func (r *mutationResolver) SendInvitation(ctx context.Context, input *gqlmodel.S
 			SetComment(input.Comment).
 			SetStartsAt(input.StartsAt).
 			SetExpiresAt(input.ExpiresAt).
+			SetChatRoomID(chatRoomID).
 			Save(ctx)
 		if err != nil {
 			return err
@@ -126,6 +129,20 @@ func (r *mutationResolver) SendInvitation(ctx context.Context, input *gqlmodel.S
 		if err != nil {
 			return err
 		}
+
+		chatRoomMap, err := convutil.ConvertStructToJSONMap(gqlmodel.ChatRoom{
+			ID:        chatRoomID,
+			UserIds:   []uuid.UUID{authUserID},
+			CreatedAt: time.Now(),
+		})
+		if err != nil {
+			return fmt.Errorf("convert chat room struct to json map: %w", err)
+		}
+
+		_, err = r.FirestoreClient.Doc(firestoreChatRoomPath(chatRoomID)).Create(ctx, chatRoomMap)
+		if err != nil {
+			return fmt.Errorf("create chat room document: %w", err)
+		}
 		return nil
 	})
 	if err != nil {
@@ -140,23 +157,28 @@ func (r *mutationResolver) SendInvitation(ctx context.Context, input *gqlmodel.S
 		return nil, err
 	}
 	targetUserPushNotificationTokens, err := r.DBQuery.Notification.GetNotifiableFriendUserPushTokens(ctx, authUserID, targetFriendUserIDs)
-	// TODO: Chunk tokens by 500 (max tokens per multicast)
-	// TODO: delete expired tokens
-	_, err = r.FCMClient.SendMulticast(ctx, &fcm.MulticastMessage{
-		Tokens: targetUserPushNotificationTokens,
-		Data: map[string]string{
-			"type":         gqlmodel.PushNotificationTypeInvitationReceived.String(),
-			"invitationId": dbInvitation.ID.String(),
-		},
-		Notification: &fcm.Notification{
-			Body: fmt.Sprintf("%sさんから、%s開催のおさそいが届きました。", inviterProfile.Nickname, dbInvitation.Location),
-		},
-		Android: &fcm.AndroidConfig{
-			Priority: "high",
-		},
-	})
 	if err != nil {
 		logging.Logger(ctx).Error(err.Error(), zap.String("invitationId", dbInvitation.ID.String()))
+	}
+	if len(targetUserPushNotificationTokens) > 0 {
+		// TODO: Chunk tokens by 500 (max tokens per multicast)
+		// TODO: delete expired tokens
+		_, err = r.FCMClient.SendMulticast(ctx, &fcm.MulticastMessage{
+			Tokens: targetUserPushNotificationTokens,
+			Data: map[string]string{
+				"type":         gqlmodel.PushNotificationTypeInvitationReceived.String(),
+				"invitationId": dbInvitation.ID.String(),
+			},
+			Notification: &fcm.Notification{
+				Body: fmt.Sprintf("%sさんから、%s開催のおさそいが届きました。", inviterProfile.Nickname, dbInvitation.Location),
+			},
+			Android: &fcm.AndroidConfig{
+				Priority: "high",
+			},
+		})
+		if err != nil {
+			logging.Logger(ctx).Error(err.Error(), zap.String("invitationId", dbInvitation.ID.String()))
+		}
 	}
 	return &gqlmodel.SendInvitationPayload{Invitation: conv.ConvertFromDBInvitation(dbInvitation)}, nil
 }
@@ -174,10 +196,39 @@ func (r *mutationResolver) AcceptInvitation(ctx context.Context, invitationID uu
 	}
 
 	// TODO: Should we check if user already denied?
-	err = r.DB.InvitationAcceptance.Create().
-		SetInvitationID(invitationID).
-		SetUserID(authUserID).
-		Exec(ctx)
+	err = ent.RunInTx(ctx, r.DB, func(tx *ent.Tx) error {
+		err := tx.InvitationAcceptance.Create().
+			SetInvitationID(invitationID).
+			SetUserID(authUserID).
+			Exec(ctx)
+		if err != nil {
+			return err
+		}
+
+		dbInvitation, err := r.DB.Invitation.Query().
+			Where(invitation.ID(invitationID)).
+			WithInvitationAcceptances().
+			Only(ctx)
+		if err != nil {
+			return err
+		}
+
+		acceptedUserIDs := convutil.ConvertToList(dbInvitation.Edges.InvitationAcceptances, func(from *ent.InvitationAcceptance) string {
+			return from.UserID.String()
+		})
+		if dbInvitation.ChatRoomID != nil {
+			_, err = r.FirestoreClient.Doc(firestoreChatRoomPath(*dbInvitation.ChatRoomID)).Update(ctx, []firestore.Update{
+				{
+					Path:  "userIds",
+					Value: append([]string{dbInvitation.UserID.String()}, acceptedUserIDs...),
+				},
+			})
+			if err != nil {
+				return err
+			}
+		}
+		return nil
+	})
 	if err != nil {
 		return nil, err
 	}

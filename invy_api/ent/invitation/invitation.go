@@ -25,6 +25,8 @@ const (
 	FieldStartsAt = "starts_at"
 	// FieldExpiresAt holds the string denoting the expires_at field in the database.
 	FieldExpiresAt = "expires_at"
+	// FieldChatRoomID holds the string denoting the chat_room_id field in the database.
+	FieldChatRoomID = "chat_room_id"
 	// FieldCreatedAt holds the string denoting the created_at field in the database.
 	FieldCreatedAt = "created_at"
 	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
@@ -78,6 +80,7 @@ var Columns = []string{
 	FieldComment,
 	FieldStartsAt,
 	FieldExpiresAt,
+	FieldChatRoomID,
 	FieldCreatedAt,
 	FieldUpdatedAt,
 }

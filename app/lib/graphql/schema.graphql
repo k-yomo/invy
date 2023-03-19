@@ -25,6 +25,36 @@ type CancelFriendshipRequestPayload {
   canceledFriendshipRequestId: UUID!
 }
 
+type ChatMessage implements Node {
+  id: UUID!
+  chatRoomId: UUID!
+  userId: UUID!
+  kind: ChatMessageKind!
+  body: ChatMessageBody!
+  createdAt: Time!
+}
+
+union ChatMessageBody = ChatMessageBodyText | ChatMessageBodyImage
+
+type ChatMessageBodyImage {
+  url: String!
+}
+
+type ChatMessageBodyText {
+  text: String!
+}
+
+enum ChatMessageKind {
+  TEXT
+  IMAGE
+}
+
+type ChatRoom implements Node {
+  id: UUID!
+  userIds: [UUID!]!
+  createdAt: Time!
+}
+
 enum ConstraintFormat {
   EMAIL
   URL
@@ -111,6 +141,7 @@ type Invitation implements Node {
   comment: String!
   startsAt: Time!
   expiresAt: Time!
+  chatRoomId: UUID
   acceptedUsers: [User!]!
   isAccepted: Boolean!
 }
@@ -130,6 +161,8 @@ type Mutation {
   deleteAccount: DeleteAccountPayload!
   createUser(input: CreateUserInput!): CreateUserPayload!
   switchUser(userId: UUID!): SwitchUserPayload!
+  SendChatMessageText(input: SendChatMessageTextInput): SendChatMessageTextPayload!
+  SendChatMessageImage(input: SendChatMessageImageInput): SendChatMessageImagePayload!
   createFriendGroup(input: CreateFriendGroupInput!): CreateFriendGroupPayload!
   updateFriendGroup(input: UpdateFriendGroupInput!): UpdateFriendGroupPayload!
   deleteFriendGroup(friendGroupId: UUID!): DeleteFriendGroupPayload!
@@ -210,6 +243,24 @@ type RegisterPushNotificationTokenPayload {
 
 type RequestFriendshipPayload {
   friendShipRequest: FriendshipRequest!
+}
+
+input SendChatMessageImageInput {
+  chatRoomId: UUID!
+  image: Upload!
+}
+
+type SendChatMessageImagePayload {
+  chatMessage: ChatMessage!
+}
+
+input SendChatMessageTextInput {
+  chatRoomId: UUID!
+  text: String!
+}
+
+type SendChatMessageTextPayload {
+  chatMessage: ChatMessage!
 }
 
 input SendInvitationInput {

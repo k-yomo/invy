@@ -8,9 +8,14 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/99designs/gqlgen/graphql"
 	"github.com/google/uuid"
 	"github.com/k-yomo/invy/invy_api/ent"
 )
+
+type ChatMessageBody interface {
+	IsChatMessageBody()
+}
 
 type Node interface {
 	IsNode()
@@ -32,6 +37,39 @@ type BlockUserPayload struct {
 type CancelFriendshipRequestPayload struct {
 	CanceledFriendshipRequestID uuid.UUID `json:"canceledFriendshipRequestId"`
 }
+
+type ChatMessage struct {
+	ID         uuid.UUID       `json:"id"`
+	ChatRoomID uuid.UUID       `json:"chatRoomId"`
+	UserID     uuid.UUID       `json:"userId"`
+	Kind       ChatMessageKind `json:"kind"`
+	Body       ChatMessageBody `json:"body"`
+	CreatedAt  time.Time       `json:"createdAt"`
+}
+
+func (ChatMessage) IsNode()               {}
+func (this ChatMessage) GetID() uuid.UUID { return this.ID }
+
+type ChatMessageBodyImage struct {
+	URL string `json:"url"`
+}
+
+func (ChatMessageBodyImage) IsChatMessageBody() {}
+
+type ChatMessageBodyText struct {
+	Text string `json:"text"`
+}
+
+func (ChatMessageBodyText) IsChatMessageBody() {}
+
+type ChatRoom struct {
+	ID        uuid.UUID   `json:"id"`
+	UserIds   []uuid.UUID `json:"userIds"`
+	CreatedAt time.Time   `json:"createdAt"`
+}
+
+func (ChatRoom) IsNode()               {}
+func (this ChatRoom) GetID() uuid.UUID { return this.ID }
 
 type Coordinate struct {
 	Latitude  float64 `json:"latitude"`
@@ -108,6 +146,7 @@ type Invitation struct {
 	Comment       string      `json:"comment"`
 	StartsAt      time.Time   `json:"startsAt"`
 	ExpiresAt     time.Time   `json:"expiresAt"`
+	ChatRoomID    *uuid.UUID  `json:"chatRoomId"`
 	AcceptedUsers []*User     `json:"acceptedUsers"`
 	IsAccepted    bool        `json:"isAccepted"`
 }
@@ -159,6 +198,24 @@ type RegisterPushNotificationTokenPayload struct {
 
 type RequestFriendshipPayload struct {
 	FriendShipRequest *FriendshipRequest `json:"friendShipRequest"`
+}
+
+type SendChatMessageImageInput struct {
+	ChatRoomID uuid.UUID      `json:"chatRoomId"`
+	Image      graphql.Upload `json:"image"`
+}
+
+type SendChatMessageImagePayload struct {
+	ChatMessage *ChatMessage `json:"chatMessage"`
+}
+
+type SendChatMessageTextInput struct {
+	ChatRoomID uuid.UUID `json:"chatRoomId"`
+	Text       string    `json:"text"`
+}
+
+type SendChatMessageTextPayload struct {
+	ChatMessage *ChatMessage `json:"chatMessage"`
 }
 
 type SendInvitationInput struct {
@@ -274,6 +331,47 @@ type Viewer struct {
 
 func (Viewer) IsNode()               {}
 func (this Viewer) GetID() uuid.UUID { return this.ID }
+
+type ChatMessageKind string
+
+const (
+	ChatMessageKindText  ChatMessageKind = "TEXT"
+	ChatMessageKindImage ChatMessageKind = "IMAGE"
+)
+
+var AllChatMessageKind = []ChatMessageKind{
+	ChatMessageKindText,
+	ChatMessageKindImage,
+}
+
+func (e ChatMessageKind) IsValid() bool {
+	switch e {
+	case ChatMessageKindText, ChatMessageKindImage:
+		return true
+	}
+	return false
+}
+
+func (e ChatMessageKind) String() string {
+	return string(e)
+}
+
+func (e *ChatMessageKind) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = ChatMessageKind(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid ChatMessageKind", str)
+	}
+	return nil
+}
+
+func (e ChatMessageKind) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
 
 type ConstraintFormat string
 

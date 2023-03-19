@@ -72,6 +72,29 @@ type ComplexityRoot struct {
 		CanceledFriendshipRequestID func(childComplexity int) int
 	}
 
+	ChatMessage struct {
+		Body       func(childComplexity int) int
+		ChatRoomID func(childComplexity int) int
+		CreatedAt  func(childComplexity int) int
+		ID         func(childComplexity int) int
+		Kind       func(childComplexity int) int
+		UserID     func(childComplexity int) int
+	}
+
+	ChatMessageBodyImage struct {
+		URL func(childComplexity int) int
+	}
+
+	ChatMessageBodyText struct {
+		Text func(childComplexity int) int
+	}
+
+	ChatRoom struct {
+		CreatedAt func(childComplexity int) int
+		ID        func(childComplexity int) int
+		UserIds   func(childComplexity int) int
+	}
+
 	Coordinate struct {
 		Latitude  func(childComplexity int) int
 		Longitude func(childComplexity int) int
@@ -124,6 +147,7 @@ type ComplexityRoot struct {
 
 	Invitation struct {
 		AcceptedUsers func(childComplexity int) int
+		ChatRoomID    func(childComplexity int) int
 		Comment       func(childComplexity int) int
 		Coordinate    func(childComplexity int) int
 		ExpiresAt     func(childComplexity int) int
@@ -160,6 +184,8 @@ type ComplexityRoot struct {
 		RegisterInvitationAwaiting    func(childComplexity int, input gqlmodel.RegisterInvitationAwaitingInput) int
 		RegisterPushNotificationToken func(childComplexity int, input *gqlmodel.RegisterPushNotificationTokenInput) int
 		RequestFriendship             func(childComplexity int, friendUserID uuid.UUID) int
+		SendChatMessageImage          func(childComplexity int, input *gqlmodel.SendChatMessageImageInput) int
+		SendChatMessageText           func(childComplexity int, input *gqlmodel.SendChatMessageTextInput) int
 		SendInvitation                func(childComplexity int, input *gqlmodel.SendInvitationInput) int
 		SignOut                       func(childComplexity int) int
 		SignUp                        func(childComplexity int, input gqlmodel.SignUpInput) int
@@ -202,6 +228,14 @@ type ComplexityRoot struct {
 
 	RequestFriendshipPayload struct {
 		FriendShipRequest func(childComplexity int) int
+	}
+
+	SendChatMessageImagePayload struct {
+		ChatMessage func(childComplexity int) int
+	}
+
+	SendChatMessageTextPayload struct {
+		ChatMessage func(childComplexity int) int
 	}
 
 	SendInvitationPayload struct {
@@ -313,6 +347,8 @@ type MutationResolver interface {
 	DeleteAccount(ctx context.Context) (*gqlmodel.DeleteAccountPayload, error)
 	CreateUser(ctx context.Context, input gqlmodel.CreateUserInput) (*gqlmodel.CreateUserPayload, error)
 	SwitchUser(ctx context.Context, userID uuid.UUID) (*gqlmodel.SwitchUserPayload, error)
+	SendChatMessageText(ctx context.Context, input *gqlmodel.SendChatMessageTextInput) (*gqlmodel.SendChatMessageTextPayload, error)
+	SendChatMessageImage(ctx context.Context, input *gqlmodel.SendChatMessageImageInput) (*gqlmodel.SendChatMessageImagePayload, error)
 	CreateFriendGroup(ctx context.Context, input gqlmodel.CreateFriendGroupInput) (*gqlmodel.CreateFriendGroupPayload, error)
 	UpdateFriendGroup(ctx context.Context, input gqlmodel.UpdateFriendGroupInput) (*gqlmodel.UpdateFriendGroupPayload, error)
 	DeleteFriendGroup(ctx context.Context, friendGroupID uuid.UUID) (*gqlmodel.DeleteFriendGroupPayload, error)
@@ -405,6 +441,83 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.CancelFriendshipRequestPayload.CanceledFriendshipRequestID(childComplexity), true
+
+	case "ChatMessage.body":
+		if e.complexity.ChatMessage.Body == nil {
+			break
+		}
+
+		return e.complexity.ChatMessage.Body(childComplexity), true
+
+	case "ChatMessage.chatRoomId":
+		if e.complexity.ChatMessage.ChatRoomID == nil {
+			break
+		}
+
+		return e.complexity.ChatMessage.ChatRoomID(childComplexity), true
+
+	case "ChatMessage.createdAt":
+		if e.complexity.ChatMessage.CreatedAt == nil {
+			break
+		}
+
+		return e.complexity.ChatMessage.CreatedAt(childComplexity), true
+
+	case "ChatMessage.id":
+		if e.complexity.ChatMessage.ID == nil {
+			break
+		}
+
+		return e.complexity.ChatMessage.ID(childComplexity), true
+
+	case "ChatMessage.kind":
+		if e.complexity.ChatMessage.Kind == nil {
+			break
+		}
+
+		return e.complexity.ChatMessage.Kind(childComplexity), true
+
+	case "ChatMessage.userId":
+		if e.complexity.ChatMessage.UserID == nil {
+			break
+		}
+
+		return e.complexity.ChatMessage.UserID(childComplexity), true
+
+	case "ChatMessageBodyImage.url":
+		if e.complexity.ChatMessageBodyImage.URL == nil {
+			break
+		}
+
+		return e.complexity.ChatMessageBodyImage.URL(childComplexity), true
+
+	case "ChatMessageBodyText.text":
+		if e.complexity.ChatMessageBodyText.Text == nil {
+			break
+		}
+
+		return e.complexity.ChatMessageBodyText.Text(childComplexity), true
+
+	case "ChatRoom.createdAt":
+		if e.complexity.ChatRoom.CreatedAt == nil {
+			break
+		}
+
+		return e.complexity.ChatRoom.CreatedAt(childComplexity), true
+
+	case "ChatRoom.id":
+		if e.complexity.ChatRoom.ID == nil {
+			break
+		}
+
+		return e.complexity.ChatRoom.ID(childComplexity), true
+
+	case "ChatRoom.userIds":
+		if e.complexity.ChatRoom.UserIds == nil {
+			break
+		}
+
+		return e.complexity.ChatRoom.UserIds(childComplexity), true
 
 	case "Coordinate.latitude":
 		if e.complexity.Coordinate.Latitude == nil {
@@ -552,6 +665,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Invitation.AcceptedUsers(childComplexity), true
+
+	case "Invitation.chatRoomId":
+		if e.complexity.Invitation.ChatRoomID == nil {
+			break
+		}
+
+		return e.complexity.Invitation.ChatRoomID(childComplexity), true
 
 	case "Invitation.comment":
 		if e.complexity.Invitation.Comment == nil {
@@ -833,6 +953,30 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.RequestFriendship(childComplexity, args["friendUserId"].(uuid.UUID)), true
 
+	case "Mutation.SendChatMessageImage":
+		if e.complexity.Mutation.SendChatMessageImage == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_SendChatMessageImage_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.SendChatMessageImage(childComplexity, args["input"].(*gqlmodel.SendChatMessageImageInput)), true
+
+	case "Mutation.SendChatMessageText":
+		if e.complexity.Mutation.SendChatMessageText == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_SendChatMessageText_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.SendChatMessageText(childComplexity, args["input"].(*gqlmodel.SendChatMessageTextInput)), true
+
 	case "Mutation.sendInvitation":
 		if e.complexity.Mutation.SendInvitation == nil {
 			break
@@ -1070,6 +1214,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.RequestFriendshipPayload.FriendShipRequest(childComplexity), true
+
+	case "SendChatMessageImagePayload.chatMessage":
+		if e.complexity.SendChatMessageImagePayload.ChatMessage == nil {
+			break
+		}
+
+		return e.complexity.SendChatMessageImagePayload.ChatMessage(childComplexity), true
+
+	case "SendChatMessageTextPayload.chatMessage":
+		if e.complexity.SendChatMessageTextPayload.ChatMessage == nil {
+			break
+		}
+
+		return e.complexity.SendChatMessageTextPayload.ChatMessage(childComplexity), true
 
 	case "SendInvitationPayload.invitation":
 		if e.complexity.SendInvitationPayload.Invitation == nil {
@@ -1378,6 +1536,8 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputCreateUserInput,
 		ec.unmarshalInputRegisterInvitationAwaitingInput,
 		ec.unmarshalInputRegisterPushNotificationTokenInput,
+		ec.unmarshalInputSendChatMessageImageInput,
+		ec.unmarshalInputSendChatMessageTextInput,
 		ec.unmarshalInputSendInvitationInput,
 		ec.unmarshalInputSignUpInput,
 		ec.unmarshalInputUpdateFriendGroupInput,
@@ -1480,6 +1640,59 @@ type DeleteAccountPayload {
     deletedAccountId: UUID!
 }
 `, BuiltIn: false},
+	{Name: "../../../defs/graphql/chat.graphql", Input: `
+extend type Mutation {
+    SendChatMessageText(input: SendChatMessageTextInput): SendChatMessageTextPayload! @authRequired
+    SendChatMessageImage(input: SendChatMessageImageInput): SendChatMessageImagePayload! @authRequired
+}
+
+
+type ChatRoom implements Node {
+    id: UUID!
+    userIds: [UUID!]!
+    createdAt: Time!
+}
+
+type ChatMessageBodyText {
+    text: String!
+}
+
+type ChatMessageBodyImage {
+    url: String!
+}
+
+enum ChatMessageKind {
+    TEXT
+    IMAGE
+}
+
+union ChatMessageBody = ChatMessageBodyText | ChatMessageBodyImage
+
+type ChatMessage implements Node {
+    id: UUID!
+    chatRoomId: UUID!
+    userId: UUID!
+    kind: ChatMessageKind!
+    body: ChatMessageBody!
+    createdAt: Time!
+}
+
+input SendChatMessageTextInput {
+    chatRoomId: UUID!
+    text: String!
+}
+type SendChatMessageTextPayload {
+    chatMessage: ChatMessage!
+}
+
+input SendChatMessageImageInput {
+    chatRoomId: UUID!
+    image: Upload!
+}
+type SendChatMessageImagePayload {
+    chatMessage: ChatMessage!
+}
+`, BuiltIn: false},
 	{Name: "../../../defs/graphql/friend_group.graphql", Input: `
 extend type Mutation {
     createFriendGroup(input: CreateFriendGroupInput!): CreateFriendGroupPayload! @authRequired
@@ -1543,6 +1756,8 @@ type Invitation implements Node {
     comment: String!
     startsAt: Time!
     expiresAt: Time!
+
+    chatRoomId: UUID
 
     acceptedUsers: [User!]! @goField(forceResolver: true)
     isAccepted: Boolean! @goField(forceResolver: true)
@@ -1853,6 +2068,36 @@ func (ec *executionContext) dir_constraint_args(ctx context.Context, rawArgs map
 		}
 	}
 	args["format"] = arg3
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_SendChatMessageImage_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *gqlmodel.SendChatMessageImageInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalOSendChatMessageImageInput2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐSendChatMessageImageInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_SendChatMessageText_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *gqlmodel.SendChatMessageTextInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalOSendChatMessageTextInput2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐSendChatMessageTextInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
 	return args, nil
 }
 
@@ -2572,6 +2817,8 @@ func (ec *executionContext) fieldContext_AcceptInvitationPayload_invitation(ctx 
 				return ec.fieldContext_Invitation_startsAt(ctx, field)
 			case "expiresAt":
 				return ec.fieldContext_Invitation_expiresAt(ctx, field)
+			case "chatRoomId":
+				return ec.fieldContext_Invitation_chatRoomId(ctx, field)
 			case "acceptedUsers":
 				return ec.fieldContext_Invitation_acceptedUsers(ctx, field)
 			case "isAccepted":
@@ -2666,6 +2913,490 @@ func (ec *executionContext) fieldContext_CancelFriendshipRequestPayload_canceled
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type UUID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ChatMessage_id(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.ChatMessage) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ChatMessage_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(uuid.UUID)
+	fc.Result = res
+	return ec.marshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ChatMessage_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ChatMessage",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type UUID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ChatMessage_chatRoomId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.ChatMessage) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ChatMessage_chatRoomId(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ChatRoomID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(uuid.UUID)
+	fc.Result = res
+	return ec.marshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ChatMessage_chatRoomId(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ChatMessage",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type UUID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ChatMessage_userId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.ChatMessage) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ChatMessage_userId(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UserID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(uuid.UUID)
+	fc.Result = res
+	return ec.marshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ChatMessage_userId(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ChatMessage",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type UUID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ChatMessage_kind(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.ChatMessage) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ChatMessage_kind(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Kind, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(gqlmodel.ChatMessageKind)
+	fc.Result = res
+	return ec.marshalNChatMessageKind2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐChatMessageKind(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ChatMessage_kind(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ChatMessage",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ChatMessageKind does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ChatMessage_body(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.ChatMessage) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ChatMessage_body(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Body, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(gqlmodel.ChatMessageBody)
+	fc.Result = res
+	return ec.marshalNChatMessageBody2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐChatMessageBody(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ChatMessage_body(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ChatMessage",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ChatMessageBody does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ChatMessage_createdAt(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.ChatMessage) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ChatMessage_createdAt(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ChatMessage_createdAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ChatMessage",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Time does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ChatMessageBodyImage_url(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.ChatMessageBodyImage) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ChatMessageBodyImage_url(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.URL, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ChatMessageBodyImage_url(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ChatMessageBodyImage",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ChatMessageBodyText_text(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.ChatMessageBodyText) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ChatMessageBodyText_text(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Text, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ChatMessageBodyText_text(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ChatMessageBodyText",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ChatRoom_id(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.ChatRoom) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ChatRoom_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(uuid.UUID)
+	fc.Result = res
+	return ec.marshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ChatRoom_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ChatRoom",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type UUID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ChatRoom_userIds(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.ChatRoom) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ChatRoom_userIds(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UserIds, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]uuid.UUID)
+	fc.Result = res
+	return ec.marshalNUUID2ᚕgithubᚗcomᚋgoogleᚋuuidᚐUUIDᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ChatRoom_userIds(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ChatRoom",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type UUID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ChatRoom_createdAt(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.ChatRoom) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ChatRoom_createdAt(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ChatRoom_createdAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ChatRoom",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Time does not have child fields")
 		},
 	}
 	return fc, nil
@@ -3120,6 +3851,8 @@ func (ec *executionContext) fieldContext_DenyInvitationPayload_invitation(ctx co
 				return ec.fieldContext_Invitation_startsAt(ctx, field)
 			case "expiresAt":
 				return ec.fieldContext_Invitation_expiresAt(ctx, field)
+			case "chatRoomId":
+				return ec.fieldContext_Invitation_chatRoomId(ctx, field)
 			case "acceptedUsers":
 				return ec.fieldContext_Invitation_acceptedUsers(ctx, field)
 			case "isAccepted":
@@ -4058,6 +4791,47 @@ func (ec *executionContext) fieldContext_Invitation_expiresAt(ctx context.Contex
 	return fc, nil
 }
 
+func (ec *executionContext) _Invitation_chatRoomId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Invitation) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Invitation_chatRoomId(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ChatRoomID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*uuid.UUID)
+	fc.Result = res
+	return ec.marshalOUUID2ᚖgithubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Invitation_chatRoomId(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Invitation",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type UUID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Invitation_acceptedUsers(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Invitation) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Invitation_acceptedUsers(ctx, field)
 	if err != nil {
@@ -4801,6 +5575,164 @@ func (ec *executionContext) fieldContext_Mutation_switchUser(ctx context.Context
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_switchUser_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_SendChatMessageText(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_SendChatMessageText(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().SendChatMessageText(rctx, fc.Args["input"].(*gqlmodel.SendChatMessageTextInput))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.AuthRequired == nil {
+				return nil, errors.New("directive authRequired is not implemented")
+			}
+			return ec.directives.AuthRequired(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*gqlmodel.SendChatMessageTextPayload); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/k-yomo/invy/invy_api/graph/gqlmodel.SendChatMessageTextPayload`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.SendChatMessageTextPayload)
+	fc.Result = res
+	return ec.marshalNSendChatMessageTextPayload2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐSendChatMessageTextPayload(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_SendChatMessageText(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "chatMessage":
+				return ec.fieldContext_SendChatMessageTextPayload_chatMessage(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type SendChatMessageTextPayload", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_SendChatMessageText_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_SendChatMessageImage(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_SendChatMessageImage(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().SendChatMessageImage(rctx, fc.Args["input"].(*gqlmodel.SendChatMessageImageInput))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.AuthRequired == nil {
+				return nil, errors.New("directive authRequired is not implemented")
+			}
+			return ec.directives.AuthRequired(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*gqlmodel.SendChatMessageImagePayload); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/k-yomo/invy/invy_api/graph/gqlmodel.SendChatMessageImagePayload`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.SendChatMessageImagePayload)
+	fc.Result = res
+	return ec.marshalNSendChatMessageImagePayload2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐSendChatMessageImagePayload(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_SendChatMessageImage(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "chatMessage":
+				return ec.fieldContext_SendChatMessageImagePayload_chatMessage(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type SendChatMessageImagePayload", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_SendChatMessageImage_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return
 	}
@@ -6755,6 +7687,8 @@ func (ec *executionContext) fieldContext_Query_invitation(ctx context.Context, f
 				return ec.fieldContext_Invitation_startsAt(ctx, field)
 			case "expiresAt":
 				return ec.fieldContext_Invitation_expiresAt(ctx, field)
+			case "chatRoomId":
+				return ec.fieldContext_Invitation_chatRoomId(ctx, field)
 			case "acceptedUsers":
 				return ec.fieldContext_Invitation_acceptedUsers(ctx, field)
 			case "isAccepted":
@@ -7417,6 +8351,122 @@ func (ec *executionContext) fieldContext_RequestFriendshipPayload_friendShipRequ
 	return fc, nil
 }
 
+func (ec *executionContext) _SendChatMessageImagePayload_chatMessage(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.SendChatMessageImagePayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SendChatMessageImagePayload_chatMessage(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ChatMessage, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.ChatMessage)
+	fc.Result = res
+	return ec.marshalNChatMessage2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐChatMessage(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_SendChatMessageImagePayload_chatMessage(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "SendChatMessageImagePayload",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_ChatMessage_id(ctx, field)
+			case "chatRoomId":
+				return ec.fieldContext_ChatMessage_chatRoomId(ctx, field)
+			case "userId":
+				return ec.fieldContext_ChatMessage_userId(ctx, field)
+			case "kind":
+				return ec.fieldContext_ChatMessage_kind(ctx, field)
+			case "body":
+				return ec.fieldContext_ChatMessage_body(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_ChatMessage_createdAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type ChatMessage", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _SendChatMessageTextPayload_chatMessage(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.SendChatMessageTextPayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SendChatMessageTextPayload_chatMessage(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ChatMessage, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.ChatMessage)
+	fc.Result = res
+	return ec.marshalNChatMessage2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐChatMessage(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_SendChatMessageTextPayload_chatMessage(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "SendChatMessageTextPayload",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_ChatMessage_id(ctx, field)
+			case "chatRoomId":
+				return ec.fieldContext_ChatMessage_chatRoomId(ctx, field)
+			case "userId":
+				return ec.fieldContext_ChatMessage_userId(ctx, field)
+			case "kind":
+				return ec.fieldContext_ChatMessage_kind(ctx, field)
+			case "body":
+				return ec.fieldContext_ChatMessage_body(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_ChatMessage_createdAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type ChatMessage", field.Name)
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _SendInvitationPayload_invitation(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.SendInvitationPayload) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_SendInvitationPayload_invitation(ctx, field)
 	if err != nil {
@@ -7472,6 +8522,8 @@ func (ec *executionContext) fieldContext_SendInvitationPayload_invitation(ctx co
 				return ec.fieldContext_Invitation_startsAt(ctx, field)
 			case "expiresAt":
 				return ec.fieldContext_Invitation_expiresAt(ctx, field)
+			case "chatRoomId":
+				return ec.fieldContext_Invitation_chatRoomId(ctx, field)
 			case "acceptedUsers":
 				return ec.fieldContext_Invitation_acceptedUsers(ctx, field)
 			case "isAccepted":
@@ -9390,6 +10442,8 @@ func (ec *executionContext) fieldContext_Viewer_sentInvitations(ctx context.Cont
 				return ec.fieldContext_Invitation_startsAt(ctx, field)
 			case "expiresAt":
 				return ec.fieldContext_Invitation_expiresAt(ctx, field)
+			case "chatRoomId":
+				return ec.fieldContext_Invitation_chatRoomId(ctx, field)
 			case "acceptedUsers":
 				return ec.fieldContext_Invitation_acceptedUsers(ctx, field)
 			case "isAccepted":
@@ -9456,6 +10510,8 @@ func (ec *executionContext) fieldContext_Viewer_pendingInvitations(ctx context.C
 				return ec.fieldContext_Invitation_startsAt(ctx, field)
 			case "expiresAt":
 				return ec.fieldContext_Invitation_expiresAt(ctx, field)
+			case "chatRoomId":
+				return ec.fieldContext_Invitation_chatRoomId(ctx, field)
 			case "acceptedUsers":
 				return ec.fieldContext_Invitation_acceptedUsers(ctx, field)
 			case "isAccepted":
@@ -9522,6 +10578,8 @@ func (ec *executionContext) fieldContext_Viewer_acceptedInvitations(ctx context.
 				return ec.fieldContext_Invitation_startsAt(ctx, field)
 			case "expiresAt":
 				return ec.fieldContext_Invitation_expiresAt(ctx, field)
+			case "chatRoomId":
+				return ec.fieldContext_Invitation_chatRoomId(ctx, field)
 			case "acceptedUsers":
 				return ec.fieldContext_Invitation_acceptedUsers(ctx, field)
 			case "isAccepted":
@@ -11572,6 +12630,78 @@ func (ec *executionContext) unmarshalInputRegisterPushNotificationTokenInput(ctx
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputSendChatMessageImageInput(ctx context.Context, obj interface{}) (gqlmodel.SendChatMessageImageInput, error) {
+	var it gqlmodel.SendChatMessageImageInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"chatRoomId", "image"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "chatRoomId":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("chatRoomId"))
+			it.ChatRoomID, err = ec.unmarshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "image":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("image"))
+			it.Image, err = ec.unmarshalNUpload2githubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚐUpload(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputSendChatMessageTextInput(ctx context.Context, obj interface{}) (gqlmodel.SendChatMessageTextInput, error) {
+	var it gqlmodel.SendChatMessageTextInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"chatRoomId", "text"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "chatRoomId":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("chatRoomId"))
+			it.ChatRoomID, err = ec.unmarshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "text":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("text"))
+			it.Text, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputSendInvitationInput(ctx context.Context, obj interface{}) (gqlmodel.SendInvitationInput, error) {
 	var it gqlmodel.SendInvitationInput
 	asMap := map[string]interface{}{}
@@ -11826,10 +12956,47 @@ func (ec *executionContext) unmarshalInputUpdateFriendGroupInput(ctx context.Con
 
 // region    ************************** interface.gotpl ***************************
 
+func (ec *executionContext) _ChatMessageBody(ctx context.Context, sel ast.SelectionSet, obj gqlmodel.ChatMessageBody) graphql.Marshaler {
+	switch obj := (obj).(type) {
+	case nil:
+		return graphql.Null
+	case gqlmodel.ChatMessageBodyText:
+		return ec._ChatMessageBodyText(ctx, sel, &obj)
+	case *gqlmodel.ChatMessageBodyText:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._ChatMessageBodyText(ctx, sel, obj)
+	case gqlmodel.ChatMessageBodyImage:
+		return ec._ChatMessageBodyImage(ctx, sel, &obj)
+	case *gqlmodel.ChatMessageBodyImage:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._ChatMessageBodyImage(ctx, sel, obj)
+	default:
+		panic(fmt.Errorf("unexpected type %T", obj))
+	}
+}
+
 func (ec *executionContext) _Node(ctx context.Context, sel ast.SelectionSet, obj gqlmodel.Node) graphql.Marshaler {
 	switch obj := (obj).(type) {
 	case nil:
 		return graphql.Null
+	case gqlmodel.ChatRoom:
+		return ec._ChatRoom(ctx, sel, &obj)
+	case *gqlmodel.ChatRoom:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._ChatRoom(ctx, sel, obj)
+	case gqlmodel.ChatMessage:
+		return ec._ChatMessage(ctx, sel, &obj)
+	case *gqlmodel.ChatMessage:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._ChatMessage(ctx, sel, obj)
 	case gqlmodel.FriendGroup:
 		return ec._FriendGroup(ctx, sel, &obj)
 	case *gqlmodel.FriendGroup:
@@ -11978,6 +13145,167 @@ func (ec *executionContext) _CancelFriendshipRequestPayload(ctx context.Context,
 		case "canceledFriendshipRequestId":
 
 			out.Values[i] = ec._CancelFriendshipRequestPayload_canceledFriendshipRequestId(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var chatMessageImplementors = []string{"ChatMessage", "Node"}
+
+func (ec *executionContext) _ChatMessage(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.ChatMessage) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, chatMessageImplementors)
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ChatMessage")
+		case "id":
+
+			out.Values[i] = ec._ChatMessage_id(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "chatRoomId":
+
+			out.Values[i] = ec._ChatMessage_chatRoomId(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "userId":
+
+			out.Values[i] = ec._ChatMessage_userId(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "kind":
+
+			out.Values[i] = ec._ChatMessage_kind(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "body":
+
+			out.Values[i] = ec._ChatMessage_body(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "createdAt":
+
+			out.Values[i] = ec._ChatMessage_createdAt(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var chatMessageBodyImageImplementors = []string{"ChatMessageBodyImage", "ChatMessageBody"}
+
+func (ec *executionContext) _ChatMessageBodyImage(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.ChatMessageBodyImage) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, chatMessageBodyImageImplementors)
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ChatMessageBodyImage")
+		case "url":
+
+			out.Values[i] = ec._ChatMessageBodyImage_url(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var chatMessageBodyTextImplementors = []string{"ChatMessageBodyText", "ChatMessageBody"}
+
+func (ec *executionContext) _ChatMessageBodyText(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.ChatMessageBodyText) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, chatMessageBodyTextImplementors)
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ChatMessageBodyText")
+		case "text":
+
+			out.Values[i] = ec._ChatMessageBodyText_text(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var chatRoomImplementors = []string{"ChatRoom", "Node"}
+
+func (ec *executionContext) _ChatRoom(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.ChatRoom) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, chatRoomImplementors)
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ChatRoom")
+		case "id":
+
+			out.Values[i] = ec._ChatRoom_id(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "userIds":
+
+			out.Values[i] = ec._ChatRoom_userIds(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "createdAt":
+
+			out.Values[i] = ec._ChatRoom_createdAt(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				invalids++
@@ -12458,6 +13786,10 @@ func (ec *executionContext) _Invitation(ctx context.Context, sel ast.SelectionSe
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
 			}
+		case "chatRoomId":
+
+			out.Values[i] = ec._Invitation_chatRoomId(ctx, field, obj)
+
 		case "acceptedUsers":
 			field := field
 
@@ -12644,6 +13976,24 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_switchUser(ctx, field)
+			})
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "SendChatMessageText":
+
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_SendChatMessageText(ctx, field)
+			})
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "SendChatMessageImage":
+
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_SendChatMessageImage(ctx, field)
 			})
 
 			if out.Values[i] == graphql.Null {
@@ -13146,6 +14496,62 @@ func (ec *executionContext) _RequestFriendshipPayload(ctx context.Context, sel a
 		case "friendShipRequest":
 
 			out.Values[i] = ec._RequestFriendshipPayload_friendShipRequest(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var sendChatMessageImagePayloadImplementors = []string{"SendChatMessageImagePayload"}
+
+func (ec *executionContext) _SendChatMessageImagePayload(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.SendChatMessageImagePayload) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, sendChatMessageImagePayloadImplementors)
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("SendChatMessageImagePayload")
+		case "chatMessage":
+
+			out.Values[i] = ec._SendChatMessageImagePayload_chatMessage(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var sendChatMessageTextPayloadImplementors = []string{"SendChatMessageTextPayload"}
+
+func (ec *executionContext) _SendChatMessageTextPayload(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.SendChatMessageTextPayload) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, sendChatMessageTextPayloadImplementors)
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("SendChatMessageTextPayload")
+		case "chatMessage":
+
+			out.Values[i] = ec._SendChatMessageTextPayload_chatMessage(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				invalids++
@@ -14350,6 +15756,36 @@ func (ec *executionContext) marshalNCancelFriendshipRequestPayload2ᚖgithubᚗc
 	return ec._CancelFriendshipRequestPayload(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalNChatMessage2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐChatMessage(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.ChatMessage) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._ChatMessage(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNChatMessageBody2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐChatMessageBody(ctx context.Context, sel ast.SelectionSet, v gqlmodel.ChatMessageBody) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._ChatMessageBody(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNChatMessageKind2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐChatMessageKind(ctx context.Context, v interface{}) (gqlmodel.ChatMessageKind, error) {
+	var res gqlmodel.ChatMessageKind
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNChatMessageKind2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐChatMessageKind(ctx context.Context, sel ast.SelectionSet, v gqlmodel.ChatMessageKind) graphql.Marshaler {
+	return v
+}
+
 func (ec *executionContext) unmarshalNCreateFriendGroupInput2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐCreateFriendGroupInput(ctx context.Context, v interface{}) (gqlmodel.CreateFriendGroupInput, error) {
 	res, err := ec.unmarshalInputCreateFriendGroupInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -14791,6 +16227,34 @@ func (ec *executionContext) marshalNRequestFriendshipPayload2ᚖgithubᚗcomᚋk
 		return graphql.Null
 	}
 	return ec._RequestFriendshipPayload(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNSendChatMessageImagePayload2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐSendChatMessageImagePayload(ctx context.Context, sel ast.SelectionSet, v gqlmodel.SendChatMessageImagePayload) graphql.Marshaler {
+	return ec._SendChatMessageImagePayload(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNSendChatMessageImagePayload2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐSendChatMessageImagePayload(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.SendChatMessageImagePayload) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._SendChatMessageImagePayload(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNSendChatMessageTextPayload2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐSendChatMessageTextPayload(ctx context.Context, sel ast.SelectionSet, v gqlmodel.SendChatMessageTextPayload) graphql.Marshaler {
+	return ec._SendChatMessageTextPayload(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNSendChatMessageTextPayload2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐSendChatMessageTextPayload(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.SendChatMessageTextPayload) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._SendChatMessageTextPayload(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNSendInvitationPayload2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐSendInvitationPayload(ctx context.Context, sel ast.SelectionSet, v gqlmodel.SendInvitationPayload) graphql.Marshaler {
@@ -15547,6 +17011,22 @@ func (ec *executionContext) unmarshalORegisterPushNotificationTokenInput2ᚖgith
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) unmarshalOSendChatMessageImageInput2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐSendChatMessageImageInput(ctx context.Context, v interface{}) (*gqlmodel.SendChatMessageImageInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputSendChatMessageImageInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalOSendChatMessageTextInput2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐSendChatMessageTextInput(ctx context.Context, v interface{}) (*gqlmodel.SendChatMessageTextInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputSendChatMessageTextInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalOSendInvitationInput2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐSendInvitationInput(ctx context.Context, v interface{}) (*gqlmodel.SendInvitationInput, error) {
 	if v == nil {
 		return nil, nil
@@ -15568,6 +17048,22 @@ func (ec *executionContext) marshalOString2ᚖstring(ctx context.Context, sel as
 		return graphql.Null
 	}
 	res := graphql.MarshalString(*v)
+	return res
+}
+
+func (ec *executionContext) unmarshalOUUID2ᚖgithubᚗcomᚋgoogleᚋuuidᚐUUID(ctx context.Context, v interface{}) (*uuid.UUID, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := scalar.UnmarshalUUID(v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOUUID2ᚖgithubᚗcomᚋgoogleᚋuuidᚐUUID(ctx context.Context, sel ast.SelectionSet, v *uuid.UUID) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	res := scalar.MarshalUUID(*v)
 	return res
 }
 

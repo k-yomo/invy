@@ -2660,6 +2660,7 @@ type InvitationMutation struct {
 	comment                       *string
 	starts_at                     *time.Time
 	expires_at                    *time.Time
+	chat_room_id                  *uuid.UUID
 	created_at                    *time.Time
 	updated_at                    *time.Time
 	clearedFields                 map[string]struct{}
@@ -3012,6 +3013,55 @@ func (m *InvitationMutation) ResetExpiresAt() {
 	m.expires_at = nil
 }
 
+// SetChatRoomID sets the "chat_room_id" field.
+func (m *InvitationMutation) SetChatRoomID(u uuid.UUID) {
+	m.chat_room_id = &u
+}
+
+// ChatRoomID returns the value of the "chat_room_id" field in the mutation.
+func (m *InvitationMutation) ChatRoomID() (r uuid.UUID, exists bool) {
+	v := m.chat_room_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldChatRoomID returns the old "chat_room_id" field's value of the Invitation entity.
+// If the Invitation object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *InvitationMutation) OldChatRoomID(ctx context.Context) (v *uuid.UUID, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldChatRoomID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldChatRoomID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldChatRoomID: %w", err)
+	}
+	return oldValue.ChatRoomID, nil
+}
+
+// ClearChatRoomID clears the value of the "chat_room_id" field.
+func (m *InvitationMutation) ClearChatRoomID() {
+	m.chat_room_id = nil
+	m.clearedFields[invitation.FieldChatRoomID] = struct{}{}
+}
+
+// ChatRoomIDCleared returns if the "chat_room_id" field was cleared in this mutation.
+func (m *InvitationMutation) ChatRoomIDCleared() bool {
+	_, ok := m.clearedFields[invitation.FieldChatRoomID]
+	return ok
+}
+
+// ResetChatRoomID resets all changes to the "chat_room_id" field.
+func (m *InvitationMutation) ResetChatRoomID() {
+	m.chat_room_id = nil
+	delete(m.clearedFields, invitation.FieldChatRoomID)
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (m *InvitationMutation) SetCreatedAt(t time.Time) {
 	m.created_at = &t
@@ -3306,7 +3356,7 @@ func (m *InvitationMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *InvitationMutation) Fields() []string {
-	fields := make([]string, 0, 8)
+	fields := make([]string, 0, 9)
 	if m.user != nil {
 		fields = append(fields, invitation.FieldUserID)
 	}
@@ -3324,6 +3374,9 @@ func (m *InvitationMutation) Fields() []string {
 	}
 	if m.expires_at != nil {
 		fields = append(fields, invitation.FieldExpiresAt)
+	}
+	if m.chat_room_id != nil {
+		fields = append(fields, invitation.FieldChatRoomID)
 	}
 	if m.created_at != nil {
 		fields = append(fields, invitation.FieldCreatedAt)
@@ -3351,6 +3404,8 @@ func (m *InvitationMutation) Field(name string) (ent.Value, bool) {
 		return m.StartsAt()
 	case invitation.FieldExpiresAt:
 		return m.ExpiresAt()
+	case invitation.FieldChatRoomID:
+		return m.ChatRoomID()
 	case invitation.FieldCreatedAt:
 		return m.CreatedAt()
 	case invitation.FieldUpdatedAt:
@@ -3376,6 +3431,8 @@ func (m *InvitationMutation) OldField(ctx context.Context, name string) (ent.Val
 		return m.OldStartsAt(ctx)
 	case invitation.FieldExpiresAt:
 		return m.OldExpiresAt(ctx)
+	case invitation.FieldChatRoomID:
+		return m.OldChatRoomID(ctx)
 	case invitation.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
 	case invitation.FieldUpdatedAt:
@@ -3431,6 +3488,13 @@ func (m *InvitationMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetExpiresAt(v)
 		return nil
+	case invitation.FieldChatRoomID:
+		v, ok := value.(uuid.UUID)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetChatRoomID(v)
+		return nil
 	case invitation.FieldCreatedAt:
 		v, ok := value.(time.Time)
 		if !ok {
@@ -3478,6 +3542,9 @@ func (m *InvitationMutation) ClearedFields() []string {
 	if m.FieldCleared(invitation.FieldCoordinate) {
 		fields = append(fields, invitation.FieldCoordinate)
 	}
+	if m.FieldCleared(invitation.FieldChatRoomID) {
+		fields = append(fields, invitation.FieldChatRoomID)
+	}
 	return fields
 }
 
@@ -3494,6 +3561,9 @@ func (m *InvitationMutation) ClearField(name string) error {
 	switch name {
 	case invitation.FieldCoordinate:
 		m.ClearCoordinate()
+		return nil
+	case invitation.FieldChatRoomID:
+		m.ClearChatRoomID()
 		return nil
 	}
 	return fmt.Errorf("unknown Invitation nullable field %s", name)
@@ -3520,6 +3590,9 @@ func (m *InvitationMutation) ResetField(name string) error {
 		return nil
 	case invitation.FieldExpiresAt:
 		m.ResetExpiresAt()
+		return nil
+	case invitation.FieldChatRoomID:
+		m.ResetChatRoomID()
 		return nil
 	case invitation.FieldCreatedAt:
 		m.ResetCreatedAt()

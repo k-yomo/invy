@@ -129,6 +129,7 @@ var (
 		{Name: "comment", Type: field.TypeString},
 		{Name: "starts_at", Type: field.TypeTime},
 		{Name: "expires_at", Type: field.TypeTime},
+		{Name: "chat_room_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "user_id", Type: field.TypeUUID},
@@ -141,7 +142,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "invitations_users_user",
-				Columns:    []*schema.Column{InvitationsColumns[8]},
+				Columns:    []*schema.Column{InvitationsColumns[9]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},

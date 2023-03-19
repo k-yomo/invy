@@ -26,12 +26,13 @@ func (e Env) IsDeployed() bool {
 }
 
 type AppConfig struct {
-	Env                      Env      `default:"local" envconfig:"APP_ENV"`
-	Port                     int      `default:"8000" envconfig:"PORT"`
-	GCPProjectID             string   `default:"invy-local" envconfig:"GCP_PROJECT_ID"`
-	GCSAvatarImageBucketName string   `envconfig:"GCS_AVATAR_IMAGE_BUCKET_NAME"`
-	FirebaseSecretKeyPath    string   `envconfig:"FIREBASE_SECRET_KEY_PATH"`
-	AllowedOrigins           []string `default:"http://localhost:3000,http://localhost:4000" envconfig:"ALLOWED_ORIGINS"`
+	Env                           Env      `default:"local" envconfig:"APP_ENV"`
+	Port                          int      `default:"8000" envconfig:"PORT"`
+	GCPProjectID                  string   `default:"invy-local" envconfig:"GCP_PROJECT_ID"`
+	GCSAvatarImageBucketName      string   `envconfig:"GCS_AVATAR_IMAGE_BUCKET_NAME"`
+	GCSChatMessageImageBucketName string   `envconfig:"GCS_CHAT_MESSAGE_IMAGE_BUCKET_NAME"`
+	FirebaseSecretKeyPath         string   `envconfig:"FIREBASE_SECRET_KEY_PATH"`
+	AllowedOrigins                []string `default:"http://localhost:3000,http://localhost:4000" envconfig:"ALLOWED_ORIGINS"`
 
 	DBConfig *DBConfig
 }

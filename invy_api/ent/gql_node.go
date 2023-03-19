@@ -312,7 +312,7 @@ func (i *Invitation) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     i.ID,
 		Type:   "Invitation",
-		Fields: make([]*Field, 8),
+		Fields: make([]*Field, 9),
 		Edges:  make([]*Edge, 4),
 	}
 	var buf []byte
@@ -364,10 +364,18 @@ func (i *Invitation) Node(ctx context.Context) (node *Node, err error) {
 		Name:  "expires_at",
 		Value: string(buf),
 	}
-	if buf, err = json.Marshal(i.CreatedAt); err != nil {
+	if buf, err = json.Marshal(i.ChatRoomID); err != nil {
 		return nil, err
 	}
 	node.Fields[6] = &Field{
+		Type:  "uuid.UUID",
+		Name:  "chat_room_id",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(i.CreatedAt); err != nil {
+		return nil, err
+	}
+	node.Fields[7] = &Field{
 		Type:  "time.Time",
 		Name:  "created_at",
 		Value: string(buf),
@@ -375,7 +383,7 @@ func (i *Invitation) Node(ctx context.Context) (node *Node, err error) {
 	if buf, err = json.Marshal(i.UpdatedAt); err != nil {
 		return nil, err
 	}
-	node.Fields[7] = &Field{
+	node.Fields[8] = &Field{
 		Type:  "time.Time",
 		Name:  "updated_at",
 		Value: string(buf),
