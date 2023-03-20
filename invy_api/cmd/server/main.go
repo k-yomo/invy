@@ -10,7 +10,6 @@ import (
 	"syscall"
 	"time"
 
-	"cloud.google.com/go/firestore"
 	"cloud.google.com/go/profiler"
 	gcs "cloud.google.com/go/storage"
 	entsql "entgo.io/ent/dialect/sql"
@@ -95,7 +94,7 @@ func main() {
 	if err != nil {
 		logger.Fatal("initializing firebase auth client failed", zap.Error(err))
 	}
-	firestoreClient, err := firestore.NewClient(ctx, appConfig.GCPProjectID)
+	firestoreClient, err := firebaseApp.Firestore(ctx)
 	if err != nil {
 		logger.Fatal("initializing firestore client failed", zap.Error(err))
 	}
