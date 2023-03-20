@@ -47,7 +47,7 @@ func (r *mutationResolver) SendChatMessageText(ctx context.Context, input *gqlmo
 		return nil, err
 	}
 
-	go r.sendChatMessageNotification(ctx, chatRoomUserIDs, input.Text)
+	r.sendChatMessageNotification(ctx, chatRoomUserIDs, input.Text)
 
 	return &gqlmodel.SendChatMessageTextPayload{
 		ChatMessage: &chatMessage,
