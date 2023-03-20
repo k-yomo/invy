@@ -7,6 +7,8 @@ import (
 	"cloud.google.com/go/firestore"
 	fcm "firebase.google.com/go/v4/messaging"
 	"github.com/google/uuid"
+	"github.com/k-yomo/invy/invy_api/auth"
+	"github.com/k-yomo/invy/invy_api/ent/userprofile"
 	"github.com/k-yomo/invy/invy_api/graph/gqlmodel"
 	"github.com/k-yomo/invy/invy_api/internal/xerrors"
 	"github.com/k-yomo/invy/pkg/convutil"
@@ -40,11 +42,13 @@ func getChatRoomUserIDs(ctx context.Context, firestoreClient *firestore.Client, 
 
 func (r *mutationResolver) sendChatMessageNotification(
 	ctx context.Context,
-	sentUserID uuid.UUID,
 	chatRoomUserIDs []uuid.UUID,
 	notificationBody string,
 ) {
-	notifyUserIDs := sliceutil.Filter(chatRoomUserIDs, sentUserID)
+	sentUserID := auth.GetCurrentUserID(ctx)
+	notifyUserIDs := sliceutil.Filter(chatRoomUserIDs, func(v uuid.UUID) bool {
+		return v != sentUserID
+	})
 	targetUserPushNotificationTokens, err := r.DBQuery.Notification.GetNotifiableFriendUserPushTokens(ctx, sentUserID, notifyUserIDs)
 	if err != nil {
 		logging.Logger(ctx).Error(err.Error())
@@ -54,7 +58,7 @@ func (r *mutationResolver) sendChatMessageNotification(
 		return
 	}
 
-	authUserProfile, err := r.DB.UserProfile.Get(ctx, sentUserID)
+	authUserProfile, err := r.DB.UserProfile.Query().Where(userprofile.UserID(sentUserID)).Only(ctx)
 	if err != nil {
 		logging.Logger(ctx).Error(err.Error())
 		return
