@@ -82,15 +82,15 @@ class ChatState extends ConsumerState<Chat> {
       showToast("メッセージの送信に失敗しました", ToastLevel.error);
       return false;
     }
-
-    setState(() {
-      chatMessages += [
-        chatUITypes.Message(
-          id: chatUITypes.MessageType.text,
-        ),
-        ...chatMessages
-      ];
-    });
+    //
+    // setState(() {
+    //   chatMessages += [
+    //     chatUITypes.TextMessage(
+    //       id: chatUITypes.MessageType.text,
+    //     ),
+    //     ...chatMessages
+    //   ];
+    // });
   }
 
   void _onAttachmentPressed() async {
