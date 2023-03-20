@@ -2586,6 +2586,45 @@ const documentNodeMutationsendChatMessageImage = DocumentNode(definitions: [
                 selectionSet: null,
               ),
               FieldNode(
+                name: NameNode(value: 'body'),
+                alias: null,
+                arguments: [],
+                directives: [],
+                selectionSet: SelectionSetNode(selections: [
+                  InlineFragmentNode(
+                    typeCondition: TypeConditionNode(
+                        on: NamedTypeNode(
+                      name: NameNode(value: 'ChatMessageBodyImage'),
+                      isNonNull: false,
+                    )),
+                    directives: [],
+                    selectionSet: SelectionSetNode(selections: [
+                      FieldNode(
+                        name: NameNode(value: 'url'),
+                        alias: null,
+                        arguments: [],
+                        directives: [],
+                        selectionSet: null,
+                      ),
+                      FieldNode(
+                        name: NameNode(value: '__typename'),
+                        alias: null,
+                        arguments: [],
+                        directives: [],
+                        selectionSet: null,
+                      ),
+                    ]),
+                  ),
+                  FieldNode(
+                    name: NameNode(value: '__typename'),
+                    alias: null,
+                    arguments: [],
+                    directives: [],
+                    selectionSet: null,
+                  ),
+                ]),
+              ),
+              FieldNode(
                 name: NameNode(value: 'createdAt'),
                 alias: null,
                 arguments: [],
@@ -2993,6 +3032,7 @@ class _CopyWithStubImpl$Mutation$sendChatMessageImage$sendChatMessageImage<TRes>
 class Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage {
   Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage({
     required this.id,
+    required this.body,
     required this.createdAt,
     this.$__typename = 'ChatMessage',
   });
@@ -3000,16 +3040,22 @@ class Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage {
   factory Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage.fromJson(
       Map<String, dynamic> json) {
     final l$id = json['id'];
+    final l$body = json['body'];
     final l$createdAt = json['createdAt'];
     final l$$__typename = json['__typename'];
     return Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage(
       id: (l$id as String),
+      body: Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body
+          .fromJson((l$body as Map<String, dynamic>)),
       createdAt: DateTime.parse((l$createdAt as String)),
       $__typename: (l$$__typename as String),
     );
   }
 
   final String id;
+
+  final Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body
+      body;
 
   final DateTime createdAt;
 
@@ -3019,6 +3065,8 @@ class Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage {
     final _resultData = <String, dynamic>{};
     final l$id = id;
     _resultData['id'] = l$id;
+    final l$body = body;
+    _resultData['body'] = l$body.toJson();
     final l$createdAt = createdAt;
     _resultData['createdAt'] = l$createdAt.toIso8601String();
     final l$$__typename = $__typename;
@@ -3029,10 +3077,12 @@ class Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage {
   @override
   int get hashCode {
     final l$id = id;
+    final l$body = body;
     final l$createdAt = createdAt;
     final l$$__typename = $__typename;
     return Object.hashAll([
       l$id,
+      l$body,
       l$createdAt,
       l$$__typename,
     ]);
@@ -3051,6 +3101,11 @@ class Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage {
     final l$id = id;
     final lOther$id = other.id;
     if (l$id != lOther$id) {
+      return false;
+    }
+    final l$body = body;
+    final lOther$body = other.body;
+    if (l$body != lOther$body) {
       return false;
     }
     final l$createdAt = createdAt;
@@ -3093,9 +3148,12 @@ abstract class CopyWith$Mutation$sendChatMessageImage$sendChatMessageImage$chatM
 
   TRes call({
     String? id,
+    Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body? body,
     DateTime? createdAt,
     String? $__typename,
   });
+  CopyWith$Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body<
+      TRes> get body;
 }
 
 class _CopyWithImpl$Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage<
@@ -3118,11 +3176,16 @@ class _CopyWithImpl$Mutation$sendChatMessageImage$sendChatMessageImage$chatMessa
 
   TRes call({
     Object? id = _undefined,
+    Object? body = _undefined,
     Object? createdAt = _undefined,
     Object? $__typename = _undefined,
   }) =>
       _then(Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage(
         id: id == _undefined || id == null ? _instance.id : (id as String),
+        body: body == _undefined || body == null
+            ? _instance.body
+            : (body
+                as Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body),
         createdAt: createdAt == _undefined || createdAt == null
             ? _instance.createdAt
             : (createdAt as DateTime),
@@ -3130,6 +3193,12 @@ class _CopyWithImpl$Mutation$sendChatMessageImage$sendChatMessageImage$chatMessa
             ? _instance.$__typename
             : ($__typename as String),
       ));
+  CopyWith$Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body<
+      TRes> get body {
+    final local$body = _instance.body;
+    return CopyWith$Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body(
+        local$body, (e) => call(body: e));
+  }
 }
 
 class _CopyWithStubImpl$Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage<
@@ -3144,8 +3213,396 @@ class _CopyWithStubImpl$Mutation$sendChatMessageImage$sendChatMessageImage$chatM
 
   call({
     String? id,
+    Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body? body,
     DateTime? createdAt,
     String? $__typename,
   }) =>
       _res;
+  CopyWith$Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body<
+          TRes>
+      get body =>
+          CopyWith$Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body
+              .stub(_res);
+}
+
+class Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body {
+  Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body(
+      {required this.$__typename});
+
+  factory Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body.fromJson(
+      Map<String, dynamic> json) {
+    switch (json["__typename"] as String) {
+      case "ChatMessageBodyImage":
+        return Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body$$ChatMessageBodyImage
+            .fromJson(json);
+
+      case "ChatMessageBodyText":
+        return Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body$$ChatMessageBodyText
+            .fromJson(json);
+
+      default:
+        final l$$__typename = json['__typename'];
+        return Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body(
+            $__typename: (l$$__typename as String));
+    }
+  }
+
+  final String $__typename;
+
+  Map<String, dynamic> toJson() {
+    final _resultData = <String, dynamic>{};
+    final l$$__typename = $__typename;
+    _resultData['__typename'] = l$$__typename;
+    return _resultData;
+  }
+
+  @override
+  int get hashCode {
+    final l$$__typename = $__typename;
+    return Object.hashAll([l$$__typename]);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    if (!(other
+            is Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body) ||
+        runtimeType != other.runtimeType) {
+      return false;
+    }
+    final l$$__typename = $__typename;
+    final lOther$$__typename = other.$__typename;
+    if (l$$__typename != lOther$$__typename) {
+      return false;
+    }
+    return true;
+  }
+}
+
+extension UtilityExtension$Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body
+    on Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body {
+  CopyWith$Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body<
+          Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body>
+      get copyWith =>
+          CopyWith$Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body(
+            this,
+            (i) => i,
+          );
+}
+
+abstract class CopyWith$Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body<
+    TRes> {
+  factory CopyWith$Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body(
+    Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body
+        instance,
+    TRes Function(
+            Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body)
+        then,
+  ) = _CopyWithImpl$Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body;
+
+  factory CopyWith$Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body.stub(
+          TRes res) =
+      _CopyWithStubImpl$Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body;
+
+  TRes call({String? $__typename});
+}
+
+class _CopyWithImpl$Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body<
+        TRes>
+    implements
+        CopyWith$Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body<
+            TRes> {
+  _CopyWithImpl$Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body(
+    this._instance,
+    this._then,
+  );
+
+  final Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body
+      _instance;
+
+  final TRes Function(
+          Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body)
+      _then;
+
+  static const _undefined = <dynamic, dynamic>{};
+
+  TRes call({Object? $__typename = _undefined}) =>
+      _then(Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body(
+          $__typename: $__typename == _undefined || $__typename == null
+              ? _instance.$__typename
+              : ($__typename as String)));
+}
+
+class _CopyWithStubImpl$Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body<
+        TRes>
+    implements
+        CopyWith$Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body<
+            TRes> {
+  _CopyWithStubImpl$Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body(
+      this._res);
+
+  TRes _res;
+
+  call({String? $__typename}) => _res;
+}
+
+class Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body$$ChatMessageBodyImage
+    implements
+        Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body {
+  Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body$$ChatMessageBodyImage({
+    required this.url,
+    this.$__typename = 'ChatMessageBodyImage',
+  });
+
+  factory Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body$$ChatMessageBodyImage.fromJson(
+      Map<String, dynamic> json) {
+    final l$url = json['url'];
+    final l$$__typename = json['__typename'];
+    return Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body$$ChatMessageBodyImage(
+      url: (l$url as String),
+      $__typename: (l$$__typename as String),
+    );
+  }
+
+  final String url;
+
+  final String $__typename;
+
+  Map<String, dynamic> toJson() {
+    final _resultData = <String, dynamic>{};
+    final l$url = url;
+    _resultData['url'] = l$url;
+    final l$$__typename = $__typename;
+    _resultData['__typename'] = l$$__typename;
+    return _resultData;
+  }
+
+  @override
+  int get hashCode {
+    final l$url = url;
+    final l$$__typename = $__typename;
+    return Object.hashAll([
+      l$url,
+      l$$__typename,
+    ]);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    if (!(other
+            is Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body$$ChatMessageBodyImage) ||
+        runtimeType != other.runtimeType) {
+      return false;
+    }
+    final l$url = url;
+    final lOther$url = other.url;
+    if (l$url != lOther$url) {
+      return false;
+    }
+    final l$$__typename = $__typename;
+    final lOther$$__typename = other.$__typename;
+    if (l$$__typename != lOther$$__typename) {
+      return false;
+    }
+    return true;
+  }
+}
+
+extension UtilityExtension$Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body$$ChatMessageBodyImage
+    on Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body$$ChatMessageBodyImage {
+  CopyWith$Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body$$ChatMessageBodyImage<
+          Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body$$ChatMessageBodyImage>
+      get copyWith =>
+          CopyWith$Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body$$ChatMessageBodyImage(
+            this,
+            (i) => i,
+          );
+}
+
+abstract class CopyWith$Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body$$ChatMessageBodyImage<
+    TRes> {
+  factory CopyWith$Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body$$ChatMessageBodyImage(
+    Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body$$ChatMessageBodyImage
+        instance,
+    TRes Function(
+            Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body$$ChatMessageBodyImage)
+        then,
+  ) = _CopyWithImpl$Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body$$ChatMessageBodyImage;
+
+  factory CopyWith$Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body$$ChatMessageBodyImage.stub(
+          TRes res) =
+      _CopyWithStubImpl$Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body$$ChatMessageBodyImage;
+
+  TRes call({
+    String? url,
+    String? $__typename,
+  });
+}
+
+class _CopyWithImpl$Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body$$ChatMessageBodyImage<
+        TRes>
+    implements
+        CopyWith$Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body$$ChatMessageBodyImage<
+            TRes> {
+  _CopyWithImpl$Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body$$ChatMessageBodyImage(
+    this._instance,
+    this._then,
+  );
+
+  final Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body$$ChatMessageBodyImage
+      _instance;
+
+  final TRes Function(
+          Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body$$ChatMessageBodyImage)
+      _then;
+
+  static const _undefined = <dynamic, dynamic>{};
+
+  TRes call({
+    Object? url = _undefined,
+    Object? $__typename = _undefined,
+  }) =>
+      _then(
+          Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body$$ChatMessageBodyImage(
+        url: url == _undefined || url == null ? _instance.url : (url as String),
+        $__typename: $__typename == _undefined || $__typename == null
+            ? _instance.$__typename
+            : ($__typename as String),
+      ));
+}
+
+class _CopyWithStubImpl$Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body$$ChatMessageBodyImage<
+        TRes>
+    implements
+        CopyWith$Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body$$ChatMessageBodyImage<
+            TRes> {
+  _CopyWithStubImpl$Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body$$ChatMessageBodyImage(
+      this._res);
+
+  TRes _res;
+
+  call({
+    String? url,
+    String? $__typename,
+  }) =>
+      _res;
+}
+
+class Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body$$ChatMessageBodyText
+    implements
+        Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body {
+  Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body$$ChatMessageBodyText(
+      {this.$__typename = 'ChatMessageBodyText'});
+
+  factory Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body$$ChatMessageBodyText.fromJson(
+      Map<String, dynamic> json) {
+    final l$$__typename = json['__typename'];
+    return Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body$$ChatMessageBodyText(
+        $__typename: (l$$__typename as String));
+  }
+
+  final String $__typename;
+
+  Map<String, dynamic> toJson() {
+    final _resultData = <String, dynamic>{};
+    final l$$__typename = $__typename;
+    _resultData['__typename'] = l$$__typename;
+    return _resultData;
+  }
+
+  @override
+  int get hashCode {
+    final l$$__typename = $__typename;
+    return Object.hashAll([l$$__typename]);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    if (!(other
+            is Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body$$ChatMessageBodyText) ||
+        runtimeType != other.runtimeType) {
+      return false;
+    }
+    final l$$__typename = $__typename;
+    final lOther$$__typename = other.$__typename;
+    if (l$$__typename != lOther$$__typename) {
+      return false;
+    }
+    return true;
+  }
+}
+
+extension UtilityExtension$Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body$$ChatMessageBodyText
+    on Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body$$ChatMessageBodyText {
+  CopyWith$Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body$$ChatMessageBodyText<
+          Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body$$ChatMessageBodyText>
+      get copyWith =>
+          CopyWith$Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body$$ChatMessageBodyText(
+            this,
+            (i) => i,
+          );
+}
+
+abstract class CopyWith$Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body$$ChatMessageBodyText<
+    TRes> {
+  factory CopyWith$Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body$$ChatMessageBodyText(
+    Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body$$ChatMessageBodyText
+        instance,
+    TRes Function(
+            Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body$$ChatMessageBodyText)
+        then,
+  ) = _CopyWithImpl$Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body$$ChatMessageBodyText;
+
+  factory CopyWith$Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body$$ChatMessageBodyText.stub(
+          TRes res) =
+      _CopyWithStubImpl$Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body$$ChatMessageBodyText;
+
+  TRes call({String? $__typename});
+}
+
+class _CopyWithImpl$Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body$$ChatMessageBodyText<
+        TRes>
+    implements
+        CopyWith$Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body$$ChatMessageBodyText<
+            TRes> {
+  _CopyWithImpl$Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body$$ChatMessageBodyText(
+    this._instance,
+    this._then,
+  );
+
+  final Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body$$ChatMessageBodyText
+      _instance;
+
+  final TRes Function(
+          Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body$$ChatMessageBodyText)
+      _then;
+
+  static const _undefined = <dynamic, dynamic>{};
+
+  TRes call({Object? $__typename = _undefined}) => _then(
+      Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body$$ChatMessageBodyText(
+          $__typename: $__typename == _undefined || $__typename == null
+              ? _instance.$__typename
+              : ($__typename as String)));
+}
+
+class _CopyWithStubImpl$Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body$$ChatMessageBodyText<
+        TRes>
+    implements
+        CopyWith$Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body$$ChatMessageBodyText<
+            TRes> {
+  _CopyWithStubImpl$Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body$$ChatMessageBodyText(
+      this._res);
+
+  TRes _res;
+
+  call({String? $__typename}) => _res;
 }

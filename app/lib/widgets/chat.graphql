@@ -12,6 +12,11 @@ mutation sendChatMessageImage($input: SendChatMessageImageInput) {
     sendChatMessageImage(input: $input) {
         chatMessage {
             id
+            body {
+                ... on ChatMessageBodyImage {
+                    url
+                }
+            }
             createdAt
         }
     }
