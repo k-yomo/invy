@@ -12,6 +12,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:invy/constants/firestore.dart';
 import 'package:invy/graphql/scalars.dart';
 import 'package:invy/graphql/schema.graphql.dart';
+import 'package:invy/router.dart';
 import 'package:invy/services/graphql_client.dart';
 import 'package:invy/state/auth.dart';
 import 'package:invy/util/toast.dart';
@@ -71,10 +72,24 @@ class ChatState extends ConsumerState<Chat> {
   }
 
   _onSendPressed(chatUITypes.PartialText message) async {
+    final chatMessageId = const Uuid().v4();
+    setState(() {
+      _chatMessages = [
+        chatUITypes.TextMessage(
+            id: chatMessageId,
+            text: message.text,
+            author: _userMap[_loggedInUser.id]!,
+            createdAt: DateTime.now().millisecondsSinceEpoch,
+            status: chatUITypes.Status.sending),
+        ..._chatMessages
+      ];
+    });
+
     final result = await _graphqlClient
         .mutate$sendChatMessageText(Options$Mutation$sendChatMessageText(
             variables: Variables$Mutation$sendChatMessageText(
       input: Input$SendChatMessageTextInput(
+        id: chatMessageId,
         chatRoomId: widget.chatRoomId,
         text: message.text,
       ),
@@ -84,27 +99,24 @@ class ChatState extends ConsumerState<Chat> {
       showToast("メッセージの送信に失敗しました", ToastLevel.error);
       return;
     }
+
     setState(() {
-      _chatMessages = [
-        chatUITypes.TextMessage(
-            id: result.parsedData!.sendChatMessageText.chatMessage.id,
-            text: message.text,
-            author: _userMap[_loggedInUser.id]!,
-            createdAt: result.parsedData!.sendChatMessageText.chatMessage
-                .createdAt.millisecondsSinceEpoch,
-            status: chatUITypes.Status.sending),
-        ..._chatMessages
-      ];
+      final index =
+          _chatMessages.indexWhere((element) => element.id == chatMessageId);
+      _chatMessages[index] = _chatMessages[index].copyWith(
+        createdAt: result.parsedData!.sendChatMessageText.chatMessage.createdAt
+            .millisecondsSinceEpoch,
+        status: null,
+      );
     });
   }
 
   void _onAttachmentPressed() async {
-    final pickedImage = await ImagePicker().pickImage(
+    final pickedImages = await ImagePicker().pickMultiImage(
       imageQuality: 100,
       maxWidth: 1440,
-      source: ImageSource.gallery,
     );
-    if (pickedImage == null) {
+    if (pickedImages.isEmpty) {
       return;
     }
 
@@ -112,50 +124,64 @@ class ChatState extends ConsumerState<Chat> {
       _isAttachmentUploading = true;
     });
 
-    var byteData = await pickedImage.readAsBytes();
-    var multipartFile = MultipartFile.fromBytes(
-      pickedImage.path.split('/').last,
-      byteData,
-      contentType: MediaType.parse(lookupMimeType(pickedImage.path)!),
-    );
-    final result = await _graphqlClient
-        .mutate$sendChatMessageImage(Options$Mutation$sendChatMessageImage(
-            variables: Variables$Mutation$sendChatMessageImage(
-      input: Input$SendChatMessageImageInput(
-        chatRoomId: widget.chatRoomId,
-        image: multipartFile,
-      ),
-    )));
+    for (var pickedImage in pickedImages) {
+      final chatMessageId = const Uuid().v4();
+      setState(() {
+        _chatMessages = [
+          chatUITypes.ImageMessage(
+              id: chatMessageId,
+              name: chatMessageId,
+              uri: pickedImage.path,
+              size: 20,
+              author: _userMap[_loggedInUser.id]!,
+              createdAt: DateTime.now().millisecondsSinceEpoch,
+              status: chatUITypes.Status.sending),
+          ..._chatMessages
+        ];
+      });
 
-    setState(() {
-      _isAttachmentUploading = false;
-    });
+      var byteData = await pickedImage.readAsBytes();
+      var multipartFile = MultipartFile.fromBytes(
+        pickedImage.path.split('/').last,
+        byteData,
+        contentType: MediaType.parse(lookupMimeType(pickedImage.path)!),
+      );
+      final result = await _graphqlClient
+          .mutate$sendChatMessageImage(Options$Mutation$sendChatMessageImage(
+              variables: Variables$Mutation$sendChatMessageImage(
+        input: Input$SendChatMessageImageInput(
+          id: chatMessageId,
+          chatRoomId: widget.chatRoomId,
+          image: multipartFile,
+        ),
+      )));
 
-    if (result.hasException) {
-      print(result.exception);
-      showToast("画像の送信に失敗しました", ToastLevel.error);
-      return;
+      setState(() {
+        _isAttachmentUploading = false;
+      });
+
+      if (result.hasException) {
+        print(result.exception);
+        showToast("画像の送信に失敗しました", ToastLevel.error);
+        continue;
+      }
+
+      final chatMessage = result.parsedData!.sendChatMessageImage.chatMessage;
+      setState(() {
+        final index =
+            _chatMessages.indexWhere((element) => element.id == chatMessageId);
+        _chatMessages[index] =
+            (_chatMessages[index] as chatUITypes.ImageMessage).copyWith(
+          // TODO: Fix not to parse json
+          uri:
+              Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body$$ChatMessageBodyImage
+                      .fromJson(chatMessage.body.toJson())
+                  .url,
+          createdAt: chatMessage.createdAt.millisecondsSinceEpoch,
+          status: null,
+        );
+      });
     }
-
-    final chatMessage = result.parsedData!.sendChatMessageImage.chatMessage;
-    setState(() {
-      _chatMessages = [
-        chatUITypes.ImageMessage(
-            id: chatMessage.id,
-            name: chatMessage.id,
-            // TODO: Fix not to parse json
-            uri:
-                Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body$$ChatMessageBodyImage
-                        .fromJson(chatMessage.body.toJson())
-                    .url,
-            size: 20,
-            author: _userMap[_loggedInUser.id]!,
-            createdAt: result.parsedData!.sendChatMessageImage.chatMessage
-                .createdAt.millisecondsSinceEpoch,
-            status: chatUITypes.Status.sending),
-        ..._chatMessages
-      ];
-    });
   }
 
   void _onPreviewDataFetched(
@@ -173,6 +199,10 @@ class ChatState extends ConsumerState<Chat> {
       _chatMessages[index] = updatedMessage;
       _chatMessagePreviewMap[updatedMessage.id] = previewData;
     });
+  }
+
+  void _onAvatarTap(chatUITypes.User user) {
+    UserProfileRoute(user.id).push(context);
   }
 
   @override
@@ -243,6 +273,7 @@ class ChatState extends ConsumerState<Chat> {
         return;
       },
       onPreviewDataFetched: _onPreviewDataFetched,
+      onAvatarTap: _onAvatarTap,
       l10n: const ChatL10nJa(),
     );
   }

@@ -1678,6 +1678,7 @@ type ChatMessage implements Node {
 }
 
 input SendChatMessageTextInput {
+    id: UUID!
     chatRoomId: UUID!
     text: String!
 }
@@ -1686,6 +1687,7 @@ type SendChatMessageTextPayload {
 }
 
 input SendChatMessageImageInput {
+    id: UUID!
     chatRoomId: UUID!
     image: Upload!
 }
@@ -12638,13 +12640,21 @@ func (ec *executionContext) unmarshalInputSendChatMessageImageInput(ctx context.
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"chatRoomId", "image"}
+	fieldsInOrder := [...]string{"id", "chatRoomId", "image"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
 			continue
 		}
 		switch k {
+		case "id":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			it.ID, err = ec.unmarshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		case "chatRoomId":
 			var err error
 
@@ -12674,13 +12684,21 @@ func (ec *executionContext) unmarshalInputSendChatMessageTextInput(ctx context.C
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"chatRoomId", "text"}
+	fieldsInOrder := [...]string{"id", "chatRoomId", "text"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
 			continue
 		}
 		switch k {
+		case "id":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			it.ID, err = ec.unmarshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		case "chatRoomId":
 			var err error
 

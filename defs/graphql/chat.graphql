@@ -36,6 +36,7 @@ type ChatMessage implements Node {
 }
 
 input SendChatMessageTextInput {
+    id: UUID!
     chatRoomId: UUID!
     text: String!
 }
@@ -44,6 +45,7 @@ type SendChatMessageTextPayload {
 }
 
 input SendChatMessageImageInput {
+    id: UUID!
     chatRoomId: UUID!
     image: Upload!
 }

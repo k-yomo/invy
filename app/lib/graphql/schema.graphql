@@ -247,6 +247,7 @@ type RequestFriendshipPayload {
 }
 
 input SendChatMessageImageInput {
+  id: UUID!
   chatRoomId: UUID!
   image: Upload!
 }
@@ -256,6 +257,7 @@ type SendChatMessageImagePayload {
 }
 
 input SendChatMessageTextInput {
+  id: UUID!
   chatRoomId: UUID!
   text: String!
 }

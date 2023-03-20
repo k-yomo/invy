@@ -9,7 +9,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/google/uuid"
 	"github.com/k-yomo/invy/invy_api/auth"
 	"github.com/k-yomo/invy/invy_api/graph/gqlmodel"
 	"github.com/k-yomo/invy/invy_api/internal/xerrors"
@@ -28,9 +27,8 @@ func (r *mutationResolver) SendChatMessageText(ctx context.Context, input *gqlmo
 		return nil, xerrors.NewErrNotFound(fmt.Errorf("chat room %q not found", input.ChatRoomID))
 	}
 
-	chatMessageID := uuid.New()
 	chatMessage := gqlmodel.ChatMessage{
-		ID:         chatMessageID,
+		ID:         input.ID,
 		ChatRoomID: input.ChatRoomID,
 		UserID:     authUserID,
 		Kind:       gqlmodel.ChatMessageKindText,
@@ -41,7 +39,7 @@ func (r *mutationResolver) SendChatMessageText(ctx context.Context, input *gqlmo
 	if err != nil {
 		return nil, err
 	}
-	_, err = r.FirestoreClient.Doc(firestoreChatMessagePath(input.ChatRoomID, chatMessageID)).
+	_, err = r.FirestoreClient.Doc(firestoreChatMessagePath(input.ChatRoomID, input.ID)).
 		Create(ctx, chatMessageMap)
 	if err != nil {
 		return nil, err
@@ -65,19 +63,14 @@ func (r *mutationResolver) SendChatMessageImage(ctx context.Context, input *gqlm
 		return nil, xerrors.NewErrNotFound(fmt.Errorf("chat room %q not found", input.ChatRoomID))
 	}
 
-	chatMessageID, err := uuid.NewUUID()
-	if err != nil {
-		return nil, err
-	}
-
-	fileName := fmt.Sprintf("%s-%s-%d", input.ChatRoomID, chatMessageID, time.Now().Unix())
+	fileName := fmt.Sprintf("%s-%s-%d", input.ChatRoomID, input.ID, time.Now().Unix())
 	imageURL, err := r.AvatarUploader.Upload(ctx, fileName, input.Image.File)
 	if err != nil {
 		return nil, err
 	}
 
 	chatMessage := gqlmodel.ChatMessage{
-		ID:         chatMessageID,
+		ID:         input.ID,
 		ChatRoomID: input.ChatRoomID,
 		UserID:     auth.GetCurrentUserID(ctx),
 		Kind:       gqlmodel.ChatMessageKindImage,
@@ -88,7 +81,7 @@ func (r *mutationResolver) SendChatMessageImage(ctx context.Context, input *gqlm
 	if err != nil {
 		return nil, err
 	}
-	_, err = r.FirestoreClient.Doc(firestoreChatMessagePath(input.ChatRoomID, chatMessageID)).
+	_, err = r.FirestoreClient.Doc(firestoreChatMessagePath(input.ChatRoomID, input.ID)).
 		Create(ctx, chatMessageMap)
 	if err != nil {
 		return nil, err

@@ -201,6 +201,7 @@ type RequestFriendshipPayload struct {
 }
 
 type SendChatMessageImageInput struct {
+	ID         uuid.UUID      `json:"id"`
 	ChatRoomID uuid.UUID      `json:"chatRoomId"`
 	Image      graphql.Upload `json:"image"`
 }
@@ -210,6 +211,7 @@ type SendChatMessageImagePayload struct {
 }
 
 type SendChatMessageTextInput struct {
+	ID         uuid.UUID `json:"id"`
 	ChatRoomID uuid.UUID `json:"chatRoomId"`
 	Text       string    `json:"text"`
 }

@@ -542,10 +542,12 @@ class _CopyWithStubImpl$Input$RegisterPushNotificationTokenInput<TRes>
 
 class Input$SendChatMessageImageInput {
   factory Input$SendChatMessageImageInput({
+    required String id,
     required String chatRoomId,
     required MultipartFile image,
   }) =>
       Input$SendChatMessageImageInput._({
+        r'id': id,
         r'chatRoomId': chatRoomId,
         r'image': image,
       });
@@ -554,6 +556,8 @@ class Input$SendChatMessageImageInput {
 
   factory Input$SendChatMessageImageInput.fromJson(Map<String, dynamic> data) {
     final result$data = <String, dynamic>{};
+    final l$id = data['id'];
+    result$data['id'] = (l$id as String);
     final l$chatRoomId = data['chatRoomId'];
     result$data['chatRoomId'] = (l$chatRoomId as String);
     final l$image = data['image'];
@@ -563,10 +567,13 @@ class Input$SendChatMessageImageInput {
 
   Map<String, dynamic> _$data;
 
+  String get id => (_$data['id'] as String);
   String get chatRoomId => (_$data['chatRoomId'] as String);
   MultipartFile get image => (_$data['image'] as MultipartFile);
   Map<String, dynamic> toJson() {
     final result$data = <String, dynamic>{};
+    final l$id = id;
+    result$data['id'] = l$id;
     final l$chatRoomId = chatRoomId;
     result$data['chatRoomId'] = l$chatRoomId;
     final l$image = image;
@@ -588,6 +595,11 @@ class Input$SendChatMessageImageInput {
         runtimeType != other.runtimeType) {
       return false;
     }
+    final l$id = id;
+    final lOther$id = other.id;
+    if (l$id != lOther$id) {
+      return false;
+    }
     final l$chatRoomId = chatRoomId;
     final lOther$chatRoomId = other.chatRoomId;
     if (l$chatRoomId != lOther$chatRoomId) {
@@ -603,9 +615,11 @@ class Input$SendChatMessageImageInput {
 
   @override
   int get hashCode {
+    final l$id = id;
     final l$chatRoomId = chatRoomId;
     final l$image = image;
     return Object.hashAll([
+      l$id,
       l$chatRoomId,
       l$image,
     ]);
@@ -622,6 +636,7 @@ abstract class CopyWith$Input$SendChatMessageImageInput<TRes> {
       _CopyWithStubImpl$Input$SendChatMessageImageInput;
 
   TRes call({
+    String? id,
     String? chatRoomId,
     MultipartFile? image,
   });
@@ -641,11 +656,13 @@ class _CopyWithImpl$Input$SendChatMessageImageInput<TRes>
   static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
+    Object? id = _undefined,
     Object? chatRoomId = _undefined,
     Object? image = _undefined,
   }) =>
       _then(Input$SendChatMessageImageInput._({
         ..._instance._$data,
+        if (id != _undefined && id != null) 'id': (id as String),
         if (chatRoomId != _undefined && chatRoomId != null)
           'chatRoomId': (chatRoomId as String),
         if (image != _undefined && image != null)
@@ -660,6 +677,7 @@ class _CopyWithStubImpl$Input$SendChatMessageImageInput<TRes>
   TRes _res;
 
   call({
+    String? id,
     String? chatRoomId,
     MultipartFile? image,
   }) =>
@@ -668,10 +686,12 @@ class _CopyWithStubImpl$Input$SendChatMessageImageInput<TRes>
 
 class Input$SendChatMessageTextInput {
   factory Input$SendChatMessageTextInput({
+    required String id,
     required String chatRoomId,
     required String text,
   }) =>
       Input$SendChatMessageTextInput._({
+        r'id': id,
         r'chatRoomId': chatRoomId,
         r'text': text,
       });
@@ -680,6 +700,8 @@ class Input$SendChatMessageTextInput {
 
   factory Input$SendChatMessageTextInput.fromJson(Map<String, dynamic> data) {
     final result$data = <String, dynamic>{};
+    final l$id = data['id'];
+    result$data['id'] = (l$id as String);
     final l$chatRoomId = data['chatRoomId'];
     result$data['chatRoomId'] = (l$chatRoomId as String);
     final l$text = data['text'];
@@ -689,10 +711,13 @@ class Input$SendChatMessageTextInput {
 
   Map<String, dynamic> _$data;
 
+  String get id => (_$data['id'] as String);
   String get chatRoomId => (_$data['chatRoomId'] as String);
   String get text => (_$data['text'] as String);
   Map<String, dynamic> toJson() {
     final result$data = <String, dynamic>{};
+    final l$id = id;
+    result$data['id'] = l$id;
     final l$chatRoomId = chatRoomId;
     result$data['chatRoomId'] = l$chatRoomId;
     final l$text = text;
@@ -714,6 +739,11 @@ class Input$SendChatMessageTextInput {
         runtimeType != other.runtimeType) {
       return false;
     }
+    final l$id = id;
+    final lOther$id = other.id;
+    if (l$id != lOther$id) {
+      return false;
+    }
     final l$chatRoomId = chatRoomId;
     final lOther$chatRoomId = other.chatRoomId;
     if (l$chatRoomId != lOther$chatRoomId) {
@@ -729,9 +759,11 @@ class Input$SendChatMessageTextInput {
 
   @override
   int get hashCode {
+    final l$id = id;
     final l$chatRoomId = chatRoomId;
     final l$text = text;
     return Object.hashAll([
+      l$id,
       l$chatRoomId,
       l$text,
     ]);
@@ -748,6 +780,7 @@ abstract class CopyWith$Input$SendChatMessageTextInput<TRes> {
       _CopyWithStubImpl$Input$SendChatMessageTextInput;
 
   TRes call({
+    String? id,
     String? chatRoomId,
     String? text,
   });
@@ -767,11 +800,13 @@ class _CopyWithImpl$Input$SendChatMessageTextInput<TRes>
   static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
+    Object? id = _undefined,
     Object? chatRoomId = _undefined,
     Object? text = _undefined,
   }) =>
       _then(Input$SendChatMessageTextInput._({
         ..._instance._$data,
+        if (id != _undefined && id != null) 'id': (id as String),
         if (chatRoomId != _undefined && chatRoomId != null)
           'chatRoomId': (chatRoomId as String),
         if (text != _undefined && text != null) 'text': (text as String),
@@ -785,6 +820,7 @@ class _CopyWithStubImpl$Input$SendChatMessageTextInput<TRes>
   TRes _res;
 
   call({
+    String? id,
     String? chatRoomId,
     String? text,
   }) =>
