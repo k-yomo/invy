@@ -7,8 +7,8 @@ import (
 	"cloud.google.com/go/firestore"
 	"github.com/google/uuid"
 	"github.com/k-yomo/invy/invy_api/auth"
-	"github.com/k-yomo/invy/invy_api/graph/gqlmodel"
 	"github.com/k-yomo/invy/invy_api/internal/xerrors"
+	"github.com/k-yomo/invy/pkg/convutil"
 	"github.com/k-yomo/invy/pkg/sliceutil"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -32,11 +32,10 @@ func isAuthUserIncludedInTheChatRoom(ctx context.Context, firestoreClient *fires
 	if err != nil {
 		return false, err
 	}
-	var chatRoom gqlmodel.ChatRoom
-	if err := chatRoomSnapshot.DataTo(&chatRoom); err != nil {
-		return false, err
-	}
-	if !sliceutil.Includes(chatRoom.UserIds, authUserID) {
+	userIDs := convutil.ConvertToList(chatRoomSnapshot.Data()["userIds"].([]interface{}), func(from interface{}) string {
+		return from.(string)
+	})
+	if !sliceutil.Includes(userIDs, authUserID.String()) {
 		return false, nil
 	}
 

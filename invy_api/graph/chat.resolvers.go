@@ -13,6 +13,7 @@ import (
 	"github.com/k-yomo/invy/invy_api/auth"
 	"github.com/k-yomo/invy/invy_api/graph/gqlmodel"
 	"github.com/k-yomo/invy/invy_api/internal/xerrors"
+	"github.com/k-yomo/invy/pkg/convutil"
 )
 
 // SendChatMessageText is the resolver for the SendChatMessageText field.
@@ -32,8 +33,12 @@ func (r *mutationResolver) SendChatMessageText(ctx context.Context, input *gqlmo
 		Body:       gqlmodel.ChatMessageBodyText{Text: input.Text},
 		CreatedAt:  time.Now(),
 	}
-	_, err := r.FirestoreClient.Doc(firestoreChatMessagePath(input.ChatRoomID, chatMessageID)).
-		Create(ctx, chatMessage)
+	chatMessageMap, err := convutil.ConvertStructToJSONMap(chatMessage)
+	if err != nil {
+		return nil, err
+	}
+	_, err = r.FirestoreClient.Doc(firestoreChatMessagePath(input.ChatRoomID, chatMessageID)).
+		Create(ctx, chatMessageMap)
 	if err != nil {
 		return nil, err
 	}
@@ -70,7 +75,12 @@ func (r *mutationResolver) SendChatMessageImage(ctx context.Context, input *gqlm
 		Body:       gqlmodel.ChatMessageBodyImage{URL: imageURL},
 		CreatedAt:  time.Now(),
 	}
-	_, err = r.FirestoreClient.Doc(firestoreChatMessagePath(input.ChatRoomID, chatMessageID)).Create(ctx, chatMessage)
+	chatMessageMap, err := convutil.ConvertStructToJSONMap(chatMessage)
+	if err != nil {
+		return nil, err
+	}
+	_, err = r.FirestoreClient.Doc(firestoreChatMessagePath(input.ChatRoomID, chatMessageID)).
+		Create(ctx, chatMessageMap)
 	if err != nil {
 		return nil, err
 	}

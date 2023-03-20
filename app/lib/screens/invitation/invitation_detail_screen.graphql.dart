@@ -291,6 +291,7 @@ const documentNodeQueryinvitationDetail = DocumentNode(definitions: [
     ]),
   ),
   fragmentDefinitioninvitationDetailFragment,
+  fragmentDefinitioninvitationDetailAcceptedUserFragment,
 ]);
 Query$invitationDetail _parserFn$Query$invitationDetail(
         Map<String, dynamic> data) =>
@@ -457,6 +458,7 @@ class Query$invitationDetail$invitation
     required this.comment,
     required this.startsAt,
     required this.expiresAt,
+    this.chatRoomId,
     required this.user,
     required this.acceptedUsers,
     this.$__typename = 'Invitation',
@@ -471,6 +473,7 @@ class Query$invitationDetail$invitation
     final l$comment = json['comment'];
     final l$startsAt = json['startsAt'];
     final l$expiresAt = json['expiresAt'];
+    final l$chatRoomId = json['chatRoomId'];
     final l$user = json['user'];
     final l$acceptedUsers = json['acceptedUsers'];
     final l$$__typename = json['__typename'];
@@ -485,10 +488,11 @@ class Query$invitationDetail$invitation
       comment: (l$comment as String),
       startsAt: DateTime.parse((l$startsAt as String)),
       expiresAt: DateTime.parse((l$expiresAt as String)),
-      user: Query$invitationDetail$invitation$user.fromJson(
+      chatRoomId: (l$chatRoomId as String?),
+      user: Fragment$invitationDetailAcceptedUserFragment.fromJson(
           (l$user as Map<String, dynamic>)),
       acceptedUsers: (l$acceptedUsers as List<dynamic>)
-          .map((e) => Query$invitationDetail$invitation$acceptedUsers.fromJson(
+          .map((e) => Fragment$invitationDetailAcceptedUserFragment.fromJson(
               (e as Map<String, dynamic>)))
           .toList(),
       $__typename: (l$$__typename as String),
@@ -508,9 +512,11 @@ class Query$invitationDetail$invitation
 
   final DateTime expiresAt;
 
-  final Query$invitationDetail$invitation$user user;
+  final String? chatRoomId;
 
-  final List<Query$invitationDetail$invitation$acceptedUsers> acceptedUsers;
+  final Fragment$invitationDetailAcceptedUserFragment user;
+
+  final List<Fragment$invitationDetailAcceptedUserFragment> acceptedUsers;
 
   final String $__typename;
 
@@ -530,6 +536,8 @@ class Query$invitationDetail$invitation
     _resultData['startsAt'] = l$startsAt.toIso8601String();
     final l$expiresAt = expiresAt;
     _resultData['expiresAt'] = l$expiresAt.toIso8601String();
+    final l$chatRoomId = chatRoomId;
+    _resultData['chatRoomId'] = l$chatRoomId;
     final l$user = user;
     _resultData['user'] = l$user.toJson();
     final l$acceptedUsers = acceptedUsers;
@@ -550,6 +558,7 @@ class Query$invitationDetail$invitation
     final l$comment = comment;
     final l$startsAt = startsAt;
     final l$expiresAt = expiresAt;
+    final l$chatRoomId = chatRoomId;
     final l$user = user;
     final l$acceptedUsers = acceptedUsers;
     final l$$__typename = $__typename;
@@ -561,6 +570,7 @@ class Query$invitationDetail$invitation
       l$comment,
       l$startsAt,
       l$expiresAt,
+      l$chatRoomId,
       l$user,
       Object.hashAll(l$acceptedUsers.map((v) => v)),
       l$$__typename,
@@ -605,6 +615,11 @@ class Query$invitationDetail$invitation
     final l$expiresAt = expiresAt;
     final lOther$expiresAt = other.expiresAt;
     if (l$expiresAt != lOther$expiresAt) {
+      return false;
+    }
+    final l$chatRoomId = chatRoomId;
+    final lOther$chatRoomId = other.chatRoomId;
+    if (l$chatRoomId != lOther$chatRoomId) {
       return false;
     }
     final l$user = user;
@@ -663,18 +678,19 @@ abstract class CopyWith$Query$invitationDetail$invitation<TRes> {
     String? comment,
     DateTime? startsAt,
     DateTime? expiresAt,
-    Query$invitationDetail$invitation$user? user,
-    List<Query$invitationDetail$invitation$acceptedUsers>? acceptedUsers,
+    String? chatRoomId,
+    Fragment$invitationDetailAcceptedUserFragment? user,
+    List<Fragment$invitationDetailAcceptedUserFragment>? acceptedUsers,
     String? $__typename,
     bool? isAccepted,
   });
   CopyWith$Query$invitationDetail$invitation$coordinate<TRes> get coordinate;
-  CopyWith$Query$invitationDetail$invitation$user<TRes> get user;
+  CopyWith$Fragment$invitationDetailAcceptedUserFragment<TRes> get user;
   TRes acceptedUsers(
-      Iterable<Query$invitationDetail$invitation$acceptedUsers> Function(
+      Iterable<Fragment$invitationDetailAcceptedUserFragment> Function(
               Iterable<
-                  CopyWith$Query$invitationDetail$invitation$acceptedUsers<
-                      Query$invitationDetail$invitation$acceptedUsers>>)
+                  CopyWith$Fragment$invitationDetailAcceptedUserFragment<
+                      Fragment$invitationDetailAcceptedUserFragment>>)
           _fn);
 }
 
@@ -698,6 +714,7 @@ class _CopyWithImpl$Query$invitationDetail$invitation<TRes>
     Object? comment = _undefined,
     Object? startsAt = _undefined,
     Object? expiresAt = _undefined,
+    Object? chatRoomId = _undefined,
     Object? user = _undefined,
     Object? acceptedUsers = _undefined,
     Object? $__typename = _undefined,
@@ -720,13 +737,16 @@ class _CopyWithImpl$Query$invitationDetail$invitation<TRes>
         expiresAt: expiresAt == _undefined || expiresAt == null
             ? _instance.expiresAt
             : (expiresAt as DateTime),
+        chatRoomId: chatRoomId == _undefined
+            ? _instance.chatRoomId
+            : (chatRoomId as String?),
         user: user == _undefined || user == null
             ? _instance.user
-            : (user as Query$invitationDetail$invitation$user),
+            : (user as Fragment$invitationDetailAcceptedUserFragment),
         acceptedUsers: acceptedUsers == _undefined || acceptedUsers == null
             ? _instance.acceptedUsers
             : (acceptedUsers
-                as List<Query$invitationDetail$invitation$acceptedUsers>),
+                as List<Fragment$invitationDetailAcceptedUserFragment>),
         $__typename: $__typename == _undefined || $__typename == null
             ? _instance.$__typename
             : ($__typename as String),
@@ -743,21 +763,21 @@ class _CopyWithImpl$Query$invitationDetail$invitation<TRes>
             local$coordinate, (e) => call(coordinate: e));
   }
 
-  CopyWith$Query$invitationDetail$invitation$user<TRes> get user {
+  CopyWith$Fragment$invitationDetailAcceptedUserFragment<TRes> get user {
     final local$user = _instance.user;
-    return CopyWith$Query$invitationDetail$invitation$user(
+    return CopyWith$Fragment$invitationDetailAcceptedUserFragment(
         local$user, (e) => call(user: e));
   }
 
   TRes acceptedUsers(
-          Iterable<Query$invitationDetail$invitation$acceptedUsers> Function(
+          Iterable<Fragment$invitationDetailAcceptedUserFragment> Function(
                   Iterable<
-                      CopyWith$Query$invitationDetail$invitation$acceptedUsers<
-                          Query$invitationDetail$invitation$acceptedUsers>>)
+                      CopyWith$Fragment$invitationDetailAcceptedUserFragment<
+                          Fragment$invitationDetailAcceptedUserFragment>>)
               _fn) =>
       call(
           acceptedUsers: _fn(_instance.acceptedUsers.map(
-              (e) => CopyWith$Query$invitationDetail$invitation$acceptedUsers(
+              (e) => CopyWith$Fragment$invitationDetailAcceptedUserFragment(
                     e,
                     (i) => i,
                   ))).toList());
@@ -776,16 +796,17 @@ class _CopyWithStubImpl$Query$invitationDetail$invitation<TRes>
     String? comment,
     DateTime? startsAt,
     DateTime? expiresAt,
-    Query$invitationDetail$invitation$user? user,
-    List<Query$invitationDetail$invitation$acceptedUsers>? acceptedUsers,
+    String? chatRoomId,
+    Fragment$invitationDetailAcceptedUserFragment? user,
+    List<Fragment$invitationDetailAcceptedUserFragment>? acceptedUsers,
     String? $__typename,
     bool? isAccepted,
   }) =>
       _res;
   CopyWith$Query$invitationDetail$invitation$coordinate<TRes> get coordinate =>
       CopyWith$Query$invitationDetail$invitation$coordinate.stub(_res);
-  CopyWith$Query$invitationDetail$invitation$user<TRes> get user =>
-      CopyWith$Query$invitationDetail$invitation$user.stub(_res);
+  CopyWith$Fragment$invitationDetailAcceptedUserFragment<TRes> get user =>
+      CopyWith$Fragment$invitationDetailAcceptedUserFragment.stub(_res);
   acceptedUsers(_fn) => _res;
 }
 
@@ -932,339 +953,6 @@ class _CopyWithStubImpl$Query$invitationDetail$invitation$coordinate<TRes>
   call({
     double? latitude,
     double? longitude,
-    String? $__typename,
-  }) =>
-      _res;
-}
-
-class Query$invitationDetail$invitation$user
-    implements Fragment$invitationDetailFragment$user {
-  Query$invitationDetail$invitation$user({
-    required this.id,
-    required this.nickname,
-    required this.avatarUrl,
-    this.$__typename = 'User',
-  });
-
-  factory Query$invitationDetail$invitation$user.fromJson(
-      Map<String, dynamic> json) {
-    final l$id = json['id'];
-    final l$nickname = json['nickname'];
-    final l$avatarUrl = json['avatarUrl'];
-    final l$$__typename = json['__typename'];
-    return Query$invitationDetail$invitation$user(
-      id: (l$id as String),
-      nickname: (l$nickname as String),
-      avatarUrl: (l$avatarUrl as String),
-      $__typename: (l$$__typename as String),
-    );
-  }
-
-  final String id;
-
-  final String nickname;
-
-  final String avatarUrl;
-
-  final String $__typename;
-
-  Map<String, dynamic> toJson() {
-    final _resultData = <String, dynamic>{};
-    final l$id = id;
-    _resultData['id'] = l$id;
-    final l$nickname = nickname;
-    _resultData['nickname'] = l$nickname;
-    final l$avatarUrl = avatarUrl;
-    _resultData['avatarUrl'] = l$avatarUrl;
-    final l$$__typename = $__typename;
-    _resultData['__typename'] = l$$__typename;
-    return _resultData;
-  }
-
-  @override
-  int get hashCode {
-    final l$id = id;
-    final l$nickname = nickname;
-    final l$avatarUrl = avatarUrl;
-    final l$$__typename = $__typename;
-    return Object.hashAll([
-      l$id,
-      l$nickname,
-      l$avatarUrl,
-      l$$__typename,
-    ]);
-  }
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) {
-      return true;
-    }
-    if (!(other is Query$invitationDetail$invitation$user) ||
-        runtimeType != other.runtimeType) {
-      return false;
-    }
-    final l$id = id;
-    final lOther$id = other.id;
-    if (l$id != lOther$id) {
-      return false;
-    }
-    final l$nickname = nickname;
-    final lOther$nickname = other.nickname;
-    if (l$nickname != lOther$nickname) {
-      return false;
-    }
-    final l$avatarUrl = avatarUrl;
-    final lOther$avatarUrl = other.avatarUrl;
-    if (l$avatarUrl != lOther$avatarUrl) {
-      return false;
-    }
-    final l$$__typename = $__typename;
-    final lOther$$__typename = other.$__typename;
-    if (l$$__typename != lOther$$__typename) {
-      return false;
-    }
-    return true;
-  }
-}
-
-extension UtilityExtension$Query$invitationDetail$invitation$user
-    on Query$invitationDetail$invitation$user {
-  CopyWith$Query$invitationDetail$invitation$user<
-          Query$invitationDetail$invitation$user>
-      get copyWith => CopyWith$Query$invitationDetail$invitation$user(
-            this,
-            (i) => i,
-          );
-}
-
-abstract class CopyWith$Query$invitationDetail$invitation$user<TRes> {
-  factory CopyWith$Query$invitationDetail$invitation$user(
-    Query$invitationDetail$invitation$user instance,
-    TRes Function(Query$invitationDetail$invitation$user) then,
-  ) = _CopyWithImpl$Query$invitationDetail$invitation$user;
-
-  factory CopyWith$Query$invitationDetail$invitation$user.stub(TRes res) =
-      _CopyWithStubImpl$Query$invitationDetail$invitation$user;
-
-  TRes call({
-    String? id,
-    String? nickname,
-    String? avatarUrl,
-    String? $__typename,
-  });
-}
-
-class _CopyWithImpl$Query$invitationDetail$invitation$user<TRes>
-    implements CopyWith$Query$invitationDetail$invitation$user<TRes> {
-  _CopyWithImpl$Query$invitationDetail$invitation$user(
-    this._instance,
-    this._then,
-  );
-
-  final Query$invitationDetail$invitation$user _instance;
-
-  final TRes Function(Query$invitationDetail$invitation$user) _then;
-
-  static const _undefined = <dynamic, dynamic>{};
-
-  TRes call({
-    Object? id = _undefined,
-    Object? nickname = _undefined,
-    Object? avatarUrl = _undefined,
-    Object? $__typename = _undefined,
-  }) =>
-      _then(Query$invitationDetail$invitation$user(
-        id: id == _undefined || id == null ? _instance.id : (id as String),
-        nickname: nickname == _undefined || nickname == null
-            ? _instance.nickname
-            : (nickname as String),
-        avatarUrl: avatarUrl == _undefined || avatarUrl == null
-            ? _instance.avatarUrl
-            : (avatarUrl as String),
-        $__typename: $__typename == _undefined || $__typename == null
-            ? _instance.$__typename
-            : ($__typename as String),
-      ));
-}
-
-class _CopyWithStubImpl$Query$invitationDetail$invitation$user<TRes>
-    implements CopyWith$Query$invitationDetail$invitation$user<TRes> {
-  _CopyWithStubImpl$Query$invitationDetail$invitation$user(this._res);
-
-  TRes _res;
-
-  call({
-    String? id,
-    String? nickname,
-    String? avatarUrl,
-    String? $__typename,
-  }) =>
-      _res;
-}
-
-class Query$invitationDetail$invitation$acceptedUsers
-    implements Fragment$invitationDetailFragment$acceptedUsers {
-  Query$invitationDetail$invitation$acceptedUsers({
-    required this.id,
-    required this.nickname,
-    required this.avatarUrl,
-    this.$__typename = 'User',
-  });
-
-  factory Query$invitationDetail$invitation$acceptedUsers.fromJson(
-      Map<String, dynamic> json) {
-    final l$id = json['id'];
-    final l$nickname = json['nickname'];
-    final l$avatarUrl = json['avatarUrl'];
-    final l$$__typename = json['__typename'];
-    return Query$invitationDetail$invitation$acceptedUsers(
-      id: (l$id as String),
-      nickname: (l$nickname as String),
-      avatarUrl: (l$avatarUrl as String),
-      $__typename: (l$$__typename as String),
-    );
-  }
-
-  final String id;
-
-  final String nickname;
-
-  final String avatarUrl;
-
-  final String $__typename;
-
-  Map<String, dynamic> toJson() {
-    final _resultData = <String, dynamic>{};
-    final l$id = id;
-    _resultData['id'] = l$id;
-    final l$nickname = nickname;
-    _resultData['nickname'] = l$nickname;
-    final l$avatarUrl = avatarUrl;
-    _resultData['avatarUrl'] = l$avatarUrl;
-    final l$$__typename = $__typename;
-    _resultData['__typename'] = l$$__typename;
-    return _resultData;
-  }
-
-  @override
-  int get hashCode {
-    final l$id = id;
-    final l$nickname = nickname;
-    final l$avatarUrl = avatarUrl;
-    final l$$__typename = $__typename;
-    return Object.hashAll([
-      l$id,
-      l$nickname,
-      l$avatarUrl,
-      l$$__typename,
-    ]);
-  }
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) {
-      return true;
-    }
-    if (!(other is Query$invitationDetail$invitation$acceptedUsers) ||
-        runtimeType != other.runtimeType) {
-      return false;
-    }
-    final l$id = id;
-    final lOther$id = other.id;
-    if (l$id != lOther$id) {
-      return false;
-    }
-    final l$nickname = nickname;
-    final lOther$nickname = other.nickname;
-    if (l$nickname != lOther$nickname) {
-      return false;
-    }
-    final l$avatarUrl = avatarUrl;
-    final lOther$avatarUrl = other.avatarUrl;
-    if (l$avatarUrl != lOther$avatarUrl) {
-      return false;
-    }
-    final l$$__typename = $__typename;
-    final lOther$$__typename = other.$__typename;
-    if (l$$__typename != lOther$$__typename) {
-      return false;
-    }
-    return true;
-  }
-}
-
-extension UtilityExtension$Query$invitationDetail$invitation$acceptedUsers
-    on Query$invitationDetail$invitation$acceptedUsers {
-  CopyWith$Query$invitationDetail$invitation$acceptedUsers<
-          Query$invitationDetail$invitation$acceptedUsers>
-      get copyWith => CopyWith$Query$invitationDetail$invitation$acceptedUsers(
-            this,
-            (i) => i,
-          );
-}
-
-abstract class CopyWith$Query$invitationDetail$invitation$acceptedUsers<TRes> {
-  factory CopyWith$Query$invitationDetail$invitation$acceptedUsers(
-    Query$invitationDetail$invitation$acceptedUsers instance,
-    TRes Function(Query$invitationDetail$invitation$acceptedUsers) then,
-  ) = _CopyWithImpl$Query$invitationDetail$invitation$acceptedUsers;
-
-  factory CopyWith$Query$invitationDetail$invitation$acceptedUsers.stub(
-          TRes res) =
-      _CopyWithStubImpl$Query$invitationDetail$invitation$acceptedUsers;
-
-  TRes call({
-    String? id,
-    String? nickname,
-    String? avatarUrl,
-    String? $__typename,
-  });
-}
-
-class _CopyWithImpl$Query$invitationDetail$invitation$acceptedUsers<TRes>
-    implements CopyWith$Query$invitationDetail$invitation$acceptedUsers<TRes> {
-  _CopyWithImpl$Query$invitationDetail$invitation$acceptedUsers(
-    this._instance,
-    this._then,
-  );
-
-  final Query$invitationDetail$invitation$acceptedUsers _instance;
-
-  final TRes Function(Query$invitationDetail$invitation$acceptedUsers) _then;
-
-  static const _undefined = <dynamic, dynamic>{};
-
-  TRes call({
-    Object? id = _undefined,
-    Object? nickname = _undefined,
-    Object? avatarUrl = _undefined,
-    Object? $__typename = _undefined,
-  }) =>
-      _then(Query$invitationDetail$invitation$acceptedUsers(
-        id: id == _undefined || id == null ? _instance.id : (id as String),
-        nickname: nickname == _undefined || nickname == null
-            ? _instance.nickname
-            : (nickname as String),
-        avatarUrl: avatarUrl == _undefined || avatarUrl == null
-            ? _instance.avatarUrl
-            : (avatarUrl as String),
-        $__typename: $__typename == _undefined || $__typename == null
-            ? _instance.$__typename
-            : ($__typename as String),
-      ));
-}
-
-class _CopyWithStubImpl$Query$invitationDetail$invitation$acceptedUsers<TRes>
-    implements CopyWith$Query$invitationDetail$invitation$acceptedUsers<TRes> {
-  _CopyWithStubImpl$Query$invitationDetail$invitation$acceptedUsers(this._res);
-
-  TRes _res;
-
-  call({
-    String? id,
-    String? nickname,
-    String? avatarUrl,
     String? $__typename,
   }) =>
       _res;

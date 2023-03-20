@@ -1,7 +1,7 @@
 
 extend type Mutation {
-    SendChatMessageText(input: SendChatMessageTextInput): SendChatMessageTextPayload! @authRequired
-    SendChatMessageImage(input: SendChatMessageImageInput): SendChatMessageImagePayload! @authRequired
+    sendChatMessageText(input: SendChatMessageTextInput): SendChatMessageTextPayload! @authRequired
+    sendChatMessageImage(input: SendChatMessageImageInput): SendChatMessageImagePayload! @authRequired
 }
 
 

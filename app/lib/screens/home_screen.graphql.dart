@@ -247,6 +247,7 @@ const documentNodeQueryhomeScreenViewer = DocumentNode(definitions: [
     ]),
   ),
   fragmentDefinitioninvitationDetailFragment,
+  fragmentDefinitioninvitationDetailAcceptedUserFragment,
   fragmentDefinitioninvitationAwaitingListItemFragment,
 ]);
 Query$homeScreenViewer _parserFn$Query$homeScreenViewer(
@@ -1004,6 +1005,7 @@ const documentNodeMutationacceptInvitation = DocumentNode(definitions: [
     ]),
   ),
   fragmentDefinitioninvitationDetailFragment,
+  fragmentDefinitioninvitationDetailAcceptedUserFragment,
 ]);
 Mutation$acceptInvitation _parserFn$Mutation$acceptInvitation(
         Map<String, dynamic> data) =>

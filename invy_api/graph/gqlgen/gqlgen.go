@@ -953,24 +953,24 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.RequestFriendship(childComplexity, args["friendUserId"].(uuid.UUID)), true
 
-	case "Mutation.SendChatMessageImage":
+	case "Mutation.sendChatMessageImage":
 		if e.complexity.Mutation.SendChatMessageImage == nil {
 			break
 		}
 
-		args, err := ec.field_Mutation_SendChatMessageImage_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_sendChatMessageImage_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
 		return e.complexity.Mutation.SendChatMessageImage(childComplexity, args["input"].(*gqlmodel.SendChatMessageImageInput)), true
 
-	case "Mutation.SendChatMessageText":
+	case "Mutation.sendChatMessageText":
 		if e.complexity.Mutation.SendChatMessageText == nil {
 			break
 		}
 
-		args, err := ec.field_Mutation_SendChatMessageText_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_sendChatMessageText_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -1642,8 +1642,8 @@ type DeleteAccountPayload {
 `, BuiltIn: false},
 	{Name: "../../../defs/graphql/chat.graphql", Input: `
 extend type Mutation {
-    SendChatMessageText(input: SendChatMessageTextInput): SendChatMessageTextPayload! @authRequired
-    SendChatMessageImage(input: SendChatMessageImageInput): SendChatMessageImagePayload! @authRequired
+    sendChatMessageText(input: SendChatMessageTextInput): SendChatMessageTextPayload! @authRequired
+    sendChatMessageImage(input: SendChatMessageImageInput): SendChatMessageImagePayload! @authRequired
 }
 
 
@@ -2071,36 +2071,6 @@ func (ec *executionContext) dir_constraint_args(ctx context.Context, rawArgs map
 	return args, nil
 }
 
-func (ec *executionContext) field_Mutation_SendChatMessageImage_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 *gqlmodel.SendChatMessageImageInput
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalOSendChatMessageImageInput2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐSendChatMessageImageInput(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["input"] = arg0
-	return args, nil
-}
-
-func (ec *executionContext) field_Mutation_SendChatMessageText_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 *gqlmodel.SendChatMessageTextInput
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalOSendChatMessageTextInput2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐSendChatMessageTextInput(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["input"] = arg0
-	return args, nil
-}
-
 func (ec *executionContext) field_Mutation_acceptFriendshipRequest_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -2308,6 +2278,36 @@ func (ec *executionContext) field_Mutation_requestFriendship_args(ctx context.Co
 		}
 	}
 	args["friendUserId"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_sendChatMessageImage_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *gqlmodel.SendChatMessageImageInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalOSendChatMessageImageInput2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐSendChatMessageImageInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_sendChatMessageText_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *gqlmodel.SendChatMessageTextInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalOSendChatMessageTextInput2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐSendChatMessageTextInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
 	return args, nil
 }
 
@@ -5581,8 +5581,8 @@ func (ec *executionContext) fieldContext_Mutation_switchUser(ctx context.Context
 	return fc, nil
 }
 
-func (ec *executionContext) _Mutation_SendChatMessageText(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_SendChatMessageText(ctx, field)
+func (ec *executionContext) _Mutation_sendChatMessageText(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_sendChatMessageText(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -5632,7 +5632,7 @@ func (ec *executionContext) _Mutation_SendChatMessageText(ctx context.Context, f
 	return ec.marshalNSendChatMessageTextPayload2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐSendChatMessageTextPayload(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Mutation_SendChatMessageText(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Mutation_sendChatMessageText(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Mutation",
 		Field:      field,
@@ -5653,15 +5653,15 @@ func (ec *executionContext) fieldContext_Mutation_SendChatMessageText(ctx contex
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_SendChatMessageText_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Mutation_sendChatMessageText_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return
 	}
 	return fc, nil
 }
 
-func (ec *executionContext) _Mutation_SendChatMessageImage(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_SendChatMessageImage(ctx, field)
+func (ec *executionContext) _Mutation_sendChatMessageImage(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_sendChatMessageImage(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -5711,7 +5711,7 @@ func (ec *executionContext) _Mutation_SendChatMessageImage(ctx context.Context, 
 	return ec.marshalNSendChatMessageImagePayload2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐSendChatMessageImagePayload(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Mutation_SendChatMessageImage(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Mutation_sendChatMessageImage(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Mutation",
 		Field:      field,
@@ -5732,7 +5732,7 @@ func (ec *executionContext) fieldContext_Mutation_SendChatMessageImage(ctx conte
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_SendChatMessageImage_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Mutation_sendChatMessageImage_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return
 	}
@@ -13981,19 +13981,19 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "SendChatMessageText":
+		case "sendChatMessageText":
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_SendChatMessageText(ctx, field)
+				return ec._Mutation_sendChatMessageText(ctx, field)
 			})
 
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "SendChatMessageImage":
+		case "sendChatMessageImage":
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_SendChatMessageImage(ctx, field)
+				return ec._Mutation_sendChatMessageImage(ctx, field)
 			})
 
 			if out.Values[i] == graphql.Null {

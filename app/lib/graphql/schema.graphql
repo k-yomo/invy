@@ -161,8 +161,8 @@ type Mutation {
   deleteAccount: DeleteAccountPayload!
   createUser(input: CreateUserInput!): CreateUserPayload!
   switchUser(userId: UUID!): SwitchUserPayload!
-  SendChatMessageText(input: SendChatMessageTextInput): SendChatMessageTextPayload!
-  SendChatMessageImage(input: SendChatMessageImageInput): SendChatMessageImagePayload!
+  sendChatMessageText(input: SendChatMessageTextInput): SendChatMessageTextPayload!
+  sendChatMessageImage(input: SendChatMessageImageInput): SendChatMessageImagePayload!
   createFriendGroup(input: CreateFriendGroupInput!): CreateFriendGroupPayload!
   updateFriendGroup(input: UpdateFriendGroupInput!): UpdateFriendGroupPayload!
   deleteFriendGroup(friendGroupId: UUID!): DeleteFriendGroupPayload!

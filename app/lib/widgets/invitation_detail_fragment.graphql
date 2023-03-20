@@ -9,14 +9,17 @@ fragment invitationDetailFragment on Invitation {
     comment
     startsAt
     expiresAt
+    chatRoomId
     user {
-        id
-        nickname
-        avatarUrl
+        ...invitationDetailAcceptedUserFragment
     }
     acceptedUsers {
-        id
-        nickname
-        avatarUrl
+        ...invitationDetailAcceptedUserFragment
     }
+}
+
+fragment invitationDetailAcceptedUserFragment on User {
+    id
+    nickname
+    avatarUrl
 }

@@ -61,6 +61,11 @@ func TestConvertStructToJSONMap(t *testing.T) {
 				"age":  float64(20),
 			},
 		},
+		{
+			name:    "returns error when non-struct is passed",
+			v:       20,
+			wantErr: true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

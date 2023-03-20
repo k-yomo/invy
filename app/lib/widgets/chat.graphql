@@ -1,0 +1,42 @@
+
+mutation sendChatMessageText($input: SendChatMessageTextInput) {
+    sendChatMessageText(input: $input) {
+        chatMessage {
+            id
+        }
+    }
+}
+
+mutation sendChatMessageImage($input: SendChatMessageImageInput) {
+    sendChatMessageImage(input: $input) {
+        chatMessage {
+            id
+        }
+    }
+}
+
+fragment ChatMessageTextFragment on ChatMessage {
+    id
+    chatRoomId
+    userId
+    kind
+    body {
+        ... on ChatMessageBodyText {
+            text
+        }
+    }
+    createdAt
+}
+
+fragment ChatMessageImageFragment on ChatMessage {
+    id
+    chatRoomId
+    userId
+    kind
+    body {
+        ... on ChatMessageBodyImage {
+            url
+        }
+    }
+    createdAt
+}
