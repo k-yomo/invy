@@ -1738,6 +1738,13 @@ const documentNodeMutationsendChatMessageText = DocumentNode(definitions: [
                 selectionSet: null,
               ),
               FieldNode(
+                name: NameNode(value: 'createdAt'),
+                alias: null,
+                arguments: [],
+                directives: [],
+                selectionSet: null,
+              ),
+              FieldNode(
                 name: NameNode(value: '__typename'),
                 alias: null,
                 arguments: [],
@@ -2131,20 +2138,25 @@ class _CopyWithStubImpl$Mutation$sendChatMessageText$sendChatMessageText<TRes>
 class Mutation$sendChatMessageText$sendChatMessageText$chatMessage {
   Mutation$sendChatMessageText$sendChatMessageText$chatMessage({
     required this.id,
+    required this.createdAt,
     this.$__typename = 'ChatMessage',
   });
 
   factory Mutation$sendChatMessageText$sendChatMessageText$chatMessage.fromJson(
       Map<String, dynamic> json) {
     final l$id = json['id'];
+    final l$createdAt = json['createdAt'];
     final l$$__typename = json['__typename'];
     return Mutation$sendChatMessageText$sendChatMessageText$chatMessage(
       id: (l$id as String),
+      createdAt: DateTime.parse((l$createdAt as String)),
       $__typename: (l$$__typename as String),
     );
   }
 
   final String id;
+
+  final DateTime createdAt;
 
   final String $__typename;
 
@@ -2152,6 +2164,8 @@ class Mutation$sendChatMessageText$sendChatMessageText$chatMessage {
     final _resultData = <String, dynamic>{};
     final l$id = id;
     _resultData['id'] = l$id;
+    final l$createdAt = createdAt;
+    _resultData['createdAt'] = l$createdAt.toIso8601String();
     final l$$__typename = $__typename;
     _resultData['__typename'] = l$$__typename;
     return _resultData;
@@ -2160,9 +2174,11 @@ class Mutation$sendChatMessageText$sendChatMessageText$chatMessage {
   @override
   int get hashCode {
     final l$id = id;
+    final l$createdAt = createdAt;
     final l$$__typename = $__typename;
     return Object.hashAll([
       l$id,
+      l$createdAt,
       l$$__typename,
     ]);
   }
@@ -2180,6 +2196,11 @@ class Mutation$sendChatMessageText$sendChatMessageText$chatMessage {
     final l$id = id;
     final lOther$id = other.id;
     if (l$id != lOther$id) {
+      return false;
+    }
+    final l$createdAt = createdAt;
+    final lOther$createdAt = other.createdAt;
+    if (l$createdAt != lOther$createdAt) {
       return false;
     }
     final l$$__typename = $__typename;
@@ -2216,6 +2237,7 @@ abstract class CopyWith$Mutation$sendChatMessageText$sendChatMessageText$chatMes
 
   TRes call({
     String? id,
+    DateTime? createdAt,
     String? $__typename,
   });
 }
@@ -2239,10 +2261,14 @@ class _CopyWithImpl$Mutation$sendChatMessageText$sendChatMessageText$chatMessage
 
   TRes call({
     Object? id = _undefined,
+    Object? createdAt = _undefined,
     Object? $__typename = _undefined,
   }) =>
       _then(Mutation$sendChatMessageText$sendChatMessageText$chatMessage(
         id: id == _undefined || id == null ? _instance.id : (id as String),
+        createdAt: createdAt == _undefined || createdAt == null
+            ? _instance.createdAt
+            : (createdAt as DateTime),
         $__typename: $__typename == _undefined || $__typename == null
             ? _instance.$__typename
             : ($__typename as String),
@@ -2261,6 +2287,7 @@ class _CopyWithStubImpl$Mutation$sendChatMessageText$sendChatMessageText$chatMes
 
   call({
     String? id,
+    DateTime? createdAt,
     String? $__typename,
   }) =>
       _res;
@@ -2553,6 +2580,13 @@ const documentNodeMutationsendChatMessageImage = DocumentNode(definitions: [
             selectionSet: SelectionSetNode(selections: [
               FieldNode(
                 name: NameNode(value: 'id'),
+                alias: null,
+                arguments: [],
+                directives: [],
+                selectionSet: null,
+              ),
+              FieldNode(
+                name: NameNode(value: 'createdAt'),
                 alias: null,
                 arguments: [],
                 directives: [],
@@ -2959,20 +2993,25 @@ class _CopyWithStubImpl$Mutation$sendChatMessageImage$sendChatMessageImage<TRes>
 class Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage {
   Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage({
     required this.id,
+    required this.createdAt,
     this.$__typename = 'ChatMessage',
   });
 
   factory Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage.fromJson(
       Map<String, dynamic> json) {
     final l$id = json['id'];
+    final l$createdAt = json['createdAt'];
     final l$$__typename = json['__typename'];
     return Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage(
       id: (l$id as String),
+      createdAt: DateTime.parse((l$createdAt as String)),
       $__typename: (l$$__typename as String),
     );
   }
 
   final String id;
+
+  final DateTime createdAt;
 
   final String $__typename;
 
@@ -2980,6 +3019,8 @@ class Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage {
     final _resultData = <String, dynamic>{};
     final l$id = id;
     _resultData['id'] = l$id;
+    final l$createdAt = createdAt;
+    _resultData['createdAt'] = l$createdAt.toIso8601String();
     final l$$__typename = $__typename;
     _resultData['__typename'] = l$$__typename;
     return _resultData;
@@ -2988,9 +3029,11 @@ class Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage {
   @override
   int get hashCode {
     final l$id = id;
+    final l$createdAt = createdAt;
     final l$$__typename = $__typename;
     return Object.hashAll([
       l$id,
+      l$createdAt,
       l$$__typename,
     ]);
   }
@@ -3008,6 +3051,11 @@ class Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage {
     final l$id = id;
     final lOther$id = other.id;
     if (l$id != lOther$id) {
+      return false;
+    }
+    final l$createdAt = createdAt;
+    final lOther$createdAt = other.createdAt;
+    if (l$createdAt != lOther$createdAt) {
       return false;
     }
     final l$$__typename = $__typename;
@@ -3045,6 +3093,7 @@ abstract class CopyWith$Mutation$sendChatMessageImage$sendChatMessageImage$chatM
 
   TRes call({
     String? id,
+    DateTime? createdAt,
     String? $__typename,
   });
 }
@@ -3069,10 +3118,14 @@ class _CopyWithImpl$Mutation$sendChatMessageImage$sendChatMessageImage$chatMessa
 
   TRes call({
     Object? id = _undefined,
+    Object? createdAt = _undefined,
     Object? $__typename = _undefined,
   }) =>
       _then(Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage(
         id: id == _undefined || id == null ? _instance.id : (id as String),
+        createdAt: createdAt == _undefined || createdAt == null
+            ? _instance.createdAt
+            : (createdAt as DateTime),
         $__typename: $__typename == _undefined || $__typename == null
             ? _instance.$__typename
             : ($__typename as String),
@@ -3091,6 +3144,7 @@ class _CopyWithStubImpl$Mutation$sendChatMessageImage$sendChatMessageImage$chatM
 
   call({
     String? id,
+    DateTime? createdAt,
     String? $__typename,
   }) =>
       _res;

@@ -3,6 +3,7 @@ mutation sendChatMessageText($input: SendChatMessageTextInput) {
     sendChatMessageText(input: $input) {
         chatMessage {
             id
+            createdAt
         }
     }
 }
@@ -11,6 +12,7 @@ mutation sendChatMessageImage($input: SendChatMessageImageInput) {
     sendChatMessageImage(input: $input) {
         chatMessage {
             id
+            createdAt
         }
     }
 }
