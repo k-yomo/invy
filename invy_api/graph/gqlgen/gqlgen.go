@@ -1827,6 +1827,7 @@ enum PushNotificationType {
     INVITATION_RECEIVED
     INVITATION_ACCEPTED
     INVITATION_AWAITING_RECEIVED
+    CHAT_MESSAGE_RECEIVED
 }
 `, BuiltIn: false},
 	{Name: "../../../defs/graphql/schema.graphql", Input: `scalar Time

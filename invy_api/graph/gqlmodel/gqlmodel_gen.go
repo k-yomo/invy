@@ -473,6 +473,7 @@ const (
 	PushNotificationTypeInvitationReceived         PushNotificationType = "INVITATION_RECEIVED"
 	PushNotificationTypeInvitationAccepted         PushNotificationType = "INVITATION_ACCEPTED"
 	PushNotificationTypeInvitationAwaitingReceived PushNotificationType = "INVITATION_AWAITING_RECEIVED"
+	PushNotificationTypeChatMessageReceived        PushNotificationType = "CHAT_MESSAGE_RECEIVED"
 )
 
 var AllPushNotificationType = []PushNotificationType{
@@ -481,11 +482,12 @@ var AllPushNotificationType = []PushNotificationType{
 	PushNotificationTypeInvitationReceived,
 	PushNotificationTypeInvitationAccepted,
 	PushNotificationTypeInvitationAwaitingReceived,
+	PushNotificationTypeChatMessageReceived,
 }
 
 func (e PushNotificationType) IsValid() bool {
 	switch e {
-	case PushNotificationTypeFriendshipRequestReceived, PushNotificationTypeFriendshipRequestAccepted, PushNotificationTypeInvitationReceived, PushNotificationTypeInvitationAccepted, PushNotificationTypeInvitationAwaitingReceived:
+	case PushNotificationTypeFriendshipRequestReceived, PushNotificationTypeFriendshipRequestAccepted, PushNotificationTypeInvitationReceived, PushNotificationTypeInvitationAccepted, PushNotificationTypeInvitationAwaitingReceived, PushNotificationTypeChatMessageReceived:
 		return true
 	}
 	return false

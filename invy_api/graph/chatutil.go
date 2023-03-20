@@ -5,10 +5,12 @@ import (
 	"fmt"
 
 	"cloud.google.com/go/firestore"
+	fcm "firebase.google.com/go/v4/messaging"
 	"github.com/google/uuid"
-	"github.com/k-yomo/invy/invy_api/auth"
+	"github.com/k-yomo/invy/invy_api/graph/gqlmodel"
 	"github.com/k-yomo/invy/invy_api/internal/xerrors"
 	"github.com/k-yomo/invy/pkg/convutil"
+	"github.com/k-yomo/invy/pkg/logging"
 	"github.com/k-yomo/invy/pkg/sliceutil"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -22,22 +24,55 @@ func firestoreChatMessagePath(chatRoomID uuid.UUID, chatMessageID uuid.UUID) str
 	return fmt.Sprintf("%s/chatMessages/%s", firestoreChatRoomPath(chatRoomID), chatMessageID)
 }
 
-func isAuthUserIncludedInTheChatRoom(ctx context.Context, firestoreClient *firestore.Client, chatRoomID uuid.UUID) (bool, error) {
-	authUserID := auth.GetCurrentUserID(ctx)
-
+func getChatRoomUserIDs(ctx context.Context, firestoreClient *firestore.Client, chatRoomID uuid.UUID) ([]uuid.UUID, error) {
 	chatRoomSnapshot, err := firestoreClient.Doc(firestoreChatRoomPath(chatRoomID)).Get(ctx)
 	if status.Code(err) == codes.NotFound {
-		return false, xerrors.NewErrNotFound(fmt.Errorf("chat room %q not found", chatRoomID))
+		return nil, xerrors.NewErrNotFound(fmt.Errorf("chat room %q not found", chatRoomID))
 	}
 	if err != nil {
-		return false, err
+		return nil, err
 	}
-	userIDs := convutil.ConvertToList(chatRoomSnapshot.Data()["userIds"].([]interface{}), func(from interface{}) string {
-		return from.(string)
+	userIDs := convutil.ConvertToList(chatRoomSnapshot.Data()["userIds"].([]interface{}), func(from interface{}) uuid.UUID {
+		return uuid.MustParse(from.(string))
 	})
-	if !sliceutil.Includes(userIDs, authUserID.String()) {
-		return false, nil
+	return userIDs, nil
+}
+
+func (r *mutationResolver) sendChatMessageNotification(
+	ctx context.Context,
+	sentUserID uuid.UUID,
+	chatRoomUserIDs []uuid.UUID,
+	notificationBody string,
+) {
+	notifyUserIDs := sliceutil.Filter(chatRoomUserIDs, sentUserID)
+	targetUserPushNotificationTokens, err := r.DBQuery.Notification.GetNotifiableFriendUserPushTokens(ctx, sentUserID, notifyUserIDs)
+	if err != nil {
+		logging.Logger(ctx).Error(err.Error())
+	}
+	if len(targetUserPushNotificationTokens) == 0 {
+		return
 	}
 
-	return true, nil
+	authUserProfile, err := r.DB.UserProfile.Get(ctx, sentUserID)
+	if err != nil {
+		logging.Logger(ctx).Error(err.Error())
+	}
+	// TODO: Chunk tokens by 500 (max tokens per multicast)
+	// TODO: delete expired tokens
+	_, err = r.FCMClient.SendMulticast(ctx, &fcm.MulticastMessage{
+		Tokens: targetUserPushNotificationTokens,
+		Data: map[string]string{
+			"type": gqlmodel.PushNotificationTypeChatMessageReceived.String(),
+		},
+		Notification: &fcm.Notification{
+			Title: authUserProfile.Nickname,
+			Body:  notificationBody,
+		},
+		Android: &fcm.AndroidConfig{
+			Priority: "high",
+		},
+	})
+	if err != nil {
+		logging.Logger(ctx).Error(err.Error())
+	}
 }

@@ -14,13 +14,17 @@ import (
 	"github.com/k-yomo/invy/invy_api/graph/gqlmodel"
 	"github.com/k-yomo/invy/invy_api/internal/xerrors"
 	"github.com/k-yomo/invy/pkg/convutil"
+	"github.com/k-yomo/invy/pkg/sliceutil"
 )
 
 // SendChatMessageText is the resolver for the SendChatMessageText field.
 func (r *mutationResolver) SendChatMessageText(ctx context.Context, input *gqlmodel.SendChatMessageTextInput) (*gqlmodel.SendChatMessageTextPayload, error) {
-	if ok, err := isAuthUserIncludedInTheChatRoom(ctx, r.FirestoreClient, input.ChatRoomID); err != nil {
+	chatRoomUserIDs, err := getChatRoomUserIDs(ctx, r.FirestoreClient, input.ChatRoomID)
+	if err != nil {
 		return nil, err
-	} else if !ok {
+	}
+	authUserID := auth.GetCurrentUserID(ctx)
+	if !sliceutil.Includes(chatRoomUserIDs, authUserID) {
 		return nil, xerrors.NewErrNotFound(fmt.Errorf("chat room %q not found", input.ChatRoomID))
 	}
 
@@ -28,7 +32,7 @@ func (r *mutationResolver) SendChatMessageText(ctx context.Context, input *gqlmo
 	chatMessage := gqlmodel.ChatMessage{
 		ID:         chatMessageID,
 		ChatRoomID: input.ChatRoomID,
-		UserID:     auth.GetCurrentUserID(ctx),
+		UserID:     authUserID,
 		Kind:       gqlmodel.ChatMessageKindText,
 		Body:       gqlmodel.ChatMessageBodyText{Text: input.Text},
 		CreatedAt:  time.Now(),
@@ -43,6 +47,8 @@ func (r *mutationResolver) SendChatMessageText(ctx context.Context, input *gqlmo
 		return nil, err
 	}
 
+	go r.sendChatMessageNotification(context.Background(), authUserID, chatRoomUserIDs, input.Text)
+
 	return &gqlmodel.SendChatMessageTextPayload{
 		ChatMessage: &chatMessage,
 	}, nil
@@ -50,9 +56,12 @@ func (r *mutationResolver) SendChatMessageText(ctx context.Context, input *gqlmo
 
 // SendChatMessageImage is the resolver for the SendChatMessageImage field.
 func (r *mutationResolver) SendChatMessageImage(ctx context.Context, input *gqlmodel.SendChatMessageImageInput) (*gqlmodel.SendChatMessageImagePayload, error) {
-	if ok, err := isAuthUserIncludedInTheChatRoom(ctx, r.FirestoreClient, input.ChatRoomID); err != nil {
+	chatRoomUserIDs, err := getChatRoomUserIDs(ctx, r.FirestoreClient, input.ChatRoomID)
+	if err != nil {
 		return nil, err
-	} else if !ok {
+	}
+	authUserID := auth.GetCurrentUserID(ctx)
+	if !sliceutil.Includes(chatRoomUserIDs, authUserID) {
 		return nil, xerrors.NewErrNotFound(fmt.Errorf("chat room %q not found", input.ChatRoomID))
 	}
 
@@ -84,6 +93,8 @@ func (r *mutationResolver) SendChatMessageImage(ctx context.Context, input *gqlm
 	if err != nil {
 		return nil, err
 	}
+
+	go r.sendChatMessageNotification(context.Background(), authUserID, chatRoomUserIDs, "写真を送信しました")
 
 	return &gqlmodel.SendChatMessageImagePayload{
 		ChatMessage: &chatMessage,

@@ -43,3 +43,14 @@ func Includes[T comparable](list []T, value T) bool {
 	}
 	return false
 }
+
+func Filter[T comparable](list []T, value T) []T {
+	filtered := make([]T, 0, len(list))
+	for _, v := range list {
+		if v == value {
+			continue
+		}
+		filtered = append(filtered, v)
+	}
+	return filtered
+}
