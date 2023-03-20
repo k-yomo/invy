@@ -3,10 +3,12 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:go_router/go_router.dart';
 import 'package:graphql/client.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:invy/graphql/viewer.graphql.dart';
 import 'package:invy/router.dart';
+import 'package:invy/screens/invitation/invitation_detail_screen.dart';
 import 'package:invy/services/graphql_client.dart';
 import 'package:invy/util/device.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
@@ -39,14 +41,52 @@ ThemeData lightTheme() => ThemeData.from(
       useMaterial3: true,
     );
 
-class App extends HookConsumerWidget {
-  const App({super.key, this.initialRoute});
+class App extends StatefulHookConsumerWidget {
+  App({super.key, required this.initialRoute});
 
   final Uri? initialRoute;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final router = ref.watch(routerProvider.call(initialRoute: initialRoute));
+  AppState createState() => AppState();
+}
+
+class AppState extends ConsumerState<App> {
+  Future<void> setupInteractedMessage() async {
+    RemoteMessage? initialMessage =
+        await FirebaseMessaging.instance.getInitialMessage();
+
+    if (initialMessage != null) {
+      _handleMessage(initialMessage);
+    }
+
+    FirebaseMessaging.onMessageOpenedApp.listen(_handleMessage);
+  }
+
+  void _handleMessage(RemoteMessage message) {
+    final messageType =
+        fromJson$Enum$PushNotificationType(message.data["type"]);
+    switch (messageType) {
+      case Enum$PushNotificationType.CHAT_MESSAGE_RECEIVED:
+        InvitationDetailRoute(message.data["invitationId"] as String)
+            .go(context);
+        break;
+      case Enum$PushNotificationType.FRIENDSHIP_REQUEST_RECEIVED:
+        const FriendsRoute().go(context);
+        break;
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    setupInteractedMessage();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final router =
+        ref.watch(routerProvider.call(initialRoute: widget.initialRoute));
     final isLoggedIn = ref.watch(isLoggedInProvider);
 
     return StreamBuilder<User?>(

@@ -18,6 +18,7 @@ import 'package:invy/util/toast.dart';
 import 'package:invy/widgets/chat.graphql.dart';
 import 'package:invy/widgets/invitation_detail_fragment.graphql.dart';
 import 'package:mime/mime.dart';
+import 'package:uuid/uuid.dart';
 
 class ChatL10nJa extends ChatL10n {
   const ChatL10nJa({
@@ -45,7 +46,7 @@ class Chat extends StatefulHookConsumerWidget {
 class ChatState extends ConsumerState<Chat> {
   int _limit = 20;
   bool _isAttachmentUploading = false;
-  List<chatUITypes.Message> chatMessages = [];
+  List<chatUITypes.Message> _chatMessages = [];
 
   final int _limitIncrement = 20;
 
@@ -69,6 +70,17 @@ class ChatState extends ConsumerState<Chat> {
   }
 
   _onSendPressed(chatUITypes.PartialText message) async {
+    // setState(() {
+    //   _chatMessages = [
+    //     chatUITypes.TextMessage(
+    //         id: Uuid().v4(),
+    //         text: message.text,
+    //         author: _userMap[_loggedInUser.id]!,
+    //         createdAt: DateTime.now().millisecondsSinceEpoch,
+    //         status: chatUITypes.Status.sending),
+    //     ..._chatMessages
+    //   ];
+    // });
     final result = await _graphqlClient
         .mutate$sendChatMessageText(Options$Mutation$sendChatMessageText(
             variables: Variables$Mutation$sendChatMessageText(
@@ -80,21 +92,8 @@ class ChatState extends ConsumerState<Chat> {
     if (result.hasException) {
       print(result.exception);
       showToast("メッセージの送信に失敗しました", ToastLevel.error);
-      return false;
+      return;
     }
-
-    setState(() {
-      chatMessages = [
-        chatUITypes.TextMessage(
-          id: result.parsedData!.sendChatMessageText.chatMessage.id,
-          text: message.text,
-          author: _userMap[_loggedInUser.id]!,
-          createdAt: result.parsedData!.sendChatMessageText.chatMessage
-              .createdAt.millisecondsSinceEpoch,
-        ),
-        ...chatMessages
-      ];
-    });
   }
 
   void _onAttachmentPressed() async {
@@ -139,14 +138,17 @@ class ChatState extends ConsumerState<Chat> {
 
   @override
   Widget build(BuildContext context) {
-    final chatMessageSnapshot = useStream(FirebaseFirestore.instance
-        .collection(firestoreChatRoomsCollectionPath)
-        .doc(widget.chatRoomId)
-        .collection(firestoreChatMessagesCollectionPath)
-        .orderBy("createdAt", descending: true)
-        .limit(_limit)
-        .snapshots());
-    chatMessages = chatMessageSnapshot.data != null
+    final chatMessagesStream = useMemoized(
+        () => FirebaseFirestore.instance
+            .collection(firestoreChatRoomsCollectionPath)
+            .doc(widget.chatRoomId)
+            .collection(firestoreChatMessagesCollectionPath)
+            .orderBy("createdAt", descending: true)
+            .limit(_limit)
+            .snapshots(),
+        [_limit]);
+    final chatMessageSnapshot = useStream(chatMessagesStream);
+    _chatMessages = chatMessageSnapshot.data != null
         ? chatMessageSnapshot.data!.docs.map((chatMessage) {
             final user = _userMap[chatMessage.get("userId") as String]!;
             switch (chatMessage.get("kind")) {
@@ -160,6 +162,7 @@ class ChatState extends ConsumerState<Chat> {
                   createdAt:
                       DateTime.parse(chatMessage.get("createdAt") as String)
                           .millisecondsSinceEpoch,
+                  status: chatUITypes.Status.sent,
                 );
               default:
                 // case "TEXT":
@@ -182,7 +185,7 @@ class ChatState extends ConsumerState<Chat> {
         firstName: _loggedInUser.nickname,
         imageUrl: _loggedInUser.avatarUrl,
       ),
-      messages: chatMessages,
+      messages: _chatMessages,
       onAttachmentPressed: _onAttachmentPressed,
       isAttachmentUploading: _isAttachmentUploading,
       onSendPressed: _onSendPressed,

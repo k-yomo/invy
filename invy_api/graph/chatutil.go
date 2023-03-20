@@ -8,6 +8,7 @@ import (
 	fcm "firebase.google.com/go/v4/messaging"
 	"github.com/google/uuid"
 	"github.com/k-yomo/invy/invy_api/auth"
+	"github.com/k-yomo/invy/invy_api/ent/invitation"
 	"github.com/k-yomo/invy/invy_api/ent/userprofile"
 	"github.com/k-yomo/invy/invy_api/graph/gqlmodel"
 	"github.com/k-yomo/invy/invy_api/internal/xerrors"
@@ -42,6 +43,7 @@ func getChatRoomUserIDs(ctx context.Context, firestoreClient *firestore.Client, 
 
 func (r *mutationResolver) sendChatMessageNotification(
 	ctx context.Context,
+	chatRoomID uuid.UUID,
 	chatRoomUserIDs []uuid.UUID,
 	notificationBody string,
 ) {
@@ -58,6 +60,12 @@ func (r *mutationResolver) sendChatMessageNotification(
 		return
 	}
 
+	invitation, err := r.DB.Invitation.Query().Where(invitation.ChatRoomID(chatRoomID)).Only(ctx)
+	if err != nil {
+		logging.Logger(ctx).Error(err.Error())
+		return
+	}
+
 	authUserProfile, err := r.DB.UserProfile.Query().Where(userprofile.UserID(sentUserID)).Only(ctx)
 	if err != nil {
 		logging.Logger(ctx).Error(err.Error())
@@ -68,7 +76,8 @@ func (r *mutationResolver) sendChatMessageNotification(
 	_, err = r.FCMClient.SendMulticast(ctx, &fcm.MulticastMessage{
 		Tokens: targetUserPushNotificationTokens,
 		Data: map[string]string{
-			"type": gqlmodel.PushNotificationTypeChatMessageReceived.String(),
+			"type":         gqlmodel.PushNotificationTypeChatMessageReceived.String(),
+			"invitationId": invitation.ID.String(),
 		},
 		Notification: &fcm.Notification{
 			Title: authUserProfile.Nickname,

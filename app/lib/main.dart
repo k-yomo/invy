@@ -32,9 +32,8 @@ import 'state/badge_count.dart';
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Hive.initFlutter();
-  if (message.data["type"] ==
-      toJson$Enum$PushNotificationType(
-          Enum$PushNotificationType.INVITATION_RECEIVED)) {
+  final messageType = fromJson$Enum$PushNotificationType(message.data["type"]);
+  if (messageType == Enum$PushNotificationType.INVITATION_RECEIVED) {
     final badgeCounter = await BadgeCounter.open();
     await badgeCounter.setBadgeCount(badgeCounter.badgeCount + 1);
   } else {

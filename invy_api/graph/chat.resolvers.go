@@ -47,7 +47,7 @@ func (r *mutationResolver) SendChatMessageText(ctx context.Context, input *gqlmo
 		return nil, err
 	}
 
-	r.sendChatMessageNotification(ctx, chatRoomUserIDs, input.Text)
+	r.sendChatMessageNotification(ctx, input.ChatRoomID, chatRoomUserIDs, input.Text)
 
 	return &gqlmodel.SendChatMessageTextPayload{
 		ChatMessage: &chatMessage,
@@ -94,7 +94,7 @@ func (r *mutationResolver) SendChatMessageImage(ctx context.Context, input *gqlm
 		return nil, err
 	}
 
-	r.sendChatMessageNotification(ctx, chatRoomUserIDs, "写真を送信しました")
+	r.sendChatMessageNotification(ctx, input.ChatRoomID, chatRoomUserIDs, "写真を送信しました")
 
 	return &gqlmodel.SendChatMessageImagePayload{
 		ChatMessage: &chatMessage,
