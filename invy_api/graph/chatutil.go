@@ -48,6 +48,7 @@ func (r *mutationResolver) sendChatMessageNotification(
 	targetUserPushNotificationTokens, err := r.DBQuery.Notification.GetNotifiableFriendUserPushTokens(ctx, sentUserID, notifyUserIDs)
 	if err != nil {
 		logging.Logger(ctx).Error(err.Error())
+		return
 	}
 	if len(targetUserPushNotificationTokens) == 0 {
 		return
@@ -56,6 +57,7 @@ func (r *mutationResolver) sendChatMessageNotification(
 	authUserProfile, err := r.DB.UserProfile.Get(ctx, sentUserID)
 	if err != nil {
 		logging.Logger(ctx).Error(err.Error())
+		return
 	}
 	// TODO: Chunk tokens by 500 (max tokens per multicast)
 	// TODO: delete expired tokens
