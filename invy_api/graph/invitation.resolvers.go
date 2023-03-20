@@ -205,7 +205,7 @@ func (r *mutationResolver) AcceptInvitation(ctx context.Context, invitationID uu
 			return err
 		}
 
-		dbInvitation, err := r.DB.Invitation.Query().
+		dbInvitation, err := tx.Invitation.Query().
 			Where(invitation.ID(invitationID)).
 			WithInvitationAcceptances().
 			Only(ctx)
