@@ -252,8 +252,8 @@ func (r *userResolver) DistanceKm(ctx context.Context, obj *gqlmodel.User) (*int
 	switch {
 	case distanceKM < 3:
 		approximateDistanceKM = 3
-	case distanceKM < 5:
-		approximateDistanceKM = 5
+	case distanceKM < 6:
+		approximateDistanceKM = 6
 	case distanceKM < 10:
 		approximateDistanceKM = 10
 	default:
