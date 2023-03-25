@@ -91,6 +91,8 @@
 		<string>開催地の入力補助に利用します。</string>
 		<key>NSPhotoLibraryUsageDescription</key>
 		<string>プロフィール画像のアップロード等に利用します。</string>
+		<key>NSCameraUsageDescription</key>
+        <string>QRコードの読み取り等に使います。</string>
 		<key>UIApplicationSceneManifest</key>
 		<dict>
 			<key>UIApplicationSupportsMultipleScenes</key>

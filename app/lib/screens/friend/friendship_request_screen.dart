@@ -1,9 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:invy/screens/friend/friend_qr_code_reader_screen.dart';
 import 'package:invy/screens/friend/friendship_request_screen.graphql.dart';
 import 'package:invy/services/graphql_client.dart';
 import 'package:invy/widgets/dynamic_links_manager.dart';
@@ -41,40 +43,63 @@ class FriendshipRequestScreen extends HookConsumerWidget {
       body: Column(
         children: [
           Container(
-            margin: const EdgeInsets.only(top: 30),
-            child: Container(
-              margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-              child: TextField(
-                textInputAction: TextInputAction.search,
-                cursorColor: Colors.black,
-                decoration: const InputDecoration(
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.black,
-                      width: 1,
-                    ),
+            margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+            child: TextButton(
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    fullscreenDialog: true,
+                    builder: (context) => const FriendQRCodeReaderScreen(),
                   ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.black,
-                      width: 2,
-                    ),
-                  ),
-                  hintText: '友達のユーザーIDで検索',
+                );
+              },
+              style: TextButton.styleFrom(
+                minimumSize: const Size.fromHeight(0),
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.zero,
                 ),
-                autofocus: true,
-                onChanged: (_) {
-                  searchUserQueryResult.value = null;
-                },
-                onSubmitted: (text) async {
-                  final result = await graphqlClient.query$searchUser(
-                      Options$Query$searchUser(
-                          fetchPolicy: FetchPolicy.networkOnly,
-                          variables:
-                              Variables$Query$searchUser(userScreenId: text)));
-                  searchUserQueryResult.value = result;
-                },
+                backgroundColor: Colors.black,
+                foregroundColor: Colors.white,
               ),
+              child: const Text(
+                'QRコードを読み取る',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+            ),
+          ),
+          Container(
+            margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+            child: TextField(
+              textInputAction: TextInputAction.search,
+              cursorColor: Colors.black,
+              decoration: const InputDecoration(
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Colors.black,
+                    width: 1,
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Colors.black,
+                    width: 2,
+                  ),
+                ),
+                hintText: '友達のユーザーIDで検索',
+              ),
+              autofocus: true,
+              onChanged: (_) {
+                searchUserQueryResult.value = null;
+              },
+              onSubmitted: (text) async {
+                final result = await graphqlClient.query$searchUser(
+                    Options$Query$searchUser(
+                        fetchPolicy: FetchPolicy.networkOnly,
+                        variables:
+                            Variables$Query$searchUser(userScreenId: text)));
+                searchUserQueryResult.value = result;
+              },
             ),
           ),
           searchUserQueryResult.value != null

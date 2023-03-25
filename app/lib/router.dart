@@ -7,6 +7,7 @@ import 'package:invy/screens/friend/freind_group_create_screen.dart';
 import 'package:invy/screens/friend/freind_group_detail_screen.dart';
 import 'package:invy/screens/friend/friends_screen.dart';
 import 'package:invy/screens/friend/friendship_request_screen.dart';
+import 'package:invy/screens/friend/friend_qr_code_reader_screen.dart';
 import 'package:invy/screens/home_screen.dart';
 import 'package:invy/screens/invitation/invitation_awaiting_form_screen.dart';
 import 'package:invy/screens/invitation/invitation_detail_screen.dart';
@@ -178,9 +179,11 @@ class InvitationRoute extends GoRouteData {
     TypedGoRoute<FriendGroupDetailRoute>(
       path: 'groups/:friendGroupId',
     ),
-    TypedGoRoute<FriendshipRequestRoute>(
-      path: 'request',
-    )
+    TypedGoRoute<FriendshipRequestRoute>(path: 'request', routes: [
+      TypedGoRoute<FriendQRCodeReaderRoute>(
+        path: 'qr_code_reader',
+      ),
+    ])
   ],
 )
 class FriendsRoute extends GoRouteData {

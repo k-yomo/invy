@@ -12,6 +12,7 @@ import 'package:invy/router.dart';
 import 'package:invy/screens/profile/profile_edit_screen.dart';
 import 'package:invy/screens/settings_screen.dart';
 import 'package:invy/state/auth.dart';
+import 'package:invy/util/dynamic_link.dart';
 import 'package:invy/util/toast.dart';
 import 'package:invy/widgets/divider.dart';
 import 'package:invy/widgets/setting_item.dart';
@@ -110,24 +111,8 @@ class MyProfileScreen extends HookConsumerWidget {
                       ),
                     ),
                     onPressed: () async {
-                      final config = getConfig();
-                      final parameters = DynamicLinkParameters(
-                        uriPrefix: config.dynamicLinkUriPrefix,
-                        link: buildUserProfileLink(user.id),
-                        iosParameters: IOSParameters(
-                            bundleId: config.iosBundleId,
-                            minimumVersion: '1',
-                            fallbackUrl: appStorePageUrl,
-                            appStoreId: "id1663614664"),
-                        androidParameters: AndroidParameters(
-                          packageName: config.iosBundleId,
-                          minimumVersion: 1,
-                          // TODO: set android play store app page url
-                          // fallbackUrl: ,
-                        ),
-                      );
-                      final shortLink = await FirebaseDynamicLinks.instance
-                          .buildShortLink(parameters);
+                      final shortLink =
+                          await buildUserProfileDynamicLink(user.id);
                       await Share.share(shortLink.shortUrl.toString());
                     },
                     child: const Text("プロフィールをシェア",

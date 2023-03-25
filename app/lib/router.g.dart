@@ -138,6 +138,12 @@ GoRoute get $friendsRoute => GoRouteData.$route(
         GoRouteData.$route(
           path: 'request',
           factory: $FriendshipRequestRouteExtension._fromState,
+          routes: [
+            GoRouteData.$route(
+              path: 'qr_code_reader',
+              factory: $FriendQRCodeReaderRouteExtension._fromState,
+            ),
+          ],
         ),
       ],
     );
@@ -197,6 +203,22 @@ extension $FriendshipRequestRouteExtension on FriendshipRequestRoute {
 
   String get location => GoRouteData.$location(
         '/friends/request',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  void push(BuildContext context) => context.push(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+}
+
+extension $FriendQRCodeReaderRouteExtension on FriendQRCodeReaderRoute {
+  static FriendQRCodeReaderRoute _fromState(GoRouterState state) =>
+      const FriendQRCodeReaderRoute();
+
+  String get location => GoRouteData.$location(
+        '/friends/request/qr_code_reader',
       );
 
   void go(BuildContext context) => context.go(location);
