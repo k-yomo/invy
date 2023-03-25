@@ -9,7 +9,7 @@ import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:invy/router.dart';
 import 'package:invy/screens/friend/blocked_friends_screen.graphql.dart';
-import 'package:invy/screens/friend/friend_request_screen.graphql.dart';
+import 'package:invy/screens/friend/friendship_request_screen.graphql.dart';
 import 'package:invy/screens/user/user_profile_screen.graphql.dart';
 import 'package:invy/state/auth.dart';
 import 'package:invy/util/toast.dart';

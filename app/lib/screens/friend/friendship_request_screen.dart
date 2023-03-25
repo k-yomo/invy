@@ -4,7 +4,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:invy/screens/friend/friend_request_screen.graphql.dart';
+import 'package:invy/screens/friend/friendship_request_screen.graphql.dart';
 import 'package:invy/services/graphql_client.dart';
 import 'package:invy/widgets/dynamic_links_manager.dart';
 

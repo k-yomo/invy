@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:invy/router.dart';
-import 'package:invy/screens/friend/friend_request_screen.graphql.dart';
+import 'package:invy/screens/friend/friendship_request_screen.graphql.dart';
 import 'package:invy/screens/user/user_friends_screen.graphql.dart';
 import 'package:invy/services/graphql_client.dart';
 import 'package:invy/state/auth.dart';
