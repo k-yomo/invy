@@ -79,13 +79,7 @@ class FriendsScreen extends HookConsumerWidget {
                         const SubTitle(text: "友建"),
                         InkWell(
                           onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                fullscreenDialog: true,
-                                builder: (context) =>
-                                    const FriendshipRequestScreen(),
-                              ),
-                            );
+                            const FriendshipRequestRoute().push(context);
                           },
                           child: const _AddFriend(),
                         ),

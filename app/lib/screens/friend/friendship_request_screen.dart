@@ -1,10 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:invy/router.dart';
 import 'package:invy/screens/friend/friend_qr_code_reader_screen.dart';
 import 'package:invy/screens/friend/friendship_request_screen.graphql.dart';
 import 'package:invy/services/graphql_client.dart';
@@ -46,12 +46,7 @@ class FriendshipRequestScreen extends HookConsumerWidget {
             margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
             child: TextButton(
               onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    fullscreenDialog: true,
-                    builder: (context) => const FriendQRCodeReaderScreen(),
-                  ),
-                );
+                const FriendQRCodeReaderRoute().push(context);
               },
               style: TextButton.styleFrom(
                 minimumSize: const Size.fromHeight(0),

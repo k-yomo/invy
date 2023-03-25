@@ -48,7 +48,7 @@ class ChatState extends ConsumerState<Chat> {
   int _limit = 20;
   bool _isAttachmentUploading = false;
   List<chatUITypes.Message> _chatMessages = [];
-  Map<String, chatUITypes.PreviewData> _chatMessagePreviewMap = {};
+  final Map<String, chatUITypes.PreviewData> _chatMessagePreviewMap = {};
 
   final int _limitIncrement = 20;
 
@@ -253,6 +253,7 @@ class ChatState extends ConsumerState<Chat> {
       setState(() {
         _chatMessages = chatMessages;
       });
+      return null;
     }, [chatMessageSnapshot.data]);
 
     return chatUI.Chat(

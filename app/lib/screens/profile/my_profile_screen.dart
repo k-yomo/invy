@@ -1,13 +1,10 @@
 import 'dart:ui';
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:invy/config/config.dart';
-import 'package:invy/constants/urls.dart';
 import 'package:invy/router.dart';
 import 'package:invy/screens/profile/profile_edit_screen.dart';
 import 'package:invy/screens/settings_screen.dart';

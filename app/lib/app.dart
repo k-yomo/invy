@@ -3,7 +3,6 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
-import 'package:go_router/go_router.dart';
 import 'package:graphql/client.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:invy/graphql/viewer.graphql.dart';
@@ -42,7 +41,7 @@ ThemeData lightTheme() => ThemeData.from(
     );
 
 class App extends StatefulHookConsumerWidget {
-  App({super.key, required this.initialRoute});
+  const App({super.key, required this.initialRoute});
 
   final Uri? initialRoute;
 

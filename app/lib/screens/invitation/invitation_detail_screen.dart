@@ -38,7 +38,7 @@ class InvitationDetailRoute extends GoRouteData {
 }
 
 class InvitationDetailScreen extends HookConsumerWidget {
-  InvitationDetailScreen({
+  const InvitationDetailScreen({
     super.key,
     required this.invitationId,
   });
@@ -219,7 +219,7 @@ class InvitationDetailScreen extends HookConsumerWidget {
                           chatRoomId: invitation.chatRoomId!,
                           users: [invitation.user, ...invitation.acceptedUsers],
                         ))
-                      : SizedBox()
+                      : const SizedBox()
                 ],
               ),
               const Padding(
