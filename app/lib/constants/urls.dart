@@ -1,5 +1,7 @@
 import 'package:invy/constants/appstore.dart';
 
+const invyAppUrlHost = "invy-app.com";
+
 final termsOfServiceUrl =
     Uri.parse("https://invy.notion.site/621c11aaef6f418b8ab0c8f230d82a78");
 final privacyPolicyUrl =

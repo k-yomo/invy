@@ -2,10 +2,10 @@ import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:invy/config/config.dart';
 import 'package:invy/constants/appstore.dart';
 import 'package:invy/constants/urls.dart';
+import 'package:invy/router.dart';
 
 Future<ShortDynamicLink> buildUserProfileDynamicLink(String userId) async {
-  final profileLink = Uri.parse("https://invy-app.com/users/$userId");
-  return buildDynamicLink(profileLink);
+  return buildDynamicLink(buildUserProfileLink(userId));
 }
 
 Future<ShortDynamicLink> buildDynamicLink(Uri url) async {

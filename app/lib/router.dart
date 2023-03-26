@@ -2,6 +2,7 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:invy/constants/urls.dart';
 import 'package:invy/screens/friend/blocked_friends_screen.dart';
 import 'package:invy/screens/friend/freind_group_create_screen.dart';
 import 'package:invy/screens/friend/freind_group_detail_screen.dart';
@@ -197,7 +198,7 @@ class FriendsRoute extends GoRouteData {
 }
 
 Uri buildUserProfileLink(String userId) {
-  return Uri.parse("https://invy-app.com/users/$userId");
+  return Uri.parse("https://$invyAppUrlHost/users/$userId");
 }
 
 @TypedGoRoute<UserProfileRoute>(

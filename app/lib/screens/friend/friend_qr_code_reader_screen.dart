@@ -1,11 +1,11 @@
 import 'dart:io';
 
-import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:invy/constants/urls.dart';
+import 'package:invy/router.dart';
 import 'package:invy/state/auth.dart';
-import 'package:invy/util/dynamic_link.dart';
 import 'package:invy/widgets/app_bar_leading.dart';
 import 'package:invy/widgets/dynamic_links_manager.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
@@ -30,18 +30,13 @@ class FriendQRCodeReaderScreen extends StatefulHookConsumerWidget {
 
 class FriendQRCodeReaderScreenState
     extends ConsumerState<FriendQRCodeReaderScreen> {
+  bool isQRScanned = false;
   QRViewController? controller;
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
-  late ShortDynamicLink myProfileDynamicLink;
 
   @override
   void initState() {
     super.initState();
-
-    Future(() async {
-      myProfileDynamicLink =
-          await buildUserProfileDynamicLink(ref.read(loggedInUserProvider)!.id);
-    });
   }
 
   // In order to get hot reload to work we need to pause the camera if the platform
@@ -64,6 +59,7 @@ class FriendQRCodeReaderScreenState
   @override
   Widget build(BuildContext context) {
     final loggedInUser = ref.read(loggedInUserProvider)!;
+
     return Scaffold(
       appBar: AppBar(
         leading: const AppBarLeading(),
@@ -81,12 +77,19 @@ class FriendQRCodeReaderScreenState
             child: QRView(
               key: qrKey,
               onQRViewCreated: _onQRViewCreated,
+              overlay: QrScannerOverlayShape(
+                overlayColor: const Color.fromRGBO(0, 0, 0, 150),
+                borderColor: Colors.black,
+                borderRadius: 16,
+                borderLength: 24,
+                borderWidth: 8,
+              ),
             ),
           ),
           SafeArea(
-            child: Container(
-              margin: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-              child: TextButton(
+              child: Container(
+            margin: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+            child: TextButton(
                 onPressed: () {
                   showMaterialModalBottomSheet(
                     context: context,
@@ -98,12 +101,14 @@ class FriendQRCodeReaderScreenState
                     ),
                     builder: (BuildContext context) {
                       return SizedBox(
-                        height: 500,
+                        height: 600,
                         child: Container(
                           margin: const EdgeInsets.symmetric(
                               vertical: 50, horizontal: 60),
                           child: QrImage(
-                            data: myProfileDynamicLink.shortUrl.toString(),
+                            data: buildUserProfileLink(loggedInUser.id)
+                                .toString()
+                                .toString(),
                             version: QrVersions.auto,
                             size: 180.0,
                           ),
@@ -124,10 +129,8 @@ class FriendQRCodeReaderScreenState
                 child: const Text(
                   'マイQRコード',
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-              ),
-            ),
-          )
+                )),
+          ))
         ],
       ),
     );
@@ -138,13 +141,24 @@ class FriendQRCodeReaderScreenState
       this.controller = controller;
     });
     controller.scannedDataStream.listen((scanData) {
-      if (scanData.code != null) {
-        final url = Uri.parse(scanData.code!);
-        if (url.host != "invy-app.com") {
-          return;
-        }
-        GoRouter.of(context).push(url.path);
+      if (isQRScanned) {
+        return;
       }
+      if (scanData.code == null) {
+        return;
+      }
+      final url = Uri.parse(scanData.code!);
+      if (url.host != invyAppUrlHost) {
+        return;
+      }
+      setState(() {
+        isQRScanned = true;
+      });
+      GoRouter.of(context).push(url.path).then((_) {
+        setState(() {
+          isQRScanned = false;
+        });
+      });
     });
   }
 }

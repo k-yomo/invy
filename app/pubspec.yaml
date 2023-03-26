@@ -91,7 +91,7 @@ dependencies:
       ref: 2b3f9f84f46418c1b337968c88883995f65f47e7
       path: modal_bottom_sheet
   sentry_flutter: ^7.1.0
-  go_router: ^6.0.7
+  go_router: ^6.5.0
   riverpod_annotation: ^2.0.2
   freezed_annotation: ^2.2.0
   adaptive_dialog: ^1.8.2
