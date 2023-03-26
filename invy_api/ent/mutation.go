@@ -2661,6 +2661,7 @@ type InvitationMutation struct {
 	starts_at                     *time.Time
 	expires_at                    *time.Time
 	chat_room_id                  *uuid.UUID
+	status                        *invitation.Status
 	created_at                    *time.Time
 	updated_at                    *time.Time
 	clearedFields                 map[string]struct{}
@@ -3062,6 +3063,42 @@ func (m *InvitationMutation) ResetChatRoomID() {
 	delete(m.clearedFields, invitation.FieldChatRoomID)
 }
 
+// SetStatus sets the "status" field.
+func (m *InvitationMutation) SetStatus(i invitation.Status) {
+	m.status = &i
+}
+
+// Status returns the value of the "status" field in the mutation.
+func (m *InvitationMutation) Status() (r invitation.Status, exists bool) {
+	v := m.status
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStatus returns the old "status" field's value of the Invitation entity.
+// If the Invitation object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *InvitationMutation) OldStatus(ctx context.Context) (v invitation.Status, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldStatus is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldStatus requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStatus: %w", err)
+	}
+	return oldValue.Status, nil
+}
+
+// ResetStatus resets all changes to the "status" field.
+func (m *InvitationMutation) ResetStatus() {
+	m.status = nil
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (m *InvitationMutation) SetCreatedAt(t time.Time) {
 	m.created_at = &t
@@ -3356,7 +3393,7 @@ func (m *InvitationMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *InvitationMutation) Fields() []string {
-	fields := make([]string, 0, 9)
+	fields := make([]string, 0, 10)
 	if m.user != nil {
 		fields = append(fields, invitation.FieldUserID)
 	}
@@ -3377,6 +3414,9 @@ func (m *InvitationMutation) Fields() []string {
 	}
 	if m.chat_room_id != nil {
 		fields = append(fields, invitation.FieldChatRoomID)
+	}
+	if m.status != nil {
+		fields = append(fields, invitation.FieldStatus)
 	}
 	if m.created_at != nil {
 		fields = append(fields, invitation.FieldCreatedAt)
@@ -3406,6 +3446,8 @@ func (m *InvitationMutation) Field(name string) (ent.Value, bool) {
 		return m.ExpiresAt()
 	case invitation.FieldChatRoomID:
 		return m.ChatRoomID()
+	case invitation.FieldStatus:
+		return m.Status()
 	case invitation.FieldCreatedAt:
 		return m.CreatedAt()
 	case invitation.FieldUpdatedAt:
@@ -3433,6 +3475,8 @@ func (m *InvitationMutation) OldField(ctx context.Context, name string) (ent.Val
 		return m.OldExpiresAt(ctx)
 	case invitation.FieldChatRoomID:
 		return m.OldChatRoomID(ctx)
+	case invitation.FieldStatus:
+		return m.OldStatus(ctx)
 	case invitation.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
 	case invitation.FieldUpdatedAt:
@@ -3494,6 +3538,13 @@ func (m *InvitationMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetChatRoomID(v)
+		return nil
+	case invitation.FieldStatus:
+		v, ok := value.(invitation.Status)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStatus(v)
 		return nil
 	case invitation.FieldCreatedAt:
 		v, ok := value.(time.Time)
@@ -3593,6 +3644,9 @@ func (m *InvitationMutation) ResetField(name string) error {
 		return nil
 	case invitation.FieldChatRoomID:
 		m.ResetChatRoomID()
+		return nil
+	case invitation.FieldStatus:
+		m.ResetStatus()
 		return nil
 	case invitation.FieldCreatedAt:
 		m.ResetCreatedAt()

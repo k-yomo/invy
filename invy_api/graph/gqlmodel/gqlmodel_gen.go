@@ -71,6 +71,10 @@ type ChatRoom struct {
 func (ChatRoom) IsNode()               {}
 func (this ChatRoom) GetID() uuid.UUID { return this.ID }
 
+type CloseInvitationPayload struct {
+	Invitation *Invitation `json:"invitation"`
+}
+
 type Coordinate struct {
 	Latitude  float64 `json:"latitude"`
 	Longitude float64 `json:"longitude"`
@@ -104,6 +108,10 @@ type DeleteFriendGroupPayload struct {
 
 type DeleteInvitationAwaitingPayload struct {
 	DeletedInvitationAwaitingID uuid.UUID `json:"deletedInvitationAwaitingId"`
+}
+
+type DeleteInvitationPayload struct {
+	DeletedInvitationID uuid.UUID `json:"deletedInvitationId"`
 }
 
 type DenyFriendshipRequestPayload struct {
@@ -474,6 +482,7 @@ const (
 	PushNotificationTypeFriendshipRequestAccepted  PushNotificationType = "FRIENDSHIP_REQUEST_ACCEPTED"
 	PushNotificationTypeInvitationReceived         PushNotificationType = "INVITATION_RECEIVED"
 	PushNotificationTypeInvitationAccepted         PushNotificationType = "INVITATION_ACCEPTED"
+	PushNotificationTypeInvitationDeleted          PushNotificationType = "INVITATION_DELETED"
 	PushNotificationTypeInvitationAwaitingReceived PushNotificationType = "INVITATION_AWAITING_RECEIVED"
 	PushNotificationTypeChatMessageReceived        PushNotificationType = "CHAT_MESSAGE_RECEIVED"
 )
@@ -483,13 +492,14 @@ var AllPushNotificationType = []PushNotificationType{
 	PushNotificationTypeFriendshipRequestAccepted,
 	PushNotificationTypeInvitationReceived,
 	PushNotificationTypeInvitationAccepted,
+	PushNotificationTypeInvitationDeleted,
 	PushNotificationTypeInvitationAwaitingReceived,
 	PushNotificationTypeChatMessageReceived,
 }
 
 func (e PushNotificationType) IsValid() bool {
 	switch e {
-	case PushNotificationTypeFriendshipRequestReceived, PushNotificationTypeFriendshipRequestAccepted, PushNotificationTypeInvitationReceived, PushNotificationTypeInvitationAccepted, PushNotificationTypeInvitationAwaitingReceived, PushNotificationTypeChatMessageReceived:
+	case PushNotificationTypeFriendshipRequestReceived, PushNotificationTypeFriendshipRequestAccepted, PushNotificationTypeInvitationReceived, PushNotificationTypeInvitationAccepted, PushNotificationTypeInvitationDeleted, PushNotificationTypeInvitationAwaitingReceived, PushNotificationTypeChatMessageReceived:
 		return true
 	}
 	return false

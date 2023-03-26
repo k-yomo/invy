@@ -1526,6 +1526,7 @@ enum Enum$PushNotificationType {
   FRIENDSHIP_REQUEST_ACCEPTED,
   INVITATION_RECEIVED,
   INVITATION_ACCEPTED,
+  INVITATION_DELETED,
   INVITATION_AWAITING_RECEIVED,
   CHAT_MESSAGE_RECEIVED,
   $unknown
@@ -1541,6 +1542,8 @@ String toJson$Enum$PushNotificationType(Enum$PushNotificationType e) {
       return r'INVITATION_RECEIVED';
     case Enum$PushNotificationType.INVITATION_ACCEPTED:
       return r'INVITATION_ACCEPTED';
+    case Enum$PushNotificationType.INVITATION_DELETED:
+      return r'INVITATION_DELETED';
     case Enum$PushNotificationType.INVITATION_AWAITING_RECEIVED:
       return r'INVITATION_AWAITING_RECEIVED';
     case Enum$PushNotificationType.CHAT_MESSAGE_RECEIVED:
@@ -1560,6 +1563,8 @@ Enum$PushNotificationType fromJson$Enum$PushNotificationType(String value) {
       return Enum$PushNotificationType.INVITATION_RECEIVED;
     case r'INVITATION_ACCEPTED':
       return Enum$PushNotificationType.INVITATION_ACCEPTED;
+    case r'INVITATION_DELETED':
+      return Enum$PushNotificationType.INVITATION_DELETED;
     case r'INVITATION_AWAITING_RECEIVED':
       return Enum$PushNotificationType.INVITATION_AWAITING_RECEIVED;
     case r'CHAT_MESSAGE_RECEIVED':

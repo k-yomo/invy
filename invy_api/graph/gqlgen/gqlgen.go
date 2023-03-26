@@ -95,6 +95,10 @@ type ComplexityRoot struct {
 		UserIds   func(childComplexity int) int
 	}
 
+	CloseInvitationPayload struct {
+		Invitation func(childComplexity int) int
+	}
+
 	Coordinate struct {
 		Latitude  func(childComplexity int) int
 		Longitude func(childComplexity int) int
@@ -118,6 +122,10 @@ type ComplexityRoot struct {
 
 	DeleteInvitationAwaitingPayload struct {
 		DeletedInvitationAwaitingID func(childComplexity int) int
+	}
+
+	DeleteInvitationPayload struct {
+		DeletedInvitationID func(childComplexity int) int
 	}
 
 	DenyFriendshipRequestPayload struct {
@@ -173,10 +181,12 @@ type ComplexityRoot struct {
 		AcceptInvitation              func(childComplexity int, invitationID uuid.UUID) int
 		BlockUser                     func(childComplexity int, userID uuid.UUID) int
 		CancelFriendshipRequest       func(childComplexity int, friendshipRequestID uuid.UUID) int
+		CloseInvitation               func(childComplexity int, invitationID uuid.UUID) int
 		CreateFriendGroup             func(childComplexity int, input gqlmodel.CreateFriendGroupInput) int
 		CreateUser                    func(childComplexity int, input gqlmodel.CreateUserInput) int
 		DeleteAccount                 func(childComplexity int) int
 		DeleteFriendGroup             func(childComplexity int, friendGroupID uuid.UUID) int
+		DeleteInvitation              func(childComplexity int, invitationID uuid.UUID) int
 		DeleteInvitationAwaiting      func(childComplexity int, invitationAwaitingID uuid.UUID) int
 		DenyFriendshipRequest         func(childComplexity int, friendshipRequestID uuid.UUID) int
 		DenyInvitation                func(childComplexity int, invitationID uuid.UUID) int
@@ -353,6 +363,8 @@ type MutationResolver interface {
 	UpdateFriendGroup(ctx context.Context, input gqlmodel.UpdateFriendGroupInput) (*gqlmodel.UpdateFriendGroupPayload, error)
 	DeleteFriendGroup(ctx context.Context, friendGroupID uuid.UUID) (*gqlmodel.DeleteFriendGroupPayload, error)
 	SendInvitation(ctx context.Context, input *gqlmodel.SendInvitationInput) (*gqlmodel.SendInvitationPayload, error)
+	CloseInvitation(ctx context.Context, invitationID uuid.UUID) (*gqlmodel.CloseInvitationPayload, error)
+	DeleteInvitation(ctx context.Context, invitationID uuid.UUID) (*gqlmodel.DeleteInvitationPayload, error)
 	AcceptInvitation(ctx context.Context, invitationID uuid.UUID) (*gqlmodel.AcceptInvitationPayload, error)
 	DenyInvitation(ctx context.Context, invitationID uuid.UUID) (*gqlmodel.DenyInvitationPayload, error)
 	RegisterInvitationAwaiting(ctx context.Context, input gqlmodel.RegisterInvitationAwaitingInput) (*gqlmodel.RegisterInvitationAwaitingPayload, error)
@@ -519,6 +531,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ChatRoom.UserIds(childComplexity), true
 
+	case "CloseInvitationPayload.invitation":
+		if e.complexity.CloseInvitationPayload.Invitation == nil {
+			break
+		}
+
+		return e.complexity.CloseInvitationPayload.Invitation(childComplexity), true
+
 	case "Coordinate.latitude":
 		if e.complexity.Coordinate.Latitude == nil {
 			break
@@ -567,6 +586,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.DeleteInvitationAwaitingPayload.DeletedInvitationAwaitingID(childComplexity), true
+
+	case "DeleteInvitationPayload.deletedInvitationId":
+		if e.complexity.DeleteInvitationPayload.DeletedInvitationID == nil {
+			break
+		}
+
+		return e.complexity.DeleteInvitationPayload.DeletedInvitationID(childComplexity), true
 
 	case "DenyFriendshipRequestPayload.deniedFriendshipRequestId":
 		if e.complexity.DenyFriendshipRequestPayload.DeniedFriendshipRequestID == nil {
@@ -826,6 +852,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.CancelFriendshipRequest(childComplexity, args["friendshipRequestId"].(uuid.UUID)), true
 
+	case "Mutation.closeInvitation":
+		if e.complexity.Mutation.CloseInvitation == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_closeInvitation_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CloseInvitation(childComplexity, args["invitationId"].(uuid.UUID)), true
+
 	case "Mutation.createFriendGroup":
 		if e.complexity.Mutation.CreateFriendGroup == nil {
 			break
@@ -868,6 +906,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.DeleteFriendGroup(childComplexity, args["friendGroupId"].(uuid.UUID)), true
+
+	case "Mutation.deleteInvitation":
+		if e.complexity.Mutation.DeleteInvitation == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_deleteInvitation_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.DeleteInvitation(childComplexity, args["invitationId"].(uuid.UUID)), true
 
 	case "Mutation.deleteInvitationAwaiting":
 		if e.complexity.Mutation.DeleteInvitationAwaiting == nil {
@@ -1737,6 +1787,9 @@ type DeleteFriendGroupPayload {
 
 extend type Mutation {
     sendInvitation(input: SendInvitationInput): SendInvitationPayload! @authRequired
+    closeInvitation(invitationId: UUID!): CloseInvitationPayload! @authRequired
+    deleteInvitation(invitationId: UUID!): DeleteInvitationPayload! @authRequired
+
     acceptInvitation(invitationId: UUID!): AcceptInvitationPayload! @authRequired
     denyInvitation(invitationId: UUID!): DenyInvitationPayload! @authRequired
 
@@ -1777,6 +1830,14 @@ input SendInvitationInput {
 }
 type SendInvitationPayload {
     invitation: Invitation!
+}
+
+type CloseInvitationPayload {
+    invitation: Invitation!
+}
+
+type DeleteInvitationPayload {
+    deletedInvitationId: UUID!
 }
 
 type AcceptInvitationPayload {
@@ -1828,6 +1889,7 @@ enum PushNotificationType {
     FRIENDSHIP_REQUEST_ACCEPTED
     INVITATION_RECEIVED
     INVITATION_ACCEPTED
+    INVITATION_DELETED
     INVITATION_AWAITING_RECEIVED
     CHAT_MESSAGE_RECEIVED
 }
@@ -2134,6 +2196,21 @@ func (ec *executionContext) field_Mutation_cancelFriendshipRequest_args(ctx cont
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_closeInvitation_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 uuid.UUID
+	if tmp, ok := rawArgs["invitationId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("invitationId"))
+		arg0, err = ec.unmarshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["invitationId"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_createFriendGroup_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -2191,6 +2268,21 @@ func (ec *executionContext) field_Mutation_deleteInvitationAwaiting_args(ctx con
 		}
 	}
 	args["invitationAwaitingId"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_deleteInvitation_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 uuid.UUID
+	if tmp, ok := rawArgs["invitationId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("invitationId"))
+		arg0, err = ec.unmarshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["invitationId"] = arg0
 	return args, nil
 }
 
@@ -3405,6 +3497,74 @@ func (ec *executionContext) fieldContext_ChatRoom_createdAt(ctx context.Context,
 	return fc, nil
 }
 
+func (ec *executionContext) _CloseInvitationPayload_invitation(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.CloseInvitationPayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CloseInvitationPayload_invitation(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Invitation, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.Invitation)
+	fc.Result = res
+	return ec.marshalNInvitation2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐInvitation(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_CloseInvitationPayload_invitation(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CloseInvitationPayload",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Invitation_id(ctx, field)
+			case "userId":
+				return ec.fieldContext_Invitation_userId(ctx, field)
+			case "user":
+				return ec.fieldContext_Invitation_user(ctx, field)
+			case "location":
+				return ec.fieldContext_Invitation_location(ctx, field)
+			case "coordinate":
+				return ec.fieldContext_Invitation_coordinate(ctx, field)
+			case "comment":
+				return ec.fieldContext_Invitation_comment(ctx, field)
+			case "startsAt":
+				return ec.fieldContext_Invitation_startsAt(ctx, field)
+			case "expiresAt":
+				return ec.fieldContext_Invitation_expiresAt(ctx, field)
+			case "chatRoomId":
+				return ec.fieldContext_Invitation_chatRoomId(ctx, field)
+			case "acceptedUsers":
+				return ec.fieldContext_Invitation_acceptedUsers(ctx, field)
+			case "isAccepted":
+				return ec.fieldContext_Invitation_isAccepted(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Invitation", field.Name)
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Coordinate_latitude(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Coordinate) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Coordinate_latitude(ctx, field)
 	if err != nil {
@@ -3745,6 +3905,50 @@ func (ec *executionContext) _DeleteInvitationAwaitingPayload_deletedInvitationAw
 func (ec *executionContext) fieldContext_DeleteInvitationAwaitingPayload_deletedInvitationAwaitingId(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "DeleteInvitationAwaitingPayload",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type UUID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _DeleteInvitationPayload_deletedInvitationId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.DeleteInvitationPayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_DeleteInvitationPayload_deletedInvitationId(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DeletedInvitationID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(uuid.UUID)
+	fc.Result = res
+	return ec.marshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_DeleteInvitationPayload_deletedInvitationId(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DeleteInvitationPayload",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -6052,6 +6256,164 @@ func (ec *executionContext) fieldContext_Mutation_sendInvitation(ctx context.Con
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_sendInvitation_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_closeInvitation(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_closeInvitation(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().CloseInvitation(rctx, fc.Args["invitationId"].(uuid.UUID))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.AuthRequired == nil {
+				return nil, errors.New("directive authRequired is not implemented")
+			}
+			return ec.directives.AuthRequired(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*gqlmodel.CloseInvitationPayload); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/k-yomo/invy/invy_api/graph/gqlmodel.CloseInvitationPayload`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.CloseInvitationPayload)
+	fc.Result = res
+	return ec.marshalNCloseInvitationPayload2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐCloseInvitationPayload(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_closeInvitation(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "invitation":
+				return ec.fieldContext_CloseInvitationPayload_invitation(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type CloseInvitationPayload", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_closeInvitation_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_deleteInvitation(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_deleteInvitation(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().DeleteInvitation(rctx, fc.Args["invitationId"].(uuid.UUID))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.AuthRequired == nil {
+				return nil, errors.New("directive authRequired is not implemented")
+			}
+			return ec.directives.AuthRequired(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*gqlmodel.DeleteInvitationPayload); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/k-yomo/invy/invy_api/graph/gqlmodel.DeleteInvitationPayload`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.DeleteInvitationPayload)
+	fc.Result = res
+	return ec.marshalNDeleteInvitationPayload2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐDeleteInvitationPayload(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_deleteInvitation(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "deletedInvitationId":
+				return ec.fieldContext_DeleteInvitationPayload_deletedInvitationId(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type DeleteInvitationPayload", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_deleteInvitation_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return
 	}
@@ -13340,6 +13702,34 @@ func (ec *executionContext) _ChatRoom(ctx context.Context, sel ast.SelectionSet,
 	return out
 }
 
+var closeInvitationPayloadImplementors = []string{"CloseInvitationPayload"}
+
+func (ec *executionContext) _CloseInvitationPayload(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.CloseInvitationPayload) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, closeInvitationPayloadImplementors)
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("CloseInvitationPayload")
+		case "invitation":
+
+			out.Values[i] = ec._CloseInvitationPayload_invitation(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var coordinateImplementors = []string{"Coordinate"}
 
 func (ec *executionContext) _Coordinate(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.Coordinate) graphql.Marshaler {
@@ -13500,6 +13890,34 @@ func (ec *executionContext) _DeleteInvitationAwaitingPayload(ctx context.Context
 		case "deletedInvitationAwaitingId":
 
 			out.Values[i] = ec._DeleteInvitationAwaitingPayload_deletedInvitationAwaitingId(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var deleteInvitationPayloadImplementors = []string{"DeleteInvitationPayload"}
+
+func (ec *executionContext) _DeleteInvitationPayload(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.DeleteInvitationPayload) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, deleteInvitationPayloadImplementors)
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("DeleteInvitationPayload")
+		case "deletedInvitationId":
+
+			out.Values[i] = ec._DeleteInvitationPayload_deletedInvitationId(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				invalids++
@@ -14049,6 +14467,24 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_sendInvitation(ctx, field)
+			})
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "closeInvitation":
+
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_closeInvitation(ctx, field)
+			})
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "deleteInvitation":
+
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_deleteInvitation(ctx, field)
 			})
 
 			if out.Values[i] == graphql.Null {
@@ -15805,6 +16241,20 @@ func (ec *executionContext) marshalNChatMessageKind2githubᚗcomᚋkᚑyomoᚋin
 	return v
 }
 
+func (ec *executionContext) marshalNCloseInvitationPayload2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐCloseInvitationPayload(ctx context.Context, sel ast.SelectionSet, v gqlmodel.CloseInvitationPayload) graphql.Marshaler {
+	return ec._CloseInvitationPayload(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNCloseInvitationPayload2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐCloseInvitationPayload(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.CloseInvitationPayload) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._CloseInvitationPayload(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalNCreateFriendGroupInput2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐCreateFriendGroupInput(ctx context.Context, v interface{}) (gqlmodel.CreateFriendGroupInput, error) {
 	res, err := ec.unmarshalInputCreateFriendGroupInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -15893,6 +16343,20 @@ func (ec *executionContext) marshalNDeleteInvitationAwaitingPayload2ᚖgithubᚗ
 		return graphql.Null
 	}
 	return ec._DeleteInvitationAwaitingPayload(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNDeleteInvitationPayload2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐDeleteInvitationPayload(ctx context.Context, sel ast.SelectionSet, v gqlmodel.DeleteInvitationPayload) graphql.Marshaler {
+	return ec._DeleteInvitationPayload(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNDeleteInvitationPayload2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐDeleteInvitationPayload(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.DeleteInvitationPayload) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._DeleteInvitationPayload(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNDenyFriendshipRequestPayload2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐDenyFriendshipRequestPayload(ctx context.Context, sel ast.SelectionSet, v gqlmodel.DenyFriendshipRequestPayload) graphql.Marshaler {

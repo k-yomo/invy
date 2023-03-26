@@ -13,7 +13,6 @@ import (
 	"cloud.google.com/go/firestore"
 	fcm "firebase.google.com/go/v4/messaging"
 	"github.com/google/uuid"
-	"github.com/k-yomo/invy/invy_api/auth"
 	"github.com/k-yomo/invy/invy_api/ent"
 	"github.com/k-yomo/invy/invy_api/ent/invitation"
 	"github.com/k-yomo/invy/invy_api/ent/invitationacceptance"
@@ -24,6 +23,7 @@ import (
 	"github.com/k-yomo/invy/invy_api/graph/gqlgen"
 	"github.com/k-yomo/invy/invy_api/graph/gqlmodel"
 	"github.com/k-yomo/invy/invy_api/graph/loader"
+	"github.com/k-yomo/invy/invy_api/internal/auth"
 	"github.com/k-yomo/invy/invy_api/internal/xerrors"
 	"github.com/k-yomo/invy/pkg/convutil"
 	"github.com/k-yomo/invy/pkg/logging"
@@ -159,11 +159,8 @@ func (r *mutationResolver) SendInvitation(ctx context.Context, input *gqlmodel.S
 	targetUserPushNotificationTokens, err := r.DBQuery.Notification.GetNotifiableFriendUserPushTokens(ctx, authUserID, targetFriendUserIDs)
 	if err != nil {
 		logging.Logger(ctx).Error(err.Error(), zap.String("invitationId", dbInvitation.ID.String()))
-	}
-	if len(targetUserPushNotificationTokens) > 0 {
-		// TODO: Chunk tokens by 500 (max tokens per multicast)
-		// TODO: delete expired tokens
-		_, err = r.FCMClient.SendMulticast(ctx, &fcm.MulticastMessage{
+	} else {
+		err := r.Service.Notification.SendMulticast(ctx, &fcm.MulticastMessage{
 			Tokens: targetUserPushNotificationTokens,
 			Data: map[string]string{
 				"type":         gqlmodel.PushNotificationTypeInvitationReceived.String(),
@@ -180,18 +177,99 @@ func (r *mutationResolver) SendInvitation(ctx context.Context, input *gqlmodel.S
 			logging.Logger(ctx).Error(err.Error(), zap.String("invitationId", dbInvitation.ID.String()))
 		}
 	}
+	if len(targetUserPushNotificationTokens) > 0 {
+	}
 	return &gqlmodel.SendInvitationPayload{Invitation: conv.ConvertFromDBInvitation(dbInvitation)}, nil
+}
+
+// CloseInvitation is the resolver for the closeInvitation field.
+func (r *mutationResolver) CloseInvitation(ctx context.Context, invitationID uuid.UUID) (*gqlmodel.CloseInvitationPayload, error) {
+	authUserID := auth.GetCurrentUserID(ctx)
+
+	dbInvitation, err := r.DB.Invitation.Query().
+		Where(invitation.ID(invitationID), invitation.UserID(authUserID)).
+		Only(ctx)
+	if ent.IsNotFound(err) {
+		return nil, xerrors.NewErrNotFound(fmt.Errorf("invitation %q not found", invitationID))
+	}
+	if err != nil {
+		return nil, err
+	}
+
+	err = r.DB.Invitation.Update().
+		Where(invitation.ID(invitationID)).
+		SetStatus(invitation.StatusClosed).
+		Exec(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return &gqlmodel.CloseInvitationPayload{Invitation: conv.ConvertFromDBInvitation(dbInvitation)}, nil
+}
+
+// DeleteInvitation is the resolver for the deleteInvitation field.
+func (r *mutationResolver) DeleteInvitation(ctx context.Context, invitationID uuid.UUID) (*gqlmodel.DeleteInvitationPayload, error) {
+	authUserID := auth.GetCurrentUserID(ctx)
+
+	dbInvitation, err := r.DB.Invitation.Query().
+		Where(invitation.ID(invitationID), invitation.UserID(authUserID)).
+		Only(ctx)
+	if ent.IsNotFound(err) {
+		return nil, xerrors.NewErrNotFound(fmt.Errorf("invitation %q not found", invitationID))
+	}
+	if err != nil {
+		return nil, err
+	}
+
+	err = r.DB.Invitation.Update().
+		Where(invitation.ID(invitationID)).
+		SetStatus(invitation.StatusDeleted).
+		Exec(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	acceptedUserNotificationTokens, err := r.DB.InvitationAcceptance.Query().
+		Where(invitationacceptance.InvitationID(invitationID)).
+		QueryUser().
+		QueryPushNotificationTokens().
+		All(ctx)
+	if err != nil {
+		logging.Logger(ctx).Error(err.Error())
+	} else {
+		fcmTokens := convutil.ConvertToList(acceptedUserNotificationTokens, func(from *ent.PushNotificationToken) string {
+			return from.FcmToken
+		})
+		err := r.Service.Notification.SendMulticast(ctx, &fcm.MulticastMessage{
+			Tokens: fcmTokens,
+			Data: map[string]string{
+				"type":         gqlmodel.PushNotificationTypeInvitationDeleted.String(),
+				"invitationId": invitationID.String(),
+			},
+			Notification: &fcm.Notification{
+				Body: fmt.Sprintf("%s開催のおさそいが削除されました。", dbInvitation.StartsAt.In(timeutil.JST).Format("1月2日 15時04分")),
+			},
+			Android: &fcm.AndroidConfig{
+				Priority: "high",
+			},
+		})
+		if err != nil {
+			logging.Logger(ctx).Error(err.Error())
+		}
+	}
+
+	return &gqlmodel.DeleteInvitationPayload{DeletedInvitationID: invitationID}, nil
 }
 
 // AcceptInvitation is the resolver for the acceptInvitation field.
 func (r *mutationResolver) AcceptInvitation(ctx context.Context, invitationID uuid.UUID) (*gqlmodel.AcceptInvitationPayload, error) {
 	authUserID := auth.GetCurrentUserID(ctx)
 
-	isAuthUserInvited, err := IsAuthUserIncludedInTheInvitation(ctx, r.DB, invitationID)
+	canAuthUserRespond, err := CanAuthUserRespondToInvitation(ctx, r.DB, invitationID)
 	if err != nil {
 		return nil, err
 	}
-	if !isAuthUserInvited {
+	if !canAuthUserRespond {
 		return nil, xerrors.NewErrNotFound(fmt.Errorf("invitation %q not found", invitationID))
 	}
 
@@ -261,27 +339,27 @@ func (r *mutationResolver) AcceptInvitation(ctx context.Context, invitationID uu
 		QueryPushNotificationTokens().
 		All(ctx)
 	if err != nil {
-		return nil, err
-	}
-	fcmTokens := convutil.ConvertToList(append(inviterPushNotificationTokens, acceptedUserPushNotificationTokens...), func(from *ent.PushNotificationToken) string {
-		return from.FcmToken
-	})
-	// TODO: Chunk tokens by 500 (max tokens per multicast)
-	_, err = r.FCMClient.SendMulticast(ctx, &fcm.MulticastMessage{
-		Tokens: fcmTokens,
-		Data: map[string]string{
-			"type":         gqlmodel.PushNotificationTypeInvitationAccepted.String(),
-			"invitationId": invitationID.String(),
-		},
-		Notification: &fcm.Notification{
-			Body: fmt.Sprintf("%sさんがおさそいを承諾しました。", acceptedUserProfile.Nickname),
-		},
-		Android: &fcm.AndroidConfig{
-			Priority: "high",
-		},
-	})
-	if err != nil {
 		logging.Logger(ctx).Error(err.Error(), zap.String("invitationId", invitationID.String()))
+	} else {
+		fcmTokens := convutil.ConvertToList(append(inviterPushNotificationTokens, acceptedUserPushNotificationTokens...), func(from *ent.PushNotificationToken) string {
+			return from.FcmToken
+		})
+		err := r.Service.Notification.SendMulticast(ctx, &fcm.MulticastMessage{
+			Tokens: fcmTokens,
+			Data: map[string]string{
+				"type":         gqlmodel.PushNotificationTypeInvitationAccepted.String(),
+				"invitationId": invitationID.String(),
+			},
+			Notification: &fcm.Notification{
+				Body: fmt.Sprintf("%sさんがおさそいを承諾しました。", acceptedUserProfile.Nickname),
+			},
+			Android: &fcm.AndroidConfig{
+				Priority: "high",
+			},
+		})
+		if err != nil {
+			logging.Logger(ctx).Error(err.Error(), zap.String("invitationId", invitationID.String()))
+		}
 	}
 
 	dbInvitation, err := r.DB.Invitation.Get(ctx, invitationID)
@@ -303,11 +381,24 @@ func (r *mutationResolver) DenyInvitation(ctx context.Context, invitationID uuid
 		return nil, xerrors.NewErrNotFound(fmt.Errorf("invitation %q not found", invitationID))
 	}
 
-	// TODO: Should we check if user already accepted?
-	err = r.DB.InvitationDenial.Create().
-		SetInvitationID(invitationID).
-		SetUserID(authUserID).
-		Exec(ctx)
+	err = ent.RunInTx(ctx, r.DB, func(tx *ent.Tx) error {
+		_, err := tx.InvitationAcceptance.Delete().
+			Where(
+				invitationacceptance.InvitationID(invitationID),
+				invitationacceptance.UserID(authUserID),
+			).Exec(ctx)
+		if err != nil {
+			return err
+		}
+		err = tx.InvitationDenial.Create().
+			SetInvitationID(invitationID).
+			SetUserID(authUserID).
+			Exec(ctx)
+		if err != nil {
+			return err
+		}
+		return nil
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -368,10 +459,10 @@ func (r *mutationResolver) RegisterInvitationAwaiting(ctx context.Context, input
 		return nil, err
 	}
 	targetUserPushNotificationTokens, err := r.DBQuery.Notification.GetNotifiableFriendUserPushTokens(ctx, authUserID, friendUserIDs)
-	// TODO: Chunk tokens by 500 (max tokens per multicast)
-	// TODO: delete expired tokens
-	if len(targetUserPushNotificationTokens) > 0 {
-		_, err = r.FCMClient.SendMulticast(ctx, &fcm.MulticastMessage{
+	if err != nil {
+		logging.Logger(ctx).Error(err.Error(), zap.String("invitationAwaitingId", dbInvitationAwaiting.ID.String()))
+	} else {
+		err := r.Service.Notification.SendMulticast(ctx, &fcm.MulticastMessage{
 			Tokens: targetUserPushNotificationTokens,
 			Data: map[string]string{
 				"type":                 gqlmodel.PushNotificationTypeInvitationAwaitingReceived.String(),

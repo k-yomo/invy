@@ -7,12 +7,12 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/graph-gophers/dataloader/v7"
-	"github.com/k-yomo/invy/invy_api/auth"
 	"github.com/k-yomo/invy/invy_api/ent"
 	"github.com/k-yomo/invy/invy_api/ent/invitationacceptance"
 	"github.com/k-yomo/invy/invy_api/ent/invitationawaiting"
 	"github.com/k-yomo/invy/invy_api/ent/userlocation"
 	"github.com/k-yomo/invy/invy_api/ent/userprofile"
+	"github.com/k-yomo/invy/invy_api/internal/auth"
 	"github.com/k-yomo/invy/pkg/length"
 	"github.com/k-yomo/invy/pkg/location"
 	"github.com/k-yomo/invy/pkg/pgutil"

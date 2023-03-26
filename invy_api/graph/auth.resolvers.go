@@ -10,8 +10,6 @@ import (
 	"strings"
 
 	"github.com/google/uuid"
-	"github.com/k-yomo/invy/invy_api/auth"
-	"github.com/k-yomo/invy/invy_api/config"
 	"github.com/k-yomo/invy/invy_api/ent"
 	"github.com/k-yomo/invy/invy_api/ent/account"
 	"github.com/k-yomo/invy/invy_api/ent/pushnotificationtoken"
@@ -19,6 +17,8 @@ import (
 	"github.com/k-yomo/invy/invy_api/ent/userprofile"
 	"github.com/k-yomo/invy/invy_api/graph/conv"
 	"github.com/k-yomo/invy/invy_api/graph/gqlmodel"
+	"github.com/k-yomo/invy/invy_api/internal/auth"
+	"github.com/k-yomo/invy/invy_api/internal/config"
 	"github.com/k-yomo/invy/pkg/requestutil"
 	"github.com/k-yomo/invy/pkg/shortid"
 )

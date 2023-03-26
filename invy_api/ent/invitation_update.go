@@ -69,6 +69,20 @@ func (iu *InvitationUpdate) SetExpiresAt(t time.Time) *InvitationUpdate {
 	return iu
 }
 
+// SetStatus sets the "status" field.
+func (iu *InvitationUpdate) SetStatus(i invitation.Status) *InvitationUpdate {
+	iu.mutation.SetStatus(i)
+	return iu
+}
+
+// SetNillableStatus sets the "status" field if the given value is not nil.
+func (iu *InvitationUpdate) SetNillableStatus(i *invitation.Status) *InvitationUpdate {
+	if i != nil {
+		iu.SetStatus(*i)
+	}
+	return iu
+}
+
 // SetUpdatedAt sets the "updated_at" field.
 func (iu *InvitationUpdate) SetUpdatedAt(t time.Time) *InvitationUpdate {
 	iu.mutation.SetUpdatedAt(t)
@@ -226,6 +240,11 @@ func (iu *InvitationUpdate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (iu *InvitationUpdate) check() error {
+	if v, ok := iu.mutation.Status(); ok {
+		if err := invitation.StatusValidator(v); err != nil {
+			return &ValidationError{Name: "status", err: fmt.Errorf(`ent: validator failed for field "Invitation.status": %w`, err)}
+		}
+	}
 	if _, ok := iu.mutation.UserID(); iu.mutation.UserCleared() && !ok {
 		return errors.New(`ent: clearing a required unique edge "Invitation.user"`)
 	}
@@ -273,6 +292,9 @@ func (iu *InvitationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if iu.mutation.ChatRoomIDCleared() {
 		_spec.ClearField(invitation.FieldChatRoomID, field.TypeUUID)
+	}
+	if value, ok := iu.mutation.Status(); ok {
+		_spec.SetField(invitation.FieldStatus, field.TypeEnum, value)
 	}
 	if value, ok := iu.mutation.UpdatedAt(); ok {
 		_spec.SetField(invitation.FieldUpdatedAt, field.TypeTime, value)
@@ -495,6 +517,20 @@ func (iuo *InvitationUpdateOne) SetExpiresAt(t time.Time) *InvitationUpdateOne {
 	return iuo
 }
 
+// SetStatus sets the "status" field.
+func (iuo *InvitationUpdateOne) SetStatus(i invitation.Status) *InvitationUpdateOne {
+	iuo.mutation.SetStatus(i)
+	return iuo
+}
+
+// SetNillableStatus sets the "status" field if the given value is not nil.
+func (iuo *InvitationUpdateOne) SetNillableStatus(i *invitation.Status) *InvitationUpdateOne {
+	if i != nil {
+		iuo.SetStatus(*i)
+	}
+	return iuo
+}
+
 // SetUpdatedAt sets the "updated_at" field.
 func (iuo *InvitationUpdateOne) SetUpdatedAt(t time.Time) *InvitationUpdateOne {
 	iuo.mutation.SetUpdatedAt(t)
@@ -659,6 +695,11 @@ func (iuo *InvitationUpdateOne) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (iuo *InvitationUpdateOne) check() error {
+	if v, ok := iuo.mutation.Status(); ok {
+		if err := invitation.StatusValidator(v); err != nil {
+			return &ValidationError{Name: "status", err: fmt.Errorf(`ent: validator failed for field "Invitation.status": %w`, err)}
+		}
+	}
 	if _, ok := iuo.mutation.UserID(); iuo.mutation.UserCleared() && !ok {
 		return errors.New(`ent: clearing a required unique edge "Invitation.user"`)
 	}
@@ -723,6 +764,9 @@ func (iuo *InvitationUpdateOne) sqlSave(ctx context.Context) (_node *Invitation,
 	}
 	if iuo.mutation.ChatRoomIDCleared() {
 		_spec.ClearField(invitation.FieldChatRoomID, field.TypeUUID)
+	}
+	if value, ok := iuo.mutation.Status(); ok {
+		_spec.SetField(invitation.FieldStatus, field.TypeEnum, value)
 	}
 	if value, ok := iuo.mutation.UpdatedAt(); ok {
 		_spec.SetField(invitation.FieldUpdatedAt, field.TypeTime, value)

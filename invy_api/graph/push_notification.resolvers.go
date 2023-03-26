@@ -7,9 +7,9 @@ package graph
 import (
 	"context"
 
-	"github.com/k-yomo/invy/invy_api/auth"
 	"github.com/k-yomo/invy/invy_api/ent/pushnotificationtoken"
 	"github.com/k-yomo/invy/invy_api/graph/gqlmodel"
+	"github.com/k-yomo/invy/invy_api/internal/auth"
 )
 
 // RegisterPushNotificationToken is the resolver for the registerPushNotificationToken field.

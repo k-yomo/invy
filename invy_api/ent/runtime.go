@@ -82,11 +82,11 @@ func init() {
 	invitationFields := schema.Invitation{}.Fields()
 	_ = invitationFields
 	// invitationDescCreatedAt is the schema descriptor for created_at field.
-	invitationDescCreatedAt := invitationFields[8].Descriptor()
+	invitationDescCreatedAt := invitationFields[9].Descriptor()
 	// invitation.DefaultCreatedAt holds the default value on creation for the created_at field.
 	invitation.DefaultCreatedAt = invitationDescCreatedAt.Default.(func() time.Time)
 	// invitationDescUpdatedAt is the schema descriptor for updated_at field.
-	invitationDescUpdatedAt := invitationFields[9].Descriptor()
+	invitationDescUpdatedAt := invitationFields[10].Descriptor()
 	// invitation.DefaultUpdatedAt holds the default value on creation for the updated_at field.
 	invitation.DefaultUpdatedAt = invitationDescUpdatedAt.Default.(func() time.Time)
 	// invitation.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.

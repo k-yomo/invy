@@ -79,6 +79,20 @@ func (ic *InvitationCreate) SetNillableChatRoomID(u *uuid.UUID) *InvitationCreat
 	return ic
 }
 
+// SetStatus sets the "status" field.
+func (ic *InvitationCreate) SetStatus(i invitation.Status) *InvitationCreate {
+	ic.mutation.SetStatus(i)
+	return ic
+}
+
+// SetNillableStatus sets the "status" field if the given value is not nil.
+func (ic *InvitationCreate) SetNillableStatus(i *invitation.Status) *InvitationCreate {
+	if i != nil {
+		ic.SetStatus(*i)
+	}
+	return ic
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (ic *InvitationCreate) SetCreatedAt(t time.Time) *InvitationCreate {
 	ic.mutation.SetCreatedAt(t)
@@ -206,6 +220,10 @@ func (ic *InvitationCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (ic *InvitationCreate) defaults() {
+	if _, ok := ic.mutation.Status(); !ok {
+		v := invitation.DefaultStatus
+		ic.mutation.SetStatus(v)
+	}
 	if _, ok := ic.mutation.CreatedAt(); !ok {
 		v := invitation.DefaultCreatedAt()
 		ic.mutation.SetCreatedAt(v)
@@ -236,6 +254,14 @@ func (ic *InvitationCreate) check() error {
 	}
 	if _, ok := ic.mutation.ExpiresAt(); !ok {
 		return &ValidationError{Name: "expires_at", err: errors.New(`ent: missing required field "Invitation.expires_at"`)}
+	}
+	if _, ok := ic.mutation.Status(); !ok {
+		return &ValidationError{Name: "status", err: errors.New(`ent: missing required field "Invitation.status"`)}
+	}
+	if v, ok := ic.mutation.Status(); ok {
+		if err := invitation.StatusValidator(v); err != nil {
+			return &ValidationError{Name: "status", err: fmt.Errorf(`ent: validator failed for field "Invitation.status": %w`, err)}
+		}
 	}
 	if _, ok := ic.mutation.CreatedAt(); !ok {
 		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Invitation.created_at"`)}
@@ -311,6 +337,10 @@ func (ic *InvitationCreate) createSpec() (*Invitation, *sqlgraph.CreateSpec) {
 	if value, ok := ic.mutation.ChatRoomID(); ok {
 		_spec.SetField(invitation.FieldChatRoomID, field.TypeUUID, value)
 		_node.ChatRoomID = &value
+	}
+	if value, ok := ic.mutation.Status(); ok {
+		_spec.SetField(invitation.FieldStatus, field.TypeEnum, value)
+		_node.Status = value
 	}
 	if value, ok := ic.mutation.CreatedAt(); ok {
 		_spec.SetField(invitation.FieldCreatedAt, field.TypeTime, value)
@@ -515,6 +545,18 @@ func (u *InvitationUpsert) UpdateExpiresAt() *InvitationUpsert {
 	return u
 }
 
+// SetStatus sets the "status" field.
+func (u *InvitationUpsert) SetStatus(v invitation.Status) *InvitationUpsert {
+	u.Set(invitation.FieldStatus, v)
+	return u
+}
+
+// UpdateStatus sets the "status" field to the value that was provided on create.
+func (u *InvitationUpsert) UpdateStatus() *InvitationUpsert {
+	u.SetExcluded(invitation.FieldStatus)
+	return u
+}
+
 // SetUpdatedAt sets the "updated_at" field.
 func (u *InvitationUpsert) SetUpdatedAt(v time.Time) *InvitationUpsert {
 	u.Set(invitation.FieldUpdatedAt, v)
@@ -658,6 +700,20 @@ func (u *InvitationUpsertOne) SetExpiresAt(v time.Time) *InvitationUpsertOne {
 func (u *InvitationUpsertOne) UpdateExpiresAt() *InvitationUpsertOne {
 	return u.Update(func(s *InvitationUpsert) {
 		s.UpdateExpiresAt()
+	})
+}
+
+// SetStatus sets the "status" field.
+func (u *InvitationUpsertOne) SetStatus(v invitation.Status) *InvitationUpsertOne {
+	return u.Update(func(s *InvitationUpsert) {
+		s.SetStatus(v)
+	})
+}
+
+// UpdateStatus sets the "status" field to the value that was provided on create.
+func (u *InvitationUpsertOne) UpdateStatus() *InvitationUpsertOne {
+	return u.Update(func(s *InvitationUpsert) {
+		s.UpdateStatus()
 	})
 }
 
@@ -969,6 +1025,20 @@ func (u *InvitationUpsertBulk) SetExpiresAt(v time.Time) *InvitationUpsertBulk {
 func (u *InvitationUpsertBulk) UpdateExpiresAt() *InvitationUpsertBulk {
 	return u.Update(func(s *InvitationUpsert) {
 		s.UpdateExpiresAt()
+	})
+}
+
+// SetStatus sets the "status" field.
+func (u *InvitationUpsertBulk) SetStatus(v invitation.Status) *InvitationUpsertBulk {
+	return u.Update(func(s *InvitationUpsert) {
+		s.SetStatus(v)
+	})
+}
+
+// UpdateStatus sets the "status" field to the value that was provided on create.
+func (u *InvitationUpsertBulk) UpdateStatus() *InvitationUpsertBulk {
+	return u.Update(func(s *InvitationUpsert) {
+		s.UpdateStatus()
 	})
 }
 

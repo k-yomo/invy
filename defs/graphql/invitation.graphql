@@ -4,6 +4,9 @@ extend type Query {
 
 extend type Mutation {
     sendInvitation(input: SendInvitationInput): SendInvitationPayload! @authRequired
+    closeInvitation(invitationId: UUID!): CloseInvitationPayload! @authRequired
+    deleteInvitation(invitationId: UUID!): DeleteInvitationPayload! @authRequired
+
     acceptInvitation(invitationId: UUID!): AcceptInvitationPayload! @authRequired
     denyInvitation(invitationId: UUID!): DenyInvitationPayload! @authRequired
 
@@ -44,6 +47,14 @@ input SendInvitationInput {
 }
 type SendInvitationPayload {
     invitation: Invitation!
+}
+
+type CloseInvitationPayload {
+    invitation: Invitation!
+}
+
+type DeleteInvitationPayload {
+    deletedInvitationId: UUID!
 }
 
 type AcceptInvitationPayload {

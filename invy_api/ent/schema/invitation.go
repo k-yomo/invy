@@ -36,6 +36,9 @@ func (Invitation) Fields() []ent.Field {
 			Immutable().
 			Nillable().
 			Optional(),
+		field.Enum("status").
+			Values("active", "closed", "deleted").
+			Default("active"),
 		field.Time("created_at").
 			Immutable().
 			Default(time.Now),

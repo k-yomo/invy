@@ -19,16 +19,17 @@ import (
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
-	"github.com/k-yomo/invy/invy_api/auth"
-	"github.com/k-yomo/invy/invy_api/config"
-	"github.com/k-yomo/invy/invy_api/device"
 	"github.com/k-yomo/invy/invy_api/ent"
 	_ "github.com/k-yomo/invy/invy_api/ent/runtime"
 	"github.com/k-yomo/invy/invy_api/graph"
 	"github.com/k-yomo/invy/invy_api/graph/directive"
 	"github.com/k-yomo/invy/invy_api/graph/gqlgen"
 	"github.com/k-yomo/invy/invy_api/graph/loader"
+	"github.com/k-yomo/invy/invy_api/internal/auth"
+	"github.com/k-yomo/invy/invy_api/internal/config"
+	"github.com/k-yomo/invy/invy_api/internal/device"
 	"github.com/k-yomo/invy/invy_api/query"
+	"github.com/k-yomo/invy/invy_api/service"
 	"github.com/k-yomo/invy/pkg/logging"
 	"github.com/k-yomo/invy/pkg/requestutil"
 	"github.com/k-yomo/invy/pkg/storage"
@@ -124,9 +125,9 @@ func main() {
 		Resolvers: &graph.Resolver{
 			DB:                       entDB,
 			DBQuery:                  query.NewQuery(bunDB),
+			Service:                  service.NewService(entDB, fcmClient),
 			FirebaseAuthClient:       firebaseAuthClient,
 			FirestoreClient:          firestoreClient,
-			FCMClient:                fcmClient,
 			AvatarUploader:           avatarUploader,
 			ChatMessageImageUploader: chatMessageImageUploader,
 		},

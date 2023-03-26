@@ -13,7 +13,6 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/google/uuid"
-	"github.com/k-yomo/invy/invy_api/auth"
 	"github.com/k-yomo/invy/invy_api/ent"
 	"github.com/k-yomo/invy/invy_api/ent/friendgroup"
 	"github.com/k-yomo/invy/invy_api/ent/friendship"
@@ -30,6 +29,7 @@ import (
 	"github.com/k-yomo/invy/invy_api/graph/gqlgen"
 	"github.com/k-yomo/invy/invy_api/graph/gqlmodel"
 	"github.com/k-yomo/invy/invy_api/graph/loader"
+	"github.com/k-yomo/invy/invy_api/internal/auth"
 	"github.com/k-yomo/invy/invy_api/internal/xerrors"
 	"github.com/k-yomo/invy/pkg/convutil"
 )
@@ -408,6 +408,7 @@ func (r *viewerResolver) SentInvitations(ctx context.Context, obj *gqlmodel.View
 	authUserID := auth.GetCurrentUserID(ctx)
 	dbInvitations, err := r.DB.Invitation.Query().
 		Where(invitation.UserID(authUserID)).
+		Where(invitation.StatusIn(invitation.StatusActive, invitation.StatusClosed)).
 		Where(invitation.StartsAtGTE(time.Now().Add(-12 * time.Hour))). // Do not show the old(started before 12H ago) invitations
 		All(ctx)
 	if err != nil {
@@ -425,6 +426,7 @@ func (r *viewerResolver) PendingInvitations(ctx context.Context, obj *gqlmodel.V
 		Where(invitationuser.UserID(authUserID)).
 		QueryInvitation().
 		Where(
+			invitation.StatusEQ(invitation.StatusActive),
 			invitation.ExpiresAtGTE(now),
 			func(s *sql.Selector) {
 				invitationAcceptanceTable := sql.Table(invitationacceptance.Table)
@@ -473,7 +475,10 @@ func (r *viewerResolver) AcceptedInvitations(ctx context.Context, obj *gqlmodel.
 	dbInvitations, err := r.DB.InvitationAcceptance.Query().
 		Where(invitationacceptance.UserID(authUserID)).
 		QueryInvitation().
-		Where(invitation.StartsAtGTE(time.Now().Add(-12 * time.Hour))). // Do not show the old(started before 12H ago) invitations
+		Where(
+			invitation.StatusIn(invitation.StatusActive, invitation.StatusClosed),
+			invitation.StartsAtGTE(time.Now().Add(-12*time.Hour)), // Do not show the old(started before 12H ago) invitations
+		).
 		All(ctx)
 	if err != nil {
 		return nil, err

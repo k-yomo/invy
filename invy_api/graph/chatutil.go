@@ -7,10 +7,10 @@ import (
 	"cloud.google.com/go/firestore"
 	fcm "firebase.google.com/go/v4/messaging"
 	"github.com/google/uuid"
-	"github.com/k-yomo/invy/invy_api/auth"
 	"github.com/k-yomo/invy/invy_api/ent/invitation"
 	"github.com/k-yomo/invy/invy_api/ent/userprofile"
 	"github.com/k-yomo/invy/invy_api/graph/gqlmodel"
+	"github.com/k-yomo/invy/invy_api/internal/auth"
 	"github.com/k-yomo/invy/invy_api/internal/xerrors"
 	"github.com/k-yomo/invy/pkg/convutil"
 	"github.com/k-yomo/invy/pkg/logging"
@@ -71,9 +71,7 @@ func (r *mutationResolver) sendChatMessageNotification(
 		logging.Logger(ctx).Error(err.Error())
 		return
 	}
-	// TODO: Chunk tokens by 500 (max tokens per multicast)
-	// TODO: delete expired tokens
-	_, err = r.FCMClient.SendMulticast(ctx, &fcm.MulticastMessage{
+	err = r.Service.Notification.SendMulticast(ctx, &fcm.MulticastMessage{
 		Tokens: targetUserPushNotificationTokens,
 		Data: map[string]string{
 			"type":         gqlmodel.PushNotificationTypeChatMessageReceived.String(),

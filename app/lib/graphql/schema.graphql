@@ -55,6 +55,10 @@ type ChatRoom implements Node {
   createdAt: Time!
 }
 
+type CloseInvitationPayload {
+  invitation: Invitation!
+}
+
 enum ConstraintFormat {
   EMAIL
   URL
@@ -95,6 +99,10 @@ type DeleteFriendGroupPayload {
 
 type DeleteInvitationAwaitingPayload {
   deletedInvitationAwaitingId: UUID!
+}
+
+type DeleteInvitationPayload {
+  deletedInvitationId: UUID!
 }
 
 type DenyFriendshipRequestPayload {
@@ -167,6 +175,8 @@ type Mutation {
   updateFriendGroup(input: UpdateFriendGroupInput!): UpdateFriendGroupPayload!
   deleteFriendGroup(friendGroupId: UUID!): DeleteFriendGroupPayload!
   sendInvitation(input: SendInvitationInput): SendInvitationPayload!
+  closeInvitation(invitationId: UUID!): CloseInvitationPayload!
+  deleteInvitation(invitationId: UUID!): DeleteInvitationPayload!
   acceptInvitation(invitationId: UUID!): AcceptInvitationPayload!
   denyInvitation(invitationId: UUID!): DenyInvitationPayload!
   registerInvitationAwaiting(input: RegisterInvitationAwaitingInput!): RegisterInvitationAwaitingPayload!
@@ -207,6 +217,7 @@ enum PushNotificationType {
   FRIENDSHIP_REQUEST_ACCEPTED
   INVITATION_RECEIVED
   INVITATION_ACCEPTED
+  INVITATION_DELETED
   INVITATION_AWAITING_RECEIVED
   CHAT_MESSAGE_RECEIVED
 }

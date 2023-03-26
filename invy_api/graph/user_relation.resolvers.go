@@ -11,7 +11,6 @@ import (
 
 	fcm "firebase.google.com/go/v4/messaging"
 	"github.com/google/uuid"
-	"github.com/k-yomo/invy/invy_api/auth"
 	"github.com/k-yomo/invy/invy_api/ent"
 	"github.com/k-yomo/invy/invy_api/ent/friendship"
 	"github.com/k-yomo/invy/invy_api/ent/friendshiprequest"
@@ -23,7 +22,9 @@ import (
 	"github.com/k-yomo/invy/invy_api/graph/gqlgen"
 	"github.com/k-yomo/invy/invy_api/graph/gqlmodel"
 	"github.com/k-yomo/invy/invy_api/graph/loader"
+	"github.com/k-yomo/invy/invy_api/internal/auth"
 	"github.com/k-yomo/invy/pkg/convutil"
+	"github.com/k-yomo/invy/pkg/logging"
 )
 
 // FromUser is the resolver for the fromUser field.
@@ -87,7 +88,7 @@ func (r *mutationResolver) RequestFriendship(ctx context.Context, friendUserID u
 	fcmTokens := convutil.ConvertToList(friendUserPushNotificationTokens, func(from *ent.PushNotificationToken) string {
 		return from.FcmToken
 	})
-	r.FCMClient.SendMulticast(ctx, &fcm.MulticastMessage{
+	err = r.Service.Notification.SendMulticast(ctx, &fcm.MulticastMessage{
 		Tokens: fcmTokens,
 		Data: map[string]string{
 			"type": gqlmodel.PushNotificationTypeFriendshipRequestReceived.String(),
@@ -99,6 +100,10 @@ func (r *mutationResolver) RequestFriendship(ctx context.Context, friendUserID u
 			Priority: "high",
 		},
 	})
+	if err != nil {
+		logging.Logger(ctx).Error(err.Error())
+	}
+
 	return &gqlmodel.RequestFriendshipPayload{FriendShipRequest: conv.ConvertFromDBFriendshipRequest(dbFriendshipRequest)}, nil
 }
 
@@ -170,7 +175,7 @@ func (r *mutationResolver) AcceptFriendshipRequest(ctx context.Context, friendsh
 	fcmTokens := convutil.ConvertToList(requestedUserPushNotificationTokens, func(from *ent.PushNotificationToken) string {
 		return from.FcmToken
 	})
-	r.FCMClient.SendMulticast(ctx, &fcm.MulticastMessage{
+	err = r.Service.Notification.SendMulticast(ctx, &fcm.MulticastMessage{
 		Tokens: fcmTokens,
 		Data: map[string]string{
 			"type": gqlmodel.PushNotificationTypeFriendshipRequestAccepted.String(),
@@ -182,6 +187,10 @@ func (r *mutationResolver) AcceptFriendshipRequest(ctx context.Context, friendsh
 			Priority: "high",
 		},
 	})
+	if err != nil {
+		logging.Logger(ctx).Error(err.Error())
+	}
+
 	return &gqlmodel.AcceptFriendshipRequestPayload{AcceptedFriendshipRequestID: friendshipRequestID}, nil
 }
 
