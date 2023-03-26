@@ -64,6 +64,10 @@ type ComplexityRoot struct {
 		Invitation func(childComplexity int) int
 	}
 
+	ActivateInvitationPayload struct {
+		Invitation func(childComplexity int) int
+	}
+
 	BlockUserPayload struct {
 		BlockedUserID func(childComplexity int) int
 	}
@@ -163,6 +167,7 @@ type ComplexityRoot struct {
 		IsAccepted    func(childComplexity int) int
 		Location      func(childComplexity int) int
 		StartsAt      func(childComplexity int) int
+		Status        func(childComplexity int) int
 		User          func(childComplexity int) int
 		UserID        func(childComplexity int) int
 	}
@@ -179,6 +184,7 @@ type ComplexityRoot struct {
 	Mutation struct {
 		AcceptFriendshipRequest       func(childComplexity int, friendshipRequestID uuid.UUID) int
 		AcceptInvitation              func(childComplexity int, invitationID uuid.UUID) int
+		ActivateInvitation            func(childComplexity int, invitationID uuid.UUID) int
 		BlockUser                     func(childComplexity int, userID uuid.UUID) int
 		CancelFriendshipRequest       func(childComplexity int, friendshipRequestID uuid.UUID) int
 		CloseInvitation               func(childComplexity int, invitationID uuid.UUID) int
@@ -364,6 +370,7 @@ type MutationResolver interface {
 	DeleteFriendGroup(ctx context.Context, friendGroupID uuid.UUID) (*gqlmodel.DeleteFriendGroupPayload, error)
 	SendInvitation(ctx context.Context, input *gqlmodel.SendInvitationInput) (*gqlmodel.SendInvitationPayload, error)
 	CloseInvitation(ctx context.Context, invitationID uuid.UUID) (*gqlmodel.CloseInvitationPayload, error)
+	ActivateInvitation(ctx context.Context, invitationID uuid.UUID) (*gqlmodel.ActivateInvitationPayload, error)
 	DeleteInvitation(ctx context.Context, invitationID uuid.UUID) (*gqlmodel.DeleteInvitationPayload, error)
 	AcceptInvitation(ctx context.Context, invitationID uuid.UUID) (*gqlmodel.AcceptInvitationPayload, error)
 	DenyInvitation(ctx context.Context, invitationID uuid.UUID) (*gqlmodel.DenyInvitationPayload, error)
@@ -439,6 +446,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.AcceptInvitationPayload.Invitation(childComplexity), true
+
+	case "ActivateInvitationPayload.invitation":
+		if e.complexity.ActivateInvitationPayload.Invitation == nil {
+			break
+		}
+
+		return e.complexity.ActivateInvitationPayload.Invitation(childComplexity), true
 
 	case "BlockUserPayload.blockedUserId":
 		if e.complexity.BlockUserPayload.BlockedUserID == nil {
@@ -748,6 +762,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Invitation.StartsAt(childComplexity), true
 
+	case "Invitation.status":
+		if e.complexity.Invitation.Status == nil {
+			break
+		}
+
+		return e.complexity.Invitation.Status(childComplexity), true
+
 	case "Invitation.user":
 		if e.complexity.Invitation.User == nil {
 			break
@@ -827,6 +848,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.AcceptInvitation(childComplexity, args["invitationId"].(uuid.UUID)), true
+
+	case "Mutation.activateInvitation":
+		if e.complexity.Mutation.ActivateInvitation == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_activateInvitation_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.ActivateInvitation(childComplexity, args["invitationId"].(uuid.UUID)), true
 
 	case "Mutation.blockUser":
 		if e.complexity.Mutation.BlockUser == nil {
@@ -1788,6 +1821,7 @@ type DeleteFriendGroupPayload {
 extend type Mutation {
     sendInvitation(input: SendInvitationInput): SendInvitationPayload! @authRequired
     closeInvitation(invitationId: UUID!): CloseInvitationPayload! @authRequired
+    activateInvitation(invitationId: UUID!): ActivateInvitationPayload! @authRequired
     deleteInvitation(invitationId: UUID!): DeleteInvitationPayload! @authRequired
 
     acceptInvitation(invitationId: UUID!): AcceptInvitationPayload! @authRequired
@@ -1802,8 +1836,14 @@ type Coordinate {
     longitude: Float!
 }
 
+enum InvitationStatus {
+    ACTIVE
+    CLOSED
+}
+
 type Invitation implements Node {
     id: UUID!
+    status: InvitationStatus!
     userId: UUID!
     user: User! @goField(forceResolver: true)
     location: String!
@@ -1833,6 +1873,10 @@ type SendInvitationPayload {
 }
 
 type CloseInvitationPayload {
+    invitation: Invitation!
+}
+
+type ActivateInvitationPayload {
     invitation: Invitation!
 }
 
@@ -2152,6 +2196,21 @@ func (ec *executionContext) field_Mutation_acceptFriendshipRequest_args(ctx cont
 }
 
 func (ec *executionContext) field_Mutation_acceptInvitation_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 uuid.UUID
+	if tmp, ok := rawArgs["invitationId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("invitationId"))
+		arg0, err = ec.unmarshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["invitationId"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_activateInvitation_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 uuid.UUID
@@ -2898,6 +2957,78 @@ func (ec *executionContext) fieldContext_AcceptInvitationPayload_invitation(ctx 
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Invitation_id(ctx, field)
+			case "status":
+				return ec.fieldContext_Invitation_status(ctx, field)
+			case "userId":
+				return ec.fieldContext_Invitation_userId(ctx, field)
+			case "user":
+				return ec.fieldContext_Invitation_user(ctx, field)
+			case "location":
+				return ec.fieldContext_Invitation_location(ctx, field)
+			case "coordinate":
+				return ec.fieldContext_Invitation_coordinate(ctx, field)
+			case "comment":
+				return ec.fieldContext_Invitation_comment(ctx, field)
+			case "startsAt":
+				return ec.fieldContext_Invitation_startsAt(ctx, field)
+			case "expiresAt":
+				return ec.fieldContext_Invitation_expiresAt(ctx, field)
+			case "chatRoomId":
+				return ec.fieldContext_Invitation_chatRoomId(ctx, field)
+			case "acceptedUsers":
+				return ec.fieldContext_Invitation_acceptedUsers(ctx, field)
+			case "isAccepted":
+				return ec.fieldContext_Invitation_isAccepted(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Invitation", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ActivateInvitationPayload_invitation(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.ActivateInvitationPayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ActivateInvitationPayload_invitation(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Invitation, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.Invitation)
+	fc.Result = res
+	return ec.marshalNInvitation2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐInvitation(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ActivateInvitationPayload_invitation(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ActivateInvitationPayload",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Invitation_id(ctx, field)
+			case "status":
+				return ec.fieldContext_Invitation_status(ctx, field)
 			case "userId":
 				return ec.fieldContext_Invitation_userId(ctx, field)
 			case "user":
@@ -3538,6 +3669,8 @@ func (ec *executionContext) fieldContext_CloseInvitationPayload_invitation(ctx c
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Invitation_id(ctx, field)
+			case "status":
+				return ec.fieldContext_Invitation_status(ctx, field)
 			case "userId":
 				return ec.fieldContext_Invitation_userId(ctx, field)
 			case "user":
@@ -4044,6 +4177,8 @@ func (ec *executionContext) fieldContext_DenyInvitationPayload_invitation(ctx co
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Invitation_id(ctx, field)
+			case "status":
+				return ec.fieldContext_Invitation_status(ctx, field)
 			case "userId":
 				return ec.fieldContext_Invitation_userId(ctx, field)
 			case "user":
@@ -4660,6 +4795,50 @@ func (ec *executionContext) fieldContext_Invitation_id(ctx context.Context, fiel
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type UUID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Invitation_status(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Invitation) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Invitation_status(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Status, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(gqlmodel.InvitationStatus)
+	fc.Result = res
+	return ec.marshalNInvitationStatus2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐInvitationStatus(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Invitation_status(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Invitation",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type InvitationStatus does not have child fields")
 		},
 	}
 	return fc, nil
@@ -6335,6 +6514,85 @@ func (ec *executionContext) fieldContext_Mutation_closeInvitation(ctx context.Co
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_closeInvitation_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_activateInvitation(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_activateInvitation(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().ActivateInvitation(rctx, fc.Args["invitationId"].(uuid.UUID))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.AuthRequired == nil {
+				return nil, errors.New("directive authRequired is not implemented")
+			}
+			return ec.directives.AuthRequired(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*gqlmodel.ActivateInvitationPayload); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/k-yomo/invy/invy_api/graph/gqlmodel.ActivateInvitationPayload`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.ActivateInvitationPayload)
+	fc.Result = res
+	return ec.marshalNActivateInvitationPayload2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐActivateInvitationPayload(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_activateInvitation(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "invitation":
+				return ec.fieldContext_ActivateInvitationPayload_invitation(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type ActivateInvitationPayload", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_activateInvitation_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return
 	}
@@ -8038,6 +8296,8 @@ func (ec *executionContext) fieldContext_Query_invitation(ctx context.Context, f
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Invitation_id(ctx, field)
+			case "status":
+				return ec.fieldContext_Invitation_status(ctx, field)
 			case "userId":
 				return ec.fieldContext_Invitation_userId(ctx, field)
 			case "user":
@@ -8873,6 +9133,8 @@ func (ec *executionContext) fieldContext_SendInvitationPayload_invitation(ctx co
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Invitation_id(ctx, field)
+			case "status":
+				return ec.fieldContext_Invitation_status(ctx, field)
 			case "userId":
 				return ec.fieldContext_Invitation_userId(ctx, field)
 			case "user":
@@ -10793,6 +11055,8 @@ func (ec *executionContext) fieldContext_Viewer_sentInvitations(ctx context.Cont
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Invitation_id(ctx, field)
+			case "status":
+				return ec.fieldContext_Invitation_status(ctx, field)
 			case "userId":
 				return ec.fieldContext_Invitation_userId(ctx, field)
 			case "user":
@@ -10861,6 +11125,8 @@ func (ec *executionContext) fieldContext_Viewer_pendingInvitations(ctx context.C
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Invitation_id(ctx, field)
+			case "status":
+				return ec.fieldContext_Invitation_status(ctx, field)
 			case "userId":
 				return ec.fieldContext_Invitation_userId(ctx, field)
 			case "user":
@@ -10929,6 +11195,8 @@ func (ec *executionContext) fieldContext_Viewer_acceptedInvitations(ctx context.
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Invitation_id(ctx, field)
+			case "status":
+				return ec.fieldContext_Invitation_status(ctx, field)
 			case "userId":
 				return ec.fieldContext_Invitation_userId(ctx, field)
 			case "user":
@@ -13485,6 +13753,34 @@ func (ec *executionContext) _AcceptInvitationPayload(ctx context.Context, sel as
 	return out
 }
 
+var activateInvitationPayloadImplementors = []string{"ActivateInvitationPayload"}
+
+func (ec *executionContext) _ActivateInvitationPayload(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.ActivateInvitationPayload) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, activateInvitationPayloadImplementors)
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ActivateInvitationPayload")
+		case "invitation":
+
+			out.Values[i] = ec._ActivateInvitationPayload_invitation(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var blockUserPayloadImplementors = []string{"BlockUserPayload"}
 
 func (ec *executionContext) _BlockUserPayload(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.BlockUserPayload) graphql.Marshaler {
@@ -14164,6 +14460,13 @@ func (ec *executionContext) _Invitation(ctx context.Context, sel ast.SelectionSe
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
 			}
+		case "status":
+
+			out.Values[i] = ec._Invitation_status(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
 		case "userId":
 
 			out.Values[i] = ec._Invitation_userId(ctx, field, obj)
@@ -14476,6 +14779,15 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_closeInvitation(ctx, field)
+			})
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "activateInvitation":
+
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_activateInvitation(ctx, field)
 			})
 
 			if out.Values[i] == graphql.Null {
@@ -16168,6 +16480,20 @@ func (ec *executionContext) marshalNAcceptInvitationPayload2ᚖgithubᚗcomᚋk�
 	return ec._AcceptInvitationPayload(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalNActivateInvitationPayload2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐActivateInvitationPayload(ctx context.Context, sel ast.SelectionSet, v gqlmodel.ActivateInvitationPayload) graphql.Marshaler {
+	return ec._ActivateInvitationPayload(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNActivateInvitationPayload2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐActivateInvitationPayload(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.ActivateInvitationPayload) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._ActivateInvitationPayload(ctx, sel, v)
+}
+
 func (ec *executionContext) marshalNBlockUserPayload2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐBlockUserPayload(ctx context.Context, sel ast.SelectionSet, v gqlmodel.BlockUserPayload) graphql.Marshaler {
 	return ec._BlockUserPayload(ctx, sel, &v)
 }
@@ -16639,6 +16965,16 @@ func (ec *executionContext) marshalNInvitationAwaiting2ᚖgithubᚗcomᚋkᚑyom
 		return graphql.Null
 	}
 	return ec._InvitationAwaiting(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNInvitationStatus2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐInvitationStatus(ctx context.Context, v interface{}) (gqlmodel.InvitationStatus, error) {
+	var res gqlmodel.InvitationStatus
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNInvitationStatus2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐInvitationStatus(ctx context.Context, sel ast.SelectionSet, v gqlmodel.InvitationStatus) graphql.Marshaler {
+	return v
 }
 
 func (ec *executionContext) marshalNMuteUserPayload2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐMuteUserPayload(ctx context.Context, sel ast.SelectionSet, v gqlmodel.MuteUserPayload) graphql.Marshaler {

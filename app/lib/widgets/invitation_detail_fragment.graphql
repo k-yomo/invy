@@ -1,6 +1,7 @@
 
 fragment invitationDetailFragment on Invitation {
     id
+    status
     location
     coordinate {
         latitude

@@ -1,7 +1,10 @@
 package conv
 
 import (
+	"fmt"
+
 	"github.com/k-yomo/invy/invy_api/ent"
+	"github.com/k-yomo/invy/invy_api/ent/invitation"
 	"github.com/k-yomo/invy/invy_api/graph/gqlmodel"
 )
 
@@ -50,7 +53,12 @@ func ConvertFromDBFriendGroup(friendGroup *ent.FriendGroup) *gqlmodel.FriendGrou
 	}
 }
 
-func ConvertFromDBInvitation(invitation *ent.Invitation) *gqlmodel.Invitation {
+func ConvertFromDBInvitation(invitation *ent.Invitation) (*gqlmodel.Invitation, error) {
+	status, err := convertFromDBInvitationStatus(invitation.Status)
+	if err != nil {
+		return nil, err
+	}
+
 	var coordinate *gqlmodel.Coordinate
 	if invitation.Coordinate != nil {
 		coordinate = &gqlmodel.Coordinate{
@@ -58,8 +66,10 @@ func ConvertFromDBInvitation(invitation *ent.Invitation) *gqlmodel.Invitation {
 			Longitude: invitation.Coordinate.Coords().X(),
 		}
 	}
+
 	return &gqlmodel.Invitation{
 		ID:         invitation.ID,
+		Status:     status,
 		UserID:     invitation.UserID,
 		Location:   invitation.Location,
 		Coordinate: coordinate,
@@ -67,6 +77,17 @@ func ConvertFromDBInvitation(invitation *ent.Invitation) *gqlmodel.Invitation {
 		StartsAt:   invitation.StartsAt,
 		ExpiresAt:  invitation.ExpiresAt,
 		ChatRoomID: invitation.ChatRoomID,
+	}, nil
+}
+
+func convertFromDBInvitationStatus(status invitation.Status) (gqlmodel.InvitationStatus, error) {
+	switch status {
+	case invitation.StatusActive:
+		return gqlmodel.InvitationStatusActive, nil
+	case invitation.StatusClosed:
+		return gqlmodel.InvitationStatusActive, nil
+	default:
+		return "", fmt.Errorf("unhandled invitation status: %s", status)
 	}
 }
 

@@ -5,3 +5,27 @@ query invitationDetail($id: UUID!) {
         isAccepted
     }
 }
+
+mutation closeInvitation($id: UUID!) {
+    closeInvitation(invitationId: $id) {
+        invitation {
+            id
+            status
+        }
+    }
+}
+
+mutation activateInvitation($id: UUID!) {
+    activateInvitation(invitationId: $id) {
+        invitation {
+            id
+            status
+        }
+    }
+}
+
+mutation deleteInvitation($id: UUID!) {
+    deleteInvitation(invitationId: $id) {
+        deletedInvitationId
+    }
+}

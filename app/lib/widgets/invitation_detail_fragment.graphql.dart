@@ -1,9 +1,11 @@
+import '../graphql/schema.graphql.dart';
 import 'package:gql/ast.dart';
 import 'package:graphql/client.dart' as graphql;
 
 class Fragment$invitationDetailFragment {
   Fragment$invitationDetailFragment({
     required this.id,
+    required this.status,
     required this.location,
     this.coordinate,
     required this.comment,
@@ -18,6 +20,7 @@ class Fragment$invitationDetailFragment {
   factory Fragment$invitationDetailFragment.fromJson(
       Map<String, dynamic> json) {
     final l$id = json['id'];
+    final l$status = json['status'];
     final l$location = json['location'];
     final l$coordinate = json['coordinate'];
     final l$comment = json['comment'];
@@ -29,6 +32,7 @@ class Fragment$invitationDetailFragment {
     final l$$__typename = json['__typename'];
     return Fragment$invitationDetailFragment(
       id: (l$id as String),
+      status: fromJson$Enum$InvitationStatus((l$status as String)),
       location: (l$location as String),
       coordinate: l$coordinate == null
           ? null
@@ -49,6 +53,8 @@ class Fragment$invitationDetailFragment {
   }
 
   final String id;
+
+  final Enum$InvitationStatus status;
 
   final String location;
 
@@ -72,6 +78,8 @@ class Fragment$invitationDetailFragment {
     final _resultData = <String, dynamic>{};
     final l$id = id;
     _resultData['id'] = l$id;
+    final l$status = status;
+    _resultData['status'] = toJson$Enum$InvitationStatus(l$status);
     final l$location = location;
     _resultData['location'] = l$location;
     final l$coordinate = coordinate;
@@ -97,6 +105,7 @@ class Fragment$invitationDetailFragment {
   @override
   int get hashCode {
     final l$id = id;
+    final l$status = status;
     final l$location = location;
     final l$coordinate = coordinate;
     final l$comment = comment;
@@ -108,6 +117,7 @@ class Fragment$invitationDetailFragment {
     final l$$__typename = $__typename;
     return Object.hashAll([
       l$id,
+      l$status,
       l$location,
       l$coordinate,
       l$comment,
@@ -132,6 +142,11 @@ class Fragment$invitationDetailFragment {
     final l$id = id;
     final lOther$id = other.id;
     if (l$id != lOther$id) {
+      return false;
+    }
+    final l$status = status;
+    final lOther$status = other.status;
+    if (l$status != lOther$status) {
       return false;
     }
     final l$location = location;
@@ -210,6 +225,7 @@ abstract class CopyWith$Fragment$invitationDetailFragment<TRes> {
 
   TRes call({
     String? id,
+    Enum$InvitationStatus? status,
     String? location,
     Fragment$invitationDetailFragment$coordinate? coordinate,
     String? comment,
@@ -245,6 +261,7 @@ class _CopyWithImpl$Fragment$invitationDetailFragment<TRes>
 
   TRes call({
     Object? id = _undefined,
+    Object? status = _undefined,
     Object? location = _undefined,
     Object? coordinate = _undefined,
     Object? comment = _undefined,
@@ -257,6 +274,9 @@ class _CopyWithImpl$Fragment$invitationDetailFragment<TRes>
   }) =>
       _then(Fragment$invitationDetailFragment(
         id: id == _undefined || id == null ? _instance.id : (id as String),
+        status: status == _undefined || status == null
+            ? _instance.status
+            : (status as Enum$InvitationStatus),
         location: location == _undefined || location == null
             ? _instance.location
             : (location as String),
@@ -323,6 +343,7 @@ class _CopyWithStubImpl$Fragment$invitationDetailFragment<TRes>
 
   call({
     String? id,
+    Enum$InvitationStatus? status,
     String? location,
     Fragment$invitationDetailFragment$coordinate? coordinate,
     String? comment,
@@ -352,6 +373,13 @@ const fragmentDefinitioninvitationDetailFragment = FragmentDefinitionNode(
   selectionSet: SelectionSetNode(selections: [
     FieldNode(
       name: NameNode(value: 'id'),
+      alias: null,
+      arguments: [],
+      directives: [],
+      selectionSet: null,
+    ),
+    FieldNode(
+      name: NameNode(value: 'status'),
       alias: null,
       arguments: [],
       directives: [],

@@ -30,6 +30,10 @@ type AcceptInvitationPayload struct {
 	Invitation *Invitation `json:"invitation"`
 }
 
+type ActivateInvitationPayload struct {
+	Invitation *Invitation `json:"invitation"`
+}
+
 type BlockUserPayload struct {
 	BlockedUserID uuid.UUID `json:"blockedUserId"`
 }
@@ -146,17 +150,18 @@ func (FriendshipRequest) IsNode()               {}
 func (this FriendshipRequest) GetID() uuid.UUID { return this.ID }
 
 type Invitation struct {
-	ID            uuid.UUID   `json:"id"`
-	UserID        uuid.UUID   `json:"userId"`
-	User          *User       `json:"user"`
-	Location      string      `json:"location"`
-	Coordinate    *Coordinate `json:"coordinate"`
-	Comment       string      `json:"comment"`
-	StartsAt      time.Time   `json:"startsAt"`
-	ExpiresAt     time.Time   `json:"expiresAt"`
-	ChatRoomID    *uuid.UUID  `json:"chatRoomId"`
-	AcceptedUsers []*User     `json:"acceptedUsers"`
-	IsAccepted    bool        `json:"isAccepted"`
+	ID            uuid.UUID        `json:"id"`
+	Status        InvitationStatus `json:"status"`
+	UserID        uuid.UUID        `json:"userId"`
+	User          *User            `json:"user"`
+	Location      string           `json:"location"`
+	Coordinate    *Coordinate      `json:"coordinate"`
+	Comment       string           `json:"comment"`
+	StartsAt      time.Time        `json:"startsAt"`
+	ExpiresAt     time.Time        `json:"expiresAt"`
+	ChatRoomID    *uuid.UUID       `json:"chatRoomId"`
+	AcceptedUsers []*User          `json:"acceptedUsers"`
+	IsAccepted    bool             `json:"isAccepted"`
 }
 
 func (Invitation) IsNode()               {}
@@ -472,6 +477,47 @@ func (e *ErrorCode) UnmarshalGQL(v interface{}) error {
 }
 
 func (e ErrorCode) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type InvitationStatus string
+
+const (
+	InvitationStatusActive InvitationStatus = "ACTIVE"
+	InvitationStatusClosed InvitationStatus = "CLOSED"
+)
+
+var AllInvitationStatus = []InvitationStatus{
+	InvitationStatusActive,
+	InvitationStatusClosed,
+}
+
+func (e InvitationStatus) IsValid() bool {
+	switch e {
+	case InvitationStatusActive, InvitationStatusClosed:
+		return true
+	}
+	return false
+}
+
+func (e InvitationStatus) String() string {
+	return string(e)
+}
+
+func (e *InvitationStatus) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = InvitationStatus(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid InvitationStatus", str)
+	}
+	return nil
+}
+
+func (e InvitationStatus) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 

@@ -5,6 +5,7 @@ extend type Query {
 extend type Mutation {
     sendInvitation(input: SendInvitationInput): SendInvitationPayload! @authRequired
     closeInvitation(invitationId: UUID!): CloseInvitationPayload! @authRequired
+    activateInvitation(invitationId: UUID!): ActivateInvitationPayload! @authRequired
     deleteInvitation(invitationId: UUID!): DeleteInvitationPayload! @authRequired
 
     acceptInvitation(invitationId: UUID!): AcceptInvitationPayload! @authRequired
@@ -19,8 +20,14 @@ type Coordinate {
     longitude: Float!
 }
 
+enum InvitationStatus {
+    ACTIVE
+    CLOSED
+}
+
 type Invitation implements Node {
     id: UUID!
+    status: InvitationStatus!
     userId: UUID!
     user: User! @goField(forceResolver: true)
     location: String!
@@ -50,6 +57,10 @@ type SendInvitationPayload {
 }
 
 type CloseInvitationPayload {
+    invitation: Invitation!
+}
+
+type ActivateInvitationPayload {
     invitation: Invitation!
 }
 

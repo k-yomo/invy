@@ -1,16 +1,22 @@
+import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:invy/router.dart';
 import 'package:invy/screens/invitation/invitation_detail_screen.graphql.dart';
 import 'package:invy/services/graphql_client.dart';
+import 'package:invy/state/auth.dart';
+import 'package:invy/util/toast.dart';
 import 'package:invy/widgets/chat.dart';
 import 'package:invy/widgets/dynamic_links_manager.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../graphql/schema.graphql.dart';
 import '../../widgets/app_bar_leading.dart';
 
 const dateTimeFormat = 'M月d日 H時m分';
@@ -61,6 +67,7 @@ class InvitationDetailScreen extends HookConsumerWidget {
       return null;
     }, []);
 
+    final loggedInUser = ref.read(loggedInUserProvider)!;
     final graphqlClient = ref.read(graphqlClientProvider);
     final invitationQuery = useMemoized(() => graphqlClient
             .watchQuery$invitationDetail(WatchOptions$Query$invitationDetail(
@@ -74,6 +81,10 @@ class InvitationDetailScreen extends HookConsumerWidget {
       return const SizedBox();
     }
 
+    final invitationStatus = useState(invitation.status);
+    final isInvitationSentByLoggedInUser =
+        invitation.user.id == loggedInUser.id;
+
     return Scaffold(
         backgroundColor: Colors.white,
         body: SafeArea(
@@ -82,6 +93,8 @@ class InvitationDetailScreen extends HookConsumerWidget {
               Column(
                 children: [
                   ExpansionTile(
+                    textColor: Colors.black,
+                    iconColor: Colors.grey.shade600,
                     title: Container(
                       width: double.infinity,
                       padding: const EdgeInsets.only(left: 30),
@@ -163,6 +176,116 @@ class InvitationDetailScreen extends HookConsumerWidget {
                       ),
                     ),
                     children: [
+                      isInvitationSentByLoggedInUser
+                          ? Row(
+                              children: [
+                                Expanded(
+                                  child: TextButton(
+                                    style: TextButton.styleFrom(
+                                      shape: const RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.zero,
+                                      ),
+                                    ),
+                                    child: Column(
+                                      children: [
+                                        Icon(
+                                            invitationStatus.value ==
+                                                    Enum$InvitationStatus.ACTIVE
+                                                ? Icons.stop_circle
+                                                : Icons.play_circle,
+                                            color: Colors.black),
+                                        const Gap(5),
+                                        Text(
+                                            invitationStatus.value ==
+                                                    Enum$InvitationStatus.ACTIVE
+                                                ? "募集停止"
+                                                : "募集再開",
+                                            style:
+                                                const TextStyle(color: Colors.black))
+                                      ],
+                                    ),
+                                    onPressed: () async {
+                                      if (invitationStatus.value ==
+                                          Enum$InvitationStatus.ACTIVE) {
+                                        final result = await graphqlClient
+                                            .mutate$closeInvitation(
+                                                Options$Mutation$closeInvitation(
+                                                    variables:
+                                                        Variables$Mutation$closeInvitation(
+                                                            id: invitation
+                                                                .id)));
+                                        if (result.hasException) {
+                                          // TODO: error handling
+                                          return;
+                                        }
+                                        invitationStatus.value =
+                                            Enum$InvitationStatus.CLOSED;
+                                        showToast("募集を停止しました", ToastLevel.info);
+                                      } else {
+                                        final result = await graphqlClient
+                                            .mutate$activateInvitation(
+                                                Options$Mutation$activateInvitation(
+                                                    variables:
+                                                        Variables$Mutation$activateInvitation(
+                                                            id: invitation
+                                                                .id)));
+                                        if (result.hasException) {
+                                          // TODO: error handling
+                                          return;
+                                        }
+                                        invitationStatus.value =
+                                            Enum$InvitationStatus.ACTIVE;
+                                        showToast("募集を再開しました", ToastLevel.info);
+                                      }
+                                    },
+                                  ),
+                                ),
+                                Expanded(
+                                  child: TextButton(
+                                    style: TextButton.styleFrom(
+                                      shape: const RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.zero,
+                                      ),
+                                    ),
+                                    child: Column(
+                                      children: const [
+                                        Icon(Icons.delete, color: Colors.black),
+                                        Gap(5),
+                                        Text("削除",
+                                            style:
+                                                TextStyle(color: Colors.black))
+                                      ],
+                                    ),
+                                    onPressed: () async {
+                                      final dialogResult =
+                                          await showOkCancelAlertDialog(
+                                              context: context,
+                                              title: "おさそいの削除",
+                                              message:
+                                                  "おさそいを削除すると、参加可否、チャットの内容が全て削除されます。おさそいを削除してもよろしいですか？",
+                                              cancelLabel: "キャンセル",
+                                              isDestructiveAction: true);
+                                      if (dialogResult != OkCancelResult.ok) {
+                                        return;
+                                      }
+                                      final result = await graphqlClient
+                                          .mutate$deleteInvitation(
+                                              Options$Mutation$deleteInvitation(
+                                                  variables:
+                                                      Variables$Mutation$deleteInvitation(
+                                                          id: invitation.id)));
+                                      if (result.hasException) {
+                                        // TODO: error handling
+                                        return;
+                                      }
+                                      const HomeRoute().go(context);
+                                      showToast("おさそいを削除しました", ToastLevel.info);
+                                    },
+                                  ),
+                                ),
+                              ],
+                            )
+                          : const SizedBox(),
                       invitation.coordinate != null
                           ? SizedBox(
                               height: 280,

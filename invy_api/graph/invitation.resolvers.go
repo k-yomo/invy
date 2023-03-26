@@ -177,9 +177,12 @@ func (r *mutationResolver) SendInvitation(ctx context.Context, input *gqlmodel.S
 			logging.Logger(ctx).Error(err.Error(), zap.String("invitationId", dbInvitation.ID.String()))
 		}
 	}
-	if len(targetUserPushNotificationTokens) > 0 {
+
+	gqlInvitation, err := conv.ConvertFromDBInvitation(dbInvitation)
+	if err != nil {
+		return nil, err
 	}
-	return &gqlmodel.SendInvitationPayload{Invitation: conv.ConvertFromDBInvitation(dbInvitation)}, nil
+	return &gqlmodel.SendInvitationPayload{Invitation: gqlInvitation}, nil
 }
 
 // CloseInvitation is the resolver for the closeInvitation field.
@@ -190,7 +193,7 @@ func (r *mutationResolver) CloseInvitation(ctx context.Context, invitationID uui
 		Where(
 			invitation.ID(invitationID),
 			invitation.UserID(authUserID),
-			invitation.StatusEQ(invitation.StatusActive),
+			invitation.StatusNEQ(invitation.StatusDeleted),
 		).
 		Only(ctx)
 	if ent.IsNotFound(err) {
@@ -208,7 +211,44 @@ func (r *mutationResolver) CloseInvitation(ctx context.Context, invitationID uui
 		return nil, err
 	}
 
-	return &gqlmodel.CloseInvitationPayload{Invitation: conv.ConvertFromDBInvitation(dbInvitation)}, nil
+	gqlInvitation, err := conv.ConvertFromDBInvitation(dbInvitation)
+	if err != nil {
+		return nil, err
+	}
+	return &gqlmodel.CloseInvitationPayload{Invitation: gqlInvitation}, nil
+}
+
+// ActivateInvitation is the resolver for the activateInvitation field.
+func (r *mutationResolver) ActivateInvitation(ctx context.Context, invitationID uuid.UUID) (*gqlmodel.ActivateInvitationPayload, error) {
+	authUserID := auth.GetCurrentUserID(ctx)
+
+	dbInvitation, err := r.DB.Invitation.Query().
+		Where(
+			invitation.ID(invitationID),
+			invitation.UserID(authUserID),
+			invitation.StatusNEQ(invitation.StatusDeleted),
+		).
+		Only(ctx)
+	if ent.IsNotFound(err) {
+		return nil, xerrors.NewErrNotFound(fmt.Errorf("invitation %q not found", invitationID))
+	}
+	if err != nil {
+		return nil, err
+	}
+
+	err = r.DB.Invitation.Update().
+		Where(invitation.ID(invitationID)).
+		SetStatus(invitation.StatusClosed).
+		Exec(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	gqlInvitation, err := conv.ConvertFromDBInvitation(dbInvitation)
+	if err != nil {
+		return nil, err
+	}
+	return &gqlmodel.ActivateInvitationPayload{Invitation: gqlInvitation}, nil
 }
 
 // DeleteInvitation is the resolver for the deleteInvitation field.
@@ -370,7 +410,12 @@ func (r *mutationResolver) AcceptInvitation(ctx context.Context, invitationID uu
 	if err != nil {
 		return nil, err
 	}
-	return &gqlmodel.AcceptInvitationPayload{Invitation: conv.ConvertFromDBInvitation(dbInvitation)}, nil
+
+	gqlInvitation, err := conv.ConvertFromDBInvitation(dbInvitation)
+	if err != nil {
+		return nil, err
+	}
+	return &gqlmodel.AcceptInvitationPayload{Invitation: gqlInvitation}, nil
 }
 
 // DenyInvitation is the resolver for the denyInvitation field.
@@ -411,7 +456,12 @@ func (r *mutationResolver) DenyInvitation(ctx context.Context, invitationID uuid
 	if err != nil {
 		return nil, err
 	}
-	return &gqlmodel.DenyInvitationPayload{Invitation: conv.ConvertFromDBInvitation(dbInvitation)}, nil
+
+	gqlInvitation, err := conv.ConvertFromDBInvitation(dbInvitation)
+	if err != nil {
+		return nil, err
+	}
+	return &gqlmodel.DenyInvitationPayload{Invitation: gqlInvitation}, nil
 }
 
 // RegisterInvitationAwaiting is the resolver for the registerInvitationAwaiting field.
@@ -518,7 +568,11 @@ func (r *queryResolver) Invitation(ctx context.Context, id uuid.UUID) (*gqlmodel
 		return nil, xerrors.NewErrNotFound(fmt.Errorf("invitation %q not found", id))
 	}
 
-	return conv.ConvertFromDBInvitation(dbInvitation), nil
+	gqlInvitation, err := conv.ConvertFromDBInvitation(dbInvitation)
+	if err != nil {
+		return nil, err
+	}
+	return gqlInvitation, nil
 }
 
 // Invitation returns gqlgen.InvitationResolver implementation.

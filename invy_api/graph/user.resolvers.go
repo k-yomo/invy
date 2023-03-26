@@ -414,7 +414,8 @@ func (r *viewerResolver) SentInvitations(ctx context.Context, obj *gqlmodel.View
 	if err != nil {
 		return nil, err
 	}
-	return convutil.ConvertToList(dbInvitations, conv.ConvertFromDBInvitation), nil
+
+	return convutil.ConvertToListAndError(dbInvitations, conv.ConvertFromDBInvitation)
 }
 
 // PendingInvitations is the resolver for the pendingInvitations field.
@@ -464,9 +465,7 @@ func (r *viewerResolver) PendingInvitations(ctx context.Context, obj *gqlmodel.V
 		return nil, err
 	}
 
-	invitations := convutil.ConvertToList(dbInvitations, conv.ConvertFromDBInvitation)
-
-	return invitations, nil
+	return convutil.ConvertToListAndError(dbInvitations, conv.ConvertFromDBInvitation)
 }
 
 // AcceptedInvitations is the resolver for the acceptedInvitations field.
@@ -483,7 +482,7 @@ func (r *viewerResolver) AcceptedInvitations(ctx context.Context, obj *gqlmodel.
 	if err != nil {
 		return nil, err
 	}
-	return convutil.ConvertToList(dbInvitations, conv.ConvertFromDBInvitation), nil
+	return convutil.ConvertToListAndError(dbInvitations, conv.ConvertFromDBInvitation)
 }
 
 // InvitationAwaitings is the resolver for the invitationAwaitings field.

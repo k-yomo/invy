@@ -1521,6 +1521,30 @@ Enum$ErrorCode fromJson$Enum$ErrorCode(String value) {
   }
 }
 
+enum Enum$InvitationStatus { ACTIVE, CLOSED, $unknown }
+
+String toJson$Enum$InvitationStatus(Enum$InvitationStatus e) {
+  switch (e) {
+    case Enum$InvitationStatus.ACTIVE:
+      return r'ACTIVE';
+    case Enum$InvitationStatus.CLOSED:
+      return r'CLOSED';
+    case Enum$InvitationStatus.$unknown:
+      return r'$unknown';
+  }
+}
+
+Enum$InvitationStatus fromJson$Enum$InvitationStatus(String value) {
+  switch (value) {
+    case r'ACTIVE':
+      return Enum$InvitationStatus.ACTIVE;
+    case r'CLOSED':
+      return Enum$InvitationStatus.CLOSED;
+    default:
+      return Enum$InvitationStatus.$unknown;
+  }
+}
+
 enum Enum$PushNotificationType {
   FRIENDSHIP_REQUEST_RECEIVED,
   FRIENDSHIP_REQUEST_ACCEPTED,

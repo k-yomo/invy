@@ -17,6 +17,10 @@ type AcceptInvitationPayload {
   invitation: Invitation!
 }
 
+type ActivateInvitationPayload {
+  invitation: Invitation!
+}
+
 type BlockUserPayload {
   blockedUserId: UUID!
 }
@@ -142,6 +146,7 @@ type FriendshipRequest implements Node {
 
 type Invitation implements Node {
   id: UUID!
+  status: InvitationStatus!
   userId: UUID!
   user: User!
   location: String!
@@ -163,6 +168,11 @@ type InvitationAwaiting implements Node {
   comment: String!
 }
 
+enum InvitationStatus {
+  ACTIVE
+  CLOSED
+}
+
 type Mutation {
   signUp(input: SignUpInput!): SignUpPayload!
   signOut: SignOutPayload!
@@ -176,6 +186,7 @@ type Mutation {
   deleteFriendGroup(friendGroupId: UUID!): DeleteFriendGroupPayload!
   sendInvitation(input: SendInvitationInput): SendInvitationPayload!
   closeInvitation(invitationId: UUID!): CloseInvitationPayload!
+  activateInvitation(invitationId: UUID!): ActivateInvitationPayload!
   deleteInvitation(invitationId: UUID!): DeleteInvitationPayload!
   acceptInvitation(invitationId: UUID!): AcceptInvitationPayload!
   denyInvitation(invitationId: UUID!): DenyInvitationPayload!
