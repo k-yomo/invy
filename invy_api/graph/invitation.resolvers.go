@@ -187,7 +187,11 @@ func (r *mutationResolver) CloseInvitation(ctx context.Context, invitationID uui
 	authUserID := auth.GetCurrentUserID(ctx)
 
 	dbInvitation, err := r.DB.Invitation.Query().
-		Where(invitation.ID(invitationID), invitation.UserID(authUserID)).
+		Where(
+			invitation.ID(invitationID),
+			invitation.UserID(authUserID),
+			invitation.StatusEQ(invitation.StatusActive),
+		).
 		Only(ctx)
 	if ent.IsNotFound(err) {
 		return nil, xerrors.NewErrNotFound(fmt.Errorf("invitation %q not found", invitationID))
