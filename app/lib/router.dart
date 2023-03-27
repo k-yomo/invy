@@ -15,6 +15,7 @@ import 'package:invy/screens/invitation/invitation_detail_screen.dart';
 import 'package:invy/screens/invitation/invitation_friend_select_screen.dart';
 import 'package:invy/screens/invitation/invitation_screen.dart';
 import 'package:invy/screens/login/login_landing_screen.dart';
+import 'package:invy/screens/new_home_screen.dart';
 import 'package:invy/screens/profile/my_profile_screen.dart';
 import 'package:invy/screens/profile/profile_edit_screen.dart';
 import 'package:invy/screens/settings_screen.dart';
@@ -153,7 +154,8 @@ class HomeRoute extends GoRouteData {
   @override
   CustomTransitionPage<void> buildPage(
           BuildContext context, GoRouterState state) =>
-      NoTransitionPage(child: DynamicLinksManager(child: HomeScreen()));
+      NoTransitionPage(
+          child: DynamicLinksManager(child: NewHomeScreenScreen()));
 }
 
 @TypedGoRoute<InvitationRoute>(path: '/invitation/new', routes: [
