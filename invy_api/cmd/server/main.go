@@ -125,7 +125,7 @@ func main() {
 		Resolvers: &graph.Resolver{
 			DB:                       entDB,
 			DBQuery:                  query.NewQuery(bunDB),
-			Service:                  service.NewService(entDB, fcmClient),
+			Service:                  service.NewService(entDB, fcmClient, firestoreClient),
 			FirebaseAuthClient:       firebaseAuthClient,
 			FirestoreClient:          firestoreClient,
 			AvatarUploader:           avatarUploader,

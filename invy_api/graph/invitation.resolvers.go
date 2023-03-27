@@ -10,7 +10,6 @@ import (
 	"fmt"
 	"time"
 
-	"cloud.google.com/go/firestore"
 	fcm "firebase.google.com/go/v4/messaging"
 	"github.com/google/uuid"
 	"github.com/k-yomo/invy/invy_api/ent"
@@ -25,6 +24,7 @@ import (
 	"github.com/k-yomo/invy/invy_api/graph/loader"
 	"github.com/k-yomo/invy/invy_api/internal/auth"
 	"github.com/k-yomo/invy/invy_api/internal/xerrors"
+	"github.com/k-yomo/invy/invy_api/service"
 	"github.com/k-yomo/invy/pkg/convutil"
 	"github.com/k-yomo/invy/pkg/logging"
 	"github.com/k-yomo/invy/pkg/pgutil"
@@ -130,16 +130,23 @@ func (r *mutationResolver) SendInvitation(ctx context.Context, input *gqlmodel.S
 			return err
 		}
 
+		now := time.Now()
 		chatRoomMap, err := convutil.ConvertStructToJSONMap(gqlmodel.ChatRoom{
-			ID:        chatRoomID,
-			UserIds:   []uuid.UUID{authUserID},
-			CreatedAt: time.Now(),
+			ID:                 chatRoomID,
+			ParticipantUserIds: []uuid.UUID{authUserID},
+			Participants: []*gqlmodel.ChatRoomParticipant{
+				{
+					UserID:     authUserID,
+					LastReadAt: now,
+				},
+			},
+			CreatedAt: now,
 		})
 		if err != nil {
 			return fmt.Errorf("convert chat room struct to json map: %w", err)
 		}
 
-		_, err = r.FirestoreClient.Doc(firestoreChatRoomPath(chatRoomID)).Create(ctx, chatRoomMap)
+		_, err = r.FirestoreClient.Doc(service.FirestoreChatRoomPath(chatRoomID)).Create(ctx, chatRoomMap)
 		if err != nil {
 			return fmt.Errorf("create chat room document: %w", err)
 		}
@@ -329,23 +336,13 @@ func (r *mutationResolver) AcceptInvitation(ctx context.Context, invitationID uu
 
 		dbInvitation, err := tx.Invitation.Query().
 			Where(invitation.ID(invitationID)).
-			WithInvitationAcceptances().
 			Only(ctx)
 		if err != nil {
 			return err
 		}
 
-		acceptedUserIDs := convutil.ConvertToList(dbInvitation.Edges.InvitationAcceptances, func(from *ent.InvitationAcceptance) string {
-			return from.UserID.String()
-		})
 		if dbInvitation.ChatRoomID != nil {
-			_, err = r.FirestoreClient.Doc(firestoreChatRoomPath(*dbInvitation.ChatRoomID)).Update(ctx, []firestore.Update{
-				{
-					Path:  "userIds",
-					Value: append([]string{dbInvitation.UserID.String()}, acceptedUserIDs...),
-				},
-			})
-			if err != nil {
+			if err := r.Service.Chat.AddParticipant(ctx, *dbInvitation.ChatRoomID, authUserID); err != nil {
 				return err
 			}
 		}

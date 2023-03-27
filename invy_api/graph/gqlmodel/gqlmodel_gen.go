@@ -67,13 +67,19 @@ type ChatMessageBodyText struct {
 func (ChatMessageBodyText) IsChatMessageBody() {}
 
 type ChatRoom struct {
-	ID        uuid.UUID   `json:"id"`
-	UserIds   []uuid.UUID `json:"userIds"`
-	CreatedAt time.Time   `json:"createdAt"`
+	ID                 uuid.UUID              `json:"id"`
+	ParticipantUserIds []uuid.UUID            `json:"participantUserIds"`
+	Participants       []*ChatRoomParticipant `json:"participants"`
+	CreatedAt          time.Time              `json:"createdAt"`
 }
 
 func (ChatRoom) IsNode()               {}
 func (this ChatRoom) GetID() uuid.UUID { return this.ID }
+
+type ChatRoomParticipant struct {
+	UserID     uuid.UUID `json:"userId"`
+	LastReadAt time.Time `json:"lastReadAt"`
+}
 
 type CloseInvitationPayload struct {
 	Invitation *Invitation `json:"invitation"`
@@ -276,6 +282,15 @@ type UnmuteUserPayload struct {
 
 type UpdateAvatarPayload struct {
 	Viewer *Viewer `json:"viewer"`
+}
+
+type UpdateChatLastReadAtInput struct {
+	ChatRoomID uuid.UUID `json:"chatRoomId"`
+	LastReadAt time.Time `json:"lastReadAt"`
+}
+
+type UpdateChatLastReadAtPayload struct {
+	ChatRoomID uuid.UUID `json:"chatRoomId"`
 }
 
 type UpdateFriendGroupInput struct {

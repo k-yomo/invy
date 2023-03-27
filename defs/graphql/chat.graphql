@@ -2,13 +2,21 @@
 extend type Mutation {
     sendChatMessageText(input: SendChatMessageTextInput): SendChatMessageTextPayload! @authRequired
     sendChatMessageImage(input: SendChatMessageImageInput): SendChatMessageImagePayload! @authRequired
+
+    updateChatLastReadAt(input: UpdateChatLastReadAtInput!): UpdateChatLastReadAtPayload! @authRequired
 }
 
 
 type ChatRoom implements Node {
     id: UUID!
-    userIds: [UUID!]!
+    participantUserIds: [UUID!]!
+    participants: [ChatRoomParticipant!]!
     createdAt: Time!
+}
+
+type ChatRoomParticipant {
+    userId: UUID!
+    lastReadAt: Time!
 }
 
 type ChatMessageBodyText {
@@ -51,4 +59,12 @@ input SendChatMessageImageInput {
 }
 type SendChatMessageImagePayload {
     chatMessage: ChatMessage!
+}
+
+input UpdateChatLastReadAtInput {
+    chatRoomId: UUID!,
+    lastReadAt: Time!
+}
+type UpdateChatLastReadAtPayload {
+    chatRoomId: UUID!
 }

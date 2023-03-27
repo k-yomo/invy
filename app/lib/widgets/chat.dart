@@ -207,6 +207,12 @@ class ChatState extends ConsumerState<Chat> {
 
   @override
   Widget build(BuildContext context) {
+    final chatRoomStream = useMemoized(() => FirebaseFirestore.instance
+        .collection(firestoreChatRoomsCollectionPath)
+        .doc(widget.chatRoomId)
+        .snapshots());
+    final chatRoomSnapshot = useStream(chatRoomStream);
+
     final chatMessagesStream = useMemoized(
         () => FirebaseFirestore.instance
             .collection(firestoreChatRoomsCollectionPath)
@@ -219,12 +225,64 @@ class ChatState extends ConsumerState<Chat> {
     final chatMessageSnapshot = useStream(chatMessagesStream);
 
     useEffect(() {
-      if (chatMessageSnapshot.data == null) {
+      if (chatRoomSnapshot.data == null) {
         return;
       }
+      final participants =
+          chatRoomSnapshot.data!.get("participants") as List<dynamic>;
+      for (var participant in participants) {
+        final userId = participant["userId"] as String;
+        final lastReadAt = DateTime.parse(participant["lastReadAt"] as String)
+            .millisecondsSinceEpoch;
+        final user = _userMap[userId];
+        if (user != null) {
+          setState(() {
+            _userMap[userId] = user.copyWith(lastSeen: lastReadAt);
+          });
+        } else {
+          // Fetch hewly added user
+          _graphqlClient
+              .query$getUserForChat(Options$Query$getUserForChat(
+                  variables: Variables$Query$getUserForChat(id: userId)))
+              .then((result) {
+            if (result.parsedData != null) {
+              setState(() {
+                _userMap[userId] = chatUITypes.User(
+                  id: userId,
+                  firstName: result.parsedData!.user.nickname,
+                  imageUrl: result.parsedData!.user.avatarUrl,
+                  lastSeen: lastReadAt,
+                );
+              });
+            }
+          });
+        }
+      }
+      return null;
+    }, [chatRoomSnapshot.data]);
 
+    useEffect(() {
+      print(chatRoomSnapshot.data);
+      if (chatRoomSnapshot.data == null ||
+          chatMessageSnapshot.data == null ||
+          chatMessageSnapshot.data!.docs.isEmpty) {
+        return;
+      }
       final chatMessages = chatMessageSnapshot.data!.docs.map((chatMessage) {
-        final user = _userMap[chatMessage.get("userId") as String]!;
+        final messageUser = _userMap[chatMessage.get("userId") as String]!;
+        final messageCreatedAt =
+            DateTime.parse(chatMessage.get("createdAt") as String)
+                .millisecondsSinceEpoch;
+        var readCount = 0;
+        _userMap.forEach((_, user) {
+          if (user.id != messageUser.id &&
+              user.lastSeen != null &&
+              user.lastSeen! > messageCreatedAt) {
+            readCount += 1;
+          }
+        });
+        final isRead = readCount > 0;
+
         switch (chatMessage.get("kind")) {
           case "IMAGE":
             return chatUITypes.ImageMessage(
@@ -232,9 +290,10 @@ class ChatState extends ConsumerState<Chat> {
               name: chatMessage.id,
               uri: chatMessage.get("body")["url"] as String,
               size: 20,
-              author: user,
-              createdAt: DateTime.parse(chatMessage.get("createdAt") as String)
-                  .millisecondsSinceEpoch,
+              author: messageUser,
+              createdAt: messageCreatedAt,
+              status: isRead ? chatUITypes.Status.seen : null,
+              showStatus: isRead,
             );
           default:
             // case "TEXT":
@@ -242,10 +301,11 @@ class ChatState extends ConsumerState<Chat> {
             return chatUITypes.TextMessage(
               id: chatMessage.id,
               text: chatMessage.get("body")["text"] as String,
-              author: user,
+              author: messageUser,
               previewData: previewData,
-              createdAt: DateTime.parse(chatMessage.get("createdAt") as String)
-                  .millisecondsSinceEpoch,
+              createdAt: messageCreatedAt,
+              status: isRead ? chatUITypes.Status.seen : null,
+              showStatus: isRead,
             );
         }
       }).toList();
@@ -253,6 +313,15 @@ class ChatState extends ConsumerState<Chat> {
       setState(() {
         _chatMessages = chatMessages;
       });
+
+      _graphqlClient.mutate$updateChatLastReadAt(
+          Options$Mutation$updateChatLastReadAt(
+              variables: Variables$Mutation$updateChatLastReadAt(
+                  input: Input$UpdateChatLastReadAtInput(
+                      chatRoomId: widget.chatRoomId,
+                      lastReadAt: DateTime.fromMillisecondsSinceEpoch(
+                          chatMessages[0].createdAt!)))));
+
       return null;
     }, [chatMessageSnapshot.data]);
 

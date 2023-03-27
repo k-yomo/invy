@@ -1269,6 +1269,132 @@ class _CopyWithStubImpl$Input$SignUpInput<TRes>
       _res;
 }
 
+class Input$UpdateChatLastReadAtInput {
+  factory Input$UpdateChatLastReadAtInput({
+    required String chatRoomId,
+    required DateTime lastReadAt,
+  }) =>
+      Input$UpdateChatLastReadAtInput._({
+        r'chatRoomId': chatRoomId,
+        r'lastReadAt': lastReadAt,
+      });
+
+  Input$UpdateChatLastReadAtInput._(this._$data);
+
+  factory Input$UpdateChatLastReadAtInput.fromJson(Map<String, dynamic> data) {
+    final result$data = <String, dynamic>{};
+    final l$chatRoomId = data['chatRoomId'];
+    result$data['chatRoomId'] = (l$chatRoomId as String);
+    final l$lastReadAt = data['lastReadAt'];
+    result$data['lastReadAt'] = DateTime.parse((l$lastReadAt as String));
+    return Input$UpdateChatLastReadAtInput._(result$data);
+  }
+
+  Map<String, dynamic> _$data;
+
+  String get chatRoomId => (_$data['chatRoomId'] as String);
+  DateTime get lastReadAt => (_$data['lastReadAt'] as DateTime);
+  Map<String, dynamic> toJson() {
+    final result$data = <String, dynamic>{};
+    final l$chatRoomId = chatRoomId;
+    result$data['chatRoomId'] = l$chatRoomId;
+    final l$lastReadAt = lastReadAt;
+    result$data['lastReadAt'] = l$lastReadAt.toIso8601String();
+    return result$data;
+  }
+
+  CopyWith$Input$UpdateChatLastReadAtInput<Input$UpdateChatLastReadAtInput>
+      get copyWith => CopyWith$Input$UpdateChatLastReadAtInput(
+            this,
+            (i) => i,
+          );
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    if (!(other is Input$UpdateChatLastReadAtInput) ||
+        runtimeType != other.runtimeType) {
+      return false;
+    }
+    final l$chatRoomId = chatRoomId;
+    final lOther$chatRoomId = other.chatRoomId;
+    if (l$chatRoomId != lOther$chatRoomId) {
+      return false;
+    }
+    final l$lastReadAt = lastReadAt;
+    final lOther$lastReadAt = other.lastReadAt;
+    if (l$lastReadAt != lOther$lastReadAt) {
+      return false;
+    }
+    return true;
+  }
+
+  @override
+  int get hashCode {
+    final l$chatRoomId = chatRoomId;
+    final l$lastReadAt = lastReadAt;
+    return Object.hashAll([
+      l$chatRoomId,
+      l$lastReadAt,
+    ]);
+  }
+}
+
+abstract class CopyWith$Input$UpdateChatLastReadAtInput<TRes> {
+  factory CopyWith$Input$UpdateChatLastReadAtInput(
+    Input$UpdateChatLastReadAtInput instance,
+    TRes Function(Input$UpdateChatLastReadAtInput) then,
+  ) = _CopyWithImpl$Input$UpdateChatLastReadAtInput;
+
+  factory CopyWith$Input$UpdateChatLastReadAtInput.stub(TRes res) =
+      _CopyWithStubImpl$Input$UpdateChatLastReadAtInput;
+
+  TRes call({
+    String? chatRoomId,
+    DateTime? lastReadAt,
+  });
+}
+
+class _CopyWithImpl$Input$UpdateChatLastReadAtInput<TRes>
+    implements CopyWith$Input$UpdateChatLastReadAtInput<TRes> {
+  _CopyWithImpl$Input$UpdateChatLastReadAtInput(
+    this._instance,
+    this._then,
+  );
+
+  final Input$UpdateChatLastReadAtInput _instance;
+
+  final TRes Function(Input$UpdateChatLastReadAtInput) _then;
+
+  static const _undefined = <dynamic, dynamic>{};
+
+  TRes call({
+    Object? chatRoomId = _undefined,
+    Object? lastReadAt = _undefined,
+  }) =>
+      _then(Input$UpdateChatLastReadAtInput._({
+        ..._instance._$data,
+        if (chatRoomId != _undefined && chatRoomId != null)
+          'chatRoomId': (chatRoomId as String),
+        if (lastReadAt != _undefined && lastReadAt != null)
+          'lastReadAt': (lastReadAt as DateTime),
+      }));
+}
+
+class _CopyWithStubImpl$Input$UpdateChatLastReadAtInput<TRes>
+    implements CopyWith$Input$UpdateChatLastReadAtInput<TRes> {
+  _CopyWithStubImpl$Input$UpdateChatLastReadAtInput(this._res);
+
+  TRes _res;
+
+  call({
+    String? chatRoomId,
+    DateTime? lastReadAt,
+  }) =>
+      _res;
+}
+
 class Input$UpdateFriendGroupInput {
   factory Input$UpdateFriendGroupInput({
     required String id,

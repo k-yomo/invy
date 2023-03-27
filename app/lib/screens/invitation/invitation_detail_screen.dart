@@ -200,8 +200,8 @@ class InvitationDetailScreen extends HookConsumerWidget {
                                                     Enum$InvitationStatus.ACTIVE
                                                 ? "募集停止"
                                                 : "募集再開",
-                                            style:
-                                                const TextStyle(color: Colors.black))
+                                            style: const TextStyle(
+                                                color: Colors.black))
                                       ],
                                     ),
                                     onPressed: () async {

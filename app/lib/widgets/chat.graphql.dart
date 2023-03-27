@@ -1446,6 +1446,591 @@ class _CopyWithStubImpl$Fragment$ChatMessageImageFragment$body$$ChatMessageBodyT
   call({String? $__typename}) => _res;
 }
 
+class Variables$Query$getUserForChat {
+  factory Variables$Query$getUserForChat({required String id}) =>
+      Variables$Query$getUserForChat._({
+        r'id': id,
+      });
+
+  Variables$Query$getUserForChat._(this._$data);
+
+  factory Variables$Query$getUserForChat.fromJson(Map<String, dynamic> data) {
+    final result$data = <String, dynamic>{};
+    final l$id = data['id'];
+    result$data['id'] = (l$id as String);
+    return Variables$Query$getUserForChat._(result$data);
+  }
+
+  Map<String, dynamic> _$data;
+
+  String get id => (_$data['id'] as String);
+  Map<String, dynamic> toJson() {
+    final result$data = <String, dynamic>{};
+    final l$id = id;
+    result$data['id'] = l$id;
+    return result$data;
+  }
+
+  CopyWith$Variables$Query$getUserForChat<Variables$Query$getUserForChat>
+      get copyWith => CopyWith$Variables$Query$getUserForChat(
+            this,
+            (i) => i,
+          );
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    if (!(other is Variables$Query$getUserForChat) ||
+        runtimeType != other.runtimeType) {
+      return false;
+    }
+    final l$id = id;
+    final lOther$id = other.id;
+    if (l$id != lOther$id) {
+      return false;
+    }
+    return true;
+  }
+
+  @override
+  int get hashCode {
+    final l$id = id;
+    return Object.hashAll([l$id]);
+  }
+}
+
+abstract class CopyWith$Variables$Query$getUserForChat<TRes> {
+  factory CopyWith$Variables$Query$getUserForChat(
+    Variables$Query$getUserForChat instance,
+    TRes Function(Variables$Query$getUserForChat) then,
+  ) = _CopyWithImpl$Variables$Query$getUserForChat;
+
+  factory CopyWith$Variables$Query$getUserForChat.stub(TRes res) =
+      _CopyWithStubImpl$Variables$Query$getUserForChat;
+
+  TRes call({String? id});
+}
+
+class _CopyWithImpl$Variables$Query$getUserForChat<TRes>
+    implements CopyWith$Variables$Query$getUserForChat<TRes> {
+  _CopyWithImpl$Variables$Query$getUserForChat(
+    this._instance,
+    this._then,
+  );
+
+  final Variables$Query$getUserForChat _instance;
+
+  final TRes Function(Variables$Query$getUserForChat) _then;
+
+  static const _undefined = <dynamic, dynamic>{};
+
+  TRes call({Object? id = _undefined}) =>
+      _then(Variables$Query$getUserForChat._({
+        ..._instance._$data,
+        if (id != _undefined && id != null) 'id': (id as String),
+      }));
+}
+
+class _CopyWithStubImpl$Variables$Query$getUserForChat<TRes>
+    implements CopyWith$Variables$Query$getUserForChat<TRes> {
+  _CopyWithStubImpl$Variables$Query$getUserForChat(this._res);
+
+  TRes _res;
+
+  call({String? id}) => _res;
+}
+
+class Query$getUserForChat {
+  Query$getUserForChat({
+    required this.user,
+    this.$__typename = 'Query',
+  });
+
+  factory Query$getUserForChat.fromJson(Map<String, dynamic> json) {
+    final l$user = json['user'];
+    final l$$__typename = json['__typename'];
+    return Query$getUserForChat(
+      user:
+          Query$getUserForChat$user.fromJson((l$user as Map<String, dynamic>)),
+      $__typename: (l$$__typename as String),
+    );
+  }
+
+  final Query$getUserForChat$user user;
+
+  final String $__typename;
+
+  Map<String, dynamic> toJson() {
+    final _resultData = <String, dynamic>{};
+    final l$user = user;
+    _resultData['user'] = l$user.toJson();
+    final l$$__typename = $__typename;
+    _resultData['__typename'] = l$$__typename;
+    return _resultData;
+  }
+
+  @override
+  int get hashCode {
+    final l$user = user;
+    final l$$__typename = $__typename;
+    return Object.hashAll([
+      l$user,
+      l$$__typename,
+    ]);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    if (!(other is Query$getUserForChat) || runtimeType != other.runtimeType) {
+      return false;
+    }
+    final l$user = user;
+    final lOther$user = other.user;
+    if (l$user != lOther$user) {
+      return false;
+    }
+    final l$$__typename = $__typename;
+    final lOther$$__typename = other.$__typename;
+    if (l$$__typename != lOther$$__typename) {
+      return false;
+    }
+    return true;
+  }
+}
+
+extension UtilityExtension$Query$getUserForChat on Query$getUserForChat {
+  CopyWith$Query$getUserForChat<Query$getUserForChat> get copyWith =>
+      CopyWith$Query$getUserForChat(
+        this,
+        (i) => i,
+      );
+}
+
+abstract class CopyWith$Query$getUserForChat<TRes> {
+  factory CopyWith$Query$getUserForChat(
+    Query$getUserForChat instance,
+    TRes Function(Query$getUserForChat) then,
+  ) = _CopyWithImpl$Query$getUserForChat;
+
+  factory CopyWith$Query$getUserForChat.stub(TRes res) =
+      _CopyWithStubImpl$Query$getUserForChat;
+
+  TRes call({
+    Query$getUserForChat$user? user,
+    String? $__typename,
+  });
+  CopyWith$Query$getUserForChat$user<TRes> get user;
+}
+
+class _CopyWithImpl$Query$getUserForChat<TRes>
+    implements CopyWith$Query$getUserForChat<TRes> {
+  _CopyWithImpl$Query$getUserForChat(
+    this._instance,
+    this._then,
+  );
+
+  final Query$getUserForChat _instance;
+
+  final TRes Function(Query$getUserForChat) _then;
+
+  static const _undefined = <dynamic, dynamic>{};
+
+  TRes call({
+    Object? user = _undefined,
+    Object? $__typename = _undefined,
+  }) =>
+      _then(Query$getUserForChat(
+        user: user == _undefined || user == null
+            ? _instance.user
+            : (user as Query$getUserForChat$user),
+        $__typename: $__typename == _undefined || $__typename == null
+            ? _instance.$__typename
+            : ($__typename as String),
+      ));
+  CopyWith$Query$getUserForChat$user<TRes> get user {
+    final local$user = _instance.user;
+    return CopyWith$Query$getUserForChat$user(local$user, (e) => call(user: e));
+  }
+}
+
+class _CopyWithStubImpl$Query$getUserForChat<TRes>
+    implements CopyWith$Query$getUserForChat<TRes> {
+  _CopyWithStubImpl$Query$getUserForChat(this._res);
+
+  TRes _res;
+
+  call({
+    Query$getUserForChat$user? user,
+    String? $__typename,
+  }) =>
+      _res;
+  CopyWith$Query$getUserForChat$user<TRes> get user =>
+      CopyWith$Query$getUserForChat$user.stub(_res);
+}
+
+const documentNodeQuerygetUserForChat = DocumentNode(definitions: [
+  OperationDefinitionNode(
+    type: OperationType.query,
+    name: NameNode(value: 'getUserForChat'),
+    variableDefinitions: [
+      VariableDefinitionNode(
+        variable: VariableNode(name: NameNode(value: 'id')),
+        type: NamedTypeNode(
+          name: NameNode(value: 'UUID'),
+          isNonNull: true,
+        ),
+        defaultValue: DefaultValueNode(value: null),
+        directives: [],
+      )
+    ],
+    directives: [],
+    selectionSet: SelectionSetNode(selections: [
+      FieldNode(
+        name: NameNode(value: 'user'),
+        alias: null,
+        arguments: [
+          ArgumentNode(
+            name: NameNode(value: 'userId'),
+            value: VariableNode(name: NameNode(value: 'id')),
+          )
+        ],
+        directives: [],
+        selectionSet: SelectionSetNode(selections: [
+          FieldNode(
+            name: NameNode(value: 'nickname'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: null,
+          ),
+          FieldNode(
+            name: NameNode(value: 'avatarUrl'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: null,
+          ),
+          FieldNode(
+            name: NameNode(value: '__typename'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: null,
+          ),
+        ]),
+      ),
+      FieldNode(
+        name: NameNode(value: '__typename'),
+        alias: null,
+        arguments: [],
+        directives: [],
+        selectionSet: null,
+      ),
+    ]),
+  ),
+]);
+Query$getUserForChat _parserFn$Query$getUserForChat(
+        Map<String, dynamic> data) =>
+    Query$getUserForChat.fromJson(data);
+typedef OnQueryComplete$Query$getUserForChat = FutureOr<void> Function(
+  Map<String, dynamic>?,
+  Query$getUserForChat?,
+);
+
+class Options$Query$getUserForChat
+    extends graphql.QueryOptions<Query$getUserForChat> {
+  Options$Query$getUserForChat({
+    String? operationName,
+    required Variables$Query$getUserForChat variables,
+    graphql.FetchPolicy? fetchPolicy,
+    graphql.ErrorPolicy? errorPolicy,
+    graphql.CacheRereadPolicy? cacheRereadPolicy,
+    Object? optimisticResult,
+    Query$getUserForChat? typedOptimisticResult,
+    Duration? pollInterval,
+    graphql.Context? context,
+    OnQueryComplete$Query$getUserForChat? onComplete,
+    graphql.OnQueryError? onError,
+  })  : onCompleteWithParsed = onComplete,
+        super(
+          variables: variables.toJson(),
+          operationName: operationName,
+          fetchPolicy: fetchPolicy,
+          errorPolicy: errorPolicy,
+          cacheRereadPolicy: cacheRereadPolicy,
+          optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
+          pollInterval: pollInterval,
+          context: context,
+          onComplete: onComplete == null
+              ? null
+              : (data) => onComplete(
+                    data,
+                    data == null ? null : _parserFn$Query$getUserForChat(data),
+                  ),
+          onError: onError,
+          document: documentNodeQuerygetUserForChat,
+          parserFn: _parserFn$Query$getUserForChat,
+        );
+
+  final OnQueryComplete$Query$getUserForChat? onCompleteWithParsed;
+
+  @override
+  List<Object?> get properties => [
+        ...super.onComplete == null
+            ? super.properties
+            : super.properties.where((property) => property != onComplete),
+        onCompleteWithParsed,
+      ];
+}
+
+class WatchOptions$Query$getUserForChat
+    extends graphql.WatchQueryOptions<Query$getUserForChat> {
+  WatchOptions$Query$getUserForChat({
+    String? operationName,
+    required Variables$Query$getUserForChat variables,
+    graphql.FetchPolicy? fetchPolicy,
+    graphql.ErrorPolicy? errorPolicy,
+    graphql.CacheRereadPolicy? cacheRereadPolicy,
+    Object? optimisticResult,
+    Query$getUserForChat? typedOptimisticResult,
+    graphql.Context? context,
+    Duration? pollInterval,
+    bool? eagerlyFetchResults,
+    bool carryForwardDataOnException = true,
+    bool fetchResults = false,
+  }) : super(
+          variables: variables.toJson(),
+          operationName: operationName,
+          fetchPolicy: fetchPolicy,
+          errorPolicy: errorPolicy,
+          cacheRereadPolicy: cacheRereadPolicy,
+          optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
+          context: context,
+          document: documentNodeQuerygetUserForChat,
+          pollInterval: pollInterval,
+          eagerlyFetchResults: eagerlyFetchResults,
+          carryForwardDataOnException: carryForwardDataOnException,
+          fetchResults: fetchResults,
+          parserFn: _parserFn$Query$getUserForChat,
+        );
+}
+
+class FetchMoreOptions$Query$getUserForChat extends graphql.FetchMoreOptions {
+  FetchMoreOptions$Query$getUserForChat({
+    required graphql.UpdateQuery updateQuery,
+    required Variables$Query$getUserForChat variables,
+  }) : super(
+          updateQuery: updateQuery,
+          variables: variables.toJson(),
+          document: documentNodeQuerygetUserForChat,
+        );
+}
+
+extension ClientExtension$Query$getUserForChat on graphql.GraphQLClient {
+  Future<graphql.QueryResult<Query$getUserForChat>> query$getUserForChat(
+          Options$Query$getUserForChat options) async =>
+      await this.query(options);
+  graphql.ObservableQuery<Query$getUserForChat> watchQuery$getUserForChat(
+          WatchOptions$Query$getUserForChat options) =>
+      this.watchQuery(options);
+  void writeQuery$getUserForChat({
+    required Query$getUserForChat data,
+    required Variables$Query$getUserForChat variables,
+    bool broadcast = true,
+  }) =>
+      this.writeQuery(
+        graphql.Request(
+          operation:
+              graphql.Operation(document: documentNodeQuerygetUserForChat),
+          variables: variables.toJson(),
+        ),
+        data: data.toJson(),
+        broadcast: broadcast,
+      );
+  Query$getUserForChat? readQuery$getUserForChat({
+    required Variables$Query$getUserForChat variables,
+    bool optimistic = true,
+  }) {
+    final result = this.readQuery(
+      graphql.Request(
+        operation: graphql.Operation(document: documentNodeQuerygetUserForChat),
+        variables: variables.toJson(),
+      ),
+      optimistic: optimistic,
+    );
+    return result == null ? null : Query$getUserForChat.fromJson(result);
+  }
+}
+
+graphql_flutter.QueryHookResult<Query$getUserForChat> useQuery$getUserForChat(
+        Options$Query$getUserForChat options) =>
+    graphql_flutter.useQuery(options);
+graphql.ObservableQuery<Query$getUserForChat> useWatchQuery$getUserForChat(
+        WatchOptions$Query$getUserForChat options) =>
+    graphql_flutter.useWatchQuery(options);
+
+class Query$getUserForChat$Widget
+    extends graphql_flutter.Query<Query$getUserForChat> {
+  Query$getUserForChat$Widget({
+    widgets.Key? key,
+    required Options$Query$getUserForChat options,
+    required graphql_flutter.QueryBuilder<Query$getUserForChat> builder,
+  }) : super(
+          key: key,
+          options: options,
+          builder: builder,
+        );
+}
+
+class Query$getUserForChat$user {
+  Query$getUserForChat$user({
+    required this.nickname,
+    required this.avatarUrl,
+    this.$__typename = 'User',
+  });
+
+  factory Query$getUserForChat$user.fromJson(Map<String, dynamic> json) {
+    final l$nickname = json['nickname'];
+    final l$avatarUrl = json['avatarUrl'];
+    final l$$__typename = json['__typename'];
+    return Query$getUserForChat$user(
+      nickname: (l$nickname as String),
+      avatarUrl: (l$avatarUrl as String),
+      $__typename: (l$$__typename as String),
+    );
+  }
+
+  final String nickname;
+
+  final String avatarUrl;
+
+  final String $__typename;
+
+  Map<String, dynamic> toJson() {
+    final _resultData = <String, dynamic>{};
+    final l$nickname = nickname;
+    _resultData['nickname'] = l$nickname;
+    final l$avatarUrl = avatarUrl;
+    _resultData['avatarUrl'] = l$avatarUrl;
+    final l$$__typename = $__typename;
+    _resultData['__typename'] = l$$__typename;
+    return _resultData;
+  }
+
+  @override
+  int get hashCode {
+    final l$nickname = nickname;
+    final l$avatarUrl = avatarUrl;
+    final l$$__typename = $__typename;
+    return Object.hashAll([
+      l$nickname,
+      l$avatarUrl,
+      l$$__typename,
+    ]);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    if (!(other is Query$getUserForChat$user) ||
+        runtimeType != other.runtimeType) {
+      return false;
+    }
+    final l$nickname = nickname;
+    final lOther$nickname = other.nickname;
+    if (l$nickname != lOther$nickname) {
+      return false;
+    }
+    final l$avatarUrl = avatarUrl;
+    final lOther$avatarUrl = other.avatarUrl;
+    if (l$avatarUrl != lOther$avatarUrl) {
+      return false;
+    }
+    final l$$__typename = $__typename;
+    final lOther$$__typename = other.$__typename;
+    if (l$$__typename != lOther$$__typename) {
+      return false;
+    }
+    return true;
+  }
+}
+
+extension UtilityExtension$Query$getUserForChat$user
+    on Query$getUserForChat$user {
+  CopyWith$Query$getUserForChat$user<Query$getUserForChat$user> get copyWith =>
+      CopyWith$Query$getUserForChat$user(
+        this,
+        (i) => i,
+      );
+}
+
+abstract class CopyWith$Query$getUserForChat$user<TRes> {
+  factory CopyWith$Query$getUserForChat$user(
+    Query$getUserForChat$user instance,
+    TRes Function(Query$getUserForChat$user) then,
+  ) = _CopyWithImpl$Query$getUserForChat$user;
+
+  factory CopyWith$Query$getUserForChat$user.stub(TRes res) =
+      _CopyWithStubImpl$Query$getUserForChat$user;
+
+  TRes call({
+    String? nickname,
+    String? avatarUrl,
+    String? $__typename,
+  });
+}
+
+class _CopyWithImpl$Query$getUserForChat$user<TRes>
+    implements CopyWith$Query$getUserForChat$user<TRes> {
+  _CopyWithImpl$Query$getUserForChat$user(
+    this._instance,
+    this._then,
+  );
+
+  final Query$getUserForChat$user _instance;
+
+  final TRes Function(Query$getUserForChat$user) _then;
+
+  static const _undefined = <dynamic, dynamic>{};
+
+  TRes call({
+    Object? nickname = _undefined,
+    Object? avatarUrl = _undefined,
+    Object? $__typename = _undefined,
+  }) =>
+      _then(Query$getUserForChat$user(
+        nickname: nickname == _undefined || nickname == null
+            ? _instance.nickname
+            : (nickname as String),
+        avatarUrl: avatarUrl == _undefined || avatarUrl == null
+            ? _instance.avatarUrl
+            : (avatarUrl as String),
+        $__typename: $__typename == _undefined || $__typename == null
+            ? _instance.$__typename
+            : ($__typename as String),
+      ));
+}
+
+class _CopyWithStubImpl$Query$getUserForChat$user<TRes>
+    implements CopyWith$Query$getUserForChat$user<TRes> {
+  _CopyWithStubImpl$Query$getUserForChat$user(this._res);
+
+  TRes _res;
+
+  call({
+    String? nickname,
+    String? avatarUrl,
+    String? $__typename,
+  }) =>
+      _res;
+}
+
 class Variables$Mutation$sendChatMessageText {
   factory Variables$Mutation$sendChatMessageText(
           {Input$SendChatMessageTextInput? input}) =>
@@ -3605,4 +4190,663 @@ class _CopyWithStubImpl$Mutation$sendChatMessageImage$sendChatMessageImage$chatM
   TRes _res;
 
   call({String? $__typename}) => _res;
+}
+
+class Variables$Mutation$updateChatLastReadAt {
+  factory Variables$Mutation$updateChatLastReadAt(
+          {Input$UpdateChatLastReadAtInput? input}) =>
+      Variables$Mutation$updateChatLastReadAt._({
+        if (input != null) r'input': input,
+      });
+
+  Variables$Mutation$updateChatLastReadAt._(this._$data);
+
+  factory Variables$Mutation$updateChatLastReadAt.fromJson(
+      Map<String, dynamic> data) {
+    final result$data = <String, dynamic>{};
+    if (data.containsKey('input')) {
+      final l$input = data['input'];
+      result$data['input'] = l$input == null
+          ? null
+          : Input$UpdateChatLastReadAtInput.fromJson(
+              (l$input as Map<String, dynamic>));
+    }
+    return Variables$Mutation$updateChatLastReadAt._(result$data);
+  }
+
+  Map<String, dynamic> _$data;
+
+  Input$UpdateChatLastReadAtInput? get input =>
+      (_$data['input'] as Input$UpdateChatLastReadAtInput?);
+  Map<String, dynamic> toJson() {
+    final result$data = <String, dynamic>{};
+    if (_$data.containsKey('input')) {
+      final l$input = input;
+      result$data['input'] = l$input?.toJson();
+    }
+    return result$data;
+  }
+
+  CopyWith$Variables$Mutation$updateChatLastReadAt<
+          Variables$Mutation$updateChatLastReadAt>
+      get copyWith => CopyWith$Variables$Mutation$updateChatLastReadAt(
+            this,
+            (i) => i,
+          );
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    if (!(other is Variables$Mutation$updateChatLastReadAt) ||
+        runtimeType != other.runtimeType) {
+      return false;
+    }
+    final l$input = input;
+    final lOther$input = other.input;
+    if (_$data.containsKey('input') != other._$data.containsKey('input')) {
+      return false;
+    }
+    if (l$input != lOther$input) {
+      return false;
+    }
+    return true;
+  }
+
+  @override
+  int get hashCode {
+    final l$input = input;
+    return Object.hashAll([_$data.containsKey('input') ? l$input : const {}]);
+  }
+}
+
+abstract class CopyWith$Variables$Mutation$updateChatLastReadAt<TRes> {
+  factory CopyWith$Variables$Mutation$updateChatLastReadAt(
+    Variables$Mutation$updateChatLastReadAt instance,
+    TRes Function(Variables$Mutation$updateChatLastReadAt) then,
+  ) = _CopyWithImpl$Variables$Mutation$updateChatLastReadAt;
+
+  factory CopyWith$Variables$Mutation$updateChatLastReadAt.stub(TRes res) =
+      _CopyWithStubImpl$Variables$Mutation$updateChatLastReadAt;
+
+  TRes call({Input$UpdateChatLastReadAtInput? input});
+}
+
+class _CopyWithImpl$Variables$Mutation$updateChatLastReadAt<TRes>
+    implements CopyWith$Variables$Mutation$updateChatLastReadAt<TRes> {
+  _CopyWithImpl$Variables$Mutation$updateChatLastReadAt(
+    this._instance,
+    this._then,
+  );
+
+  final Variables$Mutation$updateChatLastReadAt _instance;
+
+  final TRes Function(Variables$Mutation$updateChatLastReadAt) _then;
+
+  static const _undefined = <dynamic, dynamic>{};
+
+  TRes call({Object? input = _undefined}) =>
+      _then(Variables$Mutation$updateChatLastReadAt._({
+        ..._instance._$data,
+        if (input != _undefined)
+          'input': (input as Input$UpdateChatLastReadAtInput?),
+      }));
+}
+
+class _CopyWithStubImpl$Variables$Mutation$updateChatLastReadAt<TRes>
+    implements CopyWith$Variables$Mutation$updateChatLastReadAt<TRes> {
+  _CopyWithStubImpl$Variables$Mutation$updateChatLastReadAt(this._res);
+
+  TRes _res;
+
+  call({Input$UpdateChatLastReadAtInput? input}) => _res;
+}
+
+class Mutation$updateChatLastReadAt {
+  Mutation$updateChatLastReadAt({
+    required this.updateChatLastReadAt,
+    this.$__typename = 'Mutation',
+  });
+
+  factory Mutation$updateChatLastReadAt.fromJson(Map<String, dynamic> json) {
+    final l$updateChatLastReadAt = json['updateChatLastReadAt'];
+    final l$$__typename = json['__typename'];
+    return Mutation$updateChatLastReadAt(
+      updateChatLastReadAt:
+          Mutation$updateChatLastReadAt$updateChatLastReadAt.fromJson(
+              (l$updateChatLastReadAt as Map<String, dynamic>)),
+      $__typename: (l$$__typename as String),
+    );
+  }
+
+  final Mutation$updateChatLastReadAt$updateChatLastReadAt updateChatLastReadAt;
+
+  final String $__typename;
+
+  Map<String, dynamic> toJson() {
+    final _resultData = <String, dynamic>{};
+    final l$updateChatLastReadAt = updateChatLastReadAt;
+    _resultData['updateChatLastReadAt'] = l$updateChatLastReadAt.toJson();
+    final l$$__typename = $__typename;
+    _resultData['__typename'] = l$$__typename;
+    return _resultData;
+  }
+
+  @override
+  int get hashCode {
+    final l$updateChatLastReadAt = updateChatLastReadAt;
+    final l$$__typename = $__typename;
+    return Object.hashAll([
+      l$updateChatLastReadAt,
+      l$$__typename,
+    ]);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    if (!(other is Mutation$updateChatLastReadAt) ||
+        runtimeType != other.runtimeType) {
+      return false;
+    }
+    final l$updateChatLastReadAt = updateChatLastReadAt;
+    final lOther$updateChatLastReadAt = other.updateChatLastReadAt;
+    if (l$updateChatLastReadAt != lOther$updateChatLastReadAt) {
+      return false;
+    }
+    final l$$__typename = $__typename;
+    final lOther$$__typename = other.$__typename;
+    if (l$$__typename != lOther$$__typename) {
+      return false;
+    }
+    return true;
+  }
+}
+
+extension UtilityExtension$Mutation$updateChatLastReadAt
+    on Mutation$updateChatLastReadAt {
+  CopyWith$Mutation$updateChatLastReadAt<Mutation$updateChatLastReadAt>
+      get copyWith => CopyWith$Mutation$updateChatLastReadAt(
+            this,
+            (i) => i,
+          );
+}
+
+abstract class CopyWith$Mutation$updateChatLastReadAt<TRes> {
+  factory CopyWith$Mutation$updateChatLastReadAt(
+    Mutation$updateChatLastReadAt instance,
+    TRes Function(Mutation$updateChatLastReadAt) then,
+  ) = _CopyWithImpl$Mutation$updateChatLastReadAt;
+
+  factory CopyWith$Mutation$updateChatLastReadAt.stub(TRes res) =
+      _CopyWithStubImpl$Mutation$updateChatLastReadAt;
+
+  TRes call({
+    Mutation$updateChatLastReadAt$updateChatLastReadAt? updateChatLastReadAt,
+    String? $__typename,
+  });
+  CopyWith$Mutation$updateChatLastReadAt$updateChatLastReadAt<TRes>
+      get updateChatLastReadAt;
+}
+
+class _CopyWithImpl$Mutation$updateChatLastReadAt<TRes>
+    implements CopyWith$Mutation$updateChatLastReadAt<TRes> {
+  _CopyWithImpl$Mutation$updateChatLastReadAt(
+    this._instance,
+    this._then,
+  );
+
+  final Mutation$updateChatLastReadAt _instance;
+
+  final TRes Function(Mutation$updateChatLastReadAt) _then;
+
+  static const _undefined = <dynamic, dynamic>{};
+
+  TRes call({
+    Object? updateChatLastReadAt = _undefined,
+    Object? $__typename = _undefined,
+  }) =>
+      _then(Mutation$updateChatLastReadAt(
+        updateChatLastReadAt:
+            updateChatLastReadAt == _undefined || updateChatLastReadAt == null
+                ? _instance.updateChatLastReadAt
+                : (updateChatLastReadAt
+                    as Mutation$updateChatLastReadAt$updateChatLastReadAt),
+        $__typename: $__typename == _undefined || $__typename == null
+            ? _instance.$__typename
+            : ($__typename as String),
+      ));
+  CopyWith$Mutation$updateChatLastReadAt$updateChatLastReadAt<TRes>
+      get updateChatLastReadAt {
+    final local$updateChatLastReadAt = _instance.updateChatLastReadAt;
+    return CopyWith$Mutation$updateChatLastReadAt$updateChatLastReadAt(
+        local$updateChatLastReadAt, (e) => call(updateChatLastReadAt: e));
+  }
+}
+
+class _CopyWithStubImpl$Mutation$updateChatLastReadAt<TRes>
+    implements CopyWith$Mutation$updateChatLastReadAt<TRes> {
+  _CopyWithStubImpl$Mutation$updateChatLastReadAt(this._res);
+
+  TRes _res;
+
+  call({
+    Mutation$updateChatLastReadAt$updateChatLastReadAt? updateChatLastReadAt,
+    String? $__typename,
+  }) =>
+      _res;
+  CopyWith$Mutation$updateChatLastReadAt$updateChatLastReadAt<TRes>
+      get updateChatLastReadAt =>
+          CopyWith$Mutation$updateChatLastReadAt$updateChatLastReadAt.stub(
+              _res);
+}
+
+const documentNodeMutationupdateChatLastReadAt = DocumentNode(definitions: [
+  OperationDefinitionNode(
+    type: OperationType.mutation,
+    name: NameNode(value: 'updateChatLastReadAt'),
+    variableDefinitions: [
+      VariableDefinitionNode(
+        variable: VariableNode(name: NameNode(value: 'input')),
+        type: NamedTypeNode(
+          name: NameNode(value: 'UpdateChatLastReadAtInput'),
+          isNonNull: false,
+        ),
+        defaultValue: DefaultValueNode(value: null),
+        directives: [],
+      )
+    ],
+    directives: [],
+    selectionSet: SelectionSetNode(selections: [
+      FieldNode(
+        name: NameNode(value: 'updateChatLastReadAt'),
+        alias: null,
+        arguments: [
+          ArgumentNode(
+            name: NameNode(value: 'input'),
+            value: VariableNode(name: NameNode(value: 'input')),
+          )
+        ],
+        directives: [],
+        selectionSet: SelectionSetNode(selections: [
+          FieldNode(
+            name: NameNode(value: 'chatRoomId'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: null,
+          ),
+          FieldNode(
+            name: NameNode(value: '__typename'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: null,
+          ),
+        ]),
+      ),
+      FieldNode(
+        name: NameNode(value: '__typename'),
+        alias: null,
+        arguments: [],
+        directives: [],
+        selectionSet: null,
+      ),
+    ]),
+  ),
+]);
+Mutation$updateChatLastReadAt _parserFn$Mutation$updateChatLastReadAt(
+        Map<String, dynamic> data) =>
+    Mutation$updateChatLastReadAt.fromJson(data);
+typedef OnMutationCompleted$Mutation$updateChatLastReadAt = FutureOr<void>
+    Function(
+  Map<String, dynamic>?,
+  Mutation$updateChatLastReadAt?,
+);
+
+class Options$Mutation$updateChatLastReadAt
+    extends graphql.MutationOptions<Mutation$updateChatLastReadAt> {
+  Options$Mutation$updateChatLastReadAt({
+    String? operationName,
+    Variables$Mutation$updateChatLastReadAt? variables,
+    graphql.FetchPolicy? fetchPolicy,
+    graphql.ErrorPolicy? errorPolicy,
+    graphql.CacheRereadPolicy? cacheRereadPolicy,
+    Object? optimisticResult,
+    Mutation$updateChatLastReadAt? typedOptimisticResult,
+    graphql.Context? context,
+    OnMutationCompleted$Mutation$updateChatLastReadAt? onCompleted,
+    graphql.OnMutationUpdate<Mutation$updateChatLastReadAt>? update,
+    graphql.OnError? onError,
+  })  : onCompletedWithParsed = onCompleted,
+        super(
+          variables: variables?.toJson() ?? {},
+          operationName: operationName,
+          fetchPolicy: fetchPolicy,
+          errorPolicy: errorPolicy,
+          cacheRereadPolicy: cacheRereadPolicy,
+          optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
+          context: context,
+          onCompleted: onCompleted == null
+              ? null
+              : (data) => onCompleted(
+                    data,
+                    data == null
+                        ? null
+                        : _parserFn$Mutation$updateChatLastReadAt(data),
+                  ),
+          update: update,
+          onError: onError,
+          document: documentNodeMutationupdateChatLastReadAt,
+          parserFn: _parserFn$Mutation$updateChatLastReadAt,
+        );
+
+  final OnMutationCompleted$Mutation$updateChatLastReadAt?
+      onCompletedWithParsed;
+
+  @override
+  List<Object?> get properties => [
+        ...super.onCompleted == null
+            ? super.properties
+            : super.properties.where((property) => property != onCompleted),
+        onCompletedWithParsed,
+      ];
+}
+
+class WatchOptions$Mutation$updateChatLastReadAt
+    extends graphql.WatchQueryOptions<Mutation$updateChatLastReadAt> {
+  WatchOptions$Mutation$updateChatLastReadAt({
+    String? operationName,
+    Variables$Mutation$updateChatLastReadAt? variables,
+    graphql.FetchPolicy? fetchPolicy,
+    graphql.ErrorPolicy? errorPolicy,
+    graphql.CacheRereadPolicy? cacheRereadPolicy,
+    Object? optimisticResult,
+    Mutation$updateChatLastReadAt? typedOptimisticResult,
+    graphql.Context? context,
+    Duration? pollInterval,
+    bool? eagerlyFetchResults,
+    bool carryForwardDataOnException = true,
+    bool fetchResults = false,
+  }) : super(
+          variables: variables?.toJson() ?? {},
+          operationName: operationName,
+          fetchPolicy: fetchPolicy,
+          errorPolicy: errorPolicy,
+          cacheRereadPolicy: cacheRereadPolicy,
+          optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
+          context: context,
+          document: documentNodeMutationupdateChatLastReadAt,
+          pollInterval: pollInterval,
+          eagerlyFetchResults: eagerlyFetchResults,
+          carryForwardDataOnException: carryForwardDataOnException,
+          fetchResults: fetchResults,
+          parserFn: _parserFn$Mutation$updateChatLastReadAt,
+        );
+}
+
+extension ClientExtension$Mutation$updateChatLastReadAt
+    on graphql.GraphQLClient {
+  Future<graphql.QueryResult<Mutation$updateChatLastReadAt>>
+      mutate$updateChatLastReadAt(
+              [Options$Mutation$updateChatLastReadAt? options]) async =>
+          await this.mutate(options ?? Options$Mutation$updateChatLastReadAt());
+  graphql.ObservableQuery<Mutation$updateChatLastReadAt>
+      watchMutation$updateChatLastReadAt(
+              [WatchOptions$Mutation$updateChatLastReadAt? options]) =>
+          this.watchMutation(
+              options ?? WatchOptions$Mutation$updateChatLastReadAt());
+}
+
+class Mutation$updateChatLastReadAt$HookResult {
+  Mutation$updateChatLastReadAt$HookResult(
+    this.runMutation,
+    this.result,
+  );
+
+  final RunMutation$Mutation$updateChatLastReadAt runMutation;
+
+  final graphql.QueryResult<Mutation$updateChatLastReadAt> result;
+}
+
+Mutation$updateChatLastReadAt$HookResult useMutation$updateChatLastReadAt(
+    [WidgetOptions$Mutation$updateChatLastReadAt? options]) {
+  final result = graphql_flutter
+      .useMutation(options ?? WidgetOptions$Mutation$updateChatLastReadAt());
+  return Mutation$updateChatLastReadAt$HookResult(
+    ({variables, optimisticResult, typedOptimisticResult}) =>
+        result.runMutation(
+      variables?.toJson() ?? const {},
+      optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
+    ),
+    result.result,
+  );
+}
+
+graphql.ObservableQuery<Mutation$updateChatLastReadAt>
+    useWatchMutation$updateChatLastReadAt(
+            [WatchOptions$Mutation$updateChatLastReadAt? options]) =>
+        graphql_flutter.useWatchMutation(
+            options ?? WatchOptions$Mutation$updateChatLastReadAt());
+
+class WidgetOptions$Mutation$updateChatLastReadAt
+    extends graphql.MutationOptions<Mutation$updateChatLastReadAt> {
+  WidgetOptions$Mutation$updateChatLastReadAt({
+    String? operationName,
+    graphql.FetchPolicy? fetchPolicy,
+    graphql.ErrorPolicy? errorPolicy,
+    graphql.CacheRereadPolicy? cacheRereadPolicy,
+    Object? optimisticResult,
+    Mutation$updateChatLastReadAt? typedOptimisticResult,
+    graphql.Context? context,
+    OnMutationCompleted$Mutation$updateChatLastReadAt? onCompleted,
+    graphql.OnMutationUpdate<Mutation$updateChatLastReadAt>? update,
+    graphql.OnError? onError,
+  })  : onCompletedWithParsed = onCompleted,
+        super(
+          operationName: operationName,
+          fetchPolicy: fetchPolicy,
+          errorPolicy: errorPolicy,
+          cacheRereadPolicy: cacheRereadPolicy,
+          optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
+          context: context,
+          onCompleted: onCompleted == null
+              ? null
+              : (data) => onCompleted(
+                    data,
+                    data == null
+                        ? null
+                        : _parserFn$Mutation$updateChatLastReadAt(data),
+                  ),
+          update: update,
+          onError: onError,
+          document: documentNodeMutationupdateChatLastReadAt,
+          parserFn: _parserFn$Mutation$updateChatLastReadAt,
+        );
+
+  final OnMutationCompleted$Mutation$updateChatLastReadAt?
+      onCompletedWithParsed;
+
+  @override
+  List<Object?> get properties => [
+        ...super.onCompleted == null
+            ? super.properties
+            : super.properties.where((property) => property != onCompleted),
+        onCompletedWithParsed,
+      ];
+}
+
+typedef RunMutation$Mutation$updateChatLastReadAt
+    = graphql.MultiSourceResult<Mutation$updateChatLastReadAt> Function({
+  Variables$Mutation$updateChatLastReadAt? variables,
+  Object? optimisticResult,
+  Mutation$updateChatLastReadAt? typedOptimisticResult,
+});
+typedef Builder$Mutation$updateChatLastReadAt = widgets.Widget Function(
+  RunMutation$Mutation$updateChatLastReadAt,
+  graphql.QueryResult<Mutation$updateChatLastReadAt>?,
+);
+
+class Mutation$updateChatLastReadAt$Widget
+    extends graphql_flutter.Mutation<Mutation$updateChatLastReadAt> {
+  Mutation$updateChatLastReadAt$Widget({
+    widgets.Key? key,
+    WidgetOptions$Mutation$updateChatLastReadAt? options,
+    required Builder$Mutation$updateChatLastReadAt builder,
+  }) : super(
+          key: key,
+          options: options ?? WidgetOptions$Mutation$updateChatLastReadAt(),
+          builder: (
+            run,
+            result,
+          ) =>
+              builder(
+            ({
+              variables,
+              optimisticResult,
+              typedOptimisticResult,
+            }) =>
+                run(
+              variables?.toJson() ?? const {},
+              optimisticResult:
+                  optimisticResult ?? typedOptimisticResult?.toJson(),
+            ),
+            result,
+          ),
+        );
+}
+
+class Mutation$updateChatLastReadAt$updateChatLastReadAt {
+  Mutation$updateChatLastReadAt$updateChatLastReadAt({
+    required this.chatRoomId,
+    this.$__typename = 'UpdateChatLastReadAtPayload',
+  });
+
+  factory Mutation$updateChatLastReadAt$updateChatLastReadAt.fromJson(
+      Map<String, dynamic> json) {
+    final l$chatRoomId = json['chatRoomId'];
+    final l$$__typename = json['__typename'];
+    return Mutation$updateChatLastReadAt$updateChatLastReadAt(
+      chatRoomId: (l$chatRoomId as String),
+      $__typename: (l$$__typename as String),
+    );
+  }
+
+  final String chatRoomId;
+
+  final String $__typename;
+
+  Map<String, dynamic> toJson() {
+    final _resultData = <String, dynamic>{};
+    final l$chatRoomId = chatRoomId;
+    _resultData['chatRoomId'] = l$chatRoomId;
+    final l$$__typename = $__typename;
+    _resultData['__typename'] = l$$__typename;
+    return _resultData;
+  }
+
+  @override
+  int get hashCode {
+    final l$chatRoomId = chatRoomId;
+    final l$$__typename = $__typename;
+    return Object.hashAll([
+      l$chatRoomId,
+      l$$__typename,
+    ]);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    if (!(other is Mutation$updateChatLastReadAt$updateChatLastReadAt) ||
+        runtimeType != other.runtimeType) {
+      return false;
+    }
+    final l$chatRoomId = chatRoomId;
+    final lOther$chatRoomId = other.chatRoomId;
+    if (l$chatRoomId != lOther$chatRoomId) {
+      return false;
+    }
+    final l$$__typename = $__typename;
+    final lOther$$__typename = other.$__typename;
+    if (l$$__typename != lOther$$__typename) {
+      return false;
+    }
+    return true;
+  }
+}
+
+extension UtilityExtension$Mutation$updateChatLastReadAt$updateChatLastReadAt
+    on Mutation$updateChatLastReadAt$updateChatLastReadAt {
+  CopyWith$Mutation$updateChatLastReadAt$updateChatLastReadAt<
+          Mutation$updateChatLastReadAt$updateChatLastReadAt>
+      get copyWith =>
+          CopyWith$Mutation$updateChatLastReadAt$updateChatLastReadAt(
+            this,
+            (i) => i,
+          );
+}
+
+abstract class CopyWith$Mutation$updateChatLastReadAt$updateChatLastReadAt<
+    TRes> {
+  factory CopyWith$Mutation$updateChatLastReadAt$updateChatLastReadAt(
+    Mutation$updateChatLastReadAt$updateChatLastReadAt instance,
+    TRes Function(Mutation$updateChatLastReadAt$updateChatLastReadAt) then,
+  ) = _CopyWithImpl$Mutation$updateChatLastReadAt$updateChatLastReadAt;
+
+  factory CopyWith$Mutation$updateChatLastReadAt$updateChatLastReadAt.stub(
+          TRes res) =
+      _CopyWithStubImpl$Mutation$updateChatLastReadAt$updateChatLastReadAt;
+
+  TRes call({
+    String? chatRoomId,
+    String? $__typename,
+  });
+}
+
+class _CopyWithImpl$Mutation$updateChatLastReadAt$updateChatLastReadAt<TRes>
+    implements
+        CopyWith$Mutation$updateChatLastReadAt$updateChatLastReadAt<TRes> {
+  _CopyWithImpl$Mutation$updateChatLastReadAt$updateChatLastReadAt(
+    this._instance,
+    this._then,
+  );
+
+  final Mutation$updateChatLastReadAt$updateChatLastReadAt _instance;
+
+  final TRes Function(Mutation$updateChatLastReadAt$updateChatLastReadAt) _then;
+
+  static const _undefined = <dynamic, dynamic>{};
+
+  TRes call({
+    Object? chatRoomId = _undefined,
+    Object? $__typename = _undefined,
+  }) =>
+      _then(Mutation$updateChatLastReadAt$updateChatLastReadAt(
+        chatRoomId: chatRoomId == _undefined || chatRoomId == null
+            ? _instance.chatRoomId
+            : (chatRoomId as String),
+        $__typename: $__typename == _undefined || $__typename == null
+            ? _instance.$__typename
+            : ($__typename as String),
+      ));
+}
+
+class _CopyWithStubImpl$Mutation$updateChatLastReadAt$updateChatLastReadAt<TRes>
+    implements
+        CopyWith$Mutation$updateChatLastReadAt$updateChatLastReadAt<TRes> {
+  _CopyWithStubImpl$Mutation$updateChatLastReadAt$updateChatLastReadAt(
+      this._res);
+
+  TRes _res;
+
+  call({
+    String? chatRoomId,
+    String? $__typename,
+  }) =>
+      _res;
 }

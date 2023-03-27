@@ -1,3 +1,9 @@
+query getUserForChat($id: UUID!) {
+    user(userId: $id) {
+        nickname
+        avatarUrl
+    }
+}
 
 mutation sendChatMessageText($input: SendChatMessageTextInput) {
     sendChatMessageText(input: $input) {
@@ -19,6 +25,12 @@ mutation sendChatMessageImage($input: SendChatMessageImageInput) {
             }
             createdAt
         }
+    }
+}
+
+mutation updateChatLastReadAt($input: UpdateChatLastReadAtInput) {
+    updateChatLastReadAt(input: $input) {
+        chatRoomId
     }
 }
 

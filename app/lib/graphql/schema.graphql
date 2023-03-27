@@ -55,8 +55,14 @@ enum ChatMessageKind {
 
 type ChatRoom implements Node {
   id: UUID!
-  userIds: [UUID!]!
+  participantUserIds: [UUID!]!
+  participants: [ChatRoomParticipant!]!
   createdAt: Time!
+}
+
+type ChatRoomParticipant {
+  userId: UUID!
+  lastReadAt: Time!
 }
 
 type CloseInvitationPayload {
@@ -181,6 +187,7 @@ type Mutation {
   switchUser(userId: UUID!): SwitchUserPayload!
   sendChatMessageText(input: SendChatMessageTextInput): SendChatMessageTextPayload!
   sendChatMessageImage(input: SendChatMessageImageInput): SendChatMessageImagePayload!
+  updateChatLastReadAt(input: UpdateChatLastReadAtInput!): UpdateChatLastReadAtPayload!
   createFriendGroup(input: CreateFriendGroupInput!): CreateFriendGroupPayload!
   updateFriendGroup(input: UpdateFriendGroupInput!): UpdateFriendGroupPayload!
   deleteFriendGroup(friendGroupId: UUID!): DeleteFriendGroupPayload!
@@ -333,6 +340,15 @@ type UnmuteUserPayload {
 
 type UpdateAvatarPayload {
   viewer: Viewer!
+}
+
+input UpdateChatLastReadAtInput {
+  chatRoomId: UUID!
+  lastReadAt: Time!
+}
+
+type UpdateChatLastReadAtPayload {
+  chatRoomId: UUID!
 }
 
 input UpdateFriendGroupInput {

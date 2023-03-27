@@ -12,6 +12,7 @@ import (
 	"github.com/k-yomo/invy/invy_api/graph/gqlmodel"
 	"github.com/k-yomo/invy/invy_api/internal/auth"
 	"github.com/k-yomo/invy/invy_api/internal/xerrors"
+	"github.com/k-yomo/invy/invy_api/service"
 	"github.com/k-yomo/invy/pkg/convutil"
 	"github.com/k-yomo/invy/pkg/logging"
 	"github.com/k-yomo/invy/pkg/sliceutil"
@@ -19,16 +20,8 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func firestoreChatRoomPath(chatRoomID uuid.UUID) string {
-	return fmt.Sprintf("chatRooms/%s", chatRoomID)
-}
-
-func firestoreChatMessagePath(chatRoomID uuid.UUID, chatMessageID uuid.UUID) string {
-	return fmt.Sprintf("%s/chatMessages/%s", firestoreChatRoomPath(chatRoomID), chatMessageID)
-}
-
 func getChatRoomUserIDs(ctx context.Context, firestoreClient *firestore.Client, chatRoomID uuid.UUID) ([]uuid.UUID, error) {
-	chatRoomSnapshot, err := firestoreClient.Doc(firestoreChatRoomPath(chatRoomID)).Get(ctx)
+	chatRoomSnapshot, err := firestoreClient.Doc(service.FirestoreChatRoomPath(chatRoomID)).Get(ctx)
 	if status.Code(err) == codes.NotFound {
 		return nil, xerrors.NewErrNotFound(fmt.Errorf("chat room %q not found", chatRoomID))
 	}

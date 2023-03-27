@@ -94,9 +94,15 @@ type ComplexityRoot struct {
 	}
 
 	ChatRoom struct {
-		CreatedAt func(childComplexity int) int
-		ID        func(childComplexity int) int
-		UserIds   func(childComplexity int) int
+		CreatedAt          func(childComplexity int) int
+		ID                 func(childComplexity int) int
+		ParticipantUserIds func(childComplexity int) int
+		Participants       func(childComplexity int) int
+	}
+
+	ChatRoomParticipant struct {
+		LastReadAt func(childComplexity int) int
+		UserID     func(childComplexity int) int
 	}
 
 	CloseInvitationPayload struct {
@@ -209,6 +215,7 @@ type ComplexityRoot struct {
 		UnblockUser                   func(childComplexity int, userID uuid.UUID) int
 		UnmuteUser                    func(childComplexity int, userID uuid.UUID) int
 		UpdateAvatar                  func(childComplexity int, avatar graphql.Upload) int
+		UpdateChatLastReadAt          func(childComplexity int, input gqlmodel.UpdateChatLastReadAtInput) int
 		UpdateFriendGroup             func(childComplexity int, input gqlmodel.UpdateFriendGroupInput) int
 		UpdateLocation                func(childComplexity int, latitude float64, longitude float64) int
 		UpdateNickname                func(childComplexity int, nickname string) int
@@ -280,6 +287,10 @@ type ComplexityRoot struct {
 
 	UpdateAvatarPayload struct {
 		Viewer func(childComplexity int) int
+	}
+
+	UpdateChatLastReadAtPayload struct {
+		ChatRoomID func(childComplexity int) int
 	}
 
 	UpdateFriendGroupPayload struct {
@@ -365,6 +376,7 @@ type MutationResolver interface {
 	SwitchUser(ctx context.Context, userID uuid.UUID) (*gqlmodel.SwitchUserPayload, error)
 	SendChatMessageText(ctx context.Context, input *gqlmodel.SendChatMessageTextInput) (*gqlmodel.SendChatMessageTextPayload, error)
 	SendChatMessageImage(ctx context.Context, input *gqlmodel.SendChatMessageImageInput) (*gqlmodel.SendChatMessageImagePayload, error)
+	UpdateChatLastReadAt(ctx context.Context, input gqlmodel.UpdateChatLastReadAtInput) (*gqlmodel.UpdateChatLastReadAtPayload, error)
 	CreateFriendGroup(ctx context.Context, input gqlmodel.CreateFriendGroupInput) (*gqlmodel.CreateFriendGroupPayload, error)
 	UpdateFriendGroup(ctx context.Context, input gqlmodel.UpdateFriendGroupInput) (*gqlmodel.UpdateFriendGroupPayload, error)
 	DeleteFriendGroup(ctx context.Context, friendGroupID uuid.UUID) (*gqlmodel.DeleteFriendGroupPayload, error)
@@ -538,12 +550,33 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ChatRoom.ID(childComplexity), true
 
-	case "ChatRoom.userIds":
-		if e.complexity.ChatRoom.UserIds == nil {
+	case "ChatRoom.participantUserIds":
+		if e.complexity.ChatRoom.ParticipantUserIds == nil {
 			break
 		}
 
-		return e.complexity.ChatRoom.UserIds(childComplexity), true
+		return e.complexity.ChatRoom.ParticipantUserIds(childComplexity), true
+
+	case "ChatRoom.participants":
+		if e.complexity.ChatRoom.Participants == nil {
+			break
+		}
+
+		return e.complexity.ChatRoom.Participants(childComplexity), true
+
+	case "ChatRoomParticipant.lastReadAt":
+		if e.complexity.ChatRoomParticipant.LastReadAt == nil {
+			break
+		}
+
+		return e.complexity.ChatRoomParticipant.LastReadAt(childComplexity), true
+
+	case "ChatRoomParticipant.userId":
+		if e.complexity.ChatRoomParticipant.UserID == nil {
+			break
+		}
+
+		return e.complexity.ChatRoomParticipant.UserID(childComplexity), true
 
 	case "CloseInvitationPayload.invitation":
 		if e.complexity.CloseInvitationPayload.Invitation == nil {
@@ -1139,6 +1172,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.UpdateAvatar(childComplexity, args["avatar"].(graphql.Upload)), true
 
+	case "Mutation.updateChatLastReadAt":
+		if e.complexity.Mutation.UpdateChatLastReadAt == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updateChatLastReadAt_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdateChatLastReadAt(childComplexity, args["input"].(gqlmodel.UpdateChatLastReadAtInput)), true
+
 	case "Mutation.updateFriendGroup":
 		if e.complexity.Mutation.UpdateFriendGroup == nil {
 			break
@@ -1360,6 +1405,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.UpdateAvatarPayload.Viewer(childComplexity), true
+
+	case "UpdateChatLastReadAtPayload.chatRoomId":
+		if e.complexity.UpdateChatLastReadAtPayload.ChatRoomID == nil {
+			break
+		}
+
+		return e.complexity.UpdateChatLastReadAtPayload.ChatRoomID(childComplexity), true
 
 	case "UpdateFriendGroupPayload.friendGroup":
 		if e.complexity.UpdateFriendGroupPayload.FriendGroup == nil {
@@ -1623,6 +1675,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputSendChatMessageTextInput,
 		ec.unmarshalInputSendInvitationInput,
 		ec.unmarshalInputSignUpInput,
+		ec.unmarshalInputUpdateChatLastReadAtInput,
 		ec.unmarshalInputUpdateFriendGroupInput,
 	)
 	first := true
@@ -1727,13 +1780,21 @@ type DeleteAccountPayload {
 extend type Mutation {
     sendChatMessageText(input: SendChatMessageTextInput): SendChatMessageTextPayload! @authRequired
     sendChatMessageImage(input: SendChatMessageImageInput): SendChatMessageImagePayload! @authRequired
+
+    updateChatLastReadAt(input: UpdateChatLastReadAtInput!): UpdateChatLastReadAtPayload! @authRequired
 }
 
 
 type ChatRoom implements Node {
     id: UUID!
-    userIds: [UUID!]!
+    participantUserIds: [UUID!]!
+    participants: [ChatRoomParticipant!]!
     createdAt: Time!
+}
+
+type ChatRoomParticipant {
+    userId: UUID!
+    lastReadAt: Time!
 }
 
 type ChatMessageBodyText {
@@ -1776,6 +1837,14 @@ input SendChatMessageImageInput {
 }
 type SendChatMessageImagePayload {
     chatMessage: ChatMessage!
+}
+
+input UpdateChatLastReadAtInput {
+    chatRoomId: UUID!,
+    lastReadAt: Time!
+}
+type UpdateChatLastReadAtPayload {
+    chatRoomId: UUID!
 }
 `, BuiltIn: false},
 	{Name: "../../../defs/graphql/friend_group.graphql", Input: `
@@ -2552,6 +2621,21 @@ func (ec *executionContext) field_Mutation_updateAvatar_args(ctx context.Context
 		}
 	}
 	args["avatar"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_updateChatLastReadAt_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 gqlmodel.UpdateChatLastReadAtInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNUpdateChatLastReadAtInput2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐUpdateChatLastReadAtInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
 	return args, nil
 }
 
@@ -3540,8 +3624,8 @@ func (ec *executionContext) fieldContext_ChatRoom_id(ctx context.Context, field 
 	return fc, nil
 }
 
-func (ec *executionContext) _ChatRoom_userIds(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.ChatRoom) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_ChatRoom_userIds(ctx, field)
+func (ec *executionContext) _ChatRoom_participantUserIds(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.ChatRoom) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ChatRoom_participantUserIds(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -3554,7 +3638,7 @@ func (ec *executionContext) _ChatRoom_userIds(ctx context.Context, field graphql
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.UserIds, nil
+		return obj.ParticipantUserIds, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3571,7 +3655,7 @@ func (ec *executionContext) _ChatRoom_userIds(ctx context.Context, field graphql
 	return ec.marshalNUUID2ᚕgithubᚗcomᚋgoogleᚋuuidᚐUUIDᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ChatRoom_userIds(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ChatRoom_participantUserIds(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ChatRoom",
 		Field:      field,
@@ -3579,6 +3663,56 @@ func (ec *executionContext) fieldContext_ChatRoom_userIds(ctx context.Context, f
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type UUID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ChatRoom_participants(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.ChatRoom) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ChatRoom_participants(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Participants, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*gqlmodel.ChatRoomParticipant)
+	fc.Result = res
+	return ec.marshalNChatRoomParticipant2ᚕᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐChatRoomParticipantᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ChatRoom_participants(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ChatRoom",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "userId":
+				return ec.fieldContext_ChatRoomParticipant_userId(ctx, field)
+			case "lastReadAt":
+				return ec.fieldContext_ChatRoomParticipant_lastReadAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type ChatRoomParticipant", field.Name)
 		},
 	}
 	return fc, nil
@@ -3618,6 +3752,94 @@ func (ec *executionContext) _ChatRoom_createdAt(ctx context.Context, field graph
 func (ec *executionContext) fieldContext_ChatRoom_createdAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ChatRoom",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Time does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ChatRoomParticipant_userId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.ChatRoomParticipant) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ChatRoomParticipant_userId(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UserID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(uuid.UUID)
+	fc.Result = res
+	return ec.marshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ChatRoomParticipant_userId(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ChatRoomParticipant",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type UUID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ChatRoomParticipant_lastReadAt(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.ChatRoomParticipant) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ChatRoomParticipant_lastReadAt(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.LastReadAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ChatRoomParticipant_lastReadAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ChatRoomParticipant",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -6119,6 +6341,85 @@ func (ec *executionContext) fieldContext_Mutation_sendChatMessageImage(ctx conte
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_sendChatMessageImage_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_updateChatLastReadAt(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_updateChatLastReadAt(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().UpdateChatLastReadAt(rctx, fc.Args["input"].(gqlmodel.UpdateChatLastReadAtInput))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.AuthRequired == nil {
+				return nil, errors.New("directive authRequired is not implemented")
+			}
+			return ec.directives.AuthRequired(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*gqlmodel.UpdateChatLastReadAtPayload); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/k-yomo/invy/invy_api/graph/gqlmodel.UpdateChatLastReadAtPayload`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.UpdateChatLastReadAtPayload)
+	fc.Result = res
+	return ec.marshalNUpdateChatLastReadAtPayload2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐUpdateChatLastReadAtPayload(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_updateChatLastReadAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "chatRoomId":
+				return ec.fieldContext_UpdateChatLastReadAtPayload_chatRoomId(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type UpdateChatLastReadAtPayload", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_updateChatLastReadAt_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return
 	}
@@ -9511,6 +9812,50 @@ func (ec *executionContext) fieldContext_UpdateAvatarPayload_viewer(ctx context.
 				return ec.fieldContext_Viewer_invitationAwaitings(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Viewer", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _UpdateChatLastReadAtPayload_chatRoomId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.UpdateChatLastReadAtPayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UpdateChatLastReadAtPayload_chatRoomId(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ChatRoomID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(uuid.UUID)
+	fc.Result = res
+	return ec.marshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_UpdateChatLastReadAtPayload_chatRoomId(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "UpdateChatLastReadAtPayload",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type UUID does not have child fields")
 		},
 	}
 	return fc, nil
@@ -13539,6 +13884,42 @@ func (ec *executionContext) unmarshalInputSignUpInput(ctx context.Context, obj i
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputUpdateChatLastReadAtInput(ctx context.Context, obj interface{}) (gqlmodel.UpdateChatLastReadAtInput, error) {
+	var it gqlmodel.UpdateChatLastReadAtInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"chatRoomId", "lastReadAt"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "chatRoomId":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("chatRoomId"))
+			it.ChatRoomID, err = ec.unmarshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "lastReadAt":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("lastReadAt"))
+			it.LastReadAt, err = ec.unmarshalNTime2timeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputUpdateFriendGroupInput(ctx context.Context, obj interface{}) (gqlmodel.UpdateFriendGroupInput, error) {
 	var it gqlmodel.UpdateFriendGroupInput
 	asMap := map[string]interface{}{}
@@ -13973,9 +14354,16 @@ func (ec *executionContext) _ChatRoom(ctx context.Context, sel ast.SelectionSet,
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "userIds":
+		case "participantUserIds":
 
-			out.Values[i] = ec._ChatRoom_userIds(ctx, field, obj)
+			out.Values[i] = ec._ChatRoom_participantUserIds(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "participants":
+
+			out.Values[i] = ec._ChatRoom_participants(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				invalids++
@@ -13983,6 +14371,41 @@ func (ec *executionContext) _ChatRoom(ctx context.Context, sel ast.SelectionSet,
 		case "createdAt":
 
 			out.Values[i] = ec._ChatRoom_createdAt(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var chatRoomParticipantImplementors = []string{"ChatRoomParticipant"}
+
+func (ec *executionContext) _ChatRoomParticipant(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.ChatRoomParticipant) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, chatRoomParticipantImplementors)
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ChatRoomParticipant")
+		case "userId":
+
+			out.Values[i] = ec._ChatRoomParticipant_userId(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "lastReadAt":
+
+			out.Values[i] = ec._ChatRoomParticipant_lastReadAt(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				invalids++
@@ -14734,6 +15157,15 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_sendChatMessageImage(ctx, field)
+			})
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "updateChatLastReadAt":
+
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_updateChatLastReadAt(ctx, field)
 			})
 
 			if out.Values[i] == graphql.Null {
@@ -15515,6 +15947,34 @@ func (ec *executionContext) _UpdateAvatarPayload(ctx context.Context, sel ast.Se
 		case "viewer":
 
 			out.Values[i] = ec._UpdateAvatarPayload_viewer(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var updateChatLastReadAtPayloadImplementors = []string{"UpdateChatLastReadAtPayload"}
+
+func (ec *executionContext) _UpdateChatLastReadAtPayload(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.UpdateChatLastReadAtPayload) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, updateChatLastReadAtPayloadImplementors)
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("UpdateChatLastReadAtPayload")
+		case "chatRoomId":
+
+			out.Values[i] = ec._UpdateChatLastReadAtPayload_chatRoomId(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				invalids++
@@ -16567,6 +17027,60 @@ func (ec *executionContext) marshalNChatMessageKind2githubᚗcomᚋkᚑyomoᚋin
 	return v
 }
 
+func (ec *executionContext) marshalNChatRoomParticipant2ᚕᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐChatRoomParticipantᚄ(ctx context.Context, sel ast.SelectionSet, v []*gqlmodel.ChatRoomParticipant) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNChatRoomParticipant2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐChatRoomParticipant(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNChatRoomParticipant2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐChatRoomParticipant(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.ChatRoomParticipant) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._ChatRoomParticipant(ctx, sel, v)
+}
+
 func (ec *executionContext) marshalNCloseInvitationPayload2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐCloseInvitationPayload(ctx context.Context, sel ast.SelectionSet, v gqlmodel.CloseInvitationPayload) graphql.Marshaler {
 	return ec._CloseInvitationPayload(ctx, sel, &v)
 }
@@ -17254,6 +17768,25 @@ func (ec *executionContext) marshalNUpdateAvatarPayload2ᚖgithubᚗcomᚋkᚑyo
 		return graphql.Null
 	}
 	return ec._UpdateAvatarPayload(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNUpdateChatLastReadAtInput2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐUpdateChatLastReadAtInput(ctx context.Context, v interface{}) (gqlmodel.UpdateChatLastReadAtInput, error) {
+	res, err := ec.unmarshalInputUpdateChatLastReadAtInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNUpdateChatLastReadAtPayload2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐUpdateChatLastReadAtPayload(ctx context.Context, sel ast.SelectionSet, v gqlmodel.UpdateChatLastReadAtPayload) graphql.Marshaler {
+	return ec._UpdateChatLastReadAtPayload(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNUpdateChatLastReadAtPayload2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐUpdateChatLastReadAtPayload(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.UpdateChatLastReadAtPayload) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._UpdateChatLastReadAtPayload(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNUpdateFriendGroupInput2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐUpdateFriendGroupInput(ctx context.Context, v interface{}) (gqlmodel.UpdateFriendGroupInput, error) {
