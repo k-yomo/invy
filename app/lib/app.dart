@@ -9,6 +9,7 @@ import 'package:invy/graphql/viewer.graphql.dart';
 import 'package:invy/router.dart';
 import 'package:invy/screens/invitation/invitation_detail_screen.dart';
 import 'package:invy/services/graphql_client.dart';
+import 'package:invy/state/badge_count.dart';
 import 'package:invy/util/device.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
@@ -61,7 +62,9 @@ class AppState extends ConsumerState<App> {
     FirebaseMessaging.onMessageOpenedApp.listen(_handleMessage);
   }
 
-  void _handleMessage(RemoteMessage message) {
+  void _handleMessage(RemoteMessage message) async {
+    await handlePushMessage(message);
+
     final messageType =
         fromJson$Enum$PushNotificationType(message.data["type"]);
     switch (messageType) {
@@ -79,7 +82,9 @@ class AppState extends ConsumerState<App> {
   void initState() {
     super.initState();
 
-    setupInteractedMessage();
+    Future(() async {
+      await setupInteractedMessage();
+    });
   }
 
   @override

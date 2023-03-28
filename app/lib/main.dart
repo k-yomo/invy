@@ -32,17 +32,7 @@ import 'state/badge_count.dart';
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Hive.initFlutter();
-  final messageType = fromJson$Enum$PushNotificationType(message.data["type"]);
-  if (messageType == Enum$PushNotificationType.INVITATION_RECEIVED) {
-    final badgeCounter = await BadgeCounter.open();
-    await badgeCounter.setBadgeCount(badgeCounter.badgeCount + 1);
-  } else {
-    // TODO: Remove sentry logging once we confirm behaviour
-    SentryFlutter.init(configureSentryOptions);
-    Sentry.captureMessage(
-        "unhandled message in background, type: ${message.data["type"]}",
-        params: [message.data.toString()]);
-  }
+  await handlePushMessage(message);
 }
 
 configureSentryOptions(options) async {
