@@ -40,3 +40,14 @@ func ConvertStructToJSONMap(v interface{}) (map[string]interface{}, error) {
 	}
 	return jsonMap, nil
 }
+
+func ConvertMapToStructViaJSON(v map[string]interface{}, st interface{}) error {
+	if reflect.ValueOf(st).Kind() != reflect.Struct {
+		errors.New("value must be struct")
+	}
+	jsonValue, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+	return json.Unmarshal(jsonValue, st)
+}

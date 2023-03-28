@@ -72,7 +72,7 @@ func (c *chatService) AddParticipant(ctx context.Context, chatRoomID uuid.UUID, 
 			return fmt.Errorf("get chat room: %w", err)
 		}
 		var chatRoom gqlmodel.ChatRoom
-		if err := chatRoomSnapshot.DataTo(&chatRoom); err != nil {
+		if err := convutil.ConvertMapToStructViaJSON(chatRoomSnapshot.Data(), &chatRoom); err != nil {
 			return fmt.Errorf("unmarhsal chat room snapshot: %w", err)
 		}
 
