@@ -262,7 +262,6 @@ class ChatState extends ConsumerState<Chat> {
     }, [chatRoomSnapshot.data]);
 
     useEffect(() {
-      print(chatRoomSnapshot.data);
       if (chatRoomSnapshot.data == null ||
           chatMessageSnapshot.data == null ||
           chatMessageSnapshot.data!.docs.isEmpty) {
@@ -324,7 +323,7 @@ class ChatState extends ConsumerState<Chat> {
                           .toUtc()))));
 
       return null;
-    }, [chatMessageSnapshot.data]);
+    }, [chatRoomSnapshot.data, chatMessageSnapshot.data]);
 
     return chatUI.Chat(
       showUserAvatars: true,
