@@ -320,7 +320,8 @@ class ChatState extends ConsumerState<Chat> {
                   input: Input$UpdateChatLastReadAtInput(
                       chatRoomId: widget.chatRoomId,
                       lastReadAt: DateTime.fromMillisecondsSinceEpoch(
-                          chatMessages[0].createdAt!)))));
+                              chatMessages[0].createdAt!)
+                          .toUtc()))));
 
       return null;
     }, [chatMessageSnapshot.data]);

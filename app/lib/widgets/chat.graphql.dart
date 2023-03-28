@@ -4194,9 +4194,9 @@ class _CopyWithStubImpl$Mutation$sendChatMessageImage$sendChatMessageImage$chatM
 
 class Variables$Mutation$updateChatLastReadAt {
   factory Variables$Mutation$updateChatLastReadAt(
-          {Input$UpdateChatLastReadAtInput? input}) =>
+          {required Input$UpdateChatLastReadAtInput input}) =>
       Variables$Mutation$updateChatLastReadAt._({
-        if (input != null) r'input': input,
+        r'input': input,
       });
 
   Variables$Mutation$updateChatLastReadAt._(this._$data);
@@ -4204,26 +4204,20 @@ class Variables$Mutation$updateChatLastReadAt {
   factory Variables$Mutation$updateChatLastReadAt.fromJson(
       Map<String, dynamic> data) {
     final result$data = <String, dynamic>{};
-    if (data.containsKey('input')) {
-      final l$input = data['input'];
-      result$data['input'] = l$input == null
-          ? null
-          : Input$UpdateChatLastReadAtInput.fromJson(
-              (l$input as Map<String, dynamic>));
-    }
+    final l$input = data['input'];
+    result$data['input'] = Input$UpdateChatLastReadAtInput.fromJson(
+        (l$input as Map<String, dynamic>));
     return Variables$Mutation$updateChatLastReadAt._(result$data);
   }
 
   Map<String, dynamic> _$data;
 
-  Input$UpdateChatLastReadAtInput? get input =>
-      (_$data['input'] as Input$UpdateChatLastReadAtInput?);
+  Input$UpdateChatLastReadAtInput get input =>
+      (_$data['input'] as Input$UpdateChatLastReadAtInput);
   Map<String, dynamic> toJson() {
     final result$data = <String, dynamic>{};
-    if (_$data.containsKey('input')) {
-      final l$input = input;
-      result$data['input'] = l$input?.toJson();
-    }
+    final l$input = input;
+    result$data['input'] = l$input.toJson();
     return result$data;
   }
 
@@ -4244,9 +4238,6 @@ class Variables$Mutation$updateChatLastReadAt {
     }
     final l$input = input;
     final lOther$input = other.input;
-    if (_$data.containsKey('input') != other._$data.containsKey('input')) {
-      return false;
-    }
     if (l$input != lOther$input) {
       return false;
     }
@@ -4256,7 +4247,7 @@ class Variables$Mutation$updateChatLastReadAt {
   @override
   int get hashCode {
     final l$input = input;
-    return Object.hashAll([_$data.containsKey('input') ? l$input : const {}]);
+    return Object.hashAll([l$input]);
   }
 }
 
@@ -4288,8 +4279,8 @@ class _CopyWithImpl$Variables$Mutation$updateChatLastReadAt<TRes>
   TRes call({Object? input = _undefined}) =>
       _then(Variables$Mutation$updateChatLastReadAt._({
         ..._instance._$data,
-        if (input != _undefined)
-          'input': (input as Input$UpdateChatLastReadAtInput?),
+        if (input != _undefined && input != null)
+          'input': (input as Input$UpdateChatLastReadAtInput),
       }));
 }
 
@@ -4452,7 +4443,7 @@ const documentNodeMutationupdateChatLastReadAt = DocumentNode(definitions: [
         variable: VariableNode(name: NameNode(value: 'input')),
         type: NamedTypeNode(
           name: NameNode(value: 'UpdateChatLastReadAtInput'),
-          isNonNull: false,
+          isNonNull: true,
         ),
         defaultValue: DefaultValueNode(value: null),
         directives: [],
@@ -4510,7 +4501,7 @@ class Options$Mutation$updateChatLastReadAt
     extends graphql.MutationOptions<Mutation$updateChatLastReadAt> {
   Options$Mutation$updateChatLastReadAt({
     String? operationName,
-    Variables$Mutation$updateChatLastReadAt? variables,
+    required Variables$Mutation$updateChatLastReadAt variables,
     graphql.FetchPolicy? fetchPolicy,
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
@@ -4522,7 +4513,7 @@ class Options$Mutation$updateChatLastReadAt
     graphql.OnError? onError,
   })  : onCompletedWithParsed = onCompleted,
         super(
-          variables: variables?.toJson() ?? {},
+          variables: variables.toJson(),
           operationName: operationName,
           fetchPolicy: fetchPolicy,
           errorPolicy: errorPolicy,
@@ -4559,7 +4550,7 @@ class WatchOptions$Mutation$updateChatLastReadAt
     extends graphql.WatchQueryOptions<Mutation$updateChatLastReadAt> {
   WatchOptions$Mutation$updateChatLastReadAt({
     String? operationName,
-    Variables$Mutation$updateChatLastReadAt? variables,
+    required Variables$Mutation$updateChatLastReadAt variables,
     graphql.FetchPolicy? fetchPolicy,
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
@@ -4571,7 +4562,7 @@ class WatchOptions$Mutation$updateChatLastReadAt
     bool carryForwardDataOnException = true,
     bool fetchResults = false,
   }) : super(
-          variables: variables?.toJson() ?? {},
+          variables: variables.toJson(),
           operationName: operationName,
           fetchPolicy: fetchPolicy,
           errorPolicy: errorPolicy,
@@ -4591,13 +4582,12 @@ extension ClientExtension$Mutation$updateChatLastReadAt
     on graphql.GraphQLClient {
   Future<graphql.QueryResult<Mutation$updateChatLastReadAt>>
       mutate$updateChatLastReadAt(
-              [Options$Mutation$updateChatLastReadAt? options]) async =>
-          await this.mutate(options ?? Options$Mutation$updateChatLastReadAt());
+              Options$Mutation$updateChatLastReadAt options) async =>
+          await this.mutate(options);
   graphql.ObservableQuery<Mutation$updateChatLastReadAt>
       watchMutation$updateChatLastReadAt(
-              [WatchOptions$Mutation$updateChatLastReadAt? options]) =>
-          this.watchMutation(
-              options ?? WatchOptions$Mutation$updateChatLastReadAt());
+              WatchOptions$Mutation$updateChatLastReadAt options) =>
+          this.watchMutation(options);
 }
 
 class Mutation$updateChatLastReadAt$HookResult {
@@ -4616,9 +4606,9 @@ Mutation$updateChatLastReadAt$HookResult useMutation$updateChatLastReadAt(
   final result = graphql_flutter
       .useMutation(options ?? WidgetOptions$Mutation$updateChatLastReadAt());
   return Mutation$updateChatLastReadAt$HookResult(
-    ({variables, optimisticResult, typedOptimisticResult}) =>
+    (variables, {optimisticResult, typedOptimisticResult}) =>
         result.runMutation(
-      variables?.toJson() ?? const {},
+      variables.toJson(),
       optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
     ),
     result.result,
@@ -4627,9 +4617,8 @@ Mutation$updateChatLastReadAt$HookResult useMutation$updateChatLastReadAt(
 
 graphql.ObservableQuery<Mutation$updateChatLastReadAt>
     useWatchMutation$updateChatLastReadAt(
-            [WatchOptions$Mutation$updateChatLastReadAt? options]) =>
-        graphql_flutter.useWatchMutation(
-            options ?? WatchOptions$Mutation$updateChatLastReadAt());
+            WatchOptions$Mutation$updateChatLastReadAt options) =>
+        graphql_flutter.useWatchMutation(options);
 
 class WidgetOptions$Mutation$updateChatLastReadAt
     extends graphql.MutationOptions<Mutation$updateChatLastReadAt> {
@@ -4679,8 +4668,8 @@ class WidgetOptions$Mutation$updateChatLastReadAt
 }
 
 typedef RunMutation$Mutation$updateChatLastReadAt
-    = graphql.MultiSourceResult<Mutation$updateChatLastReadAt> Function({
-  Variables$Mutation$updateChatLastReadAt? variables,
+    = graphql.MultiSourceResult<Mutation$updateChatLastReadAt> Function(
+  Variables$Mutation$updateChatLastReadAt, {
   Object? optimisticResult,
   Mutation$updateChatLastReadAt? typedOptimisticResult,
 });
@@ -4703,13 +4692,13 @@ class Mutation$updateChatLastReadAt$Widget
             result,
           ) =>
               builder(
-            ({
-              variables,
+            (
+              variables, {
               optimisticResult,
               typedOptimisticResult,
             }) =>
                 run(
-              variables?.toJson() ?? const {},
+              variables.toJson(),
               optimisticResult:
                   optimisticResult ?? typedOptimisticResult?.toJson(),
             ),

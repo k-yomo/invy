@@ -28,7 +28,7 @@ mutation sendChatMessageImage($input: SendChatMessageImageInput) {
     }
 }
 
-mutation updateChatLastReadAt($input: UpdateChatLastReadAtInput) {
+mutation updateChatLastReadAt($input: UpdateChatLastReadAtInput!) {
     updateChatLastReadAt(input: $input) {
         chatRoomId
     }

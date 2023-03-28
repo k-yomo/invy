@@ -100,7 +100,8 @@ func (r *mutationResolver) SendChatMessageImage(ctx context.Context, input *gqlm
 // UpdateChatLastReadAt is the resolver for the updateChatLastReadAt field.
 func (r *mutationResolver) UpdateChatLastReadAt(ctx context.Context, input gqlmodel.UpdateChatLastReadAtInput) (*gqlmodel.UpdateChatLastReadAtPayload, error) {
 	authUserID := auth.GetCurrentUserID(ctx)
-	err := r.Service.Chat.UpdateLastReadAt(ctx, input.ChatRoomID, authUserID, input.LastReadAt)
+	// client sends UTC time, but to align with the other data, converting to local here
+	err := r.Service.Chat.UpdateLastReadAt(ctx, input.ChatRoomID, authUserID, input.LastReadAt.Local())
 	if err != nil {
 		return nil, fmt.Errorf("update last read at: %w", err)
 	}
