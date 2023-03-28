@@ -30,6 +30,19 @@ func (c *notificationService) SendMulticast(ctx context.Context, message *fcm.Mu
 	if len(message.Tokens) == 0 {
 		return nil
 	}
+
+	if message.APNS == nil {
+		message.APNS = &fcm.APNSConfig{}
+	}
+	if message.APNS.Payload == nil {
+		message.APNS.Payload = &fcm.APNSPayload{}
+	}
+	if message.APNS.Payload.Aps == nil {
+		message.APNS.Payload.Aps = &fcm.Aps{}
+	}
+	// To wake the app process and trigger the background handler
+	message.APNS.Payload.Aps.ContentAvailable = true
+
 	eg := errgroup.Group{}
 	for _, chunkedTokens := range sliceutil.Chunk(message.Tokens, maxMulticastMessages) {
 		m := fcm.MulticastMessage{
