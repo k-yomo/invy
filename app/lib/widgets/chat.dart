@@ -277,7 +277,7 @@ class ChatState extends ConsumerState<Chat> {
         _userMap.forEach((_, user) {
           if (user.id != messageUser.id &&
               user.lastSeen != null &&
-              user.lastSeen! > messageCreatedAt) {
+              user.lastSeen! >= messageCreatedAt) {
             readCount += 1;
           }
         });
