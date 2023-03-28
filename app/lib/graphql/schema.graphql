@@ -161,6 +161,7 @@ type Invitation implements Node {
   startsAt: Time!
   expiresAt: Time!
   chatRoomId: UUID
+  chatRoom: ChatRoom
   acceptedUsers: [User!]!
   isAccepted: Boolean!
 }

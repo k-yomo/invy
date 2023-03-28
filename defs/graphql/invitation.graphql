@@ -37,6 +37,7 @@ type Invitation implements Node {
     expiresAt: Time!
 
     chatRoomId: UUID
+    chatRoom: ChatRoom @goField(forceResolver: true)
 
     acceptedUsers: [User!]! @goField(forceResolver: true)
     isAccepted: Boolean! @goField(forceResolver: true)

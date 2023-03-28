@@ -166,6 +166,7 @@ type Invitation struct {
 	StartsAt      time.Time        `json:"startsAt"`
 	ExpiresAt     time.Time        `json:"expiresAt"`
 	ChatRoomID    *uuid.UUID       `json:"chatRoomId"`
+	ChatRoom      *ChatRoom        `json:"chatRoom"`
 	AcceptedUsers []*User          `json:"acceptedUsers"`
 	IsAccepted    bool             `json:"isAccepted"`
 }

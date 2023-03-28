@@ -23,6 +23,19 @@ func newChatService(firestoreClient *firestore.Client) *chatService {
 	}
 }
 
+func (c *chatService) GetChatRoom(ctx context.Context, chatRoomID uuid.UUID) (*gqlmodel.ChatRoom, error) {
+	chatRoomDocRef := c.firestoreClient.Doc(FirestoreChatRoomPath(chatRoomID))
+	chatRoomSnapshot, err := chatRoomDocRef.Get(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("get chat room: %w", err)
+	}
+	var chatRoom gqlmodel.ChatRoom
+	if err := convutil.ConvertMapToStructViaJSON(chatRoomSnapshot.Data(), &chatRoom); err != nil {
+		return nil, fmt.Errorf("unmarhsal chat room snapshot: %w", err)
+	}
+	return &chatRoom, nil
+}
+
 func (c *chatService) GetChatRoomParticipantUserIDs(ctx context.Context, chatRoomID uuid.UUID) ([]uuid.UUID, error) {
 	chatRoomDocRef := c.firestoreClient.Doc(FirestoreChatRoomPath(chatRoomID))
 	chatRoomSnapshot, err := chatRoomDocRef.Get(ctx)

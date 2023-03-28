@@ -41,6 +41,14 @@ func (r *invitationResolver) User(ctx context.Context, obj *gqlmodel.Invitation)
 	return conv.ConvertFromDBUserProfile(dbUserProfile), nil
 }
 
+// ChatRoom is the resolver for the chatRoom field.
+func (r *invitationResolver) ChatRoom(ctx context.Context, obj *gqlmodel.Invitation) (*gqlmodel.ChatRoom, error) {
+	if obj.ChatRoomID == nil {
+		return nil, nil
+	}
+	return r.Service.Chat.GetChatRoom(ctx, *obj.ChatRoomID)
+}
+
 // AcceptedUsers is the resolver for the acceptedUsers field.
 func (r *invitationResolver) AcceptedUsers(ctx context.Context, obj *gqlmodel.Invitation) ([]*gqlmodel.User, error) {
 	dbAcceptedUserProfiles, err := loader.Get(ctx).InvitationAcceptedUserProfiles.Load(ctx, obj.ID)()

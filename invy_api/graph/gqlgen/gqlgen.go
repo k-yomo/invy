@@ -165,6 +165,7 @@ type ComplexityRoot struct {
 
 	Invitation struct {
 		AcceptedUsers func(childComplexity int) int
+		ChatRoom      func(childComplexity int) int
 		ChatRoomID    func(childComplexity int) int
 		Comment       func(childComplexity int) int
 		Coordinate    func(childComplexity int) int
@@ -362,6 +363,7 @@ type FriendshipRequestResolver interface {
 type InvitationResolver interface {
 	User(ctx context.Context, obj *gqlmodel.Invitation) (*gqlmodel.User, error)
 
+	ChatRoom(ctx context.Context, obj *gqlmodel.Invitation) (*gqlmodel.ChatRoom, error)
 	AcceptedUsers(ctx context.Context, obj *gqlmodel.Invitation) ([]*gqlmodel.User, error)
 	IsAccepted(ctx context.Context, obj *gqlmodel.Invitation) (bool, error)
 }
@@ -738,6 +740,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Invitation.AcceptedUsers(childComplexity), true
+
+	case "Invitation.chatRoom":
+		if e.complexity.Invitation.ChatRoom == nil {
+			break
+		}
+
+		return e.complexity.Invitation.ChatRoom(childComplexity), true
 
 	case "Invitation.chatRoomId":
 		if e.complexity.Invitation.ChatRoomID == nil {
@@ -1922,6 +1931,7 @@ type Invitation implements Node {
     expiresAt: Time!
 
     chatRoomId: UUID
+    chatRoom: ChatRoom @goField(forceResolver: true)
 
     acceptedUsers: [User!]! @goField(forceResolver: true)
     isAccepted: Boolean! @goField(forceResolver: true)
@@ -3059,6 +3069,8 @@ func (ec *executionContext) fieldContext_AcceptInvitationPayload_invitation(ctx 
 				return ec.fieldContext_Invitation_expiresAt(ctx, field)
 			case "chatRoomId":
 				return ec.fieldContext_Invitation_chatRoomId(ctx, field)
+			case "chatRoom":
+				return ec.fieldContext_Invitation_chatRoom(ctx, field)
 			case "acceptedUsers":
 				return ec.fieldContext_Invitation_acceptedUsers(ctx, field)
 			case "isAccepted":
@@ -3129,6 +3141,8 @@ func (ec *executionContext) fieldContext_ActivateInvitationPayload_invitation(ct
 				return ec.fieldContext_Invitation_expiresAt(ctx, field)
 			case "chatRoomId":
 				return ec.fieldContext_Invitation_chatRoomId(ctx, field)
+			case "chatRoom":
+				return ec.fieldContext_Invitation_chatRoom(ctx, field)
 			case "acceptedUsers":
 				return ec.fieldContext_Invitation_acceptedUsers(ctx, field)
 			case "isAccepted":
@@ -3909,6 +3923,8 @@ func (ec *executionContext) fieldContext_CloseInvitationPayload_invitation(ctx c
 				return ec.fieldContext_Invitation_expiresAt(ctx, field)
 			case "chatRoomId":
 				return ec.fieldContext_Invitation_chatRoomId(ctx, field)
+			case "chatRoom":
+				return ec.fieldContext_Invitation_chatRoom(ctx, field)
 			case "acceptedUsers":
 				return ec.fieldContext_Invitation_acceptedUsers(ctx, field)
 			case "isAccepted":
@@ -4417,6 +4433,8 @@ func (ec *executionContext) fieldContext_DenyInvitationPayload_invitation(ctx co
 				return ec.fieldContext_Invitation_expiresAt(ctx, field)
 			case "chatRoomId":
 				return ec.fieldContext_Invitation_chatRoomId(ctx, field)
+			case "chatRoom":
+				return ec.fieldContext_Invitation_chatRoom(ctx, field)
 			case "acceptedUsers":
 				return ec.fieldContext_Invitation_acceptedUsers(ctx, field)
 			case "isAccepted":
@@ -5435,6 +5453,57 @@ func (ec *executionContext) fieldContext_Invitation_chatRoomId(ctx context.Conte
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type UUID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Invitation_chatRoom(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Invitation) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Invitation_chatRoom(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Invitation().ChatRoom(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.ChatRoom)
+	fc.Result = res
+	return ec.marshalOChatRoom2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐChatRoom(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Invitation_chatRoom(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Invitation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_ChatRoom_id(ctx, field)
+			case "participantUserIds":
+				return ec.fieldContext_ChatRoom_participantUserIds(ctx, field)
+			case "participants":
+				return ec.fieldContext_ChatRoom_participants(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_ChatRoom_createdAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type ChatRoom", field.Name)
 		},
 	}
 	return fc, nil
@@ -8615,6 +8684,8 @@ func (ec *executionContext) fieldContext_Query_invitation(ctx context.Context, f
 				return ec.fieldContext_Invitation_expiresAt(ctx, field)
 			case "chatRoomId":
 				return ec.fieldContext_Invitation_chatRoomId(ctx, field)
+			case "chatRoom":
+				return ec.fieldContext_Invitation_chatRoom(ctx, field)
 			case "acceptedUsers":
 				return ec.fieldContext_Invitation_acceptedUsers(ctx, field)
 			case "isAccepted":
@@ -9452,6 +9523,8 @@ func (ec *executionContext) fieldContext_SendInvitationPayload_invitation(ctx co
 				return ec.fieldContext_Invitation_expiresAt(ctx, field)
 			case "chatRoomId":
 				return ec.fieldContext_Invitation_chatRoomId(ctx, field)
+			case "chatRoom":
+				return ec.fieldContext_Invitation_chatRoom(ctx, field)
 			case "acceptedUsers":
 				return ec.fieldContext_Invitation_acceptedUsers(ctx, field)
 			case "isAccepted":
@@ -11418,6 +11491,8 @@ func (ec *executionContext) fieldContext_Viewer_sentInvitations(ctx context.Cont
 				return ec.fieldContext_Invitation_expiresAt(ctx, field)
 			case "chatRoomId":
 				return ec.fieldContext_Invitation_chatRoomId(ctx, field)
+			case "chatRoom":
+				return ec.fieldContext_Invitation_chatRoom(ctx, field)
 			case "acceptedUsers":
 				return ec.fieldContext_Invitation_acceptedUsers(ctx, field)
 			case "isAccepted":
@@ -11488,6 +11563,8 @@ func (ec *executionContext) fieldContext_Viewer_pendingInvitations(ctx context.C
 				return ec.fieldContext_Invitation_expiresAt(ctx, field)
 			case "chatRoomId":
 				return ec.fieldContext_Invitation_chatRoomId(ctx, field)
+			case "chatRoom":
+				return ec.fieldContext_Invitation_chatRoom(ctx, field)
 			case "acceptedUsers":
 				return ec.fieldContext_Invitation_acceptedUsers(ctx, field)
 			case "isAccepted":
@@ -11558,6 +11635,8 @@ func (ec *executionContext) fieldContext_Viewer_acceptedInvitations(ctx context.
 				return ec.fieldContext_Invitation_expiresAt(ctx, field)
 			case "chatRoomId":
 				return ec.fieldContext_Invitation_chatRoomId(ctx, field)
+			case "chatRoom":
+				return ec.fieldContext_Invitation_chatRoom(ctx, field)
 			case "acceptedUsers":
 				return ec.fieldContext_Invitation_acceptedUsers(ctx, field)
 			case "isAccepted":
@@ -14953,6 +15032,23 @@ func (ec *executionContext) _Invitation(ctx context.Context, sel ast.SelectionSe
 
 			out.Values[i] = ec._Invitation_chatRoomId(ctx, field, obj)
 
+		case "chatRoom":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Invitation_chatRoom(ctx, field, obj)
+				return res
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return innerFunc(ctx)
+
+			})
 		case "acceptedUsers":
 			field := field
 
@@ -18282,6 +18378,13 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	}
 	res := graphql.MarshalBoolean(*v)
 	return res
+}
+
+func (ec *executionContext) marshalOChatRoom2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐChatRoom(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.ChatRoom) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._ChatRoom(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOConstraintFormat2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐConstraintFormat(ctx context.Context, v interface{}) (*gqlmodel.ConstraintFormat, error) {
