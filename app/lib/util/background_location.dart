@@ -43,9 +43,9 @@ void startBackgroundLocationService() {
             // TODO: Update wording
             notificationChannelName: 'Location tracking',
             notificationTitle: 'Start Location Tracking',
-            notificationMsg: 'Track location in background',
+            notificationMsg: 'バックグラウンドで位置情報を取得しています。',
             notificationBigMsg:
-                'Background location is on to keep the app up-tp-date with your location. This is required for main features to work properly when the app is not running.',
+                '大まかな現在地を友達と共有するためにバックグラウンドで位置情報を取得しています。詳細な位置情報は共有されません。',
             notificationIcon: '',
             notificationIconColor: Colors.grey,
           )));
