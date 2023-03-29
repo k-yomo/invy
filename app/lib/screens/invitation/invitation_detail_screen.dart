@@ -2,11 +2,11 @@ import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:invy/constants/urls.dart';
 import 'package:invy/router.dart';
 import 'package:invy/screens/invitation/invitation_detail_screen.graphql.dart';
 import 'package:invy/services/graphql_client.dart';
@@ -14,6 +14,7 @@ import 'package:invy/state/auth.dart';
 import 'package:invy/util/toast.dart';
 import 'package:invy/widgets/chat.dart';
 import 'package:invy/widgets/dynamic_links_manager.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../graphql/schema.graphql.dart';
@@ -92,249 +93,256 @@ class InvitationDetailScreen extends HookConsumerWidget {
             children: [
               Column(
                 children: [
-                  ExpansionTile(
-                    textColor: Colors.black,
-                    iconColor: Colors.grey.shade600,
-                    title: Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.only(left: 30),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: Row(
-                              children: [
-                                Row(
-                                  children: [
-                                    invitation.user,
-                                    ...invitation.acceptedUsers
-                                  ]
-                                      .map((acceptedUser) => SizedBox(
-                                            width: 50,
-                                            child: Column(
-                                              children: [
-                                                CircleAvatar(
-                                                  backgroundColor:
-                                                      Colors.transparent,
-                                                  backgroundImage:
-                                                      CachedNetworkImageProvider(
-                                                          acceptedUser
-                                                              .avatarUrl),
-                                                ),
-                                                Text(
-                                                  acceptedUser.nickname,
-                                                  style: const TextStyle(
-                                                      fontSize: 10),
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                ),
-                                              ],
-                                            ),
-                                          ))
-                                      .toList(),
-                                ),
-                              ],
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.only(left: 50, right: 10),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(children: [
+                          Expanded(
+                            child: SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
+                                children: [
+                                  Row(
+                                    children: [
+                                      invitation.user,
+                                      ...invitation.acceptedUsers
+                                    ]
+                                        .map((acceptedUser) => SizedBox(
+                                              width: 50,
+                                              child: Column(
+                                                children: [
+                                                  CircleAvatar(
+                                                    backgroundColor:
+                                                        Colors.transparent,
+                                                    backgroundImage:
+                                                        CachedNetworkImageProvider(
+                                                            acceptedUser
+                                                                .avatarUrl),
+                                                  ),
+                                                  Text(
+                                                    acceptedUser.nickname,
+                                                    style: const TextStyle(
+                                                        fontSize: 10),
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                  ),
+                                                ],
+                                              ),
+                                            ))
+                                        .toList(),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Container(
-                                  margin:
-                                      const EdgeInsets.only(left: 10, right: 5),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          const Icon(Icons.fmd_good, size: 20),
-                                          Text(
-                                            invitation.location,
-                                            style:
-                                                const TextStyle(fontSize: 12),
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              Container(
-                                margin: const EdgeInsets.only(
-                                    top: 5, left: 5, bottom: 5),
-                                child: Text(
-                                  "${_convertToDisplayTime(invitation.startsAt)}〜",
-                                  style: const TextStyle(fontSize: 12),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                    children: [
-                      isInvitationSentByLoggedInUser
-                          ? Row(
-                              children: [
-                                Expanded(
-                                  child: TextButton(
-                                    style: TextButton.styleFrom(
+                          IconButton(
+                            icon: const Icon(Icons.more_horiz),
+                            onPressed: () async {
+                              List<SheetAction<String>> actions = [];
+                              if (invitation.coordinate != null) {
+                                actions.add(const SheetAction(
+                                  key: 'openMap',
+                                  label: "開催地を表示",
+                                ));
+                              }
+                              if (isInvitationSentByLoggedInUser) {
+                                final isActive = invitationStatus.value ==
+                                    Enum$InvitationStatus.ACTIVE;
+                                actions.add(SheetAction(
+                                  key: isActive
+                                      ? "closeInvitation"
+                                      : "activateInvitation",
+                                  label: isActive ? "募集停止" : "募集再開",
+                                  isDestructiveAction: isActive,
+                                ));
+                                actions.add(const SheetAction(
+                                  key: "deleteInvitation",
+                                  label: "削除",
+                                  isDestructiveAction: true,
+                                ));
+                                actions.add(const SheetAction(
+                                  key: "report",
+                                  label: "通報",
+                                  isDestructiveAction: true,
+                                ));
+                              }
+                              final result = await showModalActionSheet<String>(
+                                context: context,
+                                cancelLabel: "キャンセル",
+                                actions: actions,
+                              );
+
+                              switch (result) {
+                                case "openMap":
+                                  showMaterialModalBottomSheet(
+                                      context: context,
+                                      duration:
+                                          const Duration(milliseconds: 300),
                                       shape: const RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.zero,
+                                        borderRadius: BorderRadius.only(
+                                            topLeft: Radius.circular(20),
+                                            topRight: Radius.circular(20)),
                                       ),
-                                    ),
-                                    child: Column(
+                                      builder: (context) {
+                                        return SizedBox(
+                                          height: double.infinity,
+                                          child: Stack(children: [
+                                            GoogleMap(
+                                                initialCameraPosition:
+                                                    CameraPosition(
+                                                  target: LatLng(
+                                                      invitation
+                                                          .coordinate!.latitude,
+                                                      invitation.coordinate!
+                                                          .longitude),
+                                                  zoom: 16,
+                                                ),
+                                                myLocationEnabled: false,
+                                                myLocationButtonEnabled: false,
+                                                markers: {
+                                                  Marker(
+                                                      markerId: const MarkerId(
+                                                          "location"),
+                                                      position: LatLng(
+                                                          invitation.coordinate!
+                                                              .latitude,
+                                                          invitation.coordinate!
+                                                              .longitude),
+                                                      icon:
+                                                          invitationLocationMarker
+                                                              .value)
+                                                }),
+                                            Positioned(
+                                              bottom: 40,
+                                              right: 10,
+                                              child: TextButton(
+                                                style: ElevatedButton.styleFrom(
+                                                  backgroundColor: Colors.black,
+                                                  padding: const EdgeInsets
+                                                          .symmetric(
+                                                      horizontal: 20),
+                                                ),
+                                                onPressed: () {
+                                                  _launchMapApp(
+                                                      invitation
+                                                          .coordinate!.latitude,
+                                                      invitation.coordinate!
+                                                          .longitude);
+                                                },
+                                                child: const Text(
+                                                  '地図アプリで開く',
+                                                  style: TextStyle(
+                                                    fontSize: 12,
+                                                    color: Colors.white,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ]),
+                                        );
+                                      });
+                                  break;
+                                case "closeInvitation":
+                                  final result = await graphqlClient
+                                      .mutate$closeInvitation(
+                                          Options$Mutation$closeInvitation(
+                                              variables:
+                                                  Variables$Mutation$closeInvitation(
+                                                      id: invitation.id)));
+                                  if (result.hasException) {
+                                    // TODO: error handling
+                                    return;
+                                  }
+                                  invitationStatus.value =
+                                      Enum$InvitationStatus.CLOSED;
+                                  showToast("募集を停止しました", ToastLevel.info);
+                                  break;
+                                case "activateInvitation":
+                                  final result = await graphqlClient
+                                      .mutate$activateInvitation(
+                                          Options$Mutation$activateInvitation(
+                                              variables:
+                                                  Variables$Mutation$activateInvitation(
+                                                      id: invitation.id)));
+                                  if (result.hasException) {
+                                    // TODO: error handling
+                                    return;
+                                  }
+                                  invitationStatus.value =
+                                      Enum$InvitationStatus.ACTIVE;
+                                  showToast("募集を再開しました", ToastLevel.info);
+                                  break;
+                                case "deleteInvitation":
+                                  final dialogResult =
+                                      await showOkCancelAlertDialog(
+                                          context: context,
+                                          title: "おさそいの削除",
+                                          message:
+                                              "おさそいを削除すると、参加可否、チャットの内容が全て削除されます。おさそいを削除してもよろしいですか？",
+                                          cancelLabel: "キャンセル",
+                                          isDestructiveAction: true);
+                                  if (dialogResult != OkCancelResult.ok) {
+                                    return;
+                                  }
+                                  final result = await graphqlClient
+                                      .mutate$deleteInvitation(
+                                          Options$Mutation$deleteInvitation(
+                                              variables:
+                                                  Variables$Mutation$deleteInvitation(
+                                                      id: invitation.id)));
+                                  if (result.hasException) {
+                                    // TODO: error handling
+                                    return;
+                                  }
+                                  const HomeRoute().go(context);
+                                  showToast("おさそいを削除しました", ToastLevel.info);
+                                  break;
+                                case "report":
+                                  launchUrl(inappropriateUseReportFormUrl);
+                                  break;
+                              }
+                            },
+                          )
+                        ]),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Container(
+                                margin:
+                                    const EdgeInsets.only(left: 10, right: 5),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
                                       children: [
-                                        Icon(
-                                            invitationStatus.value ==
-                                                    Enum$InvitationStatus.ACTIVE
-                                                ? Icons.stop_circle
-                                                : Icons.play_circle,
-                                            color: Colors.black),
-                                        const Gap(5),
+                                        const Icon(Icons.fmd_good, size: 20),
                                         Text(
-                                            invitationStatus.value ==
-                                                    Enum$InvitationStatus.ACTIVE
-                                                ? "募集停止"
-                                                : "募集再開",
-                                            style: const TextStyle(
-                                                color: Colors.black))
+                                          invitation.location,
+                                          style: const TextStyle(fontSize: 12),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
                                       ],
                                     ),
-                                    onPressed: () async {
-                                      if (invitationStatus.value ==
-                                          Enum$InvitationStatus.ACTIVE) {
-                                        final result = await graphqlClient
-                                            .mutate$closeInvitation(
-                                                Options$Mutation$closeInvitation(
-                                                    variables:
-                                                        Variables$Mutation$closeInvitation(
-                                                            id: invitation
-                                                                .id)));
-                                        if (result.hasException) {
-                                          // TODO: error handling
-                                          return;
-                                        }
-                                        invitationStatus.value =
-                                            Enum$InvitationStatus.CLOSED;
-                                        showToast("募集を停止しました", ToastLevel.info);
-                                      } else {
-                                        final result = await graphqlClient
-                                            .mutate$activateInvitation(
-                                                Options$Mutation$activateInvitation(
-                                                    variables:
-                                                        Variables$Mutation$activateInvitation(
-                                                            id: invitation
-                                                                .id)));
-                                        if (result.hasException) {
-                                          // TODO: error handling
-                                          return;
-                                        }
-                                        invitationStatus.value =
-                                            Enum$InvitationStatus.ACTIVE;
-                                        showToast("募集を再開しました", ToastLevel.info);
-                                      }
-                                    },
-                                  ),
+                                  ],
                                 ),
-                                Expanded(
-                                  child: TextButton(
-                                    style: TextButton.styleFrom(
-                                      shape: const RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.zero,
-                                      ),
-                                    ),
-                                    child: Column(
-                                      children: const [
-                                        Icon(Icons.delete, color: Colors.black),
-                                        Gap(5),
-                                        Text("削除",
-                                            style:
-                                                TextStyle(color: Colors.black))
-                                      ],
-                                    ),
-                                    onPressed: () async {
-                                      final dialogResult =
-                                          await showOkCancelAlertDialog(
-                                              context: context,
-                                              title: "おさそいの削除",
-                                              message:
-                                                  "おさそいを削除すると、参加可否、チャットの内容が全て削除されます。おさそいを削除してもよろしいですか？",
-                                              cancelLabel: "キャンセル",
-                                              isDestructiveAction: true);
-                                      if (dialogResult != OkCancelResult.ok) {
-                                        return;
-                                      }
-                                      final result = await graphqlClient
-                                          .mutate$deleteInvitation(
-                                              Options$Mutation$deleteInvitation(
-                                                  variables:
-                                                      Variables$Mutation$deleteInvitation(
-                                                          id: invitation.id)));
-                                      if (result.hasException) {
-                                        // TODO: error handling
-                                        return;
-                                      }
-                                      const HomeRoute().go(context);
-                                      showToast("おさそいを削除しました", ToastLevel.info);
-                                    },
-                                  ),
-                                ),
-                              ],
-                            )
-                          : const SizedBox(),
-                      invitation.coordinate != null
-                          ? SizedBox(
-                              height: 280,
-                              child: Stack(children: [
-                                GoogleMap(
-                                    initialCameraPosition: CameraPosition(
-                                      target: LatLng(
-                                          invitation.coordinate!.latitude,
-                                          invitation.coordinate!.longitude),
-                                      zoom: 16,
-                                    ),
-                                    myLocationEnabled: false,
-                                    myLocationButtonEnabled: false,
-                                    markers: {
-                                      Marker(
-                                          markerId: const MarkerId("location"),
-                                          position: LatLng(
-                                              invitation.coordinate!.latitude,
-                                              invitation.coordinate!.longitude),
-                                          icon: invitationLocationMarker.value)
-                                    }),
-                                Positioned(
-                                  bottom: 10,
-                                  right: 10,
-                                  child: TextButton(
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.black,
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 20),
-                                    ),
-                                    onPressed: () {
-                                      _launchMapApp(
-                                          invitation.coordinate!.latitude,
-                                          invitation.coordinate!.longitude);
-                                    },
-                                    child: const Text(
-                                      '地図アプリで開く',
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ]),
-                            )
-                          : const SizedBox(height: 10),
-                    ],
+                              ),
+                            ),
+                            Container(
+                              margin: const EdgeInsets.only(
+                                  top: 5, left: 5, bottom: 5),
+                              child: Text(
+                                "${_convertToDisplayTime(invitation.startsAt)}〜",
+                                style: const TextStyle(fontSize: 12),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                   invitation.chatRoomId != null
                       ? Expanded(
