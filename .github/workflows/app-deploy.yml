@@ -6,6 +6,9 @@ on:
       - main
     paths:
       - "app/**"
+  workflow_dispatch:
+    branches:
+      - main
 
 jobs:
   deploy:
