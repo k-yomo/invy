@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:invy/constants/urls.dart';
 import 'package:invy/router.dart';
 import 'package:invy/screens/friend/blocked_friends_screen.graphql.dart';
 import 'package:invy/screens/friend/friendship_request_screen.graphql.dart';
@@ -16,6 +17,7 @@ import 'package:invy/util/toast.dart';
 import 'package:invy/widgets/app_bar_leading.dart';
 import 'package:invy/widgets/invitation_awaiting_list_carousel.dart';
 import 'package:invy/widgets/sub_title.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../graphql/user_block.graphql.dart';
 import '../../../graphql/user_mute.graphql.dart';
@@ -293,13 +295,24 @@ class UserProfileScreen extends HookConsumerWidget {
                                 ? Icons.do_not_disturb_off
                                 : Icons.do_not_disturb_on,
                             label: isBlocked.value ? "ブロック解除" : "ブロック",
-                            isDestructiveAction: true,
+                            isDestructiveAction: !isBlocked.value,
                           ),
+                          const SheetAction(
+                            key: "reportObjectionableContent",
+                            label: "通報",
+                            isDestructiveAction: true,
+                          )
                         ]);
-                    if (result == "mute") {
-                      await onPressedMute();
-                    } else if (result == "block") {
-                      await onPressedBlock();
+                    switch (result) {
+                      case "mute":
+                        await onPressedMute();
+                        break;
+                      case "block":
+                        await onPressedBlock();
+                        break;
+                      case "reportObjectionableContent":
+                        launchUrl(objectionableContentReportFormUrl);
+                        break;
                     }
                   },
                 ),

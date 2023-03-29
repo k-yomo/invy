@@ -164,7 +164,7 @@ class InvitationDetailScreen extends HookConsumerWidget {
                                   isDestructiveAction: true,
                                 ));
                                 actions.add(const SheetAction(
-                                  key: "report",
+                                  key: "reportObjectionableContent",
                                   label: "通報",
                                   isDestructiveAction: true,
                                 ));
@@ -301,8 +301,8 @@ class InvitationDetailScreen extends HookConsumerWidget {
                                   const HomeRoute().go(context);
                                   showToast("おさそいを削除しました", ToastLevel.info);
                                   break;
-                                case "report":
-                                  launchUrl(inappropriateUseReportFormUrl);
+                                case "reportObjectionableContent":
+                                  launchUrl(objectionableContentReportFormUrl);
                                   break;
                               }
                             },
