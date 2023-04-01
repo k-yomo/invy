@@ -36,7 +36,7 @@ jobs:
           go-version-file: 'go.mod'
           cache: true
 
-      - name: Install gotestsum
+      - name: Install tools
         if: steps.restore-cache.outputs.cache-hit != 'true'
         run: make setup-go
 
