@@ -2,9 +2,9 @@ package graph
 
 import (
 	"context"
-	"errors"
 
 	"github.com/99designs/gqlgen/graphql"
+	"github.com/cockroachdb/errors"
 	"github.com/k-yomo/invy/invy_api/graph/gqlmodel"
 	"github.com/k-yomo/invy/invy_api/internal/xerrors"
 	"github.com/k-yomo/invy/pkg/logging"

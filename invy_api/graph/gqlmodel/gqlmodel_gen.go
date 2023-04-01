@@ -101,7 +101,7 @@ type CreateFriendGroupPayload struct {
 
 type CreateUserInput struct {
 	Nickname  string  `json:"nickname"`
-	AvatarURL *string `json:"avatarUrl"`
+	AvatarURL *string `json:"avatarUrl,omitempty"`
 }
 
 type CreateUserPayload struct {
@@ -161,12 +161,12 @@ type Invitation struct {
 	UserID        uuid.UUID        `json:"userId"`
 	User          *User            `json:"user"`
 	Location      string           `json:"location"`
-	Coordinate    *Coordinate      `json:"coordinate"`
+	Coordinate    *Coordinate      `json:"coordinate,omitempty"`
 	Comment       string           `json:"comment"`
 	StartsAt      time.Time        `json:"startsAt"`
 	ExpiresAt     time.Time        `json:"expiresAt"`
-	ChatRoomID    *uuid.UUID       `json:"chatRoomId"`
-	ChatRoom      *ChatRoom        `json:"chatRoom"`
+	ChatRoomID    *uuid.UUID       `json:"chatRoomId,omitempty"`
+	ChatRoom      *ChatRoom        `json:"chatRoom,omitempty"`
 	AcceptedUsers []*User          `json:"acceptedUsers"`
 	IsAccepted    bool             `json:"isAccepted"`
 }
@@ -191,8 +191,8 @@ type MuteUserPayload struct {
 }
 
 type PageInfo struct {
-	StartCursor     *ent.Cursor `json:"startCursor"`
-	EndCursor       *ent.Cursor `json:"endCursor"`
+	StartCursor     *ent.Cursor `json:"startCursor,omitempty"`
+	EndCursor       *ent.Cursor `json:"endCursor,omitempty"`
 	HasNextPage     bool        `json:"hasNextPage"`
 	HasPreviousPage bool        `json:"hasPreviousPage"`
 }
@@ -246,8 +246,8 @@ type SendInvitationInput struct {
 	ExpiresAt            time.Time   `json:"expiresAt"`
 	StartsAt             time.Time   `json:"startsAt"`
 	Location             string      `json:"location"`
-	Latitude             *float64    `json:"latitude"`
-	Longitude            *float64    `json:"longitude"`
+	Latitude             *float64    `json:"latitude,omitempty"`
+	Longitude            *float64    `json:"longitude,omitempty"`
 	Comment              string      `json:"comment"`
 }
 
@@ -260,9 +260,9 @@ type SignOutPayload struct {
 }
 
 type SignUpInput struct {
-	Email     *string `json:"email"`
-	Nickname  *string `json:"nickname"`
-	AvatarURL *string `json:"avatarUrl"`
+	Email     *string `json:"email,omitempty"`
+	Nickname  *string `json:"nickname,omitempty"`
+	AvatarURL *string `json:"avatarUrl,omitempty"`
 }
 
 type SignUpPayload struct {
@@ -324,7 +324,7 @@ type User struct {
 	IsMuted                bool                  `json:"isMuted"`
 	IsBlocked              bool                  `json:"isBlocked"`
 	IsFriend               bool                  `json:"isFriend"`
-	DistanceKm             *int                  `json:"distanceKm"`
+	DistanceKm             *int                  `json:"distanceKm,omitempty"`
 	IsRequestingFriendship bool                  `json:"isRequestingFriendship"`
 	InvitationAwaitings    []*InvitationAwaiting `json:"invitationAwaitings"`
 }

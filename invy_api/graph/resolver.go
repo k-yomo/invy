@@ -13,7 +13,7 @@ import (
 //
 // It serves as dependency injection for your app, add any dependencies you require here.
 
-//go:generate go run github.com/99designs/gqlgen
+//go:generate gqlgen
 type Resolver struct {
 	// Use DB for mutation / simple query
 	DB *ent.Client
