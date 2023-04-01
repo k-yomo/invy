@@ -15,9 +15,12 @@ IMAGE_PATH := $(GAR_REGISTRY)/invy/invy-api
 IMAGE := $(IMAGE_PATH):$(VERSION)
 IMAGE_LATEST := $(IMAGE_PATH):latest
 
-.PHONY: setup
-setup: ## Setup project
+.PHONY: setup-go
+setup-go: ## Setup go development environment
 	GOBIN=${GOBIN} ./scripts/install-tools.sh
+
+.PHONY: setup
+setup: setup-go ## Setup development environment
 	npm install -g graphql-cli graphql-schema-utilities
 
 .PHONY: generate
@@ -61,6 +64,10 @@ connect-db:
 test-api: ## Run tests
 	gotestsum -- -v -race -coverprofile=coverage.out ./...
 
+.PHONY: lint-api
+lint-api: ## Run golang-ci-lint
+	golangci-lint run ./...
+
 .PHONY: fmt
 fmt: ## Format code
 	cd invy_api &&  goimports -w . & \
@@ -69,8 +76,8 @@ fmt: ## Format code
 
 .PHONY: lint
 lint: ## Run linter
-	cd app && dart fix --apply . & \
-	wait
+	make lint-api
+	cd app && dart fix --apply
 
 .PHONY: help
 help: ## Display this help screen

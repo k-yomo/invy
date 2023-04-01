@@ -13,14 +13,38 @@ permissions:
   id-token: write
 
 env:
-  GO111MODULE: "on"
   TZ: "Asia/Tokyo"
   GAR_PROJECT: invy-${{ (github.ref_type == 'tag' || github.ref == 'refs/heads/main') && 'prod' || 'dev' }}
 
 jobs:
+  dependencies:
+    name: Dependencies
+    runs-on: ubuntu-latest
+    needs: dependencies
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Restore tools cache
+        id: restore-tools-cache
+        uses: actions/cache@v3
+        with:
+          key: tools-${{ hashFiles('tools/go.sum') }}
+          path: |
+            ./bin
+
+      - uses: actions/setup-go@v4
+        with:
+          go-version-file: 'go.mod'
+          cache: true
+
+      - name: Install gotestsum
+        if: steps.restore-cache.outputs.cache-hit != 'true'
+        run: make setup-go
+
   test:
     name: Test
     runs-on: ubuntu-latest
+    needs: dependencies
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-go@v4
@@ -28,18 +52,20 @@ jobs:
           go-version-file: 'go.mod'
           cache: true
 
-      - name: Download Modules
-        run: go mod download
-
-      - name: Install gotestsum
-        run: go install gotest.tools/gotestsum
+      - name: Restore tools cache
+        uses: actions/cache@v3
+        with:
+          key: tools-${{ hashFiles('tools/go.sum') }}
+          path: |
+            ./bin
 
       - name: Test
-        run: make test
+        run: make test-api
 
   lint:
     name: Lint
     runs-on: ubuntu-latest
+    needs: dependencies
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-go@v4
@@ -47,11 +73,12 @@ jobs:
           go-version-file: 'go.mod'
           cache: true
 
-      - name: Download Modules
-        run: go mod download
-
-      - name: Install gotestsum
-        run: go install gotest.tools/gotestsum
+      - name: Restore tools cache
+        uses: actions/cache@v3
+        with:
+          key: tools-${{ hashFiles('tools/go.sum') }}
+          path: |
+            ./bin
 
       - name: Lint
         uses: golangci/golangci-lint-action@v3
