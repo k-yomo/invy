@@ -1,0 +1,6 @@
+invy-api:
+  - invy_api/**/*
+app:
+  - app/**/*
+graphql:
+  - defs/graphql/*
