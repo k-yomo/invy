@@ -90,7 +90,6 @@ jobs:
       - test
       - lint
     runs-on: ubuntu-latest
-    environment: invy-api-prod
     steps:
       - uses: actions/checkout@v3
       - name: Authenticate Google Cloud
