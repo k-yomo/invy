@@ -19,8 +19,6 @@ import (
 	"github.com/XSAM/otelsql"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
-	sqlcommentercore "github.com/google/sqlcommenter/go/core"
-	gosql "github.com/google/sqlcommenter/go/database/sql"
 	"github.com/k-yomo/invy/invy_api/ent"
 	_ "github.com/k-yomo/invy/invy_api/ent/runtime"
 	"github.com/k-yomo/invy/invy_api/graph"
@@ -76,21 +74,11 @@ func main() {
 		}
 	}
 
-	db, err := gosql.Open(
+	db, err := otelsql.Open(
 		appConfig.DBConfig.Driver,
 		appConfig.DBConfig.Dsn(),
-		sqlcommentercore.CommenterOptions{
-			Config: sqlcommentercore.CommenterConfig{
-				EnableDBDriver:    true,
-				EnableRoute:       true,
-				EnableTraceparent: true,
-				EnableApplication: true,
-			},
-			Tags: sqlcommentercore.StaticTags{
-				Application: serviceName,
-				DriverName:  appConfig.DBConfig.Driver,
-			},
-		},
+		otelsql.WithAttributes(semconv.DBSystemPostgreSQL),
+		otelsql.WithSQLCommenter(true),
 	)
 	if err != nil {
 		logger.Fatal("initialize db failed", zap.Error(err))

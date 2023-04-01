@@ -11,16 +11,11 @@ require (
 	firebase.google.com/go/v4 v4.10.0
 	github.com/99designs/gqlgen v0.17.22
 	github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/trace v1.10.2
-	github.com/GoogleCloudPlatform/opentelemetry-operations-go/propagator v0.36.0
-	github.com/XSAM/otelsql v0.20.0
 	github.com/blendle/zapdriver v1.3.1
 	github.com/cockroachdb/errors v1.9.1
 	github.com/go-chi/chi v1.5.4
 	github.com/go-ozzo/ozzo-validation/v4 v4.3.0
 	github.com/google/go-cmp v0.5.9
-	github.com/google/sqlcommenter/go/core v0.1.2
-	github.com/google/sqlcommenter/go/database/sql v0.1.1
-	github.com/google/sqlcommenter/go/net/http v0.1.0
 	github.com/google/uuid v1.3.0
 	github.com/graph-gophers/dataloader/v7 v7.1.0
 	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0
@@ -37,7 +32,6 @@ require (
 	github.com/vektah/gqlparser/v2 v2.5.1
 	github.com/vmihailenco/msgpack/v5 v5.3.5
 	go.opentelemetry.io/contrib/detectors/gcp v1.15.0
-	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.40.0
 	go.opentelemetry.io/otel v1.14.0
 	go.opentelemetry.io/otel/sdk v1.14.0
 	go.opentelemetry.io/otel/trace v1.14.0
@@ -57,7 +51,9 @@ require (
 	cloud.google.com/go/trace v1.8.0 // indirect
 	github.com/GoogleCloudPlatform/opentelemetry-operations-go/detectors/gcp v1.12.0 // indirect
 	github.com/GoogleCloudPlatform/opentelemetry-operations-go/internal/resourcemapping v0.34.2 // indirect
+	github.com/GoogleCloudPlatform/opentelemetry-operations-go/propagator v0.36.0 // indirect
 	github.com/MicahParks/keyfunc v1.5.3 // indirect
+	github.com/XSAM/otelsql v0.20.0 // indirect
 	github.com/agext/levenshtein v1.2.3 // indirect
 	github.com/agnivade/levenshtein v1.1.1 // indirect
 	github.com/apparentlymart/go-textseg/v13 v13.0.0 // indirect
@@ -90,6 +86,7 @@ require (
 	github.com/vmihailenco/tagparser/v2 v2.0.0 // indirect
 	github.com/zclconf/go-cty v1.12.1 // indirect
 	go.opencensus.io v0.24.0 // indirect
+	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.40.0 // indirect
 	go.opentelemetry.io/otel/metric v0.37.0 // indirect
 	go.uber.org/atomic v1.10.0 // indirect
 	go.uber.org/multierr v1.8.0 // indirect
