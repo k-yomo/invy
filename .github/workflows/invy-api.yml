@@ -6,7 +6,12 @@ on:
     paths:
       - ".github/workflows/invy-api.yml"
       - "invy_api/**"
+      - "pkg/**"
   pull_request:
+    paths:
+      - ".github/workflows/invy-api.yml"
+      - "invy_api/**"
+      - "pkg/**"
 
 permissions:
   contents: read
