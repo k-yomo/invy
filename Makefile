@@ -36,7 +36,7 @@ run-api: run-dbs ## Run API server
 
 .PHONY: docker-push-api
 docker-push-api: ## Build and Push docker image
-	docker build -t $(IMAGE) -f invy_api.Dockerfile .
+	docker build -t $(IMAGE) --build-arg VERSION=$(VERSION) -f invy_api.Dockerfile .
 	docker push $(IMAGE)
 
 .PHONY: add-latest-latest-tag-to-api

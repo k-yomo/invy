@@ -42,6 +42,11 @@ import (
 	"google.golang.org/api/option"
 )
 
+var (
+	// version is set when docker image is built
+	version string
+)
+
 func main() {
 	ctx := context.Background()
 
@@ -49,7 +54,7 @@ func main() {
 	if err != nil {
 		panic(fmt.Sprintf("initialize app config failed: %v", err))
 	}
-	logger, err := logging.NewLogger(!appConfig.Env.IsDeployed())
+	logger, err := logging.NewLogger(!appConfig.Env.IsDeployed(), version)
 	if err != nil {
 		panic(fmt.Sprintf("initialize logger failed: %v", err))
 	}

@@ -85,6 +85,7 @@ func (g GraphQLResponseInterceptor) InterceptResponse(ctx context.Context, next 
 		zap.Bool("isError", resp.Errors != nil),
 		zap.Object("httpRequest", &reqLog),
 	)
+	AddFields(ctx, zap.String("graphqlOperation", operationName))
 	return resp
 }
 

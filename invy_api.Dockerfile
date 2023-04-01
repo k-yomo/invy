@@ -2,6 +2,8 @@
 FROM golang:1.19-alpine as build
 ENV GO111MODULE=on
 
+ARG VERSION
+
 WORKDIR /go/src/app
 
 RUN apk --no-cache add make ca-certificates tzdata
@@ -12,7 +14,7 @@ RUN go mod download
 COPY invy_api invy_api
 COPY pkg pkg
 
-RUN CGO_ENABLED=0 go build -o bin/server -ldflags "-w -s" ./invy_api/cmd/server
+RUN CGO_ENABLED=0 go build -o bin/server -ldflags "-w -s -X main.version=$VERSION" ./invy_api/cmd/server
 
 # exec
 FROM scratch

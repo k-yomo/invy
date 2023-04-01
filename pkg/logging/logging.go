@@ -3,13 +3,12 @@ package logging
 import (
 	"context"
 
-	"github.com/blendle/zapdriver"
 	"github.com/grpc-ecosystem/go-grpc-middleware/logging/zap/ctxzap"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )
 
-func NewLogger(isDev bool) (*zap.Logger, error) {
+func NewLogger(isDev bool, version string) (*zap.Logger, error) {
 	var logger *zap.Logger
 	var err error
 	if isDev {
@@ -17,7 +16,13 @@ func NewLogger(isDev bool) (*zap.Logger, error) {
 		config.EncoderConfig.EncodeLevel = zapcore.CapitalColorLevelEncoder
 		logger, err = config.Build()
 	} else {
-		logger, err = zapdriver.NewProduction()
+		config := zap.NewProductionConfig()
+		config.Sampling = nil
+		config.OutputPaths = []string{"stdout"}
+		config.InitialFields = map[string]interface{}{
+			"version": version,
+		}
+		logger, err = config.Build()
 	}
 	if err != nil {
 		return nil, err
