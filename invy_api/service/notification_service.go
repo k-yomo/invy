@@ -7,6 +7,7 @@ import (
 	"time"
 
 	fcm "firebase.google.com/go/v4/messaging"
+	"github.com/cockroachdb/errors"
 	"github.com/k-yomo/invy/invy_api/ent"
 	"github.com/k-yomo/invy/invy_api/ent/pushnotificationtoken"
 	"github.com/k-yomo/invy/pkg/logging"
@@ -90,7 +91,7 @@ func (c *notificationService) SendMulticast(ctx context.Context, message *Multic
 		eg.Go(func() error {
 			multicastResp, err := c.fcmClient.SendMulticast(ctx, &m)
 			if err != nil {
-				return fmt.Errorf("multicast to fcm: %w", err)
+				return errors.Wrap(err, "multicast to fcm")
 			}
 			var unregisteredTokens []string
 			for i, resp := range multicastResp.Responses {

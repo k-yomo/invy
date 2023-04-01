@@ -2,8 +2,9 @@ package convutil
 
 import (
 	"encoding/json"
-	"errors"
 	"reflect"
+
+	"github.com/cockroachdb/errors"
 )
 
 func ConvertToList[FROM any, TO any](fromValues []FROM, mapFunc func(from FROM) TO) []TO {

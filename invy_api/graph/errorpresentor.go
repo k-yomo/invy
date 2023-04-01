@@ -2,6 +2,7 @@ package graph
 
 import (
 	"context"
+	"errors"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/k-yomo/invy/invy_api/graph/gqlmodel"
@@ -9,6 +10,7 @@ import (
 	"github.com/k-yomo/invy/pkg/logging"
 	"github.com/k-yomo/invy/pkg/requestutil"
 	"github.com/vektah/gqlparser/v2/gqlerror"
+	"go.uber.org/zap"
 )
 
 func NewErrorPresenter() graphql.ErrorPresenterFunc {
@@ -21,7 +23,10 @@ func NewErrorPresenter() graphql.ErrorPresenterFunc {
 			"message":   err.Error(),
 		}
 		if code == gqlmodel.ErrorCodeInternal {
-			logging.Logger(ctx).Error(err.Error())
+			logging.Logger(ctx).
+				// Increase stacktrace level not to log stacktrace here
+				WithOptions(zap.AddStacktrace(zap.DPanicLevel)).
+				Error(err.Error(), zap.Error(errors.Unwrap(err)))
 			gqlErr.Message = "internal server error"
 		}
 		return gqlErr

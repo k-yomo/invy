@@ -7,6 +7,7 @@ package graph
 import (
 	"context"
 
+	"github.com/cockroachdb/errors"
 	"github.com/k-yomo/invy/invy_api/ent/userlocation"
 	"github.com/k-yomo/invy/invy_api/graph/gqlmodel"
 	"github.com/k-yomo/invy/invy_api/internal/auth"
@@ -24,7 +25,7 @@ func (r *mutationResolver) UpdateLocation(ctx context.Context, latitude float64,
 		UpdateNewValues().
 		ID(ctx)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "upsert latest user location")
 	}
 	return &gqlmodel.UpdateLocationPayload{UpdatedUserLocationID: updatedID}, nil
 }

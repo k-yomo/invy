@@ -1,8 +1,7 @@
 package xerrors
 
 import (
-	"errors"
-
+	"github.com/cockroachdb/errors"
 	"github.com/k-yomo/invy/invy_api/graph/gqlmodel"
 )
 
@@ -12,7 +11,7 @@ type customError struct {
 }
 
 func New(err error, code gqlmodel.ErrorCode) error {
-	return &customError{code: code, err: err}
+	return &customError{code: code, err: errors.WithStackDepth(err, 1)}
 }
 
 func (ce *customError) Error() string {

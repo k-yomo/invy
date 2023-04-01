@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/cockroachdb/errors"
 	"github.com/k-yomo/invy/invy_api/graph/gqlmodel"
 	"github.com/k-yomo/invy/invy_api/internal/auth"
 	"github.com/k-yomo/invy/invy_api/internal/xerrors"
@@ -60,16 +61,16 @@ func (r *mutationResolver) SendChatMessageImage(ctx context.Context, input *gqlm
 
 	participantUserIDs, err := r.Service.Chat.GetChatRoomParticipantUserIDs(ctx, input.ChatRoomID)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "get chatroom participant user ids")
 	}
 	if !sliceutil.Includes(participantUserIDs, authUserID) {
 		return nil, xerrors.NewErrNotFound(fmt.Errorf("chat room %q not found", input.ChatRoomID))
 	}
 
 	fileName := fmt.Sprintf("%s-%s-%d", input.ChatRoomID, input.ID, time.Now().Unix())
-	imageURL, err := r.AvatarUploader.Upload(ctx, fileName, input.Image.File)
+	imageURL, err := r.ChatMessageImageUploader.Upload(ctx, fileName, input.Image.File)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "upload image in message")
 	}
 
 	chatMessage := gqlmodel.ChatMessage{
@@ -82,12 +83,12 @@ func (r *mutationResolver) SendChatMessageImage(ctx context.Context, input *gqlm
 	}
 	chatMessageMap, err := convutil.ConvertStructToJSONMap(chatMessage)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "convert chat message struct to json")
 	}
 	_, err = r.FirestoreClient.Doc(service.FirestoreChatMessagePath(input.ChatRoomID, input.ID)).
 		Create(ctx, chatMessageMap)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "create chat message")
 	}
 
 	r.sendChatMessageNotification(ctx, input.ChatRoomID, participantUserIDs, "写真を送信しました")
@@ -103,7 +104,7 @@ func (r *mutationResolver) UpdateChatLastReadAt(ctx context.Context, input gqlmo
 	// client sends UTC time, but to align with the other data, converting to local here
 	err := r.Service.Chat.UpdateLastReadAt(ctx, input.ChatRoomID, authUserID, input.LastReadAt.Local())
 	if err != nil {
-		return nil, fmt.Errorf("update last read at: %w", err)
+		return nil, errors.Wrap(err, "update last read at")
 	}
 
 	return &gqlmodel.UpdateChatLastReadAtPayload{ChatRoomID: input.ChatRoomID}, nil

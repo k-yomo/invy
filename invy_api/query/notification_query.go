@@ -2,8 +2,8 @@ package query
 
 import (
 	"context"
-	"fmt"
 
+	"github.com/cockroachdb/errors"
 	"github.com/google/uuid"
 	"github.com/uptrace/bun"
 )
@@ -53,7 +53,7 @@ WHERE
 		userID,
 	).Scan(ctx, &notifiableFriendUserPushTokens)
 	if err != nil {
-		return nil, fmt.Errorf("notifiable friend user push tokens query: %w", err)
+		return nil, errors.Wrap(err, "notifiable friend user push tokens query")
 	}
 	return notifiableFriendUserPushTokens, nil
 }

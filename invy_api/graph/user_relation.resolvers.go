@@ -6,10 +6,10 @@ package graph
 
 import (
 	"context"
-	"errors"
 	"fmt"
 
 	fcm "firebase.google.com/go/v4/messaging"
+	"github.com/cockroachdb/errors"
 	"github.com/google/uuid"
 	"github.com/k-yomo/invy/invy_api/ent"
 	"github.com/k-yomo/invy/invy_api/ent/friendship"
@@ -23,6 +23,7 @@ import (
 	"github.com/k-yomo/invy/invy_api/graph/gqlmodel"
 	"github.com/k-yomo/invy/invy_api/graph/loader"
 	"github.com/k-yomo/invy/invy_api/internal/auth"
+	"github.com/k-yomo/invy/invy_api/internal/xerrors"
 	"github.com/k-yomo/invy/invy_api/service"
 	"github.com/k-yomo/invy/pkg/convutil"
 	"github.com/k-yomo/invy/pkg/logging"
@@ -32,7 +33,7 @@ import (
 func (r *friendshipRequestResolver) FromUser(ctx context.Context, obj *gqlmodel.FriendshipRequest) (*gqlmodel.User, error) {
 	dbUserProfile, err := loader.Get(ctx).UserProfile.Load(ctx, obj.FromUserID)()
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "load user profile")
 	}
 	return conv.ConvertFromDBUserProfile(dbUserProfile), nil
 }
@@ -41,7 +42,7 @@ func (r *friendshipRequestResolver) FromUser(ctx context.Context, obj *gqlmodel.
 func (r *friendshipRequestResolver) ToUser(ctx context.Context, obj *gqlmodel.FriendshipRequest) (*gqlmodel.User, error) {
 	dbUserProfile, err := loader.Get(ctx).UserProfile.Load(ctx, obj.FromUserID)()
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "load user profile")
 	}
 	return conv.ConvertFromDBUserProfile(dbUserProfile), nil
 }
@@ -50,7 +51,7 @@ func (r *friendshipRequestResolver) ToUser(ctx context.Context, obj *gqlmodel.Fr
 func (r *mutationResolver) RequestFriendship(ctx context.Context, friendUserID uuid.UUID) (*gqlmodel.RequestFriendshipPayload, error) {
 	authUserID := auth.GetCurrentUserID(ctx)
 	if friendUserID == authUserID {
-		return nil, errors.New("friendship can't be requested to currently logged-in user")
+		return nil, xerrors.NewErrInvalidArgument(errors.New("friendship can't be requested to currently logged-in user"))
 	}
 	alreadyFriend, err := r.DB.Friendship.Query().
 		Where(
@@ -59,10 +60,10 @@ func (r *mutationResolver) RequestFriendship(ctx context.Context, friendUserID u
 		).
 		Exist(ctx)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "check if user is already friend")
 	}
 	if alreadyFriend {
-		return nil, errors.New("already friend")
+		return nil, xerrors.NewErrInvalidArgument(errors.New("already friend"))
 	}
 
 	dbFriendshipRequest, err := r.DB.FriendshipRequest.Create().
@@ -70,7 +71,7 @@ func (r *mutationResolver) RequestFriendship(ctx context.Context, friendUserID u
 		SetToUserID(friendUserID).
 		Save(ctx)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "create friendship request")
 	}
 
 	// TODO: Send notification async
@@ -78,13 +79,13 @@ func (r *mutationResolver) RequestFriendship(ctx context.Context, friendUserID u
 		Where(userprofile.UserID(authUserID)).
 		Only(ctx)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "get requester profile")
 	}
 	friendUserPushNotificationTokens, err := r.DB.PushNotificationToken.Query().
 		Where(pushnotificationtoken.UserID(friendUserID)).
 		All(ctx)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "get friend user push notification tokens")
 	}
 	fcmTokens := convutil.ConvertToList(friendUserPushNotificationTokens, func(from *ent.PushNotificationToken) string {
 		return from.FcmToken
@@ -115,7 +116,7 @@ func (r *mutationResolver) CancelFriendshipRequest(ctx context.Context, friendsh
 		).
 		Exec(ctx)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "delete friendship request")
 	}
 	return &gqlmodel.CancelFriendshipRequestPayload{CanceledFriendshipRequestID: friendshipRequestID}, nil
 }
@@ -131,30 +132,30 @@ func (r *mutationResolver) AcceptFriendshipRequest(ctx context.Context, friendsh
 				friendshiprequest.ToUserID(authUserID),
 			).Only(ctx)
 		if err != nil {
-			return err
+			return errors.Wrap(err, "get friendship request")
 		}
 		requestedUserID = friendshipRequest.FromUserID
 		if err := tx.FriendshipRequest.DeleteOne(friendshipRequest).Exec(ctx); err != nil {
-			return err
+			return errors.Wrap(err, "delete friendship request")
 		}
 		err = tx.Friendship.Create().
 			SetUserID(friendshipRequest.FromUserID).
 			SetFriendUserID(friendshipRequest.ToUserID).
 			Exec(ctx)
 		if err != nil {
-			return err
+			return errors.Wrap(err, "create friendship 1")
 		}
 		err = tx.Friendship.Create().
 			SetUserID(friendshipRequest.ToUserID).
 			SetFriendUserID(friendshipRequest.FromUserID).
 			Exec(ctx)
 		if err != nil {
-			return err
+			return errors.Wrap(err, "create friendship 2")
 		}
 		return nil
 	})
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "ent run transaction")
 	}
 
 	// TODO: Send notification async
@@ -162,13 +163,13 @@ func (r *mutationResolver) AcceptFriendshipRequest(ctx context.Context, friendsh
 		Where(userprofile.UserID(authUserID)).
 		Only(ctx)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "get accepted user profile")
 	}
 	requestedUserPushNotificationTokens, err := r.DB.PushNotificationToken.Query().
 		Where(pushnotificationtoken.UserID(requestedUserID)).
 		All(ctx)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "get requested user push notification tokens")
 	}
 	fcmTokens := convutil.ConvertToList(requestedUserPushNotificationTokens, func(from *ent.PushNotificationToken) string {
 		return from.FcmToken
@@ -199,7 +200,7 @@ func (r *mutationResolver) DenyFriendshipRequest(ctx context.Context, friendship
 		).
 		Exec(ctx)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "delete friendship request")
 	}
 	return &gqlmodel.DenyFriendshipRequestPayload{DeniedFriendshipRequestID: friendshipRequestID}, nil
 }
@@ -214,7 +215,7 @@ func (r *mutationResolver) MuteUser(ctx context.Context, userID uuid.UUID) (*gql
 		Ignore().
 		Exec(ctx)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "create user mute")
 	}
 	return &gqlmodel.MuteUserPayload{MutedUserID: userID}, nil
 }
@@ -226,7 +227,7 @@ func (r *mutationResolver) UnmuteUser(ctx context.Context, userID uuid.UUID) (*g
 		Where(usermute.UserID(authUserID), usermute.MuteUserID(userID)).
 		Exec(ctx)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "delete user mute")
 	}
 	return &gqlmodel.UnmuteUserPayload{UnmutedUserID: userID}, nil
 }
@@ -241,7 +242,7 @@ func (r *mutationResolver) BlockUser(ctx context.Context, userID uuid.UUID) (*gq
 		Ignore().
 		Exec(ctx)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "create user block")
 	}
 	return &gqlmodel.BlockUserPayload{BlockedUserID: userID}, nil
 }
@@ -253,7 +254,7 @@ func (r *mutationResolver) UnblockUser(ctx context.Context, userID uuid.UUID) (*
 		Where(userblock.UserID(authUserID), userblock.BlockUserID(userID)).
 		Exec(ctx)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "delete user block")
 	}
 	return &gqlmodel.UnblockUserPayload{UnblockedUserID: userID}, nil
 }

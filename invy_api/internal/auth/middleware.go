@@ -2,11 +2,11 @@ package auth
 
 import (
 	"context"
-	"errors"
 	"net/http"
 	"strings"
 
 	firebaseAuth "firebase.google.com/go/v4/auth"
+	"github.com/cockroachdb/errors"
 	"github.com/google/uuid"
 	"github.com/k-yomo/invy/pkg/logging"
 	"github.com/k-yomo/invy/pkg/tracing"

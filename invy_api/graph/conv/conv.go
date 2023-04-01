@@ -1,8 +1,7 @@
 package conv
 
 import (
-	"fmt"
-
+	"github.com/cockroachdb/errors"
 	"github.com/k-yomo/invy/invy_api/ent"
 	"github.com/k-yomo/invy/invy_api/ent/invitation"
 	"github.com/k-yomo/invy/invy_api/graph/gqlmodel"
@@ -56,7 +55,7 @@ func ConvertFromDBFriendGroup(friendGroup *ent.FriendGroup) *gqlmodel.FriendGrou
 func ConvertFromDBInvitation(invitation *ent.Invitation) (*gqlmodel.Invitation, error) {
 	status, err := convertFromDBInvitationStatus(invitation.Status)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "convert from db invitation status")
 	}
 
 	var coordinate *gqlmodel.Coordinate
@@ -87,7 +86,7 @@ func convertFromDBInvitationStatus(status invitation.Status) (gqlmodel.Invitatio
 	case invitation.StatusClosed:
 		return gqlmodel.InvitationStatusActive, nil
 	default:
-		return "", fmt.Errorf("unhandled invitation status: %s", status)
+		return "", errors.Errorf("unhandled invitation status: %s", status)
 	}
 }
 

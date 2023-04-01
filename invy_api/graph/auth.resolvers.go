@@ -6,9 +6,9 @@ package graph
 
 import (
 	"context"
-	"errors"
 	"strings"
 
+	"github.com/cockroachdb/errors"
 	"github.com/google/uuid"
 	"github.com/k-yomo/invy/invy_api/ent"
 	"github.com/k-yomo/invy/invy_api/ent/account"
@@ -19,6 +19,7 @@ import (
 	"github.com/k-yomo/invy/invy_api/graph/gqlmodel"
 	"github.com/k-yomo/invy/invy_api/internal/auth"
 	"github.com/k-yomo/invy/invy_api/internal/config"
+	"github.com/k-yomo/invy/invy_api/internal/xerrors"
 	"github.com/k-yomo/invy/pkg/requestutil"
 	"github.com/k-yomo/invy/pkg/shortid"
 )
@@ -28,18 +29,18 @@ func (r *mutationResolver) SignUp(ctx context.Context, input gqlmodel.SignUpInpu
 	header := requestutil.GetRequestHeader(ctx)
 	authHeader := header.Get("Authorization")
 	if authHeader == "" {
-		return nil, errors.New("unauthenticated")
+		return nil, xerrors.NewErrUnauthenticated()
 	}
 
 	idToken := strings.Replace(authHeader, "Bearer ", "", 1)
 	token, err := r.FirebaseAuthClient.VerifyIDToken(ctx, idToken)
 	if err != nil {
-		return nil, errors.New("unauthenticated")
+		return nil, xerrors.NewErrUnauthenticated()
 	}
 
 	firebaseUser, err := r.FirebaseAuthClient.GetUser(ctx, token.UID)
 	if err != nil {
-		return nil, errors.New("unauthenticated")
+		return nil, xerrors.NewErrUnauthenticated()
 	}
 
 	// TODO: Replace with our own file
@@ -76,13 +77,13 @@ func (r *mutationResolver) SignUp(ctx context.Context, input gqlmodel.SignUpInpu
 			SetNillablePhoneNumber(phoneNumber).
 			Save(ctx)
 		if err != nil {
-			return err
+			return errors.Wrap(err, "create account")
 		}
 		dbUser, err = tx.User.Create().
 			SetAccountID(dbAccount.ID).
 			Save(ctx)
 		if err != nil {
-			return err
+			return errors.Wrap(err, "create user")
 		}
 		screenID := shortid.Generate()
 		for i := 0; i < 5; i++ {
@@ -90,7 +91,7 @@ func (r *mutationResolver) SignUp(ctx context.Context, input gqlmodel.SignUpInpu
 				Where(userprofile.ScreenID(screenID)).
 				Exist(ctx)
 			if err != nil {
-				return err
+				return errors.Wrap(err, "check if given user id already exists")
 			}
 			if exist {
 				screenID = shortid.Generate()
@@ -111,7 +112,7 @@ func (r *mutationResolver) SignUp(ctx context.Context, input gqlmodel.SignUpInpu
 			SetAvatarURL(avatarURL).
 			Save(ctx)
 		if err != nil {
-			return err
+			return errors.Wrap(err, "create user profile")
 		}
 
 		claims := map[string]interface{}{
@@ -119,13 +120,13 @@ func (r *mutationResolver) SignUp(ctx context.Context, input gqlmodel.SignUpInpu
 			auth.CurrentUserIDClaimKey: dbUser.ID,
 		}
 		if err := r.FirebaseAuthClient.SetCustomUserClaims(ctx, token.UID, claims); err != nil {
-			return err
+			return errors.Wrap(err, "set custom user claims in firebase auth")
 		}
 
 		return nil
 	})
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "ent run transaction")
 	}
 
 	return &gqlmodel.SignUpPayload{Viewer: conv.ConvertFromDBUserProfileToViewer(dbUserProfile)}, nil
@@ -139,7 +140,7 @@ func (r *mutationResolver) SignOut(ctx context.Context) (*gqlmodel.SignOutPayloa
 		Where(pushnotificationtoken.UserID(authUserID)).
 		Exec(ctx)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "delete notification token")
 	}
 	return &gqlmodel.SignOutPayload{SignedOutUserID: authUserID}, nil
 }
@@ -151,14 +152,14 @@ func (r *mutationResolver) DeleteAccount(ctx context.Context) (*gqlmodel.DeleteA
 		Where(account.ID(authAccountID)).
 		Only(ctx)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "get account")
 	}
 	userIDs, err := r.DB.Account.Query().
 		QueryUsers().
 		Where(user.AccountID(authAccountID)).
 		IDs(ctx)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "get user ids")
 	}
 	err = ent.RunInTx(ctx, r.DB, func(tx *ent.Tx) error {
 		err := tx.Account.Update().
@@ -166,7 +167,7 @@ func (r *mutationResolver) DeleteAccount(ctx context.Context) (*gqlmodel.DeleteA
 			SetStatus(account.StatusDeleted).
 			Exec(ctx)
 		if err != nil {
-			return err
+			return errors.Wrap(err, "update account to deleted")
 		}
 		err = tx.User.Update().
 			Where(user.AccountID(authAccountID)).
@@ -178,7 +179,7 @@ func (r *mutationResolver) DeleteAccount(ctx context.Context) (*gqlmodel.DeleteA
 			SetAvatarURL(config.DefaultAvatarURL).
 			Exec(ctx)
 		if err != nil {
-			return err
+			return errors.Wrap(err, "update user profile to deleted")
 		}
 		if err := r.FirebaseAuthClient.DeleteUser(ctx, dbAccount.AuthID); err != nil {
 			return err
@@ -186,7 +187,7 @@ func (r *mutationResolver) DeleteAccount(ctx context.Context) (*gqlmodel.DeleteA
 		return nil
 	})
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "ent run transaction")
 	}
 	return &gqlmodel.DeleteAccountPayload{DeletedAccountID: authAccountID}, nil
 }
@@ -198,11 +199,11 @@ func (r *mutationResolver) CreateUser(ctx context.Context, input gqlmodel.Create
 		Where(user.AccountID(accountID)).
 		Count(ctx)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "get user count for the login account")
 	}
 	const maxUserCountPerAccount = 5
 	if userCount >= maxUserCountPerAccount {
-		return nil, errors.New("account can't create more than 5 users")
+		return nil, xerrors.NewErrInvalidArgument(errors.New("account can't create more than 5 users"))
 	}
 
 	avatarURL := "https://cdn-icons-png.flaticon.com/512/456/456283.png"
@@ -216,7 +217,7 @@ func (r *mutationResolver) CreateUser(ctx context.Context, input gqlmodel.Create
 			SetAccountID(accountID).
 			Save(ctx)
 		if err != nil {
-			return err
+			return errors.Wrap(err, "create user")
 		}
 		screenID := shortid.Generate()
 		for i := 0; i < 5; i++ {
@@ -224,7 +225,7 @@ func (r *mutationResolver) CreateUser(ctx context.Context, input gqlmodel.Create
 				Where(userprofile.ScreenID(screenID)).
 				Exist(ctx)
 			if err != nil {
-				return err
+				return errors.Wrap(err, "check if screen id exists")
 			}
 			if exist {
 				screenID = shortid.Generate()
@@ -239,7 +240,7 @@ func (r *mutationResolver) CreateUser(ctx context.Context, input gqlmodel.Create
 			SetNickname(input.Nickname).
 			Save(ctx)
 		if err != nil {
-			return err
+			return errors.Wrap(err, "save user profile")
 		}
 
 		return nil
@@ -260,7 +261,7 @@ func (r *mutationResolver) SwitchUser(ctx context.Context, userID uuid.UUID) (*g
 		WithUserProfile().
 		Only(ctx)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "query user profile")
 	}
 
 	claims := map[string]interface{}{
@@ -268,7 +269,7 @@ func (r *mutationResolver) SwitchUser(ctx context.Context, userID uuid.UUID) (*g
 		auth.CurrentUserIDClaimKey: dbUser.ID,
 	}
 	if err := r.FirebaseAuthClient.SetCustomUserClaims(ctx, dbUser.Edges.Account.AuthID, claims); err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "set custom user claims in firebase auth")
 	}
 
 	return &gqlmodel.SwitchUserPayload{Viewer: conv.ConvertFromDBUserProfileToViewer(dbUser.Edges.UserProfile)}, nil

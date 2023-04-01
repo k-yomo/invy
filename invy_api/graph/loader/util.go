@@ -1,9 +1,9 @@
 package loader
 
 import (
-	"errors"
 	"fmt"
 
+	"github.com/cockroachdb/errors"
 	"github.com/graph-gophers/dataloader/v7"
 )
 
@@ -30,7 +30,7 @@ func convertToResults[K LoaderKey, V any](keys []K, kvMap map[K]V) []*dataloader
 			results = append(results, &dataloader.Result[V]{Data: v, Error: nil})
 		} else {
 			var nilValue V
-			err := fmt.Errorf("value %q: %w", key, ErrNotFound)
+			err := errors.Errorf("value %q: %w", key, ErrNotFound)
 			results = append(results, &dataloader.Result[V]{Data: nilValue, Error: err})
 		}
 	}

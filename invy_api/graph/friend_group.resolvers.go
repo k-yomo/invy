@@ -7,6 +7,7 @@ package graph
 import (
 	"context"
 
+	"github.com/cockroachdb/errors"
 	"github.com/google/uuid"
 	"github.com/k-yomo/invy/invy_api/ent"
 	"github.com/k-yomo/invy/invy_api/ent/friendgroup"
@@ -28,7 +29,7 @@ func (r *friendGroupResolver) FriendUsers(ctx context.Context, obj *gqlmodel.Fri
 		QueryUserProfile().
 		All(ctx)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "query friend users in the group")
 	}
 	return convutil.ConvertToList(dbFriendUsersInGroup, conv.ConvertFromDBUserProfile), nil
 }
@@ -45,7 +46,7 @@ func (r *mutationResolver) CreateFriendGroup(ctx context.Context, input gqlmodel
 			SetTotalCount(len(input.FriendUserIds)).
 			Save(ctx)
 		if err != nil {
-			return err
+			return errors.Wrap(err, "create friend group")
 		}
 
 		dbUserFriendGroupCreates := make([]*ent.UserFriendGroupCreate, 0, len(input.FriendUserIds))
@@ -56,12 +57,12 @@ func (r *mutationResolver) CreateFriendGroup(ctx context.Context, input gqlmodel
 			dbUserFriendGroupCreates = append(dbUserFriendGroupCreates, userFriendGroupCreate)
 		}
 		if err := tx.UserFriendGroup.CreateBulk(dbUserFriendGroupCreates...).Exec(ctx); err != nil {
-			return err
+			return errors.Wrap(err, "create user friend group in bulk")
 		}
 		return nil
 	})
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "ent run transaction")
 	}
 	return &gqlmodel.CreateFriendGroupPayload{FriendGroup: conv.ConvertFromDBFriendGroup(dbFriendGroup)}, nil
 }
@@ -76,7 +77,7 @@ func (r *mutationResolver) UpdateFriendGroup(ctx context.Context, input gqlmodel
 			SetTotalCount(len(input.FriendUserIds)).
 			Save(ctx)
 		if err != nil {
-			return err
+			return errors.Wrap(err, "update friend group")
 		}
 		// no update means the group does not exist or not belonging to the logged in user
 		if updatedNum == 0 {
@@ -87,7 +88,7 @@ func (r *mutationResolver) UpdateFriendGroup(ctx context.Context, input gqlmodel
 			Where(userfriendgroup.FriendGroupID(input.ID)).
 			Exec(ctx)
 		if err != nil {
-			return err
+			return errors.Wrap(err, "delete user friend group")
 		}
 
 		dbUserFriendGroupCreates := make([]*ent.UserFriendGroupCreate, 0, len(input.FriendUserIds))
@@ -98,19 +99,19 @@ func (r *mutationResolver) UpdateFriendGroup(ctx context.Context, input gqlmodel
 			dbUserFriendGroupCreates = append(dbUserFriendGroupCreates, userFriendGroupCreate)
 		}
 		if err := tx.UserFriendGroup.CreateBulk(dbUserFriendGroupCreates...).Exec(ctx); err != nil {
-			return err
+			return errors.Wrap(err, "create user friend group in bulk")
 		}
 		return nil
 	})
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "ent run transaction")
 	}
 
 	dbFriendGroup, err := r.DB.FriendGroup.Query().
 		Where(friendgroup.ID(input.ID), friendgroup.UserID(authUserID)).
 		Only(ctx)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "get friend group")
 	}
 	return &gqlmodel.UpdateFriendGroupPayload{FriendGroup: conv.ConvertFromDBFriendGroup(dbFriendGroup)}, nil
 }
@@ -122,7 +123,7 @@ func (r *mutationResolver) DeleteFriendGroup(ctx context.Context, friendGroupID 
 		Where(friendgroup.ID(friendGroupID), friendgroup.UserID(authUserID)).
 		Exec(ctx)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "delete friend group")
 	}
 	return &gqlmodel.DeleteFriendGroupPayload{DeletedFriendGroupID: friendGroupID}, nil
 }

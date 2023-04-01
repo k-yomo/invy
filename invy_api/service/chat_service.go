@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"cloud.google.com/go/firestore"
+	"github.com/cockroachdb/errors"
 	"github.com/google/uuid"
 	"github.com/k-yomo/invy/invy_api/graph/gqlmodel"
 	"github.com/k-yomo/invy/pkg/convutil"
@@ -27,11 +28,11 @@ func (c *chatService) GetChatRoom(ctx context.Context, chatRoomID uuid.UUID) (*g
 	chatRoomDocRef := c.firestoreClient.Doc(FirestoreChatRoomPath(chatRoomID))
 	chatRoomSnapshot, err := chatRoomDocRef.Get(ctx)
 	if err != nil {
-		return nil, fmt.Errorf("get chat room: %w", err)
+		return nil, errors.Wrap(err, "get chat room")
 	}
 	var chatRoom gqlmodel.ChatRoom
 	if err := convutil.ConvertMapToStructViaJSON(chatRoomSnapshot.Data(), &chatRoom); err != nil {
-		return nil, fmt.Errorf("unmarhsal chat room snapshot: %w", err)
+		return nil, errors.Wrap(err, "unmarhsal chat room snapshot")
 	}
 	return &chatRoom, nil
 }
@@ -40,7 +41,7 @@ func (c *chatService) GetChatRoomParticipantUserIDs(ctx context.Context, chatRoo
 	chatRoomDocRef := c.firestoreClient.Doc(FirestoreChatRoomPath(chatRoomID))
 	chatRoomSnapshot, err := chatRoomDocRef.Get(ctx)
 	if err != nil {
-		return nil, fmt.Errorf("get chat room: %w", err)
+		return nil, errors.Wrap(err, "get chat room")
 	}
 	participantUserIDs := convutil.ConvertToList(chatRoomSnapshot.Data()["participantUserIds"].([]interface{}), func(from interface{}) uuid.UUID {
 		return uuid.MustParse(from.(string))
@@ -56,12 +57,12 @@ func (c *chatService) UpdateLastReadAt(ctx context.Context, chatRoomID uuid.UUID
 			return nil
 		}
 		if err != nil {
-			return fmt.Errorf("get chat room: %w", err)
+			return errors.Wrap(err, "get chat room")
 		}
 
 		var chatRoom gqlmodel.ChatRoom
 		if err := convutil.ConvertMapToStructViaJSON(chatRoomSnapshot.Data(), &chatRoom); err != nil {
-			return fmt.Errorf("unmarhsal chat room snapshot: %w", err)
+			return errors.Wrap(err, "unmarhsal chat room snapshot")
 		}
 
 		for _, participant := range chatRoom.Participants {
@@ -72,7 +73,7 @@ func (c *chatService) UpdateLastReadAt(ctx context.Context, chatRoomID uuid.UUID
 
 		chatRoomMap, err := convutil.ConvertStructToJSONMap(chatRoom)
 		if err != nil {
-			return fmt.Errorf("convert chat room struct to json map: %w", err)
+			return errors.Wrap(err, "convert chat room struct to json map")
 		}
 		return firestoreTx.Set(chatRoomDocRef, chatRoomMap)
 	})
@@ -83,11 +84,11 @@ func (c *chatService) AddParticipant(ctx context.Context, chatRoomID uuid.UUID, 
 		chatRoomDocRef := c.firestoreClient.Doc(FirestoreChatRoomPath(chatRoomID))
 		chatRoomSnapshot, err := firestoreTx.Get(chatRoomDocRef)
 		if err != nil {
-			return fmt.Errorf("get chat room: %w", err)
+			return errors.Wrap(err, "get chat room")
 		}
 		var chatRoom gqlmodel.ChatRoom
 		if err := convutil.ConvertMapToStructViaJSON(chatRoomSnapshot.Data(), &chatRoom); err != nil {
-			return fmt.Errorf("unmarhsal chat room snapshot: %w", err)
+			return errors.Wrap(err, "unmarhsal chat room snapshot")
 		}
 
 		chatRoom.ParticipantUserIds = append(chatRoom.ParticipantUserIds, userID)
@@ -98,7 +99,7 @@ func (c *chatService) AddParticipant(ctx context.Context, chatRoomID uuid.UUID, 
 
 		chatRoomMap, err := convutil.ConvertStructToJSONMap(chatRoom)
 		if err != nil {
-			return fmt.Errorf("convert chat room struct to json map: %w", err)
+			return errors.Wrap(err, "convert chat room struct to json map")
 		}
 		return firestoreTx.Set(chatRoomDocRef, chatRoomMap)
 	})

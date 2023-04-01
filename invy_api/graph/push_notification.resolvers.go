@@ -7,6 +7,7 @@ package graph
 import (
 	"context"
 
+	"github.com/cockroachdb/errors"
 	"github.com/k-yomo/invy/invy_api/ent/pushnotificationtoken"
 	"github.com/k-yomo/invy/invy_api/graph/gqlmodel"
 	"github.com/k-yomo/invy/invy_api/internal/auth"
@@ -23,7 +24,7 @@ func (r *mutationResolver) RegisterPushNotificationToken(ctx context.Context, in
 		UpdateNewValues().
 		ID(ctx)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "create push notification token")
 	}
 	return &gqlmodel.RegisterPushNotificationTokenPayload{RegisteredPushNotificationTokenID: pushNotificationTokenID}, nil
 }

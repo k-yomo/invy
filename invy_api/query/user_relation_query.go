@@ -2,8 +2,8 @@ package query
 
 import (
 	"context"
-	"fmt"
 
+	"github.com/cockroachdb/errors"
 	"github.com/google/uuid"
 	"github.com/uptrace/bun"
 )
@@ -57,7 +57,7 @@ WHERE
 		userID,
 	).Scan(ctx, &notBlockedFriendUserIDs)
 	if err != nil {
-		return nil, fmt.Errorf("not blocked user ids query: %w", err)
+		return nil, errors.Wrap(err, "not blocked user ids query")
 	}
 	return notBlockedFriendUserIDs, nil
 }

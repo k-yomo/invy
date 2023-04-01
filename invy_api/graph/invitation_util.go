@@ -3,6 +3,7 @@ package graph
 import (
 	"context"
 
+	"github.com/cockroachdb/errors"
 	"github.com/google/uuid"
 	"github.com/k-yomo/invy/invy_api/ent"
 	"github.com/k-yomo/invy/invy_api/ent/invitation"
@@ -37,7 +38,7 @@ func IsAuthUserIncludedInTheInvitation(ctx context.Context, dbClient *ent.Client
 		Where(invitationuser.UserID(authUserID)).
 		Exist(ctx)
 	if err != nil {
-		return false, err
+		return false, errors.Wrap(err, "check if user is invited")
 	}
 	return invited, nil
 }

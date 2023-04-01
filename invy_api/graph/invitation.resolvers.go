@@ -6,11 +6,11 @@ package graph
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"time"
 
 	fcm "firebase.google.com/go/v4/messaging"
+	"github.com/cockroachdb/errors"
 	"github.com/google/uuid"
 	"github.com/k-yomo/invy/invy_api/ent"
 	"github.com/k-yomo/invy/invy_api/ent/invitation"
@@ -36,7 +36,7 @@ import (
 func (r *invitationResolver) User(ctx context.Context, obj *gqlmodel.Invitation) (*gqlmodel.User, error) {
 	dbUserProfile, err := loader.Get(ctx).UserProfile.Load(ctx, obj.UserID)()
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "load user profile")
 	}
 	return conv.ConvertFromDBUserProfile(dbUserProfile), nil
 }
@@ -56,7 +56,7 @@ func (r *invitationResolver) AcceptedUsers(ctx context.Context, obj *gqlmodel.In
 		return nil, nil
 	}
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "load invitation accepted user profiles")
 	}
 	return convutil.ConvertToList(dbAcceptedUserProfiles, conv.ConvertFromDBUserProfile), nil
 }
@@ -79,7 +79,7 @@ func (r *invitationResolver) IsAccepted(ctx context.Context, obj *gqlmodel.Invit
 func (r *invitationAwaitingResolver) User(ctx context.Context, obj *gqlmodel.InvitationAwaiting) (*gqlmodel.User, error) {
 	userProfile, err := loader.Get(ctx).UserProfile.Load(ctx, obj.ID)()
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "load user profile")
 	}
 	return conv.ConvertFromDBUserProfile(userProfile), nil
 }
@@ -99,7 +99,7 @@ func (r *mutationResolver) SendInvitation(ctx context.Context, input *gqlmodel.S
 		input.TargetFriendGroupIds,
 	)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "query not blocked friend user ids")
 	}
 
 	var locationCoordinate *pgutil.GeoPoint
@@ -121,7 +121,7 @@ func (r *mutationResolver) SendInvitation(ctx context.Context, input *gqlmodel.S
 			SetChatRoomID(chatRoomID).
 			Save(ctx)
 		if err != nil {
-			return err
+			return errors.Wrap(err, "create invitation")
 		}
 
 		invitationUserCreates := make([]*ent.InvitationUserCreate, 0, len(targetFriendUserIDs))
@@ -135,7 +135,7 @@ func (r *mutationResolver) SendInvitation(ctx context.Context, input *gqlmodel.S
 		}
 		err = tx.InvitationUser.CreateBulk(invitationUserCreates...).Exec(ctx)
 		if err != nil {
-			return err
+			return errors.Wrap(err, "create invitation users")
 		}
 
 		now := time.Now()
@@ -151,17 +151,17 @@ func (r *mutationResolver) SendInvitation(ctx context.Context, input *gqlmodel.S
 			CreatedAt: now,
 		})
 		if err != nil {
-			return fmt.Errorf("convert chat room struct to json map: %w", err)
+			return errors.Wrap(err, "convert chat room struct to json map")
 		}
 
 		_, err = r.FirestoreClient.Doc(service.FirestoreChatRoomPath(chatRoomID)).Create(ctx, chatRoomMap)
 		if err != nil {
-			return fmt.Errorf("create chat room document: %w", err)
+			return errors.Wrap(err, "create chat room document")
 		}
 		return nil
 	})
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "run ent transaction")
 	}
 
 	// TODO: Send notification async
@@ -169,7 +169,7 @@ func (r *mutationResolver) SendInvitation(ctx context.Context, input *gqlmodel.S
 		Where(userprofile.UserID(dbInvitation.UserID)).
 		Only(ctx)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "get inviter profile")
 	}
 	targetUserPushNotificationTokens, err := r.DBQuery.Notification.GetNotifiableFriendUserPushTokens(ctx, authUserID, targetFriendUserIDs)
 	if err != nil {
@@ -192,7 +192,7 @@ func (r *mutationResolver) SendInvitation(ctx context.Context, input *gqlmodel.S
 
 	gqlInvitation, err := conv.ConvertFromDBInvitation(dbInvitation)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "convert from db invitation")
 	}
 	return &gqlmodel.SendInvitationPayload{Invitation: gqlInvitation}, nil
 }
