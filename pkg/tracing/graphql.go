@@ -32,6 +32,7 @@ func (a GraphqlExtension) InterceptResponse(ctx context.Context, next graphql.Re
 	tracer := otel.Tracer("response")
 	ctx, span := tracer.Start(ctx, fmt.Sprintf("Operation/%s", operationName(ctx)))
 	defer span.End()
+
 	if !span.IsRecording() {
 		return next(ctx)
 	}

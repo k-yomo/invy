@@ -38,7 +38,6 @@ import (
 	"github.com/rs/cors"
 	"github.com/uptrace/bun"
 	"github.com/uptrace/bun/dialect/pgdialect"
-	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 	"go.uber.org/zap"
 	"google.golang.org/api/option"
 )
@@ -150,7 +149,7 @@ func main() {
 	gqlServer.Use(logging.GraphQLResponseInterceptor{})
 
 	r := newBaseRouter(appConfig, logger, firebaseAuthClient)
-	r.With(loader.Middleware(entDB)).Handle("/query", otelhttp.NewHandler(gqlServer, "query"))
+	r.With(loader.Middleware(entDB)).Handle("/query", gqlServer)
 
 	if appConfig.Env == config.EnvLocal {
 		r.Get("/", playground.Handler("GraphQL playground", "/query"))
@@ -187,6 +186,7 @@ func newBaseRouter(appConfig *config.AppConfig, logger *zap.Logger, firebaseAuth
 		middleware.Recoverer,
 		requestutil.Middleware,
 		middleware.RealIP,
+		tracing.HTTPMiddleware,
 		logging.NewMiddleware(appConfig.GCPProjectID, logger),
 		auth.Middleware(firebaseAuthClient),
 		device.Middleware,
