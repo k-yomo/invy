@@ -3,6 +3,7 @@ package logging
 import (
 	"context"
 
+	"github.com/blendle/zapdriver"
 	"github.com/grpc-ecosystem/go-grpc-middleware/logging/zap/ctxzap"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
@@ -16,7 +17,7 @@ func NewLogger(isDev bool, version string) (*zap.Logger, error) {
 		config.EncoderConfig.EncodeLevel = zapcore.CapitalColorLevelEncoder
 		logger, err = config.Build()
 	} else {
-		config := zap.NewProductionConfig()
+		config := zapdriver.NewProductionConfig()
 		config.Sampling = nil
 		config.OutputPaths = []string{"stdout"}
 		config.InitialFields = map[string]interface{}{

@@ -80,12 +80,12 @@ func (g GraphQLResponseInterceptor) InterceptResponse(ctx context.Context, next 
 		LatencyMilliseconds: latency.Milliseconds(),
 		ResponseSize:        int64(len(resp.Data)),
 	}
+	AddFields(ctx, zap.String("graphqlOperation", operationName))
 	Logger(ctx).Info(
 		fmt.Sprintf("graphql operation: %s", operationName),
 		zap.Bool("isError", resp.Errors != nil),
 		zap.Object("httpRequest", &reqLog),
 	)
-	AddFields(ctx, zap.String("graphqlOperation", operationName))
 	return resp
 }
 
