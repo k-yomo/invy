@@ -85,6 +85,9 @@ func main() {
 	err = otelsql.RegisterDBStatsMetrics(db, otelsql.WithAttributes(
 		semconv.DBSystemPostgreSQL,
 	))
+	if err != nil {
+		logger.Fatal("register db stats metrics", zap.Error(err))
+	}
 
 	db.SetMaxOpenConns(10)
 	db.SetMaxIdleConns(10)
