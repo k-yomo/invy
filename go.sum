@@ -182,6 +182,12 @@ github.com/google/gofuzz v1.0.0/go.mod h1:dBl0BpW6vV/+mYPU4Po3pmUjxk6FQPldtuIdl/
 github.com/google/martian/v3 v3.3.2 h1:IqNFLAmvJOgVlpdEBiQbDc2EwKW77amAycfTuWKdfvw=
 github.com/google/pprof v0.0.0-20221103000818-d260c55eee4c h1:lvddKcYTQ545ADhBujtIJmqQrZBDsGo7XIMbAQe/sNY=
 github.com/google/pprof v0.0.0-20221103000818-d260c55eee4c/go.mod h1:dDKJzRmX4S37WGHujM7tX//fmj1uioxKzKxz3lo4HJo=
+github.com/google/sqlcommenter/go/core v0.1.2 h1:UM3jS7JROrPTsJxbLq68PRB34Iq8H3AZQDQUSV7sQWU=
+github.com/google/sqlcommenter/go/core v0.1.2/go.mod h1:GORu2htXRC4xtejBzOa4ct1L20pohP81DFNYKdCJI70=
+github.com/google/sqlcommenter/go/database/sql v0.1.1 h1:Ns8M2jdIkqR597rR9WC2JlQTwpjXEEdHDfLA/Wc5vDc=
+github.com/google/sqlcommenter/go/database/sql v0.1.1/go.mod h1:uIcYRaalfnXuQQdFY4Sm8FX1xGE5z0K19tMeS5sE4xE=
+github.com/google/sqlcommenter/go/net/http v0.1.0 h1:y9Fc8eS8aY/tVuWoFXh9HyV8mNcanMBx3PN2/8Mg/wE=
+github.com/google/sqlcommenter/go/net/http v0.1.0/go.mod h1:duXQQvXZYCX8eQ+XOrlojWF512ltEp1eSKXc/KiS9lg=
 github.com/google/uuid v1.1.2/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
 github.com/google/uuid v1.3.0 h1:t6JiXgmwXMjEs8VusXIJk2BXHsn+wx8BZdTaoZ5fu7I=
 github.com/google/uuid v1.3.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
@@ -394,6 +400,7 @@ go.opentelemetry.io/otel/metric v0.37.0 h1:pHDQuLQOZwYD+Km0eb657A25NaRzy0a+eLyKf
 go.opentelemetry.io/otel/metric v0.37.0/go.mod h1:DmdaHfGt54iV6UKxsV9slj2bBRJcKC1B1uvDLIioc1s=
 go.opentelemetry.io/otel/sdk v1.14.0 h1:PDCppFRDq8A1jL9v6KMI6dYesaq+DFcDZvjsoGvxGzY=
 go.opentelemetry.io/otel/sdk v1.14.0/go.mod h1:bwIC5TjrNG6QDCHNWvW4HLHtUQ4I+VQDsnjhvyZCALM=
+go.opentelemetry.io/otel/sdk/metric v0.37.0 h1:haYBBtZZxiI3ROwSmkZnI+d0+AVzBWeviuYQDeBWosU=
 go.opentelemetry.io/otel/trace v1.14.0 h1:wp2Mmvj41tDsyAJXiWDWpfNsOiIyd38fy85pyKcFq/M=
 go.opentelemetry.io/otel/trace v1.14.0/go.mod h1:8avnQLK+CG77yNLUae4ea2JDQ6iT+gozhnZjy/rw9G8=
 go.uber.org/atomic v1.4.0/go.mod h1:gD2HeocX3+yG+ygLZcrzQJaqmWj9AIm7n08wl/qW/PE=
