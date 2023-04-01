@@ -2,7 +2,7 @@ name: Invy API Workflow
 on:
   push:
     paths:
-      - ".github/workflows/invy_api.yml"
+      - ".github/workflows/invy-api.yml"
       - "invy_api/**"
       - "pkg/**"
 
@@ -30,11 +30,7 @@ jobs:
 
       - name: Install gotestsum
         run: go install gotest.tools/gotestsum
-      #      - name: Lint
-      #        uses: golangci/golangci-lint-action@v3.1.0
-      #        with:
-      #          version: v1.33
-      #
+
       - name: Test
         run: make test
 
