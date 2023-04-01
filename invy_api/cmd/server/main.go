@@ -97,6 +97,7 @@ func main() {
 
 	entDriver := sqlcomment.NewDriver(entsql.OpenDB(appConfig.DBConfig.Driver, db),
 		sqlcomment.WithDriverVerTag(),
+		sqlcomment.WithTagger(sqlcomment.OTELTagger{}),
 		sqlcomment.WithTags(sqlcomment.Tags{
 			sqlcomment.KeyApplication: serviceName,
 			sqlcomment.KeyFramework:   "net/http",
