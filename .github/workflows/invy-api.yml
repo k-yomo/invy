@@ -1,10 +1,12 @@
 name: Invy API Workflow
 on:
   push:
+    branches:
+      - master
     paths:
       - ".github/workflows/invy-api.yml"
       - "invy_api/**"
-      - "pkg/**"
+  pull_request:
 
 permissions:
   contents: read
@@ -13,6 +15,7 @@ permissions:
 env:
   GO111MODULE: "on"
   TZ: "Asia/Tokyo"
+  GAR_PROJECT: invy-${{ (github.ref_type == 'tag' || github.ref == 'refs/heads/main') && 'prod' || 'dev' }}
 
 jobs:
   test:
@@ -57,7 +60,9 @@ jobs:
 
   docker-build-push:
     name: Docker build and push
-    needs: test
+    needs:
+      - test
+      - lint
     runs-on: ubuntu-latest
     environment: invy-api-prod
     steps:
@@ -72,14 +77,29 @@ jobs:
         uses: google-github-actions/setup-gcloud@v1
 
       - name: Push Docker Image to Prod GAR
+        id: push-docker-image
         if: github.ref == 'refs/heads/main'
         run: |
           gcloud --quiet auth configure-docker asia-northeast1-docker.pkg.dev
+          COMMIT_REF_SHORT=$(git rev-parse --short=7 HEAD)
+          if [ "${GITHUB_REF_NAME}" == "main" ]; then
+            export VERSION=${GITHUB_REF_NAME}-$(date +%Y%m%d)-${COMMIT_REF_SHORT}
+          elif [ "${GITHUB_EVENT_NAME}" == "pull_request" ]; then
+            PR_NUMBER=${{ github.event.pull_request.number }}
+            PR_SHA=${{ github.event.pull_request.head.sha }}
+            export VERSION=pr-${PR_NUMBER}-${PR_SHA:0:7}
+          else
+            export VERSION=commit-${GITHUB_SHA:0:7}
+          fi
           docker build -t invy-api -f invy_api.Dockerfile .
           make docker-build-api
           make push-api-prod
+          echo "docker-image-version=${VERSION}" >> "$GITHUB_OUTPUT"
         env:
           DOCKER_BUILDKIT: 1
+    outputs:
+      docker_image_version: ${{ steps.push-docker-image.outputs.docker-image-version }}
+
 
   deploy-dev:
     name: Deploy Dev
@@ -100,7 +120,9 @@ jobs:
       - name: Deploy Dev
         if: github.ref == 'refs/heads/main'
         run: |
-          gcloud run deploy invy-api-dev --image=asia-northeast1-docker.pkg.dev/invy-prod/invy/invy-api:latest --project=invy-dev --region=asia-northeast1 --platform=managed
+          gcloud run deploy invy-api-dev --image=asia-northeast1-docker.pkg.dev/invy-prod/invy/invy-api:${VERSION} --project=invy-dev --region=asia-northeast1 --platform=managed
+        env:
+          VERSION: ${{needs.docker-build-push.outputs.docker-image-version}}
 
   deploy-prod:
     name: Deploy Prod
@@ -121,4 +143,6 @@ jobs:
      - name: Deploy Prod
        if: github.ref == 'refs/heads/main'
        run: |
-         gcloud run deploy invy-api-prod --image=asia-northeast1-docker.pkg.dev/invy-prod/invy/invy-api:latest --project=invy-prod --region=asia-northeast1 --platform=managed
+         gcloud run deploy invy-api-prod --image=asia-northeast1-docker.pkg.dev/invy-prod/invy/invy-api:${VERSION} --project=invy-prod --region=asia-northeast1 --platform=managed
+       env:
+        VERSION: ${{needs.docker-build-push.outputs.docker-image-version}}

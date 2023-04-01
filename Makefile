@@ -1,9 +1,24 @@
 .DEFAULT_GOAL := help
 
+GOPATH := $(shell go env GOPATH)
+GOBIN := $(PWD)/bin
+
+PATH := $(GOBIN):$(PATH)
+SHELL := env "PATH=$(PATH)" bash
+
+GIT_REF := $(shell git rev-parse --short=7 HEAD)
+VERSION ?= commit-$(GIT_REF)
+
+GAR_PROJECT ?= invy-dev
+GAR_REGISTRY := asia-northeast1-docker.pkg.dev/$(GAR_PROJECT)
+IMAGE_PATH := $(GAR_REGISTRY)/invy/invy-api
+IMAGE := $(IMAGE_PATH):$(VERSION)
+IMAGE_LATEST := $(IMAGE_PATH):latest
+
 .PHONY: setup
 setup: ## Setup project
+	GOBIN=${GOBIN} ./scripts/install-tools.sh
 	npm install -g graphql-cli graphql-schema-utilities
-	go install gotest.tools/gotestsum
 
 .PHONY: generate
 generate: ## Generate graphql code / ent code from schema
@@ -18,18 +33,13 @@ run-api: run-dbs ## Run API server
 
 .PHONY: docker-build-api
 docker-build-api:  ## Build invy-api docker image
-	docker build -t invy-api -f invy_api.Dockerfile .
+	docker build -t invy-api -t $(IMAGE) -t $(IMAGE_LATEST) -f invy_api.Dockerfile .
 
 .PHONY: push-api-dev
-push-api-dev: docker-build-api  ## Build and push docker image to dev artifact registry
-	docker tag invy-api asia-northeast1-docker.pkg.dev/invy-dev/invy/invy-api:latest
-	docker push asia-northeast1-docker.pkg.dev/invy-dev/invy/invy-api
-
-
-.PHONY: push-api-prod
-push-api-prod: docker-build-api  ## Build and push docker image to dev artifact registry
-	docker tag invy-api asia-northeast1-docker.pkg.dev/invy-prod/invy/invy-api:latest
-	docker push asia-northeast1-docker.pkg.dev/invy-prod/invy/invy-api
+push-api-image: docker-build-api  ## Build and push docker image to dev artifact registry
+	docker tag invy-api $(IMAGE)
+	docker tag invy-api $(IMAGE_LATEST)
+	docker push $(IMAGE_PATH)
 
 .PHONY: run-app
 run-app: ## Run app
@@ -47,8 +57,8 @@ run-db:
 connect-db:
 	PGPASSWORD=password psql -h 127.0.0.1 -p 15432 --user postgres -d invy
 
-.PHONY: test
-test: ## Run tests
+.PHONY: test-api
+test-api: ## Run tests
 	gotestsum -- -v -race -coverprofile=coverage.out ./...
 
 .PHONY: fmt
