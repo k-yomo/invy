@@ -116,9 +116,7 @@ jobs:
           else
             export VERSION=commit-${GITHUB_SHA:0:7}
           fi
-          docker build -t invy-api -f invy_api.Dockerfile .
-          make docker-build-api
-          make push-api-prod
+          make docker-push-api
           echo "docker-image-version=${VERSION}" >> "$GITHUB_OUTPUT"
         env:
           DOCKER_BUILDKIT: 1

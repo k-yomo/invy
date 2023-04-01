@@ -34,14 +34,9 @@ generate: ## Generate graphql code / ent code from schema
 run-api: run-dbs ## Run API server
 	cd invy_api && air
 
-.PHONY: docker-build-api
-docker-build-api:  ## Build invy-api docker image
-	docker build -t invy-api -t $(IMAGE) -t $(IMAGE_LATEST) -f invy_api.Dockerfile .
-
-.PHONY: push-api-dev
-push-api-image: docker-build-api  ## Build and push docker image to dev artifact registry
-	docker tag invy-api $(IMAGE)
-	docker tag invy-api $(IMAGE_LATEST)
+.PHONY: docker-push-api
+docker-push-api: ## Build and Push docker image
+	docker build -t $(IMAGE) -t $(IMAGE_LATEST) -f invy_api.Dockerfile .
 	docker push $(IMAGE_PATH)
 
 .PHONY: run-app
