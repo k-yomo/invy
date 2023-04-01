@@ -31,7 +31,7 @@ func (a GraphqlExtension) Validate(schema graphql.ExecutableSchema) error {
 
 func (a GraphqlExtension) InterceptResponse(ctx context.Context, next graphql.ResponseHandler) *graphql.Response {
 	operation := operationName(ctx)
-	ctx = sqlcomment.WithTag(ctx, "graphqlOperation", operation)
+	ctx = sqlcomment.WithTag(ctx, "action", operation)
 
 	tracer := otel.Tracer("response")
 	ctx, span := tracer.Start(ctx, fmt.Sprintf("Operation/%s", operation))
