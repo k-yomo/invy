@@ -42,6 +42,8 @@ import (
 	"google.golang.org/api/option"
 )
 
+const serviceName = "invy-api"
+
 var (
 	// version is set when docker image is built
 	version string
@@ -54,13 +56,13 @@ func main() {
 	if err != nil {
 		panic(fmt.Sprintf("initialize app config failed: %v", err))
 	}
-	logger, err := logging.NewLogger(!appConfig.Env.IsDeployed(), version)
+	logger, err := logging.NewLogger(!appConfig.Env.IsDeployed(), serviceName, version)
 	if err != nil {
 		panic(fmt.Sprintf("initialize logger failed: %v", err))
 	}
 
 	if appConfig.Env.IsDeployed() {
-		shutdown, err := tracing.InitTracer()
+		shutdown, err := tracing.InitTracer(ctx, serviceName)
 		if err != nil {
 			logger.Error("set trace provider failed", zap.Error(err))
 		}

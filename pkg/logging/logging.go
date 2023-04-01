@@ -9,7 +9,7 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
-func NewLogger(isDev bool, version string) (*zap.Logger, error) {
+func NewLogger(isDev bool, serviceName string, version string) (*zap.Logger, error) {
 	var logger *zap.Logger
 	var err error
 	if isDev {
@@ -21,6 +21,7 @@ func NewLogger(isDev bool, version string) (*zap.Logger, error) {
 		config.Sampling = nil
 		config.OutputPaths = []string{"stdout"}
 		config.InitialFields = map[string]interface{}{
+			"service": serviceName,
 			"version": version,
 		}
 		logger, err = config.Build()
