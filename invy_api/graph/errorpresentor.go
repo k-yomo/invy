@@ -20,7 +20,6 @@ func NewErrorPresenter() graphql.ErrorPresenterFunc {
 		gqlErr.Extensions = map[string]interface{}{
 			"code":      code,
 			"requestId": requestutil.GetRequestID(ctx),
-			"message":   err.Error(),
 		}
 		if code == gqlmodel.ErrorCodeInternal {
 			logging.Logger(ctx).
