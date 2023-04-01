@@ -74,9 +74,12 @@ func main() {
 		}
 	}
 
-	db, err := otelsql.Open(appConfig.DBConfig.Driver, appConfig.DBConfig.Dsn(), otelsql.WithAttributes(
-		semconv.DBSystemPostgreSQL,
-	))
+	db, err := otelsql.Open(
+		appConfig.DBConfig.Driver,
+		appConfig.DBConfig.Dsn(),
+		otelsql.WithAttributes(semconv.DBSystemPostgreSQL),
+		otelsql.WithSQLCommenter(true),
+	)
 	if err != nil {
 		logger.Fatal("initialize db failed", zap.Error(err))
 	}
