@@ -344,6 +344,14 @@ func (ul *UserLocation) User(ctx context.Context) (*User, error) {
 	return result, err
 }
 
+func (ulh *UserLocationHistory) User(ctx context.Context) (*User, error) {
+	result, err := ulh.Edges.UserOrErr()
+	if IsNotLoaded(err) {
+		result, err = ulh.QueryUser().Only(ctx)
+	}
+	return result, err
+}
+
 func (um *UserMute) User(ctx context.Context) (*User, error) {
 	result, err := um.Edges.UserOrErr()
 	if IsNotLoaded(err) {

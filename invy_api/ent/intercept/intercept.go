@@ -445,6 +445,33 @@ func (f TraverseUserLocation) Traverse(ctx context.Context, q ent.Query) error {
 	return fmt.Errorf("unexpected query type %T. expect *ent.UserLocationQuery", q)
 }
 
+// The UserLocationHistoryFunc type is an adapter to allow the use of ordinary function as a Querier.
+type UserLocationHistoryFunc func(context.Context, *ent.UserLocationHistoryQuery) (ent.Value, error)
+
+// Query calls f(ctx, q).
+func (f UserLocationHistoryFunc) Query(ctx context.Context, q ent.Query) (ent.Value, error) {
+	if q, ok := q.(*ent.UserLocationHistoryQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *ent.UserLocationHistoryQuery", q)
+}
+
+// The TraverseUserLocationHistory type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseUserLocationHistory func(context.Context, *ent.UserLocationHistoryQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraverseUserLocationHistory) Intercept(next ent.Querier) ent.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraverseUserLocationHistory) Traverse(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.UserLocationHistoryQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *ent.UserLocationHistoryQuery", q)
+}
+
 // The UserMuteFunc type is an adapter to allow the use of ordinary function as a Querier.
 type UserMuteFunc func(context.Context, *ent.UserMuteQuery) (ent.Value, error)
 
@@ -530,6 +557,8 @@ func NewQuery(q ent.Query) (Query, error) {
 		return &query[*ent.UserFriendGroupQuery, predicate.UserFriendGroup]{typ: ent.TypeUserFriendGroup, tq: q}, nil
 	case *ent.UserLocationQuery:
 		return &query[*ent.UserLocationQuery, predicate.UserLocation]{typ: ent.TypeUserLocation, tq: q}, nil
+	case *ent.UserLocationHistoryQuery:
+		return &query[*ent.UserLocationHistoryQuery, predicate.UserLocationHistory]{typ: ent.TypeUserLocationHistory, tq: q}, nil
 	case *ent.UserMuteQuery:
 		return &query[*ent.UserMuteQuery, predicate.UserMute]{typ: ent.TypeUserMute, tq: q}, nil
 	case *ent.UserProfileQuery:

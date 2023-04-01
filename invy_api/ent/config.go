@@ -41,6 +41,7 @@ type (
 		UserBlock             []ent.Hook
 		UserFriendGroup       []ent.Hook
 		UserLocation          []ent.Hook
+		UserLocationHistory   []ent.Hook
 		UserMute              []ent.Hook
 		UserProfile           []ent.Hook
 	}
@@ -59,6 +60,7 @@ type (
 		UserBlock             []ent.Interceptor
 		UserFriendGroup       []ent.Interceptor
 		UserLocation          []ent.Interceptor
+		UserLocationHistory   []ent.Interceptor
 		UserMute              []ent.Interceptor
 		UserProfile           []ent.Interceptor
 	}

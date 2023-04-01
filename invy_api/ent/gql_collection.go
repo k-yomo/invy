@@ -1046,6 +1046,63 @@ func newUserLocationPaginateArgs(rv map[string]interface{}) *userlocationPaginat
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (ulh *UserLocationHistoryQuery) CollectFields(ctx context.Context, satisfies ...string) (*UserLocationHistoryQuery, error) {
+	fc := graphql.GetFieldContext(ctx)
+	if fc == nil {
+		return ulh, nil
+	}
+	if err := ulh.collectField(ctx, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+		return nil, err
+	}
+	return ulh, nil
+}
+
+func (ulh *UserLocationHistoryQuery) collectField(ctx context.Context, op *graphql.OperationContext, field graphql.CollectedField, path []string, satisfies ...string) error {
+	path = append([]string(nil), path...)
+	for _, field := range graphql.CollectFields(op, field.Selections, satisfies) {
+		switch field.Name {
+		case "user":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = &UserQuery{config: ulh.config}
+			)
+			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
+				return err
+			}
+			ulh.withUser = query
+		}
+	}
+	return nil
+}
+
+type userlocationhistoryPaginateArgs struct {
+	first, last   *int
+	after, before *Cursor
+	opts          []UserLocationHistoryPaginateOption
+}
+
+func newUserLocationHistoryPaginateArgs(rv map[string]interface{}) *userlocationhistoryPaginateArgs {
+	args := &userlocationhistoryPaginateArgs{}
+	if rv == nil {
+		return args
+	}
+	if v := rv[firstField]; v != nil {
+		args.first = v.(*int)
+	}
+	if v := rv[lastField]; v != nil {
+		args.last = v.(*int)
+	}
+	if v := rv[afterField]; v != nil {
+		args.after = v.(*Cursor)
+	}
+	if v := rv[beforeField]; v != nil {
+		args.before = v.(*Cursor)
+	}
+	return args
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
 func (um *UserMuteQuery) CollectFields(ctx context.Context, satisfies ...string) (*UserMuteQuery, error) {
 	fc := graphql.GetFieldContext(ctx)
 	if fc == nil {

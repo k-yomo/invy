@@ -21,6 +21,7 @@ import (
 	"github.com/k-yomo/invy/invy_api/ent/userblock"
 	"github.com/k-yomo/invy/invy_api/ent/userfriendgroup"
 	"github.com/k-yomo/invy/invy_api/ent/userlocation"
+	"github.com/k-yomo/invy/invy_api/ent/userlocationhistory"
 	"github.com/k-yomo/invy/invy_api/ent/usermute"
 	"github.com/k-yomo/invy/invy_api/ent/userprofile"
 )
@@ -199,6 +200,16 @@ func init() {
 	userlocationDescID := userlocationFields[0].Descriptor()
 	// userlocation.DefaultID holds the default value on creation for the id field.
 	userlocation.DefaultID = userlocationDescID.Default.(func() uuid.UUID)
+	userlocationhistoryFields := schema.UserLocationHistory{}.Fields()
+	_ = userlocationhistoryFields
+	// userlocationhistoryDescCreatedAt is the schema descriptor for created_at field.
+	userlocationhistoryDescCreatedAt := userlocationhistoryFields[3].Descriptor()
+	// userlocationhistory.DefaultCreatedAt holds the default value on creation for the created_at field.
+	userlocationhistory.DefaultCreatedAt = userlocationhistoryDescCreatedAt.Default.(func() time.Time)
+	// userlocationhistoryDescID is the schema descriptor for id field.
+	userlocationhistoryDescID := userlocationhistoryFields[0].Descriptor()
+	// userlocationhistory.DefaultID holds the default value on creation for the id field.
+	userlocationhistory.DefaultID = userlocationhistoryDescID.Default.(func() uuid.UUID)
 	usermuteFields := schema.UserMute{}.Fields()
 	_ = usermuteFields
 	// usermuteDescCreatedAt is the schema descriptor for created_at field.

@@ -29,6 +29,7 @@ import (
 	"github.com/k-yomo/invy/invy_api/ent/userblock"
 	"github.com/k-yomo/invy/invy_api/ent/userfriendgroup"
 	"github.com/k-yomo/invy/invy_api/ent/userlocation"
+	"github.com/k-yomo/invy/invy_api/ent/userlocationhistory"
 	"github.com/k-yomo/invy/invy_api/ent/usermute"
 	"github.com/k-yomo/invy/invy_api/ent/userprofile"
 	"github.com/vektah/gqlparser/v2/gqlerror"
@@ -3488,6 +3489,237 @@ func (ul *UserLocation) ToEdge(order *UserLocationOrder) *UserLocationEdge {
 	return &UserLocationEdge{
 		Node:   ul,
 		Cursor: order.Field.toCursor(ul),
+	}
+}
+
+// UserLocationHistoryEdge is the edge representation of UserLocationHistory.
+type UserLocationHistoryEdge struct {
+	Node   *UserLocationHistory `json:"node"`
+	Cursor Cursor               `json:"cursor"`
+}
+
+// UserLocationHistoryConnection is the connection containing edges to UserLocationHistory.
+type UserLocationHistoryConnection struct {
+	Edges      []*UserLocationHistoryEdge `json:"edges"`
+	PageInfo   PageInfo                   `json:"pageInfo"`
+	TotalCount int                        `json:"totalCount"`
+}
+
+func (c *UserLocationHistoryConnection) build(nodes []*UserLocationHistory, pager *userlocationhistoryPager, after *Cursor, first *int, before *Cursor, last *int) {
+	c.PageInfo.HasNextPage = before != nil
+	c.PageInfo.HasPreviousPage = after != nil
+	if first != nil && *first+1 == len(nodes) {
+		c.PageInfo.HasNextPage = true
+		nodes = nodes[:len(nodes)-1]
+	} else if last != nil && *last+1 == len(nodes) {
+		c.PageInfo.HasPreviousPage = true
+		nodes = nodes[:len(nodes)-1]
+	}
+	var nodeAt func(int) *UserLocationHistory
+	if last != nil {
+		n := len(nodes) - 1
+		nodeAt = func(i int) *UserLocationHistory {
+			return nodes[n-i]
+		}
+	} else {
+		nodeAt = func(i int) *UserLocationHistory {
+			return nodes[i]
+		}
+	}
+	c.Edges = make([]*UserLocationHistoryEdge, len(nodes))
+	for i := range nodes {
+		node := nodeAt(i)
+		c.Edges[i] = &UserLocationHistoryEdge{
+			Node:   node,
+			Cursor: pager.toCursor(node),
+		}
+	}
+	if l := len(c.Edges); l > 0 {
+		c.PageInfo.StartCursor = &c.Edges[0].Cursor
+		c.PageInfo.EndCursor = &c.Edges[l-1].Cursor
+	}
+	if c.TotalCount == 0 {
+		c.TotalCount = len(nodes)
+	}
+}
+
+// UserLocationHistoryPaginateOption enables pagination customization.
+type UserLocationHistoryPaginateOption func(*userlocationhistoryPager) error
+
+// WithUserLocationHistoryOrder configures pagination ordering.
+func WithUserLocationHistoryOrder(order *UserLocationHistoryOrder) UserLocationHistoryPaginateOption {
+	if order == nil {
+		order = DefaultUserLocationHistoryOrder
+	}
+	o := *order
+	return func(pager *userlocationhistoryPager) error {
+		if err := o.Direction.Validate(); err != nil {
+			return err
+		}
+		if o.Field == nil {
+			o.Field = DefaultUserLocationHistoryOrder.Field
+		}
+		pager.order = &o
+		return nil
+	}
+}
+
+// WithUserLocationHistoryFilter configures pagination filter.
+func WithUserLocationHistoryFilter(filter func(*UserLocationHistoryQuery) (*UserLocationHistoryQuery, error)) UserLocationHistoryPaginateOption {
+	return func(pager *userlocationhistoryPager) error {
+		if filter == nil {
+			return errors.New("UserLocationHistoryQuery filter cannot be nil")
+		}
+		pager.filter = filter
+		return nil
+	}
+}
+
+type userlocationhistoryPager struct {
+	order  *UserLocationHistoryOrder
+	filter func(*UserLocationHistoryQuery) (*UserLocationHistoryQuery, error)
+}
+
+func newUserLocationHistoryPager(opts []UserLocationHistoryPaginateOption) (*userlocationhistoryPager, error) {
+	pager := &userlocationhistoryPager{}
+	for _, opt := range opts {
+		if err := opt(pager); err != nil {
+			return nil, err
+		}
+	}
+	if pager.order == nil {
+		pager.order = DefaultUserLocationHistoryOrder
+	}
+	return pager, nil
+}
+
+func (p *userlocationhistoryPager) applyFilter(query *UserLocationHistoryQuery) (*UserLocationHistoryQuery, error) {
+	if p.filter != nil {
+		return p.filter(query)
+	}
+	return query, nil
+}
+
+func (p *userlocationhistoryPager) toCursor(ulh *UserLocationHistory) Cursor {
+	return p.order.Field.toCursor(ulh)
+}
+
+func (p *userlocationhistoryPager) applyCursors(query *UserLocationHistoryQuery, after, before *Cursor) *UserLocationHistoryQuery {
+	for _, predicate := range cursorsToPredicates(
+		p.order.Direction, after, before,
+		p.order.Field.field, DefaultUserLocationHistoryOrder.Field.field,
+	) {
+		query = query.Where(predicate)
+	}
+	return query
+}
+
+func (p *userlocationhistoryPager) applyOrder(query *UserLocationHistoryQuery, reverse bool) *UserLocationHistoryQuery {
+	direction := p.order.Direction
+	if reverse {
+		direction = direction.reverse()
+	}
+	query = query.Order(direction.orderFunc(p.order.Field.field))
+	if p.order.Field != DefaultUserLocationHistoryOrder.Field {
+		query = query.Order(direction.orderFunc(DefaultUserLocationHistoryOrder.Field.field))
+	}
+	return query
+}
+
+func (p *userlocationhistoryPager) orderExpr(reverse bool) sql.Querier {
+	direction := p.order.Direction
+	if reverse {
+		direction = direction.reverse()
+	}
+	return sql.ExprFunc(func(b *sql.Builder) {
+		b.Ident(p.order.Field.field).Pad().WriteString(string(direction))
+		if p.order.Field != DefaultUserLocationHistoryOrder.Field {
+			b.Comma().Ident(DefaultUserLocationHistoryOrder.Field.field).Pad().WriteString(string(direction))
+		}
+	})
+}
+
+// Paginate executes the query and returns a relay based cursor connection to UserLocationHistory.
+func (ulh *UserLocationHistoryQuery) Paginate(
+	ctx context.Context, after *Cursor, first *int,
+	before *Cursor, last *int, opts ...UserLocationHistoryPaginateOption,
+) (*UserLocationHistoryConnection, error) {
+	if err := validateFirstLast(first, last); err != nil {
+		return nil, err
+	}
+	pager, err := newUserLocationHistoryPager(opts)
+	if err != nil {
+		return nil, err
+	}
+	if ulh, err = pager.applyFilter(ulh); err != nil {
+		return nil, err
+	}
+	conn := &UserLocationHistoryConnection{Edges: []*UserLocationHistoryEdge{}}
+	ignoredEdges := !hasCollectedField(ctx, edgesField)
+	if hasCollectedField(ctx, totalCountField) || hasCollectedField(ctx, pageInfoField) {
+		hasPagination := after != nil || first != nil || before != nil || last != nil
+		if hasPagination || ignoredEdges {
+			if conn.TotalCount, err = ulh.Clone().Count(ctx); err != nil {
+				return nil, err
+			}
+			conn.PageInfo.HasNextPage = first != nil && conn.TotalCount > 0
+			conn.PageInfo.HasPreviousPage = last != nil && conn.TotalCount > 0
+		}
+	}
+	if ignoredEdges || (first != nil && *first == 0) || (last != nil && *last == 0) {
+		return conn, nil
+	}
+
+	ulh = pager.applyCursors(ulh, after, before)
+	ulh = pager.applyOrder(ulh, last != nil)
+	if limit := paginateLimit(first, last); limit != 0 {
+		ulh.Limit(limit)
+	}
+	if field := collectedField(ctx, edgesField, nodeField); field != nil {
+		if err := ulh.collectField(ctx, graphql.GetOperationContext(ctx), *field, []string{edgesField, nodeField}); err != nil {
+			return nil, err
+		}
+	}
+
+	nodes, err := ulh.All(ctx)
+	if err != nil {
+		return nil, err
+	}
+	conn.build(nodes, pager, after, first, before, last)
+	return conn, nil
+}
+
+// UserLocationHistoryOrderField defines the ordering field of UserLocationHistory.
+type UserLocationHistoryOrderField struct {
+	field    string
+	toCursor func(*UserLocationHistory) Cursor
+}
+
+// UserLocationHistoryOrder defines the ordering of UserLocationHistory.
+type UserLocationHistoryOrder struct {
+	Direction OrderDirection                 `json:"direction"`
+	Field     *UserLocationHistoryOrderField `json:"field"`
+}
+
+// DefaultUserLocationHistoryOrder is the default ordering of UserLocationHistory.
+var DefaultUserLocationHistoryOrder = &UserLocationHistoryOrder{
+	Direction: OrderDirectionAsc,
+	Field: &UserLocationHistoryOrderField{
+		field: userlocationhistory.FieldID,
+		toCursor: func(ulh *UserLocationHistory) Cursor {
+			return Cursor{ID: ulh.ID}
+		},
+	},
+}
+
+// ToEdge converts UserLocationHistory into UserLocationHistoryEdge.
+func (ulh *UserLocationHistory) ToEdge(order *UserLocationHistoryOrder) *UserLocationHistoryEdge {
+	if order == nil {
+		order = DefaultUserLocationHistoryOrder
+	}
+	return &UserLocationHistoryEdge{
+		Node:   ulh,
+		Cursor: order.Field.toCursor(ulh),
 	}
 }
 

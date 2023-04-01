@@ -40,6 +40,8 @@ type Tx struct {
 	UserFriendGroup *UserFriendGroupClient
 	// UserLocation is the client for interacting with the UserLocation builders.
 	UserLocation *UserLocationClient
+	// UserLocationHistory is the client for interacting with the UserLocationHistory builders.
+	UserLocationHistory *UserLocationHistoryClient
 	// UserMute is the client for interacting with the UserMute builders.
 	UserMute *UserMuteClient
 	// UserProfile is the client for interacting with the UserProfile builders.
@@ -189,6 +191,7 @@ func (tx *Tx) init() {
 	tx.UserBlock = NewUserBlockClient(tx.config)
 	tx.UserFriendGroup = NewUserFriendGroupClient(tx.config)
 	tx.UserLocation = NewUserLocationClient(tx.config)
+	tx.UserLocationHistory = NewUserLocationHistoryClient(tx.config)
 	tx.UserMute = NewUserMuteClient(tx.config)
 	tx.UserProfile = NewUserProfileClient(tx.config)
 }

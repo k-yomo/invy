@@ -1,134 +1,165 @@
 import 'package:invy/graphql/scalars.dart';
 
-class Input$CreateFriendGroupInput {
-  factory Input$CreateFriendGroupInput({
-    required String name,
-    required List<String> friendUserIds,
+class Input$SignUpInput {
+  factory Input$SignUpInput({
+    String? email,
+    String? nickname,
+    String? avatarUrl,
   }) =>
-      Input$CreateFriendGroupInput._({
-        r'name': name,
-        r'friendUserIds': friendUserIds,
+      Input$SignUpInput._({
+        if (email != null) r'email': email,
+        if (nickname != null) r'nickname': nickname,
+        if (avatarUrl != null) r'avatarUrl': avatarUrl,
       });
 
-  Input$CreateFriendGroupInput._(this._$data);
+  Input$SignUpInput._(this._$data);
 
-  factory Input$CreateFriendGroupInput.fromJson(Map<String, dynamic> data) {
+  factory Input$SignUpInput.fromJson(Map<String, dynamic> data) {
     final result$data = <String, dynamic>{};
-    final l$name = data['name'];
-    result$data['name'] = (l$name as String);
-    final l$friendUserIds = data['friendUserIds'];
-    result$data['friendUserIds'] =
-        (l$friendUserIds as List<dynamic>).map((e) => (e as String)).toList();
-    return Input$CreateFriendGroupInput._(result$data);
+    if (data.containsKey('email')) {
+      final l$email = data['email'];
+      result$data['email'] = (l$email as String?);
+    }
+    if (data.containsKey('nickname')) {
+      final l$nickname = data['nickname'];
+      result$data['nickname'] = (l$nickname as String?);
+    }
+    if (data.containsKey('avatarUrl')) {
+      final l$avatarUrl = data['avatarUrl'];
+      result$data['avatarUrl'] = (l$avatarUrl as String?);
+    }
+    return Input$SignUpInput._(result$data);
   }
 
   Map<String, dynamic> _$data;
 
-  String get name => (_$data['name'] as String);
-  List<String> get friendUserIds => (_$data['friendUserIds'] as List<String>);
+  String? get email => (_$data['email'] as String?);
+  String? get nickname => (_$data['nickname'] as String?);
+  String? get avatarUrl => (_$data['avatarUrl'] as String?);
   Map<String, dynamic> toJson() {
     final result$data = <String, dynamic>{};
-    final l$name = name;
-    result$data['name'] = l$name;
-    final l$friendUserIds = friendUserIds;
-    result$data['friendUserIds'] = l$friendUserIds.map((e) => e).toList();
+    if (_$data.containsKey('email')) {
+      final l$email = email;
+      result$data['email'] = l$email;
+    }
+    if (_$data.containsKey('nickname')) {
+      final l$nickname = nickname;
+      result$data['nickname'] = l$nickname;
+    }
+    if (_$data.containsKey('avatarUrl')) {
+      final l$avatarUrl = avatarUrl;
+      result$data['avatarUrl'] = l$avatarUrl;
+    }
     return result$data;
   }
 
-  CopyWith$Input$CreateFriendGroupInput<Input$CreateFriendGroupInput>
-      get copyWith => CopyWith$Input$CreateFriendGroupInput(
-            this,
-            (i) => i,
-          );
+  CopyWith$Input$SignUpInput<Input$SignUpInput> get copyWith =>
+      CopyWith$Input$SignUpInput(
+        this,
+        (i) => i,
+      );
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) {
       return true;
     }
-    if (!(other is Input$CreateFriendGroupInput) ||
-        runtimeType != other.runtimeType) {
+    if (!(other is Input$SignUpInput) || runtimeType != other.runtimeType) {
       return false;
     }
-    final l$name = name;
-    final lOther$name = other.name;
-    if (l$name != lOther$name) {
+    final l$email = email;
+    final lOther$email = other.email;
+    if (_$data.containsKey('email') != other._$data.containsKey('email')) {
       return false;
     }
-    final l$friendUserIds = friendUserIds;
-    final lOther$friendUserIds = other.friendUserIds;
-    if (l$friendUserIds.length != lOther$friendUserIds.length) {
+    if (l$email != lOther$email) {
       return false;
     }
-    for (int i = 0; i < l$friendUserIds.length; i++) {
-      final l$friendUserIds$entry = l$friendUserIds[i];
-      final lOther$friendUserIds$entry = lOther$friendUserIds[i];
-      if (l$friendUserIds$entry != lOther$friendUserIds$entry) {
-        return false;
-      }
+    final l$nickname = nickname;
+    final lOther$nickname = other.nickname;
+    if (_$data.containsKey('nickname') !=
+        other._$data.containsKey('nickname')) {
+      return false;
+    }
+    if (l$nickname != lOther$nickname) {
+      return false;
+    }
+    final l$avatarUrl = avatarUrl;
+    final lOther$avatarUrl = other.avatarUrl;
+    if (_$data.containsKey('avatarUrl') !=
+        other._$data.containsKey('avatarUrl')) {
+      return false;
+    }
+    if (l$avatarUrl != lOther$avatarUrl) {
+      return false;
     }
     return true;
   }
 
   @override
   int get hashCode {
-    final l$name = name;
-    final l$friendUserIds = friendUserIds;
+    final l$email = email;
+    final l$nickname = nickname;
+    final l$avatarUrl = avatarUrl;
     return Object.hashAll([
-      l$name,
-      Object.hashAll(l$friendUserIds.map((v) => v)),
+      _$data.containsKey('email') ? l$email : const {},
+      _$data.containsKey('nickname') ? l$nickname : const {},
+      _$data.containsKey('avatarUrl') ? l$avatarUrl : const {},
     ]);
   }
 }
 
-abstract class CopyWith$Input$CreateFriendGroupInput<TRes> {
-  factory CopyWith$Input$CreateFriendGroupInput(
-    Input$CreateFriendGroupInput instance,
-    TRes Function(Input$CreateFriendGroupInput) then,
-  ) = _CopyWithImpl$Input$CreateFriendGroupInput;
+abstract class CopyWith$Input$SignUpInput<TRes> {
+  factory CopyWith$Input$SignUpInput(
+    Input$SignUpInput instance,
+    TRes Function(Input$SignUpInput) then,
+  ) = _CopyWithImpl$Input$SignUpInput;
 
-  factory CopyWith$Input$CreateFriendGroupInput.stub(TRes res) =
-      _CopyWithStubImpl$Input$CreateFriendGroupInput;
+  factory CopyWith$Input$SignUpInput.stub(TRes res) =
+      _CopyWithStubImpl$Input$SignUpInput;
 
   TRes call({
-    String? name,
-    List<String>? friendUserIds,
+    String? email,
+    String? nickname,
+    String? avatarUrl,
   });
 }
 
-class _CopyWithImpl$Input$CreateFriendGroupInput<TRes>
-    implements CopyWith$Input$CreateFriendGroupInput<TRes> {
-  _CopyWithImpl$Input$CreateFriendGroupInput(
+class _CopyWithImpl$Input$SignUpInput<TRes>
+    implements CopyWith$Input$SignUpInput<TRes> {
+  _CopyWithImpl$Input$SignUpInput(
     this._instance,
     this._then,
   );
 
-  final Input$CreateFriendGroupInput _instance;
+  final Input$SignUpInput _instance;
 
-  final TRes Function(Input$CreateFriendGroupInput) _then;
+  final TRes Function(Input$SignUpInput) _then;
 
   static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
-    Object? name = _undefined,
-    Object? friendUserIds = _undefined,
+    Object? email = _undefined,
+    Object? nickname = _undefined,
+    Object? avatarUrl = _undefined,
   }) =>
-      _then(Input$CreateFriendGroupInput._({
+      _then(Input$SignUpInput._({
         ..._instance._$data,
-        if (name != _undefined && name != null) 'name': (name as String),
-        if (friendUserIds != _undefined && friendUserIds != null)
-          'friendUserIds': (friendUserIds as List<String>),
+        if (email != _undefined) 'email': (email as String?),
+        if (nickname != _undefined) 'nickname': (nickname as String?),
+        if (avatarUrl != _undefined) 'avatarUrl': (avatarUrl as String?),
       }));
 }
 
-class _CopyWithStubImpl$Input$CreateFriendGroupInput<TRes>
-    implements CopyWith$Input$CreateFriendGroupInput<TRes> {
-  _CopyWithStubImpl$Input$CreateFriendGroupInput(this._res);
+class _CopyWithStubImpl$Input$SignUpInput<TRes>
+    implements CopyWith$Input$SignUpInput<TRes> {
+  _CopyWithStubImpl$Input$SignUpInput(this._res);
 
   TRes _res;
 
   call({
-    String? name,
-    List<String>? friendUserIds,
+    String? email,
+    String? nickname,
+    String? avatarUrl,
   }) =>
       _res;
 }
@@ -265,51 +296,49 @@ class _CopyWithStubImpl$Input$CreateUserInput<TRes>
       _res;
 }
 
-class Input$RegisterInvitationAwaitingInput {
-  factory Input$RegisterInvitationAwaitingInput({
-    required DateTime startsAt,
-    required DateTime endsAt,
-    required String comment,
+class Input$SendChatMessageTextInput {
+  factory Input$SendChatMessageTextInput({
+    required String id,
+    required String chatRoomId,
+    required String text,
   }) =>
-      Input$RegisterInvitationAwaitingInput._({
-        r'startsAt': startsAt,
-        r'endsAt': endsAt,
-        r'comment': comment,
+      Input$SendChatMessageTextInput._({
+        r'id': id,
+        r'chatRoomId': chatRoomId,
+        r'text': text,
       });
 
-  Input$RegisterInvitationAwaitingInput._(this._$data);
+  Input$SendChatMessageTextInput._(this._$data);
 
-  factory Input$RegisterInvitationAwaitingInput.fromJson(
-      Map<String, dynamic> data) {
+  factory Input$SendChatMessageTextInput.fromJson(Map<String, dynamic> data) {
     final result$data = <String, dynamic>{};
-    final l$startsAt = data['startsAt'];
-    result$data['startsAt'] = DateTime.parse((l$startsAt as String));
-    final l$endsAt = data['endsAt'];
-    result$data['endsAt'] = DateTime.parse((l$endsAt as String));
-    final l$comment = data['comment'];
-    result$data['comment'] = (l$comment as String);
-    return Input$RegisterInvitationAwaitingInput._(result$data);
+    final l$id = data['id'];
+    result$data['id'] = (l$id as String);
+    final l$chatRoomId = data['chatRoomId'];
+    result$data['chatRoomId'] = (l$chatRoomId as String);
+    final l$text = data['text'];
+    result$data['text'] = (l$text as String);
+    return Input$SendChatMessageTextInput._(result$data);
   }
 
   Map<String, dynamic> _$data;
 
-  DateTime get startsAt => (_$data['startsAt'] as DateTime);
-  DateTime get endsAt => (_$data['endsAt'] as DateTime);
-  String get comment => (_$data['comment'] as String);
+  String get id => (_$data['id'] as String);
+  String get chatRoomId => (_$data['chatRoomId'] as String);
+  String get text => (_$data['text'] as String);
   Map<String, dynamic> toJson() {
     final result$data = <String, dynamic>{};
-    final l$startsAt = startsAt;
-    result$data['startsAt'] = l$startsAt.toIso8601String();
-    final l$endsAt = endsAt;
-    result$data['endsAt'] = l$endsAt.toIso8601String();
-    final l$comment = comment;
-    result$data['comment'] = l$comment;
+    final l$id = id;
+    result$data['id'] = l$id;
+    final l$chatRoomId = chatRoomId;
+    result$data['chatRoomId'] = l$chatRoomId;
+    final l$text = text;
+    result$data['text'] = l$text;
     return result$data;
   }
 
-  CopyWith$Input$RegisterInvitationAwaitingInput<
-          Input$RegisterInvitationAwaitingInput>
-      get copyWith => CopyWith$Input$RegisterInvitationAwaitingInput(
+  CopyWith$Input$SendChatMessageTextInput<Input$SendChatMessageTextInput>
+      get copyWith => CopyWith$Input$SendChatMessageTextInput(
             this,
             (i) => i,
           );
@@ -318,23 +347,23 @@ class Input$RegisterInvitationAwaitingInput {
     if (identical(this, other)) {
       return true;
     }
-    if (!(other is Input$RegisterInvitationAwaitingInput) ||
+    if (!(other is Input$SendChatMessageTextInput) ||
         runtimeType != other.runtimeType) {
       return false;
     }
-    final l$startsAt = startsAt;
-    final lOther$startsAt = other.startsAt;
-    if (l$startsAt != lOther$startsAt) {
+    final l$id = id;
+    final lOther$id = other.id;
+    if (l$id != lOther$id) {
       return false;
     }
-    final l$endsAt = endsAt;
-    final lOther$endsAt = other.endsAt;
-    if (l$endsAt != lOther$endsAt) {
+    final l$chatRoomId = chatRoomId;
+    final lOther$chatRoomId = other.chatRoomId;
+    if (l$chatRoomId != lOther$chatRoomId) {
       return false;
     }
-    final l$comment = comment;
-    final lOther$comment = other.comment;
-    if (l$comment != lOther$comment) {
+    final l$text = text;
+    final lOther$text = other.text;
+    if (l$text != lOther$text) {
       return false;
     }
     return true;
@@ -342,200 +371,70 @@ class Input$RegisterInvitationAwaitingInput {
 
   @override
   int get hashCode {
-    final l$startsAt = startsAt;
-    final l$endsAt = endsAt;
-    final l$comment = comment;
+    final l$id = id;
+    final l$chatRoomId = chatRoomId;
+    final l$text = text;
     return Object.hashAll([
-      l$startsAt,
-      l$endsAt,
-      l$comment,
+      l$id,
+      l$chatRoomId,
+      l$text,
     ]);
   }
 }
 
-abstract class CopyWith$Input$RegisterInvitationAwaitingInput<TRes> {
-  factory CopyWith$Input$RegisterInvitationAwaitingInput(
-    Input$RegisterInvitationAwaitingInput instance,
-    TRes Function(Input$RegisterInvitationAwaitingInput) then,
-  ) = _CopyWithImpl$Input$RegisterInvitationAwaitingInput;
+abstract class CopyWith$Input$SendChatMessageTextInput<TRes> {
+  factory CopyWith$Input$SendChatMessageTextInput(
+    Input$SendChatMessageTextInput instance,
+    TRes Function(Input$SendChatMessageTextInput) then,
+  ) = _CopyWithImpl$Input$SendChatMessageTextInput;
 
-  factory CopyWith$Input$RegisterInvitationAwaitingInput.stub(TRes res) =
-      _CopyWithStubImpl$Input$RegisterInvitationAwaitingInput;
+  factory CopyWith$Input$SendChatMessageTextInput.stub(TRes res) =
+      _CopyWithStubImpl$Input$SendChatMessageTextInput;
 
   TRes call({
-    DateTime? startsAt,
-    DateTime? endsAt,
-    String? comment,
+    String? id,
+    String? chatRoomId,
+    String? text,
   });
 }
 
-class _CopyWithImpl$Input$RegisterInvitationAwaitingInput<TRes>
-    implements CopyWith$Input$RegisterInvitationAwaitingInput<TRes> {
-  _CopyWithImpl$Input$RegisterInvitationAwaitingInput(
+class _CopyWithImpl$Input$SendChatMessageTextInput<TRes>
+    implements CopyWith$Input$SendChatMessageTextInput<TRes> {
+  _CopyWithImpl$Input$SendChatMessageTextInput(
     this._instance,
     this._then,
   );
 
-  final Input$RegisterInvitationAwaitingInput _instance;
+  final Input$SendChatMessageTextInput _instance;
 
-  final TRes Function(Input$RegisterInvitationAwaitingInput) _then;
-
-  static const _undefined = <dynamic, dynamic>{};
-
-  TRes call({
-    Object? startsAt = _undefined,
-    Object? endsAt = _undefined,
-    Object? comment = _undefined,
-  }) =>
-      _then(Input$RegisterInvitationAwaitingInput._({
-        ..._instance._$data,
-        if (startsAt != _undefined && startsAt != null)
-          'startsAt': (startsAt as DateTime),
-        if (endsAt != _undefined && endsAt != null)
-          'endsAt': (endsAt as DateTime),
-        if (comment != _undefined && comment != null)
-          'comment': (comment as String),
-      }));
-}
-
-class _CopyWithStubImpl$Input$RegisterInvitationAwaitingInput<TRes>
-    implements CopyWith$Input$RegisterInvitationAwaitingInput<TRes> {
-  _CopyWithStubImpl$Input$RegisterInvitationAwaitingInput(this._res);
-
-  TRes _res;
-
-  call({
-    DateTime? startsAt,
-    DateTime? endsAt,
-    String? comment,
-  }) =>
-      _res;
-}
-
-class Input$RegisterPushNotificationTokenInput {
-  factory Input$RegisterPushNotificationTokenInput({
-    required String deviceId,
-    required String fcmToken,
-  }) =>
-      Input$RegisterPushNotificationTokenInput._({
-        r'deviceId': deviceId,
-        r'fcmToken': fcmToken,
-      });
-
-  Input$RegisterPushNotificationTokenInput._(this._$data);
-
-  factory Input$RegisterPushNotificationTokenInput.fromJson(
-      Map<String, dynamic> data) {
-    final result$data = <String, dynamic>{};
-    final l$deviceId = data['deviceId'];
-    result$data['deviceId'] = (l$deviceId as String);
-    final l$fcmToken = data['fcmToken'];
-    result$data['fcmToken'] = (l$fcmToken as String);
-    return Input$RegisterPushNotificationTokenInput._(result$data);
-  }
-
-  Map<String, dynamic> _$data;
-
-  String get deviceId => (_$data['deviceId'] as String);
-  String get fcmToken => (_$data['fcmToken'] as String);
-  Map<String, dynamic> toJson() {
-    final result$data = <String, dynamic>{};
-    final l$deviceId = deviceId;
-    result$data['deviceId'] = l$deviceId;
-    final l$fcmToken = fcmToken;
-    result$data['fcmToken'] = l$fcmToken;
-    return result$data;
-  }
-
-  CopyWith$Input$RegisterPushNotificationTokenInput<
-          Input$RegisterPushNotificationTokenInput>
-      get copyWith => CopyWith$Input$RegisterPushNotificationTokenInput(
-            this,
-            (i) => i,
-          );
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) {
-      return true;
-    }
-    if (!(other is Input$RegisterPushNotificationTokenInput) ||
-        runtimeType != other.runtimeType) {
-      return false;
-    }
-    final l$deviceId = deviceId;
-    final lOther$deviceId = other.deviceId;
-    if (l$deviceId != lOther$deviceId) {
-      return false;
-    }
-    final l$fcmToken = fcmToken;
-    final lOther$fcmToken = other.fcmToken;
-    if (l$fcmToken != lOther$fcmToken) {
-      return false;
-    }
-    return true;
-  }
-
-  @override
-  int get hashCode {
-    final l$deviceId = deviceId;
-    final l$fcmToken = fcmToken;
-    return Object.hashAll([
-      l$deviceId,
-      l$fcmToken,
-    ]);
-  }
-}
-
-abstract class CopyWith$Input$RegisterPushNotificationTokenInput<TRes> {
-  factory CopyWith$Input$RegisterPushNotificationTokenInput(
-    Input$RegisterPushNotificationTokenInput instance,
-    TRes Function(Input$RegisterPushNotificationTokenInput) then,
-  ) = _CopyWithImpl$Input$RegisterPushNotificationTokenInput;
-
-  factory CopyWith$Input$RegisterPushNotificationTokenInput.stub(TRes res) =
-      _CopyWithStubImpl$Input$RegisterPushNotificationTokenInput;
-
-  TRes call({
-    String? deviceId,
-    String? fcmToken,
-  });
-}
-
-class _CopyWithImpl$Input$RegisterPushNotificationTokenInput<TRes>
-    implements CopyWith$Input$RegisterPushNotificationTokenInput<TRes> {
-  _CopyWithImpl$Input$RegisterPushNotificationTokenInput(
-    this._instance,
-    this._then,
-  );
-
-  final Input$RegisterPushNotificationTokenInput _instance;
-
-  final TRes Function(Input$RegisterPushNotificationTokenInput) _then;
+  final TRes Function(Input$SendChatMessageTextInput) _then;
 
   static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
-    Object? deviceId = _undefined,
-    Object? fcmToken = _undefined,
+    Object? id = _undefined,
+    Object? chatRoomId = _undefined,
+    Object? text = _undefined,
   }) =>
-      _then(Input$RegisterPushNotificationTokenInput._({
+      _then(Input$SendChatMessageTextInput._({
         ..._instance._$data,
-        if (deviceId != _undefined && deviceId != null)
-          'deviceId': (deviceId as String),
-        if (fcmToken != _undefined && fcmToken != null)
-          'fcmToken': (fcmToken as String),
+        if (id != _undefined && id != null) 'id': (id as String),
+        if (chatRoomId != _undefined && chatRoomId != null)
+          'chatRoomId': (chatRoomId as String),
+        if (text != _undefined && text != null) 'text': (text as String),
       }));
 }
 
-class _CopyWithStubImpl$Input$RegisterPushNotificationTokenInput<TRes>
-    implements CopyWith$Input$RegisterPushNotificationTokenInput<TRes> {
-  _CopyWithStubImpl$Input$RegisterPushNotificationTokenInput(this._res);
+class _CopyWithStubImpl$Input$SendChatMessageTextInput<TRes>
+    implements CopyWith$Input$SendChatMessageTextInput<TRes> {
+  _CopyWithStubImpl$Input$SendChatMessageTextInput(this._res);
 
   TRes _res;
 
   call({
-    String? deviceId,
-    String? fcmToken,
+    String? id,
+    String? chatRoomId,
+    String? text,
   }) =>
       _res;
 }
@@ -684,49 +583,42 @@ class _CopyWithStubImpl$Input$SendChatMessageImageInput<TRes>
       _res;
 }
 
-class Input$SendChatMessageTextInput {
-  factory Input$SendChatMessageTextInput({
-    required String id,
+class Input$UpdateChatLastReadAtInput {
+  factory Input$UpdateChatLastReadAtInput({
     required String chatRoomId,
-    required String text,
+    required DateTime lastReadAt,
   }) =>
-      Input$SendChatMessageTextInput._({
-        r'id': id,
+      Input$UpdateChatLastReadAtInput._({
         r'chatRoomId': chatRoomId,
-        r'text': text,
+        r'lastReadAt': lastReadAt,
       });
 
-  Input$SendChatMessageTextInput._(this._$data);
+  Input$UpdateChatLastReadAtInput._(this._$data);
 
-  factory Input$SendChatMessageTextInput.fromJson(Map<String, dynamic> data) {
+  factory Input$UpdateChatLastReadAtInput.fromJson(Map<String, dynamic> data) {
     final result$data = <String, dynamic>{};
-    final l$id = data['id'];
-    result$data['id'] = (l$id as String);
     final l$chatRoomId = data['chatRoomId'];
     result$data['chatRoomId'] = (l$chatRoomId as String);
-    final l$text = data['text'];
-    result$data['text'] = (l$text as String);
-    return Input$SendChatMessageTextInput._(result$data);
+    final l$lastReadAt = data['lastReadAt'];
+    result$data['lastReadAt'] = DateTime.parse((l$lastReadAt as String));
+    return Input$UpdateChatLastReadAtInput._(result$data);
   }
 
   Map<String, dynamic> _$data;
 
-  String get id => (_$data['id'] as String);
   String get chatRoomId => (_$data['chatRoomId'] as String);
-  String get text => (_$data['text'] as String);
+  DateTime get lastReadAt => (_$data['lastReadAt'] as DateTime);
   Map<String, dynamic> toJson() {
     final result$data = <String, dynamic>{};
-    final l$id = id;
-    result$data['id'] = l$id;
     final l$chatRoomId = chatRoomId;
     result$data['chatRoomId'] = l$chatRoomId;
-    final l$text = text;
-    result$data['text'] = l$text;
+    final l$lastReadAt = lastReadAt;
+    result$data['lastReadAt'] = l$lastReadAt.toIso8601String();
     return result$data;
   }
 
-  CopyWith$Input$SendChatMessageTextInput<Input$SendChatMessageTextInput>
-      get copyWith => CopyWith$Input$SendChatMessageTextInput(
+  CopyWith$Input$UpdateChatLastReadAtInput<Input$UpdateChatLastReadAtInput>
+      get copyWith => CopyWith$Input$UpdateChatLastReadAtInput(
             this,
             (i) => i,
           );
@@ -735,7 +627,274 @@ class Input$SendChatMessageTextInput {
     if (identical(this, other)) {
       return true;
     }
-    if (!(other is Input$SendChatMessageTextInput) ||
+    if (!(other is Input$UpdateChatLastReadAtInput) ||
+        runtimeType != other.runtimeType) {
+      return false;
+    }
+    final l$chatRoomId = chatRoomId;
+    final lOther$chatRoomId = other.chatRoomId;
+    if (l$chatRoomId != lOther$chatRoomId) {
+      return false;
+    }
+    final l$lastReadAt = lastReadAt;
+    final lOther$lastReadAt = other.lastReadAt;
+    if (l$lastReadAt != lOther$lastReadAt) {
+      return false;
+    }
+    return true;
+  }
+
+  @override
+  int get hashCode {
+    final l$chatRoomId = chatRoomId;
+    final l$lastReadAt = lastReadAt;
+    return Object.hashAll([
+      l$chatRoomId,
+      l$lastReadAt,
+    ]);
+  }
+}
+
+abstract class CopyWith$Input$UpdateChatLastReadAtInput<TRes> {
+  factory CopyWith$Input$UpdateChatLastReadAtInput(
+    Input$UpdateChatLastReadAtInput instance,
+    TRes Function(Input$UpdateChatLastReadAtInput) then,
+  ) = _CopyWithImpl$Input$UpdateChatLastReadAtInput;
+
+  factory CopyWith$Input$UpdateChatLastReadAtInput.stub(TRes res) =
+      _CopyWithStubImpl$Input$UpdateChatLastReadAtInput;
+
+  TRes call({
+    String? chatRoomId,
+    DateTime? lastReadAt,
+  });
+}
+
+class _CopyWithImpl$Input$UpdateChatLastReadAtInput<TRes>
+    implements CopyWith$Input$UpdateChatLastReadAtInput<TRes> {
+  _CopyWithImpl$Input$UpdateChatLastReadAtInput(
+    this._instance,
+    this._then,
+  );
+
+  final Input$UpdateChatLastReadAtInput _instance;
+
+  final TRes Function(Input$UpdateChatLastReadAtInput) _then;
+
+  static const _undefined = <dynamic, dynamic>{};
+
+  TRes call({
+    Object? chatRoomId = _undefined,
+    Object? lastReadAt = _undefined,
+  }) =>
+      _then(Input$UpdateChatLastReadAtInput._({
+        ..._instance._$data,
+        if (chatRoomId != _undefined && chatRoomId != null)
+          'chatRoomId': (chatRoomId as String),
+        if (lastReadAt != _undefined && lastReadAt != null)
+          'lastReadAt': (lastReadAt as DateTime),
+      }));
+}
+
+class _CopyWithStubImpl$Input$UpdateChatLastReadAtInput<TRes>
+    implements CopyWith$Input$UpdateChatLastReadAtInput<TRes> {
+  _CopyWithStubImpl$Input$UpdateChatLastReadAtInput(this._res);
+
+  TRes _res;
+
+  call({
+    String? chatRoomId,
+    DateTime? lastReadAt,
+  }) =>
+      _res;
+}
+
+class Input$CreateFriendGroupInput {
+  factory Input$CreateFriendGroupInput({
+    required String name,
+    required List<String> friendUserIds,
+  }) =>
+      Input$CreateFriendGroupInput._({
+        r'name': name,
+        r'friendUserIds': friendUserIds,
+      });
+
+  Input$CreateFriendGroupInput._(this._$data);
+
+  factory Input$CreateFriendGroupInput.fromJson(Map<String, dynamic> data) {
+    final result$data = <String, dynamic>{};
+    final l$name = data['name'];
+    result$data['name'] = (l$name as String);
+    final l$friendUserIds = data['friendUserIds'];
+    result$data['friendUserIds'] =
+        (l$friendUserIds as List<dynamic>).map((e) => (e as String)).toList();
+    return Input$CreateFriendGroupInput._(result$data);
+  }
+
+  Map<String, dynamic> _$data;
+
+  String get name => (_$data['name'] as String);
+  List<String> get friendUserIds => (_$data['friendUserIds'] as List<String>);
+  Map<String, dynamic> toJson() {
+    final result$data = <String, dynamic>{};
+    final l$name = name;
+    result$data['name'] = l$name;
+    final l$friendUserIds = friendUserIds;
+    result$data['friendUserIds'] = l$friendUserIds.map((e) => e).toList();
+    return result$data;
+  }
+
+  CopyWith$Input$CreateFriendGroupInput<Input$CreateFriendGroupInput>
+      get copyWith => CopyWith$Input$CreateFriendGroupInput(
+            this,
+            (i) => i,
+          );
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    if (!(other is Input$CreateFriendGroupInput) ||
+        runtimeType != other.runtimeType) {
+      return false;
+    }
+    final l$name = name;
+    final lOther$name = other.name;
+    if (l$name != lOther$name) {
+      return false;
+    }
+    final l$friendUserIds = friendUserIds;
+    final lOther$friendUserIds = other.friendUserIds;
+    if (l$friendUserIds.length != lOther$friendUserIds.length) {
+      return false;
+    }
+    for (int i = 0; i < l$friendUserIds.length; i++) {
+      final l$friendUserIds$entry = l$friendUserIds[i];
+      final lOther$friendUserIds$entry = lOther$friendUserIds[i];
+      if (l$friendUserIds$entry != lOther$friendUserIds$entry) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  @override
+  int get hashCode {
+    final l$name = name;
+    final l$friendUserIds = friendUserIds;
+    return Object.hashAll([
+      l$name,
+      Object.hashAll(l$friendUserIds.map((v) => v)),
+    ]);
+  }
+}
+
+abstract class CopyWith$Input$CreateFriendGroupInput<TRes> {
+  factory CopyWith$Input$CreateFriendGroupInput(
+    Input$CreateFriendGroupInput instance,
+    TRes Function(Input$CreateFriendGroupInput) then,
+  ) = _CopyWithImpl$Input$CreateFriendGroupInput;
+
+  factory CopyWith$Input$CreateFriendGroupInput.stub(TRes res) =
+      _CopyWithStubImpl$Input$CreateFriendGroupInput;
+
+  TRes call({
+    String? name,
+    List<String>? friendUserIds,
+  });
+}
+
+class _CopyWithImpl$Input$CreateFriendGroupInput<TRes>
+    implements CopyWith$Input$CreateFriendGroupInput<TRes> {
+  _CopyWithImpl$Input$CreateFriendGroupInput(
+    this._instance,
+    this._then,
+  );
+
+  final Input$CreateFriendGroupInput _instance;
+
+  final TRes Function(Input$CreateFriendGroupInput) _then;
+
+  static const _undefined = <dynamic, dynamic>{};
+
+  TRes call({
+    Object? name = _undefined,
+    Object? friendUserIds = _undefined,
+  }) =>
+      _then(Input$CreateFriendGroupInput._({
+        ..._instance._$data,
+        if (name != _undefined && name != null) 'name': (name as String),
+        if (friendUserIds != _undefined && friendUserIds != null)
+          'friendUserIds': (friendUserIds as List<String>),
+      }));
+}
+
+class _CopyWithStubImpl$Input$CreateFriendGroupInput<TRes>
+    implements CopyWith$Input$CreateFriendGroupInput<TRes> {
+  _CopyWithStubImpl$Input$CreateFriendGroupInput(this._res);
+
+  TRes _res;
+
+  call({
+    String? name,
+    List<String>? friendUserIds,
+  }) =>
+      _res;
+}
+
+class Input$UpdateFriendGroupInput {
+  factory Input$UpdateFriendGroupInput({
+    required String id,
+    required String name,
+    required List<String> friendUserIds,
+  }) =>
+      Input$UpdateFriendGroupInput._({
+        r'id': id,
+        r'name': name,
+        r'friendUserIds': friendUserIds,
+      });
+
+  Input$UpdateFriendGroupInput._(this._$data);
+
+  factory Input$UpdateFriendGroupInput.fromJson(Map<String, dynamic> data) {
+    final result$data = <String, dynamic>{};
+    final l$id = data['id'];
+    result$data['id'] = (l$id as String);
+    final l$name = data['name'];
+    result$data['name'] = (l$name as String);
+    final l$friendUserIds = data['friendUserIds'];
+    result$data['friendUserIds'] =
+        (l$friendUserIds as List<dynamic>).map((e) => (e as String)).toList();
+    return Input$UpdateFriendGroupInput._(result$data);
+  }
+
+  Map<String, dynamic> _$data;
+
+  String get id => (_$data['id'] as String);
+  String get name => (_$data['name'] as String);
+  List<String> get friendUserIds => (_$data['friendUserIds'] as List<String>);
+  Map<String, dynamic> toJson() {
+    final result$data = <String, dynamic>{};
+    final l$id = id;
+    result$data['id'] = l$id;
+    final l$name = name;
+    result$data['name'] = l$name;
+    final l$friendUserIds = friendUserIds;
+    result$data['friendUserIds'] = l$friendUserIds.map((e) => e).toList();
+    return result$data;
+  }
+
+  CopyWith$Input$UpdateFriendGroupInput<Input$UpdateFriendGroupInput>
+      get copyWith => CopyWith$Input$UpdateFriendGroupInput(
+            this,
+            (i) => i,
+          );
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    if (!(other is Input$UpdateFriendGroupInput) ||
         runtimeType != other.runtimeType) {
       return false;
     }
@@ -744,15 +903,22 @@ class Input$SendChatMessageTextInput {
     if (l$id != lOther$id) {
       return false;
     }
-    final l$chatRoomId = chatRoomId;
-    final lOther$chatRoomId = other.chatRoomId;
-    if (l$chatRoomId != lOther$chatRoomId) {
+    final l$name = name;
+    final lOther$name = other.name;
+    if (l$name != lOther$name) {
       return false;
     }
-    final l$text = text;
-    final lOther$text = other.text;
-    if (l$text != lOther$text) {
+    final l$friendUserIds = friendUserIds;
+    final lOther$friendUserIds = other.friendUserIds;
+    if (l$friendUserIds.length != lOther$friendUserIds.length) {
       return false;
+    }
+    for (int i = 0; i < l$friendUserIds.length; i++) {
+      final l$friendUserIds$entry = l$friendUserIds[i];
+      final lOther$friendUserIds$entry = lOther$friendUserIds[i];
+      if (l$friendUserIds$entry != lOther$friendUserIds$entry) {
+        return false;
+      }
     }
     return true;
   }
@@ -760,69 +926,69 @@ class Input$SendChatMessageTextInput {
   @override
   int get hashCode {
     final l$id = id;
-    final l$chatRoomId = chatRoomId;
-    final l$text = text;
+    final l$name = name;
+    final l$friendUserIds = friendUserIds;
     return Object.hashAll([
       l$id,
-      l$chatRoomId,
-      l$text,
+      l$name,
+      Object.hashAll(l$friendUserIds.map((v) => v)),
     ]);
   }
 }
 
-abstract class CopyWith$Input$SendChatMessageTextInput<TRes> {
-  factory CopyWith$Input$SendChatMessageTextInput(
-    Input$SendChatMessageTextInput instance,
-    TRes Function(Input$SendChatMessageTextInput) then,
-  ) = _CopyWithImpl$Input$SendChatMessageTextInput;
+abstract class CopyWith$Input$UpdateFriendGroupInput<TRes> {
+  factory CopyWith$Input$UpdateFriendGroupInput(
+    Input$UpdateFriendGroupInput instance,
+    TRes Function(Input$UpdateFriendGroupInput) then,
+  ) = _CopyWithImpl$Input$UpdateFriendGroupInput;
 
-  factory CopyWith$Input$SendChatMessageTextInput.stub(TRes res) =
-      _CopyWithStubImpl$Input$SendChatMessageTextInput;
+  factory CopyWith$Input$UpdateFriendGroupInput.stub(TRes res) =
+      _CopyWithStubImpl$Input$UpdateFriendGroupInput;
 
   TRes call({
     String? id,
-    String? chatRoomId,
-    String? text,
+    String? name,
+    List<String>? friendUserIds,
   });
 }
 
-class _CopyWithImpl$Input$SendChatMessageTextInput<TRes>
-    implements CopyWith$Input$SendChatMessageTextInput<TRes> {
-  _CopyWithImpl$Input$SendChatMessageTextInput(
+class _CopyWithImpl$Input$UpdateFriendGroupInput<TRes>
+    implements CopyWith$Input$UpdateFriendGroupInput<TRes> {
+  _CopyWithImpl$Input$UpdateFriendGroupInput(
     this._instance,
     this._then,
   );
 
-  final Input$SendChatMessageTextInput _instance;
+  final Input$UpdateFriendGroupInput _instance;
 
-  final TRes Function(Input$SendChatMessageTextInput) _then;
+  final TRes Function(Input$UpdateFriendGroupInput) _then;
 
   static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
     Object? id = _undefined,
-    Object? chatRoomId = _undefined,
-    Object? text = _undefined,
+    Object? name = _undefined,
+    Object? friendUserIds = _undefined,
   }) =>
-      _then(Input$SendChatMessageTextInput._({
+      _then(Input$UpdateFriendGroupInput._({
         ..._instance._$data,
         if (id != _undefined && id != null) 'id': (id as String),
-        if (chatRoomId != _undefined && chatRoomId != null)
-          'chatRoomId': (chatRoomId as String),
-        if (text != _undefined && text != null) 'text': (text as String),
+        if (name != _undefined && name != null) 'name': (name as String),
+        if (friendUserIds != _undefined && friendUserIds != null)
+          'friendUserIds': (friendUserIds as List<String>),
       }));
 }
 
-class _CopyWithStubImpl$Input$SendChatMessageTextInput<TRes>
-    implements CopyWith$Input$SendChatMessageTextInput<TRes> {
-  _CopyWithStubImpl$Input$SendChatMessageTextInput(this._res);
+class _CopyWithStubImpl$Input$UpdateFriendGroupInput<TRes>
+    implements CopyWith$Input$UpdateFriendGroupInput<TRes> {
+  _CopyWithStubImpl$Input$UpdateFriendGroupInput(this._res);
 
   TRes _res;
 
   call({
     String? id,
-    String? chatRoomId,
-    String? text,
+    String? name,
+    List<String>? friendUserIds,
   }) =>
       _res;
 }
@@ -1105,206 +1271,51 @@ class _CopyWithStubImpl$Input$SendInvitationInput<TRes>
       _res;
 }
 
-class Input$SignUpInput {
-  factory Input$SignUpInput({
-    String? email,
-    String? nickname,
-    String? avatarUrl,
+class Input$RegisterInvitationAwaitingInput {
+  factory Input$RegisterInvitationAwaitingInput({
+    required DateTime startsAt,
+    required DateTime endsAt,
+    required String comment,
   }) =>
-      Input$SignUpInput._({
-        if (email != null) r'email': email,
-        if (nickname != null) r'nickname': nickname,
-        if (avatarUrl != null) r'avatarUrl': avatarUrl,
+      Input$RegisterInvitationAwaitingInput._({
+        r'startsAt': startsAt,
+        r'endsAt': endsAt,
+        r'comment': comment,
       });
 
-  Input$SignUpInput._(this._$data);
+  Input$RegisterInvitationAwaitingInput._(this._$data);
 
-  factory Input$SignUpInput.fromJson(Map<String, dynamic> data) {
+  factory Input$RegisterInvitationAwaitingInput.fromJson(
+      Map<String, dynamic> data) {
     final result$data = <String, dynamic>{};
-    if (data.containsKey('email')) {
-      final l$email = data['email'];
-      result$data['email'] = (l$email as String?);
-    }
-    if (data.containsKey('nickname')) {
-      final l$nickname = data['nickname'];
-      result$data['nickname'] = (l$nickname as String?);
-    }
-    if (data.containsKey('avatarUrl')) {
-      final l$avatarUrl = data['avatarUrl'];
-      result$data['avatarUrl'] = (l$avatarUrl as String?);
-    }
-    return Input$SignUpInput._(result$data);
+    final l$startsAt = data['startsAt'];
+    result$data['startsAt'] = DateTime.parse((l$startsAt as String));
+    final l$endsAt = data['endsAt'];
+    result$data['endsAt'] = DateTime.parse((l$endsAt as String));
+    final l$comment = data['comment'];
+    result$data['comment'] = (l$comment as String);
+    return Input$RegisterInvitationAwaitingInput._(result$data);
   }
 
   Map<String, dynamic> _$data;
 
-  String? get email => (_$data['email'] as String?);
-  String? get nickname => (_$data['nickname'] as String?);
-  String? get avatarUrl => (_$data['avatarUrl'] as String?);
+  DateTime get startsAt => (_$data['startsAt'] as DateTime);
+  DateTime get endsAt => (_$data['endsAt'] as DateTime);
+  String get comment => (_$data['comment'] as String);
   Map<String, dynamic> toJson() {
     final result$data = <String, dynamic>{};
-    if (_$data.containsKey('email')) {
-      final l$email = email;
-      result$data['email'] = l$email;
-    }
-    if (_$data.containsKey('nickname')) {
-      final l$nickname = nickname;
-      result$data['nickname'] = l$nickname;
-    }
-    if (_$data.containsKey('avatarUrl')) {
-      final l$avatarUrl = avatarUrl;
-      result$data['avatarUrl'] = l$avatarUrl;
-    }
+    final l$startsAt = startsAt;
+    result$data['startsAt'] = l$startsAt.toIso8601String();
+    final l$endsAt = endsAt;
+    result$data['endsAt'] = l$endsAt.toIso8601String();
+    final l$comment = comment;
+    result$data['comment'] = l$comment;
     return result$data;
   }
 
-  CopyWith$Input$SignUpInput<Input$SignUpInput> get copyWith =>
-      CopyWith$Input$SignUpInput(
-        this,
-        (i) => i,
-      );
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) {
-      return true;
-    }
-    if (!(other is Input$SignUpInput) || runtimeType != other.runtimeType) {
-      return false;
-    }
-    final l$email = email;
-    final lOther$email = other.email;
-    if (_$data.containsKey('email') != other._$data.containsKey('email')) {
-      return false;
-    }
-    if (l$email != lOther$email) {
-      return false;
-    }
-    final l$nickname = nickname;
-    final lOther$nickname = other.nickname;
-    if (_$data.containsKey('nickname') !=
-        other._$data.containsKey('nickname')) {
-      return false;
-    }
-    if (l$nickname != lOther$nickname) {
-      return false;
-    }
-    final l$avatarUrl = avatarUrl;
-    final lOther$avatarUrl = other.avatarUrl;
-    if (_$data.containsKey('avatarUrl') !=
-        other._$data.containsKey('avatarUrl')) {
-      return false;
-    }
-    if (l$avatarUrl != lOther$avatarUrl) {
-      return false;
-    }
-    return true;
-  }
-
-  @override
-  int get hashCode {
-    final l$email = email;
-    final l$nickname = nickname;
-    final l$avatarUrl = avatarUrl;
-    return Object.hashAll([
-      _$data.containsKey('email') ? l$email : const {},
-      _$data.containsKey('nickname') ? l$nickname : const {},
-      _$data.containsKey('avatarUrl') ? l$avatarUrl : const {},
-    ]);
-  }
-}
-
-abstract class CopyWith$Input$SignUpInput<TRes> {
-  factory CopyWith$Input$SignUpInput(
-    Input$SignUpInput instance,
-    TRes Function(Input$SignUpInput) then,
-  ) = _CopyWithImpl$Input$SignUpInput;
-
-  factory CopyWith$Input$SignUpInput.stub(TRes res) =
-      _CopyWithStubImpl$Input$SignUpInput;
-
-  TRes call({
-    String? email,
-    String? nickname,
-    String? avatarUrl,
-  });
-}
-
-class _CopyWithImpl$Input$SignUpInput<TRes>
-    implements CopyWith$Input$SignUpInput<TRes> {
-  _CopyWithImpl$Input$SignUpInput(
-    this._instance,
-    this._then,
-  );
-
-  final Input$SignUpInput _instance;
-
-  final TRes Function(Input$SignUpInput) _then;
-
-  static const _undefined = <dynamic, dynamic>{};
-
-  TRes call({
-    Object? email = _undefined,
-    Object? nickname = _undefined,
-    Object? avatarUrl = _undefined,
-  }) =>
-      _then(Input$SignUpInput._({
-        ..._instance._$data,
-        if (email != _undefined) 'email': (email as String?),
-        if (nickname != _undefined) 'nickname': (nickname as String?),
-        if (avatarUrl != _undefined) 'avatarUrl': (avatarUrl as String?),
-      }));
-}
-
-class _CopyWithStubImpl$Input$SignUpInput<TRes>
-    implements CopyWith$Input$SignUpInput<TRes> {
-  _CopyWithStubImpl$Input$SignUpInput(this._res);
-
-  TRes _res;
-
-  call({
-    String? email,
-    String? nickname,
-    String? avatarUrl,
-  }) =>
-      _res;
-}
-
-class Input$UpdateChatLastReadAtInput {
-  factory Input$UpdateChatLastReadAtInput({
-    required String chatRoomId,
-    required DateTime lastReadAt,
-  }) =>
-      Input$UpdateChatLastReadAtInput._({
-        r'chatRoomId': chatRoomId,
-        r'lastReadAt': lastReadAt,
-      });
-
-  Input$UpdateChatLastReadAtInput._(this._$data);
-
-  factory Input$UpdateChatLastReadAtInput.fromJson(Map<String, dynamic> data) {
-    final result$data = <String, dynamic>{};
-    final l$chatRoomId = data['chatRoomId'];
-    result$data['chatRoomId'] = (l$chatRoomId as String);
-    final l$lastReadAt = data['lastReadAt'];
-    result$data['lastReadAt'] = DateTime.parse((l$lastReadAt as String));
-    return Input$UpdateChatLastReadAtInput._(result$data);
-  }
-
-  Map<String, dynamic> _$data;
-
-  String get chatRoomId => (_$data['chatRoomId'] as String);
-  DateTime get lastReadAt => (_$data['lastReadAt'] as DateTime);
-  Map<String, dynamic> toJson() {
-    final result$data = <String, dynamic>{};
-    final l$chatRoomId = chatRoomId;
-    result$data['chatRoomId'] = l$chatRoomId;
-    final l$lastReadAt = lastReadAt;
-    result$data['lastReadAt'] = l$lastReadAt.toIso8601String();
-    return result$data;
-  }
-
-  CopyWith$Input$UpdateChatLastReadAtInput<Input$UpdateChatLastReadAtInput>
-      get copyWith => CopyWith$Input$UpdateChatLastReadAtInput(
+  CopyWith$Input$RegisterInvitationAwaitingInput<
+          Input$RegisterInvitationAwaitingInput>
+      get copyWith => CopyWith$Input$RegisterInvitationAwaitingInput(
             this,
             (i) => i,
           );
@@ -1313,18 +1324,23 @@ class Input$UpdateChatLastReadAtInput {
     if (identical(this, other)) {
       return true;
     }
-    if (!(other is Input$UpdateChatLastReadAtInput) ||
+    if (!(other is Input$RegisterInvitationAwaitingInput) ||
         runtimeType != other.runtimeType) {
       return false;
     }
-    final l$chatRoomId = chatRoomId;
-    final lOther$chatRoomId = other.chatRoomId;
-    if (l$chatRoomId != lOther$chatRoomId) {
+    final l$startsAt = startsAt;
+    final lOther$startsAt = other.startsAt;
+    if (l$startsAt != lOther$startsAt) {
       return false;
     }
-    final l$lastReadAt = lastReadAt;
-    final lOther$lastReadAt = other.lastReadAt;
-    if (l$lastReadAt != lOther$lastReadAt) {
+    final l$endsAt = endsAt;
+    final lOther$endsAt = other.endsAt;
+    if (l$endsAt != lOther$endsAt) {
+      return false;
+    }
+    final l$comment = comment;
+    final lOther$comment = other.comment;
+    if (l$comment != lOther$comment) {
       return false;
     }
     return true;
@@ -1332,113 +1348,114 @@ class Input$UpdateChatLastReadAtInput {
 
   @override
   int get hashCode {
-    final l$chatRoomId = chatRoomId;
-    final l$lastReadAt = lastReadAt;
+    final l$startsAt = startsAt;
+    final l$endsAt = endsAt;
+    final l$comment = comment;
     return Object.hashAll([
-      l$chatRoomId,
-      l$lastReadAt,
+      l$startsAt,
+      l$endsAt,
+      l$comment,
     ]);
   }
 }
 
-abstract class CopyWith$Input$UpdateChatLastReadAtInput<TRes> {
-  factory CopyWith$Input$UpdateChatLastReadAtInput(
-    Input$UpdateChatLastReadAtInput instance,
-    TRes Function(Input$UpdateChatLastReadAtInput) then,
-  ) = _CopyWithImpl$Input$UpdateChatLastReadAtInput;
+abstract class CopyWith$Input$RegisterInvitationAwaitingInput<TRes> {
+  factory CopyWith$Input$RegisterInvitationAwaitingInput(
+    Input$RegisterInvitationAwaitingInput instance,
+    TRes Function(Input$RegisterInvitationAwaitingInput) then,
+  ) = _CopyWithImpl$Input$RegisterInvitationAwaitingInput;
 
-  factory CopyWith$Input$UpdateChatLastReadAtInput.stub(TRes res) =
-      _CopyWithStubImpl$Input$UpdateChatLastReadAtInput;
+  factory CopyWith$Input$RegisterInvitationAwaitingInput.stub(TRes res) =
+      _CopyWithStubImpl$Input$RegisterInvitationAwaitingInput;
 
   TRes call({
-    String? chatRoomId,
-    DateTime? lastReadAt,
+    DateTime? startsAt,
+    DateTime? endsAt,
+    String? comment,
   });
 }
 
-class _CopyWithImpl$Input$UpdateChatLastReadAtInput<TRes>
-    implements CopyWith$Input$UpdateChatLastReadAtInput<TRes> {
-  _CopyWithImpl$Input$UpdateChatLastReadAtInput(
+class _CopyWithImpl$Input$RegisterInvitationAwaitingInput<TRes>
+    implements CopyWith$Input$RegisterInvitationAwaitingInput<TRes> {
+  _CopyWithImpl$Input$RegisterInvitationAwaitingInput(
     this._instance,
     this._then,
   );
 
-  final Input$UpdateChatLastReadAtInput _instance;
+  final Input$RegisterInvitationAwaitingInput _instance;
 
-  final TRes Function(Input$UpdateChatLastReadAtInput) _then;
+  final TRes Function(Input$RegisterInvitationAwaitingInput) _then;
 
   static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
-    Object? chatRoomId = _undefined,
-    Object? lastReadAt = _undefined,
+    Object? startsAt = _undefined,
+    Object? endsAt = _undefined,
+    Object? comment = _undefined,
   }) =>
-      _then(Input$UpdateChatLastReadAtInput._({
+      _then(Input$RegisterInvitationAwaitingInput._({
         ..._instance._$data,
-        if (chatRoomId != _undefined && chatRoomId != null)
-          'chatRoomId': (chatRoomId as String),
-        if (lastReadAt != _undefined && lastReadAt != null)
-          'lastReadAt': (lastReadAt as DateTime),
+        if (startsAt != _undefined && startsAt != null)
+          'startsAt': (startsAt as DateTime),
+        if (endsAt != _undefined && endsAt != null)
+          'endsAt': (endsAt as DateTime),
+        if (comment != _undefined && comment != null)
+          'comment': (comment as String),
       }));
 }
 
-class _CopyWithStubImpl$Input$UpdateChatLastReadAtInput<TRes>
-    implements CopyWith$Input$UpdateChatLastReadAtInput<TRes> {
-  _CopyWithStubImpl$Input$UpdateChatLastReadAtInput(this._res);
+class _CopyWithStubImpl$Input$RegisterInvitationAwaitingInput<TRes>
+    implements CopyWith$Input$RegisterInvitationAwaitingInput<TRes> {
+  _CopyWithStubImpl$Input$RegisterInvitationAwaitingInput(this._res);
 
   TRes _res;
 
   call({
-    String? chatRoomId,
-    DateTime? lastReadAt,
+    DateTime? startsAt,
+    DateTime? endsAt,
+    String? comment,
   }) =>
       _res;
 }
 
-class Input$UpdateFriendGroupInput {
-  factory Input$UpdateFriendGroupInput({
-    required String id,
-    required String name,
-    required List<String> friendUserIds,
+class Input$RegisterPushNotificationTokenInput {
+  factory Input$RegisterPushNotificationTokenInput({
+    required String deviceId,
+    required String fcmToken,
   }) =>
-      Input$UpdateFriendGroupInput._({
-        r'id': id,
-        r'name': name,
-        r'friendUserIds': friendUserIds,
+      Input$RegisterPushNotificationTokenInput._({
+        r'deviceId': deviceId,
+        r'fcmToken': fcmToken,
       });
 
-  Input$UpdateFriendGroupInput._(this._$data);
+  Input$RegisterPushNotificationTokenInput._(this._$data);
 
-  factory Input$UpdateFriendGroupInput.fromJson(Map<String, dynamic> data) {
+  factory Input$RegisterPushNotificationTokenInput.fromJson(
+      Map<String, dynamic> data) {
     final result$data = <String, dynamic>{};
-    final l$id = data['id'];
-    result$data['id'] = (l$id as String);
-    final l$name = data['name'];
-    result$data['name'] = (l$name as String);
-    final l$friendUserIds = data['friendUserIds'];
-    result$data['friendUserIds'] =
-        (l$friendUserIds as List<dynamic>).map((e) => (e as String)).toList();
-    return Input$UpdateFriendGroupInput._(result$data);
+    final l$deviceId = data['deviceId'];
+    result$data['deviceId'] = (l$deviceId as String);
+    final l$fcmToken = data['fcmToken'];
+    result$data['fcmToken'] = (l$fcmToken as String);
+    return Input$RegisterPushNotificationTokenInput._(result$data);
   }
 
   Map<String, dynamic> _$data;
 
-  String get id => (_$data['id'] as String);
-  String get name => (_$data['name'] as String);
-  List<String> get friendUserIds => (_$data['friendUserIds'] as List<String>);
+  String get deviceId => (_$data['deviceId'] as String);
+  String get fcmToken => (_$data['fcmToken'] as String);
   Map<String, dynamic> toJson() {
     final result$data = <String, dynamic>{};
-    final l$id = id;
-    result$data['id'] = l$id;
-    final l$name = name;
-    result$data['name'] = l$name;
-    final l$friendUserIds = friendUserIds;
-    result$data['friendUserIds'] = l$friendUserIds.map((e) => e).toList();
+    final l$deviceId = deviceId;
+    result$data['deviceId'] = l$deviceId;
+    final l$fcmToken = fcmToken;
+    result$data['fcmToken'] = l$fcmToken;
     return result$data;
   }
 
-  CopyWith$Input$UpdateFriendGroupInput<Input$UpdateFriendGroupInput>
-      get copyWith => CopyWith$Input$UpdateFriendGroupInput(
+  CopyWith$Input$RegisterPushNotificationTokenInput<
+          Input$RegisterPushNotificationTokenInput>
+      get copyWith => CopyWith$Input$RegisterPushNotificationTokenInput(
             this,
             (i) => i,
           );
@@ -1447,101 +1464,84 @@ class Input$UpdateFriendGroupInput {
     if (identical(this, other)) {
       return true;
     }
-    if (!(other is Input$UpdateFriendGroupInput) ||
+    if (!(other is Input$RegisterPushNotificationTokenInput) ||
         runtimeType != other.runtimeType) {
       return false;
     }
-    final l$id = id;
-    final lOther$id = other.id;
-    if (l$id != lOther$id) {
+    final l$deviceId = deviceId;
+    final lOther$deviceId = other.deviceId;
+    if (l$deviceId != lOther$deviceId) {
       return false;
     }
-    final l$name = name;
-    final lOther$name = other.name;
-    if (l$name != lOther$name) {
+    final l$fcmToken = fcmToken;
+    final lOther$fcmToken = other.fcmToken;
+    if (l$fcmToken != lOther$fcmToken) {
       return false;
-    }
-    final l$friendUserIds = friendUserIds;
-    final lOther$friendUserIds = other.friendUserIds;
-    if (l$friendUserIds.length != lOther$friendUserIds.length) {
-      return false;
-    }
-    for (int i = 0; i < l$friendUserIds.length; i++) {
-      final l$friendUserIds$entry = l$friendUserIds[i];
-      final lOther$friendUserIds$entry = lOther$friendUserIds[i];
-      if (l$friendUserIds$entry != lOther$friendUserIds$entry) {
-        return false;
-      }
     }
     return true;
   }
 
   @override
   int get hashCode {
-    final l$id = id;
-    final l$name = name;
-    final l$friendUserIds = friendUserIds;
+    final l$deviceId = deviceId;
+    final l$fcmToken = fcmToken;
     return Object.hashAll([
-      l$id,
-      l$name,
-      Object.hashAll(l$friendUserIds.map((v) => v)),
+      l$deviceId,
+      l$fcmToken,
     ]);
   }
 }
 
-abstract class CopyWith$Input$UpdateFriendGroupInput<TRes> {
-  factory CopyWith$Input$UpdateFriendGroupInput(
-    Input$UpdateFriendGroupInput instance,
-    TRes Function(Input$UpdateFriendGroupInput) then,
-  ) = _CopyWithImpl$Input$UpdateFriendGroupInput;
+abstract class CopyWith$Input$RegisterPushNotificationTokenInput<TRes> {
+  factory CopyWith$Input$RegisterPushNotificationTokenInput(
+    Input$RegisterPushNotificationTokenInput instance,
+    TRes Function(Input$RegisterPushNotificationTokenInput) then,
+  ) = _CopyWithImpl$Input$RegisterPushNotificationTokenInput;
 
-  factory CopyWith$Input$UpdateFriendGroupInput.stub(TRes res) =
-      _CopyWithStubImpl$Input$UpdateFriendGroupInput;
+  factory CopyWith$Input$RegisterPushNotificationTokenInput.stub(TRes res) =
+      _CopyWithStubImpl$Input$RegisterPushNotificationTokenInput;
 
   TRes call({
-    String? id,
-    String? name,
-    List<String>? friendUserIds,
+    String? deviceId,
+    String? fcmToken,
   });
 }
 
-class _CopyWithImpl$Input$UpdateFriendGroupInput<TRes>
-    implements CopyWith$Input$UpdateFriendGroupInput<TRes> {
-  _CopyWithImpl$Input$UpdateFriendGroupInput(
+class _CopyWithImpl$Input$RegisterPushNotificationTokenInput<TRes>
+    implements CopyWith$Input$RegisterPushNotificationTokenInput<TRes> {
+  _CopyWithImpl$Input$RegisterPushNotificationTokenInput(
     this._instance,
     this._then,
   );
 
-  final Input$UpdateFriendGroupInput _instance;
+  final Input$RegisterPushNotificationTokenInput _instance;
 
-  final TRes Function(Input$UpdateFriendGroupInput) _then;
+  final TRes Function(Input$RegisterPushNotificationTokenInput) _then;
 
   static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
-    Object? id = _undefined,
-    Object? name = _undefined,
-    Object? friendUserIds = _undefined,
+    Object? deviceId = _undefined,
+    Object? fcmToken = _undefined,
   }) =>
-      _then(Input$UpdateFriendGroupInput._({
+      _then(Input$RegisterPushNotificationTokenInput._({
         ..._instance._$data,
-        if (id != _undefined && id != null) 'id': (id as String),
-        if (name != _undefined && name != null) 'name': (name as String),
-        if (friendUserIds != _undefined && friendUserIds != null)
-          'friendUserIds': (friendUserIds as List<String>),
+        if (deviceId != _undefined && deviceId != null)
+          'deviceId': (deviceId as String),
+        if (fcmToken != _undefined && fcmToken != null)
+          'fcmToken': (fcmToken as String),
       }));
 }
 
-class _CopyWithStubImpl$Input$UpdateFriendGroupInput<TRes>
-    implements CopyWith$Input$UpdateFriendGroupInput<TRes> {
-  _CopyWithStubImpl$Input$UpdateFriendGroupInput(this._res);
+class _CopyWithStubImpl$Input$RegisterPushNotificationTokenInput<TRes>
+    implements CopyWith$Input$RegisterPushNotificationTokenInput<TRes> {
+  _CopyWithStubImpl$Input$RegisterPushNotificationTokenInput(this._res);
 
   TRes _res;
 
   call({
-    String? id,
-    String? name,
-    List<String>? friendUserIds,
+    String? deviceId,
+    String? fcmToken,
   }) =>
       _res;
 }
@@ -1567,83 +1567,6 @@ Enum$ChatMessageKind fromJson$Enum$ChatMessageKind(String value) {
       return Enum$ChatMessageKind.IMAGE;
     default:
       return Enum$ChatMessageKind.$unknown;
-  }
-}
-
-enum Enum$ConstraintFormat { EMAIL, URL, $unknown }
-
-String toJson$Enum$ConstraintFormat(Enum$ConstraintFormat e) {
-  switch (e) {
-    case Enum$ConstraintFormat.EMAIL:
-      return r'EMAIL';
-    case Enum$ConstraintFormat.URL:
-      return r'URL';
-    case Enum$ConstraintFormat.$unknown:
-      return r'$unknown';
-  }
-}
-
-Enum$ConstraintFormat fromJson$Enum$ConstraintFormat(String value) {
-  switch (value) {
-    case r'EMAIL':
-      return Enum$ConstraintFormat.EMAIL;
-    case r'URL':
-      return Enum$ConstraintFormat.URL;
-    default:
-      return Enum$ConstraintFormat.$unknown;
-  }
-}
-
-enum Enum$ErrorCode {
-  INVALID_ARGUMENT,
-  UNAUTHENTICATED,
-  FORBIDDEN,
-  NOT_FOUND,
-  ALREADY_EXISTS,
-  CONFLICT,
-  INTERNAL,
-  $unknown
-}
-
-String toJson$Enum$ErrorCode(Enum$ErrorCode e) {
-  switch (e) {
-    case Enum$ErrorCode.INVALID_ARGUMENT:
-      return r'INVALID_ARGUMENT';
-    case Enum$ErrorCode.UNAUTHENTICATED:
-      return r'UNAUTHENTICATED';
-    case Enum$ErrorCode.FORBIDDEN:
-      return r'FORBIDDEN';
-    case Enum$ErrorCode.NOT_FOUND:
-      return r'NOT_FOUND';
-    case Enum$ErrorCode.ALREADY_EXISTS:
-      return r'ALREADY_EXISTS';
-    case Enum$ErrorCode.CONFLICT:
-      return r'CONFLICT';
-    case Enum$ErrorCode.INTERNAL:
-      return r'INTERNAL';
-    case Enum$ErrorCode.$unknown:
-      return r'$unknown';
-  }
-}
-
-Enum$ErrorCode fromJson$Enum$ErrorCode(String value) {
-  switch (value) {
-    case r'INVALID_ARGUMENT':
-      return Enum$ErrorCode.INVALID_ARGUMENT;
-    case r'UNAUTHENTICATED':
-      return Enum$ErrorCode.UNAUTHENTICATED;
-    case r'FORBIDDEN':
-      return Enum$ErrorCode.FORBIDDEN;
-    case r'NOT_FOUND':
-      return Enum$ErrorCode.NOT_FOUND;
-    case r'ALREADY_EXISTS':
-      return Enum$ErrorCode.ALREADY_EXISTS;
-    case r'CONFLICT':
-      return Enum$ErrorCode.CONFLICT;
-    case r'INTERNAL':
-      return Enum$ErrorCode.INTERNAL;
-    default:
-      return Enum$ErrorCode.$unknown;
   }
 }
 
@@ -1724,16 +1647,93 @@ Enum$PushNotificationType fromJson$Enum$PushNotificationType(String value) {
   }
 }
 
+enum Enum$ConstraintFormat { EMAIL, URL, $unknown }
+
+String toJson$Enum$ConstraintFormat(Enum$ConstraintFormat e) {
+  switch (e) {
+    case Enum$ConstraintFormat.EMAIL:
+      return r'EMAIL';
+    case Enum$ConstraintFormat.URL:
+      return r'URL';
+    case Enum$ConstraintFormat.$unknown:
+      return r'$unknown';
+  }
+}
+
+Enum$ConstraintFormat fromJson$Enum$ConstraintFormat(String value) {
+  switch (value) {
+    case r'EMAIL':
+      return Enum$ConstraintFormat.EMAIL;
+    case r'URL':
+      return Enum$ConstraintFormat.URL;
+    default:
+      return Enum$ConstraintFormat.$unknown;
+  }
+}
+
+enum Enum$ErrorCode {
+  INVALID_ARGUMENT,
+  UNAUTHENTICATED,
+  FORBIDDEN,
+  NOT_FOUND,
+  ALREADY_EXISTS,
+  CONFLICT,
+  INTERNAL,
+  $unknown
+}
+
+String toJson$Enum$ErrorCode(Enum$ErrorCode e) {
+  switch (e) {
+    case Enum$ErrorCode.INVALID_ARGUMENT:
+      return r'INVALID_ARGUMENT';
+    case Enum$ErrorCode.UNAUTHENTICATED:
+      return r'UNAUTHENTICATED';
+    case Enum$ErrorCode.FORBIDDEN:
+      return r'FORBIDDEN';
+    case Enum$ErrorCode.NOT_FOUND:
+      return r'NOT_FOUND';
+    case Enum$ErrorCode.ALREADY_EXISTS:
+      return r'ALREADY_EXISTS';
+    case Enum$ErrorCode.CONFLICT:
+      return r'CONFLICT';
+    case Enum$ErrorCode.INTERNAL:
+      return r'INTERNAL';
+    case Enum$ErrorCode.$unknown:
+      return r'$unknown';
+  }
+}
+
+Enum$ErrorCode fromJson$Enum$ErrorCode(String value) {
+  switch (value) {
+    case r'INVALID_ARGUMENT':
+      return Enum$ErrorCode.INVALID_ARGUMENT;
+    case r'UNAUTHENTICATED':
+      return Enum$ErrorCode.UNAUTHENTICATED;
+    case r'FORBIDDEN':
+      return Enum$ErrorCode.FORBIDDEN;
+    case r'NOT_FOUND':
+      return Enum$ErrorCode.NOT_FOUND;
+    case r'ALREADY_EXISTS':
+      return Enum$ErrorCode.ALREADY_EXISTS;
+    case r'CONFLICT':
+      return Enum$ErrorCode.CONFLICT;
+    case r'INTERNAL':
+      return Enum$ErrorCode.INTERNAL;
+    default:
+      return Enum$ErrorCode.$unknown;
+  }
+}
+
 const possibleTypesMap = <String, Set<String>>{
   'Node': {
-    'ChatMessage',
     'ChatRoom',
+    'ChatMessage',
     'FriendGroup',
-    'FriendshipRequest',
     'Invitation',
     'InvitationAwaiting',
-    'User',
+    'FriendshipRequest',
     'Viewer',
+    'User',
   },
   'ChatMessageBody': {
     'ChatMessageBodyText',

@@ -25,6 +25,7 @@ import (
 	"github.com/k-yomo/invy/invy_api/ent/userblock"
 	"github.com/k-yomo/invy/invy_api/ent/userfriendgroup"
 	"github.com/k-yomo/invy/invy_api/ent/userlocation"
+	"github.com/k-yomo/invy/invy_api/ent/userlocationhistory"
 	"github.com/k-yomo/invy/invy_api/ent/usermute"
 	"github.com/k-yomo/invy/invy_api/ent/userprofile"
 )
@@ -1024,6 +1025,51 @@ func (ul *UserLocation) Node(ctx context.Context) (node *Node, err error) {
 	return node, nil
 }
 
+func (ulh *UserLocationHistory) Node(ctx context.Context) (node *Node, err error) {
+	node = &Node{
+		ID:     ulh.ID,
+		Type:   "UserLocationHistory",
+		Fields: make([]*Field, 3),
+		Edges:  make([]*Edge, 1),
+	}
+	var buf []byte
+	if buf, err = json.Marshal(ulh.UserID); err != nil {
+		return nil, err
+	}
+	node.Fields[0] = &Field{
+		Type:  "uuid.UUID",
+		Name:  "user_id",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(ulh.Coordinate); err != nil {
+		return nil, err
+	}
+	node.Fields[1] = &Field{
+		Type:  "*pgutil.GeoPoint",
+		Name:  "coordinate",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(ulh.CreatedAt); err != nil {
+		return nil, err
+	}
+	node.Fields[2] = &Field{
+		Type:  "time.Time",
+		Name:  "created_at",
+		Value: string(buf),
+	}
+	node.Edges[0] = &Edge{
+		Type: "User",
+		Name: "user",
+	}
+	err = ulh.QueryUser().
+		Select(user.FieldID).
+		Scan(ctx, &node.Edges[0].IDs)
+	if err != nil {
+		return nil, err
+	}
+	return node, nil
+}
+
 func (um *UserMute) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     um.ID,
@@ -1382,6 +1428,18 @@ func (c *Client) noder(ctx context.Context, table string, id uuid.UUID) (Noder, 
 			return nil, err
 		}
 		return n, nil
+	case userlocationhistory.Table:
+		query := c.UserLocationHistory.Query().
+			Where(userlocationhistory.ID(id))
+		query, err := query.CollectFields(ctx, "UserLocationHistory")
+		if err != nil {
+			return nil, err
+		}
+		n, err := query.Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
 	case usermute.Table:
 		query := c.UserMute.Query().
 			Where(usermute.ID(id))
@@ -1691,6 +1749,22 @@ func (c *Client) noders(ctx context.Context, table string, ids []uuid.UUID) ([]N
 		query := c.UserLocation.Query().
 			Where(userlocation.IDIn(ids...))
 		query, err := query.CollectFields(ctx, "UserLocation")
+		if err != nil {
+			return nil, err
+		}
+		nodes, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, node := range nodes {
+			for _, noder := range idmap[node.ID] {
+				*noder = node
+			}
+		}
+	case userlocationhistory.Table:
+		query := c.UserLocationHistory.Query().
+			Where(userlocationhistory.IDIn(ids...))
+		query, err := query.CollectFields(ctx, "UserLocationHistory")
 		if err != nil {
 			return nil, err
 		}

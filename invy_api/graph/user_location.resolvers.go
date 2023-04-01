@@ -27,5 +27,12 @@ func (r *mutationResolver) UpdateLocation(ctx context.Context, latitude float64,
 	if err != nil {
 		return nil, cerrors.Wrap(err, "upsert latest user location")
 	}
+	err = r.DB.UserLocationHistory.Create().
+		SetUserID(authUserID).
+		SetCoordinate(pgutil.NewGeoPoint(latitude, longitude)).
+		Exec(ctx)
+	if err != nil {
+		return nil, cerrors.Wrap(err, "insert user location history")
+	}
 	return &gqlmodel.UpdateLocationPayload{UpdatedUserLocationID: updatedID}, nil
 }

@@ -9,177 +9,6 @@ directive @constraint(min: Int, max: Int, pattern: String, format: ConstraintFor
 
 directive @goField(forceResolver: Boolean, name: String) on INPUT_FIELD_DEFINITION | FIELD_DEFINITION
 
-type AcceptFriendshipRequestPayload {
-  acceptedFriendshipRequestId: UUID!
-}
-
-type AcceptInvitationPayload {
-  invitation: Invitation!
-}
-
-type ActivateInvitationPayload {
-  invitation: Invitation!
-}
-
-type BlockUserPayload {
-  blockedUserId: UUID!
-}
-
-type CancelFriendshipRequestPayload {
-  canceledFriendshipRequestId: UUID!
-}
-
-type ChatMessage implements Node {
-  id: UUID!
-  chatRoomId: UUID!
-  userId: UUID!
-  kind: ChatMessageKind!
-  body: ChatMessageBody!
-  createdAt: Time!
-}
-
-union ChatMessageBody = ChatMessageBodyText | ChatMessageBodyImage
-
-type ChatMessageBodyImage {
-  url: String!
-}
-
-type ChatMessageBodyText {
-  text: String!
-}
-
-enum ChatMessageKind {
-  TEXT
-  IMAGE
-}
-
-type ChatRoom implements Node {
-  id: UUID!
-  participantUserIds: [UUID!]!
-  participants: [ChatRoomParticipant!]!
-  createdAt: Time!
-}
-
-type ChatRoomParticipant {
-  userId: UUID!
-  lastReadAt: Time!
-}
-
-type CloseInvitationPayload {
-  invitation: Invitation!
-}
-
-enum ConstraintFormat {
-  EMAIL
-  URL
-}
-
-type Coordinate {
-  latitude: Float!
-  longitude: Float!
-}
-
-input CreateFriendGroupInput {
-  name: String!
-  friendUserIds: [UUID!]!
-}
-
-type CreateFriendGroupPayload {
-  friendGroup: FriendGroup!
-}
-
-input CreateUserInput {
-  nickname: String!
-  avatarUrl: String
-}
-
-type CreateUserPayload {
-  viewer: Viewer!
-}
-
-scalar Cursor
-
-type DeleteAccountPayload {
-  deletedAccountId: UUID!
-}
-
-type DeleteFriendGroupPayload {
-  deletedFriendGroupId: UUID!
-}
-
-type DeleteInvitationAwaitingPayload {
-  deletedInvitationAwaitingId: UUID!
-}
-
-type DeleteInvitationPayload {
-  deletedInvitationId: UUID!
-}
-
-type DenyFriendshipRequestPayload {
-  deniedFriendshipRequestId: UUID!
-}
-
-type DenyInvitationPayload {
-  invitation: Invitation!
-}
-
-enum ErrorCode {
-  INVALID_ARGUMENT
-  UNAUTHENTICATED
-  FORBIDDEN
-  NOT_FOUND
-  ALREADY_EXISTS
-  CONFLICT
-  INTERNAL
-}
-
-type FriendGroup implements Node {
-  id: UUID!
-  userId: UUID!
-  name: String!
-  totalCount: Int!
-  friendUsers: [User!]!
-}
-
-type FriendshipRequest implements Node {
-  id: UUID!
-  fromUserId: UUID!
-  fromUser: User!
-  toUserId: UUID!
-  toUser: User!
-  createdAt: Time!
-}
-
-type Invitation implements Node {
-  id: UUID!
-  status: InvitationStatus!
-  userId: UUID!
-  user: User!
-  location: String!
-  coordinate: Coordinate
-  comment: String!
-  startsAt: Time!
-  expiresAt: Time!
-  chatRoomId: UUID
-  chatRoom: ChatRoom
-  acceptedUsers: [User!]!
-  isAccepted: Boolean!
-}
-
-type InvitationAwaiting implements Node {
-  id: UUID!
-  userId: UUID!
-  user: User!
-  startsAt: Time!
-  endsAt: Time!
-  comment: String!
-}
-
-enum InvitationStatus {
-  ACTIVE
-  CLOSED
-}
-
 type Mutation {
   signUp(input: SignUpInput!): SignUpPayload!
   signOut: SignOutPayload!
@@ -215,65 +44,81 @@ type Mutation {
   updateScreenId(screenId: String!): UpdateScreenIdPayload!
 }
 
-type MuteUserPayload {
-  mutedUserId: UUID!
+input SignUpInput {
+  email: String
+  nickname: String
+  avatarUrl: String
 }
 
-interface Node {
-  id: UUID!
-}
-
-type PageInfo {
-  startCursor: Cursor
-  endCursor: Cursor
-  hasNextPage: Boolean!
-  hasPreviousPage: Boolean!
-}
-
-"""PushNotificationType is included in the push notification payload"""
-enum PushNotificationType {
-  FRIENDSHIP_REQUEST_RECEIVED
-  FRIENDSHIP_REQUEST_ACCEPTED
-  INVITATION_RECEIVED
-  INVITATION_ACCEPTED
-  INVITATION_DELETED
-  INVITATION_AWAITING_RECEIVED
-  CHAT_MESSAGE_RECEIVED
-}
-
-type Query {
-  invitation(id: UUID!): Invitation!
+type SignUpPayload {
   viewer: Viewer!
-  user(userId: UUID!): User!
-
-  """fetch user by screen id"""
-  userByScreenId(screenId: String!): User!
-
-  """It'll be empty when not friend"""
-  userFriends(userId: UUID!, after: Cursor, first: Int, before: Cursor, last: Int): UserConnection!
 }
 
-input RegisterInvitationAwaitingInput {
-  startsAt: Time!
-  endsAt: Time!
-  comment: String!
+type SignOutPayload {
+  signedOutUserId: UUID!
 }
 
-type RegisterInvitationAwaitingPayload {
-  invitationAwaiting: InvitationAwaiting!
+input CreateUserInput {
+  nickname: String!
+  avatarUrl: String
 }
 
-input RegisterPushNotificationTokenInput {
-  deviceId: String!
-  fcmToken: String!
+type CreateUserPayload {
+  viewer: Viewer!
 }
 
-type RegisterPushNotificationTokenPayload {
-  registeredPushNotificationTokenId: UUID!
+type SwitchUserPayload {
+  viewer: Viewer!
 }
 
-type RequestFriendshipPayload {
-  friendShipRequest: FriendshipRequest!
+type DeleteAccountPayload {
+  deletedAccountId: UUID!
+}
+
+type ChatRoom implements Node {
+  id: UUID!
+  participantUserIds: [UUID!]!
+  participants: [ChatRoomParticipant!]!
+  createdAt: Time!
+}
+
+type ChatRoomParticipant {
+  userId: UUID!
+  lastReadAt: Time!
+}
+
+type ChatMessageBodyText {
+  text: String!
+}
+
+type ChatMessageBodyImage {
+  url: String!
+}
+
+enum ChatMessageKind {
+  TEXT
+  IMAGE
+}
+
+union ChatMessageBody = ChatMessageBodyText | ChatMessageBodyImage
+
+type ChatMessage implements Node {
+  id: UUID!
+  chatRoomId: UUID!
+  userId: UUID!
+  kind: ChatMessageKind!
+  body: ChatMessageBody!
+  createdAt: Time!
+}
+
+input SendChatMessageTextInput {
+  id: UUID!
+  chatRoomId: UUID!
+  text: String!
+}
+
+type SendChatMessageTextPayload {
+  chatMessage: ChatMessage!
 }
 
 input SendChatMessageImageInput {
@@ -286,14 +131,78 @@ type SendChatMessageImagePayload {
   chatMessage: ChatMessage!
 }
 
-input SendChatMessageTextInput {
-  id: UUID!
+input UpdateChatLastReadAtInput {
   chatRoomId: UUID!
-  text: String!
+  lastReadAt: Time!
 }
 
-type SendChatMessageTextPayload {
-  chatMessage: ChatMessage!
+type UpdateChatLastReadAtPayload {
+  chatRoomId: UUID!
+}
+
+type FriendGroup implements Node {
+  id: UUID!
+  userId: UUID!
+  name: String!
+  totalCount: Int!
+  friendUsers: [User!]!
+}
+
+input CreateFriendGroupInput {
+  name: String!
+  friendUserIds: [UUID!]!
+}
+
+type CreateFriendGroupPayload {
+  friendGroup: FriendGroup!
+}
+
+input UpdateFriendGroupInput {
+  id: UUID!
+  name: String!
+  friendUserIds: [UUID!]!
+}
+
+type UpdateFriendGroupPayload {
+  friendGroup: FriendGroup!
+}
+
+type DeleteFriendGroupPayload {
+  deletedFriendGroupId: UUID!
+}
+
+type Query {
+  invitation(id: UUID!): Invitation!
+  viewer: Viewer!
+  user(userId: UUID!): User!
+  userByScreenId(screenId: String!): User!
+  userFriends(userId: UUID!, after: Cursor, first: Int, before: Cursor, last: Int): UserConnection!
+}
+
+type Coordinate {
+  latitude: Float!
+  longitude: Float!
+}
+
+enum InvitationStatus {
+  ACTIVE
+  CLOSED
+}
+
+type Invitation implements Node {
+  id: UUID!
+  status: InvitationStatus!
+  userId: UUID!
+  user: User!
+  location: String!
+  coordinate: Coordinate
+  comment: String!
+  startsAt: Time!
+  expiresAt: Time!
+  chatRoomId: UUID
+  chatRoom: ChatRoom
+  acceptedUsers: [User!]!
+  isAccepted: Boolean!
 }
 
 input SendInvitationInput {
@@ -311,75 +220,164 @@ type SendInvitationPayload {
   invitation: Invitation!
 }
 
-type SignOutPayload {
-  signedOutUserId: UUID!
+type CloseInvitationPayload {
+  invitation: Invitation!
 }
 
-input SignUpInput {
-  email: String
-  nickname: String
-  avatarUrl: String
+type ActivateInvitationPayload {
+  invitation: Invitation!
 }
 
-type SignUpPayload {
-  viewer: Viewer!
+type DeleteInvitationPayload {
+  deletedInvitationId: UUID!
 }
 
-type SwitchUserPayload {
-  viewer: Viewer!
+type AcceptInvitationPayload {
+  invitation: Invitation!
+}
+
+type DenyInvitationPayload {
+  invitation: Invitation!
+}
+
+type InvitationAwaiting implements Node {
+  id: UUID!
+  userId: UUID!
+  user: User!
+  startsAt: Time!
+  endsAt: Time!
+  comment: String!
+}
+
+input RegisterInvitationAwaitingInput {
+  startsAt: Time!
+  endsAt: Time!
+  comment: String!
+}
+
+type RegisterInvitationAwaitingPayload {
+  invitationAwaiting: InvitationAwaiting!
+}
+
+type DeleteInvitationAwaitingPayload {
+  deletedInvitationAwaitingId: UUID!
+}
+
+input RegisterPushNotificationTokenInput {
+  deviceId: String!
+  fcmToken: String!
+}
+
+type RegisterPushNotificationTokenPayload {
+  registeredPushNotificationTokenId: UUID!
+}
+
+enum PushNotificationType {
+  FRIENDSHIP_REQUEST_RECEIVED
+  FRIENDSHIP_REQUEST_ACCEPTED
+  INVITATION_RECEIVED
+  INVITATION_ACCEPTED
+  INVITATION_DELETED
+  INVITATION_AWAITING_RECEIVED
+  CHAT_MESSAGE_RECEIVED
 }
 
 scalar Time
 
-type UnblockUserPayload {
-  unblockedUserId: UUID!
+scalar UUID
+
+scalar Cursor
+
+scalar Upload
+
+enum ConstraintFormat {
+  EMAIL
+  URL
 }
 
-type UnmuteUserPayload {
-  unmutedUserId: UUID!
-}
-
-type UpdateAvatarPayload {
-  viewer: Viewer!
-}
-
-input UpdateChatLastReadAtInput {
-  chatRoomId: UUID!
-  lastReadAt: Time!
-}
-
-type UpdateChatLastReadAtPayload {
-  chatRoomId: UUID!
-}
-
-input UpdateFriendGroupInput {
+interface Node {
   id: UUID!
-  name: String!
-  friendUserIds: [UUID!]!
 }
 
-type UpdateFriendGroupPayload {
-  friendGroup: FriendGroup!
+type PageInfo {
+  startCursor: Cursor
+  endCursor: Cursor
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+}
+
+enum ErrorCode {
+  INVALID_ARGUMENT
+  UNAUTHENTICATED
+  FORBIDDEN
+  NOT_FOUND
+  ALREADY_EXISTS
+  CONFLICT
+  INTERNAL
 }
 
 type UpdateLocationPayload {
   updatedUserLocationId: UUID!
 }
 
-type UpdateNicknamePayload {
-  viewer: Viewer!
+type FriendshipRequest implements Node {
+  id: UUID!
+  fromUserId: UUID!
+  fromUser: User!
+  toUserId: UUID!
+  toUser: User!
+  createdAt: Time!
 }
 
-type UpdateScreenIdPayload {
-  viewer: Viewer!
+type RequestFriendshipPayload {
+  friendShipRequest: FriendshipRequest!
 }
 
-scalar Upload
+type CancelFriendshipRequestPayload {
+  canceledFriendshipRequestId: UUID!
+}
 
-"""
-User is a public interface for a user
-User MUST NOT have private information such as email
-"""
+type AcceptFriendshipRequestPayload {
+  acceptedFriendshipRequestId: UUID!
+}
+
+type DenyFriendshipRequestPayload {
+  deniedFriendshipRequestId: UUID!
+}
+
+type MuteUserPayload {
+  mutedUserId: UUID!
+}
+
+type UnmuteUserPayload {
+  unmutedUserId: UUID!
+}
+
+type BlockUserPayload {
+  blockedUserId: UUID!
+}
+
+type UnblockUserPayload {
+  unblockedUserId: UUID!
+}
+
+type Viewer implements Node {
+  id: UUID!
+  screenId: String!
+  nickname: String!
+  avatarUrl: String!
+  friends(after: Cursor, first: Int, before: Cursor, last: Int): UserConnection!
+  blockedFriends(after: Cursor, first: Int, before: Cursor, last: Int): UserConnection!
+  pendingFriendshipRequests: [FriendshipRequest!]!
+  requestingFriendshipRequests: [FriendshipRequest!]!
+  friendGroup(friendGroupId: UUID!): FriendGroup!
+  friendGroups: [FriendGroup!]!
+  sentInvitations: [Invitation!]!
+  pendingInvitations: [Invitation!]!
+  acceptedInvitations: [Invitation!]!
+  invitationAwaitings: [InvitationAwaiting!]!
+}
+
 type User implements Node {
   id: UUID!
   screenId: String!
@@ -388,16 +386,14 @@ type User implements Node {
   isMuted: Boolean!
   isBlocked: Boolean!
   isFriend: Boolean!
-
-  """
-  This is an approximate distance in kilometer.
-  It'll be null when not friend or the location tracking is not enabled by the user
-  """
   distanceKm: Int
   isRequestingFriendship: Boolean!
-
-  """It'll be empty when not friend"""
   invitationAwaitings: [InvitationAwaiting!]!
+}
+
+type UserEdge {
+  node: User!
+  cursor: Cursor!
 }
 
 type UserConnection {
@@ -406,38 +402,14 @@ type UserConnection {
   totalCount: Int!
 }
 
-type UserEdge {
-  node: User!
-  cursor: Cursor!
+type UpdateAvatarPayload {
+  viewer: Viewer!
 }
 
-scalar UUID
+type UpdateNicknamePayload {
+  viewer: Viewer!
+}
 
-"""Currently logged in user"""
-type Viewer implements Node {
-  id: UUID!
-  screenId: String!
-  nickname: String!
-  avatarUrl: String!
-  friends(after: Cursor, first: Int, before: Cursor, last: Int): UserConnection!
-  blockedFriends(after: Cursor, first: Int, before: Cursor, last: Int): UserConnection!
-
-  """fetch friend ship requests need to be approved by the logged in user"""
-  pendingFriendshipRequests: [FriendshipRequest!]!
-
-  """fetch friend ship requests sent by the logged in user"""
-  requestingFriendshipRequests: [FriendshipRequest!]!
-
-  """
-  fetch friend group
-  Other user's group can't be fetched
-  """
-  friendGroup(friendGroupId: UUID!): FriendGroup!
-
-  """fetch friend groups of the logged in user"""
-  friendGroups: [FriendGroup!]!
-  sentInvitations: [Invitation!]!
-  pendingInvitations: [Invitation!]!
-  acceptedInvitations: [Invitation!]!
-  invitationAwaitings: [InvitationAwaiting!]!
+type UpdateScreenIdPayload {
+  viewer: Viewer!
 }
