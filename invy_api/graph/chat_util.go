@@ -2,37 +2,17 @@ package graph
 
 import (
 	"context"
-	"fmt"
 
-	"cloud.google.com/go/firestore"
 	fcm "firebase.google.com/go/v4/messaging"
 	"github.com/google/uuid"
 	"github.com/k-yomo/invy/invy_api/ent/invitation"
 	"github.com/k-yomo/invy/invy_api/ent/userprofile"
 	"github.com/k-yomo/invy/invy_api/graph/gqlmodel"
 	"github.com/k-yomo/invy/invy_api/internal/auth"
-	"github.com/k-yomo/invy/invy_api/internal/xerrors"
 	"github.com/k-yomo/invy/invy_api/service"
-	"github.com/k-yomo/invy/pkg/convutil"
 	"github.com/k-yomo/invy/pkg/logging"
 	"github.com/k-yomo/invy/pkg/sliceutil"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
-
-func getChatRoomUserIDs(ctx context.Context, firestoreClient *firestore.Client, chatRoomID uuid.UUID) ([]uuid.UUID, error) {
-	chatRoomSnapshot, err := firestoreClient.Doc(service.FirestoreChatRoomPath(chatRoomID)).Get(ctx)
-	if status.Code(err) == codes.NotFound {
-		return nil, xerrors.NewErrNotFound(fmt.Errorf("chat room %q not found", chatRoomID))
-	}
-	if err != nil {
-		return nil, err
-	}
-	userIDs := convutil.ConvertToList(chatRoomSnapshot.Data()["userIds"].([]interface{}), func(from interface{}) uuid.UUID {
-		return uuid.MustParse(from.(string))
-	})
-	return userIDs, nil
-}
 
 func (r *mutationResolver) sendChatMessageNotification(
 	ctx context.Context,
@@ -64,7 +44,7 @@ func (r *mutationResolver) sendChatMessageNotification(
 		logging.Logger(ctx).Error(err.Error())
 		return
 	}
-	err = r.Service.Notification.SendMulticast(ctx, &fcm.MulticastMessage{
+	err = r.Service.Notification.SendMulticast(ctx, &service.MulticastMessage{
 		Tokens: targetUserPushNotificationTokens,
 		Data: map[string]string{
 			"type":         gqlmodel.PushNotificationTypeChatMessageReceived.String(),
@@ -73,9 +53,6 @@ func (r *mutationResolver) sendChatMessageNotification(
 		Notification: &fcm.Notification{
 			Title: authUserProfile.Nickname,
 			Body:  notificationBody,
-		},
-		Android: &fcm.AndroidConfig{
-			Priority: "high",
 		},
 	})
 	if err != nil {

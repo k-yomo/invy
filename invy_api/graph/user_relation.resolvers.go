@@ -23,6 +23,7 @@ import (
 	"github.com/k-yomo/invy/invy_api/graph/gqlmodel"
 	"github.com/k-yomo/invy/invy_api/graph/loader"
 	"github.com/k-yomo/invy/invy_api/internal/auth"
+	"github.com/k-yomo/invy/invy_api/service"
 	"github.com/k-yomo/invy/pkg/convutil"
 	"github.com/k-yomo/invy/pkg/logging"
 )
@@ -88,16 +89,13 @@ func (r *mutationResolver) RequestFriendship(ctx context.Context, friendUserID u
 	fcmTokens := convutil.ConvertToList(friendUserPushNotificationTokens, func(from *ent.PushNotificationToken) string {
 		return from.FcmToken
 	})
-	err = r.Service.Notification.SendMulticast(ctx, &fcm.MulticastMessage{
+	err = r.Service.Notification.SendMulticast(ctx, &service.MulticastMessage{
 		Tokens: fcmTokens,
 		Data: map[string]string{
 			"type": gqlmodel.PushNotificationTypeFriendshipRequestReceived.String(),
 		},
 		Notification: &fcm.Notification{
 			Body: fmt.Sprintf("%sさんから友達申請が届きました。", requesterProfile.Nickname),
-		},
-		Android: &fcm.AndroidConfig{
-			Priority: "high",
 		},
 	})
 	if err != nil {
@@ -175,16 +173,13 @@ func (r *mutationResolver) AcceptFriendshipRequest(ctx context.Context, friendsh
 	fcmTokens := convutil.ConvertToList(requestedUserPushNotificationTokens, func(from *ent.PushNotificationToken) string {
 		return from.FcmToken
 	})
-	err = r.Service.Notification.SendMulticast(ctx, &fcm.MulticastMessage{
+	err = r.Service.Notification.SendMulticast(ctx, &service.MulticastMessage{
 		Tokens: fcmTokens,
 		Data: map[string]string{
 			"type": gqlmodel.PushNotificationTypeFriendshipRequestAccepted.String(),
 		},
 		Notification: &fcm.Notification{
 			Body: fmt.Sprintf("%sさんが友達申請を承諾しました。", acceptedUserProfile.Nickname),
-		},
-		Android: &fcm.AndroidConfig{
-			Priority: "high",
 		},
 	})
 	if err != nil {

@@ -3,6 +3,8 @@ package service
 import (
 	"context"
 	"fmt"
+	"strconv"
+	"time"
 
 	fcm "firebase.google.com/go/v4/messaging"
 	"github.com/k-yomo/invy/invy_api/ent"
@@ -26,32 +28,64 @@ func newNotificationService(db *ent.Client, fcmClient *fcm.Client) *notification
 	}
 }
 
-func (c *notificationService) SendMulticast(ctx context.Context, message *fcm.MulticastMessage) error {
+type MulticastMessage struct {
+	Tokens       []string
+	Data         map[string]string
+	Notification *fcm.Notification
+	ExpiredAt    *time.Time
+	CollapseKey  string
+}
+
+func (m *MulticastMessage) ToFCMMulticastMessageMessage() *fcm.MulticastMessage {
+	apnsHeader := map[string]string{}
+
+	var ttl *time.Duration
+	if m.ExpiredAt != nil {
+		apnsHeader["apns-expiration"] = strconv.FormatInt(m.ExpiredAt.Unix(), 10)
+		temp := m.ExpiredAt.Sub(time.Now())
+		ttl = &temp
+	}
+
+	if m.CollapseKey != "" {
+		apnsHeader["apns-collapse-id"] = m.CollapseKey
+	}
+
+	return &fcm.MulticastMessage{
+		Tokens:       m.Tokens,
+		Data:         m.Data,
+		Notification: m.Notification,
+		APNS: &fcm.APNSConfig{
+			Headers: apnsHeader,
+			Payload: &fcm.APNSPayload{
+				Aps: &fcm.Aps{
+					// To wake the app process and trigger the background handler
+					ContentAvailable: true,
+				},
+			},
+		},
+		Android: &fcm.AndroidConfig{
+			CollapseKey: m.CollapseKey,
+			Priority:    "high",
+			TTL:         ttl,
+		},
+	}
+}
+
+func (c *notificationService) SendMulticast(ctx context.Context, message *MulticastMessage) error {
 	if len(message.Tokens) == 0 {
 		return nil
 	}
 
-	if message.APNS == nil {
-		message.APNS = &fcm.APNSConfig{}
-	}
-	if message.APNS.Payload == nil {
-		message.APNS.Payload = &fcm.APNSPayload{}
-	}
-	if message.APNS.Payload.Aps == nil {
-		message.APNS.Payload.Aps = &fcm.Aps{}
-	}
-	// To wake the app process and trigger the background handler
-	message.APNS.Payload.Aps.ContentAvailable = true
-
+	fcmMessage := message.ToFCMMulticastMessageMessage()
 	eg := errgroup.Group{}
-	for _, chunkedTokens := range sliceutil.Chunk(message.Tokens, maxMulticastMessages) {
+	for _, chunkedTokens := range sliceutil.Chunk(fcmMessage.Tokens, maxMulticastMessages) {
 		m := fcm.MulticastMessage{
 			Tokens:       chunkedTokens,
-			Data:         message.Data,
-			Notification: message.Notification,
-			Android:      message.Android,
-			Webpush:      message.Webpush,
-			APNS:         message.APNS,
+			Data:         fcmMessage.Data,
+			Notification: fcmMessage.Notification,
+			Android:      fcmMessage.Android,
+			Webpush:      fcmMessage.Webpush,
+			APNS:         fcmMessage.APNS,
 		}
 		eg.Go(func() error {
 			multicastResp, err := c.fcmClient.SendMulticast(ctx, &m)
@@ -64,7 +98,7 @@ func (c *notificationService) SendMulticast(ctx context.Context, message *fcm.Mu
 					continue
 				}
 				if fcm.IsUnregistered(resp.Error) {
-					unregisteredTokens = append(unregisteredTokens, message.Tokens[i])
+					unregisteredTokens = append(unregisteredTokens, fcmMessage.Tokens[i])
 				}
 			}
 

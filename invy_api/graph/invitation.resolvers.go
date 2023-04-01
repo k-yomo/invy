@@ -175,7 +175,7 @@ func (r *mutationResolver) SendInvitation(ctx context.Context, input *gqlmodel.S
 	if err != nil {
 		logging.Logger(ctx).Error(err.Error(), zap.String("invitationId", dbInvitation.ID.String()))
 	} else {
-		err := r.Service.Notification.SendMulticast(ctx, &fcm.MulticastMessage{
+		err := r.Service.Notification.SendMulticast(ctx, &service.MulticastMessage{
 			Tokens: targetUserPushNotificationTokens,
 			Data: map[string]string{
 				"type":         gqlmodel.PushNotificationTypeInvitationReceived.String(),
@@ -183,9 +183,6 @@ func (r *mutationResolver) SendInvitation(ctx context.Context, input *gqlmodel.S
 			},
 			Notification: &fcm.Notification{
 				Body: fmt.Sprintf("%sさんから、%s開催のおさそいが届きました。", inviterProfile.Nickname, dbInvitation.Location),
-			},
-			Android: &fcm.AndroidConfig{
-				Priority: "high",
 			},
 		})
 		if err != nil {
@@ -299,7 +296,7 @@ func (r *mutationResolver) DeleteInvitation(ctx context.Context, invitationID uu
 		fcmTokens := convutil.ConvertToList(acceptedUserNotificationTokens, func(from *ent.PushNotificationToken) string {
 			return from.FcmToken
 		})
-		err := r.Service.Notification.SendMulticast(ctx, &fcm.MulticastMessage{
+		err := r.Service.Notification.SendMulticast(ctx, &service.MulticastMessage{
 			Tokens: fcmTokens,
 			Data: map[string]string{
 				"type":         gqlmodel.PushNotificationTypeInvitationDeleted.String(),
@@ -307,9 +304,6 @@ func (r *mutationResolver) DeleteInvitation(ctx context.Context, invitationID uu
 			},
 			Notification: &fcm.Notification{
 				Body: fmt.Sprintf("%s開催のおさそいが削除されました。", dbInvitation.StartsAt.In(timeutil.JST).Format("1月2日 15時04分")),
-			},
-			Android: &fcm.AndroidConfig{
-				Priority: "high",
 			},
 		})
 		if err != nil {
@@ -393,7 +387,7 @@ func (r *mutationResolver) AcceptInvitation(ctx context.Context, invitationID uu
 		fcmTokens := convutil.ConvertToList(append(inviterPushNotificationTokens, acceptedUserPushNotificationTokens...), func(from *ent.PushNotificationToken) string {
 			return from.FcmToken
 		})
-		err := r.Service.Notification.SendMulticast(ctx, &fcm.MulticastMessage{
+		err := r.Service.Notification.SendMulticast(ctx, &service.MulticastMessage{
 			Tokens: fcmTokens,
 			Data: map[string]string{
 				"type":         gqlmodel.PushNotificationTypeInvitationAccepted.String(),
@@ -401,9 +395,6 @@ func (r *mutationResolver) AcceptInvitation(ctx context.Context, invitationID uu
 			},
 			Notification: &fcm.Notification{
 				Body: fmt.Sprintf("%sさんがおさそいを承諾しました。", acceptedUserProfile.Nickname),
-			},
-			Android: &fcm.AndroidConfig{
-				Priority: "high",
 			},
 		})
 		if err != nil {
@@ -521,7 +512,7 @@ func (r *mutationResolver) RegisterInvitationAwaiting(ctx context.Context, input
 	if err != nil {
 		logging.Logger(ctx).Error(err.Error(), zap.String("invitationAwaitingId", dbInvitationAwaiting.ID.String()))
 	} else {
-		err := r.Service.Notification.SendMulticast(ctx, &fcm.MulticastMessage{
+		err := r.Service.Notification.SendMulticast(ctx, &service.MulticastMessage{
 			Tokens: targetUserPushNotificationTokens,
 			Data: map[string]string{
 				"type":                 gqlmodel.PushNotificationTypeInvitationAwaitingReceived.String(),
@@ -529,9 +520,6 @@ func (r *mutationResolver) RegisterInvitationAwaiting(ctx context.Context, input
 			},
 			Notification: &fcm.Notification{
 				Body: fmt.Sprintf("%sさんが、%s以降のおさそいを待っています。", userProfile.Nickname, dbInvitationAwaiting.StartsAt.In(timeutil.JST).Format("1月2日 15時04分")),
-			},
-			Android: &fcm.AndroidConfig{
-				Priority: "high",
 			},
 		})
 		if err != nil {
