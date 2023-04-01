@@ -9,7 +9,6 @@ import (
 	"syscall"
 	"time"
 
-	"ariga.io/sqlcomment"
 	"cloud.google.com/go/profiler"
 	gcs "cloud.google.com/go/storage"
 	entsql "entgo.io/ent/dialect/sql"
@@ -94,15 +93,7 @@ func main() {
 	db.SetMaxIdleConns(10)
 	db.SetConnMaxLifetime(5 * time.Minute)
 	bunDB := bun.NewDB(db, pgdialect.New())
-
-	entDriver := sqlcomment.NewDriver(entsql.OpenDB(appConfig.DBConfig.Driver, db),
-		sqlcomment.WithDriverVerTag(),
-		sqlcomment.WithTags(sqlcomment.Tags{
-			sqlcomment.KeyApplication: serviceName,
-			sqlcomment.KeyFramework:   "net/http",
-		}),
-	)
-	entDB := ent.NewClient(ent.Driver(entDriver))
+	entDB := ent.NewClient(ent.Driver(entsql.OpenDB(appConfig.DBConfig.Driver, db)))
 	// Run migration.
 	if err := entDB.Schema.Create(ctx); err != nil {
 		logger.Fatal("creating schema resources failed", zap.Error(err))

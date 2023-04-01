@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 
-	"ariga.io/sqlcomment"
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/handler/extension"
 	"go.opentelemetry.io/otel"
@@ -30,11 +29,8 @@ func (a GraphqlExtension) Validate(schema graphql.ExecutableSchema) error {
 }
 
 func (a GraphqlExtension) InterceptResponse(ctx context.Context, next graphql.ResponseHandler) *graphql.Response {
-	operation := operationName(ctx)
-	ctx = sqlcomment.WithTag(ctx, "graphqlOperation", operation)
-
 	tracer := otel.Tracer("response")
-	ctx, span := tracer.Start(ctx, fmt.Sprintf("Operation/%s", operation))
+	ctx, span := tracer.Start(ctx, fmt.Sprintf("Operation/%s", operationName(ctx)))
 	defer span.End()
 
 	if !span.IsRecording() {
