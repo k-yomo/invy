@@ -8,18 +8,18 @@
   - [Terraform](https://github.com/k-yomo/invy-terraform)
   - Cloud Run
 - Backend
-  - Go v1.19 
+  - Go
   - GraphQL (gqlgen, graphql_flutter)
   - Cloud SQL(PostgreSQL v13.0)
   - Ent
 - Mobile
-  - Flutter v3.7
+  - Flutter
 - CI
   - Github Actions (backend)
   - Codemagic (mobile)
 
 ## Prerequisites
-- Go v1.19
+- Go v1.20
 - Flutter v3.7.x
 - Docker
 
