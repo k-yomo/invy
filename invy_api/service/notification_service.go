@@ -43,7 +43,7 @@ func (m *MulticastMessage) ToFCMMulticastMessageMessage() *fcm.MulticastMessage 
 	var ttl *time.Duration
 	if m.ExpiredAt != nil {
 		apnsHeader["apns-expiration"] = strconv.FormatInt(m.ExpiredAt.Unix(), 10)
-		temp := m.ExpiredAt.Sub(time.Now())
+		temp := time.Until(*m.ExpiredAt)
 		ttl = &temp
 	}
 

@@ -49,7 +49,7 @@ func Middleware(next http.Handler) http.Handler {
 				zap.Error(err),
 			)
 			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("invalid app version header"))
+			_, _ = w.Write([]byte("invalid app version header"))
 			return
 		}
 		device := Device{

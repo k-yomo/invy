@@ -5,14 +5,14 @@ import (
 	"fmt"
 )
 
-func RunInTx(ctx context.Context, client *Client, fn func(tx *Tx) error) error {
+func RunInTx(ctx context.Context, client *Client, fn func(tx *Tx) error) (err error) {
 	tx, err := client.Tx(ctx)
 	if err != nil {
 		return err
 	}
 	defer func() {
 		if v := recover(); v != nil {
-			tx.Rollback()
+			err = tx.Rollback()
 			panic(v)
 		}
 	}()
