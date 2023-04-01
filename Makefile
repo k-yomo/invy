@@ -65,7 +65,7 @@ test-api: ## Run tests
 
 .PHONY: lint-api
 lint-api: ## Run golang-ci-lint
-	golangci-lint run ./...
+	golangci-lint run --timeout=3m ./...
 
 .PHONY: fmt
 fmt: ## Format code
