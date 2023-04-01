@@ -36,8 +36,12 @@ run-api: run-dbs ## Run API server
 
 .PHONY: docker-push-api
 docker-push-api: ## Build and Push docker image
-	docker build -t $(IMAGE) -t $(IMAGE_LATEST) -f invy_api.Dockerfile .
-	docker push $(IMAGE_PATH)
+	docker build -t $(IMAGE) -f invy_api.Dockerfile .
+	docker push $(IMAGE)
+
+.PHONY: add-latest-latest-tag-to-api
+add-latest-latest-tag-to-api: ## Add latest tag to api docker image
+	gcloud artifacts docker tags add $(IMAGE) $(IMAGE_LATEST)
 
 .PHONY: run-app
 run-app: ## Run app

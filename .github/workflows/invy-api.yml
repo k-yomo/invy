@@ -117,6 +117,7 @@ jobs:
             export VERSION=commit-${GITHUB_SHA:0:7}
           fi
           make docker-push-api
+          make add-latest-latest-tag-to-api
           echo "docker-image-version=${VERSION}" >> "$GITHUB_OUTPUT"
         env:
           DOCKER_BUILDKIT: 1
