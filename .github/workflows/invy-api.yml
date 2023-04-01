@@ -42,11 +42,11 @@ jobs:
           cache: true
 
       - name: Download modules
-        if: steps.restore-cache.outputs.cache-hit != 'true'
+        if: steps.restore-tools-cache.outputs.cache-hit != 'true'
         run: go mod download
 
       - name: Install tools
-        if: steps.restore-cache.outputs.cache-hit != 'true'
+        if: steps.restore-tools-cache.outputs.cache-hit != 'true'
         run: make setup-go
 
   test:
