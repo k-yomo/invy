@@ -2,7 +2,7 @@ name: Invy API Workflow
 on:
   push:
     branches:
-      - master
+      - main
     paths:
       - ".github/workflows/invy-api.yml"
       - "invy_api/**"
