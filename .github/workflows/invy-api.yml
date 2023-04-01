@@ -85,9 +85,7 @@ jobs:
             ./bin
 
       - name: Lint
-        uses: golangci/golangci-lint-action@v3
-        with:
-          version: latest
+        run: make lint-api
 
   docker-build-push:
     name: Docker build and push
