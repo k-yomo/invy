@@ -1,14 +1,16 @@
-# invy
+# Invy
 
 ## Architecture
 - Infra
   - GCP 
+    - [inv-dev](https://console.cloud.google.com/welcome?project=invy-dev)
+    - [invy-prod](https://console.cloud.google.com/welcome?project=invy-prod)
   - [Terraform](https://github.com/k-yomo/invy-terraform)
   - Cloud Run
 - Backend
   - Go v1.19 
-  - GraphQL (gqlgen)
-  - PostgreSQL 13.0
+  - GraphQL (gqlgen, graphql_flutter)
+  - Cloud SQL(PostgreSQL v13.0)
   - Ent
 - Mobile
   - Flutter v3.7
