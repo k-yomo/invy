@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"database/sql"
 	"fmt"
 	"net/http"
 	"os"
@@ -17,6 +16,7 @@ import (
 	firebaseAuth "firebase.google.com/go/v4/auth"
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
+	"github.com/XSAM/otelsql"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"github.com/k-yomo/invy/invy_api/ent"
@@ -38,6 +38,7 @@ import (
 	"github.com/rs/cors"
 	"github.com/uptrace/bun"
 	"github.com/uptrace/bun/dialect/pgdialect"
+	semconv "go.opentelemetry.io/otel/semconv/v1.4.0"
 	"go.uber.org/zap"
 	"google.golang.org/api/option"
 )
@@ -73,11 +74,17 @@ func main() {
 		}
 	}
 
-	db, err := sql.Open(appConfig.DBConfig.Driver, appConfig.DBConfig.Dsn())
+	db, err := otelsql.Open(appConfig.DBConfig.Driver, appConfig.DBConfig.Dsn(), otelsql.WithAttributes(
+		semconv.DBSystemPostgreSQL,
+	))
 	if err != nil {
 		logger.Fatal("initialize db failed", zap.Error(err))
 	}
 	defer db.Close()
+
+	err = otelsql.RegisterDBStatsMetrics(db, otelsql.WithAttributes(
+		semconv.DBSystemPostgreSQL,
+	))
 
 	db.SetMaxOpenConns(10)
 	db.SetMaxIdleConns(10)

@@ -53,6 +53,7 @@ require (
 	github.com/GoogleCloudPlatform/opentelemetry-operations-go/internal/resourcemapping v0.34.2 // indirect
 	github.com/GoogleCloudPlatform/opentelemetry-operations-go/propagator v0.36.0 // indirect
 	github.com/MicahParks/keyfunc v1.5.3 // indirect
+	github.com/XSAM/otelsql v0.20.0 // indirect
 	github.com/agext/levenshtein v1.2.3 // indirect
 	github.com/agnivade/levenshtein v1.1.1 // indirect
 	github.com/apparentlymart/go-textseg/v13 v13.0.0 // indirect
