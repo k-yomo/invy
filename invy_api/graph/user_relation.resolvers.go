@@ -14,7 +14,6 @@ import (
 	"github.com/k-yomo/invy/invy_api/ent"
 	"github.com/k-yomo/invy/invy_api/ent/friendship"
 	"github.com/k-yomo/invy/invy_api/ent/friendshiprequest"
-	"github.com/k-yomo/invy/invy_api/ent/pushnotificationtoken"
 	"github.com/k-yomo/invy/invy_api/ent/userblock"
 	"github.com/k-yomo/invy/invy_api/ent/usermute"
 	"github.com/k-yomo/invy/invy_api/ent/userprofile"
@@ -25,7 +24,6 @@ import (
 	"github.com/k-yomo/invy/invy_api/internal/auth"
 	"github.com/k-yomo/invy/invy_api/internal/xerrors"
 	"github.com/k-yomo/invy/invy_api/service"
-	"github.com/k-yomo/invy/pkg/convutil"
 	"github.com/k-yomo/invy/pkg/logging"
 )
 
@@ -81,17 +79,8 @@ func (r *mutationResolver) RequestFriendship(ctx context.Context, friendUserID u
 	if err != nil {
 		return nil, cerrors.Wrap(err, "get requester profile")
 	}
-	friendUserPushNotificationTokens, err := r.DB.PushNotificationToken.Query().
-		Where(pushnotificationtoken.UserID(friendUserID)).
-		All(ctx)
-	if err != nil {
-		return nil, cerrors.Wrap(err, "get friend user push notification tokens")
-	}
-	fcmTokens := convutil.ConvertToList(friendUserPushNotificationTokens, func(from *ent.PushNotificationToken) string {
-		return from.FcmToken
-	})
 	err = r.Service.Notification.SendMulticast(ctx, &service.MulticastMessage{
-		Tokens: fcmTokens,
+		ToUserIDs: []uuid.UUID{friendUserID},
 		Data: map[string]string{
 			"type": gqlmodel.PushNotificationTypeFriendshipRequestReceived.String(),
 		},
@@ -165,17 +154,8 @@ func (r *mutationResolver) AcceptFriendshipRequest(ctx context.Context, friendsh
 	if err != nil {
 		return nil, cerrors.Wrap(err, "get accepted user profile")
 	}
-	requestedUserPushNotificationTokens, err := r.DB.PushNotificationToken.Query().
-		Where(pushnotificationtoken.UserID(requestedUserID)).
-		All(ctx)
-	if err != nil {
-		return nil, cerrors.Wrap(err, "get requested user push notification tokens")
-	}
-	fcmTokens := convutil.ConvertToList(requestedUserPushNotificationTokens, func(from *ent.PushNotificationToken) string {
-		return from.FcmToken
-	})
 	err = r.Service.Notification.SendMulticast(ctx, &service.MulticastMessage{
-		Tokens: fcmTokens,
+		ToUserIDs: []uuid.UUID{requestedUserID},
 		Data: map[string]string{
 			"type": gqlmodel.PushNotificationTypeFriendshipRequestAccepted.String(),
 		},

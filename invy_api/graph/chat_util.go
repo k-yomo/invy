@@ -24,14 +24,6 @@ func (r *mutationResolver) sendChatMessageNotification(
 	notifyUserIDs := sliceutil.Filter(chatRoomUserIDs, func(v uuid.UUID) bool {
 		return v != sentUserID
 	})
-	targetUserPushNotificationTokens, err := r.DBQuery.Notification.GetNotifiableFriendUserPushTokens(ctx, sentUserID, notifyUserIDs)
-	if err != nil {
-		logging.Logger(ctx).Error(err.Error())
-		return
-	}
-	if len(targetUserPushNotificationTokens) == 0 {
-		return
-	}
 
 	invitation, err := r.DB.Invitation.Query().Where(invitation.ChatRoomID(chatRoomID)).Only(ctx)
 	if err != nil {
@@ -45,7 +37,8 @@ func (r *mutationResolver) sendChatMessageNotification(
 		return
 	}
 	err = r.Service.Notification.SendMulticast(ctx, &service.MulticastMessage{
-		Tokens: targetUserPushNotificationTokens,
+		FromUserID: sentUserID,
+		ToUserIDs:  notifyUserIDs,
 		Data: map[string]string{
 			"type":         gqlmodel.PushNotificationTypeChatMessageReceived.String(),
 			"invitationId": invitation.ID.String(),

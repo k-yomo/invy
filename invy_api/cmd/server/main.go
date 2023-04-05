@@ -151,11 +151,13 @@ func main() {
 		chatMessageImageUploader = storage.NewMockFileUploader()
 	}
 
+	dbQuery := query.NewQuery(bunDB)
+
 	gqlConfig := gqlgen.Config{
 		Resolvers: &graph.Resolver{
 			DB:                       entDB,
-			DBQuery:                  query.NewQuery(bunDB),
-			Service:                  service.NewService(entDB, fcmClient, firestoreClient),
+			DBQuery:                  dbQuery,
+			Service:                  service.NewService(entDB, dbQuery, fcmClient, firestoreClient),
 			FirebaseAuthClient:       firebaseAuthClient,
 			FirestoreClient:          firestoreClient,
 			AvatarUploader:           avatarUploader,
