@@ -43,8 +43,8 @@ func ConvertStructToJSONMap(v interface{}) (map[string]interface{}, error) {
 }
 
 func ConvertMapToStructViaJSON(v map[string]interface{}, st interface{}) error {
-	if reflect.ValueOf(st).Kind() != reflect.Struct {
-		return errors.New("value must be struct")
+	if stValue := reflect.ValueOf(st); !(stValue.Kind() == reflect.Ptr && reflect.ValueOf(stValue).Kind() == reflect.Struct) {
+		return errors.New("value must be pointer of struct")
 	}
 	jsonValue, err := json.Marshal(v)
 	if err != nil {

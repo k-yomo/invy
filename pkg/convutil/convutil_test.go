@@ -80,3 +80,34 @@ func TestConvertStructToJSONMap(t *testing.T) {
 		})
 	}
 }
+
+func TestConvertMapToStructViaJSON(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name    string
+		v       map[string]interface{}
+		st      interface{}
+		wantErr bool
+	}{
+		{
+			name: "covert map to struct",
+			v: map[string]interface{}{
+				"test": "abc",
+			},
+			st: func() interface{} {
+				test := struct {
+					Test string
+				}{}
+				return &test
+			}(),
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if err := ConvertMapToStructViaJSON(tt.v, tt.st); (err != nil) != tt.wantErr {
+				t.Errorf("ConvertMapToStructViaJSON() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}
