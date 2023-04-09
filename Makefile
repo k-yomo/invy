@@ -32,7 +32,7 @@ generate: ## Generate graphql code / ent code from schema
 
 .PHONY: run-dbs
 run-api: run-dbs ## Run API server
-	cd invy_api && air
+	cd invy_api && ../bin/air
 
 .PHONY: docker-push-api
 docker-push-api: ## Build and Push docker image
