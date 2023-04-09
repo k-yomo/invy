@@ -59,12 +59,6 @@ func (ic *InvitationCreate) SetStartsAt(t time.Time) *InvitationCreate {
 	return ic
 }
 
-// SetExpiresAt sets the "expires_at" field.
-func (ic *InvitationCreate) SetExpiresAt(t time.Time) *InvitationCreate {
-	ic.mutation.SetExpiresAt(t)
-	return ic
-}
-
 // SetChatRoomID sets the "chat_room_id" field.
 func (ic *InvitationCreate) SetChatRoomID(u uuid.UUID) *InvitationCreate {
 	ic.mutation.SetChatRoomID(u)
@@ -252,9 +246,6 @@ func (ic *InvitationCreate) check() error {
 	if _, ok := ic.mutation.StartsAt(); !ok {
 		return &ValidationError{Name: "starts_at", err: errors.New(`ent: missing required field "Invitation.starts_at"`)}
 	}
-	if _, ok := ic.mutation.ExpiresAt(); !ok {
-		return &ValidationError{Name: "expires_at", err: errors.New(`ent: missing required field "Invitation.expires_at"`)}
-	}
 	if _, ok := ic.mutation.Status(); !ok {
 		return &ValidationError{Name: "status", err: errors.New(`ent: missing required field "Invitation.status"`)}
 	}
@@ -329,10 +320,6 @@ func (ic *InvitationCreate) createSpec() (*Invitation, *sqlgraph.CreateSpec) {
 	if value, ok := ic.mutation.StartsAt(); ok {
 		_spec.SetField(invitation.FieldStartsAt, field.TypeTime, value)
 		_node.StartsAt = value
-	}
-	if value, ok := ic.mutation.ExpiresAt(); ok {
-		_spec.SetField(invitation.FieldExpiresAt, field.TypeTime, value)
-		_node.ExpiresAt = value
 	}
 	if value, ok := ic.mutation.ChatRoomID(); ok {
 		_spec.SetField(invitation.FieldChatRoomID, field.TypeUUID, value)
@@ -533,18 +520,6 @@ func (u *InvitationUpsert) UpdateStartsAt() *InvitationUpsert {
 	return u
 }
 
-// SetExpiresAt sets the "expires_at" field.
-func (u *InvitationUpsert) SetExpiresAt(v time.Time) *InvitationUpsert {
-	u.Set(invitation.FieldExpiresAt, v)
-	return u
-}
-
-// UpdateExpiresAt sets the "expires_at" field to the value that was provided on create.
-func (u *InvitationUpsert) UpdateExpiresAt() *InvitationUpsert {
-	u.SetExcluded(invitation.FieldExpiresAt)
-	return u
-}
-
 // SetStatus sets the "status" field.
 func (u *InvitationUpsert) SetStatus(v invitation.Status) *InvitationUpsert {
 	u.Set(invitation.FieldStatus, v)
@@ -686,20 +661,6 @@ func (u *InvitationUpsertOne) SetStartsAt(v time.Time) *InvitationUpsertOne {
 func (u *InvitationUpsertOne) UpdateStartsAt() *InvitationUpsertOne {
 	return u.Update(func(s *InvitationUpsert) {
 		s.UpdateStartsAt()
-	})
-}
-
-// SetExpiresAt sets the "expires_at" field.
-func (u *InvitationUpsertOne) SetExpiresAt(v time.Time) *InvitationUpsertOne {
-	return u.Update(func(s *InvitationUpsert) {
-		s.SetExpiresAt(v)
-	})
-}
-
-// UpdateExpiresAt sets the "expires_at" field to the value that was provided on create.
-func (u *InvitationUpsertOne) UpdateExpiresAt() *InvitationUpsertOne {
-	return u.Update(func(s *InvitationUpsert) {
-		s.UpdateExpiresAt()
 	})
 }
 
@@ -1011,20 +972,6 @@ func (u *InvitationUpsertBulk) SetStartsAt(v time.Time) *InvitationUpsertBulk {
 func (u *InvitationUpsertBulk) UpdateStartsAt() *InvitationUpsertBulk {
 	return u.Update(func(s *InvitationUpsert) {
 		s.UpdateStartsAt()
-	})
-}
-
-// SetExpiresAt sets the "expires_at" field.
-func (u *InvitationUpsertBulk) SetExpiresAt(v time.Time) *InvitationUpsertBulk {
-	return u.Update(func(s *InvitationUpsert) {
-		s.SetExpiresAt(v)
-	})
-}
-
-// UpdateExpiresAt sets the "expires_at" field to the value that was provided on create.
-func (u *InvitationUpsertBulk) UpdateExpiresAt() *InvitationUpsertBulk {
-	return u.Update(func(s *InvitationUpsert) {
-		s.UpdateExpiresAt()
 	})
 }
 

@@ -63,12 +63,6 @@ func (iu *InvitationUpdate) SetStartsAt(t time.Time) *InvitationUpdate {
 	return iu
 }
 
-// SetExpiresAt sets the "expires_at" field.
-func (iu *InvitationUpdate) SetExpiresAt(t time.Time) *InvitationUpdate {
-	iu.mutation.SetExpiresAt(t)
-	return iu
-}
-
 // SetStatus sets the "status" field.
 func (iu *InvitationUpdate) SetStatus(i invitation.Status) *InvitationUpdate {
 	iu.mutation.SetStatus(i)
@@ -286,9 +280,6 @@ func (iu *InvitationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := iu.mutation.StartsAt(); ok {
 		_spec.SetField(invitation.FieldStartsAt, field.TypeTime, value)
-	}
-	if value, ok := iu.mutation.ExpiresAt(); ok {
-		_spec.SetField(invitation.FieldExpiresAt, field.TypeTime, value)
 	}
 	if iu.mutation.ChatRoomIDCleared() {
 		_spec.ClearField(invitation.FieldChatRoomID, field.TypeUUID)
@@ -508,12 +499,6 @@ func (iuo *InvitationUpdateOne) SetComment(s string) *InvitationUpdateOne {
 // SetStartsAt sets the "starts_at" field.
 func (iuo *InvitationUpdateOne) SetStartsAt(t time.Time) *InvitationUpdateOne {
 	iuo.mutation.SetStartsAt(t)
-	return iuo
-}
-
-// SetExpiresAt sets the "expires_at" field.
-func (iuo *InvitationUpdateOne) SetExpiresAt(t time.Time) *InvitationUpdateOne {
-	iuo.mutation.SetExpiresAt(t)
 	return iuo
 }
 
@@ -758,9 +743,6 @@ func (iuo *InvitationUpdateOne) sqlSave(ctx context.Context) (_node *Invitation,
 	}
 	if value, ok := iuo.mutation.StartsAt(); ok {
 		_spec.SetField(invitation.FieldStartsAt, field.TypeTime, value)
-	}
-	if value, ok := iuo.mutation.ExpiresAt(); ok {
-		_spec.SetField(invitation.FieldExpiresAt, field.TypeTime, value)
 	}
 	if iuo.mutation.ChatRoomIDCleared() {
 		_spec.ClearField(invitation.FieldChatRoomID, field.TypeUUID)

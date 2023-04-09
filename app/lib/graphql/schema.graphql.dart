@@ -997,7 +997,7 @@ class Input$SendInvitationInput {
   factory Input$SendInvitationInput({
     required List<String> targetFriendGroupIds,
     required List<String> targetFriendUserIds,
-    required DateTime expiresAt,
+    DateTime? expiresAt,
     required DateTime startsAt,
     required String location,
     double? latitude,
@@ -1007,7 +1007,7 @@ class Input$SendInvitationInput {
       Input$SendInvitationInput._({
         r'targetFriendGroupIds': targetFriendGroupIds,
         r'targetFriendUserIds': targetFriendUserIds,
-        r'expiresAt': expiresAt,
+        if (expiresAt != null) r'expiresAt': expiresAt,
         r'startsAt': startsAt,
         r'location': location,
         if (latitude != null) r'latitude': latitude,
@@ -1029,8 +1029,11 @@ class Input$SendInvitationInput {
         (l$targetFriendUserIds as List<dynamic>)
             .map((e) => (e as String))
             .toList();
-    final l$expiresAt = data['expiresAt'];
-    result$data['expiresAt'] = DateTime.parse((l$expiresAt as String));
+    if (data.containsKey('expiresAt')) {
+      final l$expiresAt = data['expiresAt'];
+      result$data['expiresAt'] =
+          l$expiresAt == null ? null : DateTime.parse((l$expiresAt as String));
+    }
     final l$startsAt = data['startsAt'];
     result$data['startsAt'] = DateTime.parse((l$startsAt as String));
     final l$location = data['location'];
@@ -1054,7 +1057,7 @@ class Input$SendInvitationInput {
       (_$data['targetFriendGroupIds'] as List<String>);
   List<String> get targetFriendUserIds =>
       (_$data['targetFriendUserIds'] as List<String>);
-  DateTime get expiresAt => (_$data['expiresAt'] as DateTime);
+  DateTime? get expiresAt => (_$data['expiresAt'] as DateTime?);
   DateTime get startsAt => (_$data['startsAt'] as DateTime);
   String get location => (_$data['location'] as String);
   double? get latitude => (_$data['latitude'] as double?);
@@ -1068,8 +1071,10 @@ class Input$SendInvitationInput {
     final l$targetFriendUserIds = targetFriendUserIds;
     result$data['targetFriendUserIds'] =
         l$targetFriendUserIds.map((e) => e).toList();
-    final l$expiresAt = expiresAt;
-    result$data['expiresAt'] = l$expiresAt.toIso8601String();
+    if (_$data.containsKey('expiresAt')) {
+      final l$expiresAt = expiresAt;
+      result$data['expiresAt'] = l$expiresAt?.toIso8601String();
+    }
     final l$startsAt = startsAt;
     result$data['startsAt'] = l$startsAt.toIso8601String();
     final l$location = location;
@@ -1127,6 +1132,10 @@ class Input$SendInvitationInput {
     }
     final l$expiresAt = expiresAt;
     final lOther$expiresAt = other.expiresAt;
+    if (_$data.containsKey('expiresAt') !=
+        other._$data.containsKey('expiresAt')) {
+      return false;
+    }
     if (l$expiresAt != lOther$expiresAt) {
       return false;
     }
@@ -1179,7 +1188,7 @@ class Input$SendInvitationInput {
     return Object.hashAll([
       Object.hashAll(l$targetFriendGroupIds.map((v) => v)),
       Object.hashAll(l$targetFriendUserIds.map((v) => v)),
-      l$expiresAt,
+      _$data.containsKey('expiresAt') ? l$expiresAt : const {},
       l$startsAt,
       l$location,
       _$data.containsKey('latitude') ? l$latitude : const {},
@@ -1239,8 +1248,7 @@ class _CopyWithImpl$Input$SendInvitationInput<TRes>
           'targetFriendGroupIds': (targetFriendGroupIds as List<String>),
         if (targetFriendUserIds != _undefined && targetFriendUserIds != null)
           'targetFriendUserIds': (targetFriendUserIds as List<String>),
-        if (expiresAt != _undefined && expiresAt != null)
-          'expiresAt': (expiresAt as DateTime),
+        if (expiresAt != _undefined) 'expiresAt': (expiresAt as DateTime?),
         if (startsAt != _undefined && startsAt != null)
           'startsAt': (startsAt as DateTime),
         if (location != _undefined && location != null)

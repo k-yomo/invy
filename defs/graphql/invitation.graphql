@@ -34,6 +34,7 @@ type Invitation implements Node {
     coordinate: Coordinate
     comment: String!
     startsAt: Time!
+    # Deprecated
     expiresAt: Time!
 
     chatRoomId: UUID
@@ -46,7 +47,8 @@ type Invitation implements Node {
 input SendInvitationInput {
     targetFriendGroupIds: [UUID!]!
     targetFriendUserIds: [UUID!]!
-    expiresAt: Time!
+    # Deprecated
+    expiresAt: Time
     startsAt: Time!
     location: String!
     latitude: Float

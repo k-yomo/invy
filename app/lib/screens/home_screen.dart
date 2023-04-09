@@ -5,7 +5,6 @@ import 'package:graphql/client.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:invy/router.dart';
 import 'package:invy/screens/home_screen.graphql.dart';
-import 'package:invy/screens/invitation/invitation_awaiting_form_screen.dart';
 import 'package:invy/services/graphql_client.dart';
 import 'package:invy/state/badge_count.dart';
 import 'package:invy/state/location.dart';
@@ -209,8 +208,6 @@ class HomeScreen extends HookConsumerWidget {
                           ),
                         ),
                         Container(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 15, horizontal: 15),
                           decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: const BorderRadius.only(
@@ -242,27 +239,8 @@ class HomeScreen extends HookConsumerWidget {
                                   foregroundColor: Colors.white,
                                 ),
                                 child: const Text(
-                                  'さそう',
-                                  style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                              ),
-                              const Gap(10),
-                              OutlinedButton(
-                                onPressed: () {
-                                  const InvitationAwaitingFormRoute()
-                                      .go(context);
-                                },
-                                style: TextButton.styleFrom(
-                                  minimumSize: const Size.fromHeight(0),
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 12),
-                                ),
-                                child: const Text(
                                   'おさそいを待つ',
                                   style: TextStyle(
-                                      color: Colors.black,
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold),
                                 ),

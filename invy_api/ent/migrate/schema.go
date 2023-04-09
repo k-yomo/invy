@@ -128,7 +128,6 @@ var (
 		{Name: "coordinate", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"postgres": "geometry(Point,4326)"}},
 		{Name: "comment", Type: field.TypeString},
 		{Name: "starts_at", Type: field.TypeTime},
-		{Name: "expires_at", Type: field.TypeTime},
 		{Name: "chat_room_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "status", Type: field.TypeEnum, Enums: []string{"active", "closed", "deleted"}, Default: "active"},
 		{Name: "created_at", Type: field.TypeTime},
@@ -143,7 +142,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "invitations_users_user",
-				Columns:    []*schema.Column{InvitationsColumns[10]},
+				Columns:    []*schema.Column{InvitationsColumns[9]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},

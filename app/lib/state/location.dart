@@ -11,10 +11,6 @@ final currentPinLocationProvider = StateProvider<LatLng?>((ref) {
   return null;
 });
 
-final invitationLocationProvider = StateProvider<LatLng?>((ref) {
-  return null;
-});
-
 Future<LatLng?> getCurrentLocation() async {
   if (!await Geolocator.isLocationServiceEnabled()) {
     return null;

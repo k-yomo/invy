@@ -428,7 +428,8 @@ func (r *viewerResolver) PendingInvitations(ctx context.Context, obj *gqlmodel.V
 		QueryInvitation().
 		Where(
 			invitation.StatusEQ(invitation.StatusActive),
-			invitation.ExpiresAtGTE(now),
+			// invitation wil lbe expired after 2 hours from `startsAt`
+			invitation.StartsAtGTE(now.Add(-2*time.Hour)),
 			func(s *sql.Selector) {
 				invitationAcceptanceTable := sql.Table(invitationacceptance.Table)
 				s.Where(
@@ -459,7 +460,7 @@ func (r *viewerResolver) PendingInvitations(ctx context.Context, obj *gqlmodel.V
 					),
 				)
 			}).
-		Order(ent.Asc(invitation.FieldExpiresAt)).
+		Order(ent.Asc(invitation.FieldStartsAt)).
 		All(ctx)
 	if err != nil {
 		return nil, cerrors.Wrap(err, "query pending invitations")

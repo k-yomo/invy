@@ -9,6 +9,7 @@ import 'package:google_place/google_place.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:invy/router.dart';
 import 'package:invy/screens/invitation/invitation_friend_select_screen.dart';
+import 'package:invy/state/invitation.dart';
 import 'package:invy/state/location.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 

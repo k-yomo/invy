@@ -82,11 +82,6 @@ func StartsAt(v time.Time) predicate.Invitation {
 	return predicate.Invitation(sql.FieldEQ(FieldStartsAt, v))
 }
 
-// ExpiresAt applies equality check predicate on the "expires_at" field. It's identical to ExpiresAtEQ.
-func ExpiresAt(v time.Time) predicate.Invitation {
-	return predicate.Invitation(sql.FieldEQ(FieldExpiresAt, v))
-}
-
 // ChatRoomID applies equality check predicate on the "chat_room_id" field. It's identical to ChatRoomIDEQ.
 func ChatRoomID(v uuid.UUID) predicate.Invitation {
 	return predicate.Invitation(sql.FieldEQ(FieldChatRoomID, v))
@@ -340,46 +335,6 @@ func StartsAtLT(v time.Time) predicate.Invitation {
 // StartsAtLTE applies the LTE predicate on the "starts_at" field.
 func StartsAtLTE(v time.Time) predicate.Invitation {
 	return predicate.Invitation(sql.FieldLTE(FieldStartsAt, v))
-}
-
-// ExpiresAtEQ applies the EQ predicate on the "expires_at" field.
-func ExpiresAtEQ(v time.Time) predicate.Invitation {
-	return predicate.Invitation(sql.FieldEQ(FieldExpiresAt, v))
-}
-
-// ExpiresAtNEQ applies the NEQ predicate on the "expires_at" field.
-func ExpiresAtNEQ(v time.Time) predicate.Invitation {
-	return predicate.Invitation(sql.FieldNEQ(FieldExpiresAt, v))
-}
-
-// ExpiresAtIn applies the In predicate on the "expires_at" field.
-func ExpiresAtIn(vs ...time.Time) predicate.Invitation {
-	return predicate.Invitation(sql.FieldIn(FieldExpiresAt, vs...))
-}
-
-// ExpiresAtNotIn applies the NotIn predicate on the "expires_at" field.
-func ExpiresAtNotIn(vs ...time.Time) predicate.Invitation {
-	return predicate.Invitation(sql.FieldNotIn(FieldExpiresAt, vs...))
-}
-
-// ExpiresAtGT applies the GT predicate on the "expires_at" field.
-func ExpiresAtGT(v time.Time) predicate.Invitation {
-	return predicate.Invitation(sql.FieldGT(FieldExpiresAt, v))
-}
-
-// ExpiresAtGTE applies the GTE predicate on the "expires_at" field.
-func ExpiresAtGTE(v time.Time) predicate.Invitation {
-	return predicate.Invitation(sql.FieldGTE(FieldExpiresAt, v))
-}
-
-// ExpiresAtLT applies the LT predicate on the "expires_at" field.
-func ExpiresAtLT(v time.Time) predicate.Invitation {
-	return predicate.Invitation(sql.FieldLT(FieldExpiresAt, v))
-}
-
-// ExpiresAtLTE applies the LTE predicate on the "expires_at" field.
-func ExpiresAtLTE(v time.Time) predicate.Invitation {
-	return predicate.Invitation(sql.FieldLTE(FieldExpiresAt, v))
 }
 
 // ChatRoomIDEQ applies the EQ predicate on the "chat_room_id" field.

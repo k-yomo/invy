@@ -3,6 +3,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:graphql/client.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:invy/state/invitation.dart';
 import 'package:invy/widgets/app_bar_leading.dart';
 import 'package:invy/widgets/dynamic_links_manager.dart';
 import 'package:invy/widgets/friend_list_item_fragment.graphql.dart';
@@ -74,13 +75,15 @@ class InvitationFriendSelectScreen extends HookConsumerWidget {
                     if (selectedCount == 0) {
                       return;
                     }
+                    ref
+                        .read(invitationSelectedFriendGroupsProvider.notifier)
+                        .state = selectedFriendGroups.value;
+                    ref.read(invitationSelectedFriendsProvider.notifier).state =
+                        selectedFriends.value;
                     Navigator.of(context).push(
                       MaterialPageRoute(
                         fullscreenDialog: true,
-                        builder: (context) => InvitationDetailFormScreen(
-                          selectedFriendGroups: selectedFriendGroups.value,
-                          selectedFriends: selectedFriends.value,
-                        ),
+                        builder: (context) => InvitationDetailFormScreen(),
                       ),
                     );
                   },

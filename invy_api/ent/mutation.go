@@ -2661,7 +2661,6 @@ type InvitationMutation struct {
 	coordinate                    **pgutil.GeoPoint
 	comment                       *string
 	starts_at                     *time.Time
-	expires_at                    *time.Time
 	chat_room_id                  *uuid.UUID
 	status                        *invitation.Status
 	created_at                    *time.Time
@@ -2978,42 +2977,6 @@ func (m *InvitationMutation) OldStartsAt(ctx context.Context) (v time.Time, err 
 // ResetStartsAt resets all changes to the "starts_at" field.
 func (m *InvitationMutation) ResetStartsAt() {
 	m.starts_at = nil
-}
-
-// SetExpiresAt sets the "expires_at" field.
-func (m *InvitationMutation) SetExpiresAt(t time.Time) {
-	m.expires_at = &t
-}
-
-// ExpiresAt returns the value of the "expires_at" field in the mutation.
-func (m *InvitationMutation) ExpiresAt() (r time.Time, exists bool) {
-	v := m.expires_at
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldExpiresAt returns the old "expires_at" field's value of the Invitation entity.
-// If the Invitation object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *InvitationMutation) OldExpiresAt(ctx context.Context) (v time.Time, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldExpiresAt is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldExpiresAt requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldExpiresAt: %w", err)
-	}
-	return oldValue.ExpiresAt, nil
-}
-
-// ResetExpiresAt resets all changes to the "expires_at" field.
-func (m *InvitationMutation) ResetExpiresAt() {
-	m.expires_at = nil
 }
 
 // SetChatRoomID sets the "chat_room_id" field.
@@ -3395,7 +3358,7 @@ func (m *InvitationMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *InvitationMutation) Fields() []string {
-	fields := make([]string, 0, 10)
+	fields := make([]string, 0, 9)
 	if m.user != nil {
 		fields = append(fields, invitation.FieldUserID)
 	}
@@ -3410,9 +3373,6 @@ func (m *InvitationMutation) Fields() []string {
 	}
 	if m.starts_at != nil {
 		fields = append(fields, invitation.FieldStartsAt)
-	}
-	if m.expires_at != nil {
-		fields = append(fields, invitation.FieldExpiresAt)
 	}
 	if m.chat_room_id != nil {
 		fields = append(fields, invitation.FieldChatRoomID)
@@ -3444,8 +3404,6 @@ func (m *InvitationMutation) Field(name string) (ent.Value, bool) {
 		return m.Comment()
 	case invitation.FieldStartsAt:
 		return m.StartsAt()
-	case invitation.FieldExpiresAt:
-		return m.ExpiresAt()
 	case invitation.FieldChatRoomID:
 		return m.ChatRoomID()
 	case invitation.FieldStatus:
@@ -3473,8 +3431,6 @@ func (m *InvitationMutation) OldField(ctx context.Context, name string) (ent.Val
 		return m.OldComment(ctx)
 	case invitation.FieldStartsAt:
 		return m.OldStartsAt(ctx)
-	case invitation.FieldExpiresAt:
-		return m.OldExpiresAt(ctx)
 	case invitation.FieldChatRoomID:
 		return m.OldChatRoomID(ctx)
 	case invitation.FieldStatus:
@@ -3526,13 +3482,6 @@ func (m *InvitationMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetStartsAt(v)
-		return nil
-	case invitation.FieldExpiresAt:
-		v, ok := value.(time.Time)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetExpiresAt(v)
 		return nil
 	case invitation.FieldChatRoomID:
 		v, ok := value.(uuid.UUID)
@@ -3640,9 +3589,6 @@ func (m *InvitationMutation) ResetField(name string) error {
 		return nil
 	case invitation.FieldStartsAt:
 		m.ResetStartsAt()
-		return nil
-	case invitation.FieldExpiresAt:
-		m.ResetExpiresAt()
 		return nil
 	case invitation.FieldChatRoomID:
 		m.ResetChatRoomID()

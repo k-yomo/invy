@@ -243,7 +243,7 @@ type SendChatMessageTextPayload struct {
 type SendInvitationInput struct {
 	TargetFriendGroupIds []uuid.UUID `json:"targetFriendGroupIds"`
 	TargetFriendUserIds  []uuid.UUID `json:"targetFriendUserIds"`
-	ExpiresAt            time.Time   `json:"expiresAt"`
+	ExpiresAt            *time.Time  `json:"expiresAt,omitempty"`
 	StartsAt             time.Time   `json:"startsAt"`
 	Location             string      `json:"location"`
 	Latitude             *float64    `json:"latitude,omitempty"`
