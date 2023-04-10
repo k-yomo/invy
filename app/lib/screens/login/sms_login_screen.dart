@@ -61,7 +61,7 @@ class SMSLoginScreen extends HookConsumerWidget {
                           // inputFormatters: [],
                           style: const TextStyle(fontSize: 18),
                           decoration: InputDecoration(
-                            hintText: "080-1234-5678",
+                            hintText: "08012345678",
                             hintStyle: TextStyle(
                               fontSize: 18,
                               color: Colors.grey.shade400,

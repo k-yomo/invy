@@ -27,8 +27,10 @@ class LoginLandingScreen extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final onboarding = ref.read(onboardingProvider);
+    final isPostFrameCallbackCalled = useState(false);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!onboarding.isFinished) {
+      if (!isPostFrameCallbackCalled.value && !onboarding.isFinished) {
+        isPostFrameCallbackCalled.value = true;
         Navigator.of(context).push(MaterialPageRoute(
           builder: (context) => const OnboardingScreen(),
         ));
