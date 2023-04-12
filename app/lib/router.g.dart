@@ -81,9 +81,13 @@ extension $InvitationAwaitingFormRouteExtension on InvitationAwaitingFormRoute {
 }
 
 GoRoute get $invitationRoute => GoRouteData.$route(
-      path: '/invitation/new',
+      path: '/invitation',
       factory: $InvitationRouteExtension._fromState,
       routes: [
+        GoRouteData.$route(
+          path: 'new',
+          factory: $InvitationFormRouteExtension._fromState,
+        ),
         GoRouteData.$route(
           path: 'location_select',
           factory: $InvitationLocationSelectRouteExtension._fromState,
@@ -98,6 +102,22 @@ GoRoute get $invitationRoute => GoRouteData.$route(
 extension $InvitationRouteExtension on InvitationRoute {
   static InvitationRoute _fromState(GoRouterState state) =>
       const InvitationRoute();
+
+  String get location => GoRouteData.$location(
+        '/invitation',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  void push(BuildContext context) => context.push(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+}
+
+extension $InvitationFormRouteExtension on InvitationFormRoute {
+  static InvitationFormRoute _fromState(GoRouterState state) =>
+      const InvitationFormRoute();
 
   String get location => GoRouteData.$location(
         '/invitation/new',
@@ -117,7 +137,7 @@ extension $InvitationLocationSelectRouteExtension
       const InvitationLocationSelectRoute();
 
   String get location => GoRouteData.$location(
-        '/invitation/new/location_select',
+        '/invitation/location_select',
       );
 
   void go(BuildContext context) => context.go(location);
@@ -133,7 +153,7 @@ extension $InvitationFriendSelectRouteExtension on InvitationFriendSelectRoute {
       const InvitationFriendSelectRoute();
 
   String get location => GoRouteData.$location(
-        '/invitation/new/friend_select',
+        '/invitation/friend_select',
       );
 
   void go(BuildContext context) => context.go(location);
@@ -410,7 +430,7 @@ extension $LoginRouteExtension on LoginRoute {
 // RiverpodGenerator
 // **************************************************************************
 
-String _$routerHash() => r'7ce6adbc1b29f472302789bd2ef1b7c47fd5e2bb';
+String _$routerHash() => r'a74cd682fe47f12e3795b7b6f9041a2d407d195c';
 
 /// Copied from Dart SDK
 class _SystemHash {

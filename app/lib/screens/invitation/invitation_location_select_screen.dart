@@ -37,7 +37,7 @@ class InvitationLocationSelectScreen extends HookConsumerWidget {
     final lastUpdatedLocation = useState<LatLng?>(null);
     final currentPinLocationNotifier =
         ref.read(currentPinLocationProvider.notifier);
-    final invitationLocation = ref.watch(invitationLocationProvider);
+    final invitationLocation = ref.watch(invitationFormProvider).location;
     final locationNameNotifier =
         ref.read(invitationLocationNameProvider.notifier);
 

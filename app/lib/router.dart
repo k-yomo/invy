@@ -9,13 +9,14 @@ import 'package:invy/screens/friend/freind_group_detail_screen.dart';
 import 'package:invy/screens/friend/friends_screen.dart';
 import 'package:invy/screens/friend/friendship_request_screen.dart';
 import 'package:invy/screens/friend/friend_qr_code_reader_screen.dart';
-import 'package:invy/screens/home_screen.dart';
 import 'package:invy/screens/invitation/invitation_screen.dart';
+import 'package:invy/screens/invitation/invitation_form_screen.dart';
 import 'package:invy/screens/invitation/invitation_awaiting_form_screen.dart';
 import 'package:invy/screens/invitation/invitation_detail_screen.dart';
 import 'package:invy/screens/invitation/invitation_friend_select_screen.dart';
 import 'package:invy/screens/invitation/invitation_location_select_screen.dart';
 import 'package:invy/screens/login/login_landing_screen.dart';
+import 'package:invy/screens/home_screen.dart';
 import 'package:invy/screens/profile/my_profile_screen.dart';
 import 'package:invy/screens/profile/profile_edit_screen.dart';
 import 'package:invy/screens/settings_screen.dart';
@@ -41,13 +42,13 @@ final _shellNavigatorKey = GlobalKey<NavigatorState>();
 
 final tabs = [
   ScaffoldWithNavBarTabItem(
-    icon: const Icon(Icons.home_outlined),
-    label: 'ホーム',
+    icon: const Icon(Icons.location_pin),
+    label: 'マップ',
     location: const HomeRoute().location,
   ),
   ScaffoldWithNavBarTabItem(
     icon: const Icon(Icons.insert_invitation),
-    label: 'さそう',
+    label: 'おさそい',
     location: const InvitationRoute().location,
   ),
   ScaffoldWithNavBarTabItem(
@@ -87,7 +88,7 @@ GoRouter router(RouterRef ref, {Uri? initialRoute}) => GoRouter(
           builder: (context, state, child) {
             final String location = GoRouterState.of(context).location;
             calcIndex() {
-              if (location.startsWith('/invitation/new')) {
+              if (location.startsWith('/invitation')) {
                 return 1;
               } else if (location.startsWith('/friends')) {
                 return 2;
@@ -99,7 +100,7 @@ GoRouter router(RouterRef ref, {Uri? initialRoute}) => GoRouter(
 
             final screensWithBottomNavigation = [
               "/",
-              "/invitation/new",
+              "/invitation",
               "/friends",
               "/me",
             ];
@@ -154,10 +155,14 @@ class HomeRoute extends GoRouteData {
   @override
   CustomTransitionPage<void> buildPage(
           BuildContext context, GoRouterState state) =>
-      NoTransitionPage(child: DynamicLinksManager(child: HomeScreen()));
+      const NoTransitionPage(
+          child: DynamicLinksManager(child: HomeScreenScreen()));
 }
 
-@TypedGoRoute<InvitationRoute>(path: '/invitation/new', routes: [
+@TypedGoRoute<InvitationRoute>(path: '/invitation', routes: [
+  TypedGoRoute<InvitationFormRoute>(
+    path: 'new',
+  ),
   TypedGoRoute<InvitationLocationSelectRoute>(
     path: 'location_select',
   ),
@@ -171,7 +176,7 @@ class InvitationRoute extends GoRouteData {
   @override
   CustomTransitionPage<void> buildPage(
           BuildContext context, GoRouterState state) =>
-      const NoTransitionPage(
+      NoTransitionPage(
           child: DynamicLinksManager(child: InvitationScreen()));
 }
 

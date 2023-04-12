@@ -3,14 +3,12 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:graphql/client.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:invy/screens/invitation/invitation_form_screen.graphql.dart';
 import 'package:invy/state/invitation.dart';
 import 'package:invy/widgets/app_bar_leading.dart';
 import 'package:invy/widgets/dynamic_links_manager.dart';
-import 'package:invy/widgets/friend_list_item_fragment.graphql.dart';
 import 'package:invy/widgets/friend_selection_list.dart';
-import 'package:invy/screens/invitation/invitation_screen.graphql.dart';
 
-import '../../widgets/friend_group_fragment.graphql.dart';
 import '../../widgets/friend_group_selection_list.dart';
 import '../../services/graphql_client.dart';
 
@@ -28,17 +26,17 @@ class InvitationFriendSelectScreen extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final graphqlClient = ref.read(graphqlClientProvider);
-    final viewerQuery = graphqlClient.watchQuery$invitationScreenViewer();
+    final viewerQuery = graphqlClient.watchQuery$invitationFormScreenViewer();
     viewerQuery.fetchResults();
 
     final selectedFriendGroups =
-        useState(ref.read(invitationSelectedFriendGroupsProvider));
+        useState(ref.read(invitationFormProvider).selectedFriendGroups);
     final selectedFriends =
-        useState(ref.read(invitationSelectedFriendsProvider));
+        useState(ref.read(invitationFormProvider).selectedFriends);
     final selectedCount =
         selectedFriendGroups.value.length + selectedFriends.value.length;
 
-    return StreamBuilder<QueryResult<Query$invitationScreenViewer>>(
+    return StreamBuilder<QueryResult<Query$invitationFormScreenViewer>>(
         stream: viewerQuery.stream,
         builder: (context, snapshot) {
           final viewer = snapshot.data?.parsedData?.viewer;
@@ -62,10 +60,12 @@ class InvitationFriendSelectScreen extends HookConsumerWidget {
                 TextButton(
                   onPressed: () {
                     ref
-                        .read(invitationSelectedFriendGroupsProvider.notifier)
-                        .state = selectedFriendGroups.value;
-                    ref.read(invitationSelectedFriendsProvider.notifier).state =
-                        selectedFriends.value;
+                        .read(invitationFormProvider.notifier).set(
+                      defaultInvitationFormState.copyWith(
+                        selectedFriendGroups: selectedFriendGroups.value,
+                        selectedFriends: selectedFriends.value,
+                      ),
+                    );
                     GoRouter.of(context).pop();
                   },
                   child: Text(

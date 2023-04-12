@@ -11,6 +11,7 @@ import 'package:invy/constants/urls.dart';
 import 'package:invy/router.dart';
 import 'package:invy/screens/friend/blocked_friends_screen.graphql.dart';
 import 'package:invy/screens/friend/friendship_request_screen.graphql.dart';
+import 'package:invy/screens/invitation/invitation_form_screen.dart';
 import 'package:invy/screens/user/user_profile_screen.graphql.dart';
 import 'package:invy/state/auth.dart';
 import 'package:invy/state/invitation.dart';
@@ -110,15 +111,20 @@ class UserProfileScreen extends HookConsumerWidget {
     }
 
     onPressedInvitation() async {
-      ref.read(invitationSelectedFriendsProvider.notifier).state = [
-        Fragment$friendListItemFragment(
-          id: user.id,
-          nickname: user.nickname,
-          avatarUrl: user.avatarUrl,
-          isMuted: user.isMuted,
+      ref.read(invitationFormProvider.notifier).reset();
+      ref.read(invitationFormProvider.notifier).set(
+        ref.read(invitationFormProvider).copyWith(
+          selectedFriends: [
+            Fragment$friendListItemFragment(
+              id: user.id,
+              nickname: user.nickname,
+              avatarUrl: user.avatarUrl,
+              isMuted: user.isMuted,
+            )
+          ]
         )
-      ];
-      const InvitationRoute().go(context);
+      );
+      const InvitationFormRoute().push(context);
     }
 
     return Scaffold(

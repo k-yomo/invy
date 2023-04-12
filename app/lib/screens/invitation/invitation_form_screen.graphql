@@ -1,0 +1,36 @@
+
+query invitationFormScreenViewer {
+    viewer {
+        friendGroups {
+            ...friendGroupListItemFragment
+        }
+        friends(first: 100) {
+            edges {
+                node {
+                    ...friendListItemFragment
+                }
+            }
+            pageInfo {
+                startCursor
+                endCursor
+                hasNextPage
+                hasPreviousPage
+            }
+        }
+    }
+}
+
+mutation sendInvitation($input: SendInvitationInput!) {
+    sendInvitation(input: $input) {
+        invitation {
+            id
+            location
+            coordinate {
+                latitude
+                longitude
+            }
+            startsAt
+            expiresAt
+        }
+    }
+}

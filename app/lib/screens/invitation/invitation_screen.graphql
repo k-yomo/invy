@@ -1,36 +1,33 @@
 
 query invitationScreenViewer {
     viewer {
-        friendGroups {
-            ...friendGroupListItemFragment
+        sentInvitations {
+            ...invitationDetailFragment
         }
-        friends(first: 100) {
-            edges {
-                node {
-                    ...friendListItemFragment
-                }
-            }
-            pageInfo {
-                startCursor
-                endCursor
-                hasNextPage
-                hasPreviousPage
-            }
+
+        pendingInvitations {
+            ...invitationDetailFragment
+        }
+
+        acceptedInvitations {
+            ...invitationDetailFragment
         }
     }
 }
 
-mutation sendInvitation($input: SendInvitationInput!) {
-    sendInvitation(input: $input) {
+mutation acceptInvitation($invitationId: UUID!) {
+    acceptInvitation(invitationId: $invitationId) {
         invitation {
-            id
-            location
-            coordinate {
-                latitude
-                longitude
-            }
-            startsAt
-            expiresAt
+            ...invitationDetailFragment
         }
     }
 }
+
+mutation denyInvitation($invitationId: UUID!) {
+    denyInvitation(invitationId: $invitationId) {
+        invitation {
+            id
+        }
+    }
+}
+
