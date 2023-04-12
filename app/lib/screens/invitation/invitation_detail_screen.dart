@@ -110,28 +110,33 @@ class InvitationDetailScreen extends HookConsumerWidget {
                                       invitation.user,
                                       ...invitation.acceptedUsers
                                     ]
-                                        .map((acceptedUser) => SizedBox(
-                                              width: 50,
-                                              child: Column(
-                                                children: [
-                                                  CircleAvatar(
-                                                    backgroundColor:
-                                                        Colors.transparent,
-                                                    backgroundImage:
-                                                        CachedNetworkImageProvider(
-                                                            acceptedUser
-                                                                .avatarUrl),
-                                                  ),
-                                                  Text(
-                                                    acceptedUser.nickname,
-                                                    style: const TextStyle(
-                                                        fontSize: 10),
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                  ),
-                                                ],
+                                        .map((acceptedUser) => InkWell(
+                                      onTap: () {
+                                        UserProfileRoute(acceptedUser.id).push(context);
+                                      },
+                                          child: SizedBox(
+                                                width: 50,
+                                                child: Column(
+                                                  children: [
+                                                    CircleAvatar(
+                                                      backgroundColor:
+                                                          Colors.transparent,
+                                                      backgroundImage:
+                                                          CachedNetworkImageProvider(
+                                                              acceptedUser
+                                                                  .avatarUrl),
+                                                    ),
+                                                    Text(
+                                                      acceptedUser.nickname,
+                                                      style: const TextStyle(
+                                                          fontSize: 10),
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                    ),
+                                                  ],
+                                                ),
                                               ),
-                                            ))
+                                        ))
                                         .toList(),
                                   ),
                                 ],
