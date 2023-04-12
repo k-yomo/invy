@@ -11,7 +11,6 @@ List<GoRoute> get $appRoutes => [
       $invitationRoute,
       $friendsRoute,
       $userProfileRoute,
-      $userFriendsRoute,
       $myProfileRoute,
       $loginRoute,
     ];
@@ -19,16 +18,6 @@ List<GoRoute> get $appRoutes => [
 GoRoute get $homeRoute => GoRouteData.$route(
       path: '/',
       factory: $HomeRouteExtension._fromState,
-      routes: [
-        GoRouteData.$route(
-          path: 'invitations/:invitationId',
-          factory: $InvitationDetailRouteExtension._fromState,
-        ),
-        GoRouteData.$route(
-          path: 'invitation_awaiting/new',
-          factory: $InvitationAwaitingFormRouteExtension._fromState,
-        ),
-      ],
     );
 
 extension $HomeRouteExtension on HomeRoute {
@@ -46,42 +35,8 @@ extension $HomeRouteExtension on HomeRoute {
       context.pushReplacement(location);
 }
 
-extension $InvitationDetailRouteExtension on InvitationDetailRoute {
-  static InvitationDetailRoute _fromState(GoRouterState state) =>
-      InvitationDetailRoute(
-        state.params['invitationId']!,
-      );
-
-  String get location => GoRouteData.$location(
-        '/invitations/${Uri.encodeComponent(invitationId)}',
-      );
-
-  void go(BuildContext context) => context.go(location);
-
-  void push(BuildContext context) => context.push(location);
-
-  void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location);
-}
-
-extension $InvitationAwaitingFormRouteExtension on InvitationAwaitingFormRoute {
-  static InvitationAwaitingFormRoute _fromState(GoRouterState state) =>
-      const InvitationAwaitingFormRoute();
-
-  String get location => GoRouteData.$location(
-        '/invitation_awaiting/new',
-      );
-
-  void go(BuildContext context) => context.go(location);
-
-  void push(BuildContext context) => context.push(location);
-
-  void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location);
-}
-
 GoRoute get $invitationRoute => GoRouteData.$route(
-      path: '/invitation',
+      path: '/invitations',
       factory: $InvitationRouteExtension._fromState,
       routes: [
         GoRouteData.$route(
@@ -96,6 +51,10 @@ GoRoute get $invitationRoute => GoRouteData.$route(
           path: 'friend_select',
           factory: $InvitationFriendSelectRouteExtension._fromState,
         ),
+        GoRouteData.$route(
+          path: 'details/:invitationId',
+          factory: $InvitationDetailRouteExtension._fromState,
+        ),
       ],
     );
 
@@ -104,7 +63,7 @@ extension $InvitationRouteExtension on InvitationRoute {
       const InvitationRoute();
 
   String get location => GoRouteData.$location(
-        '/invitation',
+        '/invitations',
       );
 
   void go(BuildContext context) => context.go(location);
@@ -120,7 +79,7 @@ extension $InvitationFormRouteExtension on InvitationFormRoute {
       const InvitationFormRoute();
 
   String get location => GoRouteData.$location(
-        '/invitation/new',
+        '/invitations/new',
       );
 
   void go(BuildContext context) => context.go(location);
@@ -137,7 +96,7 @@ extension $InvitationLocationSelectRouteExtension
       const InvitationLocationSelectRoute();
 
   String get location => GoRouteData.$location(
-        '/invitation/location_select',
+        '/invitations/location_select',
       );
 
   void go(BuildContext context) => context.go(location);
@@ -153,7 +112,25 @@ extension $InvitationFriendSelectRouteExtension on InvitationFriendSelectRoute {
       const InvitationFriendSelectRoute();
 
   String get location => GoRouteData.$location(
-        '/invitation/friend_select',
+        '/invitations/friend_select',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  void push(BuildContext context) => context.push(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+}
+
+extension $InvitationDetailRouteExtension on InvitationDetailRoute {
+  static InvitationDetailRoute _fromState(GoRouterState state) =>
+      InvitationDetailRoute(
+        state.params['invitationId']!,
+      );
+
+  String get location => GoRouteData.$location(
+        '/invitations/details/${Uri.encodeComponent(invitationId)}',
       );
 
   void go(BuildContext context) => context.go(location);
@@ -169,11 +146,11 @@ GoRoute get $friendsRoute => GoRouteData.$route(
       factory: $FriendsRouteExtension._fromState,
       routes: [
         GoRouteData.$route(
-          path: 'group/new',
+          path: 'groups/new',
           factory: $FriendGroupCreateRouteExtension._fromState,
         ),
         GoRouteData.$route(
-          path: 'groups/:friendGroupId',
+          path: 'groups/details/:friendGroupId',
           factory: $FriendGroupDetailRouteExtension._fromState,
         ),
         GoRouteData.$route(
@@ -209,7 +186,7 @@ extension $FriendGroupCreateRouteExtension on FriendGroupCreateRoute {
       const FriendGroupCreateRoute();
 
   String get location => GoRouteData.$location(
-        '/friends/group/new',
+        '/friends/groups/new',
       );
 
   void go(BuildContext context) => context.go(location);
@@ -227,7 +204,7 @@ extension $FriendGroupDetailRouteExtension on FriendGroupDetailRoute {
       );
 
   String get location => GoRouteData.$location(
-        '/friends/groups/${Uri.encodeComponent(friendGroupId)}',
+        '/friends/groups/details/${Uri.encodeComponent(friendGroupId)}',
       );
 
   void go(BuildContext context) => context.go(location);
@@ -273,6 +250,12 @@ extension $FriendQRCodeReaderRouteExtension on FriendQRCodeReaderRoute {
 GoRoute get $userProfileRoute => GoRouteData.$route(
       path: '/users/:userId',
       factory: $UserProfileRouteExtension._fromState,
+      routes: [
+        GoRouteData.$route(
+          path: 'friends',
+          factory: $UserFriendsRouteExtension._fromState,
+        ),
+      ],
     );
 
 extension $UserProfileRouteExtension on UserProfileRoute {
@@ -292,11 +275,6 @@ extension $UserProfileRouteExtension on UserProfileRoute {
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location, extra: $extra);
 }
-
-GoRoute get $userFriendsRoute => GoRouteData.$route(
-      path: '/users/:userId/friends',
-      factory: $UserFriendsRouteExtension._fromState,
-    );
 
 extension $UserFriendsRouteExtension on UserFriendsRoute {
   static UserFriendsRoute _fromState(GoRouterState state) => UserFriendsRoute(
@@ -430,7 +408,7 @@ extension $LoginRouteExtension on LoginRoute {
 // RiverpodGenerator
 // **************************************************************************
 
-String _$routerHash() => r'a74cd682fe47f12e3795b7b6f9041a2d407d195c';
+String _$routerHash() => r'86445d0b04defa4c378c113a2b02df53b80aca94';
 
 /// Copied from Dart SDK
 class _SystemHash {

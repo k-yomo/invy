@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:invy/router.dart';
 import 'package:invy/screens/friend/friendship_request_screen.graphql.dart';
@@ -7,7 +8,20 @@ import 'package:invy/screens/user/user_friends_screen.graphql.dart';
 import 'package:invy/services/graphql_client.dart';
 import 'package:invy/state/auth.dart';
 import 'package:invy/widgets/app_bar_leading.dart';
+import 'package:invy/widgets/dynamic_links_manager.dart';
 import 'package:invy/widgets/friend_list_item.dart';
+
+class UserFriendsRoute extends GoRouteData {
+  const UserFriendsRoute(this.userId, {this.userNickname});
+
+  final String userId;
+  final String? userNickname;
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      DynamicLinksManager(
+          child: UserFriendsScreen(userId: userId, userNickname: userNickname));
+}
 
 class UserFriendsScreen extends HookConsumerWidget {
   const UserFriendsScreen({super.key, required this.userId, this.userNickname});

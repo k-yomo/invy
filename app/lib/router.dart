@@ -11,7 +11,6 @@ import 'package:invy/screens/friend/friendship_request_screen.dart';
 import 'package:invy/screens/friend/friend_qr_code_reader_screen.dart';
 import 'package:invy/screens/invitation/invitation_screen.dart';
 import 'package:invy/screens/invitation/invitation_form_screen.dart';
-import 'package:invy/screens/invitation/invitation_awaiting_form_screen.dart';
 import 'package:invy/screens/invitation/invitation_detail_screen.dart';
 import 'package:invy/screens/invitation/invitation_friend_select_screen.dart';
 import 'package:invy/screens/invitation/invitation_location_select_screen.dart';
@@ -88,7 +87,7 @@ GoRouter router(RouterRef ref, {Uri? initialRoute}) => GoRouter(
           builder: (context, state, child) {
             final String location = GoRouterState.of(context).location;
             calcIndex() {
-              if (location.startsWith('/invitation')) {
+              if (location.startsWith('/invitations')) {
                 return 1;
               } else if (location.startsWith('/friends')) {
                 return 2;
@@ -100,7 +99,7 @@ GoRouter router(RouterRef ref, {Uri? initialRoute}) => GoRouter(
 
             final screensWithBottomNavigation = [
               "/",
-              "/invitation",
+              "/invitations",
               "/friends",
               "/me",
             ];
@@ -141,12 +140,6 @@ GoRouter router(RouterRef ref, {Uri? initialRoute}) => GoRouter(
 @TypedGoRoute<HomeRoute>(
   path: '/',
   routes: [
-    TypedGoRoute<InvitationDetailRoute>(
-      path: 'invitations/:invitationId',
-    ),
-    TypedGoRoute<InvitationAwaitingFormRoute>(
-      path: 'invitation_awaiting/new',
-    )
   ],
 )
 class HomeRoute extends GoRouteData {
@@ -159,7 +152,7 @@ class HomeRoute extends GoRouteData {
           child: DynamicLinksManager(child: HomeScreenScreen()));
 }
 
-@TypedGoRoute<InvitationRoute>(path: '/invitation', routes: [
+@TypedGoRoute<InvitationRoute>(path: '/invitations', routes: [
   TypedGoRoute<InvitationFormRoute>(
     path: 'new',
   ),
@@ -168,6 +161,9 @@ class HomeRoute extends GoRouteData {
   ),
   TypedGoRoute<InvitationFriendSelectRoute>(
     path: 'friend_select',
+  ),
+  TypedGoRoute<InvitationDetailRoute>(
+    path: 'details/:invitationId',
   ),
 ])
 class InvitationRoute extends GoRouteData {
@@ -184,10 +180,10 @@ class InvitationRoute extends GoRouteData {
   path: '/friends',
   routes: [
     TypedGoRoute<FriendGroupCreateRoute>(
-      path: 'group/new',
+      path: 'groups/new',
     ),
     TypedGoRoute<FriendGroupDetailRoute>(
-      path: 'groups/:friendGroupId',
+      path: 'groups/details/:friendGroupId',
     ),
     TypedGoRoute<FriendshipRequestRoute>(path: 'request', routes: [
       TypedGoRoute<FriendQRCodeReaderRoute>(
@@ -212,6 +208,11 @@ Uri buildUserProfileLink(String userId) {
 
 @TypedGoRoute<UserProfileRoute>(
   path: '/users/:userId',
+  routes: [
+    TypedGoRoute<UserFriendsRoute>(
+      path: 'friends',
+    ),
+  ],
 )
 class UserProfileRoute extends GoRouteData {
   const UserProfileRoute(this.userId, {this.$extra});
@@ -223,21 +224,6 @@ class UserProfileRoute extends GoRouteData {
   Widget build(BuildContext context, GoRouterState state) =>
       DynamicLinksManager(
           child: UserProfileScreen(userId: userId, user: $extra));
-}
-
-@TypedGoRoute<UserFriendsRoute>(
-  path: '/users/:userId/friends',
-)
-class UserFriendsRoute extends GoRouteData {
-  const UserFriendsRoute(this.userId, {this.userNickname});
-
-  final String userId;
-  final String? userNickname;
-
-  @override
-  Widget build(BuildContext context, GoRouterState state) =>
-      DynamicLinksManager(
-          child: UserFriendsScreen(userId: userId, userNickname: userNickname));
 }
 
 @TypedGoRoute<MyProfileRoute>(
