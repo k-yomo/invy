@@ -85,6 +85,10 @@ GoRoute get $invitationRoute => GoRouteData.$route(
       factory: $InvitationRouteExtension._fromState,
       routes: [
         GoRouteData.$route(
+          path: 'location_select',
+          factory: $InvitationLocationSelectRouteExtension._fromState,
+        ),
+        GoRouteData.$route(
           path: 'friend_select',
           factory: $InvitationFriendSelectRouteExtension._fromState,
         ),
@@ -97,6 +101,23 @@ extension $InvitationRouteExtension on InvitationRoute {
 
   String get location => GoRouteData.$location(
         '/invitation/new',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  void push(BuildContext context) => context.push(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+}
+
+extension $InvitationLocationSelectRouteExtension
+    on InvitationLocationSelectRoute {
+  static InvitationLocationSelectRoute _fromState(GoRouterState state) =>
+      const InvitationLocationSelectRoute();
+
+  String get location => GoRouteData.$location(
+        '/invitation/new/location_select',
       );
 
   void go(BuildContext context) => context.go(location);

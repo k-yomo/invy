@@ -86,10 +86,6 @@ func (r *invitationAwaitingResolver) User(ctx context.Context, obj *gqlmodel.Inv
 
 // SendInvitation is the resolver for the sendInvitation field.
 func (r *mutationResolver) SendInvitation(ctx context.Context, input *gqlmodel.SendInvitationInput) (*gqlmodel.SendInvitationPayload, error) {
-	now := time.Now()
-	if input.ExpiresAt.Before(now) {
-		return nil, cerrors.New("expiration time must be future date time")
-	}
 	authUserID := auth.GetCurrentUserID(ctx)
 
 	targetFriendUserIDs, err := r.DBQuery.UserRelation.GetNotBlockedFriendUserIDs(
@@ -117,7 +113,6 @@ func (r *mutationResolver) SendInvitation(ctx context.Context, input *gqlmodel.S
 			SetCoordinate(locationCoordinate).
 			SetComment(input.Comment).
 			SetStartsAt(input.StartsAt).
-			SetExpiresAt(input.ExpiresAt).
 			SetChatRoomID(chatRoomID).
 			Save(ctx)
 		if err != nil {
@@ -138,26 +133,10 @@ func (r *mutationResolver) SendInvitation(ctx context.Context, input *gqlmodel.S
 			return cerrors.Wrap(err, "create invitation users")
 		}
 
-		now := time.Now()
-		chatRoomMap, err := convutil.ConvertStructToJSONMap(gqlmodel.ChatRoom{
-			ID:                 chatRoomID,
-			ParticipantUserIds: []uuid.UUID{authUserID},
-			Participants: []*gqlmodel.ChatRoomParticipant{
-				{
-					UserID:     authUserID,
-					LastReadAt: now,
-				},
-			},
-			CreatedAt: now,
-		})
-		if err != nil {
-			return cerrors.Wrap(err, "convert chat room struct to json map")
+		if _, err := r.Service.Chat.CreateChatRoom(ctx, chatRoomID, []uuid.UUID{authUserID}); err != nil {
+			return cerrors.Wrap(err, "create chat room")
 		}
 
-		_, err = r.FirestoreClient.Doc(service.FirestoreChatRoomPath(chatRoomID)).Create(ctx, chatRoomMap)
-		if err != nil {
-			return cerrors.Wrap(err, "create chat room document")
-		}
 		return nil
 	})
 	if err != nil {

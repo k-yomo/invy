@@ -1,6 +1,8 @@
 package conv
 
 import (
+	"time"
+
 	"github.com/cockroachdb/errors"
 	"github.com/k-yomo/invy/invy_api/ent"
 	"github.com/k-yomo/invy/invy_api/ent/invitation"
@@ -74,7 +76,7 @@ func ConvertFromDBInvitation(invitation *ent.Invitation) (*gqlmodel.Invitation, 
 		Coordinate: coordinate,
 		Comment:    invitation.Comment,
 		StartsAt:   invitation.StartsAt,
-		ExpiresAt:  invitation.ExpiresAt,
+		ExpiresAt:  invitation.StartsAt.Add(2 * time.Hour),
 		ChatRoomID: invitation.ChatRoomID,
 	}, nil
 }

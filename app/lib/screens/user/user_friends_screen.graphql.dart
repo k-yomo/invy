@@ -1,5 +1,4 @@
 import '../../widgets/friend_list_item_fragment.graphql.dart';
-import '../../widgets/invitation_awaiting_list_item.graphql.dart';
 import 'dart:async';
 import 'package:flutter/widgets.dart' as widgets;
 import 'package:gql/ast.dart';
@@ -407,7 +406,6 @@ const documentNodeQueryuserFriendsScreenUserFriends =
     ]),
   ),
   fragmentDefinitionuserProfileScreenFragment,
-  fragmentDefinitioninvitationAwaitingListItemFragment,
   fragmentDefinitionfriendListItemFragment,
 ]);
 Query$userFriendsScreenUserFriends _parserFn$Query$userFriendsScreenUserFriends(
@@ -933,7 +931,6 @@ class Query$userFriendsScreenUserFriends$userFriends$edges$node
     required this.isFriend,
     required this.isMuted,
     required this.isBlocked,
-    required this.invitationAwaitings,
     this.$__typename = 'User',
     this.distanceKm,
   });
@@ -948,7 +945,6 @@ class Query$userFriendsScreenUserFriends$userFriends$edges$node
     final l$isFriend = json['isFriend'];
     final l$isMuted = json['isMuted'];
     final l$isBlocked = json['isBlocked'];
-    final l$invitationAwaitings = json['invitationAwaitings'];
     final l$$__typename = json['__typename'];
     final l$distanceKm = json['distanceKm'];
     return Query$userFriendsScreenUserFriends$userFriends$edges$node(
@@ -960,11 +956,6 @@ class Query$userFriendsScreenUserFriends$userFriends$edges$node
       isFriend: (l$isFriend as bool),
       isMuted: (l$isMuted as bool),
       isBlocked: (l$isBlocked as bool),
-      invitationAwaitings: (l$invitationAwaitings as List<dynamic>)
-          .map((e) =>
-              Query$userFriendsScreenUserFriends$userFriends$edges$node$invitationAwaitings
-                  .fromJson((e as Map<String, dynamic>)))
-          .toList(),
       $__typename: (l$$__typename as String),
       distanceKm: (l$distanceKm as int?),
     );
@@ -985,10 +976,6 @@ class Query$userFriendsScreenUserFriends$userFriends$edges$node
   final bool isMuted;
 
   final bool isBlocked;
-
-  final List<
-          Query$userFriendsScreenUserFriends$userFriends$edges$node$invitationAwaitings>
-      invitationAwaitings;
 
   final String $__typename;
 
@@ -1012,9 +999,6 @@ class Query$userFriendsScreenUserFriends$userFriends$edges$node
     _resultData['isMuted'] = l$isMuted;
     final l$isBlocked = isBlocked;
     _resultData['isBlocked'] = l$isBlocked;
-    final l$invitationAwaitings = invitationAwaitings;
-    _resultData['invitationAwaitings'] =
-        l$invitationAwaitings.map((e) => e.toJson()).toList();
     final l$$__typename = $__typename;
     _resultData['__typename'] = l$$__typename;
     final l$distanceKm = distanceKm;
@@ -1032,7 +1016,6 @@ class Query$userFriendsScreenUserFriends$userFriends$edges$node
     final l$isFriend = isFriend;
     final l$isMuted = isMuted;
     final l$isBlocked = isBlocked;
-    final l$invitationAwaitings = invitationAwaitings;
     final l$$__typename = $__typename;
     final l$distanceKm = distanceKm;
     return Object.hashAll([
@@ -1044,7 +1027,6 @@ class Query$userFriendsScreenUserFriends$userFriends$edges$node
       l$isFriend,
       l$isMuted,
       l$isBlocked,
-      Object.hashAll(l$invitationAwaitings.map((v) => v)),
       l$$__typename,
       l$distanceKm,
     ]);
@@ -1099,18 +1081,6 @@ class Query$userFriendsScreenUserFriends$userFriends$edges$node
     if (l$isBlocked != lOther$isBlocked) {
       return false;
     }
-    final l$invitationAwaitings = invitationAwaitings;
-    final lOther$invitationAwaitings = other.invitationAwaitings;
-    if (l$invitationAwaitings.length != lOther$invitationAwaitings.length) {
-      return false;
-    }
-    for (int i = 0; i < l$invitationAwaitings.length; i++) {
-      final l$invitationAwaitings$entry = l$invitationAwaitings[i];
-      final lOther$invitationAwaitings$entry = lOther$invitationAwaitings[i];
-      if (l$invitationAwaitings$entry != lOther$invitationAwaitings$entry) {
-        return false;
-      }
-    }
     final l$$__typename = $__typename;
     final lOther$$__typename = other.$__typename;
     if (l$$__typename != lOther$$__typename) {
@@ -1157,17 +1127,9 @@ abstract class CopyWith$Query$userFriendsScreenUserFriends$userFriends$edges$nod
     bool? isFriend,
     bool? isMuted,
     bool? isBlocked,
-    List<Query$userFriendsScreenUserFriends$userFriends$edges$node$invitationAwaitings>?
-        invitationAwaitings,
     String? $__typename,
     int? distanceKm,
   });
-  TRes invitationAwaitings(
-      Iterable<Query$userFriendsScreenUserFriends$userFriends$edges$node$invitationAwaitings> Function(
-              Iterable<
-                  CopyWith$Query$userFriendsScreenUserFriends$userFriends$edges$node$invitationAwaitings<
-                      Query$userFriendsScreenUserFriends$userFriends$edges$node$invitationAwaitings>>)
-          _fn);
 }
 
 class _CopyWithImpl$Query$userFriendsScreenUserFriends$userFriends$edges$node<
@@ -1196,7 +1158,6 @@ class _CopyWithImpl$Query$userFriendsScreenUserFriends$userFriends$edges$node<
     Object? isFriend = _undefined,
     Object? isMuted = _undefined,
     Object? isBlocked = _undefined,
-    Object? invitationAwaitings = _undefined,
     Object? $__typename = _undefined,
     Object? distanceKm = _undefined,
   }) =>
@@ -1224,11 +1185,6 @@ class _CopyWithImpl$Query$userFriendsScreenUserFriends$userFriends$edges$node<
         isBlocked: isBlocked == _undefined || isBlocked == null
             ? _instance.isBlocked
             : (isBlocked as bool),
-        invitationAwaitings: invitationAwaitings == _undefined ||
-                invitationAwaitings == null
-            ? _instance.invitationAwaitings
-            : (invitationAwaitings as List<
-                Query$userFriendsScreenUserFriends$userFriends$edges$node$invitationAwaitings>),
         $__typename: $__typename == _undefined || $__typename == null
             ? _instance.$__typename
             : ($__typename as String),
@@ -1236,18 +1192,6 @@ class _CopyWithImpl$Query$userFriendsScreenUserFriends$userFriends$edges$node<
             ? _instance.distanceKm
             : (distanceKm as int?),
       ));
-  TRes invitationAwaitings(
-          Iterable<Query$userFriendsScreenUserFriends$userFriends$edges$node$invitationAwaitings> Function(
-                  Iterable<
-                      CopyWith$Query$userFriendsScreenUserFriends$userFriends$edges$node$invitationAwaitings<
-                          Query$userFriendsScreenUserFriends$userFriends$edges$node$invitationAwaitings>>)
-              _fn) =>
-      call(
-          invitationAwaitings: _fn(_instance.invitationAwaitings.map((e) =>
-              CopyWith$Query$userFriendsScreenUserFriends$userFriends$edges$node$invitationAwaitings(
-                e,
-                (i) => i,
-              ))).toList());
 }
 
 class _CopyWithStubImpl$Query$userFriendsScreenUserFriends$userFriends$edges$node<
@@ -1269,237 +1213,8 @@ class _CopyWithStubImpl$Query$userFriendsScreenUserFriends$userFriends$edges$nod
     bool? isFriend,
     bool? isMuted,
     bool? isBlocked,
-    List<Query$userFriendsScreenUserFriends$userFriends$edges$node$invitationAwaitings>?
-        invitationAwaitings,
     String? $__typename,
     int? distanceKm,
-  }) =>
-      _res;
-  invitationAwaitings(_fn) => _res;
-}
-
-class Query$userFriendsScreenUserFriends$userFriends$edges$node$invitationAwaitings
-    implements
-        Fragment$invitationAwaitingListItemFragment,
-        Fragment$friendListItemFragment$invitationAwaitings {
-  Query$userFriendsScreenUserFriends$userFriends$edges$node$invitationAwaitings({
-    required this.id,
-    required this.userId,
-    required this.startsAt,
-    required this.endsAt,
-    required this.comment,
-    this.$__typename = 'InvitationAwaiting',
-  });
-
-  factory Query$userFriendsScreenUserFriends$userFriends$edges$node$invitationAwaitings.fromJson(
-      Map<String, dynamic> json) {
-    final l$id = json['id'];
-    final l$userId = json['userId'];
-    final l$startsAt = json['startsAt'];
-    final l$endsAt = json['endsAt'];
-    final l$comment = json['comment'];
-    final l$$__typename = json['__typename'];
-    return Query$userFriendsScreenUserFriends$userFriends$edges$node$invitationAwaitings(
-      id: (l$id as String),
-      userId: (l$userId as String),
-      startsAt: DateTime.parse((l$startsAt as String)),
-      endsAt: DateTime.parse((l$endsAt as String)),
-      comment: (l$comment as String),
-      $__typename: (l$$__typename as String),
-    );
-  }
-
-  final String id;
-
-  final String userId;
-
-  final DateTime startsAt;
-
-  final DateTime endsAt;
-
-  final String comment;
-
-  final String $__typename;
-
-  Map<String, dynamic> toJson() {
-    final _resultData = <String, dynamic>{};
-    final l$id = id;
-    _resultData['id'] = l$id;
-    final l$userId = userId;
-    _resultData['userId'] = l$userId;
-    final l$startsAt = startsAt;
-    _resultData['startsAt'] = l$startsAt.toIso8601String();
-    final l$endsAt = endsAt;
-    _resultData['endsAt'] = l$endsAt.toIso8601String();
-    final l$comment = comment;
-    _resultData['comment'] = l$comment;
-    final l$$__typename = $__typename;
-    _resultData['__typename'] = l$$__typename;
-    return _resultData;
-  }
-
-  @override
-  int get hashCode {
-    final l$id = id;
-    final l$userId = userId;
-    final l$startsAt = startsAt;
-    final l$endsAt = endsAt;
-    final l$comment = comment;
-    final l$$__typename = $__typename;
-    return Object.hashAll([
-      l$id,
-      l$userId,
-      l$startsAt,
-      l$endsAt,
-      l$comment,
-      l$$__typename,
-    ]);
-  }
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) {
-      return true;
-    }
-    if (!(other
-            is Query$userFriendsScreenUserFriends$userFriends$edges$node$invitationAwaitings) ||
-        runtimeType != other.runtimeType) {
-      return false;
-    }
-    final l$id = id;
-    final lOther$id = other.id;
-    if (l$id != lOther$id) {
-      return false;
-    }
-    final l$userId = userId;
-    final lOther$userId = other.userId;
-    if (l$userId != lOther$userId) {
-      return false;
-    }
-    final l$startsAt = startsAt;
-    final lOther$startsAt = other.startsAt;
-    if (l$startsAt != lOther$startsAt) {
-      return false;
-    }
-    final l$endsAt = endsAt;
-    final lOther$endsAt = other.endsAt;
-    if (l$endsAt != lOther$endsAt) {
-      return false;
-    }
-    final l$comment = comment;
-    final lOther$comment = other.comment;
-    if (l$comment != lOther$comment) {
-      return false;
-    }
-    final l$$__typename = $__typename;
-    final lOther$$__typename = other.$__typename;
-    if (l$$__typename != lOther$$__typename) {
-      return false;
-    }
-    return true;
-  }
-}
-
-extension UtilityExtension$Query$userFriendsScreenUserFriends$userFriends$edges$node$invitationAwaitings
-    on Query$userFriendsScreenUserFriends$userFriends$edges$node$invitationAwaitings {
-  CopyWith$Query$userFriendsScreenUserFriends$userFriends$edges$node$invitationAwaitings<
-          Query$userFriendsScreenUserFriends$userFriends$edges$node$invitationAwaitings>
-      get copyWith =>
-          CopyWith$Query$userFriendsScreenUserFriends$userFriends$edges$node$invitationAwaitings(
-            this,
-            (i) => i,
-          );
-}
-
-abstract class CopyWith$Query$userFriendsScreenUserFriends$userFriends$edges$node$invitationAwaitings<
-    TRes> {
-  factory CopyWith$Query$userFriendsScreenUserFriends$userFriends$edges$node$invitationAwaitings(
-    Query$userFriendsScreenUserFriends$userFriends$edges$node$invitationAwaitings
-        instance,
-    TRes Function(
-            Query$userFriendsScreenUserFriends$userFriends$edges$node$invitationAwaitings)
-        then,
-  ) = _CopyWithImpl$Query$userFriendsScreenUserFriends$userFriends$edges$node$invitationAwaitings;
-
-  factory CopyWith$Query$userFriendsScreenUserFriends$userFriends$edges$node$invitationAwaitings.stub(
-          TRes res) =
-      _CopyWithStubImpl$Query$userFriendsScreenUserFriends$userFriends$edges$node$invitationAwaitings;
-
-  TRes call({
-    String? id,
-    String? userId,
-    DateTime? startsAt,
-    DateTime? endsAt,
-    String? comment,
-    String? $__typename,
-  });
-}
-
-class _CopyWithImpl$Query$userFriendsScreenUserFriends$userFriends$edges$node$invitationAwaitings<
-        TRes>
-    implements
-        CopyWith$Query$userFriendsScreenUserFriends$userFriends$edges$node$invitationAwaitings<
-            TRes> {
-  _CopyWithImpl$Query$userFriendsScreenUserFriends$userFriends$edges$node$invitationAwaitings(
-    this._instance,
-    this._then,
-  );
-
-  final Query$userFriendsScreenUserFriends$userFriends$edges$node$invitationAwaitings
-      _instance;
-
-  final TRes Function(
-          Query$userFriendsScreenUserFriends$userFriends$edges$node$invitationAwaitings)
-      _then;
-
-  static const _undefined = <dynamic, dynamic>{};
-
-  TRes call({
-    Object? id = _undefined,
-    Object? userId = _undefined,
-    Object? startsAt = _undefined,
-    Object? endsAt = _undefined,
-    Object? comment = _undefined,
-    Object? $__typename = _undefined,
-  }) =>
-      _then(
-          Query$userFriendsScreenUserFriends$userFriends$edges$node$invitationAwaitings(
-        id: id == _undefined || id == null ? _instance.id : (id as String),
-        userId: userId == _undefined || userId == null
-            ? _instance.userId
-            : (userId as String),
-        startsAt: startsAt == _undefined || startsAt == null
-            ? _instance.startsAt
-            : (startsAt as DateTime),
-        endsAt: endsAt == _undefined || endsAt == null
-            ? _instance.endsAt
-            : (endsAt as DateTime),
-        comment: comment == _undefined || comment == null
-            ? _instance.comment
-            : (comment as String),
-        $__typename: $__typename == _undefined || $__typename == null
-            ? _instance.$__typename
-            : ($__typename as String),
-      ));
-}
-
-class _CopyWithStubImpl$Query$userFriendsScreenUserFriends$userFriends$edges$node$invitationAwaitings<
-        TRes>
-    implements
-        CopyWith$Query$userFriendsScreenUserFriends$userFriends$edges$node$invitationAwaitings<
-            TRes> {
-  _CopyWithStubImpl$Query$userFriendsScreenUserFriends$userFriends$edges$node$invitationAwaitings(
-      this._res);
-
-  TRes _res;
-
-  call({
-    String? id,
-    String? userId,
-    DateTime? startsAt,
-    DateTime? endsAt,
-    String? comment,
-    String? $__typename,
   }) =>
       _res;
 }

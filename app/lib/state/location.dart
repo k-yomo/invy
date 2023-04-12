@@ -3,15 +3,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-final locationNameProvider = StateProvider<String>((ref) {
-  return "";
-});
-
 final currentPinLocationProvider = StateProvider<LatLng?>((ref) {
-  return null;
-});
-
-final invitationLocationProvider = StateProvider<LatLng?>((ref) {
   return null;
 });
 

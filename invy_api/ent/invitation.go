@@ -29,8 +29,6 @@ type Invitation struct {
 	Comment string `json:"comment,omitempty"`
 	// StartsAt holds the value of the "starts_at" field.
 	StartsAt time.Time `json:"starts_at,omitempty"`
-	// ExpiresAt holds the value of the "expires_at" field.
-	ExpiresAt time.Time `json:"expires_at,omitempty"`
 	// ChatRoomID holds the value of the "chat_room_id" field.
 	ChatRoomID *uuid.UUID `json:"chat_room_id,omitempty"`
 	// Status holds the value of the "status" field.
@@ -116,7 +114,7 @@ func (*Invitation) scanValues(columns []string) ([]any, error) {
 			values[i] = &sql.NullScanner{S: new(uuid.UUID)}
 		case invitation.FieldLocation, invitation.FieldComment, invitation.FieldStatus:
 			values[i] = new(sql.NullString)
-		case invitation.FieldStartsAt, invitation.FieldExpiresAt, invitation.FieldCreatedAt, invitation.FieldUpdatedAt:
+		case invitation.FieldStartsAt, invitation.FieldCreatedAt, invitation.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
 		case invitation.FieldID, invitation.FieldUserID:
 			values[i] = new(uuid.UUID)
@@ -170,12 +168,6 @@ func (i *Invitation) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field starts_at", values[j])
 			} else if value.Valid {
 				i.StartsAt = value.Time
-			}
-		case invitation.FieldExpiresAt:
-			if value, ok := values[j].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field expires_at", values[j])
-			} else if value.Valid {
-				i.ExpiresAt = value.Time
 			}
 		case invitation.FieldChatRoomID:
 			if value, ok := values[j].(*sql.NullScanner); !ok {
@@ -266,9 +258,6 @@ func (i *Invitation) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("starts_at=")
 	builder.WriteString(i.StartsAt.Format(time.ANSIC))
-	builder.WriteString(", ")
-	builder.WriteString("expires_at=")
-	builder.WriteString(i.ExpiresAt.Format(time.ANSIC))
 	builder.WriteString(", ")
 	if v := i.ChatRoomID; v != nil {
 		builder.WriteString("chat_room_id=")

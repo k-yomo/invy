@@ -208,7 +208,7 @@ type Invitation implements Node {
 input SendInvitationInput {
   targetFriendGroupIds: [UUID!]!
   targetFriendUserIds: [UUID!]!
-  expiresAt: Time!
+  expiresAt: Time
   startsAt: Time!
   location: String!
   latitude: Float

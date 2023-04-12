@@ -5,9 +5,4 @@ fragment friendListItemFragment on User {
     avatarUrl
     isMuted
     distanceKm
-    invitationAwaitings {
-        startsAt
-        endsAt
-        comment
-    }
 }

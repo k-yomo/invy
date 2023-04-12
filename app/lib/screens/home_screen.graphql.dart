@@ -1,4 +1,3 @@
-import '../widgets/invitation_awaiting_list_item.graphql.dart';
 import '../widgets/invitation_detail_fragment.graphql.dart';
 import 'dart:async';
 import 'package:flutter/widgets.dart' as widgets;
@@ -210,25 +209,6 @@ const documentNodeQueryhomeScreenViewer = DocumentNode(definitions: [
             ]),
           ),
           FieldNode(
-            name: NameNode(value: 'invitationAwaitings'),
-            alias: null,
-            arguments: [],
-            directives: [],
-            selectionSet: SelectionSetNode(selections: [
-              FragmentSpreadNode(
-                name: NameNode(value: 'invitationAwaitingListItemFragment'),
-                directives: [],
-              ),
-              FieldNode(
-                name: NameNode(value: '__typename'),
-                alias: null,
-                arguments: [],
-                directives: [],
-                selectionSet: null,
-              ),
-            ]),
-          ),
-          FieldNode(
             name: NameNode(value: '__typename'),
             alias: null,
             arguments: [],
@@ -248,7 +228,6 @@ const documentNodeQueryhomeScreenViewer = DocumentNode(definitions: [
   ),
   fragmentDefinitioninvitationDetailFragment,
   fragmentDefinitioninvitationDetailAcceptedUserFragment,
-  fragmentDefinitioninvitationAwaitingListItemFragment,
 ]);
 Query$homeScreenViewer _parserFn$Query$homeScreenViewer(
         Map<String, dynamic> data) =>
@@ -398,7 +377,6 @@ class Query$homeScreenViewer$viewer {
     required this.sentInvitations,
     required this.pendingInvitations,
     required this.acceptedInvitations,
-    required this.invitationAwaitings,
     this.$__typename = 'Viewer',
   });
 
@@ -406,7 +384,6 @@ class Query$homeScreenViewer$viewer {
     final l$sentInvitations = json['sentInvitations'];
     final l$pendingInvitations = json['pendingInvitations'];
     final l$acceptedInvitations = json['acceptedInvitations'];
-    final l$invitationAwaitings = json['invitationAwaitings'];
     final l$$__typename = json['__typename'];
     return Query$homeScreenViewer$viewer(
       sentInvitations: (l$sentInvitations as List<dynamic>)
@@ -421,10 +398,6 @@ class Query$homeScreenViewer$viewer {
           .map((e) => Fragment$invitationDetailFragment.fromJson(
               (e as Map<String, dynamic>)))
           .toList(),
-      invitationAwaitings: (l$invitationAwaitings as List<dynamic>)
-          .map((e) => Fragment$invitationAwaitingListItemFragment.fromJson(
-              (e as Map<String, dynamic>)))
-          .toList(),
       $__typename: (l$$__typename as String),
     );
   }
@@ -434,8 +407,6 @@ class Query$homeScreenViewer$viewer {
   final List<Fragment$invitationDetailFragment> pendingInvitations;
 
   final List<Fragment$invitationDetailFragment> acceptedInvitations;
-
-  final List<Fragment$invitationAwaitingListItemFragment> invitationAwaitings;
 
   final String $__typename;
 
@@ -450,9 +421,6 @@ class Query$homeScreenViewer$viewer {
     final l$acceptedInvitations = acceptedInvitations;
     _resultData['acceptedInvitations'] =
         l$acceptedInvitations.map((e) => e.toJson()).toList();
-    final l$invitationAwaitings = invitationAwaitings;
-    _resultData['invitationAwaitings'] =
-        l$invitationAwaitings.map((e) => e.toJson()).toList();
     final l$$__typename = $__typename;
     _resultData['__typename'] = l$$__typename;
     return _resultData;
@@ -463,13 +431,11 @@ class Query$homeScreenViewer$viewer {
     final l$sentInvitations = sentInvitations;
     final l$pendingInvitations = pendingInvitations;
     final l$acceptedInvitations = acceptedInvitations;
-    final l$invitationAwaitings = invitationAwaitings;
     final l$$__typename = $__typename;
     return Object.hashAll([
       Object.hashAll(l$sentInvitations.map((v) => v)),
       Object.hashAll(l$pendingInvitations.map((v) => v)),
       Object.hashAll(l$acceptedInvitations.map((v) => v)),
-      Object.hashAll(l$invitationAwaitings.map((v) => v)),
       l$$__typename,
     ]);
   }
@@ -519,18 +485,6 @@ class Query$homeScreenViewer$viewer {
         return false;
       }
     }
-    final l$invitationAwaitings = invitationAwaitings;
-    final lOther$invitationAwaitings = other.invitationAwaitings;
-    if (l$invitationAwaitings.length != lOther$invitationAwaitings.length) {
-      return false;
-    }
-    for (int i = 0; i < l$invitationAwaitings.length; i++) {
-      final l$invitationAwaitings$entry = l$invitationAwaitings[i];
-      final lOther$invitationAwaitings$entry = lOther$invitationAwaitings[i];
-      if (l$invitationAwaitings$entry != lOther$invitationAwaitings$entry) {
-        return false;
-      }
-    }
     final l$$__typename = $__typename;
     final lOther$$__typename = other.$__typename;
     if (l$$__typename != lOther$$__typename) {
@@ -562,7 +516,6 @@ abstract class CopyWith$Query$homeScreenViewer$viewer<TRes> {
     List<Fragment$invitationDetailFragment>? sentInvitations,
     List<Fragment$invitationDetailFragment>? pendingInvitations,
     List<Fragment$invitationDetailFragment>? acceptedInvitations,
-    List<Fragment$invitationAwaitingListItemFragment>? invitationAwaitings,
     String? $__typename,
   });
   TRes sentInvitations(
@@ -583,12 +536,6 @@ abstract class CopyWith$Query$homeScreenViewer$viewer<TRes> {
                   CopyWith$Fragment$invitationDetailFragment<
                       Fragment$invitationDetailFragment>>)
           _fn);
-  TRes invitationAwaitings(
-      Iterable<Fragment$invitationAwaitingListItemFragment> Function(
-              Iterable<
-                  CopyWith$Fragment$invitationAwaitingListItemFragment<
-                      Fragment$invitationAwaitingListItemFragment>>)
-          _fn);
 }
 
 class _CopyWithImpl$Query$homeScreenViewer$viewer<TRes>
@@ -608,7 +555,6 @@ class _CopyWithImpl$Query$homeScreenViewer$viewer<TRes>
     Object? sentInvitations = _undefined,
     Object? pendingInvitations = _undefined,
     Object? acceptedInvitations = _undefined,
-    Object? invitationAwaitings = _undefined,
     Object? $__typename = _undefined,
   }) =>
       _then(Query$homeScreenViewer$viewer(
@@ -624,11 +570,6 @@ class _CopyWithImpl$Query$homeScreenViewer$viewer<TRes>
                 acceptedInvitations == null
             ? _instance.acceptedInvitations
             : (acceptedInvitations as List<Fragment$invitationDetailFragment>),
-        invitationAwaitings:
-            invitationAwaitings == _undefined || invitationAwaitings == null
-                ? _instance.invitationAwaitings
-                : (invitationAwaitings
-                    as List<Fragment$invitationAwaitingListItemFragment>),
         $__typename: $__typename == _undefined || $__typename == null
             ? _instance.$__typename
             : ($__typename as String),
@@ -669,18 +610,6 @@ class _CopyWithImpl$Query$homeScreenViewer$viewer<TRes>
                     e,
                     (i) => i,
                   ))).toList());
-  TRes invitationAwaitings(
-          Iterable<Fragment$invitationAwaitingListItemFragment> Function(
-                  Iterable<
-                      CopyWith$Fragment$invitationAwaitingListItemFragment<
-                          Fragment$invitationAwaitingListItemFragment>>)
-              _fn) =>
-      call(
-          invitationAwaitings: _fn(_instance.invitationAwaitings
-              .map((e) => CopyWith$Fragment$invitationAwaitingListItemFragment(
-                    e,
-                    (i) => i,
-                  ))).toList());
 }
 
 class _CopyWithStubImpl$Query$homeScreenViewer$viewer<TRes>
@@ -693,14 +622,12 @@ class _CopyWithStubImpl$Query$homeScreenViewer$viewer<TRes>
     List<Fragment$invitationDetailFragment>? sentInvitations,
     List<Fragment$invitationDetailFragment>? pendingInvitations,
     List<Fragment$invitationDetailFragment>? acceptedInvitations,
-    List<Fragment$invitationAwaitingListItemFragment>? invitationAwaitings,
     String? $__typename,
   }) =>
       _res;
   sentInvitations(_fn) => _res;
   pendingInvitations(_fn) => _res;
   acceptedInvitations(_fn) => _res;
-  invitationAwaitings(_fn) => _res;
 }
 
 class Variables$Mutation$acceptInvitation {

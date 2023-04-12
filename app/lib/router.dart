@@ -10,10 +10,11 @@ import 'package:invy/screens/friend/friends_screen.dart';
 import 'package:invy/screens/friend/friendship_request_screen.dart';
 import 'package:invy/screens/friend/friend_qr_code_reader_screen.dart';
 import 'package:invy/screens/home_screen.dart';
+import 'package:invy/screens/invitation/invitation_screen.dart';
 import 'package:invy/screens/invitation/invitation_awaiting_form_screen.dart';
 import 'package:invy/screens/invitation/invitation_detail_screen.dart';
 import 'package:invy/screens/invitation/invitation_friend_select_screen.dart';
-import 'package:invy/screens/invitation/invitation_screen.dart';
+import 'package:invy/screens/invitation/invitation_location_select_screen.dart';
 import 'package:invy/screens/login/login_landing_screen.dart';
 import 'package:invy/screens/profile/my_profile_screen.dart';
 import 'package:invy/screens/profile/profile_edit_screen.dart';
@@ -157,6 +158,9 @@ class HomeRoute extends GoRouteData {
 }
 
 @TypedGoRoute<InvitationRoute>(path: '/invitation/new', routes: [
+  TypedGoRoute<InvitationLocationSelectRoute>(
+    path: 'location_select',
+  ),
   TypedGoRoute<InvitationFriendSelectRoute>(
     path: 'friend_select',
   ),

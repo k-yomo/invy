@@ -1928,6 +1928,7 @@ type Invitation implements Node {
     coordinate: Coordinate
     comment: String!
     startsAt: Time!
+    # Deprecated
     expiresAt: Time!
 
     chatRoomId: UUID
@@ -1940,7 +1941,8 @@ type Invitation implements Node {
 input SendInvitationInput {
     targetFriendGroupIds: [UUID!]!
     targetFriendUserIds: [UUID!]!
-    expiresAt: Time!
+    # Deprecated
+    expiresAt: Time
     startsAt: Time!
     location: String!
     latitude: Float
@@ -13809,7 +13811,7 @@ func (ec *executionContext) unmarshalInputSendInvitationInput(ctx context.Contex
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("expiresAt"))
-			it.ExpiresAt, err = ec.unmarshalNTime2timeᚐTime(ctx, v)
+			it.ExpiresAt, err = ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -18503,6 +18505,22 @@ func (ec *executionContext) marshalOString2ᚖstring(ctx context.Context, sel as
 		return graphql.Null
 	}
 	res := graphql.MarshalString(*v)
+	return res
+}
+
+func (ec *executionContext) unmarshalOTime2ᚖtimeᚐTime(ctx context.Context, v interface{}) (*time.Time, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := graphql.UnmarshalTime(v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOTime2ᚖtimeᚐTime(ctx context.Context, sel ast.SelectionSet, v *time.Time) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	res := graphql.MarshalTime(*v)
 	return res
 }
 

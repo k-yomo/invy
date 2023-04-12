@@ -13,10 +13,10 @@ import 'package:invy/screens/friend/blocked_friends_screen.graphql.dart';
 import 'package:invy/screens/friend/friendship_request_screen.graphql.dart';
 import 'package:invy/screens/user/user_profile_screen.graphql.dart';
 import 'package:invy/state/auth.dart';
+import 'package:invy/state/invitation.dart';
 import 'package:invy/util/toast.dart';
 import 'package:invy/widgets/app_bar_leading.dart';
-import 'package:invy/widgets/invitation_awaiting_list_carousel.dart';
-import 'package:invy/widgets/sub_title.dart';
+import 'package:invy/widgets/friend_list_item_fragment.graphql.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../graphql/user_block.graphql.dart';
@@ -107,6 +107,18 @@ class UserProfileScreen extends HookConsumerWidget {
       if (result.parsedData?.requestFriendship != null) {
         isRequestingFriendship.value = true;
       }
+    }
+
+    onPressedInvitation() async {
+      ref.read(invitationSelectedFriendsProvider.notifier).state = [
+        Fragment$friendListItemFragment(
+          id: user.id,
+          nickname: user.nickname,
+          avatarUrl: user.avatarUrl,
+          isMuted: user.isMuted,
+        )
+      ];
+      const InvitationRoute().go(context);
     }
 
     return Scaffold(
@@ -247,17 +259,25 @@ class UserProfileScreen extends HookConsumerWidget {
                         ),
                       )
                     : const SizedBox(),
-                (user.isFriend || isUserLoggedInUser) &&
-                        user.invitationAwaitings.isNotEmpty
+                user.isFriend
                     ? Container(
-                        transform: Matrix4.translationValues(0.0, -20.0, 0.0),
-                        child: Column(
-                          children: [
-                            const SubTitle(text: "おさそい待ちの時間帯"),
-                            const Gap(10),
-                            InvitationAwaitingListCarousel(
-                                invitationAwaitings: user.invitationAwaitings),
-                          ],
+                        margin: const EdgeInsets.symmetric(
+                            vertical: 30, horizontal: 60),
+                        child: TextButton(
+                          onPressed: onPressedInvitation,
+                          style: TextButton.styleFrom(
+                            minimumSize: const Size.fromHeight(0),
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            backgroundColor: Colors.black,
+                            foregroundColor: Colors.white,
+                            disabledBackgroundColor: Colors.grey,
+                            disabledForegroundColor: Colors.white,
+                          ),
+                          child: Text(
+                            'さそう',
+                            style: const TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.bold),
+                          ),
                         ),
                       )
                     : const SizedBox(),

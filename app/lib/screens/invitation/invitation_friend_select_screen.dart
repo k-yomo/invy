@@ -3,6 +3,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:graphql/client.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:invy/state/invitation.dart';
 import 'package:invy/widgets/app_bar_leading.dart';
 import 'package:invy/widgets/dynamic_links_manager.dart';
 import 'package:invy/widgets/friend_list_item_fragment.graphql.dart';
@@ -12,7 +13,6 @@ import 'package:invy/screens/invitation/invitation_screen.graphql.dart';
 import '../../widgets/friend_group_fragment.graphql.dart';
 import '../../widgets/friend_group_selection_list.dart';
 import '../../services/graphql_client.dart';
-import 'inivitation_detail_form_screen.dart';
 
 class InvitationFriendSelectRoute extends GoRouteData {
   const InvitationFriendSelectRoute();
@@ -32,8 +32,9 @@ class InvitationFriendSelectScreen extends HookConsumerWidget {
     viewerQuery.fetchResults();
 
     final selectedFriendGroups =
-        useState<List<Fragment$friendGroupListItemFragment>>([]);
-    final selectedFriends = useState<List<Fragment$friendListItemFragment>>([]);
+        useState(ref.read(invitationSelectedFriendGroupsProvider));
+    final selectedFriends =
+        useState(ref.read(invitationSelectedFriendsProvider));
     final selectedCount =
         selectedFriendGroups.value.length + selectedFriends.value.length;
 
@@ -45,17 +46,6 @@ class InvitationFriendSelectScreen extends HookConsumerWidget {
           final sortedFriends = viewer?.friends.edges ?? [];
           // TODO: Sort in backend would be better
           sortedFriends.sort((a, b) {
-            if (a.node.invitationAwaitings.isNotEmpty &&
-                b.node.invitationAwaitings.isNotEmpty) {
-              final aInvitationAwaiting = a.node.invitationAwaitings.first;
-              final bInvitationAwaiting = b.node.invitationAwaitings.first;
-              return aInvitationAwaiting.startsAt
-                  .compareTo(bInvitationAwaiting.startsAt);
-            } else if (a.node.invitationAwaitings.isNotEmpty ||
-                b.node.invitationAwaitings.isNotEmpty) {
-              return b.node.invitationAwaitings.length
-                  .compareTo(a.node.invitationAwaitings.length);
-            }
             return (a.node.distanceKm ?? double.nan)
                 .compareTo(b.node.distanceKm ?? double.nan);
           });
@@ -71,26 +61,18 @@ class InvitationFriendSelectScreen extends HookConsumerWidget {
               actions: <Widget>[
                 TextButton(
                   onPressed: () {
-                    if (selectedCount == 0) {
-                      return;
-                    }
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        fullscreenDialog: true,
-                        builder: (context) => InvitationDetailFormScreen(
-                          selectedFriendGroups: selectedFriendGroups.value,
-                          selectedFriends: selectedFriends.value,
-                        ),
-                      ),
-                    );
+                    ref
+                        .read(invitationSelectedFriendGroupsProvider.notifier)
+                        .state = selectedFriendGroups.value;
+                    ref.read(invitationSelectedFriendsProvider.notifier).state =
+                        selectedFriends.value;
+                    GoRouter.of(context).pop();
                   },
                   child: Text(
-                    "次へ",
+                    "完了",
                     style: TextStyle(
                         fontSize: 16,
-                        color: selectedCount == 0
-                            ? Colors.grey.shade600
-                            : Colors.blue.shade600,
+                        color: Colors.blue.shade600,
                         fontWeight: FontWeight.bold),
                   ),
                 ),

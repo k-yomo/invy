@@ -49,6 +49,57 @@ func (c *chatService) GetChatRoomParticipantUserIDs(ctx context.Context, chatRoo
 	return participantUserIDs, nil
 }
 
+func (c *chatService) CreateChatRoom(ctx context.Context, chatRoomID uuid.UUID, participantUserIDs []uuid.UUID) (*gqlmodel.ChatRoom, error) {
+	now := time.Now()
+	chatRoom := gqlmodel.ChatRoom{
+		ID:                 chatRoomID,
+		ParticipantUserIds: participantUserIDs,
+		CreatedAt:          now,
+	}
+	for _, userID := range participantUserIDs {
+		chatRoom.Participants = append(chatRoom.Participants, &gqlmodel.ChatRoomParticipant{
+			UserID:     userID,
+			LastReadAt: now,
+		})
+	}
+	chatRoomMap, err := convutil.ConvertStructToJSONMap(chatRoom)
+	if err != nil {
+		return nil, errors.Wrap(err, "convert chat room struct to json map")
+	}
+
+	_, err = c.firestoreClient.Doc(FirestoreChatRoomPath(chatRoomID)).Create(ctx, chatRoomMap)
+	if err != nil {
+		return nil, errors.Wrap(err, "create chat room document")
+	}
+	return &chatRoom, nil
+}
+
+func (c *chatService) AddParticipant(ctx context.Context, chatRoomID uuid.UUID, userID uuid.UUID) error {
+	return c.firestoreClient.RunTransaction(ctx, func(ctx context.Context, firestoreTx *firestore.Transaction) error {
+		chatRoomDocRef := c.firestoreClient.Doc(FirestoreChatRoomPath(chatRoomID))
+		chatRoomSnapshot, err := firestoreTx.Get(chatRoomDocRef)
+		if err != nil {
+			return errors.Wrap(err, "get chat room")
+		}
+		var chatRoom gqlmodel.ChatRoom
+		if err := convutil.ConvertMapToStructViaJSON(chatRoomSnapshot.Data(), &chatRoom); err != nil {
+			return errors.Wrap(err, "unmarhsal chat room snapshot")
+		}
+
+		chatRoom.ParticipantUserIds = append(chatRoom.ParticipantUserIds, userID)
+		chatRoom.Participants = append(chatRoom.Participants, &gqlmodel.ChatRoomParticipant{
+			UserID:     userID,
+			LastReadAt: time.Now(),
+		})
+
+		chatRoomMap, err := convutil.ConvertStructToJSONMap(chatRoom)
+		if err != nil {
+			return errors.Wrap(err, "convert chat room struct to json map")
+		}
+		return firestoreTx.Set(chatRoomDocRef, chatRoomMap)
+	})
+}
+
 func (c *chatService) UpdateLastReadAt(ctx context.Context, chatRoomID uuid.UUID, userID uuid.UUID, lastReadAt time.Time) error {
 	return c.firestoreClient.RunTransaction(ctx, func(ctx context.Context, firestoreTx *firestore.Transaction) error {
 		chatRoomDocRef := c.firestoreClient.Doc(FirestoreChatRoomPath(chatRoomID))
@@ -70,32 +121,6 @@ func (c *chatService) UpdateLastReadAt(ctx context.Context, chatRoomID uuid.UUID
 				participant.LastReadAt = lastReadAt
 			}
 		}
-
-		chatRoomMap, err := convutil.ConvertStructToJSONMap(chatRoom)
-		if err != nil {
-			return errors.Wrap(err, "convert chat room struct to json map")
-		}
-		return firestoreTx.Set(chatRoomDocRef, chatRoomMap)
-	})
-}
-
-func (c *chatService) AddParticipant(ctx context.Context, chatRoomID uuid.UUID, userID uuid.UUID) error {
-	return c.firestoreClient.RunTransaction(ctx, func(ctx context.Context, firestoreTx *firestore.Transaction) error {
-		chatRoomDocRef := c.firestoreClient.Doc(FirestoreChatRoomPath(chatRoomID))
-		chatRoomSnapshot, err := firestoreTx.Get(chatRoomDocRef)
-		if err != nil {
-			return errors.Wrap(err, "get chat room")
-		}
-		var chatRoom gqlmodel.ChatRoom
-		if err := convutil.ConvertMapToStructViaJSON(chatRoomSnapshot.Data(), &chatRoom); err != nil {
-			return errors.Wrap(err, "unmarhsal chat room snapshot")
-		}
-
-		chatRoom.ParticipantUserIds = append(chatRoom.ParticipantUserIds, userID)
-		chatRoom.Participants = append(chatRoom.Participants, &gqlmodel.ChatRoomParticipant{
-			UserID:     userID,
-			LastReadAt: time.Now(),
-		})
 
 		chatRoomMap, err := convutil.ConvertStructToJSONMap(chatRoom)
 		if err != nil {

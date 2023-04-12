@@ -14,7 +14,4 @@ fragment userProfileScreenFragment on User {
     isFriend
     isMuted
     isBlocked
-    invitationAwaitings {
-        ...invitationAwaitingListItemFragment
-    }
 }

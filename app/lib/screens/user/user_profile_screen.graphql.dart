@@ -1,4 +1,3 @@
-import '../../widgets/invitation_awaiting_list_item.graphql.dart';
 import 'dart:async';
 import 'package:flutter/widgets.dart' as widgets;
 import 'package:gql/ast.dart';
@@ -15,7 +14,6 @@ class Fragment$userProfileScreenFragment {
     required this.isFriend,
     required this.isMuted,
     required this.isBlocked,
-    required this.invitationAwaitings,
     this.$__typename = 'User',
   });
 
@@ -29,7 +27,6 @@ class Fragment$userProfileScreenFragment {
     final l$isFriend = json['isFriend'];
     final l$isMuted = json['isMuted'];
     final l$isBlocked = json['isBlocked'];
-    final l$invitationAwaitings = json['invitationAwaitings'];
     final l$$__typename = json['__typename'];
     return Fragment$userProfileScreenFragment(
       id: (l$id as String),
@@ -40,10 +37,6 @@ class Fragment$userProfileScreenFragment {
       isFriend: (l$isFriend as bool),
       isMuted: (l$isMuted as bool),
       isBlocked: (l$isBlocked as bool),
-      invitationAwaitings: (l$invitationAwaitings as List<dynamic>)
-          .map((e) => Fragment$invitationAwaitingListItemFragment.fromJson(
-              (e as Map<String, dynamic>)))
-          .toList(),
       $__typename: (l$$__typename as String),
     );
   }
@@ -63,8 +56,6 @@ class Fragment$userProfileScreenFragment {
   final bool isMuted;
 
   final bool isBlocked;
-
-  final List<Fragment$invitationAwaitingListItemFragment> invitationAwaitings;
 
   final String $__typename;
 
@@ -86,9 +77,6 @@ class Fragment$userProfileScreenFragment {
     _resultData['isMuted'] = l$isMuted;
     final l$isBlocked = isBlocked;
     _resultData['isBlocked'] = l$isBlocked;
-    final l$invitationAwaitings = invitationAwaitings;
-    _resultData['invitationAwaitings'] =
-        l$invitationAwaitings.map((e) => e.toJson()).toList();
     final l$$__typename = $__typename;
     _resultData['__typename'] = l$$__typename;
     return _resultData;
@@ -104,7 +92,6 @@ class Fragment$userProfileScreenFragment {
     final l$isFriend = isFriend;
     final l$isMuted = isMuted;
     final l$isBlocked = isBlocked;
-    final l$invitationAwaitings = invitationAwaitings;
     final l$$__typename = $__typename;
     return Object.hashAll([
       l$id,
@@ -115,7 +102,6 @@ class Fragment$userProfileScreenFragment {
       l$isFriend,
       l$isMuted,
       l$isBlocked,
-      Object.hashAll(l$invitationAwaitings.map((v) => v)),
       l$$__typename,
     ]);
   }
@@ -169,18 +155,6 @@ class Fragment$userProfileScreenFragment {
     if (l$isBlocked != lOther$isBlocked) {
       return false;
     }
-    final l$invitationAwaitings = invitationAwaitings;
-    final lOther$invitationAwaitings = other.invitationAwaitings;
-    if (l$invitationAwaitings.length != lOther$invitationAwaitings.length) {
-      return false;
-    }
-    for (int i = 0; i < l$invitationAwaitings.length; i++) {
-      final l$invitationAwaitings$entry = l$invitationAwaitings[i];
-      final lOther$invitationAwaitings$entry = lOther$invitationAwaitings[i];
-      if (l$invitationAwaitings$entry != lOther$invitationAwaitings$entry) {
-        return false;
-      }
-    }
     final l$$__typename = $__typename;
     final lOther$$__typename = other.$__typename;
     if (l$$__typename != lOther$$__typename) {
@@ -218,15 +192,8 @@ abstract class CopyWith$Fragment$userProfileScreenFragment<TRes> {
     bool? isFriend,
     bool? isMuted,
     bool? isBlocked,
-    List<Fragment$invitationAwaitingListItemFragment>? invitationAwaitings,
     String? $__typename,
   });
-  TRes invitationAwaitings(
-      Iterable<Fragment$invitationAwaitingListItemFragment> Function(
-              Iterable<
-                  CopyWith$Fragment$invitationAwaitingListItemFragment<
-                      Fragment$invitationAwaitingListItemFragment>>)
-          _fn);
 }
 
 class _CopyWithImpl$Fragment$userProfileScreenFragment<TRes>
@@ -251,7 +218,6 @@ class _CopyWithImpl$Fragment$userProfileScreenFragment<TRes>
     Object? isFriend = _undefined,
     Object? isMuted = _undefined,
     Object? isBlocked = _undefined,
-    Object? invitationAwaitings = _undefined,
     Object? $__typename = _undefined,
   }) =>
       _then(Fragment$userProfileScreenFragment(
@@ -278,27 +244,10 @@ class _CopyWithImpl$Fragment$userProfileScreenFragment<TRes>
         isBlocked: isBlocked == _undefined || isBlocked == null
             ? _instance.isBlocked
             : (isBlocked as bool),
-        invitationAwaitings:
-            invitationAwaitings == _undefined || invitationAwaitings == null
-                ? _instance.invitationAwaitings
-                : (invitationAwaitings
-                    as List<Fragment$invitationAwaitingListItemFragment>),
         $__typename: $__typename == _undefined || $__typename == null
             ? _instance.$__typename
             : ($__typename as String),
       ));
-  TRes invitationAwaitings(
-          Iterable<Fragment$invitationAwaitingListItemFragment> Function(
-                  Iterable<
-                      CopyWith$Fragment$invitationAwaitingListItemFragment<
-                          Fragment$invitationAwaitingListItemFragment>>)
-              _fn) =>
-      call(
-          invitationAwaitings: _fn(_instance.invitationAwaitings
-              .map((e) => CopyWith$Fragment$invitationAwaitingListItemFragment(
-                    e,
-                    (i) => i,
-                  ))).toList());
 }
 
 class _CopyWithStubImpl$Fragment$userProfileScreenFragment<TRes>
@@ -316,11 +265,9 @@ class _CopyWithStubImpl$Fragment$userProfileScreenFragment<TRes>
     bool? isFriend,
     bool? isMuted,
     bool? isBlocked,
-    List<Fragment$invitationAwaitingListItemFragment>? invitationAwaitings,
     String? $__typename,
   }) =>
       _res;
-  invitationAwaitings(_fn) => _res;
 }
 
 const fragmentDefinitionuserProfileScreenFragment = FragmentDefinitionNode(
@@ -389,25 +336,6 @@ const fragmentDefinitionuserProfileScreenFragment = FragmentDefinitionNode(
       selectionSet: null,
     ),
     FieldNode(
-      name: NameNode(value: 'invitationAwaitings'),
-      alias: null,
-      arguments: [],
-      directives: [],
-      selectionSet: SelectionSetNode(selections: [
-        FragmentSpreadNode(
-          name: NameNode(value: 'invitationAwaitingListItemFragment'),
-          directives: [],
-        ),
-        FieldNode(
-          name: NameNode(value: '__typename'),
-          alias: null,
-          arguments: [],
-          directives: [],
-          selectionSet: null,
-        ),
-      ]),
-    ),
-    FieldNode(
       name: NameNode(value: '__typename'),
       alias: null,
       arguments: [],
@@ -419,7 +347,6 @@ const fragmentDefinitionuserProfileScreenFragment = FragmentDefinitionNode(
 const documentNodeFragmentuserProfileScreenFragment =
     DocumentNode(definitions: [
   fragmentDefinitionuserProfileScreenFragment,
-  fragmentDefinitioninvitationAwaitingListItemFragment,
 ]);
 
 extension ClientExtension$Fragment$userProfileScreenFragment
@@ -743,7 +670,6 @@ const documentNodeQueryuserProfileScreenUser = DocumentNode(definitions: [
     ]),
   ),
   fragmentDefinitionuserProfileScreenFragment,
-  fragmentDefinitioninvitationAwaitingListItemFragment,
 ]);
 Query$userProfileScreenUser _parserFn$Query$userProfileScreenUser(
         Map<String, dynamic> data) =>

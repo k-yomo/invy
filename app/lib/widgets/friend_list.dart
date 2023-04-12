@@ -6,7 +6,6 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:invy/graphql/user_block.graphql.dart';
 import 'package:invy/graphql/user_mute.graphql.dart';
 import 'package:invy/widgets/divider.dart';
-import 'package:invy/widgets/invitation_awaiting_icon_text.dart';
 
 import '../services/graphql_client.dart';
 import 'friend_list_item_fragment.graphql.dart';
@@ -159,11 +158,6 @@ class _FriendListItem extends HookConsumerWidget {
                               fontSize: 14, fontWeight: FontWeight.bold),
                           overflow: TextOverflow.ellipsis,
                         ),
-                        friend.value.invitationAwaitings.isNotEmpty
-                            ? InvitationAwaitingIconText(
-                                invitationAwaiting:
-                                    friend.value.invitationAwaitings.first)
-                            : const SizedBox()
                       ],
                     ),
                   ),

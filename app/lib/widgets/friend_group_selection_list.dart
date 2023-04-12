@@ -23,12 +23,13 @@ class FriendGroupSelectionList extends StatelessWidget {
         children: [
           InkWell(
             onTap: () {
+              var updatedSelectedFriendGroups = [...selectedFriendGroups];
               if (isSelected) {
-                selectedFriendGroups.remove(friendGroup);
+                updatedSelectedFriendGroups.remove(friendGroup);
               } else {
-                selectedFriendGroups.add(friendGroup);
+                updatedSelectedFriendGroups.add(friendGroup);
               }
-              onChange(selectedFriendGroups);
+              onChange(updatedSelectedFriendGroups);
             },
             child: _FriendGroupListItem(
                 key: Key(friendGroup.id),
