@@ -4,6 +4,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:graphql/client.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:invy/router.dart';
+import 'package:invy/screens/invitation/invitation_form_screen.dart';
 import 'package:invy/screens/invitation/invitation_screen.graphql.dart';
 import 'package:invy/services/graphql_client.dart';
 import 'package:invy/state/badge_count.dart';
@@ -216,7 +217,7 @@ class InvitationScreen extends HookConsumerWidget {
                             children: [
                               TextButton(
                                 onPressed: () {
-                                  const InvitationRoute().go(context);
+                                  const InvitationFormRoute().go(context);
                                 },
                                 style: TextButton.styleFrom(
                                   minimumSize: const Size.fromHeight(0),
