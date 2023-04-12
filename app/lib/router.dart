@@ -15,7 +15,7 @@ import 'package:invy/screens/invitation/invitation_detail_screen.dart';
 import 'package:invy/screens/invitation/invitation_friend_select_screen.dart';
 import 'package:invy/screens/invitation/invitation_location_select_screen.dart';
 import 'package:invy/screens/login/login_landing_screen.dart';
-import 'package:invy/screens/home_screen.dart';
+import 'package:invy/screens/map_screen.dart';
 import 'package:invy/screens/profile/my_profile_screen.dart';
 import 'package:invy/screens/profile/profile_edit_screen.dart';
 import 'package:invy/screens/settings_screen.dart';
@@ -43,7 +43,7 @@ final tabs = [
   ScaffoldWithNavBarTabItem(
     icon: const Icon(Icons.location_pin),
     label: 'マップ',
-    location: const HomeRoute().location,
+    location: const MapRoute().location,
   ),
   ScaffoldWithNavBarTabItem(
     icon: const Icon(Icons.insert_invitation),
@@ -137,19 +137,19 @@ GoRouter router(RouterRef ref, {Uri? initialRoute}) => GoRouter(
       return null;
     });
 
-@TypedGoRoute<HomeRoute>(
+@TypedGoRoute<MapRoute>(
   path: '/',
   routes: [
   ],
 )
-class HomeRoute extends GoRouteData {
-  const HomeRoute();
+class MapRoute extends GoRouteData {
+  const MapRoute();
 
   @override
   CustomTransitionPage<void> buildPage(
           BuildContext context, GoRouterState state) =>
       const NoTransitionPage(
-          child: DynamicLinksManager(child: HomeScreenScreen()));
+          child: DynamicLinksManager(child: MapScreenScreen()));
 }
 
 @TypedGoRoute<InvitationRoute>(path: '/invitations', routes: [

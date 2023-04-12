@@ -10,8 +10,8 @@ import 'package:invy/state/location.dart';
 
 const locationUndecided = "未定";
 
-class HomeScreenScreen extends HookConsumerWidget {
-  const HomeScreenScreen({super.key});
+class MapScreenScreen extends HookConsumerWidget {
+  const MapScreenScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

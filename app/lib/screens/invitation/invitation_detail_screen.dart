@@ -303,7 +303,7 @@ class InvitationDetailScreen extends HookConsumerWidget {
                                     // TODO: error handling
                                     return;
                                   }
-                                  const HomeRoute().go(context);
+                                  const MapRoute().go(context);
                                   showToast("おさそいを削除しました", ToastLevel.info);
                                   break;
                                 case "reportObjectionableContent":

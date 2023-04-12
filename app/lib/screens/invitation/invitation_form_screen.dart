@@ -89,7 +89,7 @@ class InvitationFormScreen extends HookConsumerWidget {
         return;
       }
       ref.read(invitationFormProvider.notifier).reset();
-      const HomeRoute().go(context);
+      const MapRoute().go(context);
     }
 
     return Scaffold(
