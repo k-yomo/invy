@@ -25,8 +25,8 @@ import 'package:invy/screens/user/user_profile_screen.dart';
 import 'package:invy/screens/user/user_profile_screen.graphql.dart';
 import 'package:invy/state/auth.dart';
 import 'package:invy/widgets/dynamic_links_manager.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:geolocator/geolocator.dart' as geolocator;
 
 part 'router.g.dart';
 
@@ -137,7 +137,8 @@ GoRouter router(RouterRef ref, {Uri? initialRoute}) => GoRouter(
         return LoginRoute(from: state.subloc).location;
       }
 
-      if (await Permission.locationAlways.isDenied) {
+      final permission = await geolocator.Geolocator.checkPermission();
+      if (permission != geolocator.LocationPermission.always) {
         return BackgroundLocationRequestRoute(from: state.subloc).location;
       }
       return null;
@@ -155,7 +156,7 @@ class MapRoute extends GoRouteData {
   CustomTransitionPage<void> buildPage(
           BuildContext context, GoRouterState state) =>
       const NoTransitionPage(
-          child: DynamicLinksManager(child: MapScreenScreen()));
+          child: DynamicLinksManager(child: MapScreen()));
 }
 
 @TypedGoRoute<InvitationRoute>(path: '/invitations', routes: [

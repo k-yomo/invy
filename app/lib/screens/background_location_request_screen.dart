@@ -1,7 +1,7 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
+import 'package:geolocator/geolocator.dart' as geolocator;
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:invy/router.dart';
@@ -18,36 +18,23 @@ class BackgroundLocationRequestScreen extends StatefulHookConsumerWidget {
   }
 }
 
-class BackgroundLocationRequestScreenState
-    extends ConsumerState<BackgroundLocationRequestScreen> {
-  Timer? timer;
+class BackgroundLocationRequestScreenState extends ConsumerState<BackgroundLocationRequestScreen> {
 
   @override
-  void initState() {
-    super.initState();
-    timer = Timer.periodic(
-      const Duration(seconds: 3),
-      (Timer timer) async {
-        if (!await Permission.locationAlways.isGranted) {
+  Widget build(BuildContext context) {
+    useOnAppLifecycleStateChange((previous, current) async {
+      if(current == AppLifecycleState.resumed){
+        final permission = await geolocator.Geolocator.checkPermission();
+        if (permission != geolocator.LocationPermission.always) {
           return;
         }
-        if (widget.from != null) {
+        if (widget.from != null && widget.from != const BackgroundLocationRequestRoute().location) {
           GoRouter.of(context).go(widget.from!);
         } else {
           const MapRoute().go(context);
         }
-      },
-    );
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    timer?.cancel();
-  }
-
-  @override
-  Widget build(BuildContext context) {
+      }
+    });
     return Scaffold(
         body: SafeArea(
       child: Container(
