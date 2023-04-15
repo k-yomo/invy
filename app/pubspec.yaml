@@ -103,6 +103,7 @@ dependencies:
   cloud_firestore: ^4.4.5
   uuid: ^3.0.7
   qr_code_scanner: ^1.0.1
+  custom_marker: ^1.0.0
 
 dev_dependencies:
   flutter_test:

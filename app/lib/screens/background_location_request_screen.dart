@@ -7,29 +7,21 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:invy/router.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-class BackgroundLocationRequestScreen extends StatefulHookConsumerWidget {
+class BackgroundLocationRequestScreen extends HookConsumerWidget {
   const BackgroundLocationRequestScreen({super.key, this.from});
 
   final String? from;
 
   @override
-  BackgroundLocationRequestScreenState createState() {
-    return BackgroundLocationRequestScreenState();
-  }
-}
-
-class BackgroundLocationRequestScreenState extends ConsumerState<BackgroundLocationRequestScreen> {
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     useOnAppLifecycleStateChange((previous, current) async {
       if(current == AppLifecycleState.resumed){
         final permission = await geolocator.Geolocator.checkPermission();
         if (permission != geolocator.LocationPermission.always) {
           return;
         }
-        if (widget.from != null && widget.from != const BackgroundLocationRequestRoute().location) {
-          GoRouter.of(context).go(widget.from!);
+        if (from != null && from != const BackgroundLocationRequestRoute().location) {
+          GoRouter.of(context).go(from!);
         } else {
           const MapRoute().go(context);
         }

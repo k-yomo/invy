@@ -1,0 +1,20 @@
+
+query mapScreenViewer {
+    viewer {
+        friends(first: 100) {
+            edges {
+                node {
+                    id
+                    nickname
+                    avatarUrl
+                    distanceKm
+                }
+            }
+            pageInfo {
+                hasNextPage
+                endCursor
+            }
+        }
+    }
+}
+

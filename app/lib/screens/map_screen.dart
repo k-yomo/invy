@@ -1,12 +1,16 @@
 import 'dart:async';
 
+import 'package:custom_marker/marker_icon.dart';
 import 'package:flutter/material.dart' hide ModalBottomSheetRoute;
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:invy/router.dart';
 import 'package:invy/screens/invitation/invitation_form_screen.dart';
+import 'package:invy/screens/map_screen.graphql.dart';
+import 'package:invy/services/graphql_client.dart';
 import 'package:invy/state/location.dart';
+import 'package:invy/util/location.dart';
 
 const locationUndecided = "未定";
 
@@ -15,6 +19,12 @@ class MapScreen extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final graphqlClient = ref.read(graphqlClientProvider);
+    final mapScreenViewerQuery = useMemoized(() => graphqlClient
+            .watchQuery$mapScreenViewer(WatchOptions$Query$mapScreenViewer(
+          eagerlyFetchResults: true,
+        )));
+    final mapScreenViewer = useStream(mapScreenViewerQuery.stream);
     final googleMapController = useState(Completer<GoogleMapController>());
     final currentLocation = ref.watch(currentPinLocationProvider);
 
@@ -34,61 +44,73 @@ class MapScreen extends HookConsumerWidget {
       return null;
     }, []);
 
-    if (currentLocation == null) {
+    if (mapScreenViewer.data?.parsedData?.viewer == null || currentLocation == null) {
       return const SizedBox();
     }
+
+    final generateMarkers = useMemoized(() async {
+      final futureMarkers = mapScreenViewer.data!.parsedData!.viewer.friends.edges.where((e) => e.node.distanceKm != null).map((e) async {
+        return Marker(
+          markerId: MarkerId(e.node.id),
+          position: getRandomLocation(currentLocation, e.node.distanceKm! * 1000),
+          icon: await MarkerIcon.downloadResizePictureCircle(
+            e.node.avatarUrl,
+              size: 150,
+              addBorder: true,
+              borderColor: Colors.white,
+              borderSize: 10,
+          ),
+          onTap: () {
+            UserProfileRoute(e.node.id).push(context);
+          }
+        );
+      });
+      return Future.wait(futureMarkers);
+    }, [mapScreenViewer.data!.parsedData!.viewer.friends]);
+    final friendMarkers = useFuture(generateMarkers).data?.toSet() ?? <dynamic>{};
 
     return Scaffold(
       body: Column(
         children: [
           Expanded(
-            child: Stack(
-              fit: StackFit.expand,
-              alignment: Alignment.center,
-              children: [
-                GoogleMap(
-                  initialCameraPosition:
-                      CameraPosition(target: currentLocation, zoom: 11.8),
-                  onMapCreated: (GoogleMapController controller) {
-                    googleMapController.value.complete(controller);
-                  },
-                  circles: {
-                    Circle(
-                      circleId: const CircleId('3km'),
-                      center: currentLocation,
-                      radius: 3000,
-                      strokeColor: Colors.pink.withOpacity(0.8),
-                      fillColor: Colors.pink.withOpacity(0.2),
-                      strokeWidth: 2,
-                    ),
-                    Circle(
-                      circleId: const CircleId('6km'),
-                      center: currentLocation,
-                      radius: 6000,
-                      strokeColor: Colors.orange.withOpacity(0.8),
-                      fillColor: Colors.orange.withOpacity(0.2),
-                      strokeWidth: 2,
-                    ),
-                    Circle(
-                      circleId: const CircleId('10km'),
-                      center: currentLocation,
-                      radius: 10000,
-                      strokeColor: Colors.blue.withOpacity(0.8),
-                      fillColor: Colors.blue.withOpacity(0.2),
-                      strokeWidth: 2,
-                    )
-                  },
-                  mapType: MapType.normal,
-                  myLocationEnabled: true,
-                  myLocationButtonEnabled: true,
-                  mapToolbarEnabled: false,
-                  buildingsEnabled: true,
+            child: GoogleMap(
+              initialCameraPosition:
+                  CameraPosition(target: currentLocation, zoom: 11.8),
+              onMapCreated: (GoogleMapController controller) {
+                googleMapController.value.complete(controller);
+              },
+              circles: {
+                Circle(
+                  circleId: const CircleId('3km'),
+                  center: currentLocation,
+                  radius: 3000,
+                  strokeColor: Colors.pink.withOpacity(0.8),
+                  fillColor: Colors.pink.withOpacity(0.2),
+                  strokeWidth: 2,
                 ),
-                Container(
-                  margin: const EdgeInsets.only(bottom: 40),
-                  child: const Icon(Icons.fmd_good, size: 40),
-                )
-              ],
+                Circle(
+                  circleId: const CircleId('6km'),
+                  center: currentLocation,
+                  radius: 6000,
+                  strokeColor: Colors.orange.withOpacity(0.8),
+                  fillColor: Colors.orange.withOpacity(0.2),
+                  strokeWidth: 2,
+                ),
+                Circle(
+                  circleId: const CircleId('10km'),
+                  center: currentLocation,
+                  radius: 10000,
+                  strokeColor: Colors.blue.withOpacity(0.8),
+                  fillColor: Colors.blue.withOpacity(0.2),
+                  strokeWidth: 2,
+                ),
+              },
+              markers: friendMarkers,
+              mapType: MapType.normal,
+              myLocationEnabled: true,
+              myLocationButtonEnabled: true,
+              mapToolbarEnabled: false,
+              buildingsEnabled: true,
             ),
           ),
           Container(
