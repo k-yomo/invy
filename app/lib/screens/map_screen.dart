@@ -10,9 +10,6 @@ import 'package:invy/screens/invitation/invitation_form_screen.dart';
 import 'package:invy/screens/map_screen.graphql.dart';
 import 'package:invy/services/graphql_client.dart';
 import 'package:invy/state/location.dart';
-import 'package:invy/util/location.dart';
-
-const locationUndecided = "未定";
 
 class MapScreen extends HookConsumerWidget {
   const MapScreen({super.key});
@@ -78,19 +75,36 @@ class MapScreen extends HookConsumerWidget {
       body: Column(
         children: [
           Expanded(
-            child: GoogleMap(
-              initialCameraPosition:
-                  CameraPosition(target: currentLocation, zoom: 11.8),
-              onMapCreated: (GoogleMapController controller) {
-                googleMapController.value.complete(controller);
-              },
-              markers: friendMarkers,
-              mapType: MapType.normal,
-              myLocationEnabled: true,
-              myLocationButtonEnabled: true,
-              mapToolbarEnabled: false,
-              buildingsEnabled: true,
-            ),
+            child: Stack(children: [
+              GoogleMap(
+                initialCameraPosition:
+                    CameraPosition(target: currentLocation, zoom: 11.8),
+                onMapCreated: (GoogleMapController controller) {
+                  googleMapController.value.complete(controller);
+                },
+                markers: friendMarkers,
+                mapType: MapType.normal,
+                myLocationEnabled: true,
+                myLocationButtonEnabled: true,
+                mapToolbarEnabled: false,
+                buildingsEnabled: true,
+              ),
+              SafeArea(
+                child: Align(
+                  alignment: Alignment.topCenter,
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 15),
+                    padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                    decoration: BoxDecoration(
+                      color: Colors.black,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: const Text("友達の位置はあいまいに表示されています",
+                        style: TextStyle(color: Colors.white)),
+                  ),
+                ),
+              ),
+            ]),
           ),
           Container(
             padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
