@@ -67,7 +67,7 @@ class MapScreen extends HookConsumerWidget {
       });
       return Future.wait(futureMarkers);
     }, [mapScreenViewer.data!.parsedData!.viewer.friends]);
-    final friendMarkers = useFuture(generateMarkers).data?.toSet() ?? <dynamic>{};
+    final friendMarkers = useFuture(generateMarkers).data?.toSet() ?? <Marker>{};
 
     return Scaffold(
       body: Column(
