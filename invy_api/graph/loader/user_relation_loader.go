@@ -15,8 +15,6 @@ import (
 	"github.com/k-yomo/invy/invy_api/ent/usermute"
 	"github.com/k-yomo/invy/invy_api/internal/auth"
 	"github.com/k-yomo/invy/pkg/convutil"
-	"github.com/k-yomo/invy/pkg/length"
-	"github.com/k-yomo/invy/pkg/location"
 	"github.com/k-yomo/invy/pkg/pgutil"
 )
 
@@ -132,15 +130,15 @@ func NewUserBlockLoader(db *ent.Client) func(context.Context, []UserBlockKey) []
 	}
 }
 
-// NewFriendDistanceLoader loads the distance with a friend in meters
-func NewFriendDistanceLoader(db *ent.Client) func(context.Context, []uuid.UUID) []*dataloader.Result[*length.Length] {
-	return func(ctx context.Context, userIDs []uuid.UUID) []*dataloader.Result[*length.Length] {
+// NewFriendGeoPointLoader loads the latest geo point of the friend
+// WARN: Please carefully use the returned geo point, because it's PII.
+func NewFriendGeoPointLoader(db *ent.Client) func(context.Context, []uuid.UUID) []*dataloader.Result[*pgutil.GeoPoint] {
+	return func(ctx context.Context, userIDs []uuid.UUID) []*dataloader.Result[*pgutil.GeoPoint] {
 		if len(userIDs) == 0 {
 			return nil
 		}
 
 		authUserID := auth.GetCurrentUserID(ctx)
-
 		friendshipLoaderKeys := make([]FriendshipKey, 0, len(userIDs))
 		for _, userID := range userIDs {
 			friendshipLoaderKeys = append(friendshipLoaderKeys, FriendshipKey{UserID: authUserID, FriendUserID: userID})
@@ -154,30 +152,24 @@ func NewFriendDistanceLoader(db *ent.Client) func(context.Context, []uuid.UUID) 
 			}
 		}
 
-		userLocations, err := db.UserLocation.Query().
+		friendLocations, err := db.UserLocation.Query().
 			Where(
-				userlocation.UserIDIn(append(friendUserIDs, authUserID)...),
+				userlocation.UserIDIn(friendUserIDs...),
 				userlocation.UpdatedAtGTE(time.Now().Add(-2*time.Hour)),
 			).
 			All(ctx)
 		if err != nil {
-			return convertToErrorResults[*length.Length](fmt.Errorf("load user locations: %w", err), len(userIDs))
+			return convertToErrorResults[*pgutil.GeoPoint](fmt.Errorf("load user locations: %w", err), len(userIDs))
 		}
-		userIDCoordinateMap := map[uuid.UUID]*pgutil.GeoPoint{}
-		for _, ul := range userLocations {
-			userIDCoordinateMap[ul.UserID] = ul.Coordinate
+		friendUserIDCoordinateMap := map[uuid.UUID]*pgutil.GeoPoint{}
+		for _, fl := range friendLocations {
+			friendUserIDCoordinateMap[fl.UserID] = fl.Coordinate
 		}
 
-		results := make([]*dataloader.Result[*length.Length], 0, len(userIDs))
+		results := make([]*dataloader.Result[*pgutil.GeoPoint], 0, len(userIDs))
 		for _, userID := range userIDs {
-			userCoord, ok1 := userIDCoordinateMap[authUserID]
-			friendCoord, ok2 := userIDCoordinateMap[userID]
-			if !ok1 || !ok2 {
-				results = append(results, &dataloader.Result[*length.Length]{})
-				continue
-			}
-			distance := length.NewMeter(int(location.CalcDistanceMeter(userCoord.Y(), userCoord.X(), friendCoord.Y(), friendCoord.X())))
-			results = append(results, &dataloader.Result[*length.Length]{Data: &distance})
+			friendCoord := friendUserIDCoordinateMap[userID]
+			results = append(results, &dataloader.Result[*pgutil.GeoPoint]{Data: friendCoord})
 		}
 		return results
 	}

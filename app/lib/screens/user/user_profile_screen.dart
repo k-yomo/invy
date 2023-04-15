@@ -113,18 +113,16 @@ class UserProfileScreen extends HookConsumerWidget {
 
     onPressedInvitation() async {
       ref.read(invitationFormProvider.notifier).reset();
-      ref.read(invitationFormProvider.notifier).set(
-        ref.read(invitationFormProvider).copyWith(
-          selectedFriends: [
+      ref
+          .read(invitationFormProvider.notifier)
+          .set(ref.read(invitationFormProvider).copyWith(selectedFriends: [
             Fragment$friendListItemFragment(
               id: user.id,
               nickname: user.nickname,
               avatarUrl: user.avatarUrl,
               isMuted: user.isMuted,
             )
-          ]
-        )
-      );
+          ]));
       const InvitationFormRoute().push(context);
     }
 

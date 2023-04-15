@@ -324,6 +324,7 @@ type User struct {
 	IsMuted                bool                  `json:"isMuted"`
 	IsBlocked              bool                  `json:"isBlocked"`
 	IsFriend               bool                  `json:"isFriend"`
+	FuzzyCoordinate        *Coordinate           `json:"fuzzyCoordinate,omitempty"`
 	DistanceKm             *int                  `json:"distanceKm,omitempty"`
 	IsRequestingFriendship bool                  `json:"isRequestingFriendship"`
 	InvitationAwaitings    []*InvitationAwaiting `json:"invitationAwaitings"`

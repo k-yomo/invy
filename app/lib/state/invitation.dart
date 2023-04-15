@@ -38,16 +38,16 @@ final defaultInvitationFormState = InvitationFormState(
 );
 
 class InvitationFormStateNotifier extends StateNotifier<InvitationFormState> {
-  InvitationFormStateNotifier()
-      : super(defaultInvitationFormState);
+  InvitationFormStateNotifier() : super(defaultInvitationFormState);
 
   void set(InvitationFormState formState) => state = formState;
 
   void reset() => state = defaultInvitationFormState;
 }
 
-
-final invitationFormProvider = StateNotifierProvider<InvitationFormStateNotifier, InvitationFormState>((ref) {
+final invitationFormProvider =
+    StateNotifierProvider<InvitationFormStateNotifier, InvitationFormState>(
+        (ref) {
   return InvitationFormStateNotifier();
 });
 

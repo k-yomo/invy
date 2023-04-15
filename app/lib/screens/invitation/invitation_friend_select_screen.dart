@@ -59,13 +59,12 @@ class InvitationFriendSelectScreen extends HookConsumerWidget {
               actions: <Widget>[
                 TextButton(
                   onPressed: () {
-                    ref
-                        .read(invitationFormProvider.notifier).set(
-                      defaultInvitationFormState.copyWith(
-                        selectedFriendGroups: selectedFriendGroups.value,
-                        selectedFriends: selectedFriends.value,
-                      ),
-                    );
+                    ref.read(invitationFormProvider.notifier).set(
+                          defaultInvitationFormState.copyWith(
+                            selectedFriendGroups: selectedFriendGroups.value,
+                            selectedFriends: selectedFriends.value,
+                          ),
+                        );
                     GoRouter.of(context).pop();
                   },
                   child: Text(

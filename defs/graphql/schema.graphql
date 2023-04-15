@@ -43,3 +43,9 @@ enum ErrorCode {
     CONFLICT
     INTERNAL
 }
+
+type Coordinate {
+    latitude: Float!
+    longitude: Float!
+}
+

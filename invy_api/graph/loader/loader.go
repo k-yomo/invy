@@ -4,7 +4,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/graph-gophers/dataloader/v7"
 	"github.com/k-yomo/invy/invy_api/ent"
-	"github.com/k-yomo/invy/pkg/length"
+	"github.com/k-yomo/invy/pkg/pgutil"
 )
 
 type Loaders struct {
@@ -15,7 +15,7 @@ type Loaders struct {
 	UserBlock                      *dataloader.Loader[UserBlockKey, *ent.UserBlock]
 	InvitationAcceptedUserProfiles *dataloader.Loader[uuid.UUID, ent.UserProfiles]
 	FriendInvitationAwaitings      *dataloader.Loader[uuid.UUID, ent.InvitationAwaitings]
-	FriendDistance                 *dataloader.Loader[uuid.UUID, *length.Length]
+	FriendGeoPoint                 *dataloader.Loader[uuid.UUID, *pgutil.GeoPoint]
 }
 
 func NewLoaders(db *ent.Client) *Loaders {
@@ -48,9 +48,9 @@ func NewLoaders(db *ent.Client) *Loaders {
 			NewInvitationAwaitingsLoader(db),
 			dataloader.WithCache[uuid.UUID, ent.InvitationAwaitings](&dataloader.NoCache[uuid.UUID, ent.InvitationAwaitings]{}),
 		),
-		FriendDistance: dataloader.NewBatchedLoader(
-			NewFriendDistanceLoader(db),
-			dataloader.WithCache[uuid.UUID, *length.Length](&dataloader.NoCache[uuid.UUID, *length.Length]{}),
+		FriendGeoPoint: dataloader.NewBatchedLoader(
+			NewFriendGeoPointLoader(db),
+			dataloader.WithCache[uuid.UUID, *pgutil.GeoPoint](&dataloader.NoCache[uuid.UUID, *pgutil.GeoPoint]{}),
 		),
 	}
 }

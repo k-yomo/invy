@@ -25,6 +25,16 @@ func NewGeoPoint(latitude float64, longitude float64) *GeoPoint {
 	}
 }
 
+// Lat returns latitude of the geometry point value
+func (g *GeoPoint) Lat() float64 {
+	return g.Y()
+}
+
+// Lon returns longitude of the geometry point value
+func (g *GeoPoint) Lon() float64 {
+	return g.X()
+}
+
 // Value returns geometry point value, implement driver.Valuer interface
 func (g *GeoPoint) Value() (driver.Value, error) {
 	if g == nil {

@@ -313,6 +313,7 @@ type ComplexityRoot struct {
 	User struct {
 		AvatarURL              func(childComplexity int) int
 		DistanceKm             func(childComplexity int) int
+		FuzzyCoordinate        func(childComplexity int) int
 		ID                     func(childComplexity int) int
 		InvitationAwaitings    func(childComplexity int) int
 		IsBlocked              func(childComplexity int) int
@@ -415,6 +416,7 @@ type UserResolver interface {
 	IsMuted(ctx context.Context, obj *gqlmodel.User) (bool, error)
 	IsBlocked(ctx context.Context, obj *gqlmodel.User) (bool, error)
 	IsFriend(ctx context.Context, obj *gqlmodel.User) (bool, error)
+	FuzzyCoordinate(ctx context.Context, obj *gqlmodel.User) (*gqlmodel.Coordinate, error)
 	DistanceKm(ctx context.Context, obj *gqlmodel.User) (*int, error)
 	IsRequestingFriendship(ctx context.Context, obj *gqlmodel.User) (bool, error)
 	InvitationAwaitings(ctx context.Context, obj *gqlmodel.User) ([]*gqlmodel.InvitationAwaiting, error)
@@ -1464,6 +1466,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.User.DistanceKm(childComplexity), true
 
+	case "User.fuzzyCoordinate":
+		if e.complexity.User.FuzzyCoordinate == nil {
+			break
+		}
+
+		return e.complexity.User.FuzzyCoordinate(childComplexity), true
+
 	case "User.id":
 		if e.complexity.User.ID == nil {
 			break
@@ -1909,11 +1918,6 @@ extend type Mutation {
     deleteInvitationAwaiting(invitationAwaitingId: UUID!): DeleteInvitationAwaitingPayload! @authRequired
 }
 
-type Coordinate {
-    latitude: Float!
-    longitude: Float!
-}
-
 enum InvitationStatus {
     ACTIVE
     CLOSED
@@ -2064,6 +2068,12 @@ enum ErrorCode {
     CONFLICT
     INTERNAL
 }
+
+type Coordinate {
+    latitude: Float!
+    longitude: Float!
+}
+
 `, BuiltIn: false},
 	{Name: "../../../defs/graphql/user.graphql", Input: `
 extend type Query {
@@ -2117,7 +2127,10 @@ type User implements Node {
     isMuted: Boolean! @goField(forceResolver: true)
     isBlocked: Boolean! @goField(forceResolver: true)
     isFriend: Boolean! @goField(forceResolver: true)
-    # This is an approximate distance in kilometer.
+    # fuzzyCoordinate is an fuzzy user's location.
+    # It'll be null when not friend or the location tracking is not enabled by the user
+    fuzzyCoordinate: Coordinate @goField(forceResolver: true)
+    # distanceKm is an approximate distance in kilometer.
     # It'll be null when not friend or the location tracking is not enabled by the user
     distanceKm: Int @goField(forceResolver: true)
     isRequestingFriendship: Boolean! @goField(forceResolver: true)
@@ -4677,6 +4690,8 @@ func (ec *executionContext) fieldContext_FriendGroup_friendUsers(ctx context.Con
 				return ec.fieldContext_User_isBlocked(ctx, field)
 			case "isFriend":
 				return ec.fieldContext_User_isFriend(ctx, field)
+			case "fuzzyCoordinate":
+				return ec.fieldContext_User_fuzzyCoordinate(ctx, field)
 			case "distanceKm":
 				return ec.fieldContext_User_distanceKm(ctx, field)
 			case "isRequestingFriendship":
@@ -4831,6 +4846,8 @@ func (ec *executionContext) fieldContext_FriendshipRequest_fromUser(ctx context.
 				return ec.fieldContext_User_isBlocked(ctx, field)
 			case "isFriend":
 				return ec.fieldContext_User_isFriend(ctx, field)
+			case "fuzzyCoordinate":
+				return ec.fieldContext_User_fuzzyCoordinate(ctx, field)
 			case "distanceKm":
 				return ec.fieldContext_User_distanceKm(ctx, field)
 			case "isRequestingFriendship":
@@ -4941,6 +4958,8 @@ func (ec *executionContext) fieldContext_FriendshipRequest_toUser(ctx context.Co
 				return ec.fieldContext_User_isBlocked(ctx, field)
 			case "isFriend":
 				return ec.fieldContext_User_isFriend(ctx, field)
+			case "fuzzyCoordinate":
+				return ec.fieldContext_User_fuzzyCoordinate(ctx, field)
 			case "distanceKm":
 				return ec.fieldContext_User_distanceKm(ctx, field)
 			case "isRequestingFriendship":
@@ -5183,6 +5202,8 @@ func (ec *executionContext) fieldContext_Invitation_user(ctx context.Context, fi
 				return ec.fieldContext_User_isBlocked(ctx, field)
 			case "isFriend":
 				return ec.fieldContext_User_isFriend(ctx, field)
+			case "fuzzyCoordinate":
+				return ec.fieldContext_User_fuzzyCoordinate(ctx, field)
 			case "distanceKm":
 				return ec.fieldContext_User_distanceKm(ctx, field)
 			case "isRequestingFriendship":
@@ -5564,6 +5585,8 @@ func (ec *executionContext) fieldContext_Invitation_acceptedUsers(ctx context.Co
 				return ec.fieldContext_User_isBlocked(ctx, field)
 			case "isFriend":
 				return ec.fieldContext_User_isFriend(ctx, field)
+			case "fuzzyCoordinate":
+				return ec.fieldContext_User_fuzzyCoordinate(ctx, field)
 			case "distanceKm":
 				return ec.fieldContext_User_distanceKm(ctx, field)
 			case "isRequestingFriendship":
@@ -5762,6 +5785,8 @@ func (ec *executionContext) fieldContext_InvitationAwaiting_user(ctx context.Con
 				return ec.fieldContext_User_isBlocked(ctx, field)
 			case "isFriend":
 				return ec.fieldContext_User_isFriend(ctx, field)
+			case "fuzzyCoordinate":
+				return ec.fieldContext_User_fuzzyCoordinate(ctx, field)
 			case "distanceKm":
 				return ec.fieldContext_User_distanceKm(ctx, field)
 			case "isRequestingFriendship":
@@ -8877,6 +8902,8 @@ func (ec *executionContext) fieldContext_Query_user(ctx context.Context, field g
 				return ec.fieldContext_User_isBlocked(ctx, field)
 			case "isFriend":
 				return ec.fieldContext_User_isFriend(ctx, field)
+			case "fuzzyCoordinate":
+				return ec.fieldContext_User_fuzzyCoordinate(ctx, field)
 			case "distanceKm":
 				return ec.fieldContext_User_distanceKm(ctx, field)
 			case "isRequestingFriendship":
@@ -8974,6 +9001,8 @@ func (ec *executionContext) fieldContext_Query_userByScreenId(ctx context.Contex
 				return ec.fieldContext_User_isBlocked(ctx, field)
 			case "isFriend":
 				return ec.fieldContext_User_isFriend(ctx, field)
+			case "fuzzyCoordinate":
+				return ec.fieldContext_User_fuzzyCoordinate(ctx, field)
 			case "distanceKm":
 				return ec.fieldContext_User_distanceKm(ctx, field)
 			case "isRequestingFriendship":
@@ -10492,6 +10521,53 @@ func (ec *executionContext) fieldContext_User_isFriend(ctx context.Context, fiel
 	return fc, nil
 }
 
+func (ec *executionContext) _User_fuzzyCoordinate(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_fuzzyCoordinate(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.User().FuzzyCoordinate(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.Coordinate)
+	fc.Result = res
+	return ec.marshalOCoordinate2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐCoordinate(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_fuzzyCoordinate(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "latitude":
+				return ec.fieldContext_Coordinate_latitude(ctx, field)
+			case "longitude":
+				return ec.fieldContext_Coordinate_longitude(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Coordinate", field.Name)
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _User_distanceKm(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.User) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_User_distanceKm(ctx, field)
 	if err != nil {
@@ -10836,6 +10912,8 @@ func (ec *executionContext) fieldContext_UserEdge_node(ctx context.Context, fiel
 				return ec.fieldContext_User_isBlocked(ctx, field)
 			case "isFriend":
 				return ec.fieldContext_User_isFriend(ctx, field)
+			case "fuzzyCoordinate":
+				return ec.fieldContext_User_fuzzyCoordinate(ctx, field)
 			case "distanceKm":
 				return ec.fieldContext_User_distanceKm(ctx, field)
 			case "isRequestingFriendship":
@@ -16291,6 +16369,23 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
+				return res
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return innerFunc(ctx)
+
+			})
+		case "fuzzyCoordinate":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._User_fuzzyCoordinate(ctx, field, obj)
 				return res
 			}
 

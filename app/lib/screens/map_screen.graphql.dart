@@ -194,11 +194,33 @@ const documentNodeQuerymapScreenViewer = DocumentNode(definitions: [
                         selectionSet: null,
                       ),
                       FieldNode(
-                        name: NameNode(value: 'distanceKm'),
+                        name: NameNode(value: 'fuzzyCoordinate'),
                         alias: null,
                         arguments: [],
                         directives: [],
-                        selectionSet: null,
+                        selectionSet: SelectionSetNode(selections: [
+                          FieldNode(
+                            name: NameNode(value: 'latitude'),
+                            alias: null,
+                            arguments: [],
+                            directives: [],
+                            selectionSet: null,
+                          ),
+                          FieldNode(
+                            name: NameNode(value: 'longitude'),
+                            alias: null,
+                            arguments: [],
+                            directives: [],
+                            selectionSet: null,
+                          ),
+                          FieldNode(
+                            name: NameNode(value: '__typename'),
+                            alias: null,
+                            arguments: [],
+                            directives: [],
+                            selectionSet: null,
+                          ),
+                        ]),
                       ),
                       FieldNode(
                         name: NameNode(value: '__typename'),
@@ -876,7 +898,7 @@ class Query$mapScreenViewer$viewer$friends$edges$node {
     required this.id,
     required this.nickname,
     required this.avatarUrl,
-    this.distanceKm,
+    this.fuzzyCoordinate,
     this.$__typename = 'User',
   });
 
@@ -885,13 +907,16 @@ class Query$mapScreenViewer$viewer$friends$edges$node {
     final l$id = json['id'];
     final l$nickname = json['nickname'];
     final l$avatarUrl = json['avatarUrl'];
-    final l$distanceKm = json['distanceKm'];
+    final l$fuzzyCoordinate = json['fuzzyCoordinate'];
     final l$$__typename = json['__typename'];
     return Query$mapScreenViewer$viewer$friends$edges$node(
       id: (l$id as String),
       nickname: (l$nickname as String),
       avatarUrl: (l$avatarUrl as String),
-      distanceKm: (l$distanceKm as int?),
+      fuzzyCoordinate: l$fuzzyCoordinate == null
+          ? null
+          : Query$mapScreenViewer$viewer$friends$edges$node$fuzzyCoordinate
+              .fromJson((l$fuzzyCoordinate as Map<String, dynamic>)),
       $__typename: (l$$__typename as String),
     );
   }
@@ -902,7 +927,8 @@ class Query$mapScreenViewer$viewer$friends$edges$node {
 
   final String avatarUrl;
 
-  final int? distanceKm;
+  final Query$mapScreenViewer$viewer$friends$edges$node$fuzzyCoordinate?
+      fuzzyCoordinate;
 
   final String $__typename;
 
@@ -914,8 +940,8 @@ class Query$mapScreenViewer$viewer$friends$edges$node {
     _resultData['nickname'] = l$nickname;
     final l$avatarUrl = avatarUrl;
     _resultData['avatarUrl'] = l$avatarUrl;
-    final l$distanceKm = distanceKm;
-    _resultData['distanceKm'] = l$distanceKm;
+    final l$fuzzyCoordinate = fuzzyCoordinate;
+    _resultData['fuzzyCoordinate'] = l$fuzzyCoordinate?.toJson();
     final l$$__typename = $__typename;
     _resultData['__typename'] = l$$__typename;
     return _resultData;
@@ -926,13 +952,13 @@ class Query$mapScreenViewer$viewer$friends$edges$node {
     final l$id = id;
     final l$nickname = nickname;
     final l$avatarUrl = avatarUrl;
-    final l$distanceKm = distanceKm;
+    final l$fuzzyCoordinate = fuzzyCoordinate;
     final l$$__typename = $__typename;
     return Object.hashAll([
       l$id,
       l$nickname,
       l$avatarUrl,
-      l$distanceKm,
+      l$fuzzyCoordinate,
       l$$__typename,
     ]);
   }
@@ -961,9 +987,9 @@ class Query$mapScreenViewer$viewer$friends$edges$node {
     if (l$avatarUrl != lOther$avatarUrl) {
       return false;
     }
-    final l$distanceKm = distanceKm;
-    final lOther$distanceKm = other.distanceKm;
-    if (l$distanceKm != lOther$distanceKm) {
+    final l$fuzzyCoordinate = fuzzyCoordinate;
+    final lOther$fuzzyCoordinate = other.fuzzyCoordinate;
+    if (l$fuzzyCoordinate != lOther$fuzzyCoordinate) {
       return false;
     }
     final l$$__typename = $__typename;
@@ -999,9 +1025,12 @@ abstract class CopyWith$Query$mapScreenViewer$viewer$friends$edges$node<TRes> {
     String? id,
     String? nickname,
     String? avatarUrl,
-    int? distanceKm,
+    Query$mapScreenViewer$viewer$friends$edges$node$fuzzyCoordinate?
+        fuzzyCoordinate,
     String? $__typename,
   });
+  CopyWith$Query$mapScreenViewer$viewer$friends$edges$node$fuzzyCoordinate<TRes>
+      get fuzzyCoordinate;
 }
 
 class _CopyWithImpl$Query$mapScreenViewer$viewer$friends$edges$node<TRes>
@@ -1021,7 +1050,7 @@ class _CopyWithImpl$Query$mapScreenViewer$viewer$friends$edges$node<TRes>
     Object? id = _undefined,
     Object? nickname = _undefined,
     Object? avatarUrl = _undefined,
-    Object? distanceKm = _undefined,
+    Object? fuzzyCoordinate = _undefined,
     Object? $__typename = _undefined,
   }) =>
       _then(Query$mapScreenViewer$viewer$friends$edges$node(
@@ -1032,13 +1061,23 @@ class _CopyWithImpl$Query$mapScreenViewer$viewer$friends$edges$node<TRes>
         avatarUrl: avatarUrl == _undefined || avatarUrl == null
             ? _instance.avatarUrl
             : (avatarUrl as String),
-        distanceKm: distanceKm == _undefined
-            ? _instance.distanceKm
-            : (distanceKm as int?),
+        fuzzyCoordinate: fuzzyCoordinate == _undefined
+            ? _instance.fuzzyCoordinate
+            : (fuzzyCoordinate
+                as Query$mapScreenViewer$viewer$friends$edges$node$fuzzyCoordinate?),
         $__typename: $__typename == _undefined || $__typename == null
             ? _instance.$__typename
             : ($__typename as String),
       ));
+  CopyWith$Query$mapScreenViewer$viewer$friends$edges$node$fuzzyCoordinate<TRes>
+      get fuzzyCoordinate {
+    final local$fuzzyCoordinate = _instance.fuzzyCoordinate;
+    return local$fuzzyCoordinate == null
+        ? CopyWith$Query$mapScreenViewer$viewer$friends$edges$node$fuzzyCoordinate
+            .stub(_then(_instance))
+        : CopyWith$Query$mapScreenViewer$viewer$friends$edges$node$fuzzyCoordinate(
+            local$fuzzyCoordinate, (e) => call(fuzzyCoordinate: e));
+  }
 }
 
 class _CopyWithStubImpl$Query$mapScreenViewer$viewer$friends$edges$node<TRes>
@@ -1051,7 +1090,174 @@ class _CopyWithStubImpl$Query$mapScreenViewer$viewer$friends$edges$node<TRes>
     String? id,
     String? nickname,
     String? avatarUrl,
-    int? distanceKm,
+    Query$mapScreenViewer$viewer$friends$edges$node$fuzzyCoordinate?
+        fuzzyCoordinate,
+    String? $__typename,
+  }) =>
+      _res;
+  CopyWith$Query$mapScreenViewer$viewer$friends$edges$node$fuzzyCoordinate<TRes>
+      get fuzzyCoordinate =>
+          CopyWith$Query$mapScreenViewer$viewer$friends$edges$node$fuzzyCoordinate
+              .stub(_res);
+}
+
+class Query$mapScreenViewer$viewer$friends$edges$node$fuzzyCoordinate {
+  Query$mapScreenViewer$viewer$friends$edges$node$fuzzyCoordinate({
+    required this.latitude,
+    required this.longitude,
+    this.$__typename = 'Coordinate',
+  });
+
+  factory Query$mapScreenViewer$viewer$friends$edges$node$fuzzyCoordinate.fromJson(
+      Map<String, dynamic> json) {
+    final l$latitude = json['latitude'];
+    final l$longitude = json['longitude'];
+    final l$$__typename = json['__typename'];
+    return Query$mapScreenViewer$viewer$friends$edges$node$fuzzyCoordinate(
+      latitude: (l$latitude as num).toDouble(),
+      longitude: (l$longitude as num).toDouble(),
+      $__typename: (l$$__typename as String),
+    );
+  }
+
+  final double latitude;
+
+  final double longitude;
+
+  final String $__typename;
+
+  Map<String, dynamic> toJson() {
+    final _resultData = <String, dynamic>{};
+    final l$latitude = latitude;
+    _resultData['latitude'] = l$latitude;
+    final l$longitude = longitude;
+    _resultData['longitude'] = l$longitude;
+    final l$$__typename = $__typename;
+    _resultData['__typename'] = l$$__typename;
+    return _resultData;
+  }
+
+  @override
+  int get hashCode {
+    final l$latitude = latitude;
+    final l$longitude = longitude;
+    final l$$__typename = $__typename;
+    return Object.hashAll([
+      l$latitude,
+      l$longitude,
+      l$$__typename,
+    ]);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    if (!(other
+            is Query$mapScreenViewer$viewer$friends$edges$node$fuzzyCoordinate) ||
+        runtimeType != other.runtimeType) {
+      return false;
+    }
+    final l$latitude = latitude;
+    final lOther$latitude = other.latitude;
+    if (l$latitude != lOther$latitude) {
+      return false;
+    }
+    final l$longitude = longitude;
+    final lOther$longitude = other.longitude;
+    if (l$longitude != lOther$longitude) {
+      return false;
+    }
+    final l$$__typename = $__typename;
+    final lOther$$__typename = other.$__typename;
+    if (l$$__typename != lOther$$__typename) {
+      return false;
+    }
+    return true;
+  }
+}
+
+extension UtilityExtension$Query$mapScreenViewer$viewer$friends$edges$node$fuzzyCoordinate
+    on Query$mapScreenViewer$viewer$friends$edges$node$fuzzyCoordinate {
+  CopyWith$Query$mapScreenViewer$viewer$friends$edges$node$fuzzyCoordinate<
+          Query$mapScreenViewer$viewer$friends$edges$node$fuzzyCoordinate>
+      get copyWith =>
+          CopyWith$Query$mapScreenViewer$viewer$friends$edges$node$fuzzyCoordinate(
+            this,
+            (i) => i,
+          );
+}
+
+abstract class CopyWith$Query$mapScreenViewer$viewer$friends$edges$node$fuzzyCoordinate<
+    TRes> {
+  factory CopyWith$Query$mapScreenViewer$viewer$friends$edges$node$fuzzyCoordinate(
+    Query$mapScreenViewer$viewer$friends$edges$node$fuzzyCoordinate instance,
+    TRes Function(
+            Query$mapScreenViewer$viewer$friends$edges$node$fuzzyCoordinate)
+        then,
+  ) = _CopyWithImpl$Query$mapScreenViewer$viewer$friends$edges$node$fuzzyCoordinate;
+
+  factory CopyWith$Query$mapScreenViewer$viewer$friends$edges$node$fuzzyCoordinate.stub(
+          TRes res) =
+      _CopyWithStubImpl$Query$mapScreenViewer$viewer$friends$edges$node$fuzzyCoordinate;
+
+  TRes call({
+    double? latitude,
+    double? longitude,
+    String? $__typename,
+  });
+}
+
+class _CopyWithImpl$Query$mapScreenViewer$viewer$friends$edges$node$fuzzyCoordinate<
+        TRes>
+    implements
+        CopyWith$Query$mapScreenViewer$viewer$friends$edges$node$fuzzyCoordinate<
+            TRes> {
+  _CopyWithImpl$Query$mapScreenViewer$viewer$friends$edges$node$fuzzyCoordinate(
+    this._instance,
+    this._then,
+  );
+
+  final Query$mapScreenViewer$viewer$friends$edges$node$fuzzyCoordinate
+      _instance;
+
+  final TRes Function(
+      Query$mapScreenViewer$viewer$friends$edges$node$fuzzyCoordinate) _then;
+
+  static const _undefined = <dynamic, dynamic>{};
+
+  TRes call({
+    Object? latitude = _undefined,
+    Object? longitude = _undefined,
+    Object? $__typename = _undefined,
+  }) =>
+      _then(Query$mapScreenViewer$viewer$friends$edges$node$fuzzyCoordinate(
+        latitude: latitude == _undefined || latitude == null
+            ? _instance.latitude
+            : (latitude as double),
+        longitude: longitude == _undefined || longitude == null
+            ? _instance.longitude
+            : (longitude as double),
+        $__typename: $__typename == _undefined || $__typename == null
+            ? _instance.$__typename
+            : ($__typename as String),
+      ));
+}
+
+class _CopyWithStubImpl$Query$mapScreenViewer$viewer$friends$edges$node$fuzzyCoordinate<
+        TRes>
+    implements
+        CopyWith$Query$mapScreenViewer$viewer$friends$edges$node$fuzzyCoordinate<
+            TRes> {
+  _CopyWithStubImpl$Query$mapScreenViewer$viewer$friends$edges$node$fuzzyCoordinate(
+      this._res);
+
+  TRes _res;
+
+  call({
+    double? latitude,
+    double? longitude,
     String? $__typename,
   }) =>
       _res;

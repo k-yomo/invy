@@ -29,7 +29,6 @@ class InvitationFormRoute extends GoRouteData {
       const DynamicLinksManager(child: InvitationFormScreen());
 }
 
-
 class InvitationFormScreen extends HookConsumerWidget {
   const InvitationFormScreen({super.key});
 
@@ -57,7 +56,8 @@ class InvitationFormScreen extends HookConsumerWidget {
       if (invitationViewer.data?.parsedData == null) {
         return;
       }
-      final isTargetSelected = selectedFriendGroups.isNotEmpty || selectedFriends.isNotEmpty;
+      final isTargetSelected =
+          selectedFriendGroups.isNotEmpty || selectedFriends.isNotEmpty;
       final targetFriendGroupIds = (isTargetSelected
               ? selectedFriendGroups
               : invitationViewer.data!.parsedData!.viewer.friendGroups)

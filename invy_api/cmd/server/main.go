@@ -58,8 +58,6 @@ func main() {
 	if err != nil {
 		panic(fmt.Sprintf("initialize app config failed: %v", err))
 	}
-	fmt.Println(appConfig.GCPProjectID)
-	fmt.Println(appConfig.FirebaseSecretKeyPath)
 	logger, err := logging.NewLogger(!appConfig.Env.IsDeployed(), serviceName, version)
 	if err != nil {
 		panic(fmt.Sprintf("initialize logger failed: %v", err))

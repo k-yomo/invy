@@ -179,11 +179,6 @@ type Query {
   userFriends(userId: UUID!, after: Cursor, first: Int, before: Cursor, last: Int): UserConnection!
 }
 
-type Coordinate {
-  latitude: Float!
-  longitude: Float!
-}
-
 enum InvitationStatus {
   ACTIVE
   CLOSED
@@ -316,6 +311,11 @@ enum ErrorCode {
   INTERNAL
 }
 
+type Coordinate {
+  latitude: Float!
+  longitude: Float!
+}
+
 type UpdateLocationPayload {
   updatedUserLocationId: UUID!
 }
@@ -386,6 +386,7 @@ type User implements Node {
   isMuted: Boolean!
   isBlocked: Boolean!
   isFriend: Boolean!
+  fuzzyCoordinate: Coordinate
   distanceKm: Int
   isRequestingFriendship: Boolean!
   invitationAwaitings: [InvitationAwaiting!]!

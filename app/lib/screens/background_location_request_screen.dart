@@ -15,12 +15,13 @@ class BackgroundLocationRequestScreen extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     useOnAppLifecycleStateChange((previous, current) async {
-      if(current == AppLifecycleState.resumed){
+      if (current == AppLifecycleState.resumed) {
         final permission = await geolocator.Geolocator.checkPermission();
         if (permission != geolocator.LocationPermission.always) {
           return;
         }
-        if (from != null && from != const BackgroundLocationRequestRoute().location) {
+        if (from != null &&
+            from != const BackgroundLocationRequestRoute().location) {
           GoRouter.of(context).go(from!);
         } else {
           const MapRoute().go(context);

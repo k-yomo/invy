@@ -111,10 +111,12 @@ class InvitationDetailScreen extends HookConsumerWidget {
                                       ...invitation.acceptedUsers
                                     ]
                                         .map((acceptedUser) => InkWell(
-                                      onTap: () {
-                                        UserProfileRoute(acceptedUser.id).push(context);
-                                      },
-                                          child: SizedBox(
+                                              onTap: () {
+                                                UserProfileRoute(
+                                                        acceptedUser.id)
+                                                    .push(context);
+                                              },
+                                              child: SizedBox(
                                                 width: 50,
                                                 child: Column(
                                                   children: [
@@ -136,7 +138,7 @@ class InvitationDetailScreen extends HookConsumerWidget {
                                                   ],
                                                 ),
                                               ),
-                                        ))
+                                            ))
                                         .toList(),
                                   ),
                                 ],

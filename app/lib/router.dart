@@ -146,8 +146,7 @@ GoRouter router(RouterRef ref, {Uri? initialRoute}) => GoRouter(
 
 @TypedGoRoute<MapRoute>(
   path: '/',
-  routes: [
-  ],
+  routes: [],
 )
 class MapRoute extends GoRouteData {
   const MapRoute();
@@ -155,8 +154,7 @@ class MapRoute extends GoRouteData {
   @override
   CustomTransitionPage<void> buildPage(
           BuildContext context, GoRouterState state) =>
-      const NoTransitionPage(
-          child: DynamicLinksManager(child: MapScreen()));
+      const NoTransitionPage(child: DynamicLinksManager(child: MapScreen()));
 }
 
 @TypedGoRoute<InvitationRoute>(path: '/invitations', routes: [
@@ -179,8 +177,7 @@ class InvitationRoute extends GoRouteData {
   @override
   CustomTransitionPage<void> buildPage(
           BuildContext context, GoRouterState state) =>
-      NoTransitionPage(
-          child: DynamicLinksManager(child: InvitationScreen()));
+      NoTransitionPage(child: DynamicLinksManager(child: InvitationScreen()));
 }
 
 @TypedGoRoute<FriendsRoute>(
@@ -281,6 +278,6 @@ class BackgroundLocationRequestRoute extends GoRouteData {
 
   @override
   CustomTransitionPage<void> buildPage(
-      BuildContext context, GoRouterState state) =>
+          BuildContext context, GoRouterState state) =>
       NoTransitionPage(child: BackgroundLocationRequestScreen(from: from));
 }

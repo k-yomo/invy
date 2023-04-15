@@ -22,8 +22,8 @@ class InvitationScreen extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final graphqlClient = ref.read(graphqlClientProvider);
     final badgeCounter = ref.watch(pushNotificationBadgeCounter);
-    final viewerQuery = graphqlClient
-        .watchQuery$invitationScreenViewer(WatchOptions$Query$invitationScreenViewer(
+    final viewerQuery = graphqlClient.watchQuery$invitationScreenViewer(
+        WatchOptions$Query$invitationScreenViewer(
       eagerlyFetchResults: true,
     ));
     viewerQuery.startPolling(const Duration(seconds: 30));

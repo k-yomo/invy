@@ -24,6 +24,7 @@ import (
 	"github.com/k-yomo/invy/invy_api/ent/invitationuser"
 	"github.com/k-yomo/invy/invy_api/ent/user"
 	"github.com/k-yomo/invy/invy_api/ent/userblock"
+	"github.com/k-yomo/invy/invy_api/ent/userlocation"
 	"github.com/k-yomo/invy/invy_api/ent/userprofile"
 	"github.com/k-yomo/invy/invy_api/graph/conv"
 	"github.com/k-yomo/invy/invy_api/graph/gqlgen"
@@ -32,6 +33,8 @@ import (
 	"github.com/k-yomo/invy/invy_api/internal/auth"
 	"github.com/k-yomo/invy/invy_api/internal/xerrors"
 	"github.com/k-yomo/invy/pkg/convutil"
+	"github.com/k-yomo/invy/pkg/length"
+	"github.com/k-yomo/invy/pkg/location"
 )
 
 // UpdateAvatar is the resolver for the updateAvatar field.
@@ -237,15 +240,41 @@ func (r *userResolver) IsFriend(ctx context.Context, obj *gqlmodel.User) (bool, 
 	return true, nil
 }
 
+// FuzzyCoordinate is the resolver for the fuzzyCoordinate field.
+func (r *userResolver) FuzzyCoordinate(ctx context.Context, obj *gqlmodel.User) (*gqlmodel.Coordinate, error) {
+	friendGeoPoint, err := loader.Get(ctx).FriendGeoPoint.Load(ctx, obj.ID)()
+	if err != nil {
+		return nil, cerrors.Wrap(err, "load friend geo point")
+	}
+	if friendGeoPoint == nil {
+		return nil, nil
+	}
+	lat, lon := location.GetRandomLocation(friendGeoPoint.Lat(), friendGeoPoint.Lat(), 1000)
+	return &gqlmodel.Coordinate{Latitude: lat, Longitude: lon}, nil
+}
+
 // DistanceKm is the resolver for the distanceKm field.
 func (r *userResolver) DistanceKm(ctx context.Context, obj *gqlmodel.User) (*int, error) {
-	distance, err := loader.Get(ctx).FriendDistance.Load(ctx, obj.ID)()
+	authUserID := auth.GetCurrentUserID(ctx)
+	authUserLocation, err := r.DB.UserLocation.Query().
+		Where(
+			userlocation.UserID(authUserID),
+			userlocation.UpdatedAtGTE(time.Now().Add(-2*time.Hour)),
+		).
+		Only(ctx)
+	if ent.IsNotFound(err) {
+		return nil, nil
+	}
+	friendGeoPoint, err := loader.Get(ctx).FriendGeoPoint.Load(ctx, obj.ID)()
 	if err != nil {
 		return nil, cerrors.Wrap(err, "load friend distance")
 	}
-	if distance == nil {
+	if friendGeoPoint == nil {
 		return nil, nil
 	}
+
+	authUserGeoPoint := authUserLocation.Coordinate
+	distance := length.NewMeter(int(location.CalcDistanceMeter(authUserGeoPoint.Lat(), authUserGeoPoint.Lon(), friendGeoPoint.Lat(), friendGeoPoint.Lon())))
 	// Not to expose the actual location
 	var approximateDistanceKM int
 	distanceKM := distance.Kilometers()

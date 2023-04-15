@@ -15,11 +15,6 @@ extend type Mutation {
     deleteInvitationAwaiting(invitationAwaitingId: UUID!): DeleteInvitationAwaitingPayload! @authRequired
 }
 
-type Coordinate {
-    latitude: Float!
-    longitude: Float!
-}
-
 enum InvitationStatus {
     ACTIVE
     CLOSED
