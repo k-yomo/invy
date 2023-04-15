@@ -249,7 +249,7 @@ func (r *userResolver) FuzzyCoordinate(ctx context.Context, obj *gqlmodel.User) 
 	if friendGeoPoint == nil {
 		return nil, nil
 	}
-	lat, lon := location.GetRandomLocation(friendGeoPoint.Lat(), friendGeoPoint.Lat(), 1000)
+	lat, lon := location.GetRandomLocation(friendGeoPoint.Lat(), friendGeoPoint.Lon(), 1000)
 	return &gqlmodel.Coordinate{Latitude: lat, Longitude: lon}, nil
 }
 
