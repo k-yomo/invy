@@ -11,7 +11,7 @@ import 'package:invy/screens/invitation/invitation_friend_select_screen.dart';
 import 'package:invy/screens/invitation/invitation_form_screen.graphql.dart';
 import 'package:invy/state/invitation.dart';
 import 'package:invy/util/custom_date_time_picker.dart';
-import 'package:invy/widgets/dynamic_links_manager.dart';
+import 'package:invy/widgets/screen_wrapper.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
 
 import '../../widgets/app_bar_leading.dart';
@@ -26,7 +26,7 @@ class InvitationFormRoute extends GoRouteData {
 
   @override
   Widget build(BuildContext context, GoRouterState state) =>
-      const DynamicLinksManager(child: InvitationFormScreen());
+      const ScreenWrapper(child: InvitationFormScreen());
 }
 
 class InvitationFormScreen extends HookConsumerWidget {

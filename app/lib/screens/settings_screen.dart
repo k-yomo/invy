@@ -9,7 +9,7 @@ import 'package:invy/services/graphql_client.dart';
 import 'package:invy/state/auth.dart';
 import 'package:invy/state/device.dart';
 import 'package:invy/widgets/divider.dart';
-import 'package:invy/widgets/dynamic_links_manager.dart';
+import 'package:invy/widgets/screen_wrapper.dart';
 import 'package:invy/widgets/setting_item.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -19,7 +19,7 @@ class SettingsRoute extends GoRouteData {
 
   @override
   Widget build(BuildContext context, GoRouterState state) =>
-      const DynamicLinksManager(child: SettingsScreen());
+      const ScreenWrapper(child: SettingsScreen());
 }
 
 class SettingsScreen extends HookConsumerWidget {

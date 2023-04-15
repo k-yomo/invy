@@ -93,8 +93,10 @@ class MapScreen extends HookConsumerWidget {
                 child: Align(
                   alignment: Alignment.topCenter,
                   child: Container(
-                    margin: const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
-                    padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                    margin: const EdgeInsets.symmetric(
+                        vertical: 15, horizontal: 15),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 10, horizontal: 15),
                     decoration: BoxDecoration(
                       color: Colors.black,
                       borderRadius: BorderRadius.circular(10),

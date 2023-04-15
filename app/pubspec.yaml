@@ -104,6 +104,7 @@ dependencies:
   uuid: ^3.0.7
   qr_code_scanner: ^1.0.1
   custom_marker: ^1.0.0
+  version: ^3.0.2
 
 dev_dependencies:
   flutter_test:

@@ -163,6 +163,10 @@ type ComplexityRoot struct {
 		ToUserID   func(childComplexity int) int
 	}
 
+	GetMinRequiredAppVersionPayload struct {
+		MinRequiredAppVersion func(childComplexity int) int
+	}
+
 	Invitation struct {
 		AcceptedUsers func(childComplexity int) int
 		ChatRoom      func(childComplexity int) int
@@ -235,11 +239,12 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		Invitation     func(childComplexity int, id uuid.UUID) int
-		User           func(childComplexity int, userID uuid.UUID) int
-		UserByScreenID func(childComplexity int, screenID string) int
-		UserFriends    func(childComplexity int, userID uuid.UUID, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
-		Viewer         func(childComplexity int) int
+		GetMinRequiredAppVersion func(childComplexity int) int
+		Invitation               func(childComplexity int, id uuid.UUID) int
+		User                     func(childComplexity int, userID uuid.UUID) int
+		UserByScreenID           func(childComplexity int, screenID string) int
+		UserFriends              func(childComplexity int, userID uuid.UUID, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
+		Viewer                   func(childComplexity int) int
 	}
 
 	RegisterInvitationAwaitingPayload struct {
@@ -411,6 +416,7 @@ type QueryResolver interface {
 	User(ctx context.Context, userID uuid.UUID) (*gqlmodel.User, error)
 	UserByScreenID(ctx context.Context, screenID string) (*gqlmodel.User, error)
 	UserFriends(ctx context.Context, userID uuid.UUID, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*gqlmodel.UserConnection, error)
+	GetMinRequiredAppVersion(ctx context.Context) (*gqlmodel.GetMinRequiredAppVersionPayload, error)
 }
 type UserResolver interface {
 	IsMuted(ctx context.Context, obj *gqlmodel.User) (bool, error)
@@ -735,6 +741,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.FriendshipRequest.ToUserID(childComplexity), true
+
+	case "GetMinRequiredAppVersionPayload.minRequiredAppVersion":
+		if e.complexity.GetMinRequiredAppVersionPayload.MinRequiredAppVersion == nil {
+			break
+		}
+
+		return e.complexity.GetMinRequiredAppVersionPayload.MinRequiredAppVersion(childComplexity), true
 
 	case "Invitation.acceptedUsers":
 		if e.complexity.Invitation.AcceptedUsers == nil {
@@ -1277,6 +1290,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.PageInfo.StartCursor(childComplexity), true
+
+	case "Query.getMinRequiredAppVersion":
+		if e.complexity.Query.GetMinRequiredAppVersion == nil {
+			break
+		}
+
+		return e.complexity.Query.GetMinRequiredAppVersion(childComplexity), true
 
 	case "Query.invitation":
 		if e.complexity.Query.Invitation == nil {
@@ -1932,8 +1952,7 @@ type Invitation implements Node {
     coordinate: Coordinate
     comment: String!
     startsAt: Time!
-    # Deprecated
-    expiresAt: Time!
+    expiresAt: Time! @deprecated(reason: "expiration will be handled by user")
 
     chatRoomId: UUID
     chatRoom: ChatRoom @goField(forceResolver: true)
@@ -2225,6 +2244,14 @@ type UnblockUserPayload {
     unblockedUserId: UUID!
 }
 `, BuiltIn: false},
+	{Name: "../../../defs/graphql/version.graphql", Input: `
+extend type Query {
+    getMinRequiredAppVersion: GetMinRequiredAppVersionPayload!
+}
+
+type GetMinRequiredAppVersionPayload {
+    minRequiredAppVersion: String!
+}`, BuiltIn: false},
 }
 var parsedSchema = gqlparser.MustLoadSchema(sources...)
 
@@ -5012,6 +5039,50 @@ func (ec *executionContext) fieldContext_FriendshipRequest_createdAt(ctx context
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type Time does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _GetMinRequiredAppVersionPayload_minRequiredAppVersion(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.GetMinRequiredAppVersionPayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_GetMinRequiredAppVersionPayload_minRequiredAppVersion(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.MinRequiredAppVersion, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_GetMinRequiredAppVersionPayload_minRequiredAppVersion(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "GetMinRequiredAppVersionPayload",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
 		},
 	}
 	return fc, nil
@@ -9086,6 +9157,54 @@ func (ec *executionContext) fieldContext_Query_userFriends(ctx context.Context, 
 	if fc.Args, err = ec.field_Query_userFriends_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_getMinRequiredAppVersion(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_getMinRequiredAppVersion(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GetMinRequiredAppVersion(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.GetMinRequiredAppVersionPayload)
+	fc.Result = res
+	return ec.marshalNGetMinRequiredAppVersionPayload2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐGetMinRequiredAppVersionPayload(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_getMinRequiredAppVersion(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "minRequiredAppVersion":
+				return ec.fieldContext_GetMinRequiredAppVersionPayload_minRequiredAppVersion(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type GetMinRequiredAppVersionPayload", field.Name)
+		},
 	}
 	return fc, nil
 }
@@ -15025,6 +15144,34 @@ func (ec *executionContext) _FriendshipRequest(ctx context.Context, sel ast.Sele
 	return out
 }
 
+var getMinRequiredAppVersionPayloadImplementors = []string{"GetMinRequiredAppVersionPayload"}
+
+func (ec *executionContext) _GetMinRequiredAppVersionPayload(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.GetMinRequiredAppVersionPayload) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, getMinRequiredAppVersionPayloadImplementors)
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("GetMinRequiredAppVersionPayload")
+		case "minRequiredAppVersion":
+
+			out.Values[i] = ec._GetMinRequiredAppVersionPayload_minRequiredAppVersion(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var invitationImplementors = []string{"Invitation", "Node"}
 
 func (ec *executionContext) _Invitation(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.Invitation) graphql.Marshaler {
@@ -15766,6 +15913,29 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_userFriends(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return rrm(innerCtx)
+			})
+		case "getMinRequiredAppVersion":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getMinRequiredAppVersion(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
@@ -17545,6 +17715,20 @@ func (ec *executionContext) marshalNFriendshipRequest2ᚖgithubᚗcomᚋkᚑyomo
 		return graphql.Null
 	}
 	return ec._FriendshipRequest(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNGetMinRequiredAppVersionPayload2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐGetMinRequiredAppVersionPayload(ctx context.Context, sel ast.SelectionSet, v gqlmodel.GetMinRequiredAppVersionPayload) graphql.Marshaler {
+	return ec._GetMinRequiredAppVersionPayload(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNGetMinRequiredAppVersionPayload2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐGetMinRequiredAppVersionPayload(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.GetMinRequiredAppVersionPayload) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._GetMinRequiredAppVersionPayload(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNInt2int(ctx context.Context, v interface{}) (int, error) {

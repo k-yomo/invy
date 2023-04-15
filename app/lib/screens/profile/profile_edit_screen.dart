@@ -17,7 +17,7 @@ import 'package:invy/screens/profile/profile_edit_screen.graphql.dart';
 import 'package:invy/services/graphql_client.dart';
 import 'package:invy/state/auth.dart';
 import 'package:invy/util/toast.dart';
-import 'package:invy/widgets/dynamic_links_manager.dart';
+import 'package:invy/widgets/screen_wrapper.dart';
 import 'package:mime/mime.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -29,7 +29,7 @@ class ProfileEditRoute extends GoRouteData {
 
   @override
   Widget build(BuildContext context, GoRouterState state) =>
-      const DynamicLinksManager(child: ProfileEditScreen());
+      const ScreenWrapper(child: ProfileEditScreen());
 }
 
 class ProfileEditScreen extends HookConsumerWidget {

@@ -1,0 +1,7 @@
+
+
+query getMinRequiredAppVersion {
+    getMinRequiredAppVersion {
+        minRequiredAppVersion
+    }
+}

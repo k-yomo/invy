@@ -155,6 +155,10 @@ type FriendshipRequest struct {
 func (FriendshipRequest) IsNode()               {}
 func (this FriendshipRequest) GetID() uuid.UUID { return this.ID }
 
+type GetMinRequiredAppVersionPayload struct {
+	MinRequiredAppVersion string `json:"minRequiredAppVersion"`
+}
+
 type Invitation struct {
 	ID            uuid.UUID        `json:"id"`
 	Status        InvitationStatus `json:"status"`

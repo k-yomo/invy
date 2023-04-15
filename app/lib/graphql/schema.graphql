@@ -177,6 +177,7 @@ type Query {
   user(userId: UUID!): User!
   userByScreenId(screenId: String!): User!
   userFriends(userId: UUID!, after: Cursor, first: Int, before: Cursor, last: Int): UserConnection!
+  getMinRequiredAppVersion: GetMinRequiredAppVersionPayload!
 }
 
 enum InvitationStatus {
@@ -193,7 +194,7 @@ type Invitation implements Node {
   coordinate: Coordinate
   comment: String!
   startsAt: Time!
-  expiresAt: Time!
+  expiresAt: Time! @deprecated(reason: "expiration will be handled by user")
   chatRoomId: UUID
   chatRoom: ChatRoom
   acceptedUsers: [User!]!
@@ -413,4 +414,8 @@ type UpdateNicknamePayload {
 
 type UpdateScreenIdPayload {
   viewer: Viewer!
+}
+
+type GetMinRequiredAppVersionPayload {
+  minRequiredAppVersion: String!
 }

@@ -8,7 +8,7 @@ import 'package:invy/screens/user/user_friends_screen.graphql.dart';
 import 'package:invy/services/graphql_client.dart';
 import 'package:invy/state/auth.dart';
 import 'package:invy/widgets/app_bar_leading.dart';
-import 'package:invy/widgets/dynamic_links_manager.dart';
+import 'package:invy/widgets/screen_wrapper.dart';
 import 'package:invy/widgets/friend_list_item.dart';
 
 class UserFriendsRoute extends GoRouteData {
@@ -18,9 +18,8 @@ class UserFriendsRoute extends GoRouteData {
   final String? userNickname;
 
   @override
-  Widget build(BuildContext context, GoRouterState state) =>
-      DynamicLinksManager(
-          child: UserFriendsScreen(userId: userId, userNickname: userNickname));
+  Widget build(BuildContext context, GoRouterState state) => ScreenWrapper(
+      child: UserFriendsScreen(userId: userId, userNickname: userNickname));
 }
 
 class UserFriendsScreen extends HookConsumerWidget {

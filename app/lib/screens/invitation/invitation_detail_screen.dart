@@ -13,7 +13,7 @@ import 'package:invy/services/graphql_client.dart';
 import 'package:invy/state/auth.dart';
 import 'package:invy/util/toast.dart';
 import 'package:invy/widgets/chat.dart';
-import 'package:invy/widgets/dynamic_links_manager.dart';
+import 'package:invy/widgets/screen_wrapper.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -40,8 +40,7 @@ class InvitationDetailRoute extends GoRouteData {
 
   @override
   Widget build(BuildContext context, GoRouterState state) =>
-      DynamicLinksManager(
-          child: InvitationDetailScreen(invitationId: invitationId));
+      ScreenWrapper(child: InvitationDetailScreen(invitationId: invitationId));
 }
 
 class InvitationDetailScreen extends HookConsumerWidget {

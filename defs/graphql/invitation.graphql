@@ -29,8 +29,7 @@ type Invitation implements Node {
     coordinate: Coordinate
     comment: String!
     startsAt: Time!
-    # Deprecated
-    expiresAt: Time!
+    expiresAt: Time! @deprecated(reason: "expiration will be handled by user")
 
     chatRoomId: UUID
     chatRoom: ChatRoom @goField(forceResolver: true)

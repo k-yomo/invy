@@ -6,7 +6,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:invy/screens/invitation/invitation_form_screen.graphql.dart';
 import 'package:invy/state/invitation.dart';
 import 'package:invy/widgets/app_bar_leading.dart';
-import 'package:invy/widgets/dynamic_links_manager.dart';
+import 'package:invy/widgets/screen_wrapper.dart';
 import 'package:invy/widgets/friend_selection_list.dart';
 
 import '../../widgets/friend_group_selection_list.dart';
@@ -17,7 +17,7 @@ class InvitationFriendSelectRoute extends GoRouteData {
 
   @override
   Widget build(BuildContext context, GoRouterState state) =>
-      const DynamicLinksManager(child: InvitationFriendSelectScreen());
+      const ScreenWrapper(child: InvitationFriendSelectScreen());
 }
 
 class InvitationFriendSelectScreen extends HookConsumerWidget {

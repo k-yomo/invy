@@ -7,7 +7,7 @@ import 'package:invy/constants/urls.dart';
 import 'package:invy/router.dart';
 import 'package:invy/state/auth.dart';
 import 'package:invy/widgets/app_bar_leading.dart';
-import 'package:invy/widgets/dynamic_links_manager.dart';
+import 'package:invy/widgets/screen_wrapper.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -17,7 +17,7 @@ class FriendQRCodeReaderRoute extends GoRouteData {
 
   @override
   Widget build(BuildContext context, GoRouterState state) =>
-      const DynamicLinksManager(child: FriendQRCodeReaderScreen());
+      const ScreenWrapper(child: FriendQRCodeReaderScreen());
 }
 
 class FriendQRCodeReaderScreen extends StatefulHookConsumerWidget {

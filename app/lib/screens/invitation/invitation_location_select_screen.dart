@@ -12,7 +12,7 @@ import 'package:invy/router.dart';
 import 'package:invy/screens/invitation/invitation_friend_select_screen.dart';
 import 'package:invy/state/invitation.dart';
 import 'package:invy/state/location.dart';
-import 'package:invy/widgets/dynamic_links_manager.dart';
+import 'package:invy/widgets/screen_wrapper.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 import '../../config/config.dart';
@@ -24,7 +24,7 @@ class InvitationLocationSelectRoute extends GoRouteData {
 
   @override
   Widget build(BuildContext context, GoRouterState state) =>
-      const DynamicLinksManager(child: InvitationLocationSelectScreen());
+      const ScreenWrapper(child: InvitationLocationSelectScreen());
 }
 
 class InvitationLocationSelectScreen extends HookConsumerWidget {
