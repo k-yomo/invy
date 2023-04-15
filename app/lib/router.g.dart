@@ -13,6 +13,7 @@ List<GoRoute> get $appRoutes => [
       $userProfileRoute,
       $myProfileRoute,
       $loginRoute,
+      $backgroundLocationRequestRoute,
     ];
 
 GoRoute get $mapRoute => GoRouteData.$route(
@@ -404,11 +405,38 @@ extension $LoginRouteExtension on LoginRoute {
       context.pushReplacement(location);
 }
 
+GoRoute get $backgroundLocationRequestRoute => GoRouteData.$route(
+      path: '/permissions/background_location',
+      factory: $BackgroundLocationRequestRouteExtension._fromState,
+    );
+
+extension $BackgroundLocationRequestRouteExtension
+    on BackgroundLocationRequestRoute {
+  static BackgroundLocationRequestRoute _fromState(GoRouterState state) =>
+      BackgroundLocationRequestRoute(
+        from: state.queryParams['from'],
+      );
+
+  String get location => GoRouteData.$location(
+        '/permissions/background_location',
+        queryParams: {
+          if (from != null) 'from': from,
+        },
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  void push(BuildContext context) => context.push(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+}
+
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$routerHash() => r'86445d0b04defa4c378c113a2b02df53b80aca94';
+String _$routerHash() => r'a57a34bdc3c660de59d31093d3ae2b9be07e0312';
 
 /// Copied from Dart SDK
 class _SystemHash {

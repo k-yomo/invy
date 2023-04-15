@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:invy/constants/urls.dart';
+import 'package:invy/screens/background_location_request_screen.dart';
 import 'package:invy/screens/friend/blocked_friends_screen.dart';
 import 'package:invy/screens/friend/freind_group_create_screen.dart';
 import 'package:invy/screens/friend/freind_group_detail_screen.dart';
@@ -24,6 +25,7 @@ import 'package:invy/screens/user/user_profile_screen.dart';
 import 'package:invy/screens/user/user_profile_screen.graphql.dart';
 import 'package:invy/state/auth.dart';
 import 'package:invy/widgets/dynamic_links_manager.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'router.g.dart';
@@ -129,10 +131,14 @@ GoRouter router(RouterRef ref, {Uri? initialRoute}) => GoRouter(
           routes: $appRoutes)
     ],
     debugLogDiagnostics: kDebugMode,
-    redirect: (BuildContext context, GoRouterState state) {
+    redirect: (BuildContext context, GoRouterState state) async {
       final isLoggedIn = ref.watch(isLoggedInProvider);
       if (!isLoggedIn) {
         return LoginRoute(from: state.subloc).location;
+      }
+
+      if (await Permission.locationAlways.isDenied) {
+        return BackgroundLocationRequestRoute(from: state.subloc).location;
       }
       return null;
     });
@@ -262,4 +268,18 @@ class LoginRoute extends GoRouteData {
   CustomTransitionPage<void> buildPage(
           BuildContext context, GoRouterState state) =>
       NoTransitionPage(child: LoginLandingScreen(from: from));
+}
+
+@TypedGoRoute<BackgroundLocationRequestRoute>(
+  path: '/permissions/background_location',
+)
+class BackgroundLocationRequestRoute extends GoRouteData {
+  const BackgroundLocationRequestRoute({this.from});
+
+  final String? from;
+
+  @override
+  CustomTransitionPage<void> buildPage(
+      BuildContext context, GoRouterState state) =>
+      NoTransitionPage(child: BackgroundLocationRequestScreen(from: from));
 }

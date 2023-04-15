@@ -280,9 +280,9 @@ class UserProfileScreen extends HookConsumerWidget {
                             disabledBackgroundColor: Colors.grey,
                             disabledForegroundColor: Colors.white,
                           ),
-                          child: Text(
+                          child: const Text(
                             'さそう',
-                            style: const TextStyle(
+                            style: TextStyle(
                                 fontSize: 16, fontWeight: FontWeight.bold),
                           ),
                         ),
