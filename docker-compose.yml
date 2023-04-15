@@ -12,5 +12,11 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: invy
 
+  redis:
+    # https://docs.upstash.com/redis/overall/rediscompatibility
+    image: redis:6.2
+    ports:
+      - 16379:6379
+
 volumes:
   db_data:

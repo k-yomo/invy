@@ -34,7 +34,8 @@ type AppConfig struct {
 	FirebaseSecretKeyPath         string   `envconfig:"FIREBASE_SECRET_KEY_PATH"`
 	AllowedOrigins                []string `default:"http://localhost:3000,http://localhost:4000" envconfig:"ALLOWED_ORIGINS"`
 
-	DBConfig *DBConfig
+	DBConfig    *DBConfig
+	RedisConfig *RedisConfig
 }
 
 type DBConfig struct {
@@ -43,8 +44,18 @@ type DBConfig struct {
 	User     string `default:"postgres" envconfig:"DB_USER"`
 	Password string `default:"password" envconfig:"DB_PASSWORD"`
 	// either one of DB_URL or DB_CONNECTION_NAME must be supplied
-	DBURL          string `default:"localhost:15432" envconfig:"DB_URL"`
+	URL            string `default:"localhost:15432" envconfig:"DB_URL"`
 	ConnectionName string `envconfig:"DB_CONNECTION_NAME"`
+}
+
+type RedisConfig struct {
+	URL      string `default:"localhost" envconfig:"REDIS_URL"`
+	Port     string `default:"16379" envconfig:"REDIS_PORT"`
+	Password string `default:"" envconfig:"REDIS_PASSWORD"`
+}
+
+func (r *RedisConfig) Addr() string {
+	return fmt.Sprintf("%s:%s", r.URL, r.Port)
 }
 
 func NewAppConfig() (*AppConfig, error) {
@@ -62,5 +73,5 @@ func (d *DBConfig) Dsn() string {
 	if d.ConnectionName != "" {
 		return fmt.Sprintf("user=%s password=%s host=%s database=%s sslmode=disable binary_parameters=yes", d.User, d.Password, d.ConnectionName, d.DBName)
 	}
-	return fmt.Sprintf("postgres://%s:%s@%s/%s?sslmode=disable&binary_parameters=yes", d.User, d.Password, d.DBURL, d.DBName)
+	return fmt.Sprintf("postgres://%s:%s@%s/%s?sslmode=disable&binary_parameters=yes", d.User, d.Password, d.URL, d.DBName)
 }

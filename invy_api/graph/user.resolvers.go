@@ -7,6 +7,7 @@ package graph
 import (
 	"context"
 	"fmt"
+	"github.com/k-yomo/invy/pkg/cache"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
@@ -242,15 +243,24 @@ func (r *userResolver) IsFriend(ctx context.Context, obj *gqlmodel.User) (bool, 
 
 // FuzzyCoordinate is the resolver for the fuzzyCoordinate field.
 func (r *userResolver) FuzzyCoordinate(ctx context.Context, obj *gqlmodel.User) (*gqlmodel.Coordinate, error) {
-	friendGeoPoint, err := loader.Get(ctx).FriendGeoPoint.Load(ctx, obj.ID)()
+	const cacheDuration = 10 * time.Minute
+	cacheKey := fmt.Sprintf("user-fuzzy-coordinate:%s", obj.ID)
+	fuzzyCoordinate, err := cache.GetWithCache(ctx, r.Cache, cacheKey, cacheDuration, func() (*gqlmodel.Coordinate, error) {
+		friendGeoPoint, err := loader.Get(ctx).FriendGeoPoint.Load(ctx, obj.ID)()
+		if err != nil {
+			return nil, cerrors.Wrap(err, "load friend geo point")
+		}
+		if friendGeoPoint == nil {
+			return nil, nil
+		}
+		lat, lon := location.GetRandomLocation(friendGeoPoint.Lat(), friendGeoPoint.Lon(), 1500)
+		return &gqlmodel.Coordinate{Latitude: lat, Longitude: lon}, nil
+
+	})
 	if err != nil {
-		return nil, cerrors.Wrap(err, "load friend geo point")
+		return nil, err
 	}
-	if friendGeoPoint == nil {
-		return nil, nil
-	}
-	lat, lon := location.GetRandomLocation(friendGeoPoint.Lat(), friendGeoPoint.Lon(), 1000)
-	return &gqlmodel.Coordinate{Latitude: lat, Longitude: lon}, nil
+	return fuzzyCoordinate, nil
 }
 
 // DistanceKm is the resolver for the distanceKm field.

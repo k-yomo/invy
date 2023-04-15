@@ -3,6 +3,8 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/k-yomo/invy/pkg/cache"
+	"github.com/redis/go-redis/v9"
 	"net/http"
 	"os"
 	"os/signal"
@@ -112,6 +114,15 @@ func main() {
 		logger.Fatal("creating schema resources failed", zap.Error(err))
 	}
 
+	redisClient := redis.NewClient(&redis.Options{
+		Addr:     appConfig.RedisConfig.Addr(),
+		Password: appConfig.RedisConfig.Password,
+	})
+	if err := redisClient.Ping(ctx).Err(); err != nil {
+		logger.Fatal("initialize redis client failed", zap.Error(err))
+	}
+	defer redisClient.Close()
+
 	firebaseApp, err := firebase.NewApp(
 		ctx,
 		&firebase.Config{ProjectID: appConfig.GCPProjectID},
@@ -156,6 +167,7 @@ func main() {
 	gqlConfig := gqlgen.Config{
 		Resolvers: &graph.Resolver{
 			DB:                       entDB,
+			Cache:                    cache.New(redisClient),
 			DBQuery:                  dbQuery,
 			Service:                  service.NewService(entDB, dbQuery, fcmClient, firestoreClient),
 			FirebaseAuthClient:       firebaseAuthClient,
