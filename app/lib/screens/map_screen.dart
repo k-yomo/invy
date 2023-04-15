@@ -60,7 +60,7 @@ class MapScreen extends HookConsumerWidget {
                 e.node.fuzzyCoordinate!.longitude),
             icon: await MarkerIcon.downloadResizePictureCircle(
               e.node.avatarUrl,
-              size: 150,
+              size: 100,
               addBorder: true,
               borderColor: Colors.white,
               borderSize: 10,
