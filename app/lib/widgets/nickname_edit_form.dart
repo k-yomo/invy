@@ -76,7 +76,7 @@ class NicknameEditFormState extends ConsumerState<NicknameEditForm> {
         SingleChildScrollView(
           controller: ModalScrollController.of(context),
           padding:
-          EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+              EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
           child: TextButton(
             onPressed: () async {
               await onNicknameSubmitted();
@@ -97,4 +97,3 @@ class NicknameEditFormState extends ConsumerState<NicknameEditForm> {
     );
   }
 }
-

@@ -1,5 +1,3 @@
-
-
 import 'package:image_picker/image_picker.dart';
 import 'package:invy/graphql/scalars.dart';
 import 'package:mime/mime.dart';

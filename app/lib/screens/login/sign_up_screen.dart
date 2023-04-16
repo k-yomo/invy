@@ -48,10 +48,9 @@ class SignUpScreen extends HookConsumerWidget {
       final res = await graphqlClient.mutate$signUp(Options$Mutation$signUp(
           variables: Variables$Mutation$signUp(
         input: Input$SignUpInput(
-          email: firebaseUser.email,
-          nickname: nickname.value,
-          avatar: avatarFile
-        ),
+            email: firebaseUser.email,
+            nickname: nickname.value,
+            avatar: avatarFile),
       )));
       if (res.hasException) {
         print(res.exception);
@@ -109,7 +108,9 @@ class SignUpScreen extends HookConsumerWidget {
                   CircleAvatar(
                     radius: 60.0,
                     backgroundColor: Colors.transparent,
-                    backgroundImage: avatar.value != null ? Image.file(File(avatar.value!.path)).image : const CachedNetworkImageProvider(defaultAvatarURL),
+                    backgroundImage: avatar.value != null
+                        ? Image.file(File(avatar.value!.path)).image
+                        : const CachedNetworkImageProvider(defaultAvatarURL),
                   ),
                   const Gap(10),
                   OutlinedButton(

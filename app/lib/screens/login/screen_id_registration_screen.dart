@@ -22,19 +22,18 @@ class ScreenIdRegistrationScreen extends HookConsumerWidget {
     }
 
     return Scaffold(
-      appBar: AppBar(
-        leading: const AppBarLeading(),
-        title: const Text(
-          'ユーザーID登録',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        appBar: AppBar(
+          leading: const AppBarLeading(),
+          title: const Text(
+            'ユーザーID登録',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          shape:
+              Border(bottom: BorderSide(color: Colors.grey.shade200, width: 1)),
         ),
-        shape:
-            Border(bottom: BorderSide(color: Colors.grey.shade200, width: 1)),
-      ),
-      backgroundColor: Colors.white,
-      body: ScreenIdEditForm(
-        onSubmitted: onScreenIdSubmitted,
-      )
-    );
+        backgroundColor: Colors.white,
+        body: ScreenIdEditForm(
+          onSubmitted: onScreenIdSubmitted,
+        ));
   }
 }

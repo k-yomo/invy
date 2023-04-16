@@ -84,7 +84,7 @@ class ProfileEditScreen extends HookConsumerWidget {
       final result = await graphqlClient.mutate$updateNickname(
           Options$Mutation$updateNickname(
               variables:
-              Variables$Mutation$updateNickname(nickname: nickname)));
+                  Variables$Mutation$updateNickname(nickname: nickname)));
       if (result.hasException) {
         print(result.exception);
         showToast("ニックネームの更新に失敗しました。時間を置いて再度お試しください。", ToastLevel.error);
@@ -105,7 +105,7 @@ class ProfileEditScreen extends HookConsumerWidget {
       final result = await graphqlClient.mutate$updateScreenId(
           Options$Mutation$updateScreenId(
               variables:
-              Variables$Mutation$updateScreenId(screenId: screenId)));
+                  Variables$Mutation$updateScreenId(screenId: screenId)));
       if (result.hasException) {
         if (result.exception?.graphqlErrors.first.extensions != null) {
           if (result.exception!.graphqlErrors.first.extensions!["code"] ==
@@ -184,9 +184,11 @@ class ProfileEditScreen extends HookConsumerWidget {
                                       MediaQuery.of(context).size.height * 0.9,
                                   padding: const EdgeInsets.only(
                                       top: 60, left: 15, right: 15, bottom: 15),
-                                  child:
-                                      NicknameEditForm(nickname: user.nickname, onSubmitted: (nickname) async {
-                                        if (await onNicknameSubmitted(nickname)) {
+                                  child: NicknameEditForm(
+                                      nickname: user.nickname,
+                                      onSubmitted: (nickname) async {
+                                        if (await onNicknameSubmitted(
+                                            nickname)) {
                                           Navigator.pop(context);
                                         }
                                       }),
@@ -212,11 +214,13 @@ class ProfileEditScreen extends HookConsumerWidget {
                             height: MediaQuery.of(context).size.height * 0.9,
                             padding: const EdgeInsets.only(
                                 top: 60, left: 15, right: 15, bottom: 15),
-                            child: ScreenIdEditForm(screenId: user.screenId, onSubmitted: (screenId) async {
-                              if (await onScreenIdSubmitted(screenId)) {
-                                Navigator.pop(context);
-                              }
-                            }),
+                            child: ScreenIdEditForm(
+                                screenId: user.screenId,
+                                onSubmitted: (screenId) async {
+                                  if (await onScreenIdSubmitted(screenId)) {
+                                    Navigator.pop(context);
+                                  }
+                                }),
                           );
                         },
                       );

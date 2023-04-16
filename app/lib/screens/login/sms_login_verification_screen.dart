@@ -66,7 +66,7 @@ class SMSLoginVerificationScreen extends HookConsumerWidget {
       }
 
       final viewerQueryResult =
-      await graphqlClient.query$viewer(Options$Query$viewer(
+          await graphqlClient.query$viewer(Options$Query$viewer(
         fetchPolicy: FetchPolicy.networkOnly,
       ));
       // TODO: if not found, then make signUp mutation.
