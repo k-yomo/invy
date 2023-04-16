@@ -1,8 +1,4 @@
-import 'dart:io';
-
-import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart' hide ModalBottomSheetRoute;
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
@@ -16,11 +12,13 @@ import 'package:invy/graphql/schema.graphql.dart';
 import 'package:invy/screens/profile/profile_edit_screen.graphql.dart';
 import 'package:invy/services/graphql_client.dart';
 import 'package:invy/state/auth.dart';
+import 'package:invy/util/permission.dart';
 import 'package:invy/util/toast.dart';
+import 'package:invy/widgets/nickname_edit_form.dart';
+import 'package:invy/widgets/screen_id_edit_form.dart';
 import 'package:invy/widgets/screen_wrapper.dart';
 import 'package:mime/mime.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 import '../../widgets/app_bar_leading.dart';
 
@@ -43,47 +41,8 @@ class ProfileEditScreen extends HookConsumerWidget {
     final avatarUpdateLoading = useState(false);
 
     onPressedAvatarUpdate() async {
-      PermissionStatus permissionStatus;
-      if (Platform.isAndroid) {
-        final androidInfo = await DeviceInfoPlugin().androidInfo;
-        if (androidInfo.version.sdkInt <= 32) {
-          permissionStatus = await Permission.storage.status;
-          if (permissionStatus.isDenied) {
-            permissionStatus = await Permission.storage.request();
-          }
-        } else {
-          permissionStatus = await Permission.photos.status;
-          if (permissionStatus.isDenied) {
-            permissionStatus = await Permission.photos.request();
-          }
-        }
-      } else {
-        permissionStatus = await Permission.photos.status;
-        if (permissionStatus.isDenied) {
-          final status = await Permission.photos.request();
-          // Don't show alert right after user denied to allow the permission
-          if (status.isGranted) {
-            permissionStatus = status;
-          } else {
-            showToast('プロフィール写真の変更には、"写真"へのアクセス許可が必要です。', ToastLevel.error);
-            return;
-          }
-        }
-      }
-      if (permissionStatus.isDenied || permissionStatus.isPermanentlyDenied) {
-        if (!context.mounted) {
-          return;
-        }
-        final result = await showOkCancelAlertDialog(
-          context: context,
-          title: '"写真"へのアクセスがありません。',
-          message: 'プロフィール写真を変更するには、設定から"写真"へのアクセスを許可してください。',
-          cancelLabel: "キャンセル",
-          okLabel: "設定に移動",
-        );
-        if (result == OkCancelResult.ok) {
-          await openAppSettings();
-        }
+      final permissionGranted = await requirePhotoPermission(context);
+      if (!permissionGranted) {
         return;
       }
 
@@ -116,6 +75,53 @@ class ProfileEditScreen extends HookConsumerWidget {
       ref.read(loggedInUserProvider.notifier).state = user.copyWith(
           avatarUrl: result.parsedData!.updateAvatar.viewer.avatarUrl);
       showToast("プロフィール写真を更新しました", ToastLevel.success);
+    }
+
+    onNicknameSubmitted(String nickname) async {
+      if (nickname == user.nickname) {
+        return true;
+      }
+      final result = await graphqlClient.mutate$updateNickname(
+          Options$Mutation$updateNickname(
+              variables:
+              Variables$Mutation$updateNickname(nickname: nickname)));
+      if (result.hasException) {
+        print(result.exception);
+        showToast("ニックネームの更新に失敗しました。時間を置いて再度お試しください。", ToastLevel.error);
+        return false;
+      }
+      ref.read(loggedInUserProvider.notifier).update((state) {
+        return state!.copyWith(nickname: nickname);
+      });
+
+      showToast("ニックネームを更新しました。", ToastLevel.success);
+      return true;
+    }
+
+    onScreenIdSubmitted(String screenId) async {
+      if (screenId == user.screenId) {
+        return false;
+      }
+      final result = await graphqlClient.mutate$updateScreenId(
+          Options$Mutation$updateScreenId(
+              variables:
+              Variables$Mutation$updateScreenId(screenId: screenId)));
+      if (result.hasException) {
+        if (result.exception?.graphqlErrors.first.extensions != null) {
+          if (result.exception!.graphqlErrors.first.extensions!["code"] ==
+              toJson$Enum$ErrorCode(Enum$ErrorCode.ALREADY_EXISTS)) {
+            showToast("入力されたユーザーIDは既に使用されています。", ToastLevel.error);
+            return false;
+          }
+        }
+        showToast("ユーザーIDの更新に失敗しました。時間を置いて再度お試しください。", ToastLevel.error);
+        return false;
+      }
+      ref.read(loggedInUserProvider.notifier).update((state) {
+        return state!.copyWith(screenId: screenId);
+      });
+      showToast("ユーザーIDを更新しました。", ToastLevel.success);
+      return true;
     }
 
     return Scaffold(
@@ -179,7 +185,11 @@ class ProfileEditScreen extends HookConsumerWidget {
                                   padding: const EdgeInsets.only(
                                       top: 60, left: 15, right: 15, bottom: 15),
                                   child:
-                                      NicknameEditForm(nickname: user.nickname),
+                                      NicknameEditForm(nickname: user.nickname, onSubmitted: (nickname) async {
+                                        if (await onNicknameSubmitted(nickname)) {
+                                          Navigator.pop(context);
+                                        }
+                                      }),
                                 ));
                       }),
                   const Gap(20),
@@ -202,7 +212,11 @@ class ProfileEditScreen extends HookConsumerWidget {
                             height: MediaQuery.of(context).size.height * 0.9,
                             padding: const EdgeInsets.only(
                                 top: 60, left: 15, right: 15, bottom: 15),
-                            child: ScreenIdEditForm(screenId: user.screenId),
+                            child: ScreenIdEditForm(screenId: user.screenId, onSubmitted: (screenId) async {
+                              if (await onScreenIdSubmitted(screenId)) {
+                                Navigator.pop(context);
+                              }
+                            }),
                           );
                         },
                       );
@@ -214,255 +228,6 @@ class ProfileEditScreen extends HookConsumerWidget {
           ]),
         ),
       ),
-    );
-  }
-}
-
-class NicknameEditForm extends StatefulHookConsumerWidget {
-  const NicknameEditForm({super.key, this.nickname});
-  final String? nickname;
-
-  @override
-  ConsumerState<NicknameEditForm> createState() => NicknameEditFormState();
-}
-
-class NicknameEditFormState extends ConsumerState<NicknameEditForm> {
-  late TextEditingController _nicknameController;
-
-  @override
-  void initState() {
-    super.initState();
-    _nicknameController = TextEditingController(text: widget.nickname);
-    _nicknameController.selection = TextSelection.fromPosition(
-      TextPosition(offset: widget.nickname?.length ?? 0),
-    );
-  }
-
-  String? validateNickname(value) {
-    if (value == null || value.isEmpty) {
-      return 'ニックネームを入力してください';
-    }
-    if (value.length < 3) {
-      return '3文字以上入力してください';
-    }
-    return null;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final graphqlClient = ref.read(graphqlClientProvider);
-    final nicknameFormKey = useMemoized(() => GlobalKey<FormState>());
-
-    Future<bool> onNicknameSubmitted() async {
-      final nickname = _nicknameController.text;
-      if (validateNickname(nickname) != null) {
-        return false;
-      }
-      if (nickname == widget.nickname) {
-        // no change
-        return true;
-      }
-      final result = await graphqlClient.mutate$updateNickname(
-          Options$Mutation$updateNickname(
-              variables:
-                  Variables$Mutation$updateNickname(nickname: nickname)));
-      if (result.hasException) {
-        print(result.exception);
-        showToast("ユーザーIDの更新に失敗しました。時間を置いて再度お試しください。", ToastLevel.error);
-        return false;
-      }
-      ref.read(loggedInUserProvider.notifier).update((state) {
-        return state!.copyWith(nickname: nickname);
-      });
-      showToast("ニックネームを更新しました。", ToastLevel.success);
-      return true;
-    }
-
-    return Column(
-      children: [
-        Expanded(
-          child: Form(
-            key: nicknameFormKey,
-            autovalidateMode: AutovalidateMode.onUserInteraction,
-            child: TextFormField(
-              autofocus: true,
-              controller: _nicknameController,
-              cursorColor: Colors.grey.shade600,
-              decoration: InputDecoration(
-                labelText: 'ニックネーム',
-                labelStyle: TextStyle(color: Colors.grey.shade600),
-                filled: true,
-                fillColor: Colors.grey.shade100,
-                border: InputBorder.none,
-              ),
-              maxLength: 50,
-              validator: validateNickname,
-              onEditingComplete: () async {
-                final isSuccessful = await onNicknameSubmitted();
-                if (isSuccessful) {
-                  Navigator.pop(context);
-                }
-              },
-            ),
-          ),
-        ),
-        SingleChildScrollView(
-          controller: ModalScrollController.of(context),
-          padding:
-              EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-          child: TextButton(
-            onPressed: () async {
-              final isSuccessful = await onNicknameSubmitted();
-              if (isSuccessful) {
-                Navigator.pop(context);
-              }
-            },
-            style: TextButton.styleFrom(
-              minimumSize: const Size.fromHeight(0),
-              padding: const EdgeInsets.symmetric(vertical: 12),
-              backgroundColor: Colors.black,
-              foregroundColor: Colors.white,
-            ),
-            child: const Text(
-              '更新する',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class ScreenIdEditForm extends StatefulHookConsumerWidget {
-  const ScreenIdEditForm({super.key, this.screenId});
-  final String? screenId;
-
-  @override
-  ConsumerState<ScreenIdEditForm> createState() => ScreenIdEditFormState();
-}
-
-class ScreenIdEditFormState extends ConsumerState<ScreenIdEditForm> {
-  late TextEditingController _screenIdController;
-
-  @override
-  void initState() {
-    super.initState();
-    _screenIdController = TextEditingController(text: widget.screenId);
-    _screenIdController.selection = TextSelection.fromPosition(
-      TextPosition(offset: widget.screenId?.length ?? 0),
-    );
-  }
-
-  String? validateScreenId(value) {
-    final screenIdRegex = RegExp(r'(^[a-zA-Z0-9_]*$)');
-    if (value == null || value.isEmpty) {
-      return 'ユーザーIDを入力してください';
-    }
-    if (value.length < 3) {
-      return '3文字以上入力してください';
-    }
-    if (!screenIdRegex.hasMatch(value)) {
-      return '英数字、アンダースコア（_）のみ使用可能です';
-    }
-    return null;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final graphqlClient = ref.read(graphqlClientProvider);
-    final screenIdFormKey = useMemoized(() => GlobalKey<FormState>());
-
-    Future<bool> onScreenIdSubmitted() async {
-      final screenId = _screenIdController.text;
-      if (validateScreenId(screenId) != null) {
-        return false;
-      }
-      if (screenId == widget.screenId) {
-        // no change
-        return true;
-      }
-      final result = await graphqlClient.mutate$updateScreenId(
-          Options$Mutation$updateScreenId(
-              variables:
-                  Variables$Mutation$updateScreenId(screenId: screenId)));
-      if (result.hasException) {
-        if (result.exception?.graphqlErrors.first.extensions != null) {
-          if (result.exception!.graphqlErrors.first.extensions!["code"] ==
-              toJson$Enum$ErrorCode(Enum$ErrorCode.ALREADY_EXISTS)) {
-            showToast("入力されたユーザーIDは既に使用されています。", ToastLevel.error);
-            return false;
-          }
-        }
-        showToast("ユーザーIDの更新に失敗しました。時間を置いて再度お試しください。", ToastLevel.error);
-        return false;
-      }
-      ref.read(loggedInUserProvider.notifier).update((state) {
-        return state!.copyWith(screenId: screenId);
-      });
-      showToast("ユーザーIDを更新しました。", ToastLevel.success);
-      return true;
-    }
-
-    return Column(
-      children: [
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Form(
-                key: screenIdFormKey,
-                autovalidateMode: AutovalidateMode.onUserInteraction,
-                child: TextFormField(
-                  autofocus: true,
-                  controller: _screenIdController,
-                  cursorColor: Colors.grey.shade600,
-                  decoration: InputDecoration(
-                    labelText: 'ユーザーID',
-                    labelStyle: TextStyle(color: Colors.grey.shade600),
-                    filled: true,
-                    fillColor: Colors.grey.shade100,
-                    border: InputBorder.none,
-                  ),
-                  maxLength: 15,
-                  validator: validateScreenId,
-                  onEditingComplete: () async {
-                    final isSuccessful = await onScreenIdSubmitted();
-                    if (isSuccessful) {
-                      Navigator.pop(context);
-                    }
-                  },
-                ),
-              ),
-              const Text("英数字、アンダースコア（_）のみ使用可能です。",
-                  style: TextStyle(fontSize: 12))
-            ],
-          ),
-        ),
-        SingleChildScrollView(
-          controller: ModalScrollController.of(context),
-          padding:
-              EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-          child: TextButton(
-            onPressed: () async {
-              final isSuccessful = await onScreenIdSubmitted();
-              if (isSuccessful) {
-                Navigator.pop(context);
-              }
-            },
-            style: TextButton.styleFrom(
-              minimumSize: const Size.fromHeight(0),
-              padding: const EdgeInsets.symmetric(vertical: 12),
-              backgroundColor: Colors.black,
-              foregroundColor: Colors.white,
-            ),
-            child: const Text(
-              '更新する',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-          ),
-        ),
-      ],
     );
   }
 }

@@ -16,7 +16,7 @@ class LoginLandingScreen extends HookConsumerWidget {
 
   final String? from;
 
-  Future<void> _openSignup(BuildContext context) async {
+  Future<void> _openLogin(BuildContext context) async {
     await Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (BuildContext context) => SMSLoginScreen(),
@@ -130,7 +130,7 @@ class LoginLandingScreen extends HookConsumerWidget {
                           borderRadius: BorderRadius.zero,
                         ),
                       ),
-                      onPressed: () => _openSignup(context),
+                      onPressed: () => _openLogin(context),
                       child: const Text(
                         "電話番号で登録 / ログイン",
                         style: TextStyle(

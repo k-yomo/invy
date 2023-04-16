@@ -5,16 +5,17 @@ import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:graphql/client.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:invy/graphql/schema.graphql.dart';
 import 'package:invy/graphql/viewer.graphql.dart';
 import 'package:invy/router.dart';
+import 'package:invy/screens/login/sign_up_screen.dart';
 import 'package:invy/services/graphql_client.dart';
 import 'package:invy/state/auth.dart';
 import 'package:invy/state/post_login_redict.dart';
 import 'package:invy/util/toast.dart';
 import 'package:invy/widgets/sub_title.dart';
 import 'package:pinput/pinput.dart';
-import 'sms_login_screen.graphql.dart';
+
+import 'login_landing_screen.dart';
 
 class SMSLoginVerificationScreen extends HookConsumerWidget {
   const SMSLoginVerificationScreen({super.key, required this.verificationId});
@@ -41,8 +42,13 @@ class SMSLoginVerificationScreen extends HookConsumerWidget {
 
     signInToInvy() async {
       final firebaseUser = FirebaseAuth.instance.currentUser;
+      // firebaseUser must not be null but if so, redirect back to login screen
       if (firebaseUser == null) {
-        // TODO: show error
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => const LoginLandingScreen(),
+          ),
+        );
         return;
       }
 
@@ -50,47 +56,32 @@ class SMSLoginVerificationScreen extends HookConsumerWidget {
       LoggedInUser loggedInUser;
       final accountExists =
           result.claims?.containsKey("currentUserId") ?? false;
-      if (accountExists) {
-        final viewerQueryResult =
-            await graphqlClient.query$viewer(Options$Query$viewer(
-          fetchPolicy: FetchPolicy.networkOnly,
-        ));
-        // TODO: if not found, then make signUp mutation.
-        if (viewerQueryResult.hasException) {
-          // TODO: logging and show error
-          print(viewerQueryResult.exception);
-          return;
-        }
-        final user = viewerQueryResult.parsedData!.viewer;
-        loggedInUser = LoggedInUser(
-          id: user.id,
-          screenId: user.screenId,
-          nickname: user.nickname,
-          avatarUrl: user.avatarUrl,
-        );
-      } else {
-        final res = await graphqlClient.mutate$signUp(Options$Mutation$signUp(
-            variables: Variables$Mutation$signUp(
-          input: Input$SignUpInput(
-            email: firebaseUser.email,
-            nickname: firebaseUser.displayName,
-            avatarUrl: firebaseUser.photoURL,
+      if (!accountExists) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => const SignUpScreen(),
           ),
-        )));
-        if (res.hasException) {
-          print(res.exception);
-          return;
-        }
-        // Refresh id token to get new token containing user id in claims.
-        await firebaseUser.getIdToken(true);
-        final user = res.parsedData!.signUp.viewer;
-        loggedInUser = LoggedInUser(
-            id: user.id,
-            screenId: user.screenId,
-            nickname: user.nickname,
-            avatarUrl: user.avatarUrl);
-        // TODO: redirect to user profile update page?
+        );
+        return;
       }
+
+      final viewerQueryResult =
+      await graphqlClient.query$viewer(Options$Query$viewer(
+        fetchPolicy: FetchPolicy.networkOnly,
+      ));
+      // TODO: if not found, then make signUp mutation.
+      if (viewerQueryResult.hasException) {
+        // TODO: logging and show error
+        print(viewerQueryResult.exception);
+        return;
+      }
+      final user = viewerQueryResult.parsedData!.viewer;
+      loggedInUser = LoggedInUser(
+        id: user.id,
+        screenId: user.screenId,
+        nickname: user.nickname,
+        avatarUrl: user.avatarUrl,
+      );
 
       ref.read(loggedInUserProvider.notifier).state = loggedInUser;
       final postLoginRedirectScreen = ref.read(postLoginRedirectProvider);
@@ -98,10 +89,7 @@ class SMSLoginVerificationScreen extends HookConsumerWidget {
         ref.read(postLoginRedirectProvider.notifier).state = null;
         GoRouter.of(context).go(postLoginRedirectScreen);
       } else {
-        if (!accountExists) {
-          // TODO: route user to user profile registration instead
-          const MyProfileRoute().go(context);
-        }
+        const MapRoute().go(context);
       }
     }
 

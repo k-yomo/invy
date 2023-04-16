@@ -11,7 +11,8 @@ extend type Mutation {
 input SignUpInput {
     email: String @constraint(format: EMAIL)
     nickname: String @constraint(min: 3)
-    avatarUrl: String @constraint(format: URL)
+    avatarUrl: String @constraint(format: URL) @deprecated(reason: "Use avatar instead")
+    avatar: Upload
 }
 type SignUpPayload {
     viewer: Viewer!

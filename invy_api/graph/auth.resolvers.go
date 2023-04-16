@@ -43,11 +43,21 @@ func (r *mutationResolver) SignUp(ctx context.Context, input gqlmodel.SignUpInpu
 		return nil, xerrors.NewErrUnauthenticated()
 	}
 
+	newUserID := uuid.New()
+
 	// TODO: Replace with our own file
 	avatarURL := config.DefaultAvatarURL
 	if input.AvatarURL != nil {
 		avatarURL = *input.AvatarURL
 	}
+	if input.Avatar != nil {
+		fileName := generateUserAvatarImageFileName(newUserID)
+		avatarURL, err = r.AvatarUploader.Upload(ctx, fileName, input.Avatar.File)
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	var email *string
 	if firebaseUser.EmailVerified && firebaseUser.Email != "" {
 		email = &firebaseUser.Email
@@ -80,6 +90,7 @@ func (r *mutationResolver) SignUp(ctx context.Context, input gqlmodel.SignUpInpu
 			return cerrors.Wrap(err, "create account")
 		}
 		dbUser, err = tx.User.Create().
+			SetID(newUserID).
 			SetAccountID(dbAccount.ID).
 			Save(ctx)
 		if err != nil {

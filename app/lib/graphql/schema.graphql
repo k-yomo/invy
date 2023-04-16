@@ -47,7 +47,8 @@ type Mutation {
 input SignUpInput {
   email: String
   nickname: String
-  avatarUrl: String
+  avatarUrl: String @deprecated(reason: "Use avatar instead")
+  avatar: Upload
 }
 
 type SignUpPayload {

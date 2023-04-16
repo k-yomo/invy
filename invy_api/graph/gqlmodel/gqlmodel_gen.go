@@ -264,9 +264,10 @@ type SignOutPayload struct {
 }
 
 type SignUpInput struct {
-	Email     *string `json:"email,omitempty"`
-	Nickname  *string `json:"nickname,omitempty"`
-	AvatarURL *string `json:"avatarUrl,omitempty"`
+	Email     *string         `json:"email,omitempty"`
+	Nickname  *string         `json:"nickname,omitempty"`
+	AvatarURL *string         `json:"avatarUrl,omitempty"`
+	Avatar    *graphql.Upload `json:"avatar,omitempty"`
 }
 
 type SignUpPayload struct {

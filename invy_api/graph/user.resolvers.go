@@ -9,8 +9,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/k-yomo/invy/pkg/cache"
-
 	"entgo.io/ent/dialect/sql"
 	"github.com/99designs/gqlgen/graphql"
 	cerrors "github.com/cockroachdb/errors"
@@ -34,6 +32,7 @@ import (
 	"github.com/k-yomo/invy/invy_api/graph/loader"
 	"github.com/k-yomo/invy/invy_api/internal/auth"
 	"github.com/k-yomo/invy/invy_api/internal/xerrors"
+	"github.com/k-yomo/invy/pkg/cache"
 	"github.com/k-yomo/invy/pkg/convutil"
 	"github.com/k-yomo/invy/pkg/length"
 	"github.com/k-yomo/invy/pkg/location"
@@ -42,7 +41,7 @@ import (
 // UpdateAvatar is the resolver for the updateAvatar field.
 func (r *mutationResolver) UpdateAvatar(ctx context.Context, avatar graphql.Upload) (*gqlmodel.UpdateAvatarPayload, error) {
 	authUserID := auth.GetCurrentUserID(ctx)
-	fileName := fmt.Sprintf("%s-%d", authUserID, time.Now().Unix())
+	fileName := generateUserAvatarImageFileName(authUserID)
 	avatarURL, err := r.AvatarUploader.Upload(ctx, fileName, avatar.File)
 	if err != nil {
 		return nil, err

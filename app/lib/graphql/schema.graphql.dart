@@ -5,11 +5,13 @@ class Input$SignUpInput {
     String? email,
     String? nickname,
     String? avatarUrl,
+    MultipartFile? avatar,
   }) =>
       Input$SignUpInput._({
         if (email != null) r'email': email,
         if (nickname != null) r'nickname': nickname,
         if (avatarUrl != null) r'avatarUrl': avatarUrl,
+        if (avatar != null) r'avatar': avatar,
       });
 
   Input$SignUpInput._(this._$data);
@@ -28,6 +30,10 @@ class Input$SignUpInput {
       final l$avatarUrl = data['avatarUrl'];
       result$data['avatarUrl'] = (l$avatarUrl as String?);
     }
+    if (data.containsKey('avatar')) {
+      final l$avatar = data['avatar'];
+      result$data['avatar'] = l$avatar == null ? null : fileFromJson(l$avatar);
+    }
     return Input$SignUpInput._(result$data);
   }
 
@@ -36,6 +42,7 @@ class Input$SignUpInput {
   String? get email => (_$data['email'] as String?);
   String? get nickname => (_$data['nickname'] as String?);
   String? get avatarUrl => (_$data['avatarUrl'] as String?);
+  MultipartFile? get avatar => (_$data['avatar'] as MultipartFile?);
   Map<String, dynamic> toJson() {
     final result$data = <String, dynamic>{};
     if (_$data.containsKey('email')) {
@@ -49,6 +56,10 @@ class Input$SignUpInput {
     if (_$data.containsKey('avatarUrl')) {
       final l$avatarUrl = avatarUrl;
       result$data['avatarUrl'] = l$avatarUrl;
+    }
+    if (_$data.containsKey('avatar')) {
+      final l$avatar = avatar;
+      result$data['avatar'] = l$avatar == null ? null : fileToJson(l$avatar);
     }
     return result$data;
   }
@@ -92,6 +103,14 @@ class Input$SignUpInput {
     if (l$avatarUrl != lOther$avatarUrl) {
       return false;
     }
+    final l$avatar = avatar;
+    final lOther$avatar = other.avatar;
+    if (_$data.containsKey('avatar') != other._$data.containsKey('avatar')) {
+      return false;
+    }
+    if (l$avatar != lOther$avatar) {
+      return false;
+    }
     return true;
   }
 
@@ -100,10 +119,12 @@ class Input$SignUpInput {
     final l$email = email;
     final l$nickname = nickname;
     final l$avatarUrl = avatarUrl;
+    final l$avatar = avatar;
     return Object.hashAll([
       _$data.containsKey('email') ? l$email : const {},
       _$data.containsKey('nickname') ? l$nickname : const {},
       _$data.containsKey('avatarUrl') ? l$avatarUrl : const {},
+      _$data.containsKey('avatar') ? l$avatar : const {},
     ]);
   }
 }
@@ -121,6 +142,7 @@ abstract class CopyWith$Input$SignUpInput<TRes> {
     String? email,
     String? nickname,
     String? avatarUrl,
+    MultipartFile? avatar,
   });
 }
 
@@ -141,12 +163,14 @@ class _CopyWithImpl$Input$SignUpInput<TRes>
     Object? email = _undefined,
     Object? nickname = _undefined,
     Object? avatarUrl = _undefined,
+    Object? avatar = _undefined,
   }) =>
       _then(Input$SignUpInput._({
         ..._instance._$data,
         if (email != _undefined) 'email': (email as String?),
         if (nickname != _undefined) 'nickname': (nickname as String?),
         if (avatarUrl != _undefined) 'avatarUrl': (avatarUrl as String?),
+        if (avatar != _undefined) 'avatar': (avatar as MultipartFile?),
       }));
 }
 
@@ -160,6 +184,7 @@ class _CopyWithStubImpl$Input$SignUpInput<TRes>
     String? email,
     String? nickname,
     String? avatarUrl,
+    MultipartFile? avatar,
   }) =>
       _res;
 }
