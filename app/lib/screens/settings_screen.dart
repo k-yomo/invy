@@ -8,6 +8,7 @@ import 'package:invy/screens/profile/my_profile_screen.graphql.dart';
 import 'package:invy/services/graphql_client.dart';
 import 'package:invy/state/auth.dart';
 import 'package:invy/state/device.dart';
+import 'package:invy/util/toast.dart';
 import 'package:invy/widgets/divider.dart';
 import 'package:invy/widgets/screen_wrapper.dart';
 import 'package:invy/widgets/setting_item.dart';
@@ -93,7 +94,11 @@ class SettingsScreen extends HookConsumerWidget {
                       okLabel: "退会",
                       isDestructiveAction: true);
                   if (result == OkCancelResult.ok) {
-                    await graphqlClient.mutate$deleteAccount();
+                    final deleteAccountResult = await graphqlClient.mutate$deleteAccount();
+                    if (deleteAccountResult.hasException) {
+                      showToast("退会処理に失敗しました。時間をおいて再度お試し下さい。", ToastLevel.error);
+                      return;
+                    }
                     clientLogout();
                   }
                 },
