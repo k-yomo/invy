@@ -21,7 +21,8 @@ func New(redisClient *redis.Client) *Cache {
 	return &Cache{redisClient: redisClient}
 }
 
-func GetWithCache[T comparable](ctx context.Context, c *Cache, key string, ttl time.Duration, f func() (T, error)) (T, error) {
+// GetWithCache gets value from cache. If value is not found in cache, it calls f to getValue and set it to cache.
+func GetWithCache[T comparable](ctx context.Context, c *Cache, key string, ttl time.Duration, getValue func() (T, error)) (T, error) {
 	var v T
 	if err := c.Get(ctx, key, &v); err != nil && err != ErrCacheMiss {
 		logging.Logger(ctx).Warn("failed to get from cache", zap.Error(err))
@@ -31,7 +32,7 @@ func GetWithCache[T comparable](ctx context.Context, c *Cache, key string, ttl t
 		return v, nil
 	}
 
-	v, err := f()
+	v, err := getValue()
 	if err != nil {
 		return v, err
 	}

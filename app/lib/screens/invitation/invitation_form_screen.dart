@@ -89,7 +89,7 @@ class InvitationFormScreen extends HookConsumerWidget {
         return;
       }
       ref.read(invitationFormProvider.notifier).reset();
-      const MapRoute().go(context);
+      const InvitationRoute().go(context);
     }
 
     return Scaffold(
@@ -130,7 +130,7 @@ class InvitationFormScreen extends HookConsumerWidget {
                         foregroundColor: Colors.black,
                       ),
                       onPressed: () {
-                        const InvitationFriendSelectRoute().go(context);
+                        const InvitationFriendSelectRoute().push(context);
                       },
                       child: const Text(
                         '選択',

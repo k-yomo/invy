@@ -155,10 +155,7 @@ class LocationCard extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final currentPinLocation = ref.watch(currentPinLocationProvider);
     final locationName = ref.watch(invitationLocationNameProvider);
-    final locationNameNotifier =
-        ref.read(invitationLocationNameProvider.notifier);
-    final invitationLocationNotifier =
-        ref.read(invitationLocationProvider.notifier);
+    final invitationFormNotifier = ref.read(invitationFormProvider.notifier);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -195,8 +192,9 @@ class LocationCard extends HookConsumerWidget {
                   ),
                   TextButton(
                     onPressed: () {
-                      locationNameNotifier.state = "未定";
-                      invitationLocationNotifier.state = null;
+                      invitationFormNotifier.set(invitationFormNotifier
+                          .get()
+                          .copyWith(location: null, locationName: "未定"));
                     },
                     style: TextButton.styleFrom(
                         padding: const EdgeInsets.only(right: 25)),
@@ -249,9 +247,11 @@ class LocationCard extends HookConsumerWidget {
                       onPressed: () {
                         if (locationName != locationUndecided &&
                             currentPinLocation != null) {
-                          invitationLocationNotifier.state = LatLng(
-                              currentPinLocation.latitude,
-                              currentPinLocation.longitude);
+                          invitationFormNotifier.set(invitationFormNotifier
+                              .get()
+                              .copyWith(
+                                  location: LatLng(currentPinLocation.latitude,
+                                      currentPinLocation.longitude)));
                         }
                         const InvitationFriendSelectRoute().go(context);
                       },

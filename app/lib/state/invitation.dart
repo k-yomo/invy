@@ -40,6 +40,8 @@ final defaultInvitationFormState = InvitationFormState(
 class InvitationFormStateNotifier extends StateNotifier<InvitationFormState> {
   InvitationFormStateNotifier() : super(defaultInvitationFormState);
 
+  InvitationFormState get() => state;
+
   void set(InvitationFormState formState) => state = formState;
 
   void reset() => state = defaultInvitationFormState;
@@ -57,14 +59,4 @@ final invitationLocationNameProvider = StateProvider<String>((ref) {
 
 final invitationLocationProvider = StateProvider<LatLng?>((ref) {
   return null;
-});
-
-final invitationSelectedFriendGroupsProvider =
-    StateProvider<List<Fragment$friendGroupListItemFragment>>((ref) {
-  return [];
-});
-
-final invitationSelectedFriendsProvider =
-    StateProvider<List<Fragment$friendListItemFragment>>((ref) {
-  return [];
 });

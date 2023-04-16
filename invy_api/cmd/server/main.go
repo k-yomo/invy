@@ -4,13 +4,14 @@ import (
 	"context"
 	"crypto/tls"
 	"fmt"
-	"github.com/k-yomo/invy/pkg/cache"
-	"github.com/redis/go-redis/v9"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
+
+	"github.com/k-yomo/invy/pkg/cache"
+	"github.com/redis/go-redis/v9"
 
 	"ariga.io/sqlcomment"
 	"cloud.google.com/go/profiler"

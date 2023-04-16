@@ -7,8 +7,9 @@ package graph
 import (
 	"context"
 	"fmt"
-	"github.com/k-yomo/invy/pkg/cache"
 	"time"
+
+	"github.com/k-yomo/invy/pkg/cache"
 
 	"entgo.io/ent/dialect/sql"
 	"github.com/99designs/gqlgen/graphql"
@@ -243,7 +244,7 @@ func (r *userResolver) IsFriend(ctx context.Context, obj *gqlmodel.User) (bool, 
 
 // FuzzyCoordinate is the resolver for the fuzzyCoordinate field.
 func (r *userResolver) FuzzyCoordinate(ctx context.Context, obj *gqlmodel.User) (*gqlmodel.Coordinate, error) {
-	const cacheDuration = 10 * time.Minute
+	const cacheDuration = 5 * time.Minute
 	cacheKey := fmt.Sprintf("user-fuzzy-coordinate:%s", obj.ID)
 	fuzzyCoordinate, err := cache.GetWithCache(ctx, r.Cache, cacheKey, cacheDuration, func() (*gqlmodel.Coordinate, error) {
 		friendGeoPoint, err := loader.Get(ctx).FriendGeoPoint.Load(ctx, obj.ID)()
