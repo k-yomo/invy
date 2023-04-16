@@ -2,8 +2,9 @@ package graph
 
 import (
 	"fmt"
-	"github.com/google/uuid"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 func generateUserAvatarImageFileName(userID uuid.UUID) string {

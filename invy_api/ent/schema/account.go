@@ -6,7 +6,6 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
-	"entgo.io/ent/schema/index"
 	"github.com/google/uuid"
 )
 
@@ -43,12 +42,5 @@ func (Account) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("users", User.Type).
 			Ref("account"),
-	}
-}
-
-func (Account) Indexes() []ent.Index {
-	return []ent.Index{
-		// To make it possible to create account after withdrawal
-		index.Fields("phone_number", "status").Unique(),
 	}
 }

@@ -22,13 +22,6 @@ var (
 		Name:       "accounts",
 		Columns:    AccountsColumns,
 		PrimaryKey: []*schema.Column{AccountsColumns[0]},
-		Indexes: []*schema.Index{
-			{
-				Name:    "account_phone_number_status",
-				Unique:  true,
-				Columns: []*schema.Column{AccountsColumns[3], AccountsColumns[4]},
-			},
-		},
 	}
 	// FriendGroupsColumns holds the columns for the "friend_groups" table.
 	FriendGroupsColumns = []*schema.Column{

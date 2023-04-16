@@ -77,8 +77,9 @@ func (r *mutationResolver) SignUp(ctx context.Context, input gqlmodel.SignUpInpu
 		if err != nil && !ent.IsNotFound(err) {
 			return err
 		}
+		// SignUp mutation shouldn't be called for existing account.
 		if dbAccount != nil {
-			return nil
+			return cerrors.New("account already exists")
 		}
 
 		dbAccount, err = tx.Account.Create().
@@ -186,7 +187,7 @@ func (r *mutationResolver) DeleteAccount(ctx context.Context) (*gqlmodel.DeleteA
 			Exec(ctx)
 		err = tx.UserProfile.Update().
 			Where(userprofile.UserIDIn(userIDs...)).
-			SetNickname("削除済みユーザー").
+			SetNickname("退会済みユーザー").
 			SetAvatarURL(config.DefaultAvatarURL).
 			Exec(ctx)
 		if err != nil {
