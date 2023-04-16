@@ -1,5 +1,6 @@
 query friendGroupCreateScreenViewer {
     viewer {
+        id
         friends(first: 100) {
             edges {
                 node {

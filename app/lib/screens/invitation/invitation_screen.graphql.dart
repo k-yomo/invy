@@ -153,6 +153,13 @@ const documentNodeQueryinvitationScreenViewer = DocumentNode(definitions: [
         directives: [],
         selectionSet: SelectionSetNode(selections: [
           FieldNode(
+            name: NameNode(value: 'id'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: null,
+          ),
+          FieldNode(
             name: NameNode(value: 'sentInvitations'),
             alias: null,
             arguments: [],
@@ -385,6 +392,7 @@ class Query$invitationScreenViewer$Widget
 
 class Query$invitationScreenViewer$viewer {
   Query$invitationScreenViewer$viewer({
+    required this.id,
     required this.sentInvitations,
     required this.pendingInvitations,
     required this.acceptedInvitations,
@@ -393,11 +401,13 @@ class Query$invitationScreenViewer$viewer {
 
   factory Query$invitationScreenViewer$viewer.fromJson(
       Map<String, dynamic> json) {
+    final l$id = json['id'];
     final l$sentInvitations = json['sentInvitations'];
     final l$pendingInvitations = json['pendingInvitations'];
     final l$acceptedInvitations = json['acceptedInvitations'];
     final l$$__typename = json['__typename'];
     return Query$invitationScreenViewer$viewer(
+      id: (l$id as String),
       sentInvitations: (l$sentInvitations as List<dynamic>)
           .map((e) => Fragment$invitationDetailFragment.fromJson(
               (e as Map<String, dynamic>)))
@@ -414,6 +424,8 @@ class Query$invitationScreenViewer$viewer {
     );
   }
 
+  final String id;
+
   final List<Fragment$invitationDetailFragment> sentInvitations;
 
   final List<Fragment$invitationDetailFragment> pendingInvitations;
@@ -424,6 +436,8 @@ class Query$invitationScreenViewer$viewer {
 
   Map<String, dynamic> toJson() {
     final _resultData = <String, dynamic>{};
+    final l$id = id;
+    _resultData['id'] = l$id;
     final l$sentInvitations = sentInvitations;
     _resultData['sentInvitations'] =
         l$sentInvitations.map((e) => e.toJson()).toList();
@@ -440,11 +454,13 @@ class Query$invitationScreenViewer$viewer {
 
   @override
   int get hashCode {
+    final l$id = id;
     final l$sentInvitations = sentInvitations;
     final l$pendingInvitations = pendingInvitations;
     final l$acceptedInvitations = acceptedInvitations;
     final l$$__typename = $__typename;
     return Object.hashAll([
+      l$id,
       Object.hashAll(l$sentInvitations.map((v) => v)),
       Object.hashAll(l$pendingInvitations.map((v) => v)),
       Object.hashAll(l$acceptedInvitations.map((v) => v)),
@@ -459,6 +475,11 @@ class Query$invitationScreenViewer$viewer {
     }
     if (!(other is Query$invitationScreenViewer$viewer) ||
         runtimeType != other.runtimeType) {
+      return false;
+    }
+    final l$id = id;
+    final lOther$id = other.id;
+    if (l$id != lOther$id) {
       return false;
     }
     final l$sentInvitations = sentInvitations;
@@ -526,6 +547,7 @@ abstract class CopyWith$Query$invitationScreenViewer$viewer<TRes> {
       _CopyWithStubImpl$Query$invitationScreenViewer$viewer;
 
   TRes call({
+    String? id,
     List<Fragment$invitationDetailFragment>? sentInvitations,
     List<Fragment$invitationDetailFragment>? pendingInvitations,
     List<Fragment$invitationDetailFragment>? acceptedInvitations,
@@ -565,12 +587,14 @@ class _CopyWithImpl$Query$invitationScreenViewer$viewer<TRes>
   static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
+    Object? id = _undefined,
     Object? sentInvitations = _undefined,
     Object? pendingInvitations = _undefined,
     Object? acceptedInvitations = _undefined,
     Object? $__typename = _undefined,
   }) =>
       _then(Query$invitationScreenViewer$viewer(
+        id: id == _undefined || id == null ? _instance.id : (id as String),
         sentInvitations:
             sentInvitations == _undefined || sentInvitations == null
                 ? _instance.sentInvitations
@@ -632,6 +656,7 @@ class _CopyWithStubImpl$Query$invitationScreenViewer$viewer<TRes>
   TRes _res;
 
   call({
+    String? id,
     List<Fragment$invitationDetailFragment>? sentInvitations,
     List<Fragment$invitationDetailFragment>? pendingInvitations,
     List<Fragment$invitationDetailFragment>? acceptedInvitations,

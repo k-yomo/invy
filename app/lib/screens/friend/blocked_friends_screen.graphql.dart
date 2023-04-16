@@ -153,6 +153,13 @@ const documentNodeQueryblockedFriendScreenViewer = DocumentNode(definitions: [
         directives: [],
         selectionSet: SelectionSetNode(selections: [
           FieldNode(
+            name: NameNode(value: 'id'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: null,
+          ),
+          FieldNode(
             name: NameNode(value: 'blockedFriends'),
             alias: null,
             arguments: [
@@ -385,15 +392,18 @@ class Query$blockedFriendScreenViewer$Widget
 
 class Query$blockedFriendScreenViewer$viewer {
   Query$blockedFriendScreenViewer$viewer({
+    required this.id,
     required this.blockedFriends,
     this.$__typename = 'Viewer',
   });
 
   factory Query$blockedFriendScreenViewer$viewer.fromJson(
       Map<String, dynamic> json) {
+    final l$id = json['id'];
     final l$blockedFriends = json['blockedFriends'];
     final l$$__typename = json['__typename'];
     return Query$blockedFriendScreenViewer$viewer(
+      id: (l$id as String),
       blockedFriends:
           Query$blockedFriendScreenViewer$viewer$blockedFriends.fromJson(
               (l$blockedFriends as Map<String, dynamic>)),
@@ -401,12 +411,16 @@ class Query$blockedFriendScreenViewer$viewer {
     );
   }
 
+  final String id;
+
   final Query$blockedFriendScreenViewer$viewer$blockedFriends blockedFriends;
 
   final String $__typename;
 
   Map<String, dynamic> toJson() {
     final _resultData = <String, dynamic>{};
+    final l$id = id;
+    _resultData['id'] = l$id;
     final l$blockedFriends = blockedFriends;
     _resultData['blockedFriends'] = l$blockedFriends.toJson();
     final l$$__typename = $__typename;
@@ -416,9 +430,11 @@ class Query$blockedFriendScreenViewer$viewer {
 
   @override
   int get hashCode {
+    final l$id = id;
     final l$blockedFriends = blockedFriends;
     final l$$__typename = $__typename;
     return Object.hashAll([
+      l$id,
       l$blockedFriends,
       l$$__typename,
     ]);
@@ -431,6 +447,11 @@ class Query$blockedFriendScreenViewer$viewer {
     }
     if (!(other is Query$blockedFriendScreenViewer$viewer) ||
         runtimeType != other.runtimeType) {
+      return false;
+    }
+    final l$id = id;
+    final lOther$id = other.id;
+    if (l$id != lOther$id) {
       return false;
     }
     final l$blockedFriends = blockedFriends;
@@ -467,6 +488,7 @@ abstract class CopyWith$Query$blockedFriendScreenViewer$viewer<TRes> {
       _CopyWithStubImpl$Query$blockedFriendScreenViewer$viewer;
 
   TRes call({
+    String? id,
     Query$blockedFriendScreenViewer$viewer$blockedFriends? blockedFriends,
     String? $__typename,
   });
@@ -488,10 +510,12 @@ class _CopyWithImpl$Query$blockedFriendScreenViewer$viewer<TRes>
   static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
+    Object? id = _undefined,
     Object? blockedFriends = _undefined,
     Object? $__typename = _undefined,
   }) =>
       _then(Query$blockedFriendScreenViewer$viewer(
+        id: id == _undefined || id == null ? _instance.id : (id as String),
         blockedFriends: blockedFriends == _undefined || blockedFriends == null
             ? _instance.blockedFriends
             : (blockedFriends
@@ -515,6 +539,7 @@ class _CopyWithStubImpl$Query$blockedFriendScreenViewer$viewer<TRes>
   TRes _res;
 
   call({
+    String? id,
     Query$blockedFriendScreenViewer$viewer$blockedFriends? blockedFriends,
     String? $__typename,
   }) =>

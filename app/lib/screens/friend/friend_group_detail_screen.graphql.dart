@@ -268,6 +268,13 @@ const documentNodeQueryfriendGroupDetailScreenViewer =
         directives: [],
         selectionSet: SelectionSetNode(selections: [
           FieldNode(
+            name: NameNode(value: 'id'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: null,
+          ),
+          FieldNode(
             name: NameNode(value: 'friendGroup'),
             alias: null,
             arguments: [
@@ -526,15 +533,18 @@ class Query$friendGroupDetailScreenViewer$Widget
 
 class Query$friendGroupDetailScreenViewer$viewer {
   Query$friendGroupDetailScreenViewer$viewer({
+    required this.id,
     required this.friendGroup,
     this.$__typename = 'Viewer',
   });
 
   factory Query$friendGroupDetailScreenViewer$viewer.fromJson(
       Map<String, dynamic> json) {
+    final l$id = json['id'];
     final l$friendGroup = json['friendGroup'];
     final l$$__typename = json['__typename'];
     return Query$friendGroupDetailScreenViewer$viewer(
+      id: (l$id as String),
       friendGroup:
           Query$friendGroupDetailScreenViewer$viewer$friendGroup.fromJson(
               (l$friendGroup as Map<String, dynamic>)),
@@ -542,12 +552,16 @@ class Query$friendGroupDetailScreenViewer$viewer {
     );
   }
 
+  final String id;
+
   final Query$friendGroupDetailScreenViewer$viewer$friendGroup friendGroup;
 
   final String $__typename;
 
   Map<String, dynamic> toJson() {
     final _resultData = <String, dynamic>{};
+    final l$id = id;
+    _resultData['id'] = l$id;
     final l$friendGroup = friendGroup;
     _resultData['friendGroup'] = l$friendGroup.toJson();
     final l$$__typename = $__typename;
@@ -557,9 +571,11 @@ class Query$friendGroupDetailScreenViewer$viewer {
 
   @override
   int get hashCode {
+    final l$id = id;
     final l$friendGroup = friendGroup;
     final l$$__typename = $__typename;
     return Object.hashAll([
+      l$id,
       l$friendGroup,
       l$$__typename,
     ]);
@@ -572,6 +588,11 @@ class Query$friendGroupDetailScreenViewer$viewer {
     }
     if (!(other is Query$friendGroupDetailScreenViewer$viewer) ||
         runtimeType != other.runtimeType) {
+      return false;
+    }
+    final l$id = id;
+    final lOther$id = other.id;
+    if (l$id != lOther$id) {
       return false;
     }
     final l$friendGroup = friendGroup;
@@ -608,6 +629,7 @@ abstract class CopyWith$Query$friendGroupDetailScreenViewer$viewer<TRes> {
       _CopyWithStubImpl$Query$friendGroupDetailScreenViewer$viewer;
 
   TRes call({
+    String? id,
     Query$friendGroupDetailScreenViewer$viewer$friendGroup? friendGroup,
     String? $__typename,
   });
@@ -629,10 +651,12 @@ class _CopyWithImpl$Query$friendGroupDetailScreenViewer$viewer<TRes>
   static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
+    Object? id = _undefined,
     Object? friendGroup = _undefined,
     Object? $__typename = _undefined,
   }) =>
       _then(Query$friendGroupDetailScreenViewer$viewer(
+        id: id == _undefined || id == null ? _instance.id : (id as String),
         friendGroup: friendGroup == _undefined || friendGroup == null
             ? _instance.friendGroup
             : (friendGroup
@@ -656,6 +680,7 @@ class _CopyWithStubImpl$Query$friendGroupDetailScreenViewer$viewer<TRes>
   TRes _res;
 
   call({
+    String? id,
     Query$friendGroupDetailScreenViewer$viewer$friendGroup? friendGroup,
     String? $__typename,
   }) =>

@@ -1,6 +1,7 @@
 
 query invitationScreenViewer {
     viewer {
+        id
         sentInvitations {
             ...invitationDetailFragment
         }

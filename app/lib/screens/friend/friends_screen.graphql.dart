@@ -156,6 +156,13 @@ const documentNodeQueryfriendScreenViewer = DocumentNode(definitions: [
         directives: [],
         selectionSet: SelectionSetNode(selections: [
           FieldNode(
+            name: NameNode(value: 'id'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: null,
+          ),
+          FieldNode(
             name: NameNode(value: 'friendGroups'),
             alias: null,
             arguments: [],
@@ -467,6 +474,7 @@ class Query$friendScreenViewer$Widget
 
 class Query$friendScreenViewer$viewer {
   Query$friendScreenViewer$viewer({
+    required this.id,
     required this.friendGroups,
     required this.friends,
     required this.pendingFriendshipRequests,
@@ -474,11 +482,13 @@ class Query$friendScreenViewer$viewer {
   });
 
   factory Query$friendScreenViewer$viewer.fromJson(Map<String, dynamic> json) {
+    final l$id = json['id'];
     final l$friendGroups = json['friendGroups'];
     final l$friends = json['friends'];
     final l$pendingFriendshipRequests = json['pendingFriendshipRequests'];
     final l$$__typename = json['__typename'];
     return Query$friendScreenViewer$viewer(
+      id: (l$id as String),
       friendGroups: (l$friendGroups as List<dynamic>)
           .map((e) => Fragment$friendGroupListItemFragment.fromJson(
               (e as Map<String, dynamic>)))
@@ -493,6 +503,8 @@ class Query$friendScreenViewer$viewer {
     );
   }
 
+  final String id;
+
   final List<Fragment$friendGroupListItemFragment> friendGroups;
 
   final Query$friendScreenViewer$viewer$friends friends;
@@ -504,6 +516,8 @@ class Query$friendScreenViewer$viewer {
 
   Map<String, dynamic> toJson() {
     final _resultData = <String, dynamic>{};
+    final l$id = id;
+    _resultData['id'] = l$id;
     final l$friendGroups = friendGroups;
     _resultData['friendGroups'] =
         l$friendGroups.map((e) => e.toJson()).toList();
@@ -519,11 +533,13 @@ class Query$friendScreenViewer$viewer {
 
   @override
   int get hashCode {
+    final l$id = id;
     final l$friendGroups = friendGroups;
     final l$friends = friends;
     final l$pendingFriendshipRequests = pendingFriendshipRequests;
     final l$$__typename = $__typename;
     return Object.hashAll([
+      l$id,
       Object.hashAll(l$friendGroups.map((v) => v)),
       l$friends,
       Object.hashAll(l$pendingFriendshipRequests.map((v) => v)),
@@ -538,6 +554,11 @@ class Query$friendScreenViewer$viewer {
     }
     if (!(other is Query$friendScreenViewer$viewer) ||
         runtimeType != other.runtimeType) {
+      return false;
+    }
+    final l$id = id;
+    final lOther$id = other.id;
+    if (l$id != lOther$id) {
       return false;
     }
     final l$friendGroups = friendGroups;
@@ -600,6 +621,7 @@ abstract class CopyWith$Query$friendScreenViewer$viewer<TRes> {
       _CopyWithStubImpl$Query$friendScreenViewer$viewer;
 
   TRes call({
+    String? id,
     List<Fragment$friendGroupListItemFragment>? friendGroups,
     Query$friendScreenViewer$viewer$friends? friends,
     List<Fragment$pendingFriendRequestItemFragment>? pendingFriendshipRequests,
@@ -634,12 +656,14 @@ class _CopyWithImpl$Query$friendScreenViewer$viewer<TRes>
   static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
+    Object? id = _undefined,
     Object? friendGroups = _undefined,
     Object? friends = _undefined,
     Object? pendingFriendshipRequests = _undefined,
     Object? $__typename = _undefined,
   }) =>
       _then(Query$friendScreenViewer$viewer(
+        id: id == _undefined || id == null ? _instance.id : (id as String),
         friendGroups: friendGroups == _undefined || friendGroups == null
             ? _instance.friendGroups
             : (friendGroups as List<Fragment$friendGroupListItemFragment>),
@@ -694,6 +718,7 @@ class _CopyWithStubImpl$Query$friendScreenViewer$viewer<TRes>
   TRes _res;
 
   call({
+    String? id,
     List<Fragment$friendGroupListItemFragment>? friendGroups,
     Query$friendScreenViewer$viewer$friends? friends,
     List<Fragment$pendingFriendRequestItemFragment>? pendingFriendshipRequests,

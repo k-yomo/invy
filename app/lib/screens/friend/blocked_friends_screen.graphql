@@ -1,6 +1,7 @@
 
 query blockedFriendScreenViewer {
     viewer {
+        id
         blockedFriends(first: 100) {
             edges {
                 node {

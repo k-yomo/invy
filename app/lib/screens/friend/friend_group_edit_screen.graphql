@@ -8,6 +8,7 @@ fragment friendGroupEditScreenFragment on FriendGroup {
 
 query friendGroupEditScreenViewer {
     viewer {
+        id
         friends(first: 100) {
             edges {
                 node {

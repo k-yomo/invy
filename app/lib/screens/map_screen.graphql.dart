@@ -150,6 +150,13 @@ const documentNodeQuerymapScreenViewer = DocumentNode(definitions: [
         directives: [],
         selectionSet: SelectionSetNode(selections: [
           FieldNode(
+            name: NameNode(value: 'id'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: null,
+          ),
+          FieldNode(
             name: NameNode(value: 'friends'),
             alias: null,
             arguments: [
@@ -440,19 +447,24 @@ class Query$mapScreenViewer$Widget
 
 class Query$mapScreenViewer$viewer {
   Query$mapScreenViewer$viewer({
+    required this.id,
     required this.friends,
     this.$__typename = 'Viewer',
   });
 
   factory Query$mapScreenViewer$viewer.fromJson(Map<String, dynamic> json) {
+    final l$id = json['id'];
     final l$friends = json['friends'];
     final l$$__typename = json['__typename'];
     return Query$mapScreenViewer$viewer(
+      id: (l$id as String),
       friends: Query$mapScreenViewer$viewer$friends.fromJson(
           (l$friends as Map<String, dynamic>)),
       $__typename: (l$$__typename as String),
     );
   }
+
+  final String id;
 
   final Query$mapScreenViewer$viewer$friends friends;
 
@@ -460,6 +472,8 @@ class Query$mapScreenViewer$viewer {
 
   Map<String, dynamic> toJson() {
     final _resultData = <String, dynamic>{};
+    final l$id = id;
+    _resultData['id'] = l$id;
     final l$friends = friends;
     _resultData['friends'] = l$friends.toJson();
     final l$$__typename = $__typename;
@@ -469,9 +483,11 @@ class Query$mapScreenViewer$viewer {
 
   @override
   int get hashCode {
+    final l$id = id;
     final l$friends = friends;
     final l$$__typename = $__typename;
     return Object.hashAll([
+      l$id,
       l$friends,
       l$$__typename,
     ]);
@@ -484,6 +500,11 @@ class Query$mapScreenViewer$viewer {
     }
     if (!(other is Query$mapScreenViewer$viewer) ||
         runtimeType != other.runtimeType) {
+      return false;
+    }
+    final l$id = id;
+    final lOther$id = other.id;
+    if (l$id != lOther$id) {
       return false;
     }
     final l$friends = friends;
@@ -519,6 +540,7 @@ abstract class CopyWith$Query$mapScreenViewer$viewer<TRes> {
       _CopyWithStubImpl$Query$mapScreenViewer$viewer;
 
   TRes call({
+    String? id,
     Query$mapScreenViewer$viewer$friends? friends,
     String? $__typename,
   });
@@ -539,10 +561,12 @@ class _CopyWithImpl$Query$mapScreenViewer$viewer<TRes>
   static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
+    Object? id = _undefined,
     Object? friends = _undefined,
     Object? $__typename = _undefined,
   }) =>
       _then(Query$mapScreenViewer$viewer(
+        id: id == _undefined || id == null ? _instance.id : (id as String),
         friends: friends == _undefined || friends == null
             ? _instance.friends
             : (friends as Query$mapScreenViewer$viewer$friends),
@@ -564,6 +588,7 @@ class _CopyWithStubImpl$Query$mapScreenViewer$viewer<TRes>
   TRes _res;
 
   call({
+    String? id,
     Query$mapScreenViewer$viewer$friends? friends,
     String? $__typename,
   }) =>
