@@ -7,10 +7,11 @@
     - [invy-prod](https://console.cloud.google.com/welcome?project=invy-prod)
   - [Terraform](https://github.com/k-yomo/invy-terraform)
   - Cloud Run
+  - PostgreSQL v13.0 (Cloud SQL)
+  - Redis v6.2 ([Upstash](https://upstash.com/))
 - Backend
   - Go
   - GraphQL (gqlgen, graphql_flutter)
-  - Cloud SQL(PostgreSQL v13.0)
   - Ent
 - Mobile
   - Flutter
@@ -39,10 +40,14 @@ make run-app
 ## Test accounts
 SMS confirmation code is `123456` for all the accounts.
 - Local
-  - 080-1234-5678
+  - 00-1234-5678
+  - 11-1234-5678
+  - 22-1234-5678
 - Prod
   - 00-1234-5678
   - 11-1234-5678
   - 22-1234-5678
+  - ... 
+  - 99-1234-5678
 
 ※ If you need to add new account, you can register phone number for test [here](https://console.firebase.google.com/u/0/project/invy-prod/authentication/providers).
