@@ -7,7 +7,8 @@ import 'package:invy/router.dart';
 import 'package:invy/widgets/invitation_detail_fragment.graphql.dart';
 import 'package:invy/screens/invitation/invitation_detail_screen.dart';
 
-const dateTimeFormat = 'M月d日 H時m分';
+const dateFormat = 'M月d日';
+const timeFormat = 'H時m分';
 
 String _convertToDisplayTime(DateTime time) {
   final localTime = time.toLocal();
@@ -15,7 +16,7 @@ String _convertToDisplayTime(DateTime time) {
   if (localTime.day == now.day) {
     return DateFormat('H時m分').format(localTime);
   }
-  return DateFormat(dateTimeFormat).format(localTime);
+  return '${DateFormat(dateFormat).format(localTime)}(${DateFormat.E('ja').format(localTime)}) ${DateFormat(timeFormat).format(localTime)}';
 }
 
 class InvitationListItem extends StatelessWidget {

@@ -181,7 +181,7 @@ class InvitationScreen extends HookConsumerWidget {
                                               Image.asset(
                                                   'assets/images/cat.png'),
                                               const Gap(15),
-                                              const Text("参加予定のイベントはありません",
+                                              const Text("おさそいはありません",
                                                   style: TextStyle(
                                                       fontWeight:
                                                           FontWeight.bold)),
