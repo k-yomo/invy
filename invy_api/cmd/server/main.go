@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"crypto/tls"
 	"fmt"
 	"github.com/k-yomo/invy/pkg/cache"
 	"github.com/redis/go-redis/v9"
@@ -114,10 +115,17 @@ func main() {
 		logger.Fatal("creating schema resources failed", zap.Error(err))
 	}
 
-	redisClient := redis.NewClient(&redis.Options{
+	redisOpts := &redis.Options{
 		Addr:     appConfig.RedisConfig.Addr(),
 		Password: appConfig.RedisConfig.Password,
-	})
+	}
+	if appConfig.Env.IsDeployed() {
+		redisOpts.TLSConfig = &tls.Config{
+			ServerName: appConfig.RedisConfig.URL,
+			MinVersion: tls.VersionTLS12,
+		}
+	}
+	redisClient := redis.NewClient(redisOpts)
 	if err := redisClient.Ping(ctx).Err(); err != nil {
 		logger.Fatal("initialize redis client failed", zap.Error(err))
 	}
