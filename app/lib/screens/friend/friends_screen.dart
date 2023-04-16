@@ -10,7 +10,7 @@ import 'package:invy/widgets/friend_list.dart';
 import 'package:invy/widgets/sub_title.dart';
 
 import '../../widgets/pending_friendship_request_list.dart';
-import '../friend/freind_group_create_screen.dart';
+import '../friend/friend_group_create_screen.dart';
 import '../friend/friendship_request_screen.dart';
 
 class FriendsScreen extends HookConsumerWidget {

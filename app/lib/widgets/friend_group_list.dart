@@ -5,7 +5,7 @@ import 'package:invy/router.dart';
 import 'package:invy/widgets/friend_group_fragment.graphql.dart';
 import 'package:invy/widgets/friend_group_icon.dart';
 import 'package:invy/graphql/friend_group.graphql.dart';
-import 'package:invy/screens/friend/freind_group_detail_screen.dart';
+import 'package:invy/screens/friend/friend_group_detail_screen.dart';
 import 'package:flutter/material.dart';
 
 import '../services/graphql_client.dart';

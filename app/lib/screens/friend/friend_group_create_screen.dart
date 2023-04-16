@@ -3,6 +3,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:graphql/client.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:invy/util/toast.dart';
 import 'package:invy/widgets/screen_wrapper.dart';
 import 'package:invy/widgets/friend_selection_list.dart';
 import 'package:invy/screens/friend/friend_group_create_screen.graphql.dart';
@@ -46,7 +47,8 @@ class FriendGroupCreateScreen extends HookConsumerWidget {
         ),
       );
       if (result.hasException) {
-        // TODO: show error
+        showToast(
+            "グループの作成に失敗しました。時間を置いて再度お試しください。", ToastLevel.error);
         return;
       }
       Navigator.of(context).pop();
