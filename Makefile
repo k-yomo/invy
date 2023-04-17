@@ -57,7 +57,11 @@ run-db:
 
 .PHONY: connect-db
 connect-db:
-	PGPASSWORD=password psql -h 127.0.0.1 -p 15432 --user postgres -d invy
+	PGPASSWORD=password psql -h 127.0.0.1 -p 15432 -U postgres -d invy
+
+.PHONY: dump-ddl
+dump-ddl:
+	PGPASSWORD=password pg_dump -h 127.0.0.1 -p 15432 -d invy -U postgres -s > invy_api/schema.sql
 
 .PHONY: test-api
 test-api: ## Run tests
