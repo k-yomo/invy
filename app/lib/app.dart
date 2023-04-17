@@ -91,7 +91,7 @@ class AppState extends ConsumerState<App> {
   Widget build(BuildContext context) {
     final router =
         ref.watch(routerProvider.call(initialRoute: widget.initialRoute));
-    final isLoggedIn = ref.read(isLoggedInProvider);
+    final isLoggedIn = ref.watch(isLoggedInProvider);
 
     return StreamBuilder<User?>(
       stream: FirebaseAuth.instance.authStateChanges(),

@@ -15,6 +15,7 @@ import 'package:invy/services/graphql_client.dart';
 import 'package:invy/state/auth.dart';
 import 'package:invy/util/file.dart';
 import 'package:invy/util/permission.dart';
+import 'package:invy/util/toast.dart';
 import 'package:invy/widgets/app_bar_leading.dart';
 import 'package:invy/widgets/nickname_edit_form.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
@@ -30,16 +31,16 @@ class SignUpScreen extends HookConsumerWidget {
     final graphqlClient = ref.read(graphqlClientProvider);
     final avatar = useState<XFile?>(null);
     final nickname = useState('');
+    final isLoading = useState(false);
     final picker = ImagePicker();
 
     onSignUp() async {
       final firebaseUser = FirebaseAuth.instance.currentUser;
-      if (firebaseUser == null) {
+      if (firebaseUser == null || nickname.value.isEmpty || isLoading.value) {
         return;
       }
-      if (nickname.value.isEmpty) {
-        return;
-      }
+
+      isLoading.value = true;
 
       MultipartFile? avatarFile;
       if (avatar.value != null) {
@@ -52,8 +53,10 @@ class SignUpScreen extends HookConsumerWidget {
             nickname: nickname.value,
             avatar: avatarFile),
       )));
+      isLoading.value = false;
+
       if (res.hasException) {
-        print(res.exception);
+        showToast("プロフィールの登録に失敗しました。時間を置いて再度お試しください。", ToastLevel.error);
         return;
       }
       // Refresh id token to get new token containing user id in claims.
@@ -158,7 +161,15 @@ class SignUpScreen extends HookConsumerWidget {
                           nickname.value.isEmpty ? Colors.grey : Colors.black,
                       foregroundColor: Colors.white,
                     ),
-                    child: const Text(
+                    child: isLoading.value
+                        ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        color: Colors.white,
+                        strokeWidth: 3,
+                      ),
+                    ) : const Text(
                       'プロフィールを登録する',
                       style:
                           TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
