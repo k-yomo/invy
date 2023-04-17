@@ -25,9 +25,8 @@ import 'package:invy/screens/user/user_profile_screen.dart';
 import 'package:invy/screens/user/user_profile_screen.graphql.dart';
 import 'package:invy/state/auth.dart';
 import 'package:invy/widgets/screen_wrapper.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:geolocator/geolocator.dart' as geolocator;
-
 part 'router.g.dart';
 
 class ScaffoldWithNavBarTabItem extends BottomNavigationBarItem {
@@ -137,8 +136,8 @@ GoRouter router(RouterRef ref, {Uri? initialRoute}) => GoRouter(
         return LoginRoute(from: state.subloc).location;
       }
 
-      final permission = await geolocator.Geolocator.checkPermission();
-      if (permission != geolocator.LocationPermission.always) {
+      final locationAlwaysPermissionStatus = await Permission.locationAlways.status;
+      if (!locationAlwaysPermissionStatus.isGranted) {
         return BackgroundLocationRequestRoute(from: state.subloc).location;
       }
       return null;

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
-import 'package:geolocator/geolocator.dart' as geolocator;
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:invy/router.dart';
@@ -16,8 +15,8 @@ class BackgroundLocationRequestScreen extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     useOnAppLifecycleStateChange((previous, current) async {
       if (current == AppLifecycleState.resumed) {
-        final permission = await geolocator.Geolocator.checkPermission();
-        if (permission != geolocator.LocationPermission.always) {
+        final locationAlwaysPermissionStatus = await Permission.locationAlways.status;
+        if (!locationAlwaysPermissionStatus.isGranted) {
           return;
         }
         if (from != null &&
