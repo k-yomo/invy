@@ -79,7 +79,7 @@ func (ulq *UserLocationQuery) QueryUser() *UserQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(userlocation.Table, userlocation.FieldID, selector),
 			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, false, userlocation.UserTable, userlocation.UserColumn),
+			sqlgraph.Edge(sqlgraph.O2O, true, userlocation.UserTable, userlocation.UserColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(ulq.driver.Dialect(), step)
 		return fromU, nil

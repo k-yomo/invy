@@ -15,9 +15,11 @@ class APIQueryErrorMessage extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text(isNetworkError ? '情報の取得に失敗しました' : 'エラーが発生しました', style: TextStyle(fontSize: 20, color: Colors.grey.shade600)),
+          Text(isNetworkError ? '情報の取得に失敗しました' : 'エラーが発生しました',
+              style: TextStyle(fontSize: 20, color: Colors.grey.shade600)),
           const Gap(20),
-          Text(isNetworkError ? '接続を確認してもう一度お試し下さい。' : '時間を置いてもう一度お試し下さい。', style: TextStyle(color: Colors.grey.shade600)),
+          Text(isNetworkError ? '接続を確認してもう一度お試し下さい。' : '時間を置いてもう一度お試し下さい。',
+              style: TextStyle(color: Colors.grey.shade600)),
           // TODO: Display link to error report form
           // isNetworkError ? Text('エラーが続く場合は、お手数ですがお問い合わせフォームよりご連絡下さい。') : const SizedBox(),
           const Gap(20),

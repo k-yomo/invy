@@ -200,6 +200,33 @@ func HasUserProfileWith(preds ...predicate.UserProfile) predicate.User {
 	})
 }
 
+// HasUserLocation applies the HasEdge predicate on the "user_location" edge.
+func HasUserLocation() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, UserLocationTable, UserLocationColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasUserLocationWith applies the HasEdge predicate on the "user_location" edge with a given conditions (other predicates).
+func HasUserLocationWith(preds ...predicate.UserLocation) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(UserLocationInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, UserLocationTable, UserLocationColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // HasFriendUsers applies the HasEdge predicate on the "friend_users" edge.
 func HasFriendUsers() predicate.User {
 	return predicate.User(func(s *sql.Selector) {

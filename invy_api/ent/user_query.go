@@ -21,6 +21,7 @@ import (
 	"github.com/k-yomo/invy/invy_api/ent/pushnotificationtoken"
 	"github.com/k-yomo/invy/invy_api/ent/user"
 	"github.com/k-yomo/invy/invy_api/ent/userfriendgroup"
+	"github.com/k-yomo/invy/invy_api/ent/userlocation"
 	"github.com/k-yomo/invy/invy_api/ent/userprofile"
 )
 
@@ -36,6 +37,7 @@ type UserQuery struct {
 	predicates                      []predicate.User
 	withAccount                     *AccountQuery
 	withUserProfile                 *UserProfileQuery
+	withUserLocation                *UserLocationQuery
 	withFriendUsers                 *UserQuery
 	withPushNotificationTokens      *PushNotificationTokenQuery
 	withFriendGroups                *FriendGroupQuery
@@ -127,6 +129,28 @@ func (uq *UserQuery) QueryUserProfile() *UserProfileQuery {
 			sqlgraph.From(user.Table, user.FieldID, selector),
 			sqlgraph.To(userprofile.Table, userprofile.FieldID),
 			sqlgraph.Edge(sqlgraph.O2O, false, user.UserProfileTable, user.UserProfileColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryUserLocation chains the current query on the "user_location" edge.
+func (uq *UserQuery) QueryUserLocation() *UserLocationQuery {
+	query := (&UserLocationClient{config: uq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := uq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := uq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(userlocation.Table, userlocation.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, user.UserLocationTable, user.UserLocationColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
 		return fromU, nil
@@ -503,6 +527,7 @@ func (uq *UserQuery) Clone() *UserQuery {
 		predicates:                 append([]predicate.User{}, uq.predicates...),
 		withAccount:                uq.withAccount.Clone(),
 		withUserProfile:            uq.withUserProfile.Clone(),
+		withUserLocation:           uq.withUserLocation.Clone(),
 		withFriendUsers:            uq.withFriendUsers.Clone(),
 		withPushNotificationTokens: uq.withPushNotificationTokens.Clone(),
 		withFriendGroups:           uq.withFriendGroups.Clone(),
@@ -537,6 +562,17 @@ func (uq *UserQuery) WithUserProfile(opts ...func(*UserProfileQuery)) *UserQuery
 		opt(query)
 	}
 	uq.withUserProfile = query
+	return uq
+}
+
+// WithUserLocation tells the query-builder to eager-load the nodes that are connected to
+// the "user_location" edge. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithUserLocation(opts ...func(*UserLocationQuery)) *UserQuery {
+	query := (&UserLocationClient{config: uq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	uq.withUserLocation = query
 	return uq
 }
 
@@ -706,9 +742,10 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 	var (
 		nodes       = []*User{}
 		_spec       = uq.querySpec()
-		loadedTypes = [10]bool{
+		loadedTypes = [11]bool{
 			uq.withAccount != nil,
 			uq.withUserProfile != nil,
+			uq.withUserLocation != nil,
 			uq.withFriendUsers != nil,
 			uq.withPushNotificationTokens != nil,
 			uq.withFriendGroups != nil,
@@ -749,6 +786,12 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 	if query := uq.withUserProfile; query != nil {
 		if err := uq.loadUserProfile(ctx, query, nodes, nil,
 			func(n *User, e *UserProfile) { n.Edges.UserProfile = e }); err != nil {
+			return nil, err
+		}
+	}
+	if query := uq.withUserLocation; query != nil {
+		if err := uq.loadUserLocation(ctx, query, nodes, nil,
+			func(n *User, e *UserLocation) { n.Edges.UserLocation = e }); err != nil {
 			return nil, err
 		}
 	}
@@ -913,6 +956,30 @@ func (uq *UserQuery) loadUserProfile(ctx context.Context, query *UserProfileQuer
 	}
 	query.Where(predicate.UserProfile(func(s *sql.Selector) {
 		s.Where(sql.InValues(user.UserProfileColumn, fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.UserID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected foreign-key "user_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (uq *UserQuery) loadUserLocation(ctx context.Context, query *UserLocationQuery, nodes []*User, init func(*User), assign func(*User, *UserLocation)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[uuid.UUID]*User)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+	}
+	query.Where(predicate.UserLocation(func(s *sql.Selector) {
+		s.Where(sql.InValues(user.UserLocationColumn, fks...))
 	}))
 	neighbors, err := query.All(ctx)
 	if err != nil {

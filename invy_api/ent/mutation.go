@@ -6643,6 +6643,8 @@ type UserMutation struct {
 	clearedaccount                  bool
 	user_profile                    *uuid.UUID
 	cleareduser_profile             bool
+	user_location                   *uuid.UUID
+	cleareduser_location            bool
 	friend_users                    map[uuid.UUID]struct{}
 	removedfriend_users             map[uuid.UUID]struct{}
 	clearedfriend_users             bool
@@ -6947,6 +6949,45 @@ func (m *UserMutation) UserProfileIDs() (ids []uuid.UUID) {
 func (m *UserMutation) ResetUserProfile() {
 	m.user_profile = nil
 	m.cleareduser_profile = false
+}
+
+// SetUserLocationID sets the "user_location" edge to the UserLocation entity by id.
+func (m *UserMutation) SetUserLocationID(id uuid.UUID) {
+	m.user_location = &id
+}
+
+// ClearUserLocation clears the "user_location" edge to the UserLocation entity.
+func (m *UserMutation) ClearUserLocation() {
+	m.cleareduser_location = true
+}
+
+// UserLocationCleared reports if the "user_location" edge to the UserLocation entity was cleared.
+func (m *UserMutation) UserLocationCleared() bool {
+	return m.cleareduser_location
+}
+
+// UserLocationID returns the "user_location" edge ID in the mutation.
+func (m *UserMutation) UserLocationID() (id uuid.UUID, exists bool) {
+	if m.user_location != nil {
+		return *m.user_location, true
+	}
+	return
+}
+
+// UserLocationIDs returns the "user_location" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// UserLocationID instead. It exists only for internal usage by the builders.
+func (m *UserMutation) UserLocationIDs() (ids []uuid.UUID) {
+	if id := m.user_location; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetUserLocation resets all changes to the "user_location" edge.
+func (m *UserMutation) ResetUserLocation() {
+	m.user_location = nil
+	m.cleareduser_location = false
 }
 
 // AddFriendUserIDs adds the "friend_users" edge to the User entity by ids.
@@ -7548,12 +7589,15 @@ func (m *UserMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *UserMutation) AddedEdges() []string {
-	edges := make([]string, 0, 10)
+	edges := make([]string, 0, 11)
 	if m.account != nil {
 		edges = append(edges, user.EdgeAccount)
 	}
 	if m.user_profile != nil {
 		edges = append(edges, user.EdgeUserProfile)
+	}
+	if m.user_location != nil {
+		edges = append(edges, user.EdgeUserLocation)
 	}
 	if m.friend_users != nil {
 		edges = append(edges, user.EdgeFriendUsers)
@@ -7592,6 +7636,10 @@ func (m *UserMutation) AddedIDs(name string) []ent.Value {
 		}
 	case user.EdgeUserProfile:
 		if id := m.user_profile; id != nil {
+			return []ent.Value{*id}
+		}
+	case user.EdgeUserLocation:
+		if id := m.user_location; id != nil {
 			return []ent.Value{*id}
 		}
 	case user.EdgeFriendUsers:
@@ -7648,7 +7696,7 @@ func (m *UserMutation) AddedIDs(name string) []ent.Value {
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *UserMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 10)
+	edges := make([]string, 0, 11)
 	if m.removedfriend_users != nil {
 		edges = append(edges, user.EdgeFriendUsers)
 	}
@@ -7734,12 +7782,15 @@ func (m *UserMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *UserMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 10)
+	edges := make([]string, 0, 11)
 	if m.clearedaccount {
 		edges = append(edges, user.EdgeAccount)
 	}
 	if m.cleareduser_profile {
 		edges = append(edges, user.EdgeUserProfile)
+	}
+	if m.cleareduser_location {
+		edges = append(edges, user.EdgeUserLocation)
 	}
 	if m.clearedfriend_users {
 		edges = append(edges, user.EdgeFriendUsers)
@@ -7776,6 +7827,8 @@ func (m *UserMutation) EdgeCleared(name string) bool {
 		return m.clearedaccount
 	case user.EdgeUserProfile:
 		return m.cleareduser_profile
+	case user.EdgeUserLocation:
+		return m.cleareduser_location
 	case user.EdgeFriendUsers:
 		return m.clearedfriend_users
 	case user.EdgePushNotificationTokens:
@@ -7806,6 +7859,9 @@ func (m *UserMutation) ClearEdge(name string) error {
 	case user.EdgeUserProfile:
 		m.ClearUserProfile()
 		return nil
+	case user.EdgeUserLocation:
+		m.ClearUserLocation()
+		return nil
 	}
 	return fmt.Errorf("unknown User unique edge %s", name)
 }
@@ -7819,6 +7875,9 @@ func (m *UserMutation) ResetEdge(name string) error {
 		return nil
 	case user.EdgeUserProfile:
 		m.ResetUserProfile()
+		return nil
+	case user.EdgeUserLocation:
+		m.ResetUserLocation()
 		return nil
 	case user.EdgeFriendUsers:
 		m.ResetFriendUsers()

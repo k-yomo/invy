@@ -38,8 +38,12 @@ type AppConfig struct {
 	RedisConfig *RedisConfig
 }
 
+const (
+	DBDriver   = "postgres"
+	testDBName = "invy_test"
+)
+
 type DBConfig struct {
-	Driver   string `default:"postgres"`
 	DBName   string `default:"invy" envconfig:"DB_NAME"`
 	User     string `default:"postgres" envconfig:"DB_USER"`
 	Password string `default:"password" envconfig:"DB_PASSWORD"`
@@ -67,6 +71,23 @@ func NewAppConfig() (*AppConfig, error) {
 		return nil, fmt.Errorf("'%s' is invalid for env", appConfig.Env)
 	}
 	return appConfig, nil
+}
+
+func NewDBConfig() (*DBConfig, error) {
+	dbConfig := &DBConfig{}
+	if err := envconfig.Process("", dbConfig); err != nil {
+		return nil, err
+	}
+	return dbConfig, nil
+}
+
+func NewTestDBConfig() (*DBConfig, error) {
+	dbConfig, err := NewDBConfig()
+	if err != nil {
+		return nil, err
+	}
+	dbConfig.DBName = testDBName
+	return dbConfig, nil
 }
 
 func (d *DBConfig) Dsn() string {

@@ -47,8 +47,7 @@ class FriendGroupCreateScreen extends HookConsumerWidget {
         ),
       );
       if (result.hasException) {
-        showToast(
-            "グループの作成に失敗しました。時間を置いて再度お試しください。", ToastLevel.error);
+        showToast("グループの作成に失敗しました。時間を置いて再度お試しください。", ToastLevel.error);
         return;
       }
       Navigator.of(context).pop();

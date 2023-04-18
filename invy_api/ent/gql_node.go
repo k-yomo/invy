@@ -732,7 +732,7 @@ func (u *User) Node(ctx context.Context) (node *Node, err error) {
 		ID:     u.ID,
 		Type:   "User",
 		Fields: make([]*Field, 3),
-		Edges:  make([]*Edge, 10),
+		Edges:  make([]*Edge, 11),
 	}
 	var buf []byte
 	if buf, err = json.Marshal(u.AccountID); err != nil {
@@ -780,82 +780,92 @@ func (u *User) Node(ctx context.Context) (node *Node, err error) {
 		return nil, err
 	}
 	node.Edges[2] = &Edge{
-		Type: "User",
-		Name: "friend_users",
+		Type: "UserLocation",
+		Name: "user_location",
 	}
-	err = u.QueryFriendUsers().
-		Select(user.FieldID).
+	err = u.QueryUserLocation().
+		Select(userlocation.FieldID).
 		Scan(ctx, &node.Edges[2].IDs)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[3] = &Edge{
-		Type: "PushNotificationToken",
-		Name: "push_notification_tokens",
+		Type: "User",
+		Name: "friend_users",
 	}
-	err = u.QueryPushNotificationTokens().
-		Select(pushnotificationtoken.FieldID).
+	err = u.QueryFriendUsers().
+		Select(user.FieldID).
 		Scan(ctx, &node.Edges[3].IDs)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[4] = &Edge{
-		Type: "FriendGroup",
-		Name: "friend_groups",
+		Type: "PushNotificationToken",
+		Name: "push_notification_tokens",
 	}
-	err = u.QueryFriendGroups().
-		Select(friendgroup.FieldID).
+	err = u.QueryPushNotificationTokens().
+		Select(pushnotificationtoken.FieldID).
 		Scan(ctx, &node.Edges[4].IDs)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[5] = &Edge{
 		Type: "FriendGroup",
-		Name: "belonging_friend_groups",
+		Name: "friend_groups",
 	}
-	err = u.QueryBelongingFriendGroups().
+	err = u.QueryFriendGroups().
 		Select(friendgroup.FieldID).
 		Scan(ctx, &node.Edges[5].IDs)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[6] = &Edge{
-		Type: "InvitationAcceptance",
-		Name: "invitation_acceptances",
+		Type: "FriendGroup",
+		Name: "belonging_friend_groups",
 	}
-	err = u.QueryInvitationAcceptances().
-		Select(invitationacceptance.FieldID).
+	err = u.QueryBelongingFriendGroups().
+		Select(friendgroup.FieldID).
 		Scan(ctx, &node.Edges[6].IDs)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[7] = &Edge{
-		Type: "InvitationDenial",
-		Name: "invitation_denials",
+		Type: "InvitationAcceptance",
+		Name: "invitation_acceptances",
 	}
-	err = u.QueryInvitationDenials().
-		Select(invitationdenial.FieldID).
+	err = u.QueryInvitationAcceptances().
+		Select(invitationacceptance.FieldID).
 		Scan(ctx, &node.Edges[7].IDs)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[8] = &Edge{
-		Type: "Friendship",
-		Name: "friendships",
+		Type: "InvitationDenial",
+		Name: "invitation_denials",
 	}
-	err = u.QueryFriendships().
-		Select(friendship.FieldID).
+	err = u.QueryInvitationDenials().
+		Select(invitationdenial.FieldID).
 		Scan(ctx, &node.Edges[8].IDs)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[9] = &Edge{
+		Type: "Friendship",
+		Name: "friendships",
+	}
+	err = u.QueryFriendships().
+		Select(friendship.FieldID).
+		Scan(ctx, &node.Edges[9].IDs)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[10] = &Edge{
 		Type: "UserFriendGroup",
 		Name: "user_friend_groups",
 	}
 	err = u.QueryUserFriendGroups().
 		Select(userfriendgroup.FieldID).
-		Scan(ctx, &node.Edges[9].IDs)
+		Scan(ctx, &node.Edges[10].IDs)
 	if err != nil {
 		return nil, err
 	}

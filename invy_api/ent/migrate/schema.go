@@ -377,7 +377,7 @@ var (
 		{Name: "id", Type: field.TypeUUID},
 		{Name: "coordinate", Type: field.TypeOther, SchemaType: map[string]string{"postgres": "geometry(Point,4326)"}},
 		{Name: "updated_at", Type: field.TypeTime},
-		{Name: "user_id", Type: field.TypeUUID},
+		{Name: "user_id", Type: field.TypeUUID, Unique: true},
 	}
 	// UserLocationsTable holds the schema information for the "user_locations" table.
 	UserLocationsTable = &schema.Table{
@@ -386,7 +386,7 @@ var (
 		PrimaryKey: []*schema.Column{UserLocationsColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:     "user_locations_users_user",
+				Symbol:     "user_locations_users_user_location",
 				Columns:    []*schema.Column{UserLocationsColumns[3]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,

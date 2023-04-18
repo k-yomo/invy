@@ -26,6 +26,8 @@ const (
 	EdgeAccount = "account"
 	// EdgeUserProfile holds the string denoting the user_profile edge name in mutations.
 	EdgeUserProfile = "user_profile"
+	// EdgeUserLocation holds the string denoting the user_location edge name in mutations.
+	EdgeUserLocation = "user_location"
 	// EdgeFriendUsers holds the string denoting the friend_users edge name in mutations.
 	EdgeFriendUsers = "friend_users"
 	// EdgePushNotificationTokens holds the string denoting the push_notification_tokens edge name in mutations.
@@ -58,6 +60,13 @@ const (
 	UserProfileInverseTable = "user_profiles"
 	// UserProfileColumn is the table column denoting the user_profile relation/edge.
 	UserProfileColumn = "user_id"
+	// UserLocationTable is the table that holds the user_location relation/edge.
+	UserLocationTable = "user_locations"
+	// UserLocationInverseTable is the table name for the UserLocation entity.
+	// It exists in this package in order to avoid circular dependency with the "userlocation" package.
+	UserLocationInverseTable = "user_locations"
+	// UserLocationColumn is the table column denoting the user_location relation/edge.
+	UserLocationColumn = "user_id"
 	// FriendUsersTable is the table that holds the friend_users relation/edge. The primary key declared below.
 	FriendUsersTable = "friendships"
 	// PushNotificationTokensTable is the table that holds the push_notification_tokens relation/edge.

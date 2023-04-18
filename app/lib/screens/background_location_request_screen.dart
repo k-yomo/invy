@@ -15,7 +15,8 @@ class BackgroundLocationRequestScreen extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     useOnAppLifecycleStateChange((previous, current) async {
       if (current == AppLifecycleState.resumed) {
-        final locationAlwaysPermissionStatus = await Permission.locationAlways.status;
+        final locationAlwaysPermissionStatus =
+            await Permission.locationAlways.status;
         if (!locationAlwaysPermissionStatus.isGranted) {
           return;
         }

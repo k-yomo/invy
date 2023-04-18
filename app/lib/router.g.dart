@@ -436,7 +436,7 @@ extension $BackgroundLocationRequestRouteExtension
 // RiverpodGenerator
 // **************************************************************************
 
-String _$routerHash() => r'fcea5c136cb5185a1f55aa487d30e9cd89655790';
+String _$routerHash() => r'f1759b059032d9101563b0902bfb0328771d6845';
 
 /// Copied from Dart SDK
 class _SystemHash {

@@ -80,7 +80,7 @@ func main() {
 	}
 
 	db, err := otelsql.Open(
-		appConfig.DBConfig.Driver,
+		config.DBDriver,
 		appConfig.DBConfig.Dsn(),
 		otelsql.WithAttributes(semconv.DBSystemPostgreSQL),
 		otelsql.WithSpanOptions(otelsql.SpanOptions{OmitRows: true}),
@@ -102,7 +102,7 @@ func main() {
 	db.SetConnMaxLifetime(5 * time.Minute)
 	bunDB := bun.NewDB(db, pgdialect.New())
 
-	entDriver := sqlcomment.NewDriver(entsql.OpenDB(appConfig.DBConfig.Driver, db),
+	entDriver := sqlcomment.NewDriver(entsql.OpenDB(config.DBDriver, db),
 		sqlcomment.WithDriverVerTag(),
 		sqlcomment.WithTagger(sqlcomment.OTELTagger{}),
 		sqlcomment.WithTags(sqlcomment.Tags{

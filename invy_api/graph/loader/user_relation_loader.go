@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"time"
 
+	"entgo.io/ent/dialect/sql"
+
 	"github.com/google/uuid"
 	"github.com/graph-gophers/dataloader/v7"
 	"github.com/k-yomo/invy/invy_api/ent"
@@ -139,23 +141,30 @@ func NewFriendGeoPointLoader(db *ent.Client) func(context.Context, []uuid.UUID) 
 		}
 
 		authUserID := auth.GetCurrentUserID(ctx)
-		friendshipLoaderKeys := make([]FriendshipKey, 0, len(userIDs))
-		for _, userID := range userIDs {
-			friendshipLoaderKeys = append(friendshipLoaderKeys, FriendshipKey{UserID: authUserID, FriendUserID: userID})
-		}
-
-		friendshipLoaderResults := NewFriendshipLoader(db)(ctx, friendshipLoaderKeys)
-		friendUserIDs := make([]uuid.UUID, 0, len(userIDs))
-		for _, result := range friendshipLoaderResults {
-			if result.Error == nil {
-				friendUserIDs = append(friendUserIDs, result.Data.FriendUserID)
-			}
-		}
-
-		friendLocations, err := db.UserLocation.Query().
+		friendLocations, err := db.Debug().Friendship.Query().
 			Where(
-				userlocation.UserIDIn(friendUserIDs...),
-				userlocation.UpdatedAtGTE(time.Now().Add(-2*time.Hour)),
+				friendship.UserID(authUserID),
+				func(s *sql.Selector) {
+					userBlockTable := sql.Table(userblock.Table)
+					s.Where(
+						// Do not return user's location who blocks auth user
+						sql.NotExists(
+							sql.Select().
+								From(userBlockTable).
+								Where(
+									sql.And(
+										sql.ColumnsEQ(userBlockTable.C(userblock.FieldUserID), s.C(friendship.FieldFriendUserID)),
+										sql.EQ(userBlockTable.C(userblock.FieldBlockUserID), authUserID),
+									),
+								),
+						),
+					)
+				},
+			).
+			QueryFriendUser().
+			QueryUserLocation().
+			Where(
+				userlocation.UpdatedAtGTE(time.Now().Add(-2 * time.Hour)),
 			).
 			All(ctx)
 		if err != nil {
@@ -168,8 +177,8 @@ func NewFriendGeoPointLoader(db *ent.Client) func(context.Context, []uuid.UUID) 
 
 		results := make([]*dataloader.Result[*pgutil.GeoPoint], 0, len(userIDs))
 		for _, userID := range userIDs {
-			friendCoord := friendUserIDCoordinateMap[userID]
-			results = append(results, &dataloader.Result[*pgutil.GeoPoint]{Data: friendCoord})
+			friendCoordinate := friendUserIDCoordinateMap[userID]
+			results = append(results, &dataloader.Result[*pgutil.GeoPoint]{Data: friendCoordinate})
 		}
 		return results
 	}

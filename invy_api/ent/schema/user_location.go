@@ -38,7 +38,8 @@ func (UserLocation) Fields() []ent.Field {
 // Edges of the UserLocation.
 func (UserLocation) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.To("user", User.Type).
+		edge.From("user", User.Type).
+			Ref("user_location").
 			Required().
 			Unique().
 			Field("user_id").

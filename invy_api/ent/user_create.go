@@ -21,6 +21,7 @@ import (
 	"github.com/k-yomo/invy/invy_api/ent/pushnotificationtoken"
 	"github.com/k-yomo/invy/invy_api/ent/user"
 	"github.com/k-yomo/invy/invy_api/ent/userfriendgroup"
+	"github.com/k-yomo/invy/invy_api/ent/userlocation"
 	"github.com/k-yomo/invy/invy_api/ent/userprofile"
 )
 
@@ -102,6 +103,25 @@ func (uc *UserCreate) SetNillableUserProfileID(id *uuid.UUID) *UserCreate {
 // SetUserProfile sets the "user_profile" edge to the UserProfile entity.
 func (uc *UserCreate) SetUserProfile(u *UserProfile) *UserCreate {
 	return uc.SetUserProfileID(u.ID)
+}
+
+// SetUserLocationID sets the "user_location" edge to the UserLocation entity by ID.
+func (uc *UserCreate) SetUserLocationID(id uuid.UUID) *UserCreate {
+	uc.mutation.SetUserLocationID(id)
+	return uc
+}
+
+// SetNillableUserLocationID sets the "user_location" edge to the UserLocation entity by ID if the given value is not nil.
+func (uc *UserCreate) SetNillableUserLocationID(id *uuid.UUID) *UserCreate {
+	if id != nil {
+		uc = uc.SetUserLocationID(*id)
+	}
+	return uc
+}
+
+// SetUserLocation sets the "user_location" edge to the UserLocation entity.
+func (uc *UserCreate) SetUserLocation(u *UserLocation) *UserCreate {
+	return uc.SetUserLocationID(u.ID)
 }
 
 // AddFriendUserIDs adds the "friend_users" edge to the User entity by IDs.
@@ -373,6 +393,25 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeUUID,
 					Column: userprofile.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.UserLocationIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   user.UserLocationTable,
+			Columns: []string{user.UserLocationColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeUUID,
+					Column: userlocation.FieldID,
 				},
 			},
 		}

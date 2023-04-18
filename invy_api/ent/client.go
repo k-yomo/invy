@@ -1914,6 +1914,22 @@ func (c *UserClient) QueryUserProfile(u *User) *UserProfileQuery {
 	return query
 }
 
+// QueryUserLocation queries the user_location edge of a User.
+func (c *UserClient) QueryUserLocation(u *User) *UserLocationQuery {
+	query := (&UserLocationClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := u.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(userlocation.Table, userlocation.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, user.UserLocationTable, user.UserLocationColumn),
+		)
+		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // QueryFriendUsers queries the friend_users edge of a User.
 func (c *UserClient) QueryFriendUsers(u *User) *UserQuery {
 	query := (&UserClient{config: c.config}).Query()
@@ -2465,7 +2481,7 @@ func (c *UserLocationClient) QueryUser(ul *UserLocation) *UserQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(userlocation.Table, userlocation.FieldID, id),
 			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, false, userlocation.UserTable, userlocation.UserColumn),
+			sqlgraph.Edge(sqlgraph.O2O, true, userlocation.UserTable, userlocation.UserColumn),
 		)
 		fromV = sqlgraph.Neighbors(ul.driver.Dialect(), step)
 		return fromV, nil

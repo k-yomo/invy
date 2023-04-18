@@ -40,6 +40,8 @@ func (User) Edges() []ent.Edge {
 			Immutable(),
 		edge.To("user_profile", UserProfile.Type).
 			Unique(),
+		edge.To("user_location", UserLocation.Type).
+			Unique(),
 		edge.To("friend_users", User.Type).
 			Through("friendships", Friendship.Type),
 		edge.From("push_notification_tokens", PushNotificationToken.Type).Ref("user"),

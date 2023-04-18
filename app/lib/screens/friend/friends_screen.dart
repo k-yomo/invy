@@ -19,14 +19,15 @@ class FriendsScreen extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final graphqlClient = ref.read(graphqlClientProvider);
-    final viewerQuery = useMemoized(() => graphqlClient
-        .watchQuery$friendScreenViewer(WatchOptions$Query$friendScreenViewer(
-      eagerlyFetchResults: true,
-    )));
+    final viewerQuery = useMemoized(() =>
+        graphqlClient.watchQuery$friendScreenViewer(
+            WatchOptions$Query$friendScreenViewer(
+          eagerlyFetchResults: true,
+        )));
     final viewerStream = useStream(viewerQuery.stream);
     final viewer = viewerStream.data?.parsedData?.viewer;
     final sortedFriends = viewer?.friends.edges ?? [];
-    
+
     // TODO: Sort in backend would be better
     sortedFriends.sort((a, b) {
       return (a.node.distanceKm ?? double.nan)
@@ -39,67 +40,71 @@ class FriendsScreen extends HookConsumerWidget {
           '友達・グループ',
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
         ),
-        shape: Border(
-            bottom: BorderSide(color: Colors.grey.shade200, width: 1)),
+        shape:
+            Border(bottom: BorderSide(color: Colors.grey.shade200, width: 1)),
       ),
       backgroundColor: Colors.white,
-      body: (viewerStream.hasError || viewerStream.data?.hasException == true) ? APIQueryErrorMessage(refetch: viewerQuery.refetch, isNetworkError: viewerStream.hasError) : SingleChildScrollView(
-        child: Container(
-          margin: const EdgeInsets.symmetric(horizontal: 10),
-          child: Column(
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SubTitle(text: "グループ"),
-                  InkWell(
-                    onTap: () {
-                      const FriendGroupCreateRoute().go(context);
-                    },
-                    child: const _AddFriendGroup(),
-                  ),
-                  FriendGroupList(
-                      friendGroups: viewer?.friendGroups.toList() ?? [])
-                ],
+      body: (viewerStream.hasError || viewerStream.data?.hasException == true)
+          ? APIQueryErrorMessage(
+              refetch: viewerQuery.refetch,
+              isNetworkError: viewerStream.hasError)
+          : SingleChildScrollView(
+              child: Container(
+                margin: const EdgeInsets.symmetric(horizontal: 10),
+                child: Column(
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SubTitle(text: "グループ"),
+                        InkWell(
+                          onTap: () {
+                            const FriendGroupCreateRoute().go(context);
+                          },
+                          child: const _AddFriendGroup(),
+                        ),
+                        FriendGroupList(
+                            friendGroups: viewer?.friendGroups.toList() ?? [])
+                      ],
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SubTitle(text: "友建"),
+                        InkWell(
+                          onTap: () {
+                            const FriendshipRequestRoute().push(context);
+                          },
+                          child: const _AddFriend(),
+                        ),
+                        PendingFriendshipRequestList(
+                          pendingFriendshipRequests:
+                              viewer?.pendingFriendshipRequests ?? [],
+                          onClick: (String requestId) async {
+                            final result = await viewerQuery.refetch();
+                            if (result?.hasException ?? true) {
+                              return;
+                            }
+                          },
+                        ),
+                        FriendList(
+                          disableScroll: true,
+                          friends: sortedFriends.map((f) => f.node).toList(),
+                          onFriendPressed: (friendUserId) {
+                            UserProfileRoute(
+                              friendUserId,
+                              $extra: sortedFriends
+                                  .singleWhere((f) => f.node.id == friendUserId)
+                                  .node,
+                            ).push(context);
+                          },
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SubTitle(text: "友建"),
-                  InkWell(
-                    onTap: () {
-                      const FriendshipRequestRoute().push(context);
-                    },
-                    child: const _AddFriend(),
-                  ),
-                  PendingFriendshipRequestList(
-                    pendingFriendshipRequests:
-                    viewer?.pendingFriendshipRequests ?? [],
-                    onClick: (String requestId) async {
-                      final result = await viewerQuery.refetch();
-                      if (result?.hasException ?? true) {
-                        return;
-                      }
-                    },
-                  ),
-                  FriendList(
-                    disableScroll: true,
-                    friends: sortedFriends.map((f) => f.node).toList(),
-                    onFriendPressed: (friendUserId) {
-                      UserProfileRoute(
-                        friendUserId,
-                        $extra: sortedFriends
-                            .singleWhere((f) => f.node.id == friendUserId)
-                            .node,
-                      ).push(context);
-                    },
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
+            ),
     );
   }
 }

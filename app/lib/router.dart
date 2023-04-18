@@ -136,7 +136,8 @@ GoRouter router(RouterRef ref, {Uri? initialRoute}) => GoRouter(
         return LoginRoute(from: state.subloc).location;
       }
 
-      final locationAlwaysPermissionStatus = await Permission.locationAlways.status;
+      final locationAlwaysPermissionStatus =
+          await Permission.locationAlways.status;
       if (!locationAlwaysPermissionStatus.isGranted) {
         return BackgroundLocationRequestRoute(from: state.subloc).location;
       }

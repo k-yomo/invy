@@ -56,7 +56,7 @@ run-db:
 	docker-compose up -d db
 
 .PHONY: connect-db
-connect-db:
+connect-db: ## Connect to local db
 	PGPASSWORD=password psql -h 127.0.0.1 -p 15432 --user postgres -d invy
 
 .PHONY: test-api

@@ -19,6 +19,7 @@ import (
 	"github.com/k-yomo/invy/invy_api/ent/pushnotificationtoken"
 	"github.com/k-yomo/invy/invy_api/ent/user"
 	"github.com/k-yomo/invy/invy_api/ent/userfriendgroup"
+	"github.com/k-yomo/invy/invy_api/ent/userlocation"
 	"github.com/k-yomo/invy/invy_api/ent/userprofile"
 )
 
@@ -66,6 +67,25 @@ func (uu *UserUpdate) SetNillableUserProfileID(id *uuid.UUID) *UserUpdate {
 // SetUserProfile sets the "user_profile" edge to the UserProfile entity.
 func (uu *UserUpdate) SetUserProfile(u *UserProfile) *UserUpdate {
 	return uu.SetUserProfileID(u.ID)
+}
+
+// SetUserLocationID sets the "user_location" edge to the UserLocation entity by ID.
+func (uu *UserUpdate) SetUserLocationID(id uuid.UUID) *UserUpdate {
+	uu.mutation.SetUserLocationID(id)
+	return uu
+}
+
+// SetNillableUserLocationID sets the "user_location" edge to the UserLocation entity by ID if the given value is not nil.
+func (uu *UserUpdate) SetNillableUserLocationID(id *uuid.UUID) *UserUpdate {
+	if id != nil {
+		uu = uu.SetUserLocationID(*id)
+	}
+	return uu
+}
+
+// SetUserLocation sets the "user_location" edge to the UserLocation entity.
+func (uu *UserUpdate) SetUserLocation(u *UserLocation) *UserUpdate {
+	return uu.SetUserLocationID(u.ID)
 }
 
 // AddFriendUserIDs adds the "friend_users" edge to the User entity by IDs.
@@ -196,6 +216,12 @@ func (uu *UserUpdate) Mutation() *UserMutation {
 // ClearUserProfile clears the "user_profile" edge to the UserProfile entity.
 func (uu *UserUpdate) ClearUserProfile() *UserUpdate {
 	uu.mutation.ClearUserProfile()
+	return uu
+}
+
+// ClearUserLocation clears the "user_location" edge to the UserLocation entity.
+func (uu *UserUpdate) ClearUserLocation() *UserUpdate {
+	uu.mutation.ClearUserLocation()
 	return uu
 }
 
@@ -458,6 +484,41 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeUUID,
 					Column: userprofile.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uu.mutation.UserLocationCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   user.UserLocationTable,
+			Columns: []string{user.UserLocationColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeUUID,
+					Column: userlocation.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.UserLocationIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   user.UserLocationTable,
+			Columns: []string{user.UserLocationColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeUUID,
+					Column: userlocation.FieldID,
 				},
 			},
 		}
@@ -993,6 +1054,25 @@ func (uuo *UserUpdateOne) SetUserProfile(u *UserProfile) *UserUpdateOne {
 	return uuo.SetUserProfileID(u.ID)
 }
 
+// SetUserLocationID sets the "user_location" edge to the UserLocation entity by ID.
+func (uuo *UserUpdateOne) SetUserLocationID(id uuid.UUID) *UserUpdateOne {
+	uuo.mutation.SetUserLocationID(id)
+	return uuo
+}
+
+// SetNillableUserLocationID sets the "user_location" edge to the UserLocation entity by ID if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableUserLocationID(id *uuid.UUID) *UserUpdateOne {
+	if id != nil {
+		uuo = uuo.SetUserLocationID(*id)
+	}
+	return uuo
+}
+
+// SetUserLocation sets the "user_location" edge to the UserLocation entity.
+func (uuo *UserUpdateOne) SetUserLocation(u *UserLocation) *UserUpdateOne {
+	return uuo.SetUserLocationID(u.ID)
+}
+
 // AddFriendUserIDs adds the "friend_users" edge to the User entity by IDs.
 func (uuo *UserUpdateOne) AddFriendUserIDs(ids ...uuid.UUID) *UserUpdateOne {
 	uuo.mutation.AddFriendUserIDs(ids...)
@@ -1121,6 +1201,12 @@ func (uuo *UserUpdateOne) Mutation() *UserMutation {
 // ClearUserProfile clears the "user_profile" edge to the UserProfile entity.
 func (uuo *UserUpdateOne) ClearUserProfile() *UserUpdateOne {
 	uuo.mutation.ClearUserProfile()
+	return uuo
+}
+
+// ClearUserLocation clears the "user_location" edge to the UserLocation entity.
+func (uuo *UserUpdateOne) ClearUserLocation() *UserUpdateOne {
+	uuo.mutation.ClearUserLocation()
 	return uuo
 }
 
@@ -1407,6 +1493,41 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeUUID,
 					Column: userprofile.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uuo.mutation.UserLocationCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   user.UserLocationTable,
+			Columns: []string{user.UserLocationColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeUUID,
+					Column: userlocation.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.UserLocationIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   user.UserLocationTable,
+			Columns: []string{user.UserLocationColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeUUID,
+					Column: userlocation.FieldID,
 				},
 			},
 		}

@@ -94,9 +94,11 @@ class SettingsScreen extends HookConsumerWidget {
                       okLabel: "退会",
                       isDestructiveAction: true);
                   if (result == OkCancelResult.ok) {
-                    final deleteAccountResult = await graphqlClient.mutate$deleteAccount();
+                    final deleteAccountResult =
+                        await graphqlClient.mutate$deleteAccount();
                     if (deleteAccountResult.hasException) {
-                      showToast("退会処理に失敗しました。時間をおいて再度お試し下さい。", ToastLevel.error);
+                      showToast(
+                          "退会処理に失敗しました。時間をおいて再度お試し下さい。", ToastLevel.error);
                       return;
                     }
                     clientLogout();

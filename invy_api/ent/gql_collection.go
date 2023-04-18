@@ -727,6 +727,16 @@ func (u *UserQuery) collectField(ctx context.Context, op *graphql.OperationConte
 				return err
 			}
 			u.withUserProfile = query
+		case "userLocation":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = &UserLocationQuery{config: u.config}
+			)
+			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
+				return err
+			}
+			u.withUserLocation = query
 		case "friendUsers":
 			var (
 				alias = field.Alias

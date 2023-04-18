@@ -208,6 +208,14 @@ func (u *User) UserProfile(ctx context.Context) (*UserProfile, error) {
 	return result, MaskNotFound(err)
 }
 
+func (u *User) UserLocation(ctx context.Context) (*UserLocation, error) {
+	result, err := u.Edges.UserLocationOrErr()
+	if IsNotLoaded(err) {
+		result, err = u.QueryUserLocation().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
 func (u *User) FriendUsers(ctx context.Context) (result []*User, err error) {
 	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
 		result, err = u.NamedFriendUsers(graphql.GetFieldContext(ctx).Field.Alias)

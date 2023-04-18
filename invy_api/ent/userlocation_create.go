@@ -182,8 +182,8 @@ func (ulc *UserLocationCreate) createSpec() (*UserLocation, *sqlgraph.CreateSpec
 	}
 	if nodes := ulc.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: false,
+			Rel:     sqlgraph.O2O,
+			Inverse: true,
 			Table:   userlocation.UserTable,
 			Columns: []string{userlocation.UserColumn},
 			Bidi:    false,

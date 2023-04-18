@@ -11,6 +11,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/k-yomo/invy/invy_api/ent/account"
 	"github.com/k-yomo/invy/invy_api/ent/user"
+	"github.com/k-yomo/invy/invy_api/ent/userlocation"
 	"github.com/k-yomo/invy/invy_api/ent/userprofile"
 )
 
@@ -36,6 +37,8 @@ type UserEdges struct {
 	Account *Account `json:"account,omitempty"`
 	// UserProfile holds the value of the user_profile edge.
 	UserProfile *UserProfile `json:"user_profile,omitempty"`
+	// UserLocation holds the value of the user_location edge.
+	UserLocation *UserLocation `json:"user_location,omitempty"`
 	// FriendUsers holds the value of the friend_users edge.
 	FriendUsers []*User `json:"friend_users,omitempty"`
 	// PushNotificationTokens holds the value of the push_notification_tokens edge.
@@ -54,9 +57,9 @@ type UserEdges struct {
 	UserFriendGroups []*UserFriendGroup `json:"user_friend_groups,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [10]bool
+	loadedTypes [11]bool
 	// totalCount holds the count of the edges above.
-	totalCount [10]map[string]int
+	totalCount [11]map[string]int
 
 	namedFriendUsers            map[string][]*User
 	namedPushNotificationTokens map[string][]*PushNotificationToken
@@ -94,10 +97,23 @@ func (e UserEdges) UserProfileOrErr() (*UserProfile, error) {
 	return nil, &NotLoadedError{edge: "user_profile"}
 }
 
+// UserLocationOrErr returns the UserLocation value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e UserEdges) UserLocationOrErr() (*UserLocation, error) {
+	if e.loadedTypes[2] {
+		if e.UserLocation == nil {
+			// Edge was loaded but was not found.
+			return nil, &NotFoundError{label: userlocation.Label}
+		}
+		return e.UserLocation, nil
+	}
+	return nil, &NotLoadedError{edge: "user_location"}
+}
+
 // FriendUsersOrErr returns the FriendUsers value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) FriendUsersOrErr() ([]*User, error) {
-	if e.loadedTypes[2] {
+	if e.loadedTypes[3] {
 		return e.FriendUsers, nil
 	}
 	return nil, &NotLoadedError{edge: "friend_users"}
@@ -106,7 +122,7 @@ func (e UserEdges) FriendUsersOrErr() ([]*User, error) {
 // PushNotificationTokensOrErr returns the PushNotificationTokens value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) PushNotificationTokensOrErr() ([]*PushNotificationToken, error) {
-	if e.loadedTypes[3] {
+	if e.loadedTypes[4] {
 		return e.PushNotificationTokens, nil
 	}
 	return nil, &NotLoadedError{edge: "push_notification_tokens"}
@@ -115,7 +131,7 @@ func (e UserEdges) PushNotificationTokensOrErr() ([]*PushNotificationToken, erro
 // FriendGroupsOrErr returns the FriendGroups value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) FriendGroupsOrErr() ([]*FriendGroup, error) {
-	if e.loadedTypes[4] {
+	if e.loadedTypes[5] {
 		return e.FriendGroups, nil
 	}
 	return nil, &NotLoadedError{edge: "friend_groups"}
@@ -124,7 +140,7 @@ func (e UserEdges) FriendGroupsOrErr() ([]*FriendGroup, error) {
 // BelongingFriendGroupsOrErr returns the BelongingFriendGroups value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) BelongingFriendGroupsOrErr() ([]*FriendGroup, error) {
-	if e.loadedTypes[5] {
+	if e.loadedTypes[6] {
 		return e.BelongingFriendGroups, nil
 	}
 	return nil, &NotLoadedError{edge: "belonging_friend_groups"}
@@ -133,7 +149,7 @@ func (e UserEdges) BelongingFriendGroupsOrErr() ([]*FriendGroup, error) {
 // InvitationAcceptancesOrErr returns the InvitationAcceptances value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) InvitationAcceptancesOrErr() ([]*InvitationAcceptance, error) {
-	if e.loadedTypes[6] {
+	if e.loadedTypes[7] {
 		return e.InvitationAcceptances, nil
 	}
 	return nil, &NotLoadedError{edge: "invitation_acceptances"}
@@ -142,7 +158,7 @@ func (e UserEdges) InvitationAcceptancesOrErr() ([]*InvitationAcceptance, error)
 // InvitationDenialsOrErr returns the InvitationDenials value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) InvitationDenialsOrErr() ([]*InvitationDenial, error) {
-	if e.loadedTypes[7] {
+	if e.loadedTypes[8] {
 		return e.InvitationDenials, nil
 	}
 	return nil, &NotLoadedError{edge: "invitation_denials"}
@@ -151,7 +167,7 @@ func (e UserEdges) InvitationDenialsOrErr() ([]*InvitationDenial, error) {
 // FriendshipsOrErr returns the Friendships value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) FriendshipsOrErr() ([]*Friendship, error) {
-	if e.loadedTypes[8] {
+	if e.loadedTypes[9] {
 		return e.Friendships, nil
 	}
 	return nil, &NotLoadedError{edge: "friendships"}
@@ -160,7 +176,7 @@ func (e UserEdges) FriendshipsOrErr() ([]*Friendship, error) {
 // UserFriendGroupsOrErr returns the UserFriendGroups value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) UserFriendGroupsOrErr() ([]*UserFriendGroup, error) {
-	if e.loadedTypes[9] {
+	if e.loadedTypes[10] {
 		return e.UserFriendGroups, nil
 	}
 	return nil, &NotLoadedError{edge: "user_friend_groups"}
@@ -229,6 +245,11 @@ func (u *User) QueryAccount() *AccountQuery {
 // QueryUserProfile queries the "user_profile" edge of the User entity.
 func (u *User) QueryUserProfile() *UserProfileQuery {
 	return (&UserClient{config: u.config}).QueryUserProfile(u)
+}
+
+// QueryUserLocation queries the "user_location" edge of the User entity.
+func (u *User) QueryUserLocation() *UserLocationQuery {
+	return (&UserClient{config: u.config}).QueryUserLocation(u)
 }
 
 // QueryFriendUsers queries the "friend_users" edge of the User entity.
