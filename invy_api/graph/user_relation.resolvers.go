@@ -23,7 +23,7 @@ import (
 	"github.com/k-yomo/invy/invy_api/graph/loader"
 	"github.com/k-yomo/invy/invy_api/internal/auth"
 	"github.com/k-yomo/invy/invy_api/internal/xerrors"
-	"github.com/k-yomo/invy/invy_api/service"
+	"github.com/k-yomo/invy/invy_api/service/notification_service"
 	"github.com/k-yomo/invy/pkg/logging"
 )
 
@@ -79,7 +79,7 @@ func (r *mutationResolver) RequestFriendship(ctx context.Context, friendUserID u
 	if err != nil {
 		return nil, cerrors.Wrap(err, "get requester profile")
 	}
-	err = r.Service.Notification.SendMulticast(ctx, &service.MulticastMessage{
+	err = r.NotificationService.SendMulticast(ctx, &notification_service.MulticastMessage{
 		ToUserIDs: []uuid.UUID{friendUserID},
 		Data: map[string]string{
 			"type": gqlmodel.PushNotificationTypeFriendshipRequestReceived.String(),
@@ -154,7 +154,7 @@ func (r *mutationResolver) AcceptFriendshipRequest(ctx context.Context, friendsh
 	if err != nil {
 		return nil, cerrors.Wrap(err, "get accepted user profile")
 	}
-	err = r.Service.Notification.SendMulticast(ctx, &service.MulticastMessage{
+	err = r.NotificationService.SendMulticast(ctx, &notification_service.MulticastMessage{
 		ToUserIDs: []uuid.UUID{requestedUserID},
 		Data: map[string]string{
 			"type": gqlmodel.PushNotificationTypeFriendshipRequestAccepted.String(),

@@ -7,14 +7,11 @@ package graph
 import (
 	"context"
 	"fmt"
-	"time"
 
 	cerrors "github.com/cockroachdb/errors"
 	"github.com/k-yomo/invy/invy_api/graph/gqlmodel"
 	"github.com/k-yomo/invy/invy_api/internal/auth"
 	"github.com/k-yomo/invy/invy_api/internal/xerrors"
-	"github.com/k-yomo/invy/invy_api/service"
-	"github.com/k-yomo/invy/pkg/convutil"
 	"github.com/k-yomo/invy/pkg/sliceutil"
 )
 
@@ -22,7 +19,7 @@ import (
 func (r *mutationResolver) SendChatMessageText(ctx context.Context, input *gqlmodel.SendChatMessageTextInput) (*gqlmodel.SendChatMessageTextPayload, error) {
 	authUserID := auth.GetCurrentUserID(ctx)
 
-	participantUserIDs, err := r.Service.Chat.GetChatRoomParticipantUserIDs(ctx, input.ChatRoomID)
+	participantUserIDs, err := r.ChatService.GetChatRoomParticipantUserIDs(ctx, input.ChatRoomID)
 	if err != nil {
 		return nil, err
 	}
@@ -30,28 +27,13 @@ func (r *mutationResolver) SendChatMessageText(ctx context.Context, input *gqlmo
 		return nil, xerrors.NewErrNotFound(fmt.Errorf("chat room %q not found", input.ChatRoomID))
 	}
 
-	chatMessage := gqlmodel.ChatMessage{
-		ID:         input.ID,
-		ChatRoomID: input.ChatRoomID,
-		UserID:     authUserID,
-		Kind:       gqlmodel.ChatMessageKindText,
-		Body:       gqlmodel.ChatMessageBodyText{Text: input.Text},
-		CreatedAt:  time.Now(),
-	}
-	chatMessageMap, err := convutil.ConvertStructToJSONMap(chatMessage)
+	chatMessage, err := r.ChatService.CreateChatMessageText(ctx, input.ID, input.ChatRoomID, input.Text)
 	if err != nil {
 		return nil, err
 	}
-	_, err = r.FirestoreClient.Doc(service.FirestoreChatMessagePath(input.ChatRoomID, input.ID)).
-		Create(ctx, chatMessageMap)
-	if err != nil {
-		return nil, err
-	}
-
-	r.sendChatMessageNotification(ctx, input.ChatRoomID, participantUserIDs, input.Text)
 
 	return &gqlmodel.SendChatMessageTextPayload{
-		ChatMessage: &chatMessage,
+		ChatMessage: chatMessage,
 	}, nil
 }
 
@@ -59,7 +41,7 @@ func (r *mutationResolver) SendChatMessageText(ctx context.Context, input *gqlmo
 func (r *mutationResolver) SendChatMessageImage(ctx context.Context, input *gqlmodel.SendChatMessageImageInput) (*gqlmodel.SendChatMessageImagePayload, error) {
 	authUserID := auth.GetCurrentUserID(ctx)
 
-	participantUserIDs, err := r.Service.Chat.GetChatRoomParticipantUserIDs(ctx, input.ChatRoomID)
+	participantUserIDs, err := r.ChatService.GetChatRoomParticipantUserIDs(ctx, input.ChatRoomID)
 	if err != nil {
 		return nil, cerrors.Wrap(err, "get chatroom participant user ids")
 	}
@@ -67,34 +49,13 @@ func (r *mutationResolver) SendChatMessageImage(ctx context.Context, input *gqlm
 		return nil, xerrors.NewErrNotFound(fmt.Errorf("chat room %q not found", input.ChatRoomID))
 	}
 
-	fileName := fmt.Sprintf("%s-%s-%d", input.ChatRoomID, input.ID, time.Now().Unix())
-	imageURL, err := r.ChatMessageImageUploader.Upload(ctx, fileName, input.Image.File)
+	chatMessage, err := r.ChatService.CreateChatMessageImage(ctx, input.ID, input.ChatRoomID, input.Image.File)
 	if err != nil {
-		return nil, cerrors.Wrap(err, "upload image in message")
+		return nil, cerrors.Wrap(err, "create chat message image")
 	}
-
-	chatMessage := gqlmodel.ChatMessage{
-		ID:         input.ID,
-		ChatRoomID: input.ChatRoomID,
-		UserID:     auth.GetCurrentUserID(ctx),
-		Kind:       gqlmodel.ChatMessageKindImage,
-		Body:       gqlmodel.ChatMessageBodyImage{URL: imageURL},
-		CreatedAt:  time.Now(),
-	}
-	chatMessageMap, err := convutil.ConvertStructToJSONMap(chatMessage)
-	if err != nil {
-		return nil, cerrors.Wrap(err, "convert chat message struct to json")
-	}
-	_, err = r.FirestoreClient.Doc(service.FirestoreChatMessagePath(input.ChatRoomID, input.ID)).
-		Create(ctx, chatMessageMap)
-	if err != nil {
-		return nil, cerrors.Wrap(err, "create chat message")
-	}
-
-	r.sendChatMessageNotification(ctx, input.ChatRoomID, participantUserIDs, "写真を送信しました")
 
 	return &gqlmodel.SendChatMessageImagePayload{
-		ChatMessage: &chatMessage,
+		ChatMessage: chatMessage,
 	}, nil
 }
 
@@ -102,7 +63,7 @@ func (r *mutationResolver) SendChatMessageImage(ctx context.Context, input *gqlm
 func (r *mutationResolver) UpdateChatLastReadAt(ctx context.Context, input gqlmodel.UpdateChatLastReadAtInput) (*gqlmodel.UpdateChatLastReadAtPayload, error) {
 	authUserID := auth.GetCurrentUserID(ctx)
 	// client sends UTC time, but to align with the other data, converting to local here
-	err := r.Service.Chat.UpdateLastReadAt(ctx, input.ChatRoomID, authUserID, input.LastReadAt.Local())
+	err := r.ChatService.UpdateLastReadAt(ctx, input.ChatRoomID, authUserID, input.LastReadAt.Local())
 	if err != nil {
 		return nil, cerrors.Wrap(err, "update last read at")
 	}

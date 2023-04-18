@@ -10,6 +10,9 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/k-yomo/invy/invy_api/service/chat_service"
+	"github.com/k-yomo/invy/invy_api/service/notification_service"
+	"github.com/k-yomo/invy/invy_api/service/user_service"
 	"github.com/k-yomo/invy/pkg/cache"
 	"github.com/redis/go-redis/v9"
 
@@ -34,7 +37,6 @@ import (
 	"github.com/k-yomo/invy/invy_api/internal/config"
 	"github.com/k-yomo/invy/invy_api/internal/device"
 	"github.com/k-yomo/invy/invy_api/query"
-	"github.com/k-yomo/invy/invy_api/service"
 	"github.com/k-yomo/invy/pkg/logging"
 	"github.com/k-yomo/invy/pkg/requestutil"
 	"github.com/k-yomo/invy/pkg/storage"
@@ -173,16 +175,20 @@ func main() {
 
 	dbQuery := query.NewQuery(bunDB)
 
+	userService := user_service.NewUserService(entDB)
+	notificationService := notification_service.NewNotificationService(entDB, dbQuery, fcmClient)
+	chatService := chat_service.NewChatService(firestoreClient, chatMessageImageUploader, userService, notificationService)
+
 	gqlConfig := gqlgen.Config{
 		Resolvers: &graph.Resolver{
-			DB:                       entDB,
-			Cache:                    cache.New(redisClient),
-			DBQuery:                  dbQuery,
-			Service:                  service.NewService(entDB, dbQuery, fcmClient, firestoreClient),
-			FirebaseAuthClient:       firebaseAuthClient,
-			FirestoreClient:          firestoreClient,
-			AvatarUploader:           avatarUploader,
-			ChatMessageImageUploader: chatMessageImageUploader,
+			DB:                  entDB,
+			Cache:               cache.New(redisClient),
+			DBQuery:             dbQuery,
+			UserService:         userService,
+			NotificationService: notificationService,
+			ChatService:         chatService,
+			FirebaseAuthClient:  firebaseAuthClient,
+			AvatarUploader:      avatarUploader,
 		},
 		Directives: gqlgen.DirectiveRoot{
 			AuthRequired: directive.AuthRequired,

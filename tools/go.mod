@@ -6,6 +6,7 @@ require (
 	entgo.io/ent v0.11.10
 	github.com/99designs/gqlgen v0.17.27
 	github.com/cosmtrek/air v1.42.0
+	github.com/golang/mock v1.6.0
 	github.com/golangci/golangci-lint v1.52.2
 	gotest.tools/gotestsum v1.9.0
 )

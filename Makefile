@@ -25,7 +25,7 @@ setup: setup-go ## Setup development environment
 
 .PHONY: generate
 generate: ## Generate graphql code / ent code from schema
-	cd invy_api && go generate ./...
+	cd invy_api && GOBIN=${GOBIN} go generate ./...
 	@graphql-schema-utilities -s "defs/graphql/*" -o app/lib/graphql/schema.graphql
 	cd app && flutter pub run build_runner build --delete-conflicting-outputs
 	make fmt

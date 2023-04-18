@@ -1,47 +1,44 @@
-package graph
+package chat_service
 
 import (
 	"context"
 
 	fcm "firebase.google.com/go/v4/messaging"
 	"github.com/google/uuid"
-	"github.com/k-yomo/invy/invy_api/ent/invitation"
-	"github.com/k-yomo/invy/invy_api/ent/userprofile"
 	"github.com/k-yomo/invy/invy_api/graph/gqlmodel"
 	"github.com/k-yomo/invy/invy_api/internal/auth"
-	"github.com/k-yomo/invy/invy_api/service"
+	"github.com/k-yomo/invy/invy_api/service/notification_service"
 	"github.com/k-yomo/invy/pkg/logging"
 	"github.com/k-yomo/invy/pkg/sliceutil"
 )
 
-func (r *mutationResolver) sendChatMessageNotification(
+func (c *ChatServiceImpl) sendChatMessageNotification(
 	ctx context.Context,
 	chatRoomID uuid.UUID,
-	chatRoomUserIDs []uuid.UUID,
 	notificationBody string,
 ) {
 	sentUserID := auth.GetCurrentUserID(ctx)
-	notifyUserIDs := sliceutil.Filter(chatRoomUserIDs, func(v uuid.UUID) bool {
+	participantUserIDs, err := c.GetChatRoomParticipantUserIDs(ctx, chatRoomID)
+	if err != nil {
+		logging.Logger(ctx).Error(err.Error())
+		return
+	}
+
+	notifyUserIDs := sliceutil.Filter(participantUserIDs, func(v uuid.UUID) bool {
 		return v != sentUserID
 	})
 
-	invitation, err := r.DB.Invitation.Query().Where(invitation.ChatRoomID(chatRoomID)).Only(ctx)
+	authUserProfile, err := c.userService.GetUserProfile(ctx, sentUserID)
 	if err != nil {
 		logging.Logger(ctx).Error(err.Error())
 		return
 	}
-
-	authUserProfile, err := r.DB.UserProfile.Query().Where(userprofile.UserID(sentUserID)).Only(ctx)
-	if err != nil {
-		logging.Logger(ctx).Error(err.Error())
-		return
-	}
-	err = r.Service.Notification.SendMulticast(ctx, &service.MulticastMessage{
+	err = c.notificationService.SendMulticast(ctx, &notification_service.MulticastMessage{
 		FromUserID: sentUserID,
 		ToUserIDs:  notifyUserIDs,
 		Data: map[string]string{
-			"type":         gqlmodel.PushNotificationTypeChatMessageReceived.String(),
-			"invitationId": invitation.ID.String(),
+			"type":       gqlmodel.PushNotificationTypeChatMessageReceived.String(),
+			"chatRoomId": chatRoomID.String(),
 		},
 		Notification: &fcm.Notification{
 			Title: authUserProfile.Nickname,

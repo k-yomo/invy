@@ -24,7 +24,7 @@ import (
 	"github.com/k-yomo/invy/invy_api/graph/loader"
 	"github.com/k-yomo/invy/invy_api/internal/auth"
 	"github.com/k-yomo/invy/invy_api/internal/xerrors"
-	"github.com/k-yomo/invy/invy_api/service"
+	"github.com/k-yomo/invy/invy_api/service/notification_service"
 	"github.com/k-yomo/invy/pkg/convutil"
 	"github.com/k-yomo/invy/pkg/logging"
 	"github.com/k-yomo/invy/pkg/pgutil"
@@ -46,7 +46,7 @@ func (r *invitationResolver) ChatRoom(ctx context.Context, obj *gqlmodel.Invitat
 	if obj.ChatRoomID == nil {
 		return nil, nil
 	}
-	return r.Service.Chat.GetChatRoom(ctx, *obj.ChatRoomID)
+	return r.ChatService.GetChatRoom(ctx, *obj.ChatRoomID)
 }
 
 // AcceptedUsers is the resolver for the acceptedUsers field.
@@ -133,7 +133,7 @@ func (r *mutationResolver) SendInvitation(ctx context.Context, input *gqlmodel.S
 			return cerrors.Wrap(err, "create invitation users")
 		}
 
-		if _, err := r.Service.Chat.CreateChatRoom(ctx, chatRoomID, []uuid.UUID{authUserID}); err != nil {
+		if _, err := r.ChatService.CreateChatRoom(ctx, chatRoomID, []uuid.UUID{authUserID}); err != nil {
 			return cerrors.Wrap(err, "create chat room")
 		}
 
@@ -151,7 +151,7 @@ func (r *mutationResolver) SendInvitation(ctx context.Context, input *gqlmodel.S
 		return nil, cerrors.Wrap(err, "get inviter profile")
 	}
 
-	err = r.Service.Notification.SendMulticast(ctx, &service.MulticastMessage{
+	err = r.NotificationService.SendMulticast(ctx, &notification_service.MulticastMessage{
 		FromUserID: authUserID,
 		ToUserIDs:  targetFriendUserIDs,
 		Data: map[string]string{
@@ -268,7 +268,7 @@ func (r *mutationResolver) DeleteInvitation(ctx context.Context, invitationID uu
 	if err != nil {
 		logging.Logger(ctx).Error(err.Error())
 	} else {
-		err := r.Service.Notification.SendMulticast(ctx, &service.MulticastMessage{
+		err := r.NotificationService.SendMulticast(ctx, &notification_service.MulticastMessage{
 			ToUserIDs: acceptedUserIDs,
 			Data: map[string]string{
 				"type":         gqlmodel.PushNotificationTypeInvitationDeleted.String(),
@@ -316,7 +316,7 @@ func (r *mutationResolver) AcceptInvitation(ctx context.Context, invitationID uu
 		}
 
 		if dbInvitation.ChatRoomID != nil {
-			if err := r.Service.Chat.AddParticipant(ctx, *dbInvitation.ChatRoomID, authUserID); err != nil {
+			if err := r.ChatService.AddParticipant(ctx, *dbInvitation.ChatRoomID, authUserID); err != nil {
 				return err
 			}
 		}
@@ -354,7 +354,7 @@ func (r *mutationResolver) AcceptInvitation(ctx context.Context, invitationID uu
 	if err != nil {
 		logging.Logger(ctx).Error(err.Error(), zap.String("invitationId", invitationID.String()))
 	} else {
-		err := r.Service.Notification.SendMulticast(ctx, &service.MulticastMessage{
+		err := r.NotificationService.SendMulticast(ctx, &notification_service.MulticastMessage{
 			ToUserIDs: append(acceptedUserIDs, inviteUserID),
 			Data: map[string]string{
 				"type":         gqlmodel.PushNotificationTypeInvitationAccepted.String(),
@@ -475,7 +475,7 @@ func (r *mutationResolver) RegisterInvitationAwaiting(ctx context.Context, input
 	if err != nil {
 		return nil, err
 	}
-	err = r.Service.Notification.SendMulticast(ctx, &service.MulticastMessage{
+	err = r.NotificationService.SendMulticast(ctx, &notification_service.MulticastMessage{
 		FromUserID: authUserID,
 		ToUserIDs:  friendUserIDs,
 		Data: map[string]string{

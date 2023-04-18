@@ -1,4 +1,4 @@
-package service
+package chat_service
 
 import (
 	"context"
@@ -7,25 +7,15 @@ import (
 
 	"cloud.google.com/go/firestore"
 	"github.com/cockroachdb/errors"
+	"github.com/cockroachdb/errors/grpc/status"
 	"github.com/google/uuid"
 	"github.com/k-yomo/invy/invy_api/graph/gqlmodel"
 	"github.com/k-yomo/invy/pkg/convutil"
 	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
-type chatService struct {
-	firestoreClient *firestore.Client
-}
-
-func newChatService(firestoreClient *firestore.Client) *chatService {
-	return &chatService{
-		firestoreClient: firestoreClient,
-	}
-}
-
-func (c *chatService) GetChatRoom(ctx context.Context, chatRoomID uuid.UUID) (*gqlmodel.ChatRoom, error) {
-	chatRoomDocRef := c.firestoreClient.Doc(FirestoreChatRoomPath(chatRoomID))
+func (c *ChatServiceImpl) GetChatRoom(ctx context.Context, chatRoomID uuid.UUID) (*gqlmodel.ChatRoom, error) {
+	chatRoomDocRef := c.firestoreClient.Doc(firestoreChatRoomPath(chatRoomID))
 	chatRoomSnapshot, err := chatRoomDocRef.Get(ctx)
 	if err != nil {
 		return nil, errors.Wrap(err, "get chat room")
@@ -37,8 +27,8 @@ func (c *chatService) GetChatRoom(ctx context.Context, chatRoomID uuid.UUID) (*g
 	return &chatRoom, nil
 }
 
-func (c *chatService) GetChatRoomParticipantUserIDs(ctx context.Context, chatRoomID uuid.UUID) ([]uuid.UUID, error) {
-	chatRoomDocRef := c.firestoreClient.Doc(FirestoreChatRoomPath(chatRoomID))
+func (c *ChatServiceImpl) GetChatRoomParticipantUserIDs(ctx context.Context, chatRoomID uuid.UUID) ([]uuid.UUID, error) {
+	chatRoomDocRef := c.firestoreClient.Doc(firestoreChatRoomPath(chatRoomID))
 	chatRoomSnapshot, err := chatRoomDocRef.Get(ctx)
 	if err != nil {
 		return nil, errors.Wrap(err, "get chat room")
@@ -49,7 +39,7 @@ func (c *chatService) GetChatRoomParticipantUserIDs(ctx context.Context, chatRoo
 	return participantUserIDs, nil
 }
 
-func (c *chatService) CreateChatRoom(ctx context.Context, chatRoomID uuid.UUID, participantUserIDs []uuid.UUID) (*gqlmodel.ChatRoom, error) {
+func (c *ChatServiceImpl) CreateChatRoom(ctx context.Context, chatRoomID uuid.UUID, participantUserIDs []uuid.UUID) (*gqlmodel.ChatRoom, error) {
 	now := time.Now()
 	chatRoom := gqlmodel.ChatRoom{
 		ID:                 chatRoomID,
@@ -67,16 +57,16 @@ func (c *chatService) CreateChatRoom(ctx context.Context, chatRoomID uuid.UUID, 
 		return nil, errors.Wrap(err, "convert chat room struct to json map")
 	}
 
-	_, err = c.firestoreClient.Doc(FirestoreChatRoomPath(chatRoomID)).Create(ctx, chatRoomMap)
+	_, err = c.firestoreClient.Doc(firestoreChatRoomPath(chatRoomID)).Create(ctx, chatRoomMap)
 	if err != nil {
 		return nil, errors.Wrap(err, "create chat room document")
 	}
 	return &chatRoom, nil
 }
 
-func (c *chatService) AddParticipant(ctx context.Context, chatRoomID uuid.UUID, userID uuid.UUID) error {
+func (c *ChatServiceImpl) AddParticipant(ctx context.Context, chatRoomID uuid.UUID, userID uuid.UUID) error {
 	return c.firestoreClient.RunTransaction(ctx, func(ctx context.Context, firestoreTx *firestore.Transaction) error {
-		chatRoomDocRef := c.firestoreClient.Doc(FirestoreChatRoomPath(chatRoomID))
+		chatRoomDocRef := c.firestoreClient.Doc(firestoreChatRoomPath(chatRoomID))
 		chatRoomSnapshot, err := firestoreTx.Get(chatRoomDocRef)
 		if err != nil {
 			return errors.Wrap(err, "get chat room")
@@ -100,9 +90,9 @@ func (c *chatService) AddParticipant(ctx context.Context, chatRoomID uuid.UUID, 
 	})
 }
 
-func (c *chatService) UpdateLastReadAt(ctx context.Context, chatRoomID uuid.UUID, userID uuid.UUID, lastReadAt time.Time) error {
+func (c *ChatServiceImpl) UpdateLastReadAt(ctx context.Context, chatRoomID uuid.UUID, userID uuid.UUID, lastReadAt time.Time) error {
 	return c.firestoreClient.RunTransaction(ctx, func(ctx context.Context, firestoreTx *firestore.Transaction) error {
-		chatRoomDocRef := c.firestoreClient.Doc(FirestoreChatRoomPath(chatRoomID))
+		chatRoomDocRef := c.firestoreClient.Doc(firestoreChatRoomPath(chatRoomID))
 		chatRoomSnapshot, err := firestoreTx.Get(chatRoomDocRef)
 		if status.Code(err) == codes.NotFound {
 			return nil
@@ -130,10 +120,6 @@ func (c *chatService) UpdateLastReadAt(ctx context.Context, chatRoomID uuid.UUID
 	})
 }
 
-func FirestoreChatRoomPath(chatRoomID uuid.UUID) string {
+func firestoreChatRoomPath(chatRoomID uuid.UUID) string {
 	return fmt.Sprintf("chatRooms/%s", chatRoomID)
-}
-
-func FirestoreChatMessagePath(chatRoomID uuid.UUID, chatMessageID uuid.UUID) string {
-	return fmt.Sprintf("%s/chatMessages/%s", FirestoreChatRoomPath(chatRoomID), chatMessageID)
 }

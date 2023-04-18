@@ -1,4 +1,4 @@
-package service
+package notification_service
 
 import (
 	"context"
@@ -20,14 +20,19 @@ import (
 
 const maxMulticastMessages = 500
 
-type notificationService struct {
+//go:generate $GOBIN/mockgen -source=$GOFILE -package=mock_$GOPACKAGE -destination=../../mocks/service/$GOPACKAGE/mock_$GOFILE
+type NotificationService interface {
+	SendMulticast(ctx context.Context, message *MulticastMessage) error
+}
+
+type NotificationServiceImpl struct {
 	db        *ent.Client
 	dbQuery   *query.Query
 	fcmClient *fcm.Client
 }
 
-func newNotificationService(db *ent.Client, dbQuery *query.Query, fcmClient *fcm.Client) *notificationService {
-	return &notificationService{
+func NewNotificationService(db *ent.Client, dbQuery *query.Query, fcmClient *fcm.Client) NotificationService {
+	return &NotificationServiceImpl{
 		db:        db,
 		dbQuery:   dbQuery,
 		fcmClient: fcmClient,
@@ -43,7 +48,7 @@ type MulticastMessage struct {
 	CollapseKey  string
 }
 
-func (n *notificationService) SendMulticast(ctx context.Context, message *MulticastMessage) error {
+func (n *NotificationServiceImpl) SendMulticast(ctx context.Context, message *MulticastMessage) error {
 	if len(message.ToUserIDs) == 0 {
 		return nil
 	}
@@ -95,7 +100,7 @@ func (n *notificationService) SendMulticast(ctx context.Context, message *Multic
 	return eg.Wait()
 }
 
-func (n *notificationService) convertToFCMMulticastMessage(ctx context.Context, m *MulticastMessage) (*fcm.MulticastMessage, error) {
+func (n *NotificationServiceImpl) convertToFCMMulticastMessage(ctx context.Context, m *MulticastMessage) (*fcm.MulticastMessage, error) {
 	var fcmTokens []string
 	if m.FromUserID == uuid.Nil {
 		var err error
