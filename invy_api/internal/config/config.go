@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	"testing"
 
 	"github.com/kelseyhightower/envconfig"
 )
@@ -81,7 +82,9 @@ func NewDBConfig() (*DBConfig, error) {
 	return dbConfig, nil
 }
 
-func NewTestDBConfig() (*DBConfig, error) {
+func NewTestDBConfig(t *testing.T) (*DBConfig, error) {
+	t.Helper()
+
 	dbConfig, err := NewDBConfig()
 	if err != nil {
 		return nil, err

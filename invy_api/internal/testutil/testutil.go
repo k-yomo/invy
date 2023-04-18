@@ -16,7 +16,7 @@ import (
 const testDBDriverName = "txdb"
 
 func init() {
-	dbConfig, err := config.NewTestDBConfig()
+	dbConfig, err := config.NewTestDBConfig(&testing.T{})
 	if err != nil {
 		log.Fatalf(err.Error())
 	}
@@ -33,7 +33,7 @@ func init() {
 func NewTestDB(t *testing.T) *sql.DB {
 	t.Helper()
 
-	dbConfig, err := config.NewTestDBConfig()
+	dbConfig, err := config.NewTestDBConfig(t)
 	if err != nil {
 		t.Fatalf("failed to get db config: %v", err)
 	}
