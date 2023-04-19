@@ -164,7 +164,7 @@ func NewFriendGeoPointLoader(db *ent.Client) func(context.Context, []uuid.UUID) 
 			QueryFriendUser().
 			QueryUserLocation().
 			Where(
-				userlocation.UpdatedAtGTE(time.Now().Add(-2 * time.Hour)),
+				userlocation.UpdatedAtGTE(time.Now().Add(-3 * time.Hour)),
 			).
 			All(ctx)
 		if err != nil {
