@@ -34,9 +34,11 @@ void startBackgroundLocationService() {
   BackgroundLocator.registerLocationUpdate(locationCallback,
       autoStop: false,
       iosSettings: const IOSSettings(
-          accuracy: LocationAccuracy.BALANCED, distanceFilter: 100),
+          accuracy: LocationAccuracy.LOW,
+          distanceFilter: 100,
+      ),
       androidSettings: const AndroidSettings(
-          accuracy: LocationAccuracy.BALANCED,
+          accuracy: LocationAccuracy.LOW,
           interval: 300,
           distanceFilter: 100,
           androidNotificationSettings: AndroidNotificationSettings(
