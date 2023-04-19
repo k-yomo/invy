@@ -88,6 +88,7 @@ class MapScreen extends HookConsumerWidget {
                 myLocationButtonEnabled: true,
                 mapToolbarEnabled: false,
                 buildingsEnabled: true,
+                minMaxZoomPreference: const MinMaxZoomPreference(null, 15),
               ),
               SafeArea(
                 child: Align(
