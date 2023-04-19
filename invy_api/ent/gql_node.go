@@ -17,7 +17,6 @@ import (
 	"github.com/k-yomo/invy/invy_api/ent/friendshiprequest"
 	"github.com/k-yomo/invy/invy_api/ent/invitation"
 	"github.com/k-yomo/invy/invy_api/ent/invitationacceptance"
-	"github.com/k-yomo/invy/invy_api/ent/invitationawaiting"
 	"github.com/k-yomo/invy/invy_api/ent/invitationdenial"
 	"github.com/k-yomo/invy/invy_api/ent/invitationuser"
 	"github.com/k-yomo/invy/invy_api/ent/pushnotificationtoken"
@@ -481,75 +480,6 @@ func (ia *InvitationAcceptance) Node(ctx context.Context) (node *Node, err error
 	err = ia.QueryInvitation().
 		Select(invitation.FieldID).
 		Scan(ctx, &node.Edges[1].IDs)
-	if err != nil {
-		return nil, err
-	}
-	return node, nil
-}
-
-func (ia *InvitationAwaiting) Node(ctx context.Context) (node *Node, err error) {
-	node = &Node{
-		ID:     ia.ID,
-		Type:   "InvitationAwaiting",
-		Fields: make([]*Field, 6),
-		Edges:  make([]*Edge, 1),
-	}
-	var buf []byte
-	if buf, err = json.Marshal(ia.UserID); err != nil {
-		return nil, err
-	}
-	node.Fields[0] = &Field{
-		Type:  "uuid.UUID",
-		Name:  "user_id",
-		Value: string(buf),
-	}
-	if buf, err = json.Marshal(ia.StartsAt); err != nil {
-		return nil, err
-	}
-	node.Fields[1] = &Field{
-		Type:  "time.Time",
-		Name:  "starts_at",
-		Value: string(buf),
-	}
-	if buf, err = json.Marshal(ia.EndsAt); err != nil {
-		return nil, err
-	}
-	node.Fields[2] = &Field{
-		Type:  "time.Time",
-		Name:  "ends_at",
-		Value: string(buf),
-	}
-	if buf, err = json.Marshal(ia.Comment); err != nil {
-		return nil, err
-	}
-	node.Fields[3] = &Field{
-		Type:  "string",
-		Name:  "comment",
-		Value: string(buf),
-	}
-	if buf, err = json.Marshal(ia.CreatedAt); err != nil {
-		return nil, err
-	}
-	node.Fields[4] = &Field{
-		Type:  "time.Time",
-		Name:  "created_at",
-		Value: string(buf),
-	}
-	if buf, err = json.Marshal(ia.UpdatedAt); err != nil {
-		return nil, err
-	}
-	node.Fields[5] = &Field{
-		Type:  "time.Time",
-		Name:  "updated_at",
-		Value: string(buf),
-	}
-	node.Edges[0] = &Edge{
-		Type: "User",
-		Name: "user",
-	}
-	err = ia.QueryUser().
-		Select(user.FieldID).
-		Scan(ctx, &node.Edges[0].IDs)
 	if err != nil {
 		return nil, err
 	}
@@ -1334,18 +1264,6 @@ func (c *Client) noder(ctx context.Context, table string, id uuid.UUID) (Noder, 
 			return nil, err
 		}
 		return n, nil
-	case invitationawaiting.Table:
-		query := c.InvitationAwaiting.Query().
-			Where(invitationawaiting.ID(id))
-		query, err := query.CollectFields(ctx, "InvitationAwaiting")
-		if err != nil {
-			return nil, err
-		}
-		n, err := query.Only(ctx)
-		if err != nil {
-			return nil, err
-		}
-		return n, nil
 	case invitationdenial.Table:
 		query := c.InvitationDenial.Query().
 			Where(invitationdenial.ID(id))
@@ -1623,22 +1541,6 @@ func (c *Client) noders(ctx context.Context, table string, ids []uuid.UUID) ([]N
 		query := c.InvitationAcceptance.Query().
 			Where(invitationacceptance.IDIn(ids...))
 		query, err := query.CollectFields(ctx, "InvitationAcceptance")
-		if err != nil {
-			return nil, err
-		}
-		nodes, err := query.All(ctx)
-		if err != nil {
-			return nil, err
-		}
-		for _, node := range nodes {
-			for _, noder := range idmap[node.ID] {
-				*noder = node
-			}
-		}
-	case invitationawaiting.Table:
-		query := c.InvitationAwaiting.Query().
-			Where(invitationawaiting.IDIn(ids...))
-		query, err := query.CollectFields(ctx, "InvitationAwaiting")
 		if err != nil {
 			return nil, err
 		}

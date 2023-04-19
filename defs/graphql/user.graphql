@@ -37,7 +37,6 @@ type Viewer implements Node {
     sentInvitations: [Invitation!]!  @goField(forceResolver: true)
     pendingInvitations: [Invitation!]!  @goField(forceResolver: true)
     acceptedInvitations: [Invitation!]! @goField(forceResolver: true)
-    invitationAwaitings: [InvitationAwaiting!]! @goField(forceResolver: true)
 }
 
 # User is a public interface for a user
@@ -57,8 +56,6 @@ type User implements Node {
     # It'll be null when not friend or the location tracking is not enabled by the user
     distanceKm: Int @goField(forceResolver: true)
     isRequestingFriendship: Boolean! @goField(forceResolver: true)
-    # It'll be empty when not friend
-    invitationAwaitings: [InvitationAwaiting!]! @goField(forceResolver: true)
 }
 
 type UserEdge {

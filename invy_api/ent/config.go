@@ -33,7 +33,6 @@ type (
 		FriendshipRequest     []ent.Hook
 		Invitation            []ent.Hook
 		InvitationAcceptance  []ent.Hook
-		InvitationAwaiting    []ent.Hook
 		InvitationDenial      []ent.Hook
 		InvitationUser        []ent.Hook
 		PushNotificationToken []ent.Hook
@@ -52,7 +51,6 @@ type (
 		FriendshipRequest     []ent.Interceptor
 		Invitation            []ent.Interceptor
 		InvitationAcceptance  []ent.Interceptor
-		InvitationAwaiting    []ent.Interceptor
 		InvitationDenial      []ent.Interceptor
 		InvitationUser        []ent.Interceptor
 		PushNotificationToken []ent.Interceptor

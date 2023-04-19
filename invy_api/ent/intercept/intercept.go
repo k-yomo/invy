@@ -229,33 +229,6 @@ func (f TraverseInvitationAcceptance) Traverse(ctx context.Context, q ent.Query)
 	return fmt.Errorf("unexpected query type %T. expect *ent.InvitationAcceptanceQuery", q)
 }
 
-// The InvitationAwaitingFunc type is an adapter to allow the use of ordinary function as a Querier.
-type InvitationAwaitingFunc func(context.Context, *ent.InvitationAwaitingQuery) (ent.Value, error)
-
-// Query calls f(ctx, q).
-func (f InvitationAwaitingFunc) Query(ctx context.Context, q ent.Query) (ent.Value, error) {
-	if q, ok := q.(*ent.InvitationAwaitingQuery); ok {
-		return f(ctx, q)
-	}
-	return nil, fmt.Errorf("unexpected query type %T. expect *ent.InvitationAwaitingQuery", q)
-}
-
-// The TraverseInvitationAwaiting type is an adapter to allow the use of ordinary function as Traverser.
-type TraverseInvitationAwaiting func(context.Context, *ent.InvitationAwaitingQuery) error
-
-// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
-func (f TraverseInvitationAwaiting) Intercept(next ent.Querier) ent.Querier {
-	return next
-}
-
-// Traverse calls f(ctx, q).
-func (f TraverseInvitationAwaiting) Traverse(ctx context.Context, q ent.Query) error {
-	if q, ok := q.(*ent.InvitationAwaitingQuery); ok {
-		return f(ctx, q)
-	}
-	return fmt.Errorf("unexpected query type %T. expect *ent.InvitationAwaitingQuery", q)
-}
-
 // The InvitationDenialFunc type is an adapter to allow the use of ordinary function as a Querier.
 type InvitationDenialFunc func(context.Context, *ent.InvitationDenialQuery) (ent.Value, error)
 
@@ -541,8 +514,6 @@ func NewQuery(q ent.Query) (Query, error) {
 		return &query[*ent.InvitationQuery, predicate.Invitation]{typ: ent.TypeInvitation, tq: q}, nil
 	case *ent.InvitationAcceptanceQuery:
 		return &query[*ent.InvitationAcceptanceQuery, predicate.InvitationAcceptance]{typ: ent.TypeInvitationAcceptance, tq: q}, nil
-	case *ent.InvitationAwaitingQuery:
-		return &query[*ent.InvitationAwaitingQuery, predicate.InvitationAwaiting]{typ: ent.TypeInvitationAwaiting, tq: q}, nil
 	case *ent.InvitationDenialQuery:
 		return &query[*ent.InvitationDenialQuery, predicate.InvitationDenial]{typ: ent.TypeInvitationDenial, tq: q}, nil
 	case *ent.InvitationUserQuery:

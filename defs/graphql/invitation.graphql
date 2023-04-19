@@ -10,9 +10,6 @@ extend type Mutation {
 
     acceptInvitation(invitationId: UUID!): AcceptInvitationPayload! @authRequired
     denyInvitation(invitationId: UUID!): DenyInvitationPayload! @authRequired
-
-    registerInvitationAwaiting(input: RegisterInvitationAwaitingInput!): RegisterInvitationAwaitingPayload! @authRequired
-    deleteInvitationAwaiting(invitationAwaitingId: UUID!): DeleteInvitationAwaitingPayload! @authRequired
 }
 
 enum InvitationStatus {
@@ -71,27 +68,4 @@ type AcceptInvitationPayload {
 
 type DenyInvitationPayload {
     invitation: Invitation!
-}
-
-type InvitationAwaiting implements Node {
-    id: UUID!
-    userId: UUID!
-    user: User! @goField(forceResolver: true)
-    startsAt: Time!
-    endsAt: Time!
-    comment: String!
-}
-
-input RegisterInvitationAwaitingInput {
-    startsAt: Time!
-    endsAt: Time!
-    comment: String!
-}
-
-type RegisterInvitationAwaitingPayload {
-    invitationAwaiting: InvitationAwaiting!
-}
-
-type DeleteInvitationAwaitingPayload {
-    deletedInvitationAwaitingId: UUID!
 }

@@ -7,7 +7,6 @@ package graph
 import (
 	"context"
 	"fmt"
-	"time"
 
 	fcm "firebase.google.com/go/v4/messaging"
 	cerrors "github.com/cockroachdb/errors"
@@ -15,8 +14,6 @@ import (
 	"github.com/k-yomo/invy/invy_api/ent"
 	"github.com/k-yomo/invy/invy_api/ent/invitation"
 	"github.com/k-yomo/invy/invy_api/ent/invitationacceptance"
-	"github.com/k-yomo/invy/invy_api/ent/invitationawaiting"
-	"github.com/k-yomo/invy/invy_api/ent/user"
 	"github.com/k-yomo/invy/invy_api/ent/userprofile"
 	"github.com/k-yomo/invy/invy_api/graph/conv"
 	"github.com/k-yomo/invy/invy_api/graph/gqlgen"
@@ -73,15 +70,6 @@ func (r *invitationResolver) IsAccepted(ctx context.Context, obj *gqlmodel.Invit
 			invitationacceptance.InvitationID(obj.ID),
 			invitationacceptance.UserID(authUserID),
 		).Exist(ctx)
-}
-
-// User is the resolver for the user field.
-func (r *invitationAwaitingResolver) User(ctx context.Context, obj *gqlmodel.InvitationAwaiting) (*gqlmodel.User, error) {
-	userProfile, err := loader.Get(ctx).UserProfile.Load(ctx, obj.ID)()
-	if err != nil {
-		return nil, cerrors.Wrap(err, "load user profile")
-	}
-	return conv.ConvertFromDBUserProfile(userProfile), nil
 }
 
 // SendInvitation is the resolver for the sendInvitation field.
@@ -427,84 +415,6 @@ func (r *mutationResolver) DenyInvitation(ctx context.Context, invitationID uuid
 	return &gqlmodel.DenyInvitationPayload{Invitation: gqlInvitation}, nil
 }
 
-// RegisterInvitationAwaiting is the resolver for the registerInvitationAwaiting field.
-func (r *mutationResolver) RegisterInvitationAwaiting(ctx context.Context, input gqlmodel.RegisterInvitationAwaitingInput) (*gqlmodel.RegisterInvitationAwaitingPayload, error) {
-	now := time.Now()
-	if input.EndsAt.Before(now) {
-		return nil, xerrors.NewErrInvalidArgument(cerrors.New("endsAt must be future date time"))
-	}
-	if input.EndsAt.Before(input.StartsAt) {
-		return nil, xerrors.NewErrInvalidArgument(cerrors.New("endsAt must be after startsAt"))
-	}
-
-	authUserID := auth.GetCurrentUserID(ctx)
-	overlappingInvitationAwaitingExists, err := r.DB.InvitationAwaiting.Query().
-		Where(
-			invitationawaiting.UserID(authUserID),
-			invitationawaiting.StartsAtLT(input.EndsAt),
-			invitationawaiting.EndsAtGT(input.StartsAt),
-		).Exist(ctx)
-	if err != nil {
-		return nil, err
-	}
-	if overlappingInvitationAwaitingExists {
-		return nil, xerrors.New(cerrors.New("conflicting with existing invitation awaitings"), gqlmodel.ErrorCodeAlreadyExists)
-	}
-
-	dbInvitationAwaiting, err := r.DB.InvitationAwaiting.Create().
-		SetUserID(authUserID).
-		SetStartsAt(input.StartsAt).
-		SetEndsAt(input.EndsAt).
-		SetComment(input.Comment).
-		Save(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	// TODO: Send notification async
-	userProfile, err := r.DB.UserProfile.Query().
-		Where(userprofile.UserID(authUserID)).
-		Only(ctx)
-	if err != nil {
-		return nil, err
-	}
-	friendUserIDs, err := r.DB.User.Query().
-		Where(user.ID(authUserID)).
-		QueryFriendUsers().
-		IDs(ctx)
-	if err != nil {
-		return nil, err
-	}
-	err = r.NotificationService.SendMulticast(ctx, &notification_service.MulticastMessage{
-		FromUserID: authUserID,
-		ToUserIDs:  friendUserIDs,
-		Data: map[string]string{
-			"type":                 gqlmodel.PushNotificationTypeInvitationAwaitingReceived.String(),
-			"invitationAwaitingId": dbInvitationAwaiting.ID.String(),
-		},
-		Notification: &fcm.Notification{
-			Body: fmt.Sprintf("%sさんが、%s以降のおさそいを待っています。", userProfile.Nickname, dbInvitationAwaiting.StartsAt.In(timeutil.JST).Format("1月2日 15時04分")),
-		},
-	})
-	if err != nil {
-		logging.Logger(ctx).Error(err.Error(), zap.String("invitationAwaitingId", dbInvitationAwaiting.ID.String()))
-	}
-
-	return &gqlmodel.RegisterInvitationAwaitingPayload{InvitationAwaiting: conv.ConvertFromDBInvitationAwaiting(dbInvitationAwaiting)}, nil
-}
-
-// DeleteInvitationAwaiting is the resolver for the deleteInvitationAwaiting field.
-func (r *mutationResolver) DeleteInvitationAwaiting(ctx context.Context, invitationAwaitingID uuid.UUID) (*gqlmodel.DeleteInvitationAwaitingPayload, error) {
-	authUserID := auth.GetCurrentUserID(ctx)
-	_, err := r.DB.InvitationAwaiting.Delete().
-		Where(invitationawaiting.ID(invitationAwaitingID), invitationawaiting.UserID(authUserID)).
-		Exec(ctx)
-	if err != nil {
-		return nil, err
-	}
-	return &gqlmodel.DeleteInvitationAwaitingPayload{DeletedInvitationAwaitingID: invitationAwaitingID}, nil
-}
-
 // Invitation is the resolver for the invitation field.
 func (r *queryResolver) Invitation(ctx context.Context, id uuid.UUID) (*gqlmodel.Invitation, error) {
 	authUserID := auth.GetCurrentUserID(ctx)
@@ -534,10 +444,4 @@ func (r *queryResolver) Invitation(ctx context.Context, id uuid.UUID) (*gqlmodel
 // Invitation returns gqlgen.InvitationResolver implementation.
 func (r *Resolver) Invitation() gqlgen.InvitationResolver { return &invitationResolver{r} }
 
-// InvitationAwaiting returns gqlgen.InvitationAwaitingResolver implementation.
-func (r *Resolver) InvitationAwaiting() gqlgen.InvitationAwaitingResolver {
-	return &invitationAwaitingResolver{r}
-}
-
 type invitationResolver struct{ *Resolver }
-type invitationAwaitingResolver struct{ *Resolver }

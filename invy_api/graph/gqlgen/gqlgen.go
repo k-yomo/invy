@@ -43,7 +43,6 @@ type ResolverRoot interface {
 	FriendGroup() FriendGroupResolver
 	FriendshipRequest() FriendshipRequestResolver
 	Invitation() InvitationResolver
-	InvitationAwaiting() InvitationAwaitingResolver
 	Mutation() MutationResolver
 	Query() QueryResolver
 	User() UserResolver
@@ -130,10 +129,6 @@ type ComplexityRoot struct {
 		DeletedFriendGroupID func(childComplexity int) int
 	}
 
-	DeleteInvitationAwaitingPayload struct {
-		DeletedInvitationAwaitingID func(childComplexity int) int
-	}
-
 	DeleteInvitationPayload struct {
 		DeletedInvitationID func(childComplexity int) int
 	}
@@ -183,15 +178,6 @@ type ComplexityRoot struct {
 		UserID        func(childComplexity int) int
 	}
 
-	InvitationAwaiting struct {
-		Comment  func(childComplexity int) int
-		EndsAt   func(childComplexity int) int
-		ID       func(childComplexity int) int
-		StartsAt func(childComplexity int) int
-		User     func(childComplexity int) int
-		UserID   func(childComplexity int) int
-	}
-
 	Mutation struct {
 		AcceptFriendshipRequest       func(childComplexity int, friendshipRequestID uuid.UUID) int
 		AcceptInvitation              func(childComplexity int, invitationID uuid.UUID) int
@@ -204,11 +190,9 @@ type ComplexityRoot struct {
 		DeleteAccount                 func(childComplexity int) int
 		DeleteFriendGroup             func(childComplexity int, friendGroupID uuid.UUID) int
 		DeleteInvitation              func(childComplexity int, invitationID uuid.UUID) int
-		DeleteInvitationAwaiting      func(childComplexity int, invitationAwaitingID uuid.UUID) int
 		DenyFriendshipRequest         func(childComplexity int, friendshipRequestID uuid.UUID) int
 		DenyInvitation                func(childComplexity int, invitationID uuid.UUID) int
 		MuteUser                      func(childComplexity int, userID uuid.UUID) int
-		RegisterInvitationAwaiting    func(childComplexity int, input gqlmodel.RegisterInvitationAwaitingInput) int
 		RegisterPushNotificationToken func(childComplexity int, input *gqlmodel.RegisterPushNotificationTokenInput) int
 		RequestFriendship             func(childComplexity int, friendUserID uuid.UUID) int
 		SendChatMessageImage          func(childComplexity int, input *gqlmodel.SendChatMessageImageInput) int
@@ -245,10 +229,6 @@ type ComplexityRoot struct {
 		UserByScreenID           func(childComplexity int, screenID string) int
 		UserFriends              func(childComplexity int, userID uuid.UUID, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
 		Viewer                   func(childComplexity int) int
-	}
-
-	RegisterInvitationAwaitingPayload struct {
-		InvitationAwaiting func(childComplexity int) int
 	}
 
 	RegisterPushNotificationTokenPayload struct {
@@ -320,7 +300,6 @@ type ComplexityRoot struct {
 		DistanceKm             func(childComplexity int) int
 		FuzzyCoordinate        func(childComplexity int) int
 		ID                     func(childComplexity int) int
-		InvitationAwaitings    func(childComplexity int) int
 		IsBlocked              func(childComplexity int) int
 		IsFriend               func(childComplexity int) int
 		IsMuted                func(childComplexity int) int
@@ -348,7 +327,6 @@ type ComplexityRoot struct {
 		FriendGroups                 func(childComplexity int) int
 		Friends                      func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
 		ID                           func(childComplexity int) int
-		InvitationAwaitings          func(childComplexity int) int
 		Nickname                     func(childComplexity int) int
 		PendingFriendshipRequests    func(childComplexity int) int
 		PendingInvitations           func(childComplexity int) int
@@ -373,9 +351,6 @@ type InvitationResolver interface {
 	AcceptedUsers(ctx context.Context, obj *gqlmodel.Invitation) ([]*gqlmodel.User, error)
 	IsAccepted(ctx context.Context, obj *gqlmodel.Invitation) (bool, error)
 }
-type InvitationAwaitingResolver interface {
-	User(ctx context.Context, obj *gqlmodel.InvitationAwaiting) (*gqlmodel.User, error)
-}
 type MutationResolver interface {
 	SignUp(ctx context.Context, input gqlmodel.SignUpInput) (*gqlmodel.SignUpPayload, error)
 	SignOut(ctx context.Context) (*gqlmodel.SignOutPayload, error)
@@ -394,8 +369,6 @@ type MutationResolver interface {
 	DeleteInvitation(ctx context.Context, invitationID uuid.UUID) (*gqlmodel.DeleteInvitationPayload, error)
 	AcceptInvitation(ctx context.Context, invitationID uuid.UUID) (*gqlmodel.AcceptInvitationPayload, error)
 	DenyInvitation(ctx context.Context, invitationID uuid.UUID) (*gqlmodel.DenyInvitationPayload, error)
-	RegisterInvitationAwaiting(ctx context.Context, input gqlmodel.RegisterInvitationAwaitingInput) (*gqlmodel.RegisterInvitationAwaitingPayload, error)
-	DeleteInvitationAwaiting(ctx context.Context, invitationAwaitingID uuid.UUID) (*gqlmodel.DeleteInvitationAwaitingPayload, error)
 	RegisterPushNotificationToken(ctx context.Context, input *gqlmodel.RegisterPushNotificationTokenInput) (*gqlmodel.RegisterPushNotificationTokenPayload, error)
 	UpdateAvatar(ctx context.Context, avatar graphql.Upload) (*gqlmodel.UpdateAvatarPayload, error)
 	UpdateNickname(ctx context.Context, nickname string) (*gqlmodel.UpdateNicknamePayload, error)
@@ -425,7 +398,6 @@ type UserResolver interface {
 	FuzzyCoordinate(ctx context.Context, obj *gqlmodel.User) (*gqlmodel.Coordinate, error)
 	DistanceKm(ctx context.Context, obj *gqlmodel.User) (*int, error)
 	IsRequestingFriendship(ctx context.Context, obj *gqlmodel.User) (bool, error)
-	InvitationAwaitings(ctx context.Context, obj *gqlmodel.User) ([]*gqlmodel.InvitationAwaiting, error)
 }
 type ViewerResolver interface {
 	Friends(ctx context.Context, obj *gqlmodel.Viewer, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*gqlmodel.UserConnection, error)
@@ -437,7 +409,6 @@ type ViewerResolver interface {
 	SentInvitations(ctx context.Context, obj *gqlmodel.Viewer) ([]*gqlmodel.Invitation, error)
 	PendingInvitations(ctx context.Context, obj *gqlmodel.Viewer) ([]*gqlmodel.Invitation, error)
 	AcceptedInvitations(ctx context.Context, obj *gqlmodel.Viewer) ([]*gqlmodel.Invitation, error)
-	InvitationAwaitings(ctx context.Context, obj *gqlmodel.Viewer) ([]*gqlmodel.InvitationAwaiting, error)
 }
 
 type executableSchema struct {
@@ -637,13 +608,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.DeleteFriendGroupPayload.DeletedFriendGroupID(childComplexity), true
 
-	case "DeleteInvitationAwaitingPayload.deletedInvitationAwaitingId":
-		if e.complexity.DeleteInvitationAwaitingPayload.DeletedInvitationAwaitingID == nil {
-			break
-		}
-
-		return e.complexity.DeleteInvitationAwaitingPayload.DeletedInvitationAwaitingID(childComplexity), true
-
 	case "DeleteInvitationPayload.deletedInvitationId":
 		if e.complexity.DeleteInvitationPayload.DeletedInvitationID == nil {
 			break
@@ -840,48 +804,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Invitation.UserID(childComplexity), true
 
-	case "InvitationAwaiting.comment":
-		if e.complexity.InvitationAwaiting.Comment == nil {
-			break
-		}
-
-		return e.complexity.InvitationAwaiting.Comment(childComplexity), true
-
-	case "InvitationAwaiting.endsAt":
-		if e.complexity.InvitationAwaiting.EndsAt == nil {
-			break
-		}
-
-		return e.complexity.InvitationAwaiting.EndsAt(childComplexity), true
-
-	case "InvitationAwaiting.id":
-		if e.complexity.InvitationAwaiting.ID == nil {
-			break
-		}
-
-		return e.complexity.InvitationAwaiting.ID(childComplexity), true
-
-	case "InvitationAwaiting.startsAt":
-		if e.complexity.InvitationAwaiting.StartsAt == nil {
-			break
-		}
-
-		return e.complexity.InvitationAwaiting.StartsAt(childComplexity), true
-
-	case "InvitationAwaiting.user":
-		if e.complexity.InvitationAwaiting.User == nil {
-			break
-		}
-
-		return e.complexity.InvitationAwaiting.User(childComplexity), true
-
-	case "InvitationAwaiting.userId":
-		if e.complexity.InvitationAwaiting.UserID == nil {
-			break
-		}
-
-		return e.complexity.InvitationAwaiting.UserID(childComplexity), true
-
 	case "Mutation.acceptFriendshipRequest":
 		if e.complexity.Mutation.AcceptFriendshipRequest == nil {
 			break
@@ -1009,18 +931,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.DeleteInvitation(childComplexity, args["invitationId"].(uuid.UUID)), true
 
-	case "Mutation.deleteInvitationAwaiting":
-		if e.complexity.Mutation.DeleteInvitationAwaiting == nil {
-			break
-		}
-
-		args, err := ec.field_Mutation_deleteInvitationAwaiting_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.DeleteInvitationAwaiting(childComplexity, args["invitationAwaitingId"].(uuid.UUID)), true
-
 	case "Mutation.denyFriendshipRequest":
 		if e.complexity.Mutation.DenyFriendshipRequest == nil {
 			break
@@ -1056,18 +966,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.MuteUser(childComplexity, args["userId"].(uuid.UUID)), true
-
-	case "Mutation.registerInvitationAwaiting":
-		if e.complexity.Mutation.RegisterInvitationAwaiting == nil {
-			break
-		}
-
-		args, err := ec.field_Mutation_registerInvitationAwaiting_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.RegisterInvitationAwaiting(childComplexity, args["input"].(gqlmodel.RegisterInvitationAwaitingInput)), true
 
 	case "Mutation.registerPushNotificationToken":
 		if e.complexity.Mutation.RegisterPushNotificationToken == nil {
@@ -1353,13 +1251,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.Viewer(childComplexity), true
 
-	case "RegisterInvitationAwaitingPayload.invitationAwaiting":
-		if e.complexity.RegisterInvitationAwaitingPayload.InvitationAwaiting == nil {
-			break
-		}
-
-		return e.complexity.RegisterInvitationAwaitingPayload.InvitationAwaiting(childComplexity), true
-
 	case "RegisterPushNotificationTokenPayload.registeredPushNotificationTokenId":
 		if e.complexity.RegisterPushNotificationTokenPayload.RegisteredPushNotificationTokenID == nil {
 			break
@@ -1499,13 +1390,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.User.ID(childComplexity), true
-
-	case "User.invitationAwaitings":
-		if e.complexity.User.InvitationAwaitings == nil {
-			break
-		}
-
-		return e.complexity.User.InvitationAwaitings(childComplexity), true
 
 	case "User.isBlocked":
 		if e.complexity.User.IsBlocked == nil {
@@ -1648,13 +1532,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Viewer.ID(childComplexity), true
 
-	case "Viewer.invitationAwaitings":
-		if e.complexity.Viewer.InvitationAwaitings == nil {
-			break
-		}
-
-		return e.complexity.Viewer.InvitationAwaitings(childComplexity), true
-
 	case "Viewer.nickname":
 		if e.complexity.Viewer.Nickname == nil {
 			break
@@ -1707,7 +1584,6 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	inputUnmarshalMap := graphql.BuildUnmarshalerMap(
 		ec.unmarshalInputCreateFriendGroupInput,
 		ec.unmarshalInputCreateUserInput,
-		ec.unmarshalInputRegisterInvitationAwaitingInput,
 		ec.unmarshalInputRegisterPushNotificationTokenInput,
 		ec.unmarshalInputSendChatMessageImageInput,
 		ec.unmarshalInputSendChatMessageTextInput,
@@ -1934,9 +1810,6 @@ extend type Mutation {
 
     acceptInvitation(invitationId: UUID!): AcceptInvitationPayload! @authRequired
     denyInvitation(invitationId: UUID!): DenyInvitationPayload! @authRequired
-
-    registerInvitationAwaiting(input: RegisterInvitationAwaitingInput!): RegisterInvitationAwaitingPayload! @authRequired
-    deleteInvitationAwaiting(invitationAwaitingId: UUID!): DeleteInvitationAwaitingPayload! @authRequired
 }
 
 enum InvitationStatus {
@@ -1995,29 +1868,6 @@ type AcceptInvitationPayload {
 
 type DenyInvitationPayload {
     invitation: Invitation!
-}
-
-type InvitationAwaiting implements Node {
-    id: UUID!
-    userId: UUID!
-    user: User! @goField(forceResolver: true)
-    startsAt: Time!
-    endsAt: Time!
-    comment: String!
-}
-
-input RegisterInvitationAwaitingInput {
-    startsAt: Time!
-    endsAt: Time!
-    comment: String!
-}
-
-type RegisterInvitationAwaitingPayload {
-    invitationAwaiting: InvitationAwaiting!
-}
-
-type DeleteInvitationAwaitingPayload {
-    deletedInvitationAwaitingId: UUID!
 }
 `, BuiltIn: false},
 	{Name: "../../../defs/graphql/push_notification.graphql", Input: `extend type Mutation {
@@ -2134,7 +1984,6 @@ type Viewer implements Node {
     sentInvitations: [Invitation!]!  @goField(forceResolver: true)
     pendingInvitations: [Invitation!]!  @goField(forceResolver: true)
     acceptedInvitations: [Invitation!]! @goField(forceResolver: true)
-    invitationAwaitings: [InvitationAwaiting!]! @goField(forceResolver: true)
 }
 
 # User is a public interface for a user
@@ -2154,8 +2003,6 @@ type User implements Node {
     # It'll be null when not friend or the location tracking is not enabled by the user
     distanceKm: Int @goField(forceResolver: true)
     isRequestingFriendship: Boolean! @goField(forceResolver: true)
-    # It'll be empty when not friend
-    invitationAwaitings: [InvitationAwaiting!]! @goField(forceResolver: true)
 }
 
 type UserEdge {
@@ -2437,21 +2284,6 @@ func (ec *executionContext) field_Mutation_deleteFriendGroup_args(ctx context.Co
 	return args, nil
 }
 
-func (ec *executionContext) field_Mutation_deleteInvitationAwaiting_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 uuid.UUID
-	if tmp, ok := rawArgs["invitationAwaitingId"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("invitationAwaitingId"))
-		arg0, err = ec.unmarshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["invitationAwaitingId"] = arg0
-	return args, nil
-}
-
 func (ec *executionContext) field_Mutation_deleteInvitation_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -2509,21 +2341,6 @@ func (ec *executionContext) field_Mutation_muteUser_args(ctx context.Context, ra
 		}
 	}
 	args["userId"] = arg0
-	return args, nil
-}
-
-func (ec *executionContext) field_Mutation_registerInvitationAwaiting_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 gqlmodel.RegisterInvitationAwaitingInput
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNRegisterInvitationAwaitingInput2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐRegisterInvitationAwaitingInput(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["input"] = arg0
 	return args, nil
 }
 
@@ -4188,8 +4005,6 @@ func (ec *executionContext) fieldContext_CreateUserPayload_viewer(ctx context.Co
 				return ec.fieldContext_Viewer_pendingInvitations(ctx, field)
 			case "acceptedInvitations":
 				return ec.fieldContext_Viewer_acceptedInvitations(ctx, field)
-			case "invitationAwaitings":
-				return ec.fieldContext_Viewer_invitationAwaitings(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Viewer", field.Name)
 		},
@@ -4275,50 +4090,6 @@ func (ec *executionContext) _DeleteFriendGroupPayload_deletedFriendGroupId(ctx c
 func (ec *executionContext) fieldContext_DeleteFriendGroupPayload_deletedFriendGroupId(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "DeleteFriendGroupPayload",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type UUID does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _DeleteInvitationAwaitingPayload_deletedInvitationAwaitingId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.DeleteInvitationAwaitingPayload) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_DeleteInvitationAwaitingPayload_deletedInvitationAwaitingId(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.DeletedInvitationAwaitingID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(uuid.UUID)
-	fc.Result = res
-	return ec.marshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_DeleteInvitationAwaitingPayload_deletedInvitationAwaitingId(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "DeleteInvitationAwaitingPayload",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -4724,8 +4495,6 @@ func (ec *executionContext) fieldContext_FriendGroup_friendUsers(ctx context.Con
 				return ec.fieldContext_User_distanceKm(ctx, field)
 			case "isRequestingFriendship":
 				return ec.fieldContext_User_isRequestingFriendship(ctx, field)
-			case "invitationAwaitings":
-				return ec.fieldContext_User_invitationAwaitings(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -4880,8 +4649,6 @@ func (ec *executionContext) fieldContext_FriendshipRequest_fromUser(ctx context.
 				return ec.fieldContext_User_distanceKm(ctx, field)
 			case "isRequestingFriendship":
 				return ec.fieldContext_User_isRequestingFriendship(ctx, field)
-			case "invitationAwaitings":
-				return ec.fieldContext_User_invitationAwaitings(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -4992,8 +4759,6 @@ func (ec *executionContext) fieldContext_FriendshipRequest_toUser(ctx context.Co
 				return ec.fieldContext_User_distanceKm(ctx, field)
 			case "isRequestingFriendship":
 				return ec.fieldContext_User_isRequestingFriendship(ctx, field)
-			case "invitationAwaitings":
-				return ec.fieldContext_User_invitationAwaitings(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -5280,8 +5045,6 @@ func (ec *executionContext) fieldContext_Invitation_user(ctx context.Context, fi
 				return ec.fieldContext_User_distanceKm(ctx, field)
 			case "isRequestingFriendship":
 				return ec.fieldContext_User_isRequestingFriendship(ctx, field)
-			case "invitationAwaitings":
-				return ec.fieldContext_User_invitationAwaitings(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -5663,8 +5426,6 @@ func (ec *executionContext) fieldContext_Invitation_acceptedUsers(ctx context.Co
 				return ec.fieldContext_User_distanceKm(ctx, field)
 			case "isRequestingFriendship":
 				return ec.fieldContext_User_isRequestingFriendship(ctx, field)
-			case "invitationAwaitings":
-				return ec.fieldContext_User_invitationAwaitings(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -5711,294 +5472,6 @@ func (ec *executionContext) fieldContext_Invitation_isAccepted(ctx context.Conte
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type Boolean does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _InvitationAwaiting_id(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.InvitationAwaiting) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_InvitationAwaiting_id(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.ID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(uuid.UUID)
-	fc.Result = res
-	return ec.marshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_InvitationAwaiting_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "InvitationAwaiting",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type UUID does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _InvitationAwaiting_userId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.InvitationAwaiting) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_InvitationAwaiting_userId(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.UserID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(uuid.UUID)
-	fc.Result = res
-	return ec.marshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_InvitationAwaiting_userId(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "InvitationAwaiting",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type UUID does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _InvitationAwaiting_user(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.InvitationAwaiting) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_InvitationAwaiting_user(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.InvitationAwaiting().User(rctx, obj)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*gqlmodel.User)
-	fc.Result = res
-	return ec.marshalNUser2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐUser(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_InvitationAwaiting_user(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "InvitationAwaiting",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_User_id(ctx, field)
-			case "screenId":
-				return ec.fieldContext_User_screenId(ctx, field)
-			case "nickname":
-				return ec.fieldContext_User_nickname(ctx, field)
-			case "avatarUrl":
-				return ec.fieldContext_User_avatarUrl(ctx, field)
-			case "isMuted":
-				return ec.fieldContext_User_isMuted(ctx, field)
-			case "isBlocked":
-				return ec.fieldContext_User_isBlocked(ctx, field)
-			case "isFriend":
-				return ec.fieldContext_User_isFriend(ctx, field)
-			case "fuzzyCoordinate":
-				return ec.fieldContext_User_fuzzyCoordinate(ctx, field)
-			case "distanceKm":
-				return ec.fieldContext_User_distanceKm(ctx, field)
-			case "isRequestingFriendship":
-				return ec.fieldContext_User_isRequestingFriendship(ctx, field)
-			case "invitationAwaitings":
-				return ec.fieldContext_User_invitationAwaitings(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _InvitationAwaiting_startsAt(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.InvitationAwaiting) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_InvitationAwaiting_startsAt(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.StartsAt, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(time.Time)
-	fc.Result = res
-	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_InvitationAwaiting_startsAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "InvitationAwaiting",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Time does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _InvitationAwaiting_endsAt(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.InvitationAwaiting) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_InvitationAwaiting_endsAt(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.EndsAt, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(time.Time)
-	fc.Result = res
-	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_InvitationAwaiting_endsAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "InvitationAwaiting",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Time does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _InvitationAwaiting_comment(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.InvitationAwaiting) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_InvitationAwaiting_comment(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Comment, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_InvitationAwaiting_comment(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "InvitationAwaiting",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
 		},
 	}
 	return fc, nil
@@ -7299,164 +6772,6 @@ func (ec *executionContext) fieldContext_Mutation_denyInvitation(ctx context.Con
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_denyInvitation_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Mutation_registerInvitationAwaiting(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_registerInvitationAwaiting(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		directive0 := func(rctx context.Context) (interface{}, error) {
-			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().RegisterInvitationAwaiting(rctx, fc.Args["input"].(gqlmodel.RegisterInvitationAwaitingInput))
-		}
-		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.AuthRequired == nil {
-				return nil, errors.New("directive authRequired is not implemented")
-			}
-			return ec.directives.AuthRequired(ctx, nil, directive0)
-		}
-
-		tmp, err := directive1(rctx)
-		if err != nil {
-			return nil, graphql.ErrorOnPath(ctx, err)
-		}
-		if tmp == nil {
-			return nil, nil
-		}
-		if data, ok := tmp.(*gqlmodel.RegisterInvitationAwaitingPayload); ok {
-			return data, nil
-		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/k-yomo/invy/invy_api/graph/gqlmodel.RegisterInvitationAwaitingPayload`, tmp)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*gqlmodel.RegisterInvitationAwaitingPayload)
-	fc.Result = res
-	return ec.marshalNRegisterInvitationAwaitingPayload2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐRegisterInvitationAwaitingPayload(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Mutation_registerInvitationAwaiting(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Mutation",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "invitationAwaiting":
-				return ec.fieldContext_RegisterInvitationAwaitingPayload_invitationAwaiting(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type RegisterInvitationAwaitingPayload", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_registerInvitationAwaiting_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Mutation_deleteInvitationAwaiting(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_deleteInvitationAwaiting(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		directive0 := func(rctx context.Context) (interface{}, error) {
-			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().DeleteInvitationAwaiting(rctx, fc.Args["invitationAwaitingId"].(uuid.UUID))
-		}
-		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.AuthRequired == nil {
-				return nil, errors.New("directive authRequired is not implemented")
-			}
-			return ec.directives.AuthRequired(ctx, nil, directive0)
-		}
-
-		tmp, err := directive1(rctx)
-		if err != nil {
-			return nil, graphql.ErrorOnPath(ctx, err)
-		}
-		if tmp == nil {
-			return nil, nil
-		}
-		if data, ok := tmp.(*gqlmodel.DeleteInvitationAwaitingPayload); ok {
-			return data, nil
-		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/k-yomo/invy/invy_api/graph/gqlmodel.DeleteInvitationAwaitingPayload`, tmp)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*gqlmodel.DeleteInvitationAwaitingPayload)
-	fc.Result = res
-	return ec.marshalNDeleteInvitationAwaitingPayload2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐDeleteInvitationAwaitingPayload(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Mutation_deleteInvitationAwaiting(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Mutation",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "deletedInvitationAwaitingId":
-				return ec.fieldContext_DeleteInvitationAwaitingPayload_deletedInvitationAwaitingId(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type DeleteInvitationAwaitingPayload", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_deleteInvitationAwaiting_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return
 	}
@@ -8892,8 +8207,6 @@ func (ec *executionContext) fieldContext_Query_viewer(ctx context.Context, field
 				return ec.fieldContext_Viewer_pendingInvitations(ctx, field)
 			case "acceptedInvitations":
 				return ec.fieldContext_Viewer_acceptedInvitations(ctx, field)
-			case "invitationAwaitings":
-				return ec.fieldContext_Viewer_invitationAwaitings(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Viewer", field.Name)
 		},
@@ -8980,8 +8293,6 @@ func (ec *executionContext) fieldContext_Query_user(ctx context.Context, field g
 				return ec.fieldContext_User_distanceKm(ctx, field)
 			case "isRequestingFriendship":
 				return ec.fieldContext_User_isRequestingFriendship(ctx, field)
-			case "invitationAwaitings":
-				return ec.fieldContext_User_invitationAwaitings(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -9079,8 +8390,6 @@ func (ec *executionContext) fieldContext_Query_userByScreenId(ctx context.Contex
 				return ec.fieldContext_User_distanceKm(ctx, field)
 			case "isRequestingFriendship":
 				return ec.fieldContext_User_isRequestingFriendship(ctx, field)
-			case "invitationAwaitings":
-				return ec.fieldContext_User_invitationAwaitings(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -9334,64 +8643,6 @@ func (ec *executionContext) fieldContext_Query___schema(ctx context.Context, fie
 				return ec.fieldContext___Schema_directives(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type __Schema", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _RegisterInvitationAwaitingPayload_invitationAwaiting(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.RegisterInvitationAwaitingPayload) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_RegisterInvitationAwaitingPayload_invitationAwaiting(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.InvitationAwaiting, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*gqlmodel.InvitationAwaiting)
-	fc.Result = res
-	return ec.marshalNInvitationAwaiting2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐInvitationAwaiting(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_RegisterInvitationAwaitingPayload_invitationAwaiting(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "RegisterInvitationAwaitingPayload",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_InvitationAwaiting_id(ctx, field)
-			case "userId":
-				return ec.fieldContext_InvitationAwaiting_userId(ctx, field)
-			case "user":
-				return ec.fieldContext_InvitationAwaiting_user(ctx, field)
-			case "startsAt":
-				return ec.fieldContext_InvitationAwaiting_startsAt(ctx, field)
-			case "endsAt":
-				return ec.fieldContext_InvitationAwaiting_endsAt(ctx, field)
-			case "comment":
-				return ec.fieldContext_InvitationAwaiting_comment(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type InvitationAwaiting", field.Name)
 		},
 	}
 	return fc, nil
@@ -9796,8 +9047,6 @@ func (ec *executionContext) fieldContext_SignUpPayload_viewer(ctx context.Contex
 				return ec.fieldContext_Viewer_pendingInvitations(ctx, field)
 			case "acceptedInvitations":
 				return ec.fieldContext_Viewer_acceptedInvitations(ctx, field)
-			case "invitationAwaitings":
-				return ec.fieldContext_Viewer_invitationAwaitings(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Viewer", field.Name)
 		},
@@ -9870,8 +9119,6 @@ func (ec *executionContext) fieldContext_SwitchUserPayload_viewer(ctx context.Co
 				return ec.fieldContext_Viewer_pendingInvitations(ctx, field)
 			case "acceptedInvitations":
 				return ec.fieldContext_Viewer_acceptedInvitations(ctx, field)
-			case "invitationAwaitings":
-				return ec.fieldContext_Viewer_invitationAwaitings(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Viewer", field.Name)
 		},
@@ -10032,8 +9279,6 @@ func (ec *executionContext) fieldContext_UpdateAvatarPayload_viewer(ctx context.
 				return ec.fieldContext_Viewer_pendingInvitations(ctx, field)
 			case "acceptedInvitations":
 				return ec.fieldContext_Viewer_acceptedInvitations(ctx, field)
-			case "invitationAwaitings":
-				return ec.fieldContext_Viewer_invitationAwaitings(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Viewer", field.Name)
 		},
@@ -10250,8 +9495,6 @@ func (ec *executionContext) fieldContext_UpdateNicknamePayload_viewer(ctx contex
 				return ec.fieldContext_Viewer_pendingInvitations(ctx, field)
 			case "acceptedInvitations":
 				return ec.fieldContext_Viewer_acceptedInvitations(ctx, field)
-			case "invitationAwaitings":
-				return ec.fieldContext_Viewer_invitationAwaitings(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Viewer", field.Name)
 		},
@@ -10324,8 +9567,6 @@ func (ec *executionContext) fieldContext_UpdateScreenIdPayload_viewer(ctx contex
 				return ec.fieldContext_Viewer_pendingInvitations(ctx, field)
 			case "acceptedInvitations":
 				return ec.fieldContext_Viewer_acceptedInvitations(ctx, field)
-			case "invitationAwaitings":
-				return ec.fieldContext_Viewer_invitationAwaitings(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Viewer", field.Name)
 		},
@@ -10773,64 +10014,6 @@ func (ec *executionContext) fieldContext_User_isRequestingFriendship(ctx context
 	return fc, nil
 }
 
-func (ec *executionContext) _User_invitationAwaitings(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.User) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_User_invitationAwaitings(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.User().InvitationAwaitings(rctx, obj)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]*gqlmodel.InvitationAwaiting)
-	fc.Result = res
-	return ec.marshalNInvitationAwaiting2ᚕᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐInvitationAwaitingᚄ(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_User_invitationAwaitings(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "User",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_InvitationAwaiting_id(ctx, field)
-			case "userId":
-				return ec.fieldContext_InvitationAwaiting_userId(ctx, field)
-			case "user":
-				return ec.fieldContext_InvitationAwaiting_user(ctx, field)
-			case "startsAt":
-				return ec.fieldContext_InvitationAwaiting_startsAt(ctx, field)
-			case "endsAt":
-				return ec.fieldContext_InvitationAwaiting_endsAt(ctx, field)
-			case "comment":
-				return ec.fieldContext_InvitationAwaiting_comment(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type InvitationAwaiting", field.Name)
-		},
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _UserConnection_edges(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.UserConnection) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_UserConnection_edges(ctx, field)
 	if err != nil {
@@ -11038,8 +10221,6 @@ func (ec *executionContext) fieldContext_UserEdge_node(ctx context.Context, fiel
 				return ec.fieldContext_User_distanceKm(ctx, field)
 			case "isRequestingFriendship":
 				return ec.fieldContext_User_isRequestingFriendship(ctx, field)
-			case "invitationAwaitings":
-				return ec.fieldContext_User_invitationAwaitings(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -11843,64 +11024,6 @@ func (ec *executionContext) fieldContext_Viewer_acceptedInvitations(ctx context.
 				return ec.fieldContext_Invitation_isAccepted(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Invitation", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Viewer_invitationAwaitings(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Viewer) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Viewer_invitationAwaitings(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Viewer().InvitationAwaitings(rctx, obj)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]*gqlmodel.InvitationAwaiting)
-	fc.Result = res
-	return ec.marshalNInvitationAwaiting2ᚕᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐInvitationAwaitingᚄ(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Viewer_invitationAwaitings(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Viewer",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_InvitationAwaiting_id(ctx, field)
-			case "userId":
-				return ec.fieldContext_InvitationAwaiting_userId(ctx, field)
-			case "user":
-				return ec.fieldContext_InvitationAwaiting_user(ctx, field)
-			case "startsAt":
-				return ec.fieldContext_InvitationAwaiting_startsAt(ctx, field)
-			case "endsAt":
-				return ec.fieldContext_InvitationAwaiting_endsAt(ctx, field)
-			case "comment":
-				return ec.fieldContext_InvitationAwaiting_comment(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type InvitationAwaiting", field.Name)
 		},
 	}
 	return fc, nil
@@ -13807,50 +12930,6 @@ func (ec *executionContext) unmarshalInputCreateUserInput(ctx context.Context, o
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputRegisterInvitationAwaitingInput(ctx context.Context, obj interface{}) (gqlmodel.RegisterInvitationAwaitingInput, error) {
-	var it gqlmodel.RegisterInvitationAwaitingInput
-	asMap := map[string]interface{}{}
-	for k, v := range obj.(map[string]interface{}) {
-		asMap[k] = v
-	}
-
-	fieldsInOrder := [...]string{"startsAt", "endsAt", "comment"}
-	for _, k := range fieldsInOrder {
-		v, ok := asMap[k]
-		if !ok {
-			continue
-		}
-		switch k {
-		case "startsAt":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("startsAt"))
-			it.StartsAt, err = ec.unmarshalNTime2timeᚐTime(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "endsAt":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("endsAt"))
-			it.EndsAt, err = ec.unmarshalNTime2timeᚐTime(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "comment":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("comment"))
-			it.Comment, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		}
-	}
-
-	return it, nil
-}
-
 func (ec *executionContext) unmarshalInputRegisterPushNotificationTokenInput(ctx context.Context, obj interface{}) (gqlmodel.RegisterPushNotificationTokenInput, error) {
 	var it gqlmodel.RegisterPushNotificationTokenInput
 	asMap := map[string]interface{}{}
@@ -14328,13 +13407,6 @@ func (ec *executionContext) _Node(ctx context.Context, sel ast.SelectionSet, obj
 			return graphql.Null
 		}
 		return ec._Invitation(ctx, sel, obj)
-	case gqlmodel.InvitationAwaiting:
-		return ec._InvitationAwaiting(ctx, sel, &obj)
-	case *gqlmodel.InvitationAwaiting:
-		if obj == nil {
-			return graphql.Null
-		}
-		return ec._InvitationAwaiting(ctx, sel, obj)
 	case gqlmodel.Viewer:
 		return ec._Viewer(ctx, sel, &obj)
 	case *gqlmodel.Viewer:
@@ -14883,34 +13955,6 @@ func (ec *executionContext) _DeleteFriendGroupPayload(ctx context.Context, sel a
 	return out
 }
 
-var deleteInvitationAwaitingPayloadImplementors = []string{"DeleteInvitationAwaitingPayload"}
-
-func (ec *executionContext) _DeleteInvitationAwaitingPayload(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.DeleteInvitationAwaitingPayload) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, deleteInvitationAwaitingPayloadImplementors)
-	out := graphql.NewFieldSet(fields)
-	var invalids uint32
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("DeleteInvitationAwaitingPayload")
-		case "deletedInvitationAwaitingId":
-
-			out.Values[i] = ec._DeleteInvitationAwaitingPayload_deletedInvitationAwaitingId(ctx, field, obj)
-
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch()
-	if invalids > 0 {
-		return graphql.Null
-	}
-	return out
-}
-
 var deleteInvitationPayloadImplementors = []string{"DeleteInvitationPayload"}
 
 func (ec *executionContext) _DeleteInvitationPayload(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.DeleteInvitationPayload) graphql.Marshaler {
@@ -15336,82 +14380,6 @@ func (ec *executionContext) _Invitation(ctx context.Context, sel ast.SelectionSe
 	return out
 }
 
-var invitationAwaitingImplementors = []string{"InvitationAwaiting", "Node"}
-
-func (ec *executionContext) _InvitationAwaiting(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.InvitationAwaiting) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, invitationAwaitingImplementors)
-	out := graphql.NewFieldSet(fields)
-	var invalids uint32
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("InvitationAwaiting")
-		case "id":
-
-			out.Values[i] = ec._InvitationAwaiting_id(ctx, field, obj)
-
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&invalids, 1)
-			}
-		case "userId":
-
-			out.Values[i] = ec._InvitationAwaiting_userId(ctx, field, obj)
-
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&invalids, 1)
-			}
-		case "user":
-			field := field
-
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._InvitationAwaiting_user(ctx, field, obj)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
-				return res
-			}
-
-			out.Concurrently(i, func() graphql.Marshaler {
-				return innerFunc(ctx)
-
-			})
-		case "startsAt":
-
-			out.Values[i] = ec._InvitationAwaiting_startsAt(ctx, field, obj)
-
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&invalids, 1)
-			}
-		case "endsAt":
-
-			out.Values[i] = ec._InvitationAwaiting_endsAt(ctx, field, obj)
-
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&invalids, 1)
-			}
-		case "comment":
-
-			out.Values[i] = ec._InvitationAwaiting_comment(ctx, field, obj)
-
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&invalids, 1)
-			}
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch()
-	if invalids > 0 {
-		return graphql.Null
-	}
-	return out
-}
-
 var mutationImplementors = []string{"Mutation"}
 
 func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet) graphql.Marshaler {
@@ -15579,24 +14547,6 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_denyInvitation(ctx, field)
-			})
-
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "registerInvitationAwaiting":
-
-			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_registerInvitationAwaiting(ctx, field)
-			})
-
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "deleteInvitationAwaiting":
-
-			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_deleteInvitationAwaiting(ctx, field)
 			})
 
 			if out.Values[i] == graphql.Null {
@@ -15970,34 +14920,6 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				return ec._Query___schema(ctx, field)
 			})
 
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch()
-	if invalids > 0 {
-		return graphql.Null
-	}
-	return out
-}
-
-var registerInvitationAwaitingPayloadImplementors = []string{"RegisterInvitationAwaitingPayload"}
-
-func (ec *executionContext) _RegisterInvitationAwaitingPayload(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.RegisterInvitationAwaitingPayload) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, registerInvitationAwaitingPayloadImplementors)
-	out := graphql.NewFieldSet(fields)
-	var invalids uint32
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("RegisterInvitationAwaitingPayload")
-		case "invitationAwaiting":
-
-			out.Values[i] = ec._RegisterInvitationAwaitingPayload_invitationAwaiting(ctx, field, obj)
-
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -16609,26 +15531,6 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 				return innerFunc(ctx)
 
 			})
-		case "invitationAwaitings":
-			field := field
-
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._User_invitationAwaitings(ctx, field, obj)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
-				return res
-			}
-
-			out.Concurrently(i, func() graphql.Marshaler {
-				return innerFunc(ctx)
-
-			})
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -16925,26 +15827,6 @@ func (ec *executionContext) _Viewer(ctx context.Context, sel ast.SelectionSet, o
 					}
 				}()
 				res = ec._Viewer_acceptedInvitations(ctx, field, obj)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
-				return res
-			}
-
-			out.Concurrently(i, func() graphql.Marshaler {
-				return innerFunc(ctx)
-
-			})
-		case "invitationAwaitings":
-			field := field
-
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Viewer_invitationAwaitings(ctx, field, obj)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
@@ -17543,20 +16425,6 @@ func (ec *executionContext) marshalNDeleteFriendGroupPayload2ᚖgithubᚗcomᚋk
 	return ec._DeleteFriendGroupPayload(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNDeleteInvitationAwaitingPayload2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐDeleteInvitationAwaitingPayload(ctx context.Context, sel ast.SelectionSet, v gqlmodel.DeleteInvitationAwaitingPayload) graphql.Marshaler {
-	return ec._DeleteInvitationAwaitingPayload(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalNDeleteInvitationAwaitingPayload2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐDeleteInvitationAwaitingPayload(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.DeleteInvitationAwaitingPayload) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
-		}
-		return graphql.Null
-	}
-	return ec._DeleteInvitationAwaitingPayload(ctx, sel, v)
-}
-
 func (ec *executionContext) marshalNDeleteInvitationPayload2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐDeleteInvitationPayload(ctx context.Context, sel ast.SelectionSet, v gqlmodel.DeleteInvitationPayload) graphql.Marshaler {
 	return ec._DeleteInvitationPayload(ctx, sel, &v)
 }
@@ -17813,60 +16681,6 @@ func (ec *executionContext) marshalNInvitation2ᚖgithubᚗcomᚋkᚑyomoᚋinvy
 	return ec._Invitation(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNInvitationAwaiting2ᚕᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐInvitationAwaitingᚄ(ctx context.Context, sel ast.SelectionSet, v []*gqlmodel.InvitationAwaiting) graphql.Marshaler {
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalNInvitationAwaiting2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐInvitationAwaiting(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-
-	for _, e := range ret {
-		if e == graphql.Null {
-			return graphql.Null
-		}
-	}
-
-	return ret
-}
-
-func (ec *executionContext) marshalNInvitationAwaiting2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐInvitationAwaiting(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.InvitationAwaiting) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
-		}
-		return graphql.Null
-	}
-	return ec._InvitationAwaiting(ctx, sel, v)
-}
-
 func (ec *executionContext) unmarshalNInvitationStatus2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐInvitationStatus(ctx context.Context, v interface{}) (gqlmodel.InvitationStatus, error) {
 	var res gqlmodel.InvitationStatus
 	err := res.UnmarshalGQL(v)
@@ -17899,25 +16713,6 @@ func (ec *executionContext) marshalNPageInfo2ᚖgithubᚗcomᚋkᚑyomoᚋinvy�
 		return graphql.Null
 	}
 	return ec._PageInfo(ctx, sel, v)
-}
-
-func (ec *executionContext) unmarshalNRegisterInvitationAwaitingInput2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐRegisterInvitationAwaitingInput(ctx context.Context, v interface{}) (gqlmodel.RegisterInvitationAwaitingInput, error) {
-	res, err := ec.unmarshalInputRegisterInvitationAwaitingInput(ctx, v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalNRegisterInvitationAwaitingPayload2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐRegisterInvitationAwaitingPayload(ctx context.Context, sel ast.SelectionSet, v gqlmodel.RegisterInvitationAwaitingPayload) graphql.Marshaler {
-	return ec._RegisterInvitationAwaitingPayload(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalNRegisterInvitationAwaitingPayload2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐRegisterInvitationAwaitingPayload(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.RegisterInvitationAwaitingPayload) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
-		}
-		return graphql.Null
-	}
-	return ec._RegisterInvitationAwaitingPayload(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNRegisterPushNotificationTokenPayload2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐRegisterPushNotificationTokenPayload(ctx context.Context, sel ast.SelectionSet, v gqlmodel.RegisterPushNotificationTokenPayload) graphql.Marshaler {

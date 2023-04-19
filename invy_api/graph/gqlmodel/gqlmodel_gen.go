@@ -116,10 +116,6 @@ type DeleteFriendGroupPayload struct {
 	DeletedFriendGroupID uuid.UUID `json:"deletedFriendGroupId"`
 }
 
-type DeleteInvitationAwaitingPayload struct {
-	DeletedInvitationAwaitingID uuid.UUID `json:"deletedInvitationAwaitingId"`
-}
-
 type DeleteInvitationPayload struct {
 	DeletedInvitationID uuid.UUID `json:"deletedInvitationId"`
 }
@@ -178,18 +174,6 @@ type Invitation struct {
 func (Invitation) IsNode()               {}
 func (this Invitation) GetID() uuid.UUID { return this.ID }
 
-type InvitationAwaiting struct {
-	ID       uuid.UUID `json:"id"`
-	UserID   uuid.UUID `json:"userId"`
-	User     *User     `json:"user"`
-	StartsAt time.Time `json:"startsAt"`
-	EndsAt   time.Time `json:"endsAt"`
-	Comment  string    `json:"comment"`
-}
-
-func (InvitationAwaiting) IsNode()               {}
-func (this InvitationAwaiting) GetID() uuid.UUID { return this.ID }
-
 type MuteUserPayload struct {
 	MutedUserID uuid.UUID `json:"mutedUserId"`
 }
@@ -199,16 +183,6 @@ type PageInfo struct {
 	EndCursor       *ent.Cursor `json:"endCursor,omitempty"`
 	HasNextPage     bool        `json:"hasNextPage"`
 	HasPreviousPage bool        `json:"hasPreviousPage"`
-}
-
-type RegisterInvitationAwaitingInput struct {
-	StartsAt time.Time `json:"startsAt"`
-	EndsAt   time.Time `json:"endsAt"`
-	Comment  string    `json:"comment"`
-}
-
-type RegisterInvitationAwaitingPayload struct {
-	InvitationAwaiting *InvitationAwaiting `json:"invitationAwaiting"`
 }
 
 type RegisterPushNotificationTokenInput struct {
@@ -322,17 +296,16 @@ type UpdateScreenIDPayload struct {
 }
 
 type User struct {
-	ID                     uuid.UUID             `json:"id"`
-	ScreenID               string                `json:"screenId"`
-	Nickname               string                `json:"nickname"`
-	AvatarURL              string                `json:"avatarUrl"`
-	IsMuted                bool                  `json:"isMuted"`
-	IsBlocked              bool                  `json:"isBlocked"`
-	IsFriend               bool                  `json:"isFriend"`
-	FuzzyCoordinate        *Coordinate           `json:"fuzzyCoordinate,omitempty"`
-	DistanceKm             *int                  `json:"distanceKm,omitempty"`
-	IsRequestingFriendship bool                  `json:"isRequestingFriendship"`
-	InvitationAwaitings    []*InvitationAwaiting `json:"invitationAwaitings"`
+	ID                     uuid.UUID   `json:"id"`
+	ScreenID               string      `json:"screenId"`
+	Nickname               string      `json:"nickname"`
+	AvatarURL              string      `json:"avatarUrl"`
+	IsMuted                bool        `json:"isMuted"`
+	IsBlocked              bool        `json:"isBlocked"`
+	IsFriend               bool        `json:"isFriend"`
+	FuzzyCoordinate        *Coordinate `json:"fuzzyCoordinate,omitempty"`
+	DistanceKm             *int        `json:"distanceKm,omitempty"`
+	IsRequestingFriendship bool        `json:"isRequestingFriendship"`
 }
 
 func (User) IsNode()               {}
@@ -350,20 +323,19 @@ type UserEdge struct {
 }
 
 type Viewer struct {
-	ID                           uuid.UUID             `json:"id"`
-	ScreenID                     string                `json:"screenId"`
-	Nickname                     string                `json:"nickname"`
-	AvatarURL                    string                `json:"avatarUrl"`
-	Friends                      *UserConnection       `json:"friends"`
-	BlockedFriends               *UserConnection       `json:"blockedFriends"`
-	PendingFriendshipRequests    []*FriendshipRequest  `json:"pendingFriendshipRequests"`
-	RequestingFriendshipRequests []*FriendshipRequest  `json:"requestingFriendshipRequests"`
-	FriendGroup                  *FriendGroup          `json:"friendGroup"`
-	FriendGroups                 []*FriendGroup        `json:"friendGroups"`
-	SentInvitations              []*Invitation         `json:"sentInvitations"`
-	PendingInvitations           []*Invitation         `json:"pendingInvitations"`
-	AcceptedInvitations          []*Invitation         `json:"acceptedInvitations"`
-	InvitationAwaitings          []*InvitationAwaiting `json:"invitationAwaitings"`
+	ID                           uuid.UUID            `json:"id"`
+	ScreenID                     string               `json:"screenId"`
+	Nickname                     string               `json:"nickname"`
+	AvatarURL                    string               `json:"avatarUrl"`
+	Friends                      *UserConnection      `json:"friends"`
+	BlockedFriends               *UserConnection      `json:"blockedFriends"`
+	PendingFriendshipRequests    []*FriendshipRequest `json:"pendingFriendshipRequests"`
+	RequestingFriendshipRequests []*FriendshipRequest `json:"requestingFriendshipRequests"`
+	FriendGroup                  *FriendGroup         `json:"friendGroup"`
+	FriendGroups                 []*FriendGroup       `json:"friendGroups"`
+	SentInvitations              []*Invitation        `json:"sentInvitations"`
+	PendingInvitations           []*Invitation        `json:"pendingInvitations"`
+	AcceptedInvitations          []*Invitation        `json:"acceptedInvitations"`
 }
 
 func (Viewer) IsNode()               {}

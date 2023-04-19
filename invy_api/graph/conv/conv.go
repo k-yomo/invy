@@ -91,13 +91,3 @@ func convertFromDBInvitationStatus(status invitation.Status) (gqlmodel.Invitatio
 		return "", errors.Errorf("unhandled invitation status: %s", status)
 	}
 }
-
-func ConvertFromDBInvitationAwaiting(invitationAwaiting *ent.InvitationAwaiting) *gqlmodel.InvitationAwaiting {
-	return &gqlmodel.InvitationAwaiting{
-		ID:       invitationAwaiting.ID,
-		UserID:   invitationAwaiting.UserID,
-		StartsAt: invitationAwaiting.StartsAt,
-		EndsAt:   invitationAwaiting.EndsAt,
-		Comment:  invitationAwaiting.Comment,
-	}
-}

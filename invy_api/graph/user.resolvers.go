@@ -19,7 +19,6 @@ import (
 	"github.com/k-yomo/invy/invy_api/ent/friendshiprequest"
 	"github.com/k-yomo/invy/invy_api/ent/invitation"
 	"github.com/k-yomo/invy/invy_api/ent/invitationacceptance"
-	"github.com/k-yomo/invy/invy_api/ent/invitationawaiting"
 	"github.com/k-yomo/invy/invy_api/ent/invitationdenial"
 	"github.com/k-yomo/invy/invy_api/ent/invitationuser"
 	"github.com/k-yomo/invy/invy_api/ent/user"
@@ -315,15 +314,6 @@ func (r *userResolver) IsRequestingFriendship(ctx context.Context, obj *gqlmodel
 	return true, nil
 }
 
-// InvitationAwaitings is the resolver for the invitationAwaitings field.
-func (r *userResolver) InvitationAwaitings(ctx context.Context, obj *gqlmodel.User) ([]*gqlmodel.InvitationAwaiting, error) {
-	dbInvitationAwaitings, err := loader.Get(ctx).FriendInvitationAwaitings.Load(ctx, obj.ID)()
-	if err != nil && !cerrors.Is(err, loader.ErrNotFound) {
-		return nil, cerrors.Wrap(err, "load friend invitation awaitings")
-	}
-	return convutil.ConvertToList(dbInvitationAwaitings, conv.ConvertFromDBInvitationAwaiting), nil
-}
-
 // Friends is the resolver for the friends field.
 func (r *viewerResolver) Friends(ctx context.Context, obj *gqlmodel.Viewer, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*gqlmodel.UserConnection, error) {
 	authUserID := auth.GetCurrentUserID(ctx)
@@ -523,29 +513,6 @@ func (r *viewerResolver) AcceptedInvitations(ctx context.Context, obj *gqlmodel.
 		return nil, cerrors.Wrap(err, "query accepted invitations")
 	}
 	return convutil.ConvertToListAndError(dbInvitations, conv.ConvertFromDBInvitation)
-}
-
-// InvitationAwaitings is the resolver for the invitationAwaitings field.
-func (r *viewerResolver) InvitationAwaitings(ctx context.Context, obj *gqlmodel.Viewer) ([]*gqlmodel.InvitationAwaiting, error) {
-	authUserID := auth.GetCurrentUserID(ctx)
-	now := time.Now()
-	dbInvitationAwaitings, err := r.DB.InvitationAwaiting.Query().
-		Where(
-			invitationawaiting.UserID(authUserID),
-			invitationawaiting.Or(
-				invitationawaiting.And(
-					invitationawaiting.StartsAtLTE(now),
-					invitationawaiting.EndsAtGTE(now),
-				),
-				invitationawaiting.StartsAtGTE(now),
-			),
-		).
-		Order(ent.Asc(invitationawaiting.FieldStartsAt), ent.Asc(invitationawaiting.FieldEndsAt)).
-		All(ctx)
-	if err != nil {
-		return nil, cerrors.Wrap(err, "query invitation awaitings")
-	}
-	return convutil.ConvertToList(dbInvitationAwaitings, conv.ConvertFromDBInvitationAwaiting), nil
 }
 
 // User returns gqlgen.UserResolver implementation.
