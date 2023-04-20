@@ -209,7 +209,7 @@ func main() {
 
 	r := newBaseRouter(appConfig, logger, firebaseAuthClient)
 	r.With(loader.Middleware(entDB)).Handle("/query", gqlServer)
-	r.Route("/", func(r chi.Router) {
+	r.With(auth.RequireAuthMiddleware(firebaseAuthClient)).Route("/", func(r chi.Router) {
 		chatImageHandler := handler.NewChatImageHandler(chatService, gcsClient, appConfig.GCSChatMessageImageBucketName)
 		r.Get("/chatRooms/{chatRoomID}/images/{object}", chatImageHandler.HandleGetChatImage)
 	})
