@@ -29,6 +29,7 @@ func (e Env) IsDeployed() bool {
 type AppConfig struct {
 	Env                           Env      `default:"local" envconfig:"APP_ENV"`
 	Port                          int      `default:"8000" envconfig:"PORT"`
+	RootURL                       string   `default:"http://localhost:8000" envconfig:"ROOT_URL"`
 	GCPProjectID                  string   `default:"invy-local" envconfig:"GCP_PROJECT_ID"`
 	GCSAvatarImageBucketName      string   `envconfig:"GCS_AVATAR_IMAGE_BUCKET_NAME"`
 	GCSChatMessageImageBucketName string   `envconfig:"GCS_CHAT_MESSAGE_IMAGE_BUCKET_NAME"`

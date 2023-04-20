@@ -8,10 +8,6 @@ import (
 	gcs "cloud.google.com/go/storage"
 )
 
-type FileUploader interface {
-	Upload(ctx context.Context, fileName string, file io.Reader) (objURL string, err error)
-}
-
 type gcsFileUploader struct {
 	gcsClient  *gcs.Client
 	bucketName string

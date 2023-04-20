@@ -10,6 +10,7 @@ import (
 	"github.com/cockroachdb/errors/grpc/status"
 	"github.com/google/uuid"
 	"github.com/k-yomo/invy/invy_api/graph/gqlmodel"
+	"github.com/k-yomo/invy/invy_api/internal/xerrors"
 	"github.com/k-yomo/invy/pkg/convutil"
 	"google.golang.org/grpc/codes"
 )
@@ -17,6 +18,9 @@ import (
 func (c *ChatServiceImpl) GetChatRoom(ctx context.Context, chatRoomID uuid.UUID) (*gqlmodel.ChatRoom, error) {
 	chatRoomDocRef := c.firestoreClient.Doc(firestoreChatRoomPath(chatRoomID))
 	chatRoomSnapshot, err := chatRoomDocRef.Get(ctx)
+	if status.Code(err) == codes.NotFound {
+		return nil, xerrors.NewErrNotFound(fmt.Errorf("chat room '%s' not found", chatRoomID))
+	}
 	if err != nil {
 		return nil, errors.Wrap(err, "get chat room")
 	}

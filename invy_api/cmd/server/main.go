@@ -10,6 +10,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/k-yomo/invy/invy_api/handler"
 	"github.com/k-yomo/invy/invy_api/service/chat_service"
 	"github.com/k-yomo/invy/invy_api/service/notification_service"
 	"github.com/k-yomo/invy/invy_api/service/user_service"
@@ -22,7 +23,7 @@ import (
 	entsql "entgo.io/ent/dialect/sql"
 	firebase "firebase.google.com/go/v4"
 	firebaseAuth "firebase.google.com/go/v4/auth"
-	"github.com/99designs/gqlgen/graphql/handler"
+	gqlhandler "github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/XSAM/otelsql"
 	"github.com/go-chi/chi"
@@ -156,15 +157,15 @@ func main() {
 		logger.Fatal("initializing FCM client failed", zap.Error(err))
 	}
 
+	gcsClient, err := gcs.NewClient(context.Background())
+	if err != nil {
+		logger.Fatal("initialize gcs client failed", zap.Error(err))
+	}
+	defer gcsClient.Close()
+
 	var avatarUploader storage.FileUploader
 	var chatMessageImageUploader storage.FileUploader
 	if appConfig.Env.IsDeployed() {
-		gcsClient, err := gcs.NewClient(context.Background())
-		if err != nil {
-			logger.Fatal("initialize gcs client failed", zap.Error(err))
-		}
-		defer gcsClient.Close()
-
 		avatarUploader = storage.NewGCSFileUploader(gcsClient, appConfig.GCSAvatarImageBucketName)
 		chatMessageImageUploader = storage.NewGCSFileUploader(gcsClient, appConfig.GCSChatMessageImageBucketName)
 	} else {
@@ -177,7 +178,13 @@ func main() {
 
 	userService := user_service.NewUserService(entDB)
 	notificationService := notification_service.NewNotificationService(entDB, dbQuery, fcmClient)
-	chatService := chat_service.NewChatService(firestoreClient, chatMessageImageUploader, userService, notificationService)
+	chatService := chat_service.NewChatService(
+		firestoreClient,
+		chatMessageImageUploader,
+		appConfig.RootURL,
+		userService,
+		notificationService,
+	)
 
 	gqlConfig := gqlgen.Config{
 		Resolvers: &graph.Resolver{
@@ -195,13 +202,17 @@ func main() {
 			Constraint:   directive.Constraint,
 		},
 	}
-	gqlServer := handler.NewDefaultServer(gqlgen.NewExecutableSchema(gqlConfig))
+	gqlServer := gqlhandler.NewDefaultServer(gqlgen.NewExecutableSchema(gqlConfig))
 	gqlServer.SetErrorPresenter(graph.NewErrorPresenter())
 	gqlServer.Use(tracing.GraphqlExtension{})
 	gqlServer.Use(logging.GraphQLResponseInterceptor{})
 
 	r := newBaseRouter(appConfig, logger, firebaseAuthClient)
 	r.With(loader.Middleware(entDB)).Handle("/query", gqlServer)
+	r.Route("/", func(r chi.Router) {
+		chatImageHandler := handler.NewChatImageHandler(chatService, gcsClient, appConfig.GCSChatMessageImageBucketName)
+		r.Get("/chatRooms/{chatRoomID}/images/{object}", chatImageHandler.HandleGetChatImage)
+	})
 
 	if appConfig.Env == config.EnvLocal {
 		r.Get("/", playground.Handler("GraphQL playground", "/query"))

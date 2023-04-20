@@ -28,6 +28,7 @@ type ChatService interface {
 type ChatServiceImpl struct {
 	firestoreClient          *firestore.Client
 	chatMessageImageUploader storage.FileUploader
+	apiRootURL               string
 
 	userService         user_service.UserService
 	notificationService notification_service.NotificationService
@@ -36,12 +37,14 @@ type ChatServiceImpl struct {
 func NewChatService(
 	firestoreClient *firestore.Client,
 	chatMessageImageUploader storage.FileUploader,
+	apiRootURL string,
 	userService user_service.UserService,
 	notificationService notification_service.NotificationService,
 ) ChatService {
 	return &ChatServiceImpl{
 		firestoreClient:          firestoreClient,
 		chatMessageImageUploader: chatMessageImageUploader,
+		apiRootURL:               apiRootURL,
 		userService:              userService,
 		notificationService:      notificationService,
 	}

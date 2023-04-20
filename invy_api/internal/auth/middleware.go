@@ -45,6 +45,22 @@ func GetCurrentUserID(ctx context.Context) uuid.UUID {
 	return currentUserID
 }
 
+func RequireAuthMiddleware(firebaseAuthClient *firebaseAuth.Client) func(next http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
+		requireAuth := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			if userID := GetCurrentUserID(r.Context()); userID == uuid.Nil {
+				w.WriteHeader(http.StatusUnauthorized)
+				_, _ = w.Write([]byte(`{"error": "unauthenticated"}`))
+				return
+			}
+			next.ServeHTTP(w, r)
+		})
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			Middleware(firebaseAuthClient)(requireAuth)
+		})
+	}
+}
+
 // Middleware authenticates user
 // This does not return error even if authentication failed
 func Middleware(firebaseAuthClient *firebaseAuth.Client) func(next http.Handler) http.Handler {

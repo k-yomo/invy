@@ -38,10 +38,11 @@ func (c *ChatServiceImpl) CreateChatMessageText(ctx context.Context, messageID u
 
 func (c *ChatServiceImpl) CreateChatMessageImage(ctx context.Context, messageID uuid.UUID, chatRoomID uuid.UUID, image io.Reader) (*gqlmodel.ChatMessage, error) {
 	fileName := fmt.Sprintf("%s-%s-%d", chatRoomID, messageID, time.Now().Unix())
-	imageURL, err := c.chatMessageImageUploader.Upload(ctx, fileName, image)
-	if err != nil {
+	if _, err := c.chatMessageImageUploader.Upload(ctx, fileName, image); err != nil {
 		return nil, errors.Wrap(err, "upload image in message")
 	}
+	imageURL := fmt.Sprintf("%s/chatRooms/%s/images/%s", c.apiRootURL, chatRoomID, fileName)
+
 	chatMessage := gqlmodel.ChatMessage{
 		ID:         messageID,
 		ChatRoomID: chatRoomID,
