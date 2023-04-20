@@ -1,8 +1,19 @@
 # See GitHub's docs for more information on this file:
 # https://docs.github.com/en/free-pro-team@latest/github/administering-a-repository/configuration-options-for-dependency-updates
 version: 2
+enable-beta-ecosystems: true
 updates:
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "weekly"
+
+#  - package-ecosystem: "gomod"
+#    directory: "/"
+#    schedule:
+#      interval: "weekly"
+#
+#  - package-ecosystem: "pub"
+#    directory: "/app"
+#    schedule:
+#      interval: "weekly"
