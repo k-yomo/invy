@@ -56,7 +56,7 @@ func RequireAuthMiddleware(firebaseAuthClient *firebaseAuth.Client) func(next ht
 			next.ServeHTTP(w, r)
 		})
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			Middleware(firebaseAuthClient)(requireAuth)
+			Middleware(firebaseAuthClient)(requireAuth).ServeHTTP(w, r)
 		})
 	}
 }
