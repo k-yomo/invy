@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/k-yomo/invy/invy_api/handler"
+	"github.com/k-yomo/invy/invy_api/internal/device"
 	"github.com/k-yomo/invy/invy_api/service/chat_service"
 	"github.com/k-yomo/invy/invy_api/service/notification_service"
 	"github.com/k-yomo/invy/invy_api/service/user_service"
@@ -36,7 +37,6 @@ import (
 	"github.com/k-yomo/invy/invy_api/graph/loader"
 	"github.com/k-yomo/invy/invy_api/internal/auth"
 	"github.com/k-yomo/invy/invy_api/internal/config"
-	"github.com/k-yomo/invy/invy_api/internal/device"
 	"github.com/k-yomo/invy/invy_api/query"
 	"github.com/k-yomo/invy/pkg/logging"
 	"github.com/k-yomo/invy/pkg/requestutil"
@@ -208,7 +208,10 @@ func main() {
 	gqlServer.Use(logging.GraphQLResponseInterceptor{})
 
 	r := newBaseRouter(appConfig, logger, firebaseAuthClient)
-	r.With(loader.Middleware(entDB)).Handle("/query", gqlServer)
+	r.With(
+		device.Middleware,
+		loader.Middleware(entDB),
+	).Handle("/query", gqlServer)
 	r.With(auth.RequireAuthMiddleware(firebaseAuthClient)).Route("/", func(r chi.Router) {
 		chatImageHandler := handler.NewChatImageHandler(chatService, gcsClient, appConfig.GCSChatMessageImageBucketName)
 		r.Get("/chatRooms/{chatRoomID}/images/{object}", chatImageHandler.HandleGetChatImage)
@@ -252,7 +255,6 @@ func newBaseRouter(appConfig *config.AppConfig, logger *zap.Logger, firebaseAuth
 		tracing.HTTPMiddleware,
 		logging.NewMiddleware(appConfig.GCPProjectID, logger),
 		auth.Middleware(firebaseAuthClient),
-		device.Middleware,
 	)
 	return r
 }
