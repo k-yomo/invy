@@ -19,11 +19,8 @@ import (
 // UserLocationQuery is the builder for querying UserLocation entities.
 type UserLocationQuery struct {
 	config
-	limit      *int
-	offset     *int
-	unique     *bool
-	order      []OrderFunc
-	fields     []string
+	ctx        *QueryContext
+	order      []userlocation.OrderOption
 	inters     []Interceptor
 	predicates []predicate.UserLocation
 	withUser   *UserQuery
@@ -42,25 +39,25 @@ func (ulq *UserLocationQuery) Where(ps ...predicate.UserLocation) *UserLocationQ
 
 // Limit the number of records to be returned by this query.
 func (ulq *UserLocationQuery) Limit(limit int) *UserLocationQuery {
-	ulq.limit = &limit
+	ulq.ctx.Limit = &limit
 	return ulq
 }
 
 // Offset to start from.
 func (ulq *UserLocationQuery) Offset(offset int) *UserLocationQuery {
-	ulq.offset = &offset
+	ulq.ctx.Offset = &offset
 	return ulq
 }
 
 // Unique configures the query builder to filter duplicate records on query.
 // By default, unique is set to true, and can be disabled using this method.
 func (ulq *UserLocationQuery) Unique(unique bool) *UserLocationQuery {
-	ulq.unique = &unique
+	ulq.ctx.Unique = &unique
 	return ulq
 }
 
 // Order specifies how the records should be ordered.
-func (ulq *UserLocationQuery) Order(o ...OrderFunc) *UserLocationQuery {
+func (ulq *UserLocationQuery) Order(o ...userlocation.OrderOption) *UserLocationQuery {
 	ulq.order = append(ulq.order, o...)
 	return ulq
 }
@@ -90,7 +87,7 @@ func (ulq *UserLocationQuery) QueryUser() *UserQuery {
 // First returns the first UserLocation entity from the query.
 // Returns a *NotFoundError when no UserLocation was found.
 func (ulq *UserLocationQuery) First(ctx context.Context) (*UserLocation, error) {
-	nodes, err := ulq.Limit(1).All(newQueryContext(ctx, TypeUserLocation, "First"))
+	nodes, err := ulq.Limit(1).All(setContextOp(ctx, ulq.ctx, "First"))
 	if err != nil {
 		return nil, err
 	}
@@ -113,7 +110,7 @@ func (ulq *UserLocationQuery) FirstX(ctx context.Context) *UserLocation {
 // Returns a *NotFoundError when no UserLocation ID was found.
 func (ulq *UserLocationQuery) FirstID(ctx context.Context) (id uuid.UUID, err error) {
 	var ids []uuid.UUID
-	if ids, err = ulq.Limit(1).IDs(newQueryContext(ctx, TypeUserLocation, "FirstID")); err != nil {
+	if ids, err = ulq.Limit(1).IDs(setContextOp(ctx, ulq.ctx, "FirstID")); err != nil {
 		return
 	}
 	if len(ids) == 0 {
@@ -136,7 +133,7 @@ func (ulq *UserLocationQuery) FirstIDX(ctx context.Context) uuid.UUID {
 // Returns a *NotSingularError when more than one UserLocation entity is found.
 // Returns a *NotFoundError when no UserLocation entities are found.
 func (ulq *UserLocationQuery) Only(ctx context.Context) (*UserLocation, error) {
-	nodes, err := ulq.Limit(2).All(newQueryContext(ctx, TypeUserLocation, "Only"))
+	nodes, err := ulq.Limit(2).All(setContextOp(ctx, ulq.ctx, "Only"))
 	if err != nil {
 		return nil, err
 	}
@@ -164,7 +161,7 @@ func (ulq *UserLocationQuery) OnlyX(ctx context.Context) *UserLocation {
 // Returns a *NotFoundError when no entities are found.
 func (ulq *UserLocationQuery) OnlyID(ctx context.Context) (id uuid.UUID, err error) {
 	var ids []uuid.UUID
-	if ids, err = ulq.Limit(2).IDs(newQueryContext(ctx, TypeUserLocation, "OnlyID")); err != nil {
+	if ids, err = ulq.Limit(2).IDs(setContextOp(ctx, ulq.ctx, "OnlyID")); err != nil {
 		return
 	}
 	switch len(ids) {
@@ -189,7 +186,7 @@ func (ulq *UserLocationQuery) OnlyIDX(ctx context.Context) uuid.UUID {
 
 // All executes the query and returns a list of UserLocations.
 func (ulq *UserLocationQuery) All(ctx context.Context) ([]*UserLocation, error) {
-	ctx = newQueryContext(ctx, TypeUserLocation, "All")
+	ctx = setContextOp(ctx, ulq.ctx, "All")
 	if err := ulq.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
@@ -207,10 +204,12 @@ func (ulq *UserLocationQuery) AllX(ctx context.Context) []*UserLocation {
 }
 
 // IDs executes the query and returns a list of UserLocation IDs.
-func (ulq *UserLocationQuery) IDs(ctx context.Context) ([]uuid.UUID, error) {
-	var ids []uuid.UUID
-	ctx = newQueryContext(ctx, TypeUserLocation, "IDs")
-	if err := ulq.Select(userlocation.FieldID).Scan(ctx, &ids); err != nil {
+func (ulq *UserLocationQuery) IDs(ctx context.Context) (ids []uuid.UUID, err error) {
+	if ulq.ctx.Unique == nil && ulq.path != nil {
+		ulq.Unique(true)
+	}
+	ctx = setContextOp(ctx, ulq.ctx, "IDs")
+	if err = ulq.Select(userlocation.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
 	return ids, nil
@@ -227,7 +226,7 @@ func (ulq *UserLocationQuery) IDsX(ctx context.Context) []uuid.UUID {
 
 // Count returns the count of the given query.
 func (ulq *UserLocationQuery) Count(ctx context.Context) (int, error) {
-	ctx = newQueryContext(ctx, TypeUserLocation, "Count")
+	ctx = setContextOp(ctx, ulq.ctx, "Count")
 	if err := ulq.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
@@ -245,7 +244,7 @@ func (ulq *UserLocationQuery) CountX(ctx context.Context) int {
 
 // Exist returns true if the query has elements in the graph.
 func (ulq *UserLocationQuery) Exist(ctx context.Context) (bool, error) {
-	ctx = newQueryContext(ctx, TypeUserLocation, "Exist")
+	ctx = setContextOp(ctx, ulq.ctx, "Exist")
 	switch _, err := ulq.FirstID(ctx); {
 	case IsNotFound(err):
 		return false, nil
@@ -273,16 +272,14 @@ func (ulq *UserLocationQuery) Clone() *UserLocationQuery {
 	}
 	return &UserLocationQuery{
 		config:     ulq.config,
-		limit:      ulq.limit,
-		offset:     ulq.offset,
-		order:      append([]OrderFunc{}, ulq.order...),
+		ctx:        ulq.ctx.Clone(),
+		order:      append([]userlocation.OrderOption{}, ulq.order...),
 		inters:     append([]Interceptor{}, ulq.inters...),
 		predicates: append([]predicate.UserLocation{}, ulq.predicates...),
 		withUser:   ulq.withUser.Clone(),
 		// clone intermediate query.
-		sql:    ulq.sql.Clone(),
-		path:   ulq.path,
-		unique: ulq.unique,
+		sql:  ulq.sql.Clone(),
+		path: ulq.path,
 	}
 }
 
@@ -312,9 +309,9 @@ func (ulq *UserLocationQuery) WithUser(opts ...func(*UserQuery)) *UserLocationQu
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (ulq *UserLocationQuery) GroupBy(field string, fields ...string) *UserLocationGroupBy {
-	ulq.fields = append([]string{field}, fields...)
+	ulq.ctx.Fields = append([]string{field}, fields...)
 	grbuild := &UserLocationGroupBy{build: ulq}
-	grbuild.flds = &ulq.fields
+	grbuild.flds = &ulq.ctx.Fields
 	grbuild.label = userlocation.Label
 	grbuild.scan = grbuild.Scan
 	return grbuild
@@ -333,10 +330,10 @@ func (ulq *UserLocationQuery) GroupBy(field string, fields ...string) *UserLocat
 //		Select(userlocation.FieldUserID).
 //		Scan(ctx, &v)
 func (ulq *UserLocationQuery) Select(fields ...string) *UserLocationSelect {
-	ulq.fields = append(ulq.fields, fields...)
+	ulq.ctx.Fields = append(ulq.ctx.Fields, fields...)
 	sbuild := &UserLocationSelect{UserLocationQuery: ulq}
 	sbuild.label = userlocation.Label
-	sbuild.flds, sbuild.scan = &ulq.fields, sbuild.Scan
+	sbuild.flds, sbuild.scan = &ulq.ctx.Fields, sbuild.Scan
 	return sbuild
 }
 
@@ -356,7 +353,7 @@ func (ulq *UserLocationQuery) prepareQuery(ctx context.Context) error {
 			}
 		}
 	}
-	for _, f := range ulq.fields {
+	for _, f := range ulq.ctx.Fields {
 		if !userlocation.ValidColumn(f) {
 			return &ValidationError{Name: f, err: fmt.Errorf("ent: invalid field %q for query", f)}
 		}
@@ -424,6 +421,9 @@ func (ulq *UserLocationQuery) loadUser(ctx context.Context, query *UserQuery, no
 		}
 		nodeids[fk] = append(nodeids[fk], nodes[i])
 	}
+	if len(ids) == 0 {
+		return nil
+	}
 	query.Where(user.IDIn(ids...))
 	neighbors, err := query.All(ctx)
 	if err != nil {
@@ -446,36 +446,31 @@ func (ulq *UserLocationQuery) sqlCount(ctx context.Context) (int, error) {
 	if len(ulq.modifiers) > 0 {
 		_spec.Modifiers = ulq.modifiers
 	}
-	_spec.Node.Columns = ulq.fields
-	if len(ulq.fields) > 0 {
-		_spec.Unique = ulq.unique != nil && *ulq.unique
+	_spec.Node.Columns = ulq.ctx.Fields
+	if len(ulq.ctx.Fields) > 0 {
+		_spec.Unique = ulq.ctx.Unique != nil && *ulq.ctx.Unique
 	}
 	return sqlgraph.CountNodes(ctx, ulq.driver, _spec)
 }
 
 func (ulq *UserLocationQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := &sqlgraph.QuerySpec{
-		Node: &sqlgraph.NodeSpec{
-			Table:   userlocation.Table,
-			Columns: userlocation.Columns,
-			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
-				Column: userlocation.FieldID,
-			},
-		},
-		From:   ulq.sql,
-		Unique: true,
-	}
-	if unique := ulq.unique; unique != nil {
+	_spec := sqlgraph.NewQuerySpec(userlocation.Table, userlocation.Columns, sqlgraph.NewFieldSpec(userlocation.FieldID, field.TypeUUID))
+	_spec.From = ulq.sql
+	if unique := ulq.ctx.Unique; unique != nil {
 		_spec.Unique = *unique
+	} else if ulq.path != nil {
+		_spec.Unique = true
 	}
-	if fields := ulq.fields; len(fields) > 0 {
+	if fields := ulq.ctx.Fields; len(fields) > 0 {
 		_spec.Node.Columns = make([]string, 0, len(fields))
 		_spec.Node.Columns = append(_spec.Node.Columns, userlocation.FieldID)
 		for i := range fields {
 			if fields[i] != userlocation.FieldID {
 				_spec.Node.Columns = append(_spec.Node.Columns, fields[i])
 			}
+		}
+		if ulq.withUser != nil {
+			_spec.Node.AddColumnOnce(userlocation.FieldUserID)
 		}
 	}
 	if ps := ulq.predicates; len(ps) > 0 {
@@ -485,10 +480,10 @@ func (ulq *UserLocationQuery) querySpec() *sqlgraph.QuerySpec {
 			}
 		}
 	}
-	if limit := ulq.limit; limit != nil {
+	if limit := ulq.ctx.Limit; limit != nil {
 		_spec.Limit = *limit
 	}
-	if offset := ulq.offset; offset != nil {
+	if offset := ulq.ctx.Offset; offset != nil {
 		_spec.Offset = *offset
 	}
 	if ps := ulq.order; len(ps) > 0 {
@@ -504,7 +499,7 @@ func (ulq *UserLocationQuery) querySpec() *sqlgraph.QuerySpec {
 func (ulq *UserLocationQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	builder := sql.Dialect(ulq.driver.Dialect())
 	t1 := builder.Table(userlocation.Table)
-	columns := ulq.fields
+	columns := ulq.ctx.Fields
 	if len(columns) == 0 {
 		columns = userlocation.Columns
 	}
@@ -513,7 +508,7 @@ func (ulq *UserLocationQuery) sqlQuery(ctx context.Context) *sql.Selector {
 		selector = ulq.sql
 		selector.Select(selector.Columns(columns...)...)
 	}
-	if ulq.unique != nil && *ulq.unique {
+	if ulq.ctx.Unique != nil && *ulq.ctx.Unique {
 		selector.Distinct()
 	}
 	for _, p := range ulq.predicates {
@@ -522,12 +517,12 @@ func (ulq *UserLocationQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	for _, p := range ulq.order {
 		p(selector)
 	}
-	if offset := ulq.offset; offset != nil {
+	if offset := ulq.ctx.Offset; offset != nil {
 		// limit is mandatory for offset clause. We start
 		// with default value, and override it below if needed.
 		selector.Offset(*offset).Limit(math.MaxInt32)
 	}
-	if limit := ulq.limit; limit != nil {
+	if limit := ulq.ctx.Limit; limit != nil {
 		selector.Limit(*limit)
 	}
 	return selector
@@ -547,7 +542,7 @@ func (ulgb *UserLocationGroupBy) Aggregate(fns ...AggregateFunc) *UserLocationGr
 
 // Scan applies the selector query and scans the result into the given value.
 func (ulgb *UserLocationGroupBy) Scan(ctx context.Context, v any) error {
-	ctx = newQueryContext(ctx, TypeUserLocation, "GroupBy")
+	ctx = setContextOp(ctx, ulgb.build.ctx, "GroupBy")
 	if err := ulgb.build.prepareQuery(ctx); err != nil {
 		return err
 	}
@@ -595,7 +590,7 @@ func (uls *UserLocationSelect) Aggregate(fns ...AggregateFunc) *UserLocationSele
 
 // Scan applies the selector query and scans the result into the given value.
 func (uls *UserLocationSelect) Scan(ctx context.Context, v any) error {
-	ctx = newQueryContext(ctx, TypeUserLocation, "Select")
+	ctx = setContextOp(ctx, uls.ctx, "Select")
 	if err := uls.prepareQuery(ctx); err != nil {
 		return err
 	}

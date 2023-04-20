@@ -40,15 +40,7 @@ func (ubd *UserBlockDelete) ExecX(ctx context.Context) int {
 }
 
 func (ubd *UserBlockDelete) sqlExec(ctx context.Context) (int, error) {
-	_spec := &sqlgraph.DeleteSpec{
-		Node: &sqlgraph.NodeSpec{
-			Table: userblock.Table,
-			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
-				Column: userblock.FieldID,
-			},
-		},
-	}
+	_spec := sqlgraph.NewDeleteSpec(userblock.Table, sqlgraph.NewFieldSpec(userblock.FieldID, field.TypeUUID))
 	if ps := ubd.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -69,6 +61,12 @@ type UserBlockDeleteOne struct {
 	ubd *UserBlockDelete
 }
 
+// Where appends a list predicates to the UserBlockDelete builder.
+func (ubdo *UserBlockDeleteOne) Where(ps ...predicate.UserBlock) *UserBlockDeleteOne {
+	ubdo.ubd.mutation.Where(ps...)
+	return ubdo
+}
+
 // Exec executes the deletion query.
 func (ubdo *UserBlockDeleteOne) Exec(ctx context.Context) error {
 	n, err := ubdo.ubd.Exec(ctx)
@@ -84,5 +82,7 @@ func (ubdo *UserBlockDeleteOne) Exec(ctx context.Context) error {
 
 // ExecX is like Exec, but panics if an error occurs.
 func (ubdo *UserBlockDeleteOne) ExecX(ctx context.Context) {
-	ubdo.ubd.ExecX(ctx)
+	if err := ubdo.Exec(ctx); err != nil {
+		panic(err)
+	}
 }

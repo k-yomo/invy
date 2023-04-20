@@ -11,6 +11,10 @@ import (
 	"github.com/google/uuid"
 	"github.com/k-yomo/invy/invy_api/ent/migrate"
 
+	"entgo.io/ent"
+	"entgo.io/ent/dialect"
+	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/k-yomo/invy/invy_api/ent/account"
 	"github.com/k-yomo/invy/invy_api/ent/friendgroup"
 	"github.com/k-yomo/invy/invy_api/ent/friendship"
@@ -27,10 +31,6 @@ import (
 	"github.com/k-yomo/invy/invy_api/ent/userlocationhistory"
 	"github.com/k-yomo/invy/invy_api/ent/usermute"
 	"github.com/k-yomo/invy/invy_api/ent/userprofile"
-
-	"entgo.io/ent/dialect"
-	"entgo.io/ent/dialect/sql"
-	"entgo.io/ent/dialect/sql/sqlgraph"
 )
 
 // Client is the client that holds all ent builders.
@@ -99,6 +99,55 @@ func (c *Client) init() {
 	c.UserLocationHistory = NewUserLocationHistoryClient(c.config)
 	c.UserMute = NewUserMuteClient(c.config)
 	c.UserProfile = NewUserProfileClient(c.config)
+}
+
+type (
+	// config is the configuration for the client and its builder.
+	config struct {
+		// driver used for executing database requests.
+		driver dialect.Driver
+		// debug enable a debug logging.
+		debug bool
+		// log used for logging on debug mode.
+		log func(...any)
+		// hooks to execute on mutations.
+		hooks *hooks
+		// interceptors to execute on queries.
+		inters *inters
+	}
+	// Option function to configure the client.
+	Option func(*config)
+)
+
+// options applies the options on the config object.
+func (c *config) options(opts ...Option) {
+	for _, opt := range opts {
+		opt(c)
+	}
+	if c.debug {
+		c.driver = dialect.Debug(c.driver, c.log)
+	}
+}
+
+// Debug enables debug logging on the ent.Driver.
+func Debug() Option {
+	return func(c *config) {
+		c.debug = true
+	}
+}
+
+// Log sets the logging function for debug mode.
+func Log(fn func(...any)) Option {
+	return func(c *config) {
+		c.log = fn
+	}
+}
+
+// Driver configures the client driver.
+func Driver(driver dialect.Driver) Option {
+	return func(c *config) {
+		c.driver = driver
+	}
 }
 
 // Open opens a database/sql.DB specified by the driver name and
@@ -211,43 +260,27 @@ func (c *Client) Close() error {
 // Use adds the mutation hooks to all the entity clients.
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
-	c.Account.Use(hooks...)
-	c.FriendGroup.Use(hooks...)
-	c.Friendship.Use(hooks...)
-	c.FriendshipRequest.Use(hooks...)
-	c.Invitation.Use(hooks...)
-	c.InvitationAcceptance.Use(hooks...)
-	c.InvitationDenial.Use(hooks...)
-	c.InvitationUser.Use(hooks...)
-	c.PushNotificationToken.Use(hooks...)
-	c.User.Use(hooks...)
-	c.UserBlock.Use(hooks...)
-	c.UserFriendGroup.Use(hooks...)
-	c.UserLocation.Use(hooks...)
-	c.UserLocationHistory.Use(hooks...)
-	c.UserMute.Use(hooks...)
-	c.UserProfile.Use(hooks...)
+	for _, n := range []interface{ Use(...Hook) }{
+		c.Account, c.FriendGroup, c.Friendship, c.FriendshipRequest, c.Invitation,
+		c.InvitationAcceptance, c.InvitationDenial, c.InvitationUser,
+		c.PushNotificationToken, c.User, c.UserBlock, c.UserFriendGroup,
+		c.UserLocation, c.UserLocationHistory, c.UserMute, c.UserProfile,
+	} {
+		n.Use(hooks...)
+	}
 }
 
 // Intercept adds the query interceptors to all the entity clients.
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
-	c.Account.Intercept(interceptors...)
-	c.FriendGroup.Intercept(interceptors...)
-	c.Friendship.Intercept(interceptors...)
-	c.FriendshipRequest.Intercept(interceptors...)
-	c.Invitation.Intercept(interceptors...)
-	c.InvitationAcceptance.Intercept(interceptors...)
-	c.InvitationDenial.Intercept(interceptors...)
-	c.InvitationUser.Intercept(interceptors...)
-	c.PushNotificationToken.Intercept(interceptors...)
-	c.User.Intercept(interceptors...)
-	c.UserBlock.Intercept(interceptors...)
-	c.UserFriendGroup.Intercept(interceptors...)
-	c.UserLocation.Intercept(interceptors...)
-	c.UserLocationHistory.Intercept(interceptors...)
-	c.UserMute.Intercept(interceptors...)
-	c.UserProfile.Intercept(interceptors...)
+	for _, n := range []interface{ Intercept(...Interceptor) }{
+		c.Account, c.FriendGroup, c.Friendship, c.FriendshipRequest, c.Invitation,
+		c.InvitationAcceptance, c.InvitationDenial, c.InvitationUser,
+		c.PushNotificationToken, c.User, c.UserBlock, c.UserFriendGroup,
+		c.UserLocation, c.UserLocationHistory, c.UserMute, c.UserProfile,
+	} {
+		n.Intercept(interceptors...)
+	}
 }
 
 // Mutate implements the ent.Mutator interface.
@@ -306,7 +339,7 @@ func (c *AccountClient) Use(hooks ...Hook) {
 	c.hooks.Account = append(c.hooks.Account, hooks...)
 }
 
-// Use adds a list of query interceptors to the interceptors stack.
+// Intercept adds a list of query interceptors to the interceptors stack.
 // A call to `Intercept(f, g, h)` equals to `account.Intercept(f(g(h())))`.
 func (c *AccountClient) Intercept(interceptors ...Interceptor) {
 	c.inters.Account = append(c.inters.Account, interceptors...)
@@ -364,6 +397,7 @@ func (c *AccountClient) DeleteOneID(id uuid.UUID) *AccountDeleteOne {
 func (c *AccountClient) Query() *AccountQuery {
 	return &AccountQuery{
 		config: c.config,
+		ctx:    &QueryContext{Type: TypeAccount},
 		inters: c.Interceptors(),
 	}
 }
@@ -439,7 +473,7 @@ func (c *FriendGroupClient) Use(hooks ...Hook) {
 	c.hooks.FriendGroup = append(c.hooks.FriendGroup, hooks...)
 }
 
-// Use adds a list of query interceptors to the interceptors stack.
+// Intercept adds a list of query interceptors to the interceptors stack.
 // A call to `Intercept(f, g, h)` equals to `friendgroup.Intercept(f(g(h())))`.
 func (c *FriendGroupClient) Intercept(interceptors ...Interceptor) {
 	c.inters.FriendGroup = append(c.inters.FriendGroup, interceptors...)
@@ -497,6 +531,7 @@ func (c *FriendGroupClient) DeleteOneID(id uuid.UUID) *FriendGroupDeleteOne {
 func (c *FriendGroupClient) Query() *FriendGroupQuery {
 	return &FriendGroupQuery{
 		config: c.config,
+		ctx:    &QueryContext{Type: TypeFriendGroup},
 		inters: c.Interceptors(),
 	}
 }
@@ -604,7 +639,7 @@ func (c *FriendshipClient) Use(hooks ...Hook) {
 	c.hooks.Friendship = append(c.hooks.Friendship, hooks...)
 }
 
-// Use adds a list of query interceptors to the interceptors stack.
+// Intercept adds a list of query interceptors to the interceptors stack.
 // A call to `Intercept(f, g, h)` equals to `friendship.Intercept(f(g(h())))`.
 func (c *FriendshipClient) Intercept(interceptors ...Interceptor) {
 	c.inters.Friendship = append(c.inters.Friendship, interceptors...)
@@ -662,6 +697,7 @@ func (c *FriendshipClient) DeleteOneID(id uuid.UUID) *FriendshipDeleteOne {
 func (c *FriendshipClient) Query() *FriendshipQuery {
 	return &FriendshipQuery{
 		config: c.config,
+		ctx:    &QueryContext{Type: TypeFriendship},
 		inters: c.Interceptors(),
 	}
 }
@@ -753,7 +789,7 @@ func (c *FriendshipRequestClient) Use(hooks ...Hook) {
 	c.hooks.FriendshipRequest = append(c.hooks.FriendshipRequest, hooks...)
 }
 
-// Use adds a list of query interceptors to the interceptors stack.
+// Intercept adds a list of query interceptors to the interceptors stack.
 // A call to `Intercept(f, g, h)` equals to `friendshiprequest.Intercept(f(g(h())))`.
 func (c *FriendshipRequestClient) Intercept(interceptors ...Interceptor) {
 	c.inters.FriendshipRequest = append(c.inters.FriendshipRequest, interceptors...)
@@ -811,6 +847,7 @@ func (c *FriendshipRequestClient) DeleteOneID(id uuid.UUID) *FriendshipRequestDe
 func (c *FriendshipRequestClient) Query() *FriendshipRequestQuery {
 	return &FriendshipRequestQuery{
 		config: c.config,
+		ctx:    &QueryContext{Type: TypeFriendshipRequest},
 		inters: c.Interceptors(),
 	}
 }
@@ -902,7 +939,7 @@ func (c *InvitationClient) Use(hooks ...Hook) {
 	c.hooks.Invitation = append(c.hooks.Invitation, hooks...)
 }
 
-// Use adds a list of query interceptors to the interceptors stack.
+// Intercept adds a list of query interceptors to the interceptors stack.
 // A call to `Intercept(f, g, h)` equals to `invitation.Intercept(f(g(h())))`.
 func (c *InvitationClient) Intercept(interceptors ...Interceptor) {
 	c.inters.Invitation = append(c.inters.Invitation, interceptors...)
@@ -960,6 +997,7 @@ func (c *InvitationClient) DeleteOneID(id uuid.UUID) *InvitationDeleteOne {
 func (c *InvitationClient) Query() *InvitationQuery {
 	return &InvitationQuery{
 		config: c.config,
+		ctx:    &QueryContext{Type: TypeInvitation},
 		inters: c.Interceptors(),
 	}
 }
@@ -1083,7 +1121,7 @@ func (c *InvitationAcceptanceClient) Use(hooks ...Hook) {
 	c.hooks.InvitationAcceptance = append(c.hooks.InvitationAcceptance, hooks...)
 }
 
-// Use adds a list of query interceptors to the interceptors stack.
+// Intercept adds a list of query interceptors to the interceptors stack.
 // A call to `Intercept(f, g, h)` equals to `invitationacceptance.Intercept(f(g(h())))`.
 func (c *InvitationAcceptanceClient) Intercept(interceptors ...Interceptor) {
 	c.inters.InvitationAcceptance = append(c.inters.InvitationAcceptance, interceptors...)
@@ -1141,6 +1179,7 @@ func (c *InvitationAcceptanceClient) DeleteOneID(id uuid.UUID) *InvitationAccept
 func (c *InvitationAcceptanceClient) Query() *InvitationAcceptanceQuery {
 	return &InvitationAcceptanceQuery{
 		config: c.config,
+		ctx:    &QueryContext{Type: TypeInvitationAcceptance},
 		inters: c.Interceptors(),
 	}
 }
@@ -1232,7 +1271,7 @@ func (c *InvitationDenialClient) Use(hooks ...Hook) {
 	c.hooks.InvitationDenial = append(c.hooks.InvitationDenial, hooks...)
 }
 
-// Use adds a list of query interceptors to the interceptors stack.
+// Intercept adds a list of query interceptors to the interceptors stack.
 // A call to `Intercept(f, g, h)` equals to `invitationdenial.Intercept(f(g(h())))`.
 func (c *InvitationDenialClient) Intercept(interceptors ...Interceptor) {
 	c.inters.InvitationDenial = append(c.inters.InvitationDenial, interceptors...)
@@ -1290,6 +1329,7 @@ func (c *InvitationDenialClient) DeleteOneID(id uuid.UUID) *InvitationDenialDele
 func (c *InvitationDenialClient) Query() *InvitationDenialQuery {
 	return &InvitationDenialQuery{
 		config: c.config,
+		ctx:    &QueryContext{Type: TypeInvitationDenial},
 		inters: c.Interceptors(),
 	}
 }
@@ -1381,7 +1421,7 @@ func (c *InvitationUserClient) Use(hooks ...Hook) {
 	c.hooks.InvitationUser = append(c.hooks.InvitationUser, hooks...)
 }
 
-// Use adds a list of query interceptors to the interceptors stack.
+// Intercept adds a list of query interceptors to the interceptors stack.
 // A call to `Intercept(f, g, h)` equals to `invitationuser.Intercept(f(g(h())))`.
 func (c *InvitationUserClient) Intercept(interceptors ...Interceptor) {
 	c.inters.InvitationUser = append(c.inters.InvitationUser, interceptors...)
@@ -1439,6 +1479,7 @@ func (c *InvitationUserClient) DeleteOneID(id uuid.UUID) *InvitationUserDeleteOn
 func (c *InvitationUserClient) Query() *InvitationUserQuery {
 	return &InvitationUserQuery{
 		config: c.config,
+		ctx:    &QueryContext{Type: TypeInvitationUser},
 		inters: c.Interceptors(),
 	}
 }
@@ -1530,7 +1571,7 @@ func (c *PushNotificationTokenClient) Use(hooks ...Hook) {
 	c.hooks.PushNotificationToken = append(c.hooks.PushNotificationToken, hooks...)
 }
 
-// Use adds a list of query interceptors to the interceptors stack.
+// Intercept adds a list of query interceptors to the interceptors stack.
 // A call to `Intercept(f, g, h)` equals to `pushnotificationtoken.Intercept(f(g(h())))`.
 func (c *PushNotificationTokenClient) Intercept(interceptors ...Interceptor) {
 	c.inters.PushNotificationToken = append(c.inters.PushNotificationToken, interceptors...)
@@ -1588,6 +1629,7 @@ func (c *PushNotificationTokenClient) DeleteOneID(id uuid.UUID) *PushNotificatio
 func (c *PushNotificationTokenClient) Query() *PushNotificationTokenQuery {
 	return &PushNotificationTokenQuery{
 		config: c.config,
+		ctx:    &QueryContext{Type: TypePushNotificationToken},
 		inters: c.Interceptors(),
 	}
 }
@@ -1663,7 +1705,7 @@ func (c *UserClient) Use(hooks ...Hook) {
 	c.hooks.User = append(c.hooks.User, hooks...)
 }
 
-// Use adds a list of query interceptors to the interceptors stack.
+// Intercept adds a list of query interceptors to the interceptors stack.
 // A call to `Intercept(f, g, h)` equals to `user.Intercept(f(g(h())))`.
 func (c *UserClient) Intercept(interceptors ...Interceptor) {
 	c.inters.User = append(c.inters.User, interceptors...)
@@ -1721,6 +1763,7 @@ func (c *UserClient) DeleteOneID(id uuid.UUID) *UserDeleteOne {
 func (c *UserClient) Query() *UserQuery {
 	return &UserQuery{
 		config: c.config,
+		ctx:    &QueryContext{Type: TypeUser},
 		inters: c.Interceptors(),
 	}
 }
@@ -1956,7 +1999,7 @@ func (c *UserBlockClient) Use(hooks ...Hook) {
 	c.hooks.UserBlock = append(c.hooks.UserBlock, hooks...)
 }
 
-// Use adds a list of query interceptors to the interceptors stack.
+// Intercept adds a list of query interceptors to the interceptors stack.
 // A call to `Intercept(f, g, h)` equals to `userblock.Intercept(f(g(h())))`.
 func (c *UserBlockClient) Intercept(interceptors ...Interceptor) {
 	c.inters.UserBlock = append(c.inters.UserBlock, interceptors...)
@@ -2014,6 +2057,7 @@ func (c *UserBlockClient) DeleteOneID(id uuid.UUID) *UserBlockDeleteOne {
 func (c *UserBlockClient) Query() *UserBlockQuery {
 	return &UserBlockQuery{
 		config: c.config,
+		ctx:    &QueryContext{Type: TypeUserBlock},
 		inters: c.Interceptors(),
 	}
 }
@@ -2105,7 +2149,7 @@ func (c *UserFriendGroupClient) Use(hooks ...Hook) {
 	c.hooks.UserFriendGroup = append(c.hooks.UserFriendGroup, hooks...)
 }
 
-// Use adds a list of query interceptors to the interceptors stack.
+// Intercept adds a list of query interceptors to the interceptors stack.
 // A call to `Intercept(f, g, h)` equals to `userfriendgroup.Intercept(f(g(h())))`.
 func (c *UserFriendGroupClient) Intercept(interceptors ...Interceptor) {
 	c.inters.UserFriendGroup = append(c.inters.UserFriendGroup, interceptors...)
@@ -2163,6 +2207,7 @@ func (c *UserFriendGroupClient) DeleteOneID(id uuid.UUID) *UserFriendGroupDelete
 func (c *UserFriendGroupClient) Query() *UserFriendGroupQuery {
 	return &UserFriendGroupQuery{
 		config: c.config,
+		ctx:    &QueryContext{Type: TypeUserFriendGroup},
 		inters: c.Interceptors(),
 	}
 }
@@ -2254,7 +2299,7 @@ func (c *UserLocationClient) Use(hooks ...Hook) {
 	c.hooks.UserLocation = append(c.hooks.UserLocation, hooks...)
 }
 
-// Use adds a list of query interceptors to the interceptors stack.
+// Intercept adds a list of query interceptors to the interceptors stack.
 // A call to `Intercept(f, g, h)` equals to `userlocation.Intercept(f(g(h())))`.
 func (c *UserLocationClient) Intercept(interceptors ...Interceptor) {
 	c.inters.UserLocation = append(c.inters.UserLocation, interceptors...)
@@ -2312,6 +2357,7 @@ func (c *UserLocationClient) DeleteOneID(id uuid.UUID) *UserLocationDeleteOne {
 func (c *UserLocationClient) Query() *UserLocationQuery {
 	return &UserLocationQuery{
 		config: c.config,
+		ctx:    &QueryContext{Type: TypeUserLocation},
 		inters: c.Interceptors(),
 	}
 }
@@ -2387,7 +2433,7 @@ func (c *UserLocationHistoryClient) Use(hooks ...Hook) {
 	c.hooks.UserLocationHistory = append(c.hooks.UserLocationHistory, hooks...)
 }
 
-// Use adds a list of query interceptors to the interceptors stack.
+// Intercept adds a list of query interceptors to the interceptors stack.
 // A call to `Intercept(f, g, h)` equals to `userlocationhistory.Intercept(f(g(h())))`.
 func (c *UserLocationHistoryClient) Intercept(interceptors ...Interceptor) {
 	c.inters.UserLocationHistory = append(c.inters.UserLocationHistory, interceptors...)
@@ -2445,6 +2491,7 @@ func (c *UserLocationHistoryClient) DeleteOneID(id uuid.UUID) *UserLocationHisto
 func (c *UserLocationHistoryClient) Query() *UserLocationHistoryQuery {
 	return &UserLocationHistoryQuery{
 		config: c.config,
+		ctx:    &QueryContext{Type: TypeUserLocationHistory},
 		inters: c.Interceptors(),
 	}
 }
@@ -2520,7 +2567,7 @@ func (c *UserMuteClient) Use(hooks ...Hook) {
 	c.hooks.UserMute = append(c.hooks.UserMute, hooks...)
 }
 
-// Use adds a list of query interceptors to the interceptors stack.
+// Intercept adds a list of query interceptors to the interceptors stack.
 // A call to `Intercept(f, g, h)` equals to `usermute.Intercept(f(g(h())))`.
 func (c *UserMuteClient) Intercept(interceptors ...Interceptor) {
 	c.inters.UserMute = append(c.inters.UserMute, interceptors...)
@@ -2578,6 +2625,7 @@ func (c *UserMuteClient) DeleteOneID(id uuid.UUID) *UserMuteDeleteOne {
 func (c *UserMuteClient) Query() *UserMuteQuery {
 	return &UserMuteQuery{
 		config: c.config,
+		ctx:    &QueryContext{Type: TypeUserMute},
 		inters: c.Interceptors(),
 	}
 }
@@ -2669,7 +2717,7 @@ func (c *UserProfileClient) Use(hooks ...Hook) {
 	c.hooks.UserProfile = append(c.hooks.UserProfile, hooks...)
 }
 
-// Use adds a list of query interceptors to the interceptors stack.
+// Intercept adds a list of query interceptors to the interceptors stack.
 // A call to `Intercept(f, g, h)` equals to `userprofile.Intercept(f(g(h())))`.
 func (c *UserProfileClient) Intercept(interceptors ...Interceptor) {
 	c.inters.UserProfile = append(c.inters.UserProfile, interceptors...)
@@ -2727,6 +2775,7 @@ func (c *UserProfileClient) DeleteOneID(id uuid.UUID) *UserProfileDeleteOne {
 func (c *UserProfileClient) Query() *UserProfileQuery {
 	return &UserProfileQuery{
 		config: c.config,
+		ctx:    &QueryContext{Type: TypeUserProfile},
 		inters: c.Interceptors(),
 	}
 }
@@ -2785,3 +2834,19 @@ func (c *UserProfileClient) mutate(ctx context.Context, m *UserProfileMutation) 
 		return nil, fmt.Errorf("ent: unknown UserProfile mutation op: %q", m.Op())
 	}
 }
+
+// hooks and interceptors per client, for fast access.
+type (
+	hooks struct {
+		Account, FriendGroup, Friendship, FriendshipRequest, Invitation,
+		InvitationAcceptance, InvitationDenial, InvitationUser, PushNotificationToken,
+		User, UserBlock, UserFriendGroup, UserLocation, UserLocationHistory, UserMute,
+		UserProfile []ent.Hook
+	}
+	inters struct {
+		Account, FriendGroup, Friendship, FriendshipRequest, Invitation,
+		InvitationAcceptance, InvitationDenial, InvitationUser, PushNotificationToken,
+		User, UserBlock, UserFriendGroup, UserLocation, UserLocationHistory, UserMute,
+		UserProfile []ent.Interceptor
+	}
+)

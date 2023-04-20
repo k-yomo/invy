@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/google/uuid"
 	"github.com/k-yomo/invy/invy_api/ent/account"
@@ -28,7 +29,8 @@ type User struct {
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the UserQuery when eager-loading is set.
-	Edges UserEdges `json:"edges"`
+	Edges        UserEdges `json:"edges"`
+	selectValues sql.SelectValues
 }
 
 // UserEdges holds the relations/edges for other nodes in the graph.
@@ -194,7 +196,7 @@ func (*User) scanValues(columns []string) ([]any, error) {
 		case user.FieldID, user.FieldAccountID:
 			values[i] = new(uuid.UUID)
 		default:
-			return nil, fmt.Errorf("unexpected column %q for type User", columns[i])
+			values[i] = new(sql.UnknownType)
 		}
 	}
 	return values, nil
@@ -232,71 +234,79 @@ func (u *User) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				u.CreatedAt = value.Time
 			}
+		default:
+			u.selectValues.Set(columns[i], values[i])
 		}
 	}
 	return nil
 }
 
+// Value returns the ent.Value that was dynamically selected and assigned to the User.
+// This includes values selected through modifiers, order, etc.
+func (u *User) Value(name string) (ent.Value, error) {
+	return u.selectValues.Get(name)
+}
+
 // QueryAccount queries the "account" edge of the User entity.
 func (u *User) QueryAccount() *AccountQuery {
-	return (&UserClient{config: u.config}).QueryAccount(u)
+	return NewUserClient(u.config).QueryAccount(u)
 }
 
 // QueryUserProfile queries the "user_profile" edge of the User entity.
 func (u *User) QueryUserProfile() *UserProfileQuery {
-	return (&UserClient{config: u.config}).QueryUserProfile(u)
+	return NewUserClient(u.config).QueryUserProfile(u)
 }
 
 // QueryUserLocation queries the "user_location" edge of the User entity.
 func (u *User) QueryUserLocation() *UserLocationQuery {
-	return (&UserClient{config: u.config}).QueryUserLocation(u)
+	return NewUserClient(u.config).QueryUserLocation(u)
 }
 
 // QueryFriendUsers queries the "friend_users" edge of the User entity.
 func (u *User) QueryFriendUsers() *UserQuery {
-	return (&UserClient{config: u.config}).QueryFriendUsers(u)
+	return NewUserClient(u.config).QueryFriendUsers(u)
 }
 
 // QueryPushNotificationTokens queries the "push_notification_tokens" edge of the User entity.
 func (u *User) QueryPushNotificationTokens() *PushNotificationTokenQuery {
-	return (&UserClient{config: u.config}).QueryPushNotificationTokens(u)
+	return NewUserClient(u.config).QueryPushNotificationTokens(u)
 }
 
 // QueryFriendGroups queries the "friend_groups" edge of the User entity.
 func (u *User) QueryFriendGroups() *FriendGroupQuery {
-	return (&UserClient{config: u.config}).QueryFriendGroups(u)
+	return NewUserClient(u.config).QueryFriendGroups(u)
 }
 
 // QueryBelongingFriendGroups queries the "belonging_friend_groups" edge of the User entity.
 func (u *User) QueryBelongingFriendGroups() *FriendGroupQuery {
-	return (&UserClient{config: u.config}).QueryBelongingFriendGroups(u)
+	return NewUserClient(u.config).QueryBelongingFriendGroups(u)
 }
 
 // QueryInvitationAcceptances queries the "invitation_acceptances" edge of the User entity.
 func (u *User) QueryInvitationAcceptances() *InvitationAcceptanceQuery {
-	return (&UserClient{config: u.config}).QueryInvitationAcceptances(u)
+	return NewUserClient(u.config).QueryInvitationAcceptances(u)
 }
 
 // QueryInvitationDenials queries the "invitation_denials" edge of the User entity.
 func (u *User) QueryInvitationDenials() *InvitationDenialQuery {
-	return (&UserClient{config: u.config}).QueryInvitationDenials(u)
+	return NewUserClient(u.config).QueryInvitationDenials(u)
 }
 
 // QueryFriendships queries the "friendships" edge of the User entity.
 func (u *User) QueryFriendships() *FriendshipQuery {
-	return (&UserClient{config: u.config}).QueryFriendships(u)
+	return NewUserClient(u.config).QueryFriendships(u)
 }
 
 // QueryUserFriendGroups queries the "user_friend_groups" edge of the User entity.
 func (u *User) QueryUserFriendGroups() *UserFriendGroupQuery {
-	return (&UserClient{config: u.config}).QueryUserFriendGroups(u)
+	return NewUserClient(u.config).QueryUserFriendGroups(u)
 }
 
 // Update returns a builder for updating this User.
 // Note that you need to call User.Unwrap() before calling this method if this User
 // was returned from a transaction, and the transaction was committed or rolled back.
 func (u *User) Update() *UserUpdateOne {
-	return (&UserClient{config: u.config}).UpdateOne(u)
+	return NewUserClient(u.config).UpdateOne(u)
 }
 
 // Unwrap unwraps the User entity that was returned from a transaction after it was closed,
@@ -521,9 +531,3 @@ func (u *User) appendNamedUserFriendGroups(name string, edges ...*UserFriendGrou
 
 // Users is a parsable slice of User.
 type Users []*User
-
-func (u Users) config(cfg config) {
-	for _i := range u {
-		u[_i].config = cfg
-	}
-}

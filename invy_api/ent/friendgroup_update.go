@@ -189,16 +189,7 @@ func (fgu *FriendGroupUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if err := fgu.check(); err != nil {
 		return n, err
 	}
-	_spec := &sqlgraph.UpdateSpec{
-		Node: &sqlgraph.NodeSpec{
-			Table:   friendgroup.Table,
-			Columns: friendgroup.Columns,
-			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
-				Column: friendgroup.FieldID,
-			},
-		},
-	}
+	_spec := sqlgraph.NewUpdateSpec(friendgroup.Table, friendgroup.Columns, sqlgraph.NewFieldSpec(friendgroup.FieldID, field.TypeUUID))
 	if ps := fgu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -226,10 +217,7 @@ func (fgu *FriendGroupUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: friendgroup.FriendUsersPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeUUID,
-					Column: user.FieldID,
-				},
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
 			},
 		}
 		createE := &UserFriendGroupCreate{config: fgu.config, mutation: newUserFriendGroupMutation(fgu.config, OpCreate)}
@@ -249,10 +237,7 @@ func (fgu *FriendGroupUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: friendgroup.FriendUsersPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeUUID,
-					Column: user.FieldID,
-				},
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -275,10 +260,7 @@ func (fgu *FriendGroupUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: friendgroup.FriendUsersPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeUUID,
-					Column: user.FieldID,
-				},
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -301,10 +283,7 @@ func (fgu *FriendGroupUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{friendgroup.UserFriendGroupsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeUUID,
-					Column: userfriendgroup.FieldID,
-				},
+				IDSpec: sqlgraph.NewFieldSpec(userfriendgroup.FieldID, field.TypeUUID),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -317,10 +296,7 @@ func (fgu *FriendGroupUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{friendgroup.UserFriendGroupsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeUUID,
-					Column: userfriendgroup.FieldID,
-				},
+				IDSpec: sqlgraph.NewFieldSpec(userfriendgroup.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -336,10 +312,7 @@ func (fgu *FriendGroupUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{friendgroup.UserFriendGroupsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeUUID,
-					Column: userfriendgroup.FieldID,
-				},
+				IDSpec: sqlgraph.NewFieldSpec(userfriendgroup.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -477,6 +450,12 @@ func (fguo *FriendGroupUpdateOne) RemoveUserFriendGroups(u ...*UserFriendGroup) 
 	return fguo.RemoveUserFriendGroupIDs(ids...)
 }
 
+// Where appends a list predicates to the FriendGroupUpdate builder.
+func (fguo *FriendGroupUpdateOne) Where(ps ...predicate.FriendGroup) *FriendGroupUpdateOne {
+	fguo.mutation.Where(ps...)
+	return fguo
+}
+
 // Select allows selecting one or more fields (columns) of the returned entity.
 // The default is selecting all fields defined in the entity schema.
 func (fguo *FriendGroupUpdateOne) Select(field string, fields ...string) *FriendGroupUpdateOne {
@@ -532,16 +511,7 @@ func (fguo *FriendGroupUpdateOne) sqlSave(ctx context.Context) (_node *FriendGro
 	if err := fguo.check(); err != nil {
 		return _node, err
 	}
-	_spec := &sqlgraph.UpdateSpec{
-		Node: &sqlgraph.NodeSpec{
-			Table:   friendgroup.Table,
-			Columns: friendgroup.Columns,
-			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
-				Column: friendgroup.FieldID,
-			},
-		},
-	}
+	_spec := sqlgraph.NewUpdateSpec(friendgroup.Table, friendgroup.Columns, sqlgraph.NewFieldSpec(friendgroup.FieldID, field.TypeUUID))
 	id, ok := fguo.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "FriendGroup.id" for update`)}
@@ -586,10 +556,7 @@ func (fguo *FriendGroupUpdateOne) sqlSave(ctx context.Context) (_node *FriendGro
 			Columns: friendgroup.FriendUsersPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeUUID,
-					Column: user.FieldID,
-				},
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
 			},
 		}
 		createE := &UserFriendGroupCreate{config: fguo.config, mutation: newUserFriendGroupMutation(fguo.config, OpCreate)}
@@ -609,10 +576,7 @@ func (fguo *FriendGroupUpdateOne) sqlSave(ctx context.Context) (_node *FriendGro
 			Columns: friendgroup.FriendUsersPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeUUID,
-					Column: user.FieldID,
-				},
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -635,10 +599,7 @@ func (fguo *FriendGroupUpdateOne) sqlSave(ctx context.Context) (_node *FriendGro
 			Columns: friendgroup.FriendUsersPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeUUID,
-					Column: user.FieldID,
-				},
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -661,10 +622,7 @@ func (fguo *FriendGroupUpdateOne) sqlSave(ctx context.Context) (_node *FriendGro
 			Columns: []string{friendgroup.UserFriendGroupsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeUUID,
-					Column: userfriendgroup.FieldID,
-				},
+				IDSpec: sqlgraph.NewFieldSpec(userfriendgroup.FieldID, field.TypeUUID),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -677,10 +635,7 @@ func (fguo *FriendGroupUpdateOne) sqlSave(ctx context.Context) (_node *FriendGro
 			Columns: []string{friendgroup.UserFriendGroupsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeUUID,
-					Column: userfriendgroup.FieldID,
-				},
+				IDSpec: sqlgraph.NewFieldSpec(userfriendgroup.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -696,10 +651,7 @@ func (fguo *FriendGroupUpdateOne) sqlSave(ctx context.Context) (_node *FriendGro
 			Columns: []string{friendgroup.UserFriendGroupsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeUUID,
-					Column: userfriendgroup.FieldID,
-				},
+				IDSpec: sqlgraph.NewFieldSpec(userfriendgroup.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {

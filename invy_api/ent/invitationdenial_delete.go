@@ -40,15 +40,7 @@ func (idd *InvitationDenialDelete) ExecX(ctx context.Context) int {
 }
 
 func (idd *InvitationDenialDelete) sqlExec(ctx context.Context) (int, error) {
-	_spec := &sqlgraph.DeleteSpec{
-		Node: &sqlgraph.NodeSpec{
-			Table: invitationdenial.Table,
-			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
-				Column: invitationdenial.FieldID,
-			},
-		},
-	}
+	_spec := sqlgraph.NewDeleteSpec(invitationdenial.Table, sqlgraph.NewFieldSpec(invitationdenial.FieldID, field.TypeUUID))
 	if ps := idd.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -69,6 +61,12 @@ type InvitationDenialDeleteOne struct {
 	idd *InvitationDenialDelete
 }
 
+// Where appends a list predicates to the InvitationDenialDelete builder.
+func (iddo *InvitationDenialDeleteOne) Where(ps ...predicate.InvitationDenial) *InvitationDenialDeleteOne {
+	iddo.idd.mutation.Where(ps...)
+	return iddo
+}
+
 // Exec executes the deletion query.
 func (iddo *InvitationDenialDeleteOne) Exec(ctx context.Context) error {
 	n, err := iddo.idd.Exec(ctx)
@@ -84,5 +82,7 @@ func (iddo *InvitationDenialDeleteOne) Exec(ctx context.Context) error {
 
 // ExecX is like Exec, but panics if an error occurs.
 func (iddo *InvitationDenialDeleteOne) ExecX(ctx context.Context) {
-	iddo.idd.ExecX(ctx)
+	if err := iddo.Exec(ctx); err != nil {
+		panic(err)
+	}
 }

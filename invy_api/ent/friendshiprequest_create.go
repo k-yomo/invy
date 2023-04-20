@@ -178,13 +178,7 @@ func (frc *FriendshipRequestCreate) sqlSave(ctx context.Context) (*FriendshipReq
 func (frc *FriendshipRequestCreate) createSpec() (*FriendshipRequest, *sqlgraph.CreateSpec) {
 	var (
 		_node = &FriendshipRequest{config: frc.config}
-		_spec = &sqlgraph.CreateSpec{
-			Table: friendshiprequest.Table,
-			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
-				Column: friendshiprequest.FieldID,
-			},
-		}
+		_spec = sqlgraph.NewCreateSpec(friendshiprequest.Table, sqlgraph.NewFieldSpec(friendshiprequest.FieldID, field.TypeUUID))
 	)
 	_spec.OnConflict = frc.conflict
 	if id, ok := frc.mutation.ID(); ok {
@@ -203,10 +197,7 @@ func (frc *FriendshipRequestCreate) createSpec() (*FriendshipRequest, *sqlgraph.
 			Columns: []string{friendshiprequest.FromUsersColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeUUID,
-					Column: user.FieldID,
-				},
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -223,10 +214,7 @@ func (frc *FriendshipRequestCreate) createSpec() (*FriendshipRequest, *sqlgraph.
 			Columns: []string{friendshiprequest.ToUsersColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeUUID,
-					Column: user.FieldID,
-				},
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -407,8 +395,8 @@ func (frcb *FriendshipRequestCreateBulk) Save(ctx context.Context) ([]*Friendshi
 					return nil, err
 				}
 				builder.mutation = mutation
-				nodes[i], specs[i] = builder.createSpec()
 				var err error
+				nodes[i], specs[i] = builder.createSpec()
 				if i < len(mutators)-1 {
 					_, err = mutators[i+1].Mutate(root, frcb.builders[i+1].mutation)
 				} else {

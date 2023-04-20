@@ -20,11 +20,8 @@ import (
 // InvitationDenialQuery is the builder for querying InvitationDenial entities.
 type InvitationDenialQuery struct {
 	config
-	limit          *int
-	offset         *int
-	unique         *bool
-	order          []OrderFunc
-	fields         []string
+	ctx            *QueryContext
+	order          []invitationdenial.OrderOption
 	inters         []Interceptor
 	predicates     []predicate.InvitationDenial
 	withUser       *UserQuery
@@ -44,25 +41,25 @@ func (idq *InvitationDenialQuery) Where(ps ...predicate.InvitationDenial) *Invit
 
 // Limit the number of records to be returned by this query.
 func (idq *InvitationDenialQuery) Limit(limit int) *InvitationDenialQuery {
-	idq.limit = &limit
+	idq.ctx.Limit = &limit
 	return idq
 }
 
 // Offset to start from.
 func (idq *InvitationDenialQuery) Offset(offset int) *InvitationDenialQuery {
-	idq.offset = &offset
+	idq.ctx.Offset = &offset
 	return idq
 }
 
 // Unique configures the query builder to filter duplicate records on query.
 // By default, unique is set to true, and can be disabled using this method.
 func (idq *InvitationDenialQuery) Unique(unique bool) *InvitationDenialQuery {
-	idq.unique = &unique
+	idq.ctx.Unique = &unique
 	return idq
 }
 
 // Order specifies how the records should be ordered.
-func (idq *InvitationDenialQuery) Order(o ...OrderFunc) *InvitationDenialQuery {
+func (idq *InvitationDenialQuery) Order(o ...invitationdenial.OrderOption) *InvitationDenialQuery {
 	idq.order = append(idq.order, o...)
 	return idq
 }
@@ -114,7 +111,7 @@ func (idq *InvitationDenialQuery) QueryInvitation() *InvitationQuery {
 // First returns the first InvitationDenial entity from the query.
 // Returns a *NotFoundError when no InvitationDenial was found.
 func (idq *InvitationDenialQuery) First(ctx context.Context) (*InvitationDenial, error) {
-	nodes, err := idq.Limit(1).All(newQueryContext(ctx, TypeInvitationDenial, "First"))
+	nodes, err := idq.Limit(1).All(setContextOp(ctx, idq.ctx, "First"))
 	if err != nil {
 		return nil, err
 	}
@@ -137,7 +134,7 @@ func (idq *InvitationDenialQuery) FirstX(ctx context.Context) *InvitationDenial 
 // Returns a *NotFoundError when no InvitationDenial ID was found.
 func (idq *InvitationDenialQuery) FirstID(ctx context.Context) (id uuid.UUID, err error) {
 	var ids []uuid.UUID
-	if ids, err = idq.Limit(1).IDs(newQueryContext(ctx, TypeInvitationDenial, "FirstID")); err != nil {
+	if ids, err = idq.Limit(1).IDs(setContextOp(ctx, idq.ctx, "FirstID")); err != nil {
 		return
 	}
 	if len(ids) == 0 {
@@ -160,7 +157,7 @@ func (idq *InvitationDenialQuery) FirstIDX(ctx context.Context) uuid.UUID {
 // Returns a *NotSingularError when more than one InvitationDenial entity is found.
 // Returns a *NotFoundError when no InvitationDenial entities are found.
 func (idq *InvitationDenialQuery) Only(ctx context.Context) (*InvitationDenial, error) {
-	nodes, err := idq.Limit(2).All(newQueryContext(ctx, TypeInvitationDenial, "Only"))
+	nodes, err := idq.Limit(2).All(setContextOp(ctx, idq.ctx, "Only"))
 	if err != nil {
 		return nil, err
 	}
@@ -188,7 +185,7 @@ func (idq *InvitationDenialQuery) OnlyX(ctx context.Context) *InvitationDenial {
 // Returns a *NotFoundError when no entities are found.
 func (idq *InvitationDenialQuery) OnlyID(ctx context.Context) (id uuid.UUID, err error) {
 	var ids []uuid.UUID
-	if ids, err = idq.Limit(2).IDs(newQueryContext(ctx, TypeInvitationDenial, "OnlyID")); err != nil {
+	if ids, err = idq.Limit(2).IDs(setContextOp(ctx, idq.ctx, "OnlyID")); err != nil {
 		return
 	}
 	switch len(ids) {
@@ -213,7 +210,7 @@ func (idq *InvitationDenialQuery) OnlyIDX(ctx context.Context) uuid.UUID {
 
 // All executes the query and returns a list of InvitationDenials.
 func (idq *InvitationDenialQuery) All(ctx context.Context) ([]*InvitationDenial, error) {
-	ctx = newQueryContext(ctx, TypeInvitationDenial, "All")
+	ctx = setContextOp(ctx, idq.ctx, "All")
 	if err := idq.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
@@ -231,10 +228,12 @@ func (idq *InvitationDenialQuery) AllX(ctx context.Context) []*InvitationDenial 
 }
 
 // IDs executes the query and returns a list of InvitationDenial IDs.
-func (idq *InvitationDenialQuery) IDs(ctx context.Context) ([]uuid.UUID, error) {
-	var ids []uuid.UUID
-	ctx = newQueryContext(ctx, TypeInvitationDenial, "IDs")
-	if err := idq.Select(invitationdenial.FieldID).Scan(ctx, &ids); err != nil {
+func (idq *InvitationDenialQuery) IDs(ctx context.Context) (ids []uuid.UUID, err error) {
+	if idq.ctx.Unique == nil && idq.path != nil {
+		idq.Unique(true)
+	}
+	ctx = setContextOp(ctx, idq.ctx, "IDs")
+	if err = idq.Select(invitationdenial.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
 	return ids, nil
@@ -251,7 +250,7 @@ func (idq *InvitationDenialQuery) IDsX(ctx context.Context) []uuid.UUID {
 
 // Count returns the count of the given query.
 func (idq *InvitationDenialQuery) Count(ctx context.Context) (int, error) {
-	ctx = newQueryContext(ctx, TypeInvitationDenial, "Count")
+	ctx = setContextOp(ctx, idq.ctx, "Count")
 	if err := idq.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
@@ -269,7 +268,7 @@ func (idq *InvitationDenialQuery) CountX(ctx context.Context) int {
 
 // Exist returns true if the query has elements in the graph.
 func (idq *InvitationDenialQuery) Exist(ctx context.Context) (bool, error) {
-	ctx = newQueryContext(ctx, TypeInvitationDenial, "Exist")
+	ctx = setContextOp(ctx, idq.ctx, "Exist")
 	switch _, err := idq.FirstID(ctx); {
 	case IsNotFound(err):
 		return false, nil
@@ -297,17 +296,15 @@ func (idq *InvitationDenialQuery) Clone() *InvitationDenialQuery {
 	}
 	return &InvitationDenialQuery{
 		config:         idq.config,
-		limit:          idq.limit,
-		offset:         idq.offset,
-		order:          append([]OrderFunc{}, idq.order...),
+		ctx:            idq.ctx.Clone(),
+		order:          append([]invitationdenial.OrderOption{}, idq.order...),
 		inters:         append([]Interceptor{}, idq.inters...),
 		predicates:     append([]predicate.InvitationDenial{}, idq.predicates...),
 		withUser:       idq.withUser.Clone(),
 		withInvitation: idq.withInvitation.Clone(),
 		// clone intermediate query.
-		sql:    idq.sql.Clone(),
-		path:   idq.path,
-		unique: idq.unique,
+		sql:  idq.sql.Clone(),
+		path: idq.path,
 	}
 }
 
@@ -348,9 +345,9 @@ func (idq *InvitationDenialQuery) WithInvitation(opts ...func(*InvitationQuery))
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (idq *InvitationDenialQuery) GroupBy(field string, fields ...string) *InvitationDenialGroupBy {
-	idq.fields = append([]string{field}, fields...)
+	idq.ctx.Fields = append([]string{field}, fields...)
 	grbuild := &InvitationDenialGroupBy{build: idq}
-	grbuild.flds = &idq.fields
+	grbuild.flds = &idq.ctx.Fields
 	grbuild.label = invitationdenial.Label
 	grbuild.scan = grbuild.Scan
 	return grbuild
@@ -369,10 +366,10 @@ func (idq *InvitationDenialQuery) GroupBy(field string, fields ...string) *Invit
 //		Select(invitationdenial.FieldUserID).
 //		Scan(ctx, &v)
 func (idq *InvitationDenialQuery) Select(fields ...string) *InvitationDenialSelect {
-	idq.fields = append(idq.fields, fields...)
+	idq.ctx.Fields = append(idq.ctx.Fields, fields...)
 	sbuild := &InvitationDenialSelect{InvitationDenialQuery: idq}
 	sbuild.label = invitationdenial.Label
-	sbuild.flds, sbuild.scan = &idq.fields, sbuild.Scan
+	sbuild.flds, sbuild.scan = &idq.ctx.Fields, sbuild.Scan
 	return sbuild
 }
 
@@ -392,7 +389,7 @@ func (idq *InvitationDenialQuery) prepareQuery(ctx context.Context) error {
 			}
 		}
 	}
-	for _, f := range idq.fields {
+	for _, f := range idq.ctx.Fields {
 		if !invitationdenial.ValidColumn(f) {
 			return &ValidationError{Name: f, err: fmt.Errorf("ent: invalid field %q for query", f)}
 		}
@@ -467,6 +464,9 @@ func (idq *InvitationDenialQuery) loadUser(ctx context.Context, query *UserQuery
 		}
 		nodeids[fk] = append(nodeids[fk], nodes[i])
 	}
+	if len(ids) == 0 {
+		return nil
+	}
 	query.Where(user.IDIn(ids...))
 	neighbors, err := query.All(ctx)
 	if err != nil {
@@ -493,6 +493,9 @@ func (idq *InvitationDenialQuery) loadInvitation(ctx context.Context, query *Inv
 		}
 		nodeids[fk] = append(nodeids[fk], nodes[i])
 	}
+	if len(ids) == 0 {
+		return nil
+	}
 	query.Where(invitation.IDIn(ids...))
 	neighbors, err := query.All(ctx)
 	if err != nil {
@@ -515,36 +518,34 @@ func (idq *InvitationDenialQuery) sqlCount(ctx context.Context) (int, error) {
 	if len(idq.modifiers) > 0 {
 		_spec.Modifiers = idq.modifiers
 	}
-	_spec.Node.Columns = idq.fields
-	if len(idq.fields) > 0 {
-		_spec.Unique = idq.unique != nil && *idq.unique
+	_spec.Node.Columns = idq.ctx.Fields
+	if len(idq.ctx.Fields) > 0 {
+		_spec.Unique = idq.ctx.Unique != nil && *idq.ctx.Unique
 	}
 	return sqlgraph.CountNodes(ctx, idq.driver, _spec)
 }
 
 func (idq *InvitationDenialQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := &sqlgraph.QuerySpec{
-		Node: &sqlgraph.NodeSpec{
-			Table:   invitationdenial.Table,
-			Columns: invitationdenial.Columns,
-			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
-				Column: invitationdenial.FieldID,
-			},
-		},
-		From:   idq.sql,
-		Unique: true,
-	}
-	if unique := idq.unique; unique != nil {
+	_spec := sqlgraph.NewQuerySpec(invitationdenial.Table, invitationdenial.Columns, sqlgraph.NewFieldSpec(invitationdenial.FieldID, field.TypeUUID))
+	_spec.From = idq.sql
+	if unique := idq.ctx.Unique; unique != nil {
 		_spec.Unique = *unique
+	} else if idq.path != nil {
+		_spec.Unique = true
 	}
-	if fields := idq.fields; len(fields) > 0 {
+	if fields := idq.ctx.Fields; len(fields) > 0 {
 		_spec.Node.Columns = make([]string, 0, len(fields))
 		_spec.Node.Columns = append(_spec.Node.Columns, invitationdenial.FieldID)
 		for i := range fields {
 			if fields[i] != invitationdenial.FieldID {
 				_spec.Node.Columns = append(_spec.Node.Columns, fields[i])
 			}
+		}
+		if idq.withUser != nil {
+			_spec.Node.AddColumnOnce(invitationdenial.FieldUserID)
+		}
+		if idq.withInvitation != nil {
+			_spec.Node.AddColumnOnce(invitationdenial.FieldInvitationID)
 		}
 	}
 	if ps := idq.predicates; len(ps) > 0 {
@@ -554,10 +555,10 @@ func (idq *InvitationDenialQuery) querySpec() *sqlgraph.QuerySpec {
 			}
 		}
 	}
-	if limit := idq.limit; limit != nil {
+	if limit := idq.ctx.Limit; limit != nil {
 		_spec.Limit = *limit
 	}
-	if offset := idq.offset; offset != nil {
+	if offset := idq.ctx.Offset; offset != nil {
 		_spec.Offset = *offset
 	}
 	if ps := idq.order; len(ps) > 0 {
@@ -573,7 +574,7 @@ func (idq *InvitationDenialQuery) querySpec() *sqlgraph.QuerySpec {
 func (idq *InvitationDenialQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	builder := sql.Dialect(idq.driver.Dialect())
 	t1 := builder.Table(invitationdenial.Table)
-	columns := idq.fields
+	columns := idq.ctx.Fields
 	if len(columns) == 0 {
 		columns = invitationdenial.Columns
 	}
@@ -582,7 +583,7 @@ func (idq *InvitationDenialQuery) sqlQuery(ctx context.Context) *sql.Selector {
 		selector = idq.sql
 		selector.Select(selector.Columns(columns...)...)
 	}
-	if idq.unique != nil && *idq.unique {
+	if idq.ctx.Unique != nil && *idq.ctx.Unique {
 		selector.Distinct()
 	}
 	for _, p := range idq.predicates {
@@ -591,12 +592,12 @@ func (idq *InvitationDenialQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	for _, p := range idq.order {
 		p(selector)
 	}
-	if offset := idq.offset; offset != nil {
+	if offset := idq.ctx.Offset; offset != nil {
 		// limit is mandatory for offset clause. We start
 		// with default value, and override it below if needed.
 		selector.Offset(*offset).Limit(math.MaxInt32)
 	}
-	if limit := idq.limit; limit != nil {
+	if limit := idq.ctx.Limit; limit != nil {
 		selector.Limit(*limit)
 	}
 	return selector
@@ -616,7 +617,7 @@ func (idgb *InvitationDenialGroupBy) Aggregate(fns ...AggregateFunc) *Invitation
 
 // Scan applies the selector query and scans the result into the given value.
 func (idgb *InvitationDenialGroupBy) Scan(ctx context.Context, v any) error {
-	ctx = newQueryContext(ctx, TypeInvitationDenial, "GroupBy")
+	ctx = setContextOp(ctx, idgb.build.ctx, "GroupBy")
 	if err := idgb.build.prepareQuery(ctx); err != nil {
 		return err
 	}
@@ -664,7 +665,7 @@ func (ids *InvitationDenialSelect) Aggregate(fns ...AggregateFunc) *InvitationDe
 
 // Scan applies the selector query and scans the result into the given value.
 func (ids *InvitationDenialSelect) Scan(ctx context.Context, v any) error {
-	ctx = newQueryContext(ctx, TypeInvitationDenial, "Select")
+	ctx = setContextOp(ctx, ids.ctx, "Select")
 	if err := ids.prepareQuery(ctx); err != nil {
 		return err
 	}

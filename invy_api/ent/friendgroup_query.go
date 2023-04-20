@@ -21,11 +21,8 @@ import (
 // FriendGroupQuery is the builder for querying FriendGroup entities.
 type FriendGroupQuery struct {
 	config
-	limit                     *int
-	offset                    *int
-	unique                    *bool
-	order                     []OrderFunc
-	fields                    []string
+	ctx                       *QueryContext
+	order                     []friendgroup.OrderOption
 	inters                    []Interceptor
 	predicates                []predicate.FriendGroup
 	withUser                  *UserQuery
@@ -48,25 +45,25 @@ func (fgq *FriendGroupQuery) Where(ps ...predicate.FriendGroup) *FriendGroupQuer
 
 // Limit the number of records to be returned by this query.
 func (fgq *FriendGroupQuery) Limit(limit int) *FriendGroupQuery {
-	fgq.limit = &limit
+	fgq.ctx.Limit = &limit
 	return fgq
 }
 
 // Offset to start from.
 func (fgq *FriendGroupQuery) Offset(offset int) *FriendGroupQuery {
-	fgq.offset = &offset
+	fgq.ctx.Offset = &offset
 	return fgq
 }
 
 // Unique configures the query builder to filter duplicate records on query.
 // By default, unique is set to true, and can be disabled using this method.
 func (fgq *FriendGroupQuery) Unique(unique bool) *FriendGroupQuery {
-	fgq.unique = &unique
+	fgq.ctx.Unique = &unique
 	return fgq
 }
 
 // Order specifies how the records should be ordered.
-func (fgq *FriendGroupQuery) Order(o ...OrderFunc) *FriendGroupQuery {
+func (fgq *FriendGroupQuery) Order(o ...friendgroup.OrderOption) *FriendGroupQuery {
 	fgq.order = append(fgq.order, o...)
 	return fgq
 }
@@ -140,7 +137,7 @@ func (fgq *FriendGroupQuery) QueryUserFriendGroups() *UserFriendGroupQuery {
 // First returns the first FriendGroup entity from the query.
 // Returns a *NotFoundError when no FriendGroup was found.
 func (fgq *FriendGroupQuery) First(ctx context.Context) (*FriendGroup, error) {
-	nodes, err := fgq.Limit(1).All(newQueryContext(ctx, TypeFriendGroup, "First"))
+	nodes, err := fgq.Limit(1).All(setContextOp(ctx, fgq.ctx, "First"))
 	if err != nil {
 		return nil, err
 	}
@@ -163,7 +160,7 @@ func (fgq *FriendGroupQuery) FirstX(ctx context.Context) *FriendGroup {
 // Returns a *NotFoundError when no FriendGroup ID was found.
 func (fgq *FriendGroupQuery) FirstID(ctx context.Context) (id uuid.UUID, err error) {
 	var ids []uuid.UUID
-	if ids, err = fgq.Limit(1).IDs(newQueryContext(ctx, TypeFriendGroup, "FirstID")); err != nil {
+	if ids, err = fgq.Limit(1).IDs(setContextOp(ctx, fgq.ctx, "FirstID")); err != nil {
 		return
 	}
 	if len(ids) == 0 {
@@ -186,7 +183,7 @@ func (fgq *FriendGroupQuery) FirstIDX(ctx context.Context) uuid.UUID {
 // Returns a *NotSingularError when more than one FriendGroup entity is found.
 // Returns a *NotFoundError when no FriendGroup entities are found.
 func (fgq *FriendGroupQuery) Only(ctx context.Context) (*FriendGroup, error) {
-	nodes, err := fgq.Limit(2).All(newQueryContext(ctx, TypeFriendGroup, "Only"))
+	nodes, err := fgq.Limit(2).All(setContextOp(ctx, fgq.ctx, "Only"))
 	if err != nil {
 		return nil, err
 	}
@@ -214,7 +211,7 @@ func (fgq *FriendGroupQuery) OnlyX(ctx context.Context) *FriendGroup {
 // Returns a *NotFoundError when no entities are found.
 func (fgq *FriendGroupQuery) OnlyID(ctx context.Context) (id uuid.UUID, err error) {
 	var ids []uuid.UUID
-	if ids, err = fgq.Limit(2).IDs(newQueryContext(ctx, TypeFriendGroup, "OnlyID")); err != nil {
+	if ids, err = fgq.Limit(2).IDs(setContextOp(ctx, fgq.ctx, "OnlyID")); err != nil {
 		return
 	}
 	switch len(ids) {
@@ -239,7 +236,7 @@ func (fgq *FriendGroupQuery) OnlyIDX(ctx context.Context) uuid.UUID {
 
 // All executes the query and returns a list of FriendGroups.
 func (fgq *FriendGroupQuery) All(ctx context.Context) ([]*FriendGroup, error) {
-	ctx = newQueryContext(ctx, TypeFriendGroup, "All")
+	ctx = setContextOp(ctx, fgq.ctx, "All")
 	if err := fgq.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
@@ -257,10 +254,12 @@ func (fgq *FriendGroupQuery) AllX(ctx context.Context) []*FriendGroup {
 }
 
 // IDs executes the query and returns a list of FriendGroup IDs.
-func (fgq *FriendGroupQuery) IDs(ctx context.Context) ([]uuid.UUID, error) {
-	var ids []uuid.UUID
-	ctx = newQueryContext(ctx, TypeFriendGroup, "IDs")
-	if err := fgq.Select(friendgroup.FieldID).Scan(ctx, &ids); err != nil {
+func (fgq *FriendGroupQuery) IDs(ctx context.Context) (ids []uuid.UUID, err error) {
+	if fgq.ctx.Unique == nil && fgq.path != nil {
+		fgq.Unique(true)
+	}
+	ctx = setContextOp(ctx, fgq.ctx, "IDs")
+	if err = fgq.Select(friendgroup.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
 	return ids, nil
@@ -277,7 +276,7 @@ func (fgq *FriendGroupQuery) IDsX(ctx context.Context) []uuid.UUID {
 
 // Count returns the count of the given query.
 func (fgq *FriendGroupQuery) Count(ctx context.Context) (int, error) {
-	ctx = newQueryContext(ctx, TypeFriendGroup, "Count")
+	ctx = setContextOp(ctx, fgq.ctx, "Count")
 	if err := fgq.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
@@ -295,7 +294,7 @@ func (fgq *FriendGroupQuery) CountX(ctx context.Context) int {
 
 // Exist returns true if the query has elements in the graph.
 func (fgq *FriendGroupQuery) Exist(ctx context.Context) (bool, error) {
-	ctx = newQueryContext(ctx, TypeFriendGroup, "Exist")
+	ctx = setContextOp(ctx, fgq.ctx, "Exist")
 	switch _, err := fgq.FirstID(ctx); {
 	case IsNotFound(err):
 		return false, nil
@@ -323,18 +322,16 @@ func (fgq *FriendGroupQuery) Clone() *FriendGroupQuery {
 	}
 	return &FriendGroupQuery{
 		config:               fgq.config,
-		limit:                fgq.limit,
-		offset:               fgq.offset,
-		order:                append([]OrderFunc{}, fgq.order...),
+		ctx:                  fgq.ctx.Clone(),
+		order:                append([]friendgroup.OrderOption{}, fgq.order...),
 		inters:               append([]Interceptor{}, fgq.inters...),
 		predicates:           append([]predicate.FriendGroup{}, fgq.predicates...),
 		withUser:             fgq.withUser.Clone(),
 		withFriendUsers:      fgq.withFriendUsers.Clone(),
 		withUserFriendGroups: fgq.withUserFriendGroups.Clone(),
 		// clone intermediate query.
-		sql:    fgq.sql.Clone(),
-		path:   fgq.path,
-		unique: fgq.unique,
+		sql:  fgq.sql.Clone(),
+		path: fgq.path,
 	}
 }
 
@@ -386,9 +383,9 @@ func (fgq *FriendGroupQuery) WithUserFriendGroups(opts ...func(*UserFriendGroupQ
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (fgq *FriendGroupQuery) GroupBy(field string, fields ...string) *FriendGroupGroupBy {
-	fgq.fields = append([]string{field}, fields...)
+	fgq.ctx.Fields = append([]string{field}, fields...)
 	grbuild := &FriendGroupGroupBy{build: fgq}
-	grbuild.flds = &fgq.fields
+	grbuild.flds = &fgq.ctx.Fields
 	grbuild.label = friendgroup.Label
 	grbuild.scan = grbuild.Scan
 	return grbuild
@@ -407,10 +404,10 @@ func (fgq *FriendGroupQuery) GroupBy(field string, fields ...string) *FriendGrou
 //		Select(friendgroup.FieldUserID).
 //		Scan(ctx, &v)
 func (fgq *FriendGroupQuery) Select(fields ...string) *FriendGroupSelect {
-	fgq.fields = append(fgq.fields, fields...)
+	fgq.ctx.Fields = append(fgq.ctx.Fields, fields...)
 	sbuild := &FriendGroupSelect{FriendGroupQuery: fgq}
 	sbuild.label = friendgroup.Label
-	sbuild.flds, sbuild.scan = &fgq.fields, sbuild.Scan
+	sbuild.flds, sbuild.scan = &fgq.ctx.Fields, sbuild.Scan
 	return sbuild
 }
 
@@ -430,7 +427,7 @@ func (fgq *FriendGroupQuery) prepareQuery(ctx context.Context) error {
 			}
 		}
 	}
-	for _, f := range fgq.fields {
+	for _, f := range fgq.ctx.Fields {
 		if !friendgroup.ValidColumn(f) {
 			return &ValidationError{Name: f, err: fmt.Errorf("ent: invalid field %q for query", f)}
 		}
@@ -530,6 +527,9 @@ func (fgq *FriendGroupQuery) loadUser(ctx context.Context, query *UserQuery, nod
 		}
 		nodeids[fk] = append(nodeids[fk], nodes[i])
 	}
+	if len(ids) == 0 {
+		return nil
+	}
 	query.Where(user.IDIn(ids...))
 	neighbors, err := query.All(ctx)
 	if err != nil {
@@ -569,27 +569,30 @@ func (fgq *FriendGroupQuery) loadFriendUsers(ctx context.Context, query *UserQue
 	if err := query.prepareQuery(ctx); err != nil {
 		return err
 	}
-	neighbors, err := query.sqlAll(ctx, func(_ context.Context, spec *sqlgraph.QuerySpec) {
-		assign := spec.Assign
-		values := spec.ScanValues
-		spec.ScanValues = func(columns []string) ([]any, error) {
-			values, err := values(columns[1:])
-			if err != nil {
-				return nil, err
+	qr := QuerierFunc(func(ctx context.Context, q Query) (Value, error) {
+		return query.sqlAll(ctx, func(_ context.Context, spec *sqlgraph.QuerySpec) {
+			assign := spec.Assign
+			values := spec.ScanValues
+			spec.ScanValues = func(columns []string) ([]any, error) {
+				values, err := values(columns[1:])
+				if err != nil {
+					return nil, err
+				}
+				return append([]any{new(uuid.UUID)}, values...), nil
 			}
-			return append([]any{new(uuid.UUID)}, values...), nil
-		}
-		spec.Assign = func(columns []string, values []any) error {
-			outValue := *values[0].(*uuid.UUID)
-			inValue := *values[1].(*uuid.UUID)
-			if nids[inValue] == nil {
-				nids[inValue] = map[*FriendGroup]struct{}{byID[outValue]: {}}
-				return assign(columns[1:], values[1:])
+			spec.Assign = func(columns []string, values []any) error {
+				outValue := *values[0].(*uuid.UUID)
+				inValue := *values[1].(*uuid.UUID)
+				if nids[inValue] == nil {
+					nids[inValue] = map[*FriendGroup]struct{}{byID[outValue]: {}}
+					return assign(columns[1:], values[1:])
+				}
+				nids[inValue][byID[outValue]] = struct{}{}
+				return nil
 			}
-			nids[inValue][byID[outValue]] = struct{}{}
-			return nil
-		}
+		})
 	})
+	neighbors, err := withInterceptors[[]*User](ctx, query, qr, query.inters)
 	if err != nil {
 		return err
 	}
@@ -615,7 +618,7 @@ func (fgq *FriendGroupQuery) loadUserFriendGroups(ctx context.Context, query *Us
 		}
 	}
 	query.Where(predicate.UserFriendGroup(func(s *sql.Selector) {
-		s.Where(sql.InValues(friendgroup.UserFriendGroupsColumn, fks...))
+		s.Where(sql.InValues(s.C(friendgroup.UserFriendGroupsColumn), fks...))
 	}))
 	neighbors, err := query.All(ctx)
 	if err != nil {
@@ -637,36 +640,31 @@ func (fgq *FriendGroupQuery) sqlCount(ctx context.Context) (int, error) {
 	if len(fgq.modifiers) > 0 {
 		_spec.Modifiers = fgq.modifiers
 	}
-	_spec.Node.Columns = fgq.fields
-	if len(fgq.fields) > 0 {
-		_spec.Unique = fgq.unique != nil && *fgq.unique
+	_spec.Node.Columns = fgq.ctx.Fields
+	if len(fgq.ctx.Fields) > 0 {
+		_spec.Unique = fgq.ctx.Unique != nil && *fgq.ctx.Unique
 	}
 	return sqlgraph.CountNodes(ctx, fgq.driver, _spec)
 }
 
 func (fgq *FriendGroupQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := &sqlgraph.QuerySpec{
-		Node: &sqlgraph.NodeSpec{
-			Table:   friendgroup.Table,
-			Columns: friendgroup.Columns,
-			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
-				Column: friendgroup.FieldID,
-			},
-		},
-		From:   fgq.sql,
-		Unique: true,
-	}
-	if unique := fgq.unique; unique != nil {
+	_spec := sqlgraph.NewQuerySpec(friendgroup.Table, friendgroup.Columns, sqlgraph.NewFieldSpec(friendgroup.FieldID, field.TypeUUID))
+	_spec.From = fgq.sql
+	if unique := fgq.ctx.Unique; unique != nil {
 		_spec.Unique = *unique
+	} else if fgq.path != nil {
+		_spec.Unique = true
 	}
-	if fields := fgq.fields; len(fields) > 0 {
+	if fields := fgq.ctx.Fields; len(fields) > 0 {
 		_spec.Node.Columns = make([]string, 0, len(fields))
 		_spec.Node.Columns = append(_spec.Node.Columns, friendgroup.FieldID)
 		for i := range fields {
 			if fields[i] != friendgroup.FieldID {
 				_spec.Node.Columns = append(_spec.Node.Columns, fields[i])
 			}
+		}
+		if fgq.withUser != nil {
+			_spec.Node.AddColumnOnce(friendgroup.FieldUserID)
 		}
 	}
 	if ps := fgq.predicates; len(ps) > 0 {
@@ -676,10 +674,10 @@ func (fgq *FriendGroupQuery) querySpec() *sqlgraph.QuerySpec {
 			}
 		}
 	}
-	if limit := fgq.limit; limit != nil {
+	if limit := fgq.ctx.Limit; limit != nil {
 		_spec.Limit = *limit
 	}
-	if offset := fgq.offset; offset != nil {
+	if offset := fgq.ctx.Offset; offset != nil {
 		_spec.Offset = *offset
 	}
 	if ps := fgq.order; len(ps) > 0 {
@@ -695,7 +693,7 @@ func (fgq *FriendGroupQuery) querySpec() *sqlgraph.QuerySpec {
 func (fgq *FriendGroupQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	builder := sql.Dialect(fgq.driver.Dialect())
 	t1 := builder.Table(friendgroup.Table)
-	columns := fgq.fields
+	columns := fgq.ctx.Fields
 	if len(columns) == 0 {
 		columns = friendgroup.Columns
 	}
@@ -704,7 +702,7 @@ func (fgq *FriendGroupQuery) sqlQuery(ctx context.Context) *sql.Selector {
 		selector = fgq.sql
 		selector.Select(selector.Columns(columns...)...)
 	}
-	if fgq.unique != nil && *fgq.unique {
+	if fgq.ctx.Unique != nil && *fgq.ctx.Unique {
 		selector.Distinct()
 	}
 	for _, p := range fgq.predicates {
@@ -713,12 +711,12 @@ func (fgq *FriendGroupQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	for _, p := range fgq.order {
 		p(selector)
 	}
-	if offset := fgq.offset; offset != nil {
+	if offset := fgq.ctx.Offset; offset != nil {
 		// limit is mandatory for offset clause. We start
 		// with default value, and override it below if needed.
 		selector.Offset(*offset).Limit(math.MaxInt32)
 	}
-	if limit := fgq.limit; limit != nil {
+	if limit := fgq.ctx.Limit; limit != nil {
 		selector.Limit(*limit)
 	}
 	return selector
@@ -766,7 +764,7 @@ func (fggb *FriendGroupGroupBy) Aggregate(fns ...AggregateFunc) *FriendGroupGrou
 
 // Scan applies the selector query and scans the result into the given value.
 func (fggb *FriendGroupGroupBy) Scan(ctx context.Context, v any) error {
-	ctx = newQueryContext(ctx, TypeFriendGroup, "GroupBy")
+	ctx = setContextOp(ctx, fggb.build.ctx, "GroupBy")
 	if err := fggb.build.prepareQuery(ctx); err != nil {
 		return err
 	}
@@ -814,7 +812,7 @@ func (fgs *FriendGroupSelect) Aggregate(fns ...AggregateFunc) *FriendGroupSelect
 
 // Scan applies the selector query and scans the result into the given value.
 func (fgs *FriendGroupSelect) Scan(ctx context.Context, v any) error {
-	ctx = newQueryContext(ctx, TypeFriendGroup, "Select")
+	ctx = setContextOp(ctx, fgs.ctx, "Select")
 	if err := fgs.prepareQuery(ctx); err != nil {
 		return err
 	}

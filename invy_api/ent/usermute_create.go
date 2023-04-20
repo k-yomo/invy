@@ -166,13 +166,7 @@ func (umc *UserMuteCreate) sqlSave(ctx context.Context) (*UserMute, error) {
 func (umc *UserMuteCreate) createSpec() (*UserMute, *sqlgraph.CreateSpec) {
 	var (
 		_node = &UserMute{config: umc.config}
-		_spec = &sqlgraph.CreateSpec{
-			Table: usermute.Table,
-			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
-				Column: usermute.FieldID,
-			},
-		}
+		_spec = sqlgraph.NewCreateSpec(usermute.Table, sqlgraph.NewFieldSpec(usermute.FieldID, field.TypeUUID))
 	)
 	_spec.OnConflict = umc.conflict
 	if id, ok := umc.mutation.ID(); ok {
@@ -191,10 +185,7 @@ func (umc *UserMuteCreate) createSpec() (*UserMute, *sqlgraph.CreateSpec) {
 			Columns: []string{usermute.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeUUID,
-					Column: user.FieldID,
-				},
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -211,10 +202,7 @@ func (umc *UserMuteCreate) createSpec() (*UserMute, *sqlgraph.CreateSpec) {
 			Columns: []string{usermute.MuteUserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeUUID,
-					Column: user.FieldID,
-				},
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -395,8 +383,8 @@ func (umcb *UserMuteCreateBulk) Save(ctx context.Context) ([]*UserMute, error) {
 					return nil, err
 				}
 				builder.mutation = mutation
-				nodes[i], specs[i] = builder.createSpec()
 				var err error
+				nodes[i], specs[i] = builder.createSpec()
 				if i < len(mutators)-1 {
 					_, err = mutators[i+1].Mutate(root, umcb.builders[i+1].mutation)
 				} else {

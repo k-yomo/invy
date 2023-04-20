@@ -167,13 +167,7 @@ func (ufgc *UserFriendGroupCreate) sqlSave(ctx context.Context) (*UserFriendGrou
 func (ufgc *UserFriendGroupCreate) createSpec() (*UserFriendGroup, *sqlgraph.CreateSpec) {
 	var (
 		_node = &UserFriendGroup{config: ufgc.config}
-		_spec = &sqlgraph.CreateSpec{
-			Table: userfriendgroup.Table,
-			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
-				Column: userfriendgroup.FieldID,
-			},
-		}
+		_spec = sqlgraph.NewCreateSpec(userfriendgroup.Table, sqlgraph.NewFieldSpec(userfriendgroup.FieldID, field.TypeUUID))
 	)
 	_spec.OnConflict = ufgc.conflict
 	if id, ok := ufgc.mutation.ID(); ok {
@@ -192,10 +186,7 @@ func (ufgc *UserFriendGroupCreate) createSpec() (*UserFriendGroup, *sqlgraph.Cre
 			Columns: []string{userfriendgroup.FriendGroupColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeUUID,
-					Column: friendgroup.FieldID,
-				},
+				IDSpec: sqlgraph.NewFieldSpec(friendgroup.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -212,10 +203,7 @@ func (ufgc *UserFriendGroupCreate) createSpec() (*UserFriendGroup, *sqlgraph.Cre
 			Columns: []string{userfriendgroup.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeUUID,
-					Column: user.FieldID,
-				},
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -396,8 +384,8 @@ func (ufgcb *UserFriendGroupCreateBulk) Save(ctx context.Context) ([]*UserFriend
 					return nil, err
 				}
 				builder.mutation = mutation
-				nodes[i], specs[i] = builder.createSpec()
 				var err error
+				nodes[i], specs[i] = builder.createSpec()
 				if i < len(mutators)-1 {
 					_, err = mutators[i+1].Mutate(root, ufgcb.builders[i+1].mutation)
 				} else {

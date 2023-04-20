@@ -19,11 +19,8 @@ import (
 // UserLocationHistoryQuery is the builder for querying UserLocationHistory entities.
 type UserLocationHistoryQuery struct {
 	config
-	limit      *int
-	offset     *int
-	unique     *bool
-	order      []OrderFunc
-	fields     []string
+	ctx        *QueryContext
+	order      []userlocationhistory.OrderOption
 	inters     []Interceptor
 	predicates []predicate.UserLocationHistory
 	withUser   *UserQuery
@@ -42,25 +39,25 @@ func (ulhq *UserLocationHistoryQuery) Where(ps ...predicate.UserLocationHistory)
 
 // Limit the number of records to be returned by this query.
 func (ulhq *UserLocationHistoryQuery) Limit(limit int) *UserLocationHistoryQuery {
-	ulhq.limit = &limit
+	ulhq.ctx.Limit = &limit
 	return ulhq
 }
 
 // Offset to start from.
 func (ulhq *UserLocationHistoryQuery) Offset(offset int) *UserLocationHistoryQuery {
-	ulhq.offset = &offset
+	ulhq.ctx.Offset = &offset
 	return ulhq
 }
 
 // Unique configures the query builder to filter duplicate records on query.
 // By default, unique is set to true, and can be disabled using this method.
 func (ulhq *UserLocationHistoryQuery) Unique(unique bool) *UserLocationHistoryQuery {
-	ulhq.unique = &unique
+	ulhq.ctx.Unique = &unique
 	return ulhq
 }
 
 // Order specifies how the records should be ordered.
-func (ulhq *UserLocationHistoryQuery) Order(o ...OrderFunc) *UserLocationHistoryQuery {
+func (ulhq *UserLocationHistoryQuery) Order(o ...userlocationhistory.OrderOption) *UserLocationHistoryQuery {
 	ulhq.order = append(ulhq.order, o...)
 	return ulhq
 }
@@ -90,7 +87,7 @@ func (ulhq *UserLocationHistoryQuery) QueryUser() *UserQuery {
 // First returns the first UserLocationHistory entity from the query.
 // Returns a *NotFoundError when no UserLocationHistory was found.
 func (ulhq *UserLocationHistoryQuery) First(ctx context.Context) (*UserLocationHistory, error) {
-	nodes, err := ulhq.Limit(1).All(newQueryContext(ctx, TypeUserLocationHistory, "First"))
+	nodes, err := ulhq.Limit(1).All(setContextOp(ctx, ulhq.ctx, "First"))
 	if err != nil {
 		return nil, err
 	}
@@ -113,7 +110,7 @@ func (ulhq *UserLocationHistoryQuery) FirstX(ctx context.Context) *UserLocationH
 // Returns a *NotFoundError when no UserLocationHistory ID was found.
 func (ulhq *UserLocationHistoryQuery) FirstID(ctx context.Context) (id uuid.UUID, err error) {
 	var ids []uuid.UUID
-	if ids, err = ulhq.Limit(1).IDs(newQueryContext(ctx, TypeUserLocationHistory, "FirstID")); err != nil {
+	if ids, err = ulhq.Limit(1).IDs(setContextOp(ctx, ulhq.ctx, "FirstID")); err != nil {
 		return
 	}
 	if len(ids) == 0 {
@@ -136,7 +133,7 @@ func (ulhq *UserLocationHistoryQuery) FirstIDX(ctx context.Context) uuid.UUID {
 // Returns a *NotSingularError when more than one UserLocationHistory entity is found.
 // Returns a *NotFoundError when no UserLocationHistory entities are found.
 func (ulhq *UserLocationHistoryQuery) Only(ctx context.Context) (*UserLocationHistory, error) {
-	nodes, err := ulhq.Limit(2).All(newQueryContext(ctx, TypeUserLocationHistory, "Only"))
+	nodes, err := ulhq.Limit(2).All(setContextOp(ctx, ulhq.ctx, "Only"))
 	if err != nil {
 		return nil, err
 	}
@@ -164,7 +161,7 @@ func (ulhq *UserLocationHistoryQuery) OnlyX(ctx context.Context) *UserLocationHi
 // Returns a *NotFoundError when no entities are found.
 func (ulhq *UserLocationHistoryQuery) OnlyID(ctx context.Context) (id uuid.UUID, err error) {
 	var ids []uuid.UUID
-	if ids, err = ulhq.Limit(2).IDs(newQueryContext(ctx, TypeUserLocationHistory, "OnlyID")); err != nil {
+	if ids, err = ulhq.Limit(2).IDs(setContextOp(ctx, ulhq.ctx, "OnlyID")); err != nil {
 		return
 	}
 	switch len(ids) {
@@ -189,7 +186,7 @@ func (ulhq *UserLocationHistoryQuery) OnlyIDX(ctx context.Context) uuid.UUID {
 
 // All executes the query and returns a list of UserLocationHistories.
 func (ulhq *UserLocationHistoryQuery) All(ctx context.Context) ([]*UserLocationHistory, error) {
-	ctx = newQueryContext(ctx, TypeUserLocationHistory, "All")
+	ctx = setContextOp(ctx, ulhq.ctx, "All")
 	if err := ulhq.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
@@ -207,10 +204,12 @@ func (ulhq *UserLocationHistoryQuery) AllX(ctx context.Context) []*UserLocationH
 }
 
 // IDs executes the query and returns a list of UserLocationHistory IDs.
-func (ulhq *UserLocationHistoryQuery) IDs(ctx context.Context) ([]uuid.UUID, error) {
-	var ids []uuid.UUID
-	ctx = newQueryContext(ctx, TypeUserLocationHistory, "IDs")
-	if err := ulhq.Select(userlocationhistory.FieldID).Scan(ctx, &ids); err != nil {
+func (ulhq *UserLocationHistoryQuery) IDs(ctx context.Context) (ids []uuid.UUID, err error) {
+	if ulhq.ctx.Unique == nil && ulhq.path != nil {
+		ulhq.Unique(true)
+	}
+	ctx = setContextOp(ctx, ulhq.ctx, "IDs")
+	if err = ulhq.Select(userlocationhistory.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
 	return ids, nil
@@ -227,7 +226,7 @@ func (ulhq *UserLocationHistoryQuery) IDsX(ctx context.Context) []uuid.UUID {
 
 // Count returns the count of the given query.
 func (ulhq *UserLocationHistoryQuery) Count(ctx context.Context) (int, error) {
-	ctx = newQueryContext(ctx, TypeUserLocationHistory, "Count")
+	ctx = setContextOp(ctx, ulhq.ctx, "Count")
 	if err := ulhq.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
@@ -245,7 +244,7 @@ func (ulhq *UserLocationHistoryQuery) CountX(ctx context.Context) int {
 
 // Exist returns true if the query has elements in the graph.
 func (ulhq *UserLocationHistoryQuery) Exist(ctx context.Context) (bool, error) {
-	ctx = newQueryContext(ctx, TypeUserLocationHistory, "Exist")
+	ctx = setContextOp(ctx, ulhq.ctx, "Exist")
 	switch _, err := ulhq.FirstID(ctx); {
 	case IsNotFound(err):
 		return false, nil
@@ -273,16 +272,14 @@ func (ulhq *UserLocationHistoryQuery) Clone() *UserLocationHistoryQuery {
 	}
 	return &UserLocationHistoryQuery{
 		config:     ulhq.config,
-		limit:      ulhq.limit,
-		offset:     ulhq.offset,
-		order:      append([]OrderFunc{}, ulhq.order...),
+		ctx:        ulhq.ctx.Clone(),
+		order:      append([]userlocationhistory.OrderOption{}, ulhq.order...),
 		inters:     append([]Interceptor{}, ulhq.inters...),
 		predicates: append([]predicate.UserLocationHistory{}, ulhq.predicates...),
 		withUser:   ulhq.withUser.Clone(),
 		// clone intermediate query.
-		sql:    ulhq.sql.Clone(),
-		path:   ulhq.path,
-		unique: ulhq.unique,
+		sql:  ulhq.sql.Clone(),
+		path: ulhq.path,
 	}
 }
 
@@ -312,9 +309,9 @@ func (ulhq *UserLocationHistoryQuery) WithUser(opts ...func(*UserQuery)) *UserLo
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (ulhq *UserLocationHistoryQuery) GroupBy(field string, fields ...string) *UserLocationHistoryGroupBy {
-	ulhq.fields = append([]string{field}, fields...)
+	ulhq.ctx.Fields = append([]string{field}, fields...)
 	grbuild := &UserLocationHistoryGroupBy{build: ulhq}
-	grbuild.flds = &ulhq.fields
+	grbuild.flds = &ulhq.ctx.Fields
 	grbuild.label = userlocationhistory.Label
 	grbuild.scan = grbuild.Scan
 	return grbuild
@@ -333,10 +330,10 @@ func (ulhq *UserLocationHistoryQuery) GroupBy(field string, fields ...string) *U
 //		Select(userlocationhistory.FieldUserID).
 //		Scan(ctx, &v)
 func (ulhq *UserLocationHistoryQuery) Select(fields ...string) *UserLocationHistorySelect {
-	ulhq.fields = append(ulhq.fields, fields...)
+	ulhq.ctx.Fields = append(ulhq.ctx.Fields, fields...)
 	sbuild := &UserLocationHistorySelect{UserLocationHistoryQuery: ulhq}
 	sbuild.label = userlocationhistory.Label
-	sbuild.flds, sbuild.scan = &ulhq.fields, sbuild.Scan
+	sbuild.flds, sbuild.scan = &ulhq.ctx.Fields, sbuild.Scan
 	return sbuild
 }
 
@@ -356,7 +353,7 @@ func (ulhq *UserLocationHistoryQuery) prepareQuery(ctx context.Context) error {
 			}
 		}
 	}
-	for _, f := range ulhq.fields {
+	for _, f := range ulhq.ctx.Fields {
 		if !userlocationhistory.ValidColumn(f) {
 			return &ValidationError{Name: f, err: fmt.Errorf("ent: invalid field %q for query", f)}
 		}
@@ -424,6 +421,9 @@ func (ulhq *UserLocationHistoryQuery) loadUser(ctx context.Context, query *UserQ
 		}
 		nodeids[fk] = append(nodeids[fk], nodes[i])
 	}
+	if len(ids) == 0 {
+		return nil
+	}
 	query.Where(user.IDIn(ids...))
 	neighbors, err := query.All(ctx)
 	if err != nil {
@@ -446,36 +446,31 @@ func (ulhq *UserLocationHistoryQuery) sqlCount(ctx context.Context) (int, error)
 	if len(ulhq.modifiers) > 0 {
 		_spec.Modifiers = ulhq.modifiers
 	}
-	_spec.Node.Columns = ulhq.fields
-	if len(ulhq.fields) > 0 {
-		_spec.Unique = ulhq.unique != nil && *ulhq.unique
+	_spec.Node.Columns = ulhq.ctx.Fields
+	if len(ulhq.ctx.Fields) > 0 {
+		_spec.Unique = ulhq.ctx.Unique != nil && *ulhq.ctx.Unique
 	}
 	return sqlgraph.CountNodes(ctx, ulhq.driver, _spec)
 }
 
 func (ulhq *UserLocationHistoryQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := &sqlgraph.QuerySpec{
-		Node: &sqlgraph.NodeSpec{
-			Table:   userlocationhistory.Table,
-			Columns: userlocationhistory.Columns,
-			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
-				Column: userlocationhistory.FieldID,
-			},
-		},
-		From:   ulhq.sql,
-		Unique: true,
-	}
-	if unique := ulhq.unique; unique != nil {
+	_spec := sqlgraph.NewQuerySpec(userlocationhistory.Table, userlocationhistory.Columns, sqlgraph.NewFieldSpec(userlocationhistory.FieldID, field.TypeUUID))
+	_spec.From = ulhq.sql
+	if unique := ulhq.ctx.Unique; unique != nil {
 		_spec.Unique = *unique
+	} else if ulhq.path != nil {
+		_spec.Unique = true
 	}
-	if fields := ulhq.fields; len(fields) > 0 {
+	if fields := ulhq.ctx.Fields; len(fields) > 0 {
 		_spec.Node.Columns = make([]string, 0, len(fields))
 		_spec.Node.Columns = append(_spec.Node.Columns, userlocationhistory.FieldID)
 		for i := range fields {
 			if fields[i] != userlocationhistory.FieldID {
 				_spec.Node.Columns = append(_spec.Node.Columns, fields[i])
 			}
+		}
+		if ulhq.withUser != nil {
+			_spec.Node.AddColumnOnce(userlocationhistory.FieldUserID)
 		}
 	}
 	if ps := ulhq.predicates; len(ps) > 0 {
@@ -485,10 +480,10 @@ func (ulhq *UserLocationHistoryQuery) querySpec() *sqlgraph.QuerySpec {
 			}
 		}
 	}
-	if limit := ulhq.limit; limit != nil {
+	if limit := ulhq.ctx.Limit; limit != nil {
 		_spec.Limit = *limit
 	}
-	if offset := ulhq.offset; offset != nil {
+	if offset := ulhq.ctx.Offset; offset != nil {
 		_spec.Offset = *offset
 	}
 	if ps := ulhq.order; len(ps) > 0 {
@@ -504,7 +499,7 @@ func (ulhq *UserLocationHistoryQuery) querySpec() *sqlgraph.QuerySpec {
 func (ulhq *UserLocationHistoryQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	builder := sql.Dialect(ulhq.driver.Dialect())
 	t1 := builder.Table(userlocationhistory.Table)
-	columns := ulhq.fields
+	columns := ulhq.ctx.Fields
 	if len(columns) == 0 {
 		columns = userlocationhistory.Columns
 	}
@@ -513,7 +508,7 @@ func (ulhq *UserLocationHistoryQuery) sqlQuery(ctx context.Context) *sql.Selecto
 		selector = ulhq.sql
 		selector.Select(selector.Columns(columns...)...)
 	}
-	if ulhq.unique != nil && *ulhq.unique {
+	if ulhq.ctx.Unique != nil && *ulhq.ctx.Unique {
 		selector.Distinct()
 	}
 	for _, p := range ulhq.predicates {
@@ -522,12 +517,12 @@ func (ulhq *UserLocationHistoryQuery) sqlQuery(ctx context.Context) *sql.Selecto
 	for _, p := range ulhq.order {
 		p(selector)
 	}
-	if offset := ulhq.offset; offset != nil {
+	if offset := ulhq.ctx.Offset; offset != nil {
 		// limit is mandatory for offset clause. We start
 		// with default value, and override it below if needed.
 		selector.Offset(*offset).Limit(math.MaxInt32)
 	}
-	if limit := ulhq.limit; limit != nil {
+	if limit := ulhq.ctx.Limit; limit != nil {
 		selector.Limit(*limit)
 	}
 	return selector
@@ -547,7 +542,7 @@ func (ulhgb *UserLocationHistoryGroupBy) Aggregate(fns ...AggregateFunc) *UserLo
 
 // Scan applies the selector query and scans the result into the given value.
 func (ulhgb *UserLocationHistoryGroupBy) Scan(ctx context.Context, v any) error {
-	ctx = newQueryContext(ctx, TypeUserLocationHistory, "GroupBy")
+	ctx = setContextOp(ctx, ulhgb.build.ctx, "GroupBy")
 	if err := ulhgb.build.prepareQuery(ctx); err != nil {
 		return err
 	}
@@ -595,7 +590,7 @@ func (ulhs *UserLocationHistorySelect) Aggregate(fns ...AggregateFunc) *UserLoca
 
 // Scan applies the selector query and scans the result into the given value.
 func (ulhs *UserLocationHistorySelect) Scan(ctx context.Context, v any) error {
-	ctx = newQueryContext(ctx, TypeUserLocationHistory, "Select")
+	ctx = setContextOp(ctx, ulhs.ctx, "Select")
 	if err := ulhs.prepareQuery(ctx); err != nil {
 		return err
 	}

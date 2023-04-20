@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/google/uuid"
 	"github.com/k-yomo/invy/invy_api/ent/user"
@@ -26,7 +27,8 @@ type UserBlock struct {
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the UserBlockQuery when eager-loading is set.
-	Edges UserBlockEdges `json:"edges"`
+	Edges        UserBlockEdges `json:"edges"`
+	selectValues sql.SelectValues
 }
 
 // UserBlockEdges holds the relations/edges for other nodes in the graph.
@@ -78,7 +80,7 @@ func (*UserBlock) scanValues(columns []string) ([]any, error) {
 		case userblock.FieldID, userblock.FieldUserID, userblock.FieldBlockUserID:
 			values[i] = new(uuid.UUID)
 		default:
-			return nil, fmt.Errorf("unexpected column %q for type UserBlock", columns[i])
+			values[i] = new(sql.UnknownType)
 		}
 	}
 	return values, nil
@@ -116,26 +118,34 @@ func (ub *UserBlock) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				ub.CreatedAt = value.Time
 			}
+		default:
+			ub.selectValues.Set(columns[i], values[i])
 		}
 	}
 	return nil
 }
 
+// Value returns the ent.Value that was dynamically selected and assigned to the UserBlock.
+// This includes values selected through modifiers, order, etc.
+func (ub *UserBlock) Value(name string) (ent.Value, error) {
+	return ub.selectValues.Get(name)
+}
+
 // QueryUser queries the "user" edge of the UserBlock entity.
 func (ub *UserBlock) QueryUser() *UserQuery {
-	return (&UserBlockClient{config: ub.config}).QueryUser(ub)
+	return NewUserBlockClient(ub.config).QueryUser(ub)
 }
 
 // QueryBlockUser queries the "block_user" edge of the UserBlock entity.
 func (ub *UserBlock) QueryBlockUser() *UserQuery {
-	return (&UserBlockClient{config: ub.config}).QueryBlockUser(ub)
+	return NewUserBlockClient(ub.config).QueryBlockUser(ub)
 }
 
 // Update returns a builder for updating this UserBlock.
 // Note that you need to call UserBlock.Unwrap() before calling this method if this UserBlock
 // was returned from a transaction, and the transaction was committed or rolled back.
 func (ub *UserBlock) Update() *UserBlockUpdateOne {
-	return (&UserBlockClient{config: ub.config}).UpdateOne(ub)
+	return NewUserBlockClient(ub.config).UpdateOne(ub)
 }
 
 // Unwrap unwraps the UserBlock entity that was returned from a transaction after it was closed,
@@ -168,9 +178,3 @@ func (ub *UserBlock) String() string {
 
 // UserBlocks is a parsable slice of UserBlock.
 type UserBlocks []*UserBlock
-
-func (ub UserBlocks) config(cfg config) {
-	for _i := range ub {
-		ub[_i].config = cfg
-	}
-}

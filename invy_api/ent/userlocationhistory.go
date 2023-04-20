@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/google/uuid"
 	"github.com/k-yomo/invy/invy_api/ent/user"
@@ -27,7 +28,8 @@ type UserLocationHistory struct {
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the UserLocationHistoryQuery when eager-loading is set.
-	Edges UserLocationHistoryEdges `json:"edges"`
+	Edges        UserLocationHistoryEdges `json:"edges"`
+	selectValues sql.SelectValues
 }
 
 // UserLocationHistoryEdges holds the relations/edges for other nodes in the graph.
@@ -66,7 +68,7 @@ func (*UserLocationHistory) scanValues(columns []string) ([]any, error) {
 		case userlocationhistory.FieldID, userlocationhistory.FieldUserID:
 			values[i] = new(uuid.UUID)
 		default:
-			return nil, fmt.Errorf("unexpected column %q for type UserLocationHistory", columns[i])
+			values[i] = new(sql.UnknownType)
 		}
 	}
 	return values, nil
@@ -104,21 +106,29 @@ func (ulh *UserLocationHistory) assignValues(columns []string, values []any) err
 			} else if value.Valid {
 				ulh.CreatedAt = value.Time
 			}
+		default:
+			ulh.selectValues.Set(columns[i], values[i])
 		}
 	}
 	return nil
 }
 
+// Value returns the ent.Value that was dynamically selected and assigned to the UserLocationHistory.
+// This includes values selected through modifiers, order, etc.
+func (ulh *UserLocationHistory) Value(name string) (ent.Value, error) {
+	return ulh.selectValues.Get(name)
+}
+
 // QueryUser queries the "user" edge of the UserLocationHistory entity.
 func (ulh *UserLocationHistory) QueryUser() *UserQuery {
-	return (&UserLocationHistoryClient{config: ulh.config}).QueryUser(ulh)
+	return NewUserLocationHistoryClient(ulh.config).QueryUser(ulh)
 }
 
 // Update returns a builder for updating this UserLocationHistory.
 // Note that you need to call UserLocationHistory.Unwrap() before calling this method if this UserLocationHistory
 // was returned from a transaction, and the transaction was committed or rolled back.
 func (ulh *UserLocationHistory) Update() *UserLocationHistoryUpdateOne {
-	return (&UserLocationHistoryClient{config: ulh.config}).UpdateOne(ulh)
+	return NewUserLocationHistoryClient(ulh.config).UpdateOne(ulh)
 }
 
 // Unwrap unwraps the UserLocationHistory entity that was returned from a transaction after it was closed,
@@ -151,9 +161,3 @@ func (ulh *UserLocationHistory) String() string {
 
 // UserLocationHistories is a parsable slice of UserLocationHistory.
 type UserLocationHistories []*UserLocationHistory
-
-func (ulh UserLocationHistories) config(cfg config) {
-	for _i := range ulh {
-		ulh[_i].config = cfg
-	}
-}

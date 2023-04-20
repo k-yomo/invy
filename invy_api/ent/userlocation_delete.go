@@ -40,15 +40,7 @@ func (uld *UserLocationDelete) ExecX(ctx context.Context) int {
 }
 
 func (uld *UserLocationDelete) sqlExec(ctx context.Context) (int, error) {
-	_spec := &sqlgraph.DeleteSpec{
-		Node: &sqlgraph.NodeSpec{
-			Table: userlocation.Table,
-			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
-				Column: userlocation.FieldID,
-			},
-		},
-	}
+	_spec := sqlgraph.NewDeleteSpec(userlocation.Table, sqlgraph.NewFieldSpec(userlocation.FieldID, field.TypeUUID))
 	if ps := uld.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -69,6 +61,12 @@ type UserLocationDeleteOne struct {
 	uld *UserLocationDelete
 }
 
+// Where appends a list predicates to the UserLocationDelete builder.
+func (uldo *UserLocationDeleteOne) Where(ps ...predicate.UserLocation) *UserLocationDeleteOne {
+	uldo.uld.mutation.Where(ps...)
+	return uldo
+}
+
 // Exec executes the deletion query.
 func (uldo *UserLocationDeleteOne) Exec(ctx context.Context) error {
 	n, err := uldo.uld.Exec(ctx)
@@ -84,5 +82,7 @@ func (uldo *UserLocationDeleteOne) Exec(ctx context.Context) error {
 
 // ExecX is like Exec, but panics if an error occurs.
 func (uldo *UserLocationDeleteOne) ExecX(ctx context.Context) {
-	uldo.uld.ExecX(ctx)
+	if err := uldo.Exec(ctx); err != nil {
+		panic(err)
+	}
 }

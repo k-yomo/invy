@@ -9,6 +9,8 @@ import (
 	"sync"
 	"time"
 
+	"entgo.io/ent"
+	"entgo.io/ent/dialect/sql"
 	"github.com/google/uuid"
 	"github.com/k-yomo/invy/invy_api/ent/account"
 	"github.com/k-yomo/invy/invy_api/ent/friendgroup"
@@ -28,9 +30,6 @@ import (
 	"github.com/k-yomo/invy/invy_api/ent/usermute"
 	"github.com/k-yomo/invy/invy_api/ent/userprofile"
 	"github.com/k-yomo/invy/pkg/pgutil"
-
-	"entgo.io/ent"
-	"entgo.io/ent/dialect/sql"
 )
 
 const (

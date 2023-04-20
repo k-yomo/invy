@@ -74,16 +74,7 @@ func (idu *InvitationDenialUpdate) sqlSave(ctx context.Context) (n int, err erro
 	if err := idu.check(); err != nil {
 		return n, err
 	}
-	_spec := &sqlgraph.UpdateSpec{
-		Node: &sqlgraph.NodeSpec{
-			Table:   invitationdenial.Table,
-			Columns: invitationdenial.Columns,
-			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
-				Column: invitationdenial.FieldID,
-			},
-		},
-	}
+	_spec := sqlgraph.NewUpdateSpec(invitationdenial.Table, invitationdenial.Columns, sqlgraph.NewFieldSpec(invitationdenial.FieldID, field.TypeUUID))
 	if ps := idu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -114,6 +105,12 @@ type InvitationDenialUpdateOne struct {
 // Mutation returns the InvitationDenialMutation object of the builder.
 func (iduo *InvitationDenialUpdateOne) Mutation() *InvitationDenialMutation {
 	return iduo.mutation
+}
+
+// Where appends a list predicates to the InvitationDenialUpdate builder.
+func (iduo *InvitationDenialUpdateOne) Where(ps ...predicate.InvitationDenial) *InvitationDenialUpdateOne {
+	iduo.mutation.Where(ps...)
+	return iduo
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
@@ -165,16 +162,7 @@ func (iduo *InvitationDenialUpdateOne) sqlSave(ctx context.Context) (_node *Invi
 	if err := iduo.check(); err != nil {
 		return _node, err
 	}
-	_spec := &sqlgraph.UpdateSpec{
-		Node: &sqlgraph.NodeSpec{
-			Table:   invitationdenial.Table,
-			Columns: invitationdenial.Columns,
-			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
-				Column: invitationdenial.FieldID,
-			},
-		},
-	}
+	_spec := sqlgraph.NewUpdateSpec(invitationdenial.Table, invitationdenial.Columns, sqlgraph.NewFieldSpec(invitationdenial.FieldID, field.TypeUUID))
 	id, ok := iduo.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "InvitationDenial.id" for update`)}

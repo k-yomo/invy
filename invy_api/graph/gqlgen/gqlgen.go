@@ -12,10 +12,10 @@ import (
 	"sync/atomic"
 	"time"
 
+	"entgo.io/contrib/entgql"
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/introspection"
 	"github.com/google/uuid"
-	"github.com/k-yomo/invy/invy_api/ent"
 	"github.com/k-yomo/invy/invy_api/graph/gqlmodel"
 	"github.com/k-yomo/invy/invy_api/graph/scalar"
 	gqlparser "github.com/vektah/gqlparser/v2"
@@ -227,7 +227,7 @@ type ComplexityRoot struct {
 		Invitation               func(childComplexity int, id uuid.UUID) int
 		User                     func(childComplexity int, userID uuid.UUID) int
 		UserByScreenID           func(childComplexity int, screenID string) int
-		UserFriends              func(childComplexity int, userID uuid.UUID, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
+		UserFriends              func(childComplexity int, userID uuid.UUID, after *entgql.Cursor[uuid.UUID], first *int, before *entgql.Cursor[uuid.UUID], last *int) int
 		Viewer                   func(childComplexity int) int
 	}
 
@@ -322,10 +322,10 @@ type ComplexityRoot struct {
 	Viewer struct {
 		AcceptedInvitations          func(childComplexity int) int
 		AvatarURL                    func(childComplexity int) int
-		BlockedFriends               func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
+		BlockedFriends               func(childComplexity int, after *entgql.Cursor[uuid.UUID], first *int, before *entgql.Cursor[uuid.UUID], last *int) int
 		FriendGroup                  func(childComplexity int, friendGroupID uuid.UUID) int
 		FriendGroups                 func(childComplexity int) int
-		Friends                      func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
+		Friends                      func(childComplexity int, after *entgql.Cursor[uuid.UUID], first *int, before *entgql.Cursor[uuid.UUID], last *int) int
 		ID                           func(childComplexity int) int
 		Nickname                     func(childComplexity int) int
 		PendingFriendshipRequests    func(childComplexity int) int
@@ -388,7 +388,7 @@ type QueryResolver interface {
 	Viewer(ctx context.Context) (*gqlmodel.Viewer, error)
 	User(ctx context.Context, userID uuid.UUID) (*gqlmodel.User, error)
 	UserByScreenID(ctx context.Context, screenID string) (*gqlmodel.User, error)
-	UserFriends(ctx context.Context, userID uuid.UUID, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*gqlmodel.UserConnection, error)
+	UserFriends(ctx context.Context, userID uuid.UUID, after *entgql.Cursor[uuid.UUID], first *int, before *entgql.Cursor[uuid.UUID], last *int) (*gqlmodel.UserConnection, error)
 	GetMinRequiredAppVersion(ctx context.Context) (*gqlmodel.GetMinRequiredAppVersionPayload, error)
 }
 type UserResolver interface {
@@ -400,8 +400,8 @@ type UserResolver interface {
 	IsRequestingFriendship(ctx context.Context, obj *gqlmodel.User) (bool, error)
 }
 type ViewerResolver interface {
-	Friends(ctx context.Context, obj *gqlmodel.Viewer, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*gqlmodel.UserConnection, error)
-	BlockedFriends(ctx context.Context, obj *gqlmodel.Viewer, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*gqlmodel.UserConnection, error)
+	Friends(ctx context.Context, obj *gqlmodel.Viewer, after *entgql.Cursor[uuid.UUID], first *int, before *entgql.Cursor[uuid.UUID], last *int) (*gqlmodel.UserConnection, error)
+	BlockedFriends(ctx context.Context, obj *gqlmodel.Viewer, after *entgql.Cursor[uuid.UUID], first *int, before *entgql.Cursor[uuid.UUID], last *int) (*gqlmodel.UserConnection, error)
 	PendingFriendshipRequests(ctx context.Context, obj *gqlmodel.Viewer) ([]*gqlmodel.FriendshipRequest, error)
 	RequestingFriendshipRequests(ctx context.Context, obj *gqlmodel.Viewer) ([]*gqlmodel.FriendshipRequest, error)
 	FriendGroup(ctx context.Context, obj *gqlmodel.Viewer, friendGroupID uuid.UUID) (*gqlmodel.FriendGroup, error)
@@ -1242,7 +1242,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.UserFriends(childComplexity, args["userId"].(uuid.UUID), args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int)), true
+		return e.complexity.Query.UserFriends(childComplexity, args["userId"].(uuid.UUID), args["after"].(*entgql.Cursor[uuid.UUID]), args["first"].(*int), args["before"].(*entgql.Cursor[uuid.UUID]), args["last"].(*int)), true
 
 	case "Query.viewer":
 		if e.complexity.Query.Viewer == nil {
@@ -1492,7 +1492,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Viewer.BlockedFriends(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int)), true
+		return e.complexity.Viewer.BlockedFriends(childComplexity, args["after"].(*entgql.Cursor[uuid.UUID]), args["first"].(*int), args["before"].(*entgql.Cursor[uuid.UUID]), args["last"].(*int)), true
 
 	case "Viewer.friendGroup":
 		if e.complexity.Viewer.FriendGroup == nil {
@@ -1523,7 +1523,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Viewer.Friends(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int)), true
+		return e.complexity.Viewer.Friends(childComplexity, args["after"].(*entgql.Cursor[uuid.UUID]), args["first"].(*int), args["before"].(*entgql.Cursor[uuid.UUID]), args["last"].(*int)), true
 
 	case "Viewer.id":
 		if e.complexity.Viewer.ID == nil {
@@ -2635,10 +2635,10 @@ func (ec *executionContext) field_Query_userFriends_args(ctx context.Context, ra
 		}
 	}
 	args["userId"] = arg0
-	var arg1 *ent.Cursor
+	var arg1 *entgql.Cursor[uuid.UUID]
 	if tmp, ok := rawArgs["after"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("after"))
-		arg1, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋentᚐCursor(ctx, tmp)
+		arg1, err = ec.unmarshalOCursor2ᚖentgoᚗioᚋcontribᚋentgqlᚐCursor(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -2653,10 +2653,10 @@ func (ec *executionContext) field_Query_userFriends_args(ctx context.Context, ra
 		}
 	}
 	args["first"] = arg2
-	var arg3 *ent.Cursor
+	var arg3 *entgql.Cursor[uuid.UUID]
 	if tmp, ok := rawArgs["before"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("before"))
-		arg3, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋentᚐCursor(ctx, tmp)
+		arg3, err = ec.unmarshalOCursor2ᚖentgoᚗioᚋcontribᚋentgqlᚐCursor(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -2692,10 +2692,10 @@ func (ec *executionContext) field_Query_user_args(ctx context.Context, rawArgs m
 func (ec *executionContext) field_Viewer_blockedFriends_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 *ent.Cursor
+	var arg0 *entgql.Cursor[uuid.UUID]
 	if tmp, ok := rawArgs["after"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("after"))
-		arg0, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋentᚐCursor(ctx, tmp)
+		arg0, err = ec.unmarshalOCursor2ᚖentgoᚗioᚋcontribᚋentgqlᚐCursor(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -2710,10 +2710,10 @@ func (ec *executionContext) field_Viewer_blockedFriends_args(ctx context.Context
 		}
 	}
 	args["first"] = arg1
-	var arg2 *ent.Cursor
+	var arg2 *entgql.Cursor[uuid.UUID]
 	if tmp, ok := rawArgs["before"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("before"))
-		arg2, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋentᚐCursor(ctx, tmp)
+		arg2, err = ec.unmarshalOCursor2ᚖentgoᚗioᚋcontribᚋentgqlᚐCursor(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -2749,10 +2749,10 @@ func (ec *executionContext) field_Viewer_friendGroup_args(ctx context.Context, r
 func (ec *executionContext) field_Viewer_friends_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 *ent.Cursor
+	var arg0 *entgql.Cursor[uuid.UUID]
 	if tmp, ok := rawArgs["after"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("after"))
-		arg0, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋentᚐCursor(ctx, tmp)
+		arg0, err = ec.unmarshalOCursor2ᚖentgoᚗioᚋcontribᚋentgqlᚐCursor(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -2767,10 +2767,10 @@ func (ec *executionContext) field_Viewer_friends_args(ctx context.Context, rawAr
 		}
 	}
 	args["first"] = arg1
-	var arg2 *ent.Cursor
+	var arg2 *entgql.Cursor[uuid.UUID]
 	if tmp, ok := rawArgs["before"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("before"))
-		arg2, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋentᚐCursor(ctx, tmp)
+		arg2, err = ec.unmarshalOCursor2ᚖentgoᚗioᚋcontribᚋentgqlᚐCursor(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -7872,9 +7872,9 @@ func (ec *executionContext) _PageInfo_startCursor(ctx context.Context, field gra
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*ent.Cursor)
+	res := resTmp.(*entgql.Cursor[uuid.UUID])
 	fc.Result = res
-	return ec.marshalOCursor2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋentᚐCursor(ctx, field.Selections, res)
+	return ec.marshalOCursor2ᚖentgoᚗioᚋcontribᚋentgqlᚐCursor(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_PageInfo_startCursor(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -7913,9 +7913,9 @@ func (ec *executionContext) _PageInfo_endCursor(ctx context.Context, field graph
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*ent.Cursor)
+	res := resTmp.(*entgql.Cursor[uuid.UUID])
 	fc.Result = res
-	return ec.marshalOCursor2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋentᚐCursor(ctx, field.Selections, res)
+	return ec.marshalOCursor2ᚖentgoᚗioᚋcontribᚋentgqlᚐCursor(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_PageInfo_endCursor(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -8422,7 +8422,7 @@ func (ec *executionContext) _Query_userFriends(ctx context.Context, field graphq
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().UserFriends(rctx, fc.Args["userId"].(uuid.UUID), fc.Args["after"].(*ent.Cursor), fc.Args["first"].(*int), fc.Args["before"].(*ent.Cursor), fc.Args["last"].(*int))
+		return ec.resolvers.Query().UserFriends(rctx, fc.Args["userId"].(uuid.UUID), fc.Args["after"].(*entgql.Cursor[uuid.UUID]), fc.Args["first"].(*int), fc.Args["before"].(*entgql.Cursor[uuid.UUID]), fc.Args["last"].(*int))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -10254,9 +10254,9 @@ func (ec *executionContext) _UserEdge_cursor(ctx context.Context, field graphql.
 		}
 		return graphql.Null
 	}
-	res := resTmp.(ent.Cursor)
+	res := resTmp.(entgql.Cursor[uuid.UUID])
 	fc.Result = res
-	return ec.marshalNCursor2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋentᚐCursor(ctx, field.Selections, res)
+	return ec.marshalNCursor2entgoᚗioᚋcontribᚋentgqlᚐCursor(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_UserEdge_cursor(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -10462,7 +10462,7 @@ func (ec *executionContext) _Viewer_friends(ctx context.Context, field graphql.C
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Viewer().Friends(rctx, obj, fc.Args["after"].(*ent.Cursor), fc.Args["first"].(*int), fc.Args["before"].(*ent.Cursor), fc.Args["last"].(*int))
+		return ec.resolvers.Viewer().Friends(rctx, obj, fc.Args["after"].(*entgql.Cursor[uuid.UUID]), fc.Args["first"].(*int), fc.Args["before"].(*entgql.Cursor[uuid.UUID]), fc.Args["last"].(*int))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -10525,7 +10525,7 @@ func (ec *executionContext) _Viewer_blockedFriends(ctx context.Context, field gr
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Viewer().BlockedFriends(rctx, obj, fc.Args["after"].(*ent.Cursor), fc.Args["first"].(*int), fc.Args["before"].(*ent.Cursor), fc.Args["last"].(*int))
+		return ec.resolvers.Viewer().BlockedFriends(rctx, obj, fc.Args["after"].(*entgql.Cursor[uuid.UUID]), fc.Args["first"].(*int), fc.Args["before"].(*entgql.Cursor[uuid.UUID]), fc.Args["last"].(*int))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -16387,13 +16387,13 @@ func (ec *executionContext) marshalNCreateUserPayload2ᚖgithubᚗcomᚋkᚑyomo
 	return ec._CreateUserPayload(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNCursor2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋentᚐCursor(ctx context.Context, v interface{}) (ent.Cursor, error) {
-	var res ent.Cursor
+func (ec *executionContext) unmarshalNCursor2entgoᚗioᚋcontribᚋentgqlᚐCursor(ctx context.Context, v interface{}) (entgql.Cursor[uuid.UUID], error) {
+	var res entgql.Cursor[uuid.UUID]
 	err := res.UnmarshalGQL(v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNCursor2githubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋentᚐCursor(ctx context.Context, sel ast.SelectionSet, v ent.Cursor) graphql.Marshaler {
+func (ec *executionContext) marshalNCursor2entgoᚗioᚋcontribᚋentgqlᚐCursor(ctx context.Context, sel ast.SelectionSet, v entgql.Cursor[uuid.UUID]) graphql.Marshaler {
 	return v
 }
 
@@ -17495,16 +17495,16 @@ func (ec *executionContext) marshalOCoordinate2ᚖgithubᚗcomᚋkᚑyomoᚋinvy
 	return ec._Coordinate(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalOCursor2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋentᚐCursor(ctx context.Context, v interface{}) (*ent.Cursor, error) {
+func (ec *executionContext) unmarshalOCursor2ᚖentgoᚗioᚋcontribᚋentgqlᚐCursor(ctx context.Context, v interface{}) (*entgql.Cursor[uuid.UUID], error) {
 	if v == nil {
 		return nil, nil
 	}
-	var res = new(ent.Cursor)
+	var res = new(entgql.Cursor[uuid.UUID])
 	err := res.UnmarshalGQL(v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalOCursor2ᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋentᚐCursor(ctx context.Context, sel ast.SelectionSet, v *ent.Cursor) graphql.Marshaler {
+func (ec *executionContext) marshalOCursor2ᚖentgoᚗioᚋcontribᚋentgqlᚐCursor(ctx context.Context, sel ast.SelectionSet, v *entgql.Cursor[uuid.UUID]) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}

@@ -74,16 +74,7 @@ func (umu *UserMuteUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if err := umu.check(); err != nil {
 		return n, err
 	}
-	_spec := &sqlgraph.UpdateSpec{
-		Node: &sqlgraph.NodeSpec{
-			Table:   usermute.Table,
-			Columns: usermute.Columns,
-			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
-				Column: usermute.FieldID,
-			},
-		},
-	}
+	_spec := sqlgraph.NewUpdateSpec(usermute.Table, usermute.Columns, sqlgraph.NewFieldSpec(usermute.FieldID, field.TypeUUID))
 	if ps := umu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -114,6 +105,12 @@ type UserMuteUpdateOne struct {
 // Mutation returns the UserMuteMutation object of the builder.
 func (umuo *UserMuteUpdateOne) Mutation() *UserMuteMutation {
 	return umuo.mutation
+}
+
+// Where appends a list predicates to the UserMuteUpdate builder.
+func (umuo *UserMuteUpdateOne) Where(ps ...predicate.UserMute) *UserMuteUpdateOne {
+	umuo.mutation.Where(ps...)
+	return umuo
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
@@ -165,16 +162,7 @@ func (umuo *UserMuteUpdateOne) sqlSave(ctx context.Context) (_node *UserMute, er
 	if err := umuo.check(); err != nil {
 		return _node, err
 	}
-	_spec := &sqlgraph.UpdateSpec{
-		Node: &sqlgraph.NodeSpec{
-			Table:   usermute.Table,
-			Columns: usermute.Columns,
-			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
-				Column: usermute.FieldID,
-			},
-		},
-	}
+	_spec := sqlgraph.NewUpdateSpec(usermute.Table, usermute.Columns, sqlgraph.NewFieldSpec(usermute.FieldID, field.TypeUUID))
 	id, ok := umuo.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "UserMute.id" for update`)}

@@ -160,11 +160,7 @@ func HasAccount() predicate.User {
 // HasAccountWith applies the HasEdge predicate on the "account" edge with a given conditions (other predicates).
 func HasAccountWith(preds ...predicate.Account) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(AccountInverseTable, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, false, AccountTable, AccountColumn),
-		)
+		step := newAccountStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)
@@ -187,11 +183,7 @@ func HasUserProfile() predicate.User {
 // HasUserProfileWith applies the HasEdge predicate on the "user_profile" edge with a given conditions (other predicates).
 func HasUserProfileWith(preds ...predicate.UserProfile) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(UserProfileInverseTable, FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, false, UserProfileTable, UserProfileColumn),
-		)
+		step := newUserProfileStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)
@@ -214,11 +206,7 @@ func HasUserLocation() predicate.User {
 // HasUserLocationWith applies the HasEdge predicate on the "user_location" edge with a given conditions (other predicates).
 func HasUserLocationWith(preds ...predicate.UserLocation) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(UserLocationInverseTable, FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, false, UserLocationTable, UserLocationColumn),
-		)
+		step := newUserLocationStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)
@@ -241,11 +229,7 @@ func HasFriendUsers() predicate.User {
 // HasFriendUsersWith applies the HasEdge predicate on the "friend_users" edge with a given conditions (other predicates).
 func HasFriendUsersWith(preds ...predicate.User) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, false, FriendUsersTable, FriendUsersPrimaryKey...),
-		)
+		step := newFriendUsersStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)
@@ -268,11 +252,7 @@ func HasPushNotificationTokens() predicate.User {
 // HasPushNotificationTokensWith applies the HasEdge predicate on the "push_notification_tokens" edge with a given conditions (other predicates).
 func HasPushNotificationTokensWith(preds ...predicate.PushNotificationToken) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(PushNotificationTokensInverseTable, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, true, PushNotificationTokensTable, PushNotificationTokensColumn),
-		)
+		step := newPushNotificationTokensStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)
@@ -295,11 +275,7 @@ func HasFriendGroups() predicate.User {
 // HasFriendGroupsWith applies the HasEdge predicate on the "friend_groups" edge with a given conditions (other predicates).
 func HasFriendGroupsWith(preds ...predicate.FriendGroup) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(FriendGroupsInverseTable, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, true, FriendGroupsTable, FriendGroupsColumn),
-		)
+		step := newFriendGroupsStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)
@@ -322,11 +298,7 @@ func HasBelongingFriendGroups() predicate.User {
 // HasBelongingFriendGroupsWith applies the HasEdge predicate on the "belonging_friend_groups" edge with a given conditions (other predicates).
 func HasBelongingFriendGroupsWith(preds ...predicate.FriendGroup) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(BelongingFriendGroupsInverseTable, FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, true, BelongingFriendGroupsTable, BelongingFriendGroupsPrimaryKey...),
-		)
+		step := newBelongingFriendGroupsStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)
@@ -349,11 +321,7 @@ func HasInvitationAcceptances() predicate.User {
 // HasInvitationAcceptancesWith applies the HasEdge predicate on the "invitation_acceptances" edge with a given conditions (other predicates).
 func HasInvitationAcceptancesWith(preds ...predicate.InvitationAcceptance) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(InvitationAcceptancesInverseTable, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, true, InvitationAcceptancesTable, InvitationAcceptancesColumn),
-		)
+		step := newInvitationAcceptancesStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)
@@ -376,11 +344,7 @@ func HasInvitationDenials() predicate.User {
 // HasInvitationDenialsWith applies the HasEdge predicate on the "invitation_denials" edge with a given conditions (other predicates).
 func HasInvitationDenialsWith(preds ...predicate.InvitationDenial) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(InvitationDenialsInverseTable, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, true, InvitationDenialsTable, InvitationDenialsColumn),
-		)
+		step := newInvitationDenialsStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)
@@ -403,11 +367,7 @@ func HasFriendships() predicate.User {
 // HasFriendshipsWith applies the HasEdge predicate on the "friendships" edge with a given conditions (other predicates).
 func HasFriendshipsWith(preds ...predicate.Friendship) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(FriendshipsInverseTable, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, true, FriendshipsTable, FriendshipsColumn),
-		)
+		step := newFriendshipsStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)
@@ -430,11 +390,7 @@ func HasUserFriendGroups() predicate.User {
 // HasUserFriendGroupsWith applies the HasEdge predicate on the "user_friend_groups" edge with a given conditions (other predicates).
 func HasUserFriendGroupsWith(preds ...predicate.UserFriendGroup) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(UserFriendGroupsInverseTable, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, true, UserFriendGroupsTable, UserFriendGroupsColumn),
-		)
+		step := newUserFriendGroupsStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

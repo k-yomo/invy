@@ -74,16 +74,7 @@ func (fu *FriendshipUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if err := fu.check(); err != nil {
 		return n, err
 	}
-	_spec := &sqlgraph.UpdateSpec{
-		Node: &sqlgraph.NodeSpec{
-			Table:   friendship.Table,
-			Columns: friendship.Columns,
-			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
-				Column: friendship.FieldID,
-			},
-		},
-	}
+	_spec := sqlgraph.NewUpdateSpec(friendship.Table, friendship.Columns, sqlgraph.NewFieldSpec(friendship.FieldID, field.TypeUUID))
 	if ps := fu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -114,6 +105,12 @@ type FriendshipUpdateOne struct {
 // Mutation returns the FriendshipMutation object of the builder.
 func (fuo *FriendshipUpdateOne) Mutation() *FriendshipMutation {
 	return fuo.mutation
+}
+
+// Where appends a list predicates to the FriendshipUpdate builder.
+func (fuo *FriendshipUpdateOne) Where(ps ...predicate.Friendship) *FriendshipUpdateOne {
+	fuo.mutation.Where(ps...)
+	return fuo
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
@@ -165,16 +162,7 @@ func (fuo *FriendshipUpdateOne) sqlSave(ctx context.Context) (_node *Friendship,
 	if err := fuo.check(); err != nil {
 		return _node, err
 	}
-	_spec := &sqlgraph.UpdateSpec{
-		Node: &sqlgraph.NodeSpec{
-			Table:   friendship.Table,
-			Columns: friendship.Columns,
-			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
-				Column: friendship.FieldID,
-			},
-		},
-	}
+	_spec := sqlgraph.NewUpdateSpec(friendship.Table, friendship.Columns, sqlgraph.NewFieldSpec(friendship.FieldID, field.TypeUUID))
 	id, ok := fuo.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "Friendship.id" for update`)}

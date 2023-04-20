@@ -78,16 +78,7 @@ func (ulhu *UserLocationHistoryUpdate) sqlSave(ctx context.Context) (n int, err 
 	if err := ulhu.check(); err != nil {
 		return n, err
 	}
-	_spec := &sqlgraph.UpdateSpec{
-		Node: &sqlgraph.NodeSpec{
-			Table:   userlocationhistory.Table,
-			Columns: userlocationhistory.Columns,
-			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
-				Column: userlocationhistory.FieldID,
-			},
-		},
-	}
+	_spec := sqlgraph.NewUpdateSpec(userlocationhistory.Table, userlocationhistory.Columns, sqlgraph.NewFieldSpec(userlocationhistory.FieldID, field.TypeUUID))
 	if ps := ulhu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -127,6 +118,12 @@ func (ulhuo *UserLocationHistoryUpdateOne) SetCoordinate(pp *pgutil.GeoPoint) *U
 // Mutation returns the UserLocationHistoryMutation object of the builder.
 func (ulhuo *UserLocationHistoryUpdateOne) Mutation() *UserLocationHistoryMutation {
 	return ulhuo.mutation
+}
+
+// Where appends a list predicates to the UserLocationHistoryUpdate builder.
+func (ulhuo *UserLocationHistoryUpdateOne) Where(ps ...predicate.UserLocationHistory) *UserLocationHistoryUpdateOne {
+	ulhuo.mutation.Where(ps...)
+	return ulhuo
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
@@ -175,16 +172,7 @@ func (ulhuo *UserLocationHistoryUpdateOne) sqlSave(ctx context.Context) (_node *
 	if err := ulhuo.check(); err != nil {
 		return _node, err
 	}
-	_spec := &sqlgraph.UpdateSpec{
-		Node: &sqlgraph.NodeSpec{
-			Table:   userlocationhistory.Table,
-			Columns: userlocationhistory.Columns,
-			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
-				Column: userlocationhistory.FieldID,
-			},
-		},
-	}
+	_spec := sqlgraph.NewUpdateSpec(userlocationhistory.Table, userlocationhistory.Columns, sqlgraph.NewFieldSpec(userlocationhistory.FieldID, field.TypeUUID))
 	id, ok := ulhuo.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "UserLocationHistory.id" for update`)}

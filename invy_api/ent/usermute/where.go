@@ -165,11 +165,7 @@ func HasUser() predicate.UserMute {
 // HasUserWith applies the HasEdge predicate on the "user" edge with a given conditions (other predicates).
 func HasUserWith(preds ...predicate.User) predicate.UserMute {
 	return predicate.UserMute(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(UserInverseTable, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, false, UserTable, UserColumn),
-		)
+		step := newUserStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)
@@ -192,11 +188,7 @@ func HasMuteUser() predicate.UserMute {
 // HasMuteUserWith applies the HasEdge predicate on the "mute_user" edge with a given conditions (other predicates).
 func HasMuteUserWith(preds ...predicate.User) predicate.UserMute {
 	return predicate.UserMute(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(MuteUserInverseTable, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, false, MuteUserTable, MuteUserColumn),
-		)
+		step := newMuteUserStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

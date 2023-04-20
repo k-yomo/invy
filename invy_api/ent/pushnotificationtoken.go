@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/google/uuid"
 	"github.com/k-yomo/invy/invy_api/ent/pushnotificationtoken"
@@ -30,7 +31,8 @@ type PushNotificationToken struct {
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the PushNotificationTokenQuery when eager-loading is set.
-	Edges PushNotificationTokenEdges `json:"edges"`
+	Edges        PushNotificationTokenEdges `json:"edges"`
+	selectValues sql.SelectValues
 }
 
 // PushNotificationTokenEdges holds the relations/edges for other nodes in the graph.
@@ -69,7 +71,7 @@ func (*PushNotificationToken) scanValues(columns []string) ([]any, error) {
 		case pushnotificationtoken.FieldID, pushnotificationtoken.FieldUserID:
 			values[i] = new(uuid.UUID)
 		default:
-			return nil, fmt.Errorf("unexpected column %q for type PushNotificationToken", columns[i])
+			values[i] = new(sql.UnknownType)
 		}
 	}
 	return values, nil
@@ -119,21 +121,29 @@ func (pnt *PushNotificationToken) assignValues(columns []string, values []any) e
 			} else if value.Valid {
 				pnt.UpdatedAt = value.Time
 			}
+		default:
+			pnt.selectValues.Set(columns[i], values[i])
 		}
 	}
 	return nil
 }
 
+// Value returns the ent.Value that was dynamically selected and assigned to the PushNotificationToken.
+// This includes values selected through modifiers, order, etc.
+func (pnt *PushNotificationToken) Value(name string) (ent.Value, error) {
+	return pnt.selectValues.Get(name)
+}
+
 // QueryUser queries the "user" edge of the PushNotificationToken entity.
 func (pnt *PushNotificationToken) QueryUser() *UserQuery {
-	return (&PushNotificationTokenClient{config: pnt.config}).QueryUser(pnt)
+	return NewPushNotificationTokenClient(pnt.config).QueryUser(pnt)
 }
 
 // Update returns a builder for updating this PushNotificationToken.
 // Note that you need to call PushNotificationToken.Unwrap() before calling this method if this PushNotificationToken
 // was returned from a transaction, and the transaction was committed or rolled back.
 func (pnt *PushNotificationToken) Update() *PushNotificationTokenUpdateOne {
-	return (&PushNotificationTokenClient{config: pnt.config}).UpdateOne(pnt)
+	return NewPushNotificationTokenClient(pnt.config).UpdateOne(pnt)
 }
 
 // Unwrap unwraps the PushNotificationToken entity that was returned from a transaction after it was closed,
@@ -172,9 +182,3 @@ func (pnt *PushNotificationToken) String() string {
 
 // PushNotificationTokens is a parsable slice of PushNotificationToken.
 type PushNotificationTokens []*PushNotificationToken
-
-func (pnt PushNotificationTokens) config(cfg config) {
-	for _i := range pnt {
-		pnt[_i].config = cfg
-	}
-}

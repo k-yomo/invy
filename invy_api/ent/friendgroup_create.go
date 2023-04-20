@@ -231,13 +231,7 @@ func (fgc *FriendGroupCreate) sqlSave(ctx context.Context) (*FriendGroup, error)
 func (fgc *FriendGroupCreate) createSpec() (*FriendGroup, *sqlgraph.CreateSpec) {
 	var (
 		_node = &FriendGroup{config: fgc.config}
-		_spec = &sqlgraph.CreateSpec{
-			Table: friendgroup.Table,
-			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
-				Column: friendgroup.FieldID,
-			},
-		}
+		_spec = sqlgraph.NewCreateSpec(friendgroup.Table, sqlgraph.NewFieldSpec(friendgroup.FieldID, field.TypeUUID))
 	)
 	_spec.OnConflict = fgc.conflict
 	if id, ok := fgc.mutation.ID(); ok {
@@ -268,10 +262,7 @@ func (fgc *FriendGroupCreate) createSpec() (*FriendGroup, *sqlgraph.CreateSpec) 
 			Columns: []string{friendgroup.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeUUID,
-					Column: user.FieldID,
-				},
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -288,10 +279,7 @@ func (fgc *FriendGroupCreate) createSpec() (*FriendGroup, *sqlgraph.CreateSpec) 
 			Columns: friendgroup.FriendUsersPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeUUID,
-					Column: user.FieldID,
-				},
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -314,10 +302,7 @@ func (fgc *FriendGroupCreate) createSpec() (*FriendGroup, *sqlgraph.CreateSpec) 
 			Columns: []string{friendgroup.UserFriendGroupsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeUUID,
-					Column: userfriendgroup.FieldID,
-				},
+				IDSpec: sqlgraph.NewFieldSpec(userfriendgroup.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -585,8 +570,8 @@ func (fgcb *FriendGroupCreateBulk) Save(ctx context.Context) ([]*FriendGroup, er
 					return nil, err
 				}
 				builder.mutation = mutation
-				nodes[i], specs[i] = builder.createSpec()
 				var err error
+				nodes[i], specs[i] = builder.createSpec()
 				if i < len(mutators)-1 {
 					_, err = mutators[i+1].Mutate(root, fgcb.builders[i+1].mutation)
 				} else {

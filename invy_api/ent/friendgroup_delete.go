@@ -40,15 +40,7 @@ func (fgd *FriendGroupDelete) ExecX(ctx context.Context) int {
 }
 
 func (fgd *FriendGroupDelete) sqlExec(ctx context.Context) (int, error) {
-	_spec := &sqlgraph.DeleteSpec{
-		Node: &sqlgraph.NodeSpec{
-			Table: friendgroup.Table,
-			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
-				Column: friendgroup.FieldID,
-			},
-		},
-	}
+	_spec := sqlgraph.NewDeleteSpec(friendgroup.Table, sqlgraph.NewFieldSpec(friendgroup.FieldID, field.TypeUUID))
 	if ps := fgd.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -69,6 +61,12 @@ type FriendGroupDeleteOne struct {
 	fgd *FriendGroupDelete
 }
 
+// Where appends a list predicates to the FriendGroupDelete builder.
+func (fgdo *FriendGroupDeleteOne) Where(ps ...predicate.FriendGroup) *FriendGroupDeleteOne {
+	fgdo.fgd.mutation.Where(ps...)
+	return fgdo
+}
+
 // Exec executes the deletion query.
 func (fgdo *FriendGroupDeleteOne) Exec(ctx context.Context) error {
 	n, err := fgdo.fgd.Exec(ctx)
@@ -84,5 +82,7 @@ func (fgdo *FriendGroupDeleteOne) Exec(ctx context.Context) error {
 
 // ExecX is like Exec, but panics if an error occurs.
 func (fgdo *FriendGroupDeleteOne) ExecX(ctx context.Context) {
-	fgdo.fgd.ExecX(ctx)
+	if err := fgdo.Exec(ctx); err != nil {
+		panic(err)
+	}
 }

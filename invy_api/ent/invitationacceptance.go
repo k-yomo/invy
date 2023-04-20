@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/google/uuid"
 	"github.com/k-yomo/invy/invy_api/ent/invitation"
@@ -27,7 +28,8 @@ type InvitationAcceptance struct {
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the InvitationAcceptanceQuery when eager-loading is set.
-	Edges InvitationAcceptanceEdges `json:"edges"`
+	Edges        InvitationAcceptanceEdges `json:"edges"`
+	selectValues sql.SelectValues
 }
 
 // InvitationAcceptanceEdges holds the relations/edges for other nodes in the graph.
@@ -79,7 +81,7 @@ func (*InvitationAcceptance) scanValues(columns []string) ([]any, error) {
 		case invitationacceptance.FieldID, invitationacceptance.FieldUserID, invitationacceptance.FieldInvitationID:
 			values[i] = new(uuid.UUID)
 		default:
-			return nil, fmt.Errorf("unexpected column %q for type InvitationAcceptance", columns[i])
+			values[i] = new(sql.UnknownType)
 		}
 	}
 	return values, nil
@@ -117,26 +119,34 @@ func (ia *InvitationAcceptance) assignValues(columns []string, values []any) err
 			} else if value.Valid {
 				ia.CreatedAt = value.Time
 			}
+		default:
+			ia.selectValues.Set(columns[i], values[i])
 		}
 	}
 	return nil
 }
 
+// Value returns the ent.Value that was dynamically selected and assigned to the InvitationAcceptance.
+// This includes values selected through modifiers, order, etc.
+func (ia *InvitationAcceptance) Value(name string) (ent.Value, error) {
+	return ia.selectValues.Get(name)
+}
+
 // QueryUser queries the "user" edge of the InvitationAcceptance entity.
 func (ia *InvitationAcceptance) QueryUser() *UserQuery {
-	return (&InvitationAcceptanceClient{config: ia.config}).QueryUser(ia)
+	return NewInvitationAcceptanceClient(ia.config).QueryUser(ia)
 }
 
 // QueryInvitation queries the "invitation" edge of the InvitationAcceptance entity.
 func (ia *InvitationAcceptance) QueryInvitation() *InvitationQuery {
-	return (&InvitationAcceptanceClient{config: ia.config}).QueryInvitation(ia)
+	return NewInvitationAcceptanceClient(ia.config).QueryInvitation(ia)
 }
 
 // Update returns a builder for updating this InvitationAcceptance.
 // Note that you need to call InvitationAcceptance.Unwrap() before calling this method if this InvitationAcceptance
 // was returned from a transaction, and the transaction was committed or rolled back.
 func (ia *InvitationAcceptance) Update() *InvitationAcceptanceUpdateOne {
-	return (&InvitationAcceptanceClient{config: ia.config}).UpdateOne(ia)
+	return NewInvitationAcceptanceClient(ia.config).UpdateOne(ia)
 }
 
 // Unwrap unwraps the InvitationAcceptance entity that was returned from a transaction after it was closed,
@@ -169,9 +179,3 @@ func (ia *InvitationAcceptance) String() string {
 
 // InvitationAcceptances is a parsable slice of InvitationAcceptance.
 type InvitationAcceptances []*InvitationAcceptance
-
-func (ia InvitationAcceptances) config(cfg config) {
-	for _i := range ia {
-		ia[_i].config = cfg
-	}
-}

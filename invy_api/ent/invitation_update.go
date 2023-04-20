@@ -249,16 +249,7 @@ func (iu *InvitationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if err := iu.check(); err != nil {
 		return n, err
 	}
-	_spec := &sqlgraph.UpdateSpec{
-		Node: &sqlgraph.NodeSpec{
-			Table:   invitation.Table,
-			Columns: invitation.Columns,
-			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
-				Column: invitation.FieldID,
-			},
-		},
-	}
+	_spec := sqlgraph.NewUpdateSpec(invitation.Table, invitation.Columns, sqlgraph.NewFieldSpec(invitation.FieldID, field.TypeUUID))
 	if ps := iu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -298,10 +289,7 @@ func (iu *InvitationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{invitation.InvitationUsersColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeUUID,
-					Column: invitationuser.FieldID,
-				},
+				IDSpec: sqlgraph.NewFieldSpec(invitationuser.FieldID, field.TypeUUID),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -314,10 +302,7 @@ func (iu *InvitationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{invitation.InvitationUsersColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeUUID,
-					Column: invitationuser.FieldID,
-				},
+				IDSpec: sqlgraph.NewFieldSpec(invitationuser.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -333,10 +318,7 @@ func (iu *InvitationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{invitation.InvitationUsersColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeUUID,
-					Column: invitationuser.FieldID,
-				},
+				IDSpec: sqlgraph.NewFieldSpec(invitationuser.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -352,10 +334,7 @@ func (iu *InvitationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{invitation.InvitationAcceptancesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeUUID,
-					Column: invitationacceptance.FieldID,
-				},
+				IDSpec: sqlgraph.NewFieldSpec(invitationacceptance.FieldID, field.TypeUUID),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -368,10 +347,7 @@ func (iu *InvitationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{invitation.InvitationAcceptancesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeUUID,
-					Column: invitationacceptance.FieldID,
-				},
+				IDSpec: sqlgraph.NewFieldSpec(invitationacceptance.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -387,10 +363,7 @@ func (iu *InvitationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{invitation.InvitationAcceptancesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeUUID,
-					Column: invitationacceptance.FieldID,
-				},
+				IDSpec: sqlgraph.NewFieldSpec(invitationacceptance.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -406,10 +379,7 @@ func (iu *InvitationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{invitation.InvitationDenialsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeUUID,
-					Column: invitationdenial.FieldID,
-				},
+				IDSpec: sqlgraph.NewFieldSpec(invitationdenial.FieldID, field.TypeUUID),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -422,10 +392,7 @@ func (iu *InvitationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{invitation.InvitationDenialsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeUUID,
-					Column: invitationdenial.FieldID,
-				},
+				IDSpec: sqlgraph.NewFieldSpec(invitationdenial.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -441,10 +408,7 @@ func (iu *InvitationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{invitation.InvitationDenialsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeUUID,
-					Column: invitationdenial.FieldID,
-				},
+				IDSpec: sqlgraph.NewFieldSpec(invitationdenial.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -635,6 +599,12 @@ func (iuo *InvitationUpdateOne) RemoveInvitationDenials(i ...*InvitationDenial) 
 	return iuo.RemoveInvitationDenialIDs(ids...)
 }
 
+// Where appends a list predicates to the InvitationUpdate builder.
+func (iuo *InvitationUpdateOne) Where(ps ...predicate.Invitation) *InvitationUpdateOne {
+	iuo.mutation.Where(ps...)
+	return iuo
+}
+
 // Select allows selecting one or more fields (columns) of the returned entity.
 // The default is selecting all fields defined in the entity schema.
 func (iuo *InvitationUpdateOne) Select(field string, fields ...string) *InvitationUpdateOne {
@@ -695,16 +665,7 @@ func (iuo *InvitationUpdateOne) sqlSave(ctx context.Context) (_node *Invitation,
 	if err := iuo.check(); err != nil {
 		return _node, err
 	}
-	_spec := &sqlgraph.UpdateSpec{
-		Node: &sqlgraph.NodeSpec{
-			Table:   invitation.Table,
-			Columns: invitation.Columns,
-			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
-				Column: invitation.FieldID,
-			},
-		},
-	}
+	_spec := sqlgraph.NewUpdateSpec(invitation.Table, invitation.Columns, sqlgraph.NewFieldSpec(invitation.FieldID, field.TypeUUID))
 	id, ok := iuo.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "Invitation.id" for update`)}
@@ -761,10 +722,7 @@ func (iuo *InvitationUpdateOne) sqlSave(ctx context.Context) (_node *Invitation,
 			Columns: []string{invitation.InvitationUsersColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeUUID,
-					Column: invitationuser.FieldID,
-				},
+				IDSpec: sqlgraph.NewFieldSpec(invitationuser.FieldID, field.TypeUUID),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -777,10 +735,7 @@ func (iuo *InvitationUpdateOne) sqlSave(ctx context.Context) (_node *Invitation,
 			Columns: []string{invitation.InvitationUsersColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeUUID,
-					Column: invitationuser.FieldID,
-				},
+				IDSpec: sqlgraph.NewFieldSpec(invitationuser.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -796,10 +751,7 @@ func (iuo *InvitationUpdateOne) sqlSave(ctx context.Context) (_node *Invitation,
 			Columns: []string{invitation.InvitationUsersColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeUUID,
-					Column: invitationuser.FieldID,
-				},
+				IDSpec: sqlgraph.NewFieldSpec(invitationuser.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -815,10 +767,7 @@ func (iuo *InvitationUpdateOne) sqlSave(ctx context.Context) (_node *Invitation,
 			Columns: []string{invitation.InvitationAcceptancesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeUUID,
-					Column: invitationacceptance.FieldID,
-				},
+				IDSpec: sqlgraph.NewFieldSpec(invitationacceptance.FieldID, field.TypeUUID),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -831,10 +780,7 @@ func (iuo *InvitationUpdateOne) sqlSave(ctx context.Context) (_node *Invitation,
 			Columns: []string{invitation.InvitationAcceptancesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeUUID,
-					Column: invitationacceptance.FieldID,
-				},
+				IDSpec: sqlgraph.NewFieldSpec(invitationacceptance.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -850,10 +796,7 @@ func (iuo *InvitationUpdateOne) sqlSave(ctx context.Context) (_node *Invitation,
 			Columns: []string{invitation.InvitationAcceptancesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeUUID,
-					Column: invitationacceptance.FieldID,
-				},
+				IDSpec: sqlgraph.NewFieldSpec(invitationacceptance.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -869,10 +812,7 @@ func (iuo *InvitationUpdateOne) sqlSave(ctx context.Context) (_node *Invitation,
 			Columns: []string{invitation.InvitationDenialsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeUUID,
-					Column: invitationdenial.FieldID,
-				},
+				IDSpec: sqlgraph.NewFieldSpec(invitationdenial.FieldID, field.TypeUUID),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -885,10 +825,7 @@ func (iuo *InvitationUpdateOne) sqlSave(ctx context.Context) (_node *Invitation,
 			Columns: []string{invitation.InvitationDenialsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeUUID,
-					Column: invitationdenial.FieldID,
-				},
+				IDSpec: sqlgraph.NewFieldSpec(invitationdenial.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -904,10 +841,7 @@ func (iuo *InvitationUpdateOne) sqlSave(ctx context.Context) (_node *Invitation,
 			Columns: []string{invitation.InvitationDenialsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeUUID,
-					Column: invitationdenial.FieldID,
-				},
+				IDSpec: sqlgraph.NewFieldSpec(invitationdenial.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {

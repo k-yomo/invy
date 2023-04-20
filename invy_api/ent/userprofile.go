@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/google/uuid"
 	"github.com/k-yomo/invy/invy_api/ent/user"
@@ -32,7 +33,8 @@ type UserProfile struct {
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the UserProfileQuery when eager-loading is set.
-	Edges UserProfileEdges `json:"edges"`
+	Edges        UserProfileEdges `json:"edges"`
+	selectValues sql.SelectValues
 }
 
 // UserProfileEdges holds the relations/edges for other nodes in the graph.
@@ -71,7 +73,7 @@ func (*UserProfile) scanValues(columns []string) ([]any, error) {
 		case userprofile.FieldID, userprofile.FieldUserID:
 			values[i] = new(uuid.UUID)
 		default:
-			return nil, fmt.Errorf("unexpected column %q for type UserProfile", columns[i])
+			values[i] = new(sql.UnknownType)
 		}
 	}
 	return values, nil
@@ -127,21 +129,29 @@ func (up *UserProfile) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				up.UpdatedAt = value.Time
 			}
+		default:
+			up.selectValues.Set(columns[i], values[i])
 		}
 	}
 	return nil
 }
 
+// Value returns the ent.Value that was dynamically selected and assigned to the UserProfile.
+// This includes values selected through modifiers, order, etc.
+func (up *UserProfile) Value(name string) (ent.Value, error) {
+	return up.selectValues.Get(name)
+}
+
 // QueryUser queries the "user" edge of the UserProfile entity.
 func (up *UserProfile) QueryUser() *UserQuery {
-	return (&UserProfileClient{config: up.config}).QueryUser(up)
+	return NewUserProfileClient(up.config).QueryUser(up)
 }
 
 // Update returns a builder for updating this UserProfile.
 // Note that you need to call UserProfile.Unwrap() before calling this method if this UserProfile
 // was returned from a transaction, and the transaction was committed or rolled back.
 func (up *UserProfile) Update() *UserProfileUpdateOne {
-	return (&UserProfileClient{config: up.config}).UpdateOne(up)
+	return NewUserProfileClient(up.config).UpdateOne(up)
 }
 
 // Unwrap unwraps the UserProfile entity that was returned from a transaction after it was closed,
@@ -183,9 +193,3 @@ func (up *UserProfile) String() string {
 
 // UserProfiles is a parsable slice of UserProfile.
 type UserProfiles []*UserProfile
-
-func (up UserProfiles) config(cfg config) {
-	for _i := range up {
-		up[_i].config = cfg
-	}
-}

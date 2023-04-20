@@ -74,16 +74,7 @@ func (iau *InvitationAcceptanceUpdate) sqlSave(ctx context.Context) (n int, err 
 	if err := iau.check(); err != nil {
 		return n, err
 	}
-	_spec := &sqlgraph.UpdateSpec{
-		Node: &sqlgraph.NodeSpec{
-			Table:   invitationacceptance.Table,
-			Columns: invitationacceptance.Columns,
-			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
-				Column: invitationacceptance.FieldID,
-			},
-		},
-	}
+	_spec := sqlgraph.NewUpdateSpec(invitationacceptance.Table, invitationacceptance.Columns, sqlgraph.NewFieldSpec(invitationacceptance.FieldID, field.TypeUUID))
 	if ps := iau.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -114,6 +105,12 @@ type InvitationAcceptanceUpdateOne struct {
 // Mutation returns the InvitationAcceptanceMutation object of the builder.
 func (iauo *InvitationAcceptanceUpdateOne) Mutation() *InvitationAcceptanceMutation {
 	return iauo.mutation
+}
+
+// Where appends a list predicates to the InvitationAcceptanceUpdate builder.
+func (iauo *InvitationAcceptanceUpdateOne) Where(ps ...predicate.InvitationAcceptance) *InvitationAcceptanceUpdateOne {
+	iauo.mutation.Where(ps...)
+	return iauo
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
@@ -165,16 +162,7 @@ func (iauo *InvitationAcceptanceUpdateOne) sqlSave(ctx context.Context) (_node *
 	if err := iauo.check(); err != nil {
 		return _node, err
 	}
-	_spec := &sqlgraph.UpdateSpec{
-		Node: &sqlgraph.NodeSpec{
-			Table:   invitationacceptance.Table,
-			Columns: invitationacceptance.Columns,
-			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
-				Column: invitationacceptance.FieldID,
-			},
-		},
-	}
+	_spec := sqlgraph.NewUpdateSpec(invitationacceptance.Table, invitationacceptance.Columns, sqlgraph.NewFieldSpec(invitationacceptance.FieldID, field.TypeUUID))
 	id, ok := iauo.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "InvitationAcceptance.id" for update`)}

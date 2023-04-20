@@ -105,16 +105,7 @@ func (upu *UserProfileUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if err := upu.check(); err != nil {
 		return n, err
 	}
-	_spec := &sqlgraph.UpdateSpec{
-		Node: &sqlgraph.NodeSpec{
-			Table:   userprofile.Table,
-			Columns: userprofile.Columns,
-			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
-				Column: userprofile.FieldID,
-			},
-		},
-	}
+	_spec := sqlgraph.NewUpdateSpec(userprofile.Table, userprofile.Columns, sqlgraph.NewFieldSpec(userprofile.FieldID, field.TypeUUID))
 	if ps := upu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -183,6 +174,12 @@ func (upuo *UserProfileUpdateOne) Mutation() *UserProfileMutation {
 	return upuo.mutation
 }
 
+// Where appends a list predicates to the UserProfileUpdate builder.
+func (upuo *UserProfileUpdateOne) Where(ps ...predicate.UserProfile) *UserProfileUpdateOne {
+	upuo.mutation.Where(ps...)
+	return upuo
+}
+
 // Select allows selecting one or more fields (columns) of the returned entity.
 // The default is selecting all fields defined in the entity schema.
 func (upuo *UserProfileUpdateOne) Select(field string, fields ...string) *UserProfileUpdateOne {
@@ -238,16 +235,7 @@ func (upuo *UserProfileUpdateOne) sqlSave(ctx context.Context) (_node *UserProfi
 	if err := upuo.check(); err != nil {
 		return _node, err
 	}
-	_spec := &sqlgraph.UpdateSpec{
-		Node: &sqlgraph.NodeSpec{
-			Table:   userprofile.Table,
-			Columns: userprofile.Columns,
-			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
-				Column: userprofile.FieldID,
-			},
-		},
-	}
+	_spec := sqlgraph.NewUpdateSpec(userprofile.Table, userprofile.Columns, sqlgraph.NewFieldSpec(userprofile.FieldID, field.TypeUUID))
 	id, ok := upuo.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "UserProfile.id" for update`)}

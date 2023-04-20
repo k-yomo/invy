@@ -40,15 +40,7 @@ func (iud *InvitationUserDelete) ExecX(ctx context.Context) int {
 }
 
 func (iud *InvitationUserDelete) sqlExec(ctx context.Context) (int, error) {
-	_spec := &sqlgraph.DeleteSpec{
-		Node: &sqlgraph.NodeSpec{
-			Table: invitationuser.Table,
-			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
-				Column: invitationuser.FieldID,
-			},
-		},
-	}
+	_spec := sqlgraph.NewDeleteSpec(invitationuser.Table, sqlgraph.NewFieldSpec(invitationuser.FieldID, field.TypeUUID))
 	if ps := iud.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -69,6 +61,12 @@ type InvitationUserDeleteOne struct {
 	iud *InvitationUserDelete
 }
 
+// Where appends a list predicates to the InvitationUserDelete builder.
+func (iudo *InvitationUserDeleteOne) Where(ps ...predicate.InvitationUser) *InvitationUserDeleteOne {
+	iudo.iud.mutation.Where(ps...)
+	return iudo
+}
+
 // Exec executes the deletion query.
 func (iudo *InvitationUserDeleteOne) Exec(ctx context.Context) error {
 	n, err := iudo.iud.Exec(ctx)
@@ -84,5 +82,7 @@ func (iudo *InvitationUserDeleteOne) Exec(ctx context.Context) error {
 
 // ExecX is like Exec, but panics if an error occurs.
 func (iudo *InvitationUserDeleteOne) ExecX(ctx context.Context) {
-	iudo.iud.ExecX(ctx)
+	if err := iudo.Exec(ctx); err != nil {
+		panic(err)
+	}
 }

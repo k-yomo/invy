@@ -112,16 +112,7 @@ func (pntu *PushNotificationTokenUpdate) sqlSave(ctx context.Context) (n int, er
 	if err := pntu.check(); err != nil {
 		return n, err
 	}
-	_spec := &sqlgraph.UpdateSpec{
-		Node: &sqlgraph.NodeSpec{
-			Table:   pushnotificationtoken.Table,
-			Columns: pushnotificationtoken.Columns,
-			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
-				Column: pushnotificationtoken.FieldID,
-			},
-		},
-	}
+	_spec := sqlgraph.NewUpdateSpec(pushnotificationtoken.Table, pushnotificationtoken.Columns, sqlgraph.NewFieldSpec(pushnotificationtoken.FieldID, field.TypeUUID))
 	if ps := pntu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -143,10 +134,7 @@ func (pntu *PushNotificationTokenUpdate) sqlSave(ctx context.Context) (n int, er
 			Columns: []string{pushnotificationtoken.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeUUID,
-					Column: user.FieldID,
-				},
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -159,10 +147,7 @@ func (pntu *PushNotificationTokenUpdate) sqlSave(ctx context.Context) (n int, er
 			Columns: []string{pushnotificationtoken.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeUUID,
-					Column: user.FieldID,
-				},
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -224,6 +209,12 @@ func (pntuo *PushNotificationTokenUpdateOne) ClearUser() *PushNotificationTokenU
 	return pntuo
 }
 
+// Where appends a list predicates to the PushNotificationTokenUpdate builder.
+func (pntuo *PushNotificationTokenUpdateOne) Where(ps ...predicate.PushNotificationToken) *PushNotificationTokenUpdateOne {
+	pntuo.mutation.Where(ps...)
+	return pntuo
+}
+
 // Select allows selecting one or more fields (columns) of the returned entity.
 // The default is selecting all fields defined in the entity schema.
 func (pntuo *PushNotificationTokenUpdateOne) Select(field string, fields ...string) *PushNotificationTokenUpdateOne {
@@ -279,16 +270,7 @@ func (pntuo *PushNotificationTokenUpdateOne) sqlSave(ctx context.Context) (_node
 	if err := pntuo.check(); err != nil {
 		return _node, err
 	}
-	_spec := &sqlgraph.UpdateSpec{
-		Node: &sqlgraph.NodeSpec{
-			Table:   pushnotificationtoken.Table,
-			Columns: pushnotificationtoken.Columns,
-			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
-				Column: pushnotificationtoken.FieldID,
-			},
-		},
-	}
+	_spec := sqlgraph.NewUpdateSpec(pushnotificationtoken.Table, pushnotificationtoken.Columns, sqlgraph.NewFieldSpec(pushnotificationtoken.FieldID, field.TypeUUID))
 	id, ok := pntuo.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "PushNotificationToken.id" for update`)}
@@ -327,10 +309,7 @@ func (pntuo *PushNotificationTokenUpdateOne) sqlSave(ctx context.Context) (_node
 			Columns: []string{pushnotificationtoken.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeUUID,
-					Column: user.FieldID,
-				},
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -343,10 +322,7 @@ func (pntuo *PushNotificationTokenUpdateOne) sqlSave(ctx context.Context) (_node
 			Columns: []string{pushnotificationtoken.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeUUID,
-					Column: user.FieldID,
-				},
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {

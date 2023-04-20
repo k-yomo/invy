@@ -8,9 +8,9 @@ import (
 	"strconv"
 	"time"
 
+	"entgo.io/contrib/entgql"
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/google/uuid"
-	"github.com/k-yomo/invy/invy_api/ent"
 )
 
 type ChatMessageBody interface {
@@ -179,10 +179,10 @@ type MuteUserPayload struct {
 }
 
 type PageInfo struct {
-	StartCursor     *ent.Cursor `json:"startCursor,omitempty"`
-	EndCursor       *ent.Cursor `json:"endCursor,omitempty"`
-	HasNextPage     bool        `json:"hasNextPage"`
-	HasPreviousPage bool        `json:"hasPreviousPage"`
+	StartCursor     *entgql.Cursor[uuid.UUID] `json:"startCursor,omitempty"`
+	EndCursor       *entgql.Cursor[uuid.UUID] `json:"endCursor,omitempty"`
+	HasNextPage     bool                      `json:"hasNextPage"`
+	HasPreviousPage bool                      `json:"hasPreviousPage"`
 }
 
 type RegisterPushNotificationTokenInput struct {
@@ -318,8 +318,8 @@ type UserConnection struct {
 }
 
 type UserEdge struct {
-	Node   *User      `json:"node"`
-	Cursor ent.Cursor `json:"cursor"`
+	Node   *User                    `json:"node"`
+	Cursor entgql.Cursor[uuid.UUID] `json:"cursor"`
 }
 
 type Viewer struct {

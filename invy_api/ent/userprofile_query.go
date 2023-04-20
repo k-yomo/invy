@@ -19,11 +19,8 @@ import (
 // UserProfileQuery is the builder for querying UserProfile entities.
 type UserProfileQuery struct {
 	config
-	limit      *int
-	offset     *int
-	unique     *bool
-	order      []OrderFunc
-	fields     []string
+	ctx        *QueryContext
+	order      []userprofile.OrderOption
 	inters     []Interceptor
 	predicates []predicate.UserProfile
 	withUser   *UserQuery
@@ -42,25 +39,25 @@ func (upq *UserProfileQuery) Where(ps ...predicate.UserProfile) *UserProfileQuer
 
 // Limit the number of records to be returned by this query.
 func (upq *UserProfileQuery) Limit(limit int) *UserProfileQuery {
-	upq.limit = &limit
+	upq.ctx.Limit = &limit
 	return upq
 }
 
 // Offset to start from.
 func (upq *UserProfileQuery) Offset(offset int) *UserProfileQuery {
-	upq.offset = &offset
+	upq.ctx.Offset = &offset
 	return upq
 }
 
 // Unique configures the query builder to filter duplicate records on query.
 // By default, unique is set to true, and can be disabled using this method.
 func (upq *UserProfileQuery) Unique(unique bool) *UserProfileQuery {
-	upq.unique = &unique
+	upq.ctx.Unique = &unique
 	return upq
 }
 
 // Order specifies how the records should be ordered.
-func (upq *UserProfileQuery) Order(o ...OrderFunc) *UserProfileQuery {
+func (upq *UserProfileQuery) Order(o ...userprofile.OrderOption) *UserProfileQuery {
 	upq.order = append(upq.order, o...)
 	return upq
 }
@@ -90,7 +87,7 @@ func (upq *UserProfileQuery) QueryUser() *UserQuery {
 // First returns the first UserProfile entity from the query.
 // Returns a *NotFoundError when no UserProfile was found.
 func (upq *UserProfileQuery) First(ctx context.Context) (*UserProfile, error) {
-	nodes, err := upq.Limit(1).All(newQueryContext(ctx, TypeUserProfile, "First"))
+	nodes, err := upq.Limit(1).All(setContextOp(ctx, upq.ctx, "First"))
 	if err != nil {
 		return nil, err
 	}
@@ -113,7 +110,7 @@ func (upq *UserProfileQuery) FirstX(ctx context.Context) *UserProfile {
 // Returns a *NotFoundError when no UserProfile ID was found.
 func (upq *UserProfileQuery) FirstID(ctx context.Context) (id uuid.UUID, err error) {
 	var ids []uuid.UUID
-	if ids, err = upq.Limit(1).IDs(newQueryContext(ctx, TypeUserProfile, "FirstID")); err != nil {
+	if ids, err = upq.Limit(1).IDs(setContextOp(ctx, upq.ctx, "FirstID")); err != nil {
 		return
 	}
 	if len(ids) == 0 {
@@ -136,7 +133,7 @@ func (upq *UserProfileQuery) FirstIDX(ctx context.Context) uuid.UUID {
 // Returns a *NotSingularError when more than one UserProfile entity is found.
 // Returns a *NotFoundError when no UserProfile entities are found.
 func (upq *UserProfileQuery) Only(ctx context.Context) (*UserProfile, error) {
-	nodes, err := upq.Limit(2).All(newQueryContext(ctx, TypeUserProfile, "Only"))
+	nodes, err := upq.Limit(2).All(setContextOp(ctx, upq.ctx, "Only"))
 	if err != nil {
 		return nil, err
 	}
@@ -164,7 +161,7 @@ func (upq *UserProfileQuery) OnlyX(ctx context.Context) *UserProfile {
 // Returns a *NotFoundError when no entities are found.
 func (upq *UserProfileQuery) OnlyID(ctx context.Context) (id uuid.UUID, err error) {
 	var ids []uuid.UUID
-	if ids, err = upq.Limit(2).IDs(newQueryContext(ctx, TypeUserProfile, "OnlyID")); err != nil {
+	if ids, err = upq.Limit(2).IDs(setContextOp(ctx, upq.ctx, "OnlyID")); err != nil {
 		return
 	}
 	switch len(ids) {
@@ -189,7 +186,7 @@ func (upq *UserProfileQuery) OnlyIDX(ctx context.Context) uuid.UUID {
 
 // All executes the query and returns a list of UserProfiles.
 func (upq *UserProfileQuery) All(ctx context.Context) ([]*UserProfile, error) {
-	ctx = newQueryContext(ctx, TypeUserProfile, "All")
+	ctx = setContextOp(ctx, upq.ctx, "All")
 	if err := upq.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
@@ -207,10 +204,12 @@ func (upq *UserProfileQuery) AllX(ctx context.Context) []*UserProfile {
 }
 
 // IDs executes the query and returns a list of UserProfile IDs.
-func (upq *UserProfileQuery) IDs(ctx context.Context) ([]uuid.UUID, error) {
-	var ids []uuid.UUID
-	ctx = newQueryContext(ctx, TypeUserProfile, "IDs")
-	if err := upq.Select(userprofile.FieldID).Scan(ctx, &ids); err != nil {
+func (upq *UserProfileQuery) IDs(ctx context.Context) (ids []uuid.UUID, err error) {
+	if upq.ctx.Unique == nil && upq.path != nil {
+		upq.Unique(true)
+	}
+	ctx = setContextOp(ctx, upq.ctx, "IDs")
+	if err = upq.Select(userprofile.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
 	return ids, nil
@@ -227,7 +226,7 @@ func (upq *UserProfileQuery) IDsX(ctx context.Context) []uuid.UUID {
 
 // Count returns the count of the given query.
 func (upq *UserProfileQuery) Count(ctx context.Context) (int, error) {
-	ctx = newQueryContext(ctx, TypeUserProfile, "Count")
+	ctx = setContextOp(ctx, upq.ctx, "Count")
 	if err := upq.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
@@ -245,7 +244,7 @@ func (upq *UserProfileQuery) CountX(ctx context.Context) int {
 
 // Exist returns true if the query has elements in the graph.
 func (upq *UserProfileQuery) Exist(ctx context.Context) (bool, error) {
-	ctx = newQueryContext(ctx, TypeUserProfile, "Exist")
+	ctx = setContextOp(ctx, upq.ctx, "Exist")
 	switch _, err := upq.FirstID(ctx); {
 	case IsNotFound(err):
 		return false, nil
@@ -273,16 +272,14 @@ func (upq *UserProfileQuery) Clone() *UserProfileQuery {
 	}
 	return &UserProfileQuery{
 		config:     upq.config,
-		limit:      upq.limit,
-		offset:     upq.offset,
-		order:      append([]OrderFunc{}, upq.order...),
+		ctx:        upq.ctx.Clone(),
+		order:      append([]userprofile.OrderOption{}, upq.order...),
 		inters:     append([]Interceptor{}, upq.inters...),
 		predicates: append([]predicate.UserProfile{}, upq.predicates...),
 		withUser:   upq.withUser.Clone(),
 		// clone intermediate query.
-		sql:    upq.sql.Clone(),
-		path:   upq.path,
-		unique: upq.unique,
+		sql:  upq.sql.Clone(),
+		path: upq.path,
 	}
 }
 
@@ -312,9 +309,9 @@ func (upq *UserProfileQuery) WithUser(opts ...func(*UserQuery)) *UserProfileQuer
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (upq *UserProfileQuery) GroupBy(field string, fields ...string) *UserProfileGroupBy {
-	upq.fields = append([]string{field}, fields...)
+	upq.ctx.Fields = append([]string{field}, fields...)
 	grbuild := &UserProfileGroupBy{build: upq}
-	grbuild.flds = &upq.fields
+	grbuild.flds = &upq.ctx.Fields
 	grbuild.label = userprofile.Label
 	grbuild.scan = grbuild.Scan
 	return grbuild
@@ -333,10 +330,10 @@ func (upq *UserProfileQuery) GroupBy(field string, fields ...string) *UserProfil
 //		Select(userprofile.FieldUserID).
 //		Scan(ctx, &v)
 func (upq *UserProfileQuery) Select(fields ...string) *UserProfileSelect {
-	upq.fields = append(upq.fields, fields...)
+	upq.ctx.Fields = append(upq.ctx.Fields, fields...)
 	sbuild := &UserProfileSelect{UserProfileQuery: upq}
 	sbuild.label = userprofile.Label
-	sbuild.flds, sbuild.scan = &upq.fields, sbuild.Scan
+	sbuild.flds, sbuild.scan = &upq.ctx.Fields, sbuild.Scan
 	return sbuild
 }
 
@@ -356,7 +353,7 @@ func (upq *UserProfileQuery) prepareQuery(ctx context.Context) error {
 			}
 		}
 	}
-	for _, f := range upq.fields {
+	for _, f := range upq.ctx.Fields {
 		if !userprofile.ValidColumn(f) {
 			return &ValidationError{Name: f, err: fmt.Errorf("ent: invalid field %q for query", f)}
 		}
@@ -424,6 +421,9 @@ func (upq *UserProfileQuery) loadUser(ctx context.Context, query *UserQuery, nod
 		}
 		nodeids[fk] = append(nodeids[fk], nodes[i])
 	}
+	if len(ids) == 0 {
+		return nil
+	}
 	query.Where(user.IDIn(ids...))
 	neighbors, err := query.All(ctx)
 	if err != nil {
@@ -446,36 +446,31 @@ func (upq *UserProfileQuery) sqlCount(ctx context.Context) (int, error) {
 	if len(upq.modifiers) > 0 {
 		_spec.Modifiers = upq.modifiers
 	}
-	_spec.Node.Columns = upq.fields
-	if len(upq.fields) > 0 {
-		_spec.Unique = upq.unique != nil && *upq.unique
+	_spec.Node.Columns = upq.ctx.Fields
+	if len(upq.ctx.Fields) > 0 {
+		_spec.Unique = upq.ctx.Unique != nil && *upq.ctx.Unique
 	}
 	return sqlgraph.CountNodes(ctx, upq.driver, _spec)
 }
 
 func (upq *UserProfileQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := &sqlgraph.QuerySpec{
-		Node: &sqlgraph.NodeSpec{
-			Table:   userprofile.Table,
-			Columns: userprofile.Columns,
-			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
-				Column: userprofile.FieldID,
-			},
-		},
-		From:   upq.sql,
-		Unique: true,
-	}
-	if unique := upq.unique; unique != nil {
+	_spec := sqlgraph.NewQuerySpec(userprofile.Table, userprofile.Columns, sqlgraph.NewFieldSpec(userprofile.FieldID, field.TypeUUID))
+	_spec.From = upq.sql
+	if unique := upq.ctx.Unique; unique != nil {
 		_spec.Unique = *unique
+	} else if upq.path != nil {
+		_spec.Unique = true
 	}
-	if fields := upq.fields; len(fields) > 0 {
+	if fields := upq.ctx.Fields; len(fields) > 0 {
 		_spec.Node.Columns = make([]string, 0, len(fields))
 		_spec.Node.Columns = append(_spec.Node.Columns, userprofile.FieldID)
 		for i := range fields {
 			if fields[i] != userprofile.FieldID {
 				_spec.Node.Columns = append(_spec.Node.Columns, fields[i])
 			}
+		}
+		if upq.withUser != nil {
+			_spec.Node.AddColumnOnce(userprofile.FieldUserID)
 		}
 	}
 	if ps := upq.predicates; len(ps) > 0 {
@@ -485,10 +480,10 @@ func (upq *UserProfileQuery) querySpec() *sqlgraph.QuerySpec {
 			}
 		}
 	}
-	if limit := upq.limit; limit != nil {
+	if limit := upq.ctx.Limit; limit != nil {
 		_spec.Limit = *limit
 	}
-	if offset := upq.offset; offset != nil {
+	if offset := upq.ctx.Offset; offset != nil {
 		_spec.Offset = *offset
 	}
 	if ps := upq.order; len(ps) > 0 {
@@ -504,7 +499,7 @@ func (upq *UserProfileQuery) querySpec() *sqlgraph.QuerySpec {
 func (upq *UserProfileQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	builder := sql.Dialect(upq.driver.Dialect())
 	t1 := builder.Table(userprofile.Table)
-	columns := upq.fields
+	columns := upq.ctx.Fields
 	if len(columns) == 0 {
 		columns = userprofile.Columns
 	}
@@ -513,7 +508,7 @@ func (upq *UserProfileQuery) sqlQuery(ctx context.Context) *sql.Selector {
 		selector = upq.sql
 		selector.Select(selector.Columns(columns...)...)
 	}
-	if upq.unique != nil && *upq.unique {
+	if upq.ctx.Unique != nil && *upq.ctx.Unique {
 		selector.Distinct()
 	}
 	for _, p := range upq.predicates {
@@ -522,12 +517,12 @@ func (upq *UserProfileQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	for _, p := range upq.order {
 		p(selector)
 	}
-	if offset := upq.offset; offset != nil {
+	if offset := upq.ctx.Offset; offset != nil {
 		// limit is mandatory for offset clause. We start
 		// with default value, and override it below if needed.
 		selector.Offset(*offset).Limit(math.MaxInt32)
 	}
-	if limit := upq.limit; limit != nil {
+	if limit := upq.ctx.Limit; limit != nil {
 		selector.Limit(*limit)
 	}
 	return selector
@@ -547,7 +542,7 @@ func (upgb *UserProfileGroupBy) Aggregate(fns ...AggregateFunc) *UserProfileGrou
 
 // Scan applies the selector query and scans the result into the given value.
 func (upgb *UserProfileGroupBy) Scan(ctx context.Context, v any) error {
-	ctx = newQueryContext(ctx, TypeUserProfile, "GroupBy")
+	ctx = setContextOp(ctx, upgb.build.ctx, "GroupBy")
 	if err := upgb.build.prepareQuery(ctx); err != nil {
 		return err
 	}
@@ -595,7 +590,7 @@ func (ups *UserProfileSelect) Aggregate(fns ...AggregateFunc) *UserProfileSelect
 
 // Scan applies the selector query and scans the result into the given value.
 func (ups *UserProfileSelect) Scan(ctx context.Context, v any) error {
-	ctx = newQueryContext(ctx, TypeUserProfile, "Select")
+	ctx = setContextOp(ctx, ups.ctx, "Select")
 	if err := ups.prepareQuery(ctx); err != nil {
 		return err
 	}

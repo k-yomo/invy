@@ -40,15 +40,7 @@ func (pntd *PushNotificationTokenDelete) ExecX(ctx context.Context) int {
 }
 
 func (pntd *PushNotificationTokenDelete) sqlExec(ctx context.Context) (int, error) {
-	_spec := &sqlgraph.DeleteSpec{
-		Node: &sqlgraph.NodeSpec{
-			Table: pushnotificationtoken.Table,
-			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
-				Column: pushnotificationtoken.FieldID,
-			},
-		},
-	}
+	_spec := sqlgraph.NewDeleteSpec(pushnotificationtoken.Table, sqlgraph.NewFieldSpec(pushnotificationtoken.FieldID, field.TypeUUID))
 	if ps := pntd.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -69,6 +61,12 @@ type PushNotificationTokenDeleteOne struct {
 	pntd *PushNotificationTokenDelete
 }
 
+// Where appends a list predicates to the PushNotificationTokenDelete builder.
+func (pntdo *PushNotificationTokenDeleteOne) Where(ps ...predicate.PushNotificationToken) *PushNotificationTokenDeleteOne {
+	pntdo.pntd.mutation.Where(ps...)
+	return pntdo
+}
+
 // Exec executes the deletion query.
 func (pntdo *PushNotificationTokenDeleteOne) Exec(ctx context.Context) error {
 	n, err := pntdo.pntd.Exec(ctx)
@@ -84,5 +82,7 @@ func (pntdo *PushNotificationTokenDeleteOne) Exec(ctx context.Context) error {
 
 // ExecX is like Exec, but panics if an error occurs.
 func (pntdo *PushNotificationTokenDeleteOne) ExecX(ctx context.Context) {
-	pntdo.pntd.ExecX(ctx)
+	if err := pntdo.Exec(ctx); err != nil {
+		panic(err)
+	}
 }

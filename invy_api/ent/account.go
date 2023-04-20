@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/google/uuid"
 	"github.com/k-yomo/invy/invy_api/ent/account"
@@ -29,7 +30,8 @@ type Account struct {
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the AccountQuery when eager-loading is set.
-	Edges AccountEdges `json:"edges"`
+	Edges        AccountEdges `json:"edges"`
+	selectValues sql.SelectValues
 }
 
 // AccountEdges holds the relations/edges for other nodes in the graph.
@@ -66,7 +68,7 @@ func (*Account) scanValues(columns []string) ([]any, error) {
 		case account.FieldID:
 			values[i] = new(uuid.UUID)
 		default:
-			return nil, fmt.Errorf("unexpected column %q for type Account", columns[i])
+			values[i] = new(sql.UnknownType)
 		}
 	}
 	return values, nil
@@ -118,21 +120,29 @@ func (a *Account) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				a.CreatedAt = value.Time
 			}
+		default:
+			a.selectValues.Set(columns[i], values[i])
 		}
 	}
 	return nil
 }
 
+// Value returns the ent.Value that was dynamically selected and assigned to the Account.
+// This includes values selected through modifiers, order, etc.
+func (a *Account) Value(name string) (ent.Value, error) {
+	return a.selectValues.Get(name)
+}
+
 // QueryUsers queries the "users" edge of the Account entity.
 func (a *Account) QueryUsers() *UserQuery {
-	return (&AccountClient{config: a.config}).QueryUsers(a)
+	return NewAccountClient(a.config).QueryUsers(a)
 }
 
 // Update returns a builder for updating this Account.
 // Note that you need to call Account.Unwrap() before calling this method if this Account
 // was returned from a transaction, and the transaction was committed or rolled back.
 func (a *Account) Update() *AccountUpdateOne {
-	return (&AccountClient{config: a.config}).UpdateOne(a)
+	return NewAccountClient(a.config).UpdateOne(a)
 }
 
 // Unwrap unwraps the Account entity that was returned from a transaction after it was closed,
@@ -199,9 +209,3 @@ func (a *Account) appendNamedUsers(name string, edges ...*User) {
 
 // Accounts is a parsable slice of Account.
 type Accounts []*Account
-
-func (a Accounts) config(cfg config) {
-	for _i := range a {
-		a[_i].config = cfg
-	}
-}

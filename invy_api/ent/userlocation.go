@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/google/uuid"
 	"github.com/k-yomo/invy/invy_api/ent/user"
@@ -27,7 +28,8 @@ type UserLocation struct {
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the UserLocationQuery when eager-loading is set.
-	Edges UserLocationEdges `json:"edges"`
+	Edges        UserLocationEdges `json:"edges"`
+	selectValues sql.SelectValues
 }
 
 // UserLocationEdges holds the relations/edges for other nodes in the graph.
@@ -66,7 +68,7 @@ func (*UserLocation) scanValues(columns []string) ([]any, error) {
 		case userlocation.FieldID, userlocation.FieldUserID:
 			values[i] = new(uuid.UUID)
 		default:
-			return nil, fmt.Errorf("unexpected column %q for type UserLocation", columns[i])
+			values[i] = new(sql.UnknownType)
 		}
 	}
 	return values, nil
@@ -104,21 +106,29 @@ func (ul *UserLocation) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				ul.UpdatedAt = value.Time
 			}
+		default:
+			ul.selectValues.Set(columns[i], values[i])
 		}
 	}
 	return nil
 }
 
+// Value returns the ent.Value that was dynamically selected and assigned to the UserLocation.
+// This includes values selected through modifiers, order, etc.
+func (ul *UserLocation) Value(name string) (ent.Value, error) {
+	return ul.selectValues.Get(name)
+}
+
 // QueryUser queries the "user" edge of the UserLocation entity.
 func (ul *UserLocation) QueryUser() *UserQuery {
-	return (&UserLocationClient{config: ul.config}).QueryUser(ul)
+	return NewUserLocationClient(ul.config).QueryUser(ul)
 }
 
 // Update returns a builder for updating this UserLocation.
 // Note that you need to call UserLocation.Unwrap() before calling this method if this UserLocation
 // was returned from a transaction, and the transaction was committed or rolled back.
 func (ul *UserLocation) Update() *UserLocationUpdateOne {
-	return (&UserLocationClient{config: ul.config}).UpdateOne(ul)
+	return NewUserLocationClient(ul.config).UpdateOne(ul)
 }
 
 // Unwrap unwraps the UserLocation entity that was returned from a transaction after it was closed,
@@ -151,9 +161,3 @@ func (ul *UserLocation) String() string {
 
 // UserLocations is a parsable slice of UserLocation.
 type UserLocations []*UserLocation
-
-func (ul UserLocations) config(cfg config) {
-	for _i := range ul {
-		ul[_i].config = cfg
-	}
-}

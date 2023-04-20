@@ -188,13 +188,7 @@ func (pntc *PushNotificationTokenCreate) sqlSave(ctx context.Context) (*PushNoti
 func (pntc *PushNotificationTokenCreate) createSpec() (*PushNotificationToken, *sqlgraph.CreateSpec) {
 	var (
 		_node = &PushNotificationToken{config: pntc.config}
-		_spec = &sqlgraph.CreateSpec{
-			Table: pushnotificationtoken.Table,
-			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
-				Column: pushnotificationtoken.FieldID,
-			},
-		}
+		_spec = sqlgraph.NewCreateSpec(pushnotificationtoken.Table, sqlgraph.NewFieldSpec(pushnotificationtoken.FieldID, field.TypeUUID))
 	)
 	_spec.OnConflict = pntc.conflict
 	if id, ok := pntc.mutation.ID(); ok {
@@ -225,10 +219,7 @@ func (pntc *PushNotificationTokenCreate) createSpec() (*PushNotificationToken, *
 			Columns: []string{pushnotificationtoken.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeUUID,
-					Column: user.FieldID,
-				},
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -484,8 +475,8 @@ func (pntcb *PushNotificationTokenCreateBulk) Save(ctx context.Context) ([]*Push
 					return nil, err
 				}
 				builder.mutation = mutation
-				nodes[i], specs[i] = builder.createSpec()
 				var err error
+				nodes[i], specs[i] = builder.createSpec()
 				if i < len(mutators)-1 {
 					_, err = mutators[i+1].Mutate(root, pntcb.builders[i+1].mutation)
 				} else {

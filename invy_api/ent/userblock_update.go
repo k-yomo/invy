@@ -74,16 +74,7 @@ func (ubu *UserBlockUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if err := ubu.check(); err != nil {
 		return n, err
 	}
-	_spec := &sqlgraph.UpdateSpec{
-		Node: &sqlgraph.NodeSpec{
-			Table:   userblock.Table,
-			Columns: userblock.Columns,
-			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
-				Column: userblock.FieldID,
-			},
-		},
-	}
+	_spec := sqlgraph.NewUpdateSpec(userblock.Table, userblock.Columns, sqlgraph.NewFieldSpec(userblock.FieldID, field.TypeUUID))
 	if ps := ubu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -114,6 +105,12 @@ type UserBlockUpdateOne struct {
 // Mutation returns the UserBlockMutation object of the builder.
 func (ubuo *UserBlockUpdateOne) Mutation() *UserBlockMutation {
 	return ubuo.mutation
+}
+
+// Where appends a list predicates to the UserBlockUpdate builder.
+func (ubuo *UserBlockUpdateOne) Where(ps ...predicate.UserBlock) *UserBlockUpdateOne {
+	ubuo.mutation.Where(ps...)
+	return ubuo
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
@@ -165,16 +162,7 @@ func (ubuo *UserBlockUpdateOne) sqlSave(ctx context.Context) (_node *UserBlock, 
 	if err := ubuo.check(); err != nil {
 		return _node, err
 	}
-	_spec := &sqlgraph.UpdateSpec{
-		Node: &sqlgraph.NodeSpec{
-			Table:   userblock.Table,
-			Columns: userblock.Columns,
-			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
-				Column: userblock.FieldID,
-			},
-		},
-	}
+	_spec := sqlgraph.NewUpdateSpec(userblock.Table, userblock.Columns, sqlgraph.NewFieldSpec(userblock.FieldID, field.TypeUUID))
 	id, ok := ubuo.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "UserBlock.id" for update`)}

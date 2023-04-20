@@ -165,11 +165,7 @@ func HasUser() predicate.UserBlock {
 // HasUserWith applies the HasEdge predicate on the "user" edge with a given conditions (other predicates).
 func HasUserWith(preds ...predicate.User) predicate.UserBlock {
 	return predicate.UserBlock(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(UserInverseTable, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, false, UserTable, UserColumn),
-		)
+		step := newUserStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)
@@ -192,11 +188,7 @@ func HasBlockUser() predicate.UserBlock {
 // HasBlockUserWith applies the HasEdge predicate on the "block_user" edge with a given conditions (other predicates).
 func HasBlockUserWith(preds ...predicate.User) predicate.UserBlock {
 	return predicate.UserBlock(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(BlockUserInverseTable, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, false, BlockUserTable, BlockUserColumn),
-		)
+		step := newBlockUserStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

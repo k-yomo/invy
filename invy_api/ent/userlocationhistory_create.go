@@ -159,13 +159,7 @@ func (ulhc *UserLocationHistoryCreate) sqlSave(ctx context.Context) (*UserLocati
 func (ulhc *UserLocationHistoryCreate) createSpec() (*UserLocationHistory, *sqlgraph.CreateSpec) {
 	var (
 		_node = &UserLocationHistory{config: ulhc.config}
-		_spec = &sqlgraph.CreateSpec{
-			Table: userlocationhistory.Table,
-			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
-				Column: userlocationhistory.FieldID,
-			},
-		}
+		_spec = sqlgraph.NewCreateSpec(userlocationhistory.Table, sqlgraph.NewFieldSpec(userlocationhistory.FieldID, field.TypeUUID))
 	)
 	_spec.OnConflict = ulhc.conflict
 	if id, ok := ulhc.mutation.ID(); ok {
@@ -188,10 +182,7 @@ func (ulhc *UserLocationHistoryCreate) createSpec() (*UserLocationHistory, *sqlg
 			Columns: []string{userlocationhistory.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeUUID,
-					Column: user.FieldID,
-				},
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -395,8 +386,8 @@ func (ulhcb *UserLocationHistoryCreateBulk) Save(ctx context.Context) ([]*UserLo
 					return nil, err
 				}
 				builder.mutation = mutation
-				nodes[i], specs[i] = builder.createSpec()
 				var err error
+				nodes[i], specs[i] = builder.createSpec()
 				if i < len(mutators)-1 {
 					_, err = mutators[i+1].Mutate(root, ulhcb.builders[i+1].mutation)
 				} else {

@@ -74,16 +74,7 @@ func (ufgu *UserFriendGroupUpdate) sqlSave(ctx context.Context) (n int, err erro
 	if err := ufgu.check(); err != nil {
 		return n, err
 	}
-	_spec := &sqlgraph.UpdateSpec{
-		Node: &sqlgraph.NodeSpec{
-			Table:   userfriendgroup.Table,
-			Columns: userfriendgroup.Columns,
-			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
-				Column: userfriendgroup.FieldID,
-			},
-		},
-	}
+	_spec := sqlgraph.NewUpdateSpec(userfriendgroup.Table, userfriendgroup.Columns, sqlgraph.NewFieldSpec(userfriendgroup.FieldID, field.TypeUUID))
 	if ps := ufgu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -114,6 +105,12 @@ type UserFriendGroupUpdateOne struct {
 // Mutation returns the UserFriendGroupMutation object of the builder.
 func (ufguo *UserFriendGroupUpdateOne) Mutation() *UserFriendGroupMutation {
 	return ufguo.mutation
+}
+
+// Where appends a list predicates to the UserFriendGroupUpdate builder.
+func (ufguo *UserFriendGroupUpdateOne) Where(ps ...predicate.UserFriendGroup) *UserFriendGroupUpdateOne {
+	ufguo.mutation.Where(ps...)
+	return ufguo
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
@@ -165,16 +162,7 @@ func (ufguo *UserFriendGroupUpdateOne) sqlSave(ctx context.Context) (_node *User
 	if err := ufguo.check(); err != nil {
 		return _node, err
 	}
-	_spec := &sqlgraph.UpdateSpec{
-		Node: &sqlgraph.NodeSpec{
-			Table:   userfriendgroup.Table,
-			Columns: userfriendgroup.Columns,
-			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
-				Column: userfriendgroup.FieldID,
-			},
-		},
-	}
+	_spec := sqlgraph.NewUpdateSpec(userfriendgroup.Table, userfriendgroup.Columns, sqlgraph.NewFieldSpec(userfriendgroup.FieldID, field.TypeUUID))
 	id, ok := ufguo.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "UserFriendGroup.id" for update`)}

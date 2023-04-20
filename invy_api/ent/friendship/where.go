@@ -165,11 +165,7 @@ func HasUser() predicate.Friendship {
 // HasUserWith applies the HasEdge predicate on the "user" edge with a given conditions (other predicates).
 func HasUserWith(preds ...predicate.User) predicate.Friendship {
 	return predicate.Friendship(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(UserInverseTable, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, false, UserTable, UserColumn),
-		)
+		step := newUserStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)
@@ -192,11 +188,7 @@ func HasFriendUser() predicate.Friendship {
 // HasFriendUserWith applies the HasEdge predicate on the "friend_user" edge with a given conditions (other predicates).
 func HasFriendUserWith(preds ...predicate.User) predicate.Friendship {
 	return predicate.Friendship(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(FriendUserInverseTable, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, false, FriendUserTable, FriendUserColumn),
-		)
+		step := newFriendUserStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

@@ -292,13 +292,7 @@ func (ic *InvitationCreate) sqlSave(ctx context.Context) (*Invitation, error) {
 func (ic *InvitationCreate) createSpec() (*Invitation, *sqlgraph.CreateSpec) {
 	var (
 		_node = &Invitation{config: ic.config}
-		_spec = &sqlgraph.CreateSpec{
-			Table: invitation.Table,
-			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
-				Column: invitation.FieldID,
-			},
-		}
+		_spec = sqlgraph.NewCreateSpec(invitation.Table, sqlgraph.NewFieldSpec(invitation.FieldID, field.TypeUUID))
 	)
 	_spec.OnConflict = ic.conflict
 	if id, ok := ic.mutation.ID(); ok {
@@ -345,10 +339,7 @@ func (ic *InvitationCreate) createSpec() (*Invitation, *sqlgraph.CreateSpec) {
 			Columns: []string{invitation.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeUUID,
-					Column: user.FieldID,
-				},
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -365,10 +356,7 @@ func (ic *InvitationCreate) createSpec() (*Invitation, *sqlgraph.CreateSpec) {
 			Columns: []string{invitation.InvitationUsersColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeUUID,
-					Column: invitationuser.FieldID,
-				},
+				IDSpec: sqlgraph.NewFieldSpec(invitationuser.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -384,10 +372,7 @@ func (ic *InvitationCreate) createSpec() (*Invitation, *sqlgraph.CreateSpec) {
 			Columns: []string{invitation.InvitationAcceptancesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeUUID,
-					Column: invitationacceptance.FieldID,
-				},
+				IDSpec: sqlgraph.NewFieldSpec(invitationacceptance.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -403,10 +388,7 @@ func (ic *InvitationCreate) createSpec() (*Invitation, *sqlgraph.CreateSpec) {
 			Columns: []string{invitation.InvitationDenialsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeUUID,
-					Column: invitationdenial.FieldID,
-				},
+				IDSpec: sqlgraph.NewFieldSpec(invitationdenial.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -755,8 +737,8 @@ func (icb *InvitationCreateBulk) Save(ctx context.Context) ([]*Invitation, error
 					return nil, err
 				}
 				builder.mutation = mutation
-				nodes[i], specs[i] = builder.createSpec()
 				var err error
+				nodes[i], specs[i] = builder.createSpec()
 				if i < len(mutators)-1 {
 					_, err = mutators[i+1].Mutate(root, icb.builders[i+1].mutation)
 				} else {

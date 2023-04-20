@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"time"
 
+	"entgo.io/contrib/entgql"
 	"entgo.io/ent/dialect/sql"
 	"github.com/99designs/gqlgen/graphql"
 	cerrors "github.com/cockroachdb/errors"
@@ -137,7 +138,7 @@ func (r *queryResolver) UserByScreenID(ctx context.Context, screenID string) (*g
 }
 
 // UserFriends is the resolver for the userFriends field.
-func (r *queryResolver) UserFriends(ctx context.Context, userID uuid.UUID, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*gqlmodel.UserConnection, error) {
+func (r *queryResolver) UserFriends(ctx context.Context, userID uuid.UUID, after *entgql.Cursor[uuid.UUID], first *int, before *entgql.Cursor[uuid.UUID], last *int) (*gqlmodel.UserConnection, error) {
 	authUserID := auth.GetCurrentUserID(ctx)
 	isFriend, err := r.DB.Friendship.Query().
 		Where(friendship.UserID(authUserID), friendship.FriendUserID(userID)).
@@ -315,7 +316,7 @@ func (r *userResolver) IsRequestingFriendship(ctx context.Context, obj *gqlmodel
 }
 
 // Friends is the resolver for the friends field.
-func (r *viewerResolver) Friends(ctx context.Context, obj *gqlmodel.Viewer, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*gqlmodel.UserConnection, error) {
+func (r *viewerResolver) Friends(ctx context.Context, obj *gqlmodel.Viewer, after *entgql.Cursor[uuid.UUID], first *int, before *entgql.Cursor[uuid.UUID], last *int) (*gqlmodel.UserConnection, error) {
 	authUserID := auth.GetCurrentUserID(ctx)
 	dbUserProfileConnection, err := r.DB.Friendship.Query().
 		WithFriendUser(func(q *ent.UserQuery) {
@@ -360,7 +361,7 @@ func (r *viewerResolver) Friends(ctx context.Context, obj *gqlmodel.Viewer, afte
 }
 
 // BlockedFriends is the resolver for the blockedFriends field.
-func (r *viewerResolver) BlockedFriends(ctx context.Context, obj *gqlmodel.Viewer, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*gqlmodel.UserConnection, error) {
+func (r *viewerResolver) BlockedFriends(ctx context.Context, obj *gqlmodel.Viewer, after *entgql.Cursor[uuid.UUID], first *int, before *entgql.Cursor[uuid.UUID], last *int) (*gqlmodel.UserConnection, error) {
 	authUserID := auth.GetCurrentUserID(ctx)
 	dbUserProfileConnection, err := r.DB.UserBlock.Query().
 		Where(userblock.UserID(authUserID)).

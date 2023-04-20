@@ -94,16 +94,7 @@ func (ulu *UserLocationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if err := ulu.check(); err != nil {
 		return n, err
 	}
-	_spec := &sqlgraph.UpdateSpec{
-		Node: &sqlgraph.NodeSpec{
-			Table:   userlocation.Table,
-			Columns: userlocation.Columns,
-			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
-				Column: userlocation.FieldID,
-			},
-		},
-	}
+	_spec := sqlgraph.NewUpdateSpec(userlocation.Table, userlocation.Columns, sqlgraph.NewFieldSpec(userlocation.FieldID, field.TypeUUID))
 	if ps := ulu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -152,6 +143,12 @@ func (uluo *UserLocationUpdateOne) SetUpdatedAt(t time.Time) *UserLocationUpdate
 // Mutation returns the UserLocationMutation object of the builder.
 func (uluo *UserLocationUpdateOne) Mutation() *UserLocationMutation {
 	return uluo.mutation
+}
+
+// Where appends a list predicates to the UserLocationUpdate builder.
+func (uluo *UserLocationUpdateOne) Where(ps ...predicate.UserLocation) *UserLocationUpdateOne {
+	uluo.mutation.Where(ps...)
+	return uluo
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
@@ -209,16 +206,7 @@ func (uluo *UserLocationUpdateOne) sqlSave(ctx context.Context) (_node *UserLoca
 	if err := uluo.check(); err != nil {
 		return _node, err
 	}
-	_spec := &sqlgraph.UpdateSpec{
-		Node: &sqlgraph.NodeSpec{
-			Table:   userlocation.Table,
-			Columns: userlocation.Columns,
-			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
-				Column: userlocation.FieldID,
-			},
-		},
-	}
+	_spec := sqlgraph.NewUpdateSpec(userlocation.Table, userlocation.Columns, sqlgraph.NewFieldSpec(userlocation.FieldID, field.TypeUUID))
 	id, ok := uluo.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "UserLocation.id" for update`)}

@@ -19,11 +19,8 @@ import (
 // UserMuteQuery is the builder for querying UserMute entities.
 type UserMuteQuery struct {
 	config
-	limit        *int
-	offset       *int
-	unique       *bool
-	order        []OrderFunc
-	fields       []string
+	ctx          *QueryContext
+	order        []usermute.OrderOption
 	inters       []Interceptor
 	predicates   []predicate.UserMute
 	withUser     *UserQuery
@@ -43,25 +40,25 @@ func (umq *UserMuteQuery) Where(ps ...predicate.UserMute) *UserMuteQuery {
 
 // Limit the number of records to be returned by this query.
 func (umq *UserMuteQuery) Limit(limit int) *UserMuteQuery {
-	umq.limit = &limit
+	umq.ctx.Limit = &limit
 	return umq
 }
 
 // Offset to start from.
 func (umq *UserMuteQuery) Offset(offset int) *UserMuteQuery {
-	umq.offset = &offset
+	umq.ctx.Offset = &offset
 	return umq
 }
 
 // Unique configures the query builder to filter duplicate records on query.
 // By default, unique is set to true, and can be disabled using this method.
 func (umq *UserMuteQuery) Unique(unique bool) *UserMuteQuery {
-	umq.unique = &unique
+	umq.ctx.Unique = &unique
 	return umq
 }
 
 // Order specifies how the records should be ordered.
-func (umq *UserMuteQuery) Order(o ...OrderFunc) *UserMuteQuery {
+func (umq *UserMuteQuery) Order(o ...usermute.OrderOption) *UserMuteQuery {
 	umq.order = append(umq.order, o...)
 	return umq
 }
@@ -113,7 +110,7 @@ func (umq *UserMuteQuery) QueryMuteUser() *UserQuery {
 // First returns the first UserMute entity from the query.
 // Returns a *NotFoundError when no UserMute was found.
 func (umq *UserMuteQuery) First(ctx context.Context) (*UserMute, error) {
-	nodes, err := umq.Limit(1).All(newQueryContext(ctx, TypeUserMute, "First"))
+	nodes, err := umq.Limit(1).All(setContextOp(ctx, umq.ctx, "First"))
 	if err != nil {
 		return nil, err
 	}
@@ -136,7 +133,7 @@ func (umq *UserMuteQuery) FirstX(ctx context.Context) *UserMute {
 // Returns a *NotFoundError when no UserMute ID was found.
 func (umq *UserMuteQuery) FirstID(ctx context.Context) (id uuid.UUID, err error) {
 	var ids []uuid.UUID
-	if ids, err = umq.Limit(1).IDs(newQueryContext(ctx, TypeUserMute, "FirstID")); err != nil {
+	if ids, err = umq.Limit(1).IDs(setContextOp(ctx, umq.ctx, "FirstID")); err != nil {
 		return
 	}
 	if len(ids) == 0 {
@@ -159,7 +156,7 @@ func (umq *UserMuteQuery) FirstIDX(ctx context.Context) uuid.UUID {
 // Returns a *NotSingularError when more than one UserMute entity is found.
 // Returns a *NotFoundError when no UserMute entities are found.
 func (umq *UserMuteQuery) Only(ctx context.Context) (*UserMute, error) {
-	nodes, err := umq.Limit(2).All(newQueryContext(ctx, TypeUserMute, "Only"))
+	nodes, err := umq.Limit(2).All(setContextOp(ctx, umq.ctx, "Only"))
 	if err != nil {
 		return nil, err
 	}
@@ -187,7 +184,7 @@ func (umq *UserMuteQuery) OnlyX(ctx context.Context) *UserMute {
 // Returns a *NotFoundError when no entities are found.
 func (umq *UserMuteQuery) OnlyID(ctx context.Context) (id uuid.UUID, err error) {
 	var ids []uuid.UUID
-	if ids, err = umq.Limit(2).IDs(newQueryContext(ctx, TypeUserMute, "OnlyID")); err != nil {
+	if ids, err = umq.Limit(2).IDs(setContextOp(ctx, umq.ctx, "OnlyID")); err != nil {
 		return
 	}
 	switch len(ids) {
@@ -212,7 +209,7 @@ func (umq *UserMuteQuery) OnlyIDX(ctx context.Context) uuid.UUID {
 
 // All executes the query and returns a list of UserMutes.
 func (umq *UserMuteQuery) All(ctx context.Context) ([]*UserMute, error) {
-	ctx = newQueryContext(ctx, TypeUserMute, "All")
+	ctx = setContextOp(ctx, umq.ctx, "All")
 	if err := umq.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
@@ -230,10 +227,12 @@ func (umq *UserMuteQuery) AllX(ctx context.Context) []*UserMute {
 }
 
 // IDs executes the query and returns a list of UserMute IDs.
-func (umq *UserMuteQuery) IDs(ctx context.Context) ([]uuid.UUID, error) {
-	var ids []uuid.UUID
-	ctx = newQueryContext(ctx, TypeUserMute, "IDs")
-	if err := umq.Select(usermute.FieldID).Scan(ctx, &ids); err != nil {
+func (umq *UserMuteQuery) IDs(ctx context.Context) (ids []uuid.UUID, err error) {
+	if umq.ctx.Unique == nil && umq.path != nil {
+		umq.Unique(true)
+	}
+	ctx = setContextOp(ctx, umq.ctx, "IDs")
+	if err = umq.Select(usermute.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
 	return ids, nil
@@ -250,7 +249,7 @@ func (umq *UserMuteQuery) IDsX(ctx context.Context) []uuid.UUID {
 
 // Count returns the count of the given query.
 func (umq *UserMuteQuery) Count(ctx context.Context) (int, error) {
-	ctx = newQueryContext(ctx, TypeUserMute, "Count")
+	ctx = setContextOp(ctx, umq.ctx, "Count")
 	if err := umq.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
@@ -268,7 +267,7 @@ func (umq *UserMuteQuery) CountX(ctx context.Context) int {
 
 // Exist returns true if the query has elements in the graph.
 func (umq *UserMuteQuery) Exist(ctx context.Context) (bool, error) {
-	ctx = newQueryContext(ctx, TypeUserMute, "Exist")
+	ctx = setContextOp(ctx, umq.ctx, "Exist")
 	switch _, err := umq.FirstID(ctx); {
 	case IsNotFound(err):
 		return false, nil
@@ -296,17 +295,15 @@ func (umq *UserMuteQuery) Clone() *UserMuteQuery {
 	}
 	return &UserMuteQuery{
 		config:       umq.config,
-		limit:        umq.limit,
-		offset:       umq.offset,
-		order:        append([]OrderFunc{}, umq.order...),
+		ctx:          umq.ctx.Clone(),
+		order:        append([]usermute.OrderOption{}, umq.order...),
 		inters:       append([]Interceptor{}, umq.inters...),
 		predicates:   append([]predicate.UserMute{}, umq.predicates...),
 		withUser:     umq.withUser.Clone(),
 		withMuteUser: umq.withMuteUser.Clone(),
 		// clone intermediate query.
-		sql:    umq.sql.Clone(),
-		path:   umq.path,
-		unique: umq.unique,
+		sql:  umq.sql.Clone(),
+		path: umq.path,
 	}
 }
 
@@ -347,9 +344,9 @@ func (umq *UserMuteQuery) WithMuteUser(opts ...func(*UserQuery)) *UserMuteQuery 
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (umq *UserMuteQuery) GroupBy(field string, fields ...string) *UserMuteGroupBy {
-	umq.fields = append([]string{field}, fields...)
+	umq.ctx.Fields = append([]string{field}, fields...)
 	grbuild := &UserMuteGroupBy{build: umq}
-	grbuild.flds = &umq.fields
+	grbuild.flds = &umq.ctx.Fields
 	grbuild.label = usermute.Label
 	grbuild.scan = grbuild.Scan
 	return grbuild
@@ -368,10 +365,10 @@ func (umq *UserMuteQuery) GroupBy(field string, fields ...string) *UserMuteGroup
 //		Select(usermute.FieldUserID).
 //		Scan(ctx, &v)
 func (umq *UserMuteQuery) Select(fields ...string) *UserMuteSelect {
-	umq.fields = append(umq.fields, fields...)
+	umq.ctx.Fields = append(umq.ctx.Fields, fields...)
 	sbuild := &UserMuteSelect{UserMuteQuery: umq}
 	sbuild.label = usermute.Label
-	sbuild.flds, sbuild.scan = &umq.fields, sbuild.Scan
+	sbuild.flds, sbuild.scan = &umq.ctx.Fields, sbuild.Scan
 	return sbuild
 }
 
@@ -391,7 +388,7 @@ func (umq *UserMuteQuery) prepareQuery(ctx context.Context) error {
 			}
 		}
 	}
-	for _, f := range umq.fields {
+	for _, f := range umq.ctx.Fields {
 		if !usermute.ValidColumn(f) {
 			return &ValidationError{Name: f, err: fmt.Errorf("ent: invalid field %q for query", f)}
 		}
@@ -466,6 +463,9 @@ func (umq *UserMuteQuery) loadUser(ctx context.Context, query *UserQuery, nodes 
 		}
 		nodeids[fk] = append(nodeids[fk], nodes[i])
 	}
+	if len(ids) == 0 {
+		return nil
+	}
 	query.Where(user.IDIn(ids...))
 	neighbors, err := query.All(ctx)
 	if err != nil {
@@ -492,6 +492,9 @@ func (umq *UserMuteQuery) loadMuteUser(ctx context.Context, query *UserQuery, no
 		}
 		nodeids[fk] = append(nodeids[fk], nodes[i])
 	}
+	if len(ids) == 0 {
+		return nil
+	}
 	query.Where(user.IDIn(ids...))
 	neighbors, err := query.All(ctx)
 	if err != nil {
@@ -514,36 +517,34 @@ func (umq *UserMuteQuery) sqlCount(ctx context.Context) (int, error) {
 	if len(umq.modifiers) > 0 {
 		_spec.Modifiers = umq.modifiers
 	}
-	_spec.Node.Columns = umq.fields
-	if len(umq.fields) > 0 {
-		_spec.Unique = umq.unique != nil && *umq.unique
+	_spec.Node.Columns = umq.ctx.Fields
+	if len(umq.ctx.Fields) > 0 {
+		_spec.Unique = umq.ctx.Unique != nil && *umq.ctx.Unique
 	}
 	return sqlgraph.CountNodes(ctx, umq.driver, _spec)
 }
 
 func (umq *UserMuteQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := &sqlgraph.QuerySpec{
-		Node: &sqlgraph.NodeSpec{
-			Table:   usermute.Table,
-			Columns: usermute.Columns,
-			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
-				Column: usermute.FieldID,
-			},
-		},
-		From:   umq.sql,
-		Unique: true,
-	}
-	if unique := umq.unique; unique != nil {
+	_spec := sqlgraph.NewQuerySpec(usermute.Table, usermute.Columns, sqlgraph.NewFieldSpec(usermute.FieldID, field.TypeUUID))
+	_spec.From = umq.sql
+	if unique := umq.ctx.Unique; unique != nil {
 		_spec.Unique = *unique
+	} else if umq.path != nil {
+		_spec.Unique = true
 	}
-	if fields := umq.fields; len(fields) > 0 {
+	if fields := umq.ctx.Fields; len(fields) > 0 {
 		_spec.Node.Columns = make([]string, 0, len(fields))
 		_spec.Node.Columns = append(_spec.Node.Columns, usermute.FieldID)
 		for i := range fields {
 			if fields[i] != usermute.FieldID {
 				_spec.Node.Columns = append(_spec.Node.Columns, fields[i])
 			}
+		}
+		if umq.withUser != nil {
+			_spec.Node.AddColumnOnce(usermute.FieldUserID)
+		}
+		if umq.withMuteUser != nil {
+			_spec.Node.AddColumnOnce(usermute.FieldMuteUserID)
 		}
 	}
 	if ps := umq.predicates; len(ps) > 0 {
@@ -553,10 +554,10 @@ func (umq *UserMuteQuery) querySpec() *sqlgraph.QuerySpec {
 			}
 		}
 	}
-	if limit := umq.limit; limit != nil {
+	if limit := umq.ctx.Limit; limit != nil {
 		_spec.Limit = *limit
 	}
-	if offset := umq.offset; offset != nil {
+	if offset := umq.ctx.Offset; offset != nil {
 		_spec.Offset = *offset
 	}
 	if ps := umq.order; len(ps) > 0 {
@@ -572,7 +573,7 @@ func (umq *UserMuteQuery) querySpec() *sqlgraph.QuerySpec {
 func (umq *UserMuteQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	builder := sql.Dialect(umq.driver.Dialect())
 	t1 := builder.Table(usermute.Table)
-	columns := umq.fields
+	columns := umq.ctx.Fields
 	if len(columns) == 0 {
 		columns = usermute.Columns
 	}
@@ -581,7 +582,7 @@ func (umq *UserMuteQuery) sqlQuery(ctx context.Context) *sql.Selector {
 		selector = umq.sql
 		selector.Select(selector.Columns(columns...)...)
 	}
-	if umq.unique != nil && *umq.unique {
+	if umq.ctx.Unique != nil && *umq.ctx.Unique {
 		selector.Distinct()
 	}
 	for _, p := range umq.predicates {
@@ -590,12 +591,12 @@ func (umq *UserMuteQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	for _, p := range umq.order {
 		p(selector)
 	}
-	if offset := umq.offset; offset != nil {
+	if offset := umq.ctx.Offset; offset != nil {
 		// limit is mandatory for offset clause. We start
 		// with default value, and override it below if needed.
 		selector.Offset(*offset).Limit(math.MaxInt32)
 	}
-	if limit := umq.limit; limit != nil {
+	if limit := umq.ctx.Limit; limit != nil {
 		selector.Limit(*limit)
 	}
 	return selector
@@ -615,7 +616,7 @@ func (umgb *UserMuteGroupBy) Aggregate(fns ...AggregateFunc) *UserMuteGroupBy {
 
 // Scan applies the selector query and scans the result into the given value.
 func (umgb *UserMuteGroupBy) Scan(ctx context.Context, v any) error {
-	ctx = newQueryContext(ctx, TypeUserMute, "GroupBy")
+	ctx = setContextOp(ctx, umgb.build.ctx, "GroupBy")
 	if err := umgb.build.prepareQuery(ctx); err != nil {
 		return err
 	}
@@ -663,7 +664,7 @@ func (ums *UserMuteSelect) Aggregate(fns ...AggregateFunc) *UserMuteSelect {
 
 // Scan applies the selector query and scans the result into the given value.
 func (ums *UserMuteSelect) Scan(ctx context.Context, v any) error {
-	ctx = newQueryContext(ctx, TypeUserMute, "Select")
+	ctx = setContextOp(ctx, ums.ctx, "Select")
 	if err := ums.prepareQuery(ctx); err != nil {
 		return err
 	}

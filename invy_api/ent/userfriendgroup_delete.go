@@ -40,15 +40,7 @@ func (ufgd *UserFriendGroupDelete) ExecX(ctx context.Context) int {
 }
 
 func (ufgd *UserFriendGroupDelete) sqlExec(ctx context.Context) (int, error) {
-	_spec := &sqlgraph.DeleteSpec{
-		Node: &sqlgraph.NodeSpec{
-			Table: userfriendgroup.Table,
-			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
-				Column: userfriendgroup.FieldID,
-			},
-		},
-	}
+	_spec := sqlgraph.NewDeleteSpec(userfriendgroup.Table, sqlgraph.NewFieldSpec(userfriendgroup.FieldID, field.TypeUUID))
 	if ps := ufgd.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -69,6 +61,12 @@ type UserFriendGroupDeleteOne struct {
 	ufgd *UserFriendGroupDelete
 }
 
+// Where appends a list predicates to the UserFriendGroupDelete builder.
+func (ufgdo *UserFriendGroupDeleteOne) Where(ps ...predicate.UserFriendGroup) *UserFriendGroupDeleteOne {
+	ufgdo.ufgd.mutation.Where(ps...)
+	return ufgdo
+}
+
 // Exec executes the deletion query.
 func (ufgdo *UserFriendGroupDeleteOne) Exec(ctx context.Context) error {
 	n, err := ufgdo.ufgd.Exec(ctx)
@@ -84,5 +82,7 @@ func (ufgdo *UserFriendGroupDeleteOne) Exec(ctx context.Context) error {
 
 // ExecX is like Exec, but panics if an error occurs.
 func (ufgdo *UserFriendGroupDeleteOne) ExecX(ctx context.Context) {
-	ufgdo.ufgd.ExecX(ctx)
+	if err := ufgdo.Exec(ctx); err != nil {
+		panic(err)
+	}
 }

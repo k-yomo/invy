@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/google/uuid"
 	"github.com/k-yomo/invy/invy_api/ent/friendgroup"
@@ -27,7 +28,8 @@ type UserFriendGroup struct {
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the UserFriendGroupQuery when eager-loading is set.
-	Edges UserFriendGroupEdges `json:"edges"`
+	Edges        UserFriendGroupEdges `json:"edges"`
+	selectValues sql.SelectValues
 }
 
 // UserFriendGroupEdges holds the relations/edges for other nodes in the graph.
@@ -79,7 +81,7 @@ func (*UserFriendGroup) scanValues(columns []string) ([]any, error) {
 		case userfriendgroup.FieldID, userfriendgroup.FieldFriendGroupID, userfriendgroup.FieldUserID:
 			values[i] = new(uuid.UUID)
 		default:
-			return nil, fmt.Errorf("unexpected column %q for type UserFriendGroup", columns[i])
+			values[i] = new(sql.UnknownType)
 		}
 	}
 	return values, nil
@@ -117,26 +119,34 @@ func (ufg *UserFriendGroup) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				ufg.CreatedAt = value.Time
 			}
+		default:
+			ufg.selectValues.Set(columns[i], values[i])
 		}
 	}
 	return nil
 }
 
+// Value returns the ent.Value that was dynamically selected and assigned to the UserFriendGroup.
+// This includes values selected through modifiers, order, etc.
+func (ufg *UserFriendGroup) Value(name string) (ent.Value, error) {
+	return ufg.selectValues.Get(name)
+}
+
 // QueryFriendGroup queries the "friend_group" edge of the UserFriendGroup entity.
 func (ufg *UserFriendGroup) QueryFriendGroup() *FriendGroupQuery {
-	return (&UserFriendGroupClient{config: ufg.config}).QueryFriendGroup(ufg)
+	return NewUserFriendGroupClient(ufg.config).QueryFriendGroup(ufg)
 }
 
 // QueryUser queries the "user" edge of the UserFriendGroup entity.
 func (ufg *UserFriendGroup) QueryUser() *UserQuery {
-	return (&UserFriendGroupClient{config: ufg.config}).QueryUser(ufg)
+	return NewUserFriendGroupClient(ufg.config).QueryUser(ufg)
 }
 
 // Update returns a builder for updating this UserFriendGroup.
 // Note that you need to call UserFriendGroup.Unwrap() before calling this method if this UserFriendGroup
 // was returned from a transaction, and the transaction was committed or rolled back.
 func (ufg *UserFriendGroup) Update() *UserFriendGroupUpdateOne {
-	return (&UserFriendGroupClient{config: ufg.config}).UpdateOne(ufg)
+	return NewUserFriendGroupClient(ufg.config).UpdateOne(ufg)
 }
 
 // Unwrap unwraps the UserFriendGroup entity that was returned from a transaction after it was closed,
@@ -169,9 +179,3 @@ func (ufg *UserFriendGroup) String() string {
 
 // UserFriendGroups is a parsable slice of UserFriendGroup.
 type UserFriendGroups []*UserFriendGroup
-
-func (ufg UserFriendGroups) config(cfg config) {
-	for _i := range ufg {
-		ufg[_i].config = cfg
-	}
-}

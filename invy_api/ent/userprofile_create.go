@@ -197,13 +197,7 @@ func (upc *UserProfileCreate) sqlSave(ctx context.Context) (*UserProfile, error)
 func (upc *UserProfileCreate) createSpec() (*UserProfile, *sqlgraph.CreateSpec) {
 	var (
 		_node = &UserProfile{config: upc.config}
-		_spec = &sqlgraph.CreateSpec{
-			Table: userprofile.Table,
-			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
-				Column: userprofile.FieldID,
-			},
-		}
+		_spec = sqlgraph.NewCreateSpec(userprofile.Table, sqlgraph.NewFieldSpec(userprofile.FieldID, field.TypeUUID))
 	)
 	_spec.OnConflict = upc.conflict
 	if id, ok := upc.mutation.ID(); ok {
@@ -238,10 +232,7 @@ func (upc *UserProfileCreate) createSpec() (*UserProfile, *sqlgraph.CreateSpec) 
 			Columns: []string{userprofile.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeUUID,
-					Column: user.FieldID,
-				},
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -523,8 +514,8 @@ func (upcb *UserProfileCreateBulk) Save(ctx context.Context) ([]*UserProfile, er
 					return nil, err
 				}
 				builder.mutation = mutation
-				nodes[i], specs[i] = builder.createSpec()
 				var err error
+				nodes[i], specs[i] = builder.createSpec()
 				if i < len(mutators)-1 {
 					_, err = mutators[i+1].Mutate(root, upcb.builders[i+1].mutation)
 				} else {

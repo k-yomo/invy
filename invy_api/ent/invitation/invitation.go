@@ -8,6 +8,8 @@ import (
 	"strconv"
 	"time"
 
+	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/google/uuid"
 )
 
@@ -134,6 +136,136 @@ func StatusValidator(s Status) error {
 	default:
 		return fmt.Errorf("invitation: invalid enum value for status field: %q", s)
 	}
+}
+
+// OrderOption defines the ordering options for the Invitation queries.
+type OrderOption func(*sql.Selector)
+
+// ByID orders the results by the id field.
+func ByID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldID, opts...).ToFunc()
+}
+
+// ByUserID orders the results by the user_id field.
+func ByUserID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldUserID, opts...).ToFunc()
+}
+
+// ByLocation orders the results by the location field.
+func ByLocation(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldLocation, opts...).ToFunc()
+}
+
+// ByCoordinate orders the results by the coordinate field.
+func ByCoordinate(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCoordinate, opts...).ToFunc()
+}
+
+// ByComment orders the results by the comment field.
+func ByComment(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldComment, opts...).ToFunc()
+}
+
+// ByStartsAt orders the results by the starts_at field.
+func ByStartsAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldStartsAt, opts...).ToFunc()
+}
+
+// ByChatRoomID orders the results by the chat_room_id field.
+func ByChatRoomID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldChatRoomID, opts...).ToFunc()
+}
+
+// ByStatus orders the results by the status field.
+func ByStatus(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldStatus, opts...).ToFunc()
+}
+
+// ByCreatedAt orders the results by the created_at field.
+func ByCreatedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCreatedAt, opts...).ToFunc()
+}
+
+// ByUpdatedAt orders the results by the updated_at field.
+func ByUpdatedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldUpdatedAt, opts...).ToFunc()
+}
+
+// ByUserField orders the results by user field.
+func ByUserField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newUserStep(), sql.OrderByField(field, opts...))
+	}
+}
+
+// ByInvitationUsersCount orders the results by invitation_users count.
+func ByInvitationUsersCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newInvitationUsersStep(), opts...)
+	}
+}
+
+// ByInvitationUsers orders the results by invitation_users terms.
+func ByInvitationUsers(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newInvitationUsersStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByInvitationAcceptancesCount orders the results by invitation_acceptances count.
+func ByInvitationAcceptancesCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newInvitationAcceptancesStep(), opts...)
+	}
+}
+
+// ByInvitationAcceptances orders the results by invitation_acceptances terms.
+func ByInvitationAcceptances(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newInvitationAcceptancesStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByInvitationDenialsCount orders the results by invitation_denials count.
+func ByInvitationDenialsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newInvitationDenialsStep(), opts...)
+	}
+}
+
+// ByInvitationDenials orders the results by invitation_denials terms.
+func ByInvitationDenials(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newInvitationDenialsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+func newUserStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(UserInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, false, UserTable, UserColumn),
+	)
+}
+func newInvitationUsersStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(InvitationUsersInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, true, InvitationUsersTable, InvitationUsersColumn),
+	)
+}
+func newInvitationAcceptancesStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(InvitationAcceptancesInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, true, InvitationAcceptancesTable, InvitationAcceptancesColumn),
+	)
+}
+func newInvitationDenialsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(InvitationDenialsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, true, InvitationDenialsTable, InvitationDenialsColumn),
+	)
 }
 
 // MarshalGQL implements graphql.Marshaler interface.

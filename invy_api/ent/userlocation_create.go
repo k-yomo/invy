@@ -159,13 +159,7 @@ func (ulc *UserLocationCreate) sqlSave(ctx context.Context) (*UserLocation, erro
 func (ulc *UserLocationCreate) createSpec() (*UserLocation, *sqlgraph.CreateSpec) {
 	var (
 		_node = &UserLocation{config: ulc.config}
-		_spec = &sqlgraph.CreateSpec{
-			Table: userlocation.Table,
-			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
-				Column: userlocation.FieldID,
-			},
-		}
+		_spec = sqlgraph.NewCreateSpec(userlocation.Table, sqlgraph.NewFieldSpec(userlocation.FieldID, field.TypeUUID))
 	)
 	_spec.OnConflict = ulc.conflict
 	if id, ok := ulc.mutation.ID(); ok {
@@ -188,10 +182,7 @@ func (ulc *UserLocationCreate) createSpec() (*UserLocation, *sqlgraph.CreateSpec
 			Columns: []string{userlocation.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeUUID,
-					Column: user.FieldID,
-				},
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -418,8 +409,8 @@ func (ulcb *UserLocationCreateBulk) Save(ctx context.Context) ([]*UserLocation, 
 					return nil, err
 				}
 				builder.mutation = mutation
-				nodes[i], specs[i] = builder.createSpec()
 				var err error
+				nodes[i], specs[i] = builder.createSpec()
 				if i < len(mutators)-1 {
 					_, err = mutators[i+1].Mutate(root, ulcb.builders[i+1].mutation)
 				} else {

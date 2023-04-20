@@ -40,15 +40,7 @@ func (upd *UserProfileDelete) ExecX(ctx context.Context) int {
 }
 
 func (upd *UserProfileDelete) sqlExec(ctx context.Context) (int, error) {
-	_spec := &sqlgraph.DeleteSpec{
-		Node: &sqlgraph.NodeSpec{
-			Table: userprofile.Table,
-			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
-				Column: userprofile.FieldID,
-			},
-		},
-	}
+	_spec := sqlgraph.NewDeleteSpec(userprofile.Table, sqlgraph.NewFieldSpec(userprofile.FieldID, field.TypeUUID))
 	if ps := upd.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -69,6 +61,12 @@ type UserProfileDeleteOne struct {
 	upd *UserProfileDelete
 }
 
+// Where appends a list predicates to the UserProfileDelete builder.
+func (updo *UserProfileDeleteOne) Where(ps ...predicate.UserProfile) *UserProfileDeleteOne {
+	updo.upd.mutation.Where(ps...)
+	return updo
+}
+
 // Exec executes the deletion query.
 func (updo *UserProfileDeleteOne) Exec(ctx context.Context) error {
 	n, err := updo.upd.Exec(ctx)
@@ -84,5 +82,7 @@ func (updo *UserProfileDeleteOne) Exec(ctx context.Context) error {
 
 // ExecX is like Exec, but panics if an error occurs.
 func (updo *UserProfileDeleteOne) ExecX(ctx context.Context) {
-	updo.upd.ExecX(ctx)
+	if err := updo.Exec(ctx); err != nil {
+		panic(err)
+	}
 }

@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/google/uuid"
 	"github.com/k-yomo/invy/invy_api/ent/friendshiprequest"
@@ -26,7 +27,8 @@ type FriendshipRequest struct {
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the FriendshipRequestQuery when eager-loading is set.
-	Edges FriendshipRequestEdges `json:"edges"`
+	Edges        FriendshipRequestEdges `json:"edges"`
+	selectValues sql.SelectValues
 }
 
 // FriendshipRequestEdges holds the relations/edges for other nodes in the graph.
@@ -78,7 +80,7 @@ func (*FriendshipRequest) scanValues(columns []string) ([]any, error) {
 		case friendshiprequest.FieldID, friendshiprequest.FieldFromUserID, friendshiprequest.FieldToUserID:
 			values[i] = new(uuid.UUID)
 		default:
-			return nil, fmt.Errorf("unexpected column %q for type FriendshipRequest", columns[i])
+			values[i] = new(sql.UnknownType)
 		}
 	}
 	return values, nil
@@ -116,26 +118,34 @@ func (fr *FriendshipRequest) assignValues(columns []string, values []any) error 
 			} else if value.Valid {
 				fr.CreatedAt = value.Time
 			}
+		default:
+			fr.selectValues.Set(columns[i], values[i])
 		}
 	}
 	return nil
 }
 
+// Value returns the ent.Value that was dynamically selected and assigned to the FriendshipRequest.
+// This includes values selected through modifiers, order, etc.
+func (fr *FriendshipRequest) Value(name string) (ent.Value, error) {
+	return fr.selectValues.Get(name)
+}
+
 // QueryFromUsers queries the "from_users" edge of the FriendshipRequest entity.
 func (fr *FriendshipRequest) QueryFromUsers() *UserQuery {
-	return (&FriendshipRequestClient{config: fr.config}).QueryFromUsers(fr)
+	return NewFriendshipRequestClient(fr.config).QueryFromUsers(fr)
 }
 
 // QueryToUsers queries the "to_users" edge of the FriendshipRequest entity.
 func (fr *FriendshipRequest) QueryToUsers() *UserQuery {
-	return (&FriendshipRequestClient{config: fr.config}).QueryToUsers(fr)
+	return NewFriendshipRequestClient(fr.config).QueryToUsers(fr)
 }
 
 // Update returns a builder for updating this FriendshipRequest.
 // Note that you need to call FriendshipRequest.Unwrap() before calling this method if this FriendshipRequest
 // was returned from a transaction, and the transaction was committed or rolled back.
 func (fr *FriendshipRequest) Update() *FriendshipRequestUpdateOne {
-	return (&FriendshipRequestClient{config: fr.config}).UpdateOne(fr)
+	return NewFriendshipRequestClient(fr.config).UpdateOne(fr)
 }
 
 // Unwrap unwraps the FriendshipRequest entity that was returned from a transaction after it was closed,
@@ -168,9 +178,3 @@ func (fr *FriendshipRequest) String() string {
 
 // FriendshipRequests is a parsable slice of FriendshipRequest.
 type FriendshipRequests []*FriendshipRequest
-
-func (fr FriendshipRequests) config(cfg config) {
-	for _i := range fr {
-		fr[_i].config = cfg
-	}
-}

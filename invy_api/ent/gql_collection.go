@@ -7,6 +7,22 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"github.com/99designs/gqlgen/graphql"
+	"github.com/k-yomo/invy/invy_api/ent/account"
+	"github.com/k-yomo/invy/invy_api/ent/friendgroup"
+	"github.com/k-yomo/invy/invy_api/ent/friendship"
+	"github.com/k-yomo/invy/invy_api/ent/friendshiprequest"
+	"github.com/k-yomo/invy/invy_api/ent/invitation"
+	"github.com/k-yomo/invy/invy_api/ent/invitationacceptance"
+	"github.com/k-yomo/invy/invy_api/ent/invitationdenial"
+	"github.com/k-yomo/invy/invy_api/ent/invitationuser"
+	"github.com/k-yomo/invy/invy_api/ent/pushnotificationtoken"
+	"github.com/k-yomo/invy/invy_api/ent/user"
+	"github.com/k-yomo/invy/invy_api/ent/userblock"
+	"github.com/k-yomo/invy/invy_api/ent/userfriendgroup"
+	"github.com/k-yomo/invy/invy_api/ent/userlocation"
+	"github.com/k-yomo/invy/invy_api/ent/userlocationhistory"
+	"github.com/k-yomo/invy/invy_api/ent/usermute"
+	"github.com/k-yomo/invy/invy_api/ent/userprofile"
 )
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
@@ -21,23 +37,58 @@ func (a *AccountQuery) CollectFields(ctx context.Context, satisfies ...string) (
 	return a, nil
 }
 
-func (a *AccountQuery) collectField(ctx context.Context, op *graphql.OperationContext, field graphql.CollectedField, path []string, satisfies ...string) error {
+func (a *AccountQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
 	path = append([]string(nil), path...)
-	for _, field := range graphql.CollectFields(op, field.Selections, satisfies) {
+	var (
+		unknownSeen    bool
+		fieldSeen      = make(map[string]struct{}, len(account.Columns))
+		selectedFields = []string{account.FieldID}
+	)
+	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
 		switch field.Name {
 		case "users":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
-				query = &UserQuery{config: a.config}
+				query = (&UserClient{config: a.config}).Query()
 			)
-			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
 				return err
 			}
 			a.WithNamedUsers(alias, func(wq *UserQuery) {
 				*wq = *query
 			})
+		case "authID":
+			if _, ok := fieldSeen[account.FieldAuthID]; !ok {
+				selectedFields = append(selectedFields, account.FieldAuthID)
+				fieldSeen[account.FieldAuthID] = struct{}{}
+			}
+		case "email":
+			if _, ok := fieldSeen[account.FieldEmail]; !ok {
+				selectedFields = append(selectedFields, account.FieldEmail)
+				fieldSeen[account.FieldEmail] = struct{}{}
+			}
+		case "phoneNumber":
+			if _, ok := fieldSeen[account.FieldPhoneNumber]; !ok {
+				selectedFields = append(selectedFields, account.FieldPhoneNumber)
+				fieldSeen[account.FieldPhoneNumber] = struct{}{}
+			}
+		case "status":
+			if _, ok := fieldSeen[account.FieldStatus]; !ok {
+				selectedFields = append(selectedFields, account.FieldStatus)
+				fieldSeen[account.FieldStatus] = struct{}{}
+			}
+		case "createdAt":
+			if _, ok := fieldSeen[account.FieldCreatedAt]; !ok {
+				selectedFields = append(selectedFields, account.FieldCreatedAt)
+				fieldSeen[account.FieldCreatedAt] = struct{}{}
+			}
+		default:
+			unknownSeen = true
 		}
+	}
+	if !unknownSeen {
+		a.Select(selectedFields...)
 	}
 	return nil
 }
@@ -80,27 +131,36 @@ func (fg *FriendGroupQuery) CollectFields(ctx context.Context, satisfies ...stri
 	return fg, nil
 }
 
-func (fg *FriendGroupQuery) collectField(ctx context.Context, op *graphql.OperationContext, field graphql.CollectedField, path []string, satisfies ...string) error {
+func (fg *FriendGroupQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
 	path = append([]string(nil), path...)
-	for _, field := range graphql.CollectFields(op, field.Selections, satisfies) {
+	var (
+		unknownSeen    bool
+		fieldSeen      = make(map[string]struct{}, len(friendgroup.Columns))
+		selectedFields = []string{friendgroup.FieldID}
+	)
+	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
 		switch field.Name {
 		case "user":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
-				query = &UserQuery{config: fg.config}
+				query = (&UserClient{config: fg.config}).Query()
 			)
-			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
 				return err
 			}
 			fg.withUser = query
+			if _, ok := fieldSeen[friendgroup.FieldUserID]; !ok {
+				selectedFields = append(selectedFields, friendgroup.FieldUserID)
+				fieldSeen[friendgroup.FieldUserID] = struct{}{}
+			}
 		case "friendUsers":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
-				query = &UserQuery{config: fg.config}
+				query = (&UserClient{config: fg.config}).Query()
 			)
-			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
 				return err
 			}
 			fg.WithNamedFriendUsers(alias, func(wq *UserQuery) {
@@ -110,15 +170,45 @@ func (fg *FriendGroupQuery) collectField(ctx context.Context, op *graphql.Operat
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
-				query = &UserFriendGroupQuery{config: fg.config}
+				query = (&UserFriendGroupClient{config: fg.config}).Query()
 			)
-			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
 				return err
 			}
 			fg.WithNamedUserFriendGroups(alias, func(wq *UserFriendGroupQuery) {
 				*wq = *query
 			})
+		case "userID":
+			if _, ok := fieldSeen[friendgroup.FieldUserID]; !ok {
+				selectedFields = append(selectedFields, friendgroup.FieldUserID)
+				fieldSeen[friendgroup.FieldUserID] = struct{}{}
+			}
+		case "name":
+			if _, ok := fieldSeen[friendgroup.FieldName]; !ok {
+				selectedFields = append(selectedFields, friendgroup.FieldName)
+				fieldSeen[friendgroup.FieldName] = struct{}{}
+			}
+		case "totalCount":
+			if _, ok := fieldSeen[friendgroup.FieldTotalCount]; !ok {
+				selectedFields = append(selectedFields, friendgroup.FieldTotalCount)
+				fieldSeen[friendgroup.FieldTotalCount] = struct{}{}
+			}
+		case "createdAt":
+			if _, ok := fieldSeen[friendgroup.FieldCreatedAt]; !ok {
+				selectedFields = append(selectedFields, friendgroup.FieldCreatedAt)
+				fieldSeen[friendgroup.FieldCreatedAt] = struct{}{}
+			}
+		case "updatedAt":
+			if _, ok := fieldSeen[friendgroup.FieldUpdatedAt]; !ok {
+				selectedFields = append(selectedFields, friendgroup.FieldUpdatedAt)
+				fieldSeen[friendgroup.FieldUpdatedAt] = struct{}{}
+			}
+		default:
+			unknownSeen = true
 		}
+	}
+	if !unknownSeen {
+		fg.Select(selectedFields...)
 	}
 	return nil
 }
@@ -161,31 +251,64 @@ func (f *FriendshipQuery) CollectFields(ctx context.Context, satisfies ...string
 	return f, nil
 }
 
-func (f *FriendshipQuery) collectField(ctx context.Context, op *graphql.OperationContext, field graphql.CollectedField, path []string, satisfies ...string) error {
+func (f *FriendshipQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
 	path = append([]string(nil), path...)
-	for _, field := range graphql.CollectFields(op, field.Selections, satisfies) {
+	var (
+		unknownSeen    bool
+		fieldSeen      = make(map[string]struct{}, len(friendship.Columns))
+		selectedFields = []string{friendship.FieldID}
+	)
+	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
 		switch field.Name {
 		case "user":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
-				query = &UserQuery{config: f.config}
+				query = (&UserClient{config: f.config}).Query()
 			)
-			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
 				return err
 			}
 			f.withUser = query
+			if _, ok := fieldSeen[friendship.FieldUserID]; !ok {
+				selectedFields = append(selectedFields, friendship.FieldUserID)
+				fieldSeen[friendship.FieldUserID] = struct{}{}
+			}
 		case "friendUser":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
-				query = &UserQuery{config: f.config}
+				query = (&UserClient{config: f.config}).Query()
 			)
-			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
 				return err
 			}
 			f.withFriendUser = query
+			if _, ok := fieldSeen[friendship.FieldFriendUserID]; !ok {
+				selectedFields = append(selectedFields, friendship.FieldFriendUserID)
+				fieldSeen[friendship.FieldFriendUserID] = struct{}{}
+			}
+		case "userID":
+			if _, ok := fieldSeen[friendship.FieldUserID]; !ok {
+				selectedFields = append(selectedFields, friendship.FieldUserID)
+				fieldSeen[friendship.FieldUserID] = struct{}{}
+			}
+		case "friendUserID":
+			if _, ok := fieldSeen[friendship.FieldFriendUserID]; !ok {
+				selectedFields = append(selectedFields, friendship.FieldFriendUserID)
+				fieldSeen[friendship.FieldFriendUserID] = struct{}{}
+			}
+		case "createdAt":
+			if _, ok := fieldSeen[friendship.FieldCreatedAt]; !ok {
+				selectedFields = append(selectedFields, friendship.FieldCreatedAt)
+				fieldSeen[friendship.FieldCreatedAt] = struct{}{}
+			}
+		default:
+			unknownSeen = true
 		}
+	}
+	if !unknownSeen {
+		f.Select(selectedFields...)
 	}
 	return nil
 }
@@ -228,31 +351,64 @@ func (fr *FriendshipRequestQuery) CollectFields(ctx context.Context, satisfies .
 	return fr, nil
 }
 
-func (fr *FriendshipRequestQuery) collectField(ctx context.Context, op *graphql.OperationContext, field graphql.CollectedField, path []string, satisfies ...string) error {
+func (fr *FriendshipRequestQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
 	path = append([]string(nil), path...)
-	for _, field := range graphql.CollectFields(op, field.Selections, satisfies) {
+	var (
+		unknownSeen    bool
+		fieldSeen      = make(map[string]struct{}, len(friendshiprequest.Columns))
+		selectedFields = []string{friendshiprequest.FieldID}
+	)
+	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
 		switch field.Name {
 		case "fromUsers":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
-				query = &UserQuery{config: fr.config}
+				query = (&UserClient{config: fr.config}).Query()
 			)
-			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
 				return err
 			}
 			fr.withFromUsers = query
+			if _, ok := fieldSeen[friendshiprequest.FieldFromUserID]; !ok {
+				selectedFields = append(selectedFields, friendshiprequest.FieldFromUserID)
+				fieldSeen[friendshiprequest.FieldFromUserID] = struct{}{}
+			}
 		case "toUsers":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
-				query = &UserQuery{config: fr.config}
+				query = (&UserClient{config: fr.config}).Query()
 			)
-			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
 				return err
 			}
 			fr.withToUsers = query
+			if _, ok := fieldSeen[friendshiprequest.FieldToUserID]; !ok {
+				selectedFields = append(selectedFields, friendshiprequest.FieldToUserID)
+				fieldSeen[friendshiprequest.FieldToUserID] = struct{}{}
+			}
+		case "fromUserID":
+			if _, ok := fieldSeen[friendshiprequest.FieldFromUserID]; !ok {
+				selectedFields = append(selectedFields, friendshiprequest.FieldFromUserID)
+				fieldSeen[friendshiprequest.FieldFromUserID] = struct{}{}
+			}
+		case "toUserID":
+			if _, ok := fieldSeen[friendshiprequest.FieldToUserID]; !ok {
+				selectedFields = append(selectedFields, friendshiprequest.FieldToUserID)
+				fieldSeen[friendshiprequest.FieldToUserID] = struct{}{}
+			}
+		case "createdAt":
+			if _, ok := fieldSeen[friendshiprequest.FieldCreatedAt]; !ok {
+				selectedFields = append(selectedFields, friendshiprequest.FieldCreatedAt)
+				fieldSeen[friendshiprequest.FieldCreatedAt] = struct{}{}
+			}
+		default:
+			unknownSeen = true
 		}
+	}
+	if !unknownSeen {
+		fr.Select(selectedFields...)
 	}
 	return nil
 }
@@ -295,27 +451,36 @@ func (i *InvitationQuery) CollectFields(ctx context.Context, satisfies ...string
 	return i, nil
 }
 
-func (i *InvitationQuery) collectField(ctx context.Context, op *graphql.OperationContext, field graphql.CollectedField, path []string, satisfies ...string) error {
+func (i *InvitationQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
 	path = append([]string(nil), path...)
-	for _, field := range graphql.CollectFields(op, field.Selections, satisfies) {
+	var (
+		unknownSeen    bool
+		fieldSeen      = make(map[string]struct{}, len(invitation.Columns))
+		selectedFields = []string{invitation.FieldID}
+	)
+	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
 		switch field.Name {
 		case "user":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
-				query = &UserQuery{config: i.config}
+				query = (&UserClient{config: i.config}).Query()
 			)
-			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
 				return err
 			}
 			i.withUser = query
+			if _, ok := fieldSeen[invitation.FieldUserID]; !ok {
+				selectedFields = append(selectedFields, invitation.FieldUserID)
+				fieldSeen[invitation.FieldUserID] = struct{}{}
+			}
 		case "invitationUsers":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
-				query = &InvitationUserQuery{config: i.config}
+				query = (&InvitationUserClient{config: i.config}).Query()
 			)
-			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
 				return err
 			}
 			i.WithNamedInvitationUsers(alias, func(wq *InvitationUserQuery) {
@@ -325,9 +490,9 @@ func (i *InvitationQuery) collectField(ctx context.Context, op *graphql.Operatio
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
-				query = &InvitationAcceptanceQuery{config: i.config}
+				query = (&InvitationAcceptanceClient{config: i.config}).Query()
 			)
-			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
 				return err
 			}
 			i.WithNamedInvitationAcceptances(alias, func(wq *InvitationAcceptanceQuery) {
@@ -337,15 +502,65 @@ func (i *InvitationQuery) collectField(ctx context.Context, op *graphql.Operatio
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
-				query = &InvitationDenialQuery{config: i.config}
+				query = (&InvitationDenialClient{config: i.config}).Query()
 			)
-			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
 				return err
 			}
 			i.WithNamedInvitationDenials(alias, func(wq *InvitationDenialQuery) {
 				*wq = *query
 			})
+		case "userID":
+			if _, ok := fieldSeen[invitation.FieldUserID]; !ok {
+				selectedFields = append(selectedFields, invitation.FieldUserID)
+				fieldSeen[invitation.FieldUserID] = struct{}{}
+			}
+		case "location":
+			if _, ok := fieldSeen[invitation.FieldLocation]; !ok {
+				selectedFields = append(selectedFields, invitation.FieldLocation)
+				fieldSeen[invitation.FieldLocation] = struct{}{}
+			}
+		case "coordinate":
+			if _, ok := fieldSeen[invitation.FieldCoordinate]; !ok {
+				selectedFields = append(selectedFields, invitation.FieldCoordinate)
+				fieldSeen[invitation.FieldCoordinate] = struct{}{}
+			}
+		case "comment":
+			if _, ok := fieldSeen[invitation.FieldComment]; !ok {
+				selectedFields = append(selectedFields, invitation.FieldComment)
+				fieldSeen[invitation.FieldComment] = struct{}{}
+			}
+		case "startsAt":
+			if _, ok := fieldSeen[invitation.FieldStartsAt]; !ok {
+				selectedFields = append(selectedFields, invitation.FieldStartsAt)
+				fieldSeen[invitation.FieldStartsAt] = struct{}{}
+			}
+		case "chatRoomID":
+			if _, ok := fieldSeen[invitation.FieldChatRoomID]; !ok {
+				selectedFields = append(selectedFields, invitation.FieldChatRoomID)
+				fieldSeen[invitation.FieldChatRoomID] = struct{}{}
+			}
+		case "status":
+			if _, ok := fieldSeen[invitation.FieldStatus]; !ok {
+				selectedFields = append(selectedFields, invitation.FieldStatus)
+				fieldSeen[invitation.FieldStatus] = struct{}{}
+			}
+		case "createdAt":
+			if _, ok := fieldSeen[invitation.FieldCreatedAt]; !ok {
+				selectedFields = append(selectedFields, invitation.FieldCreatedAt)
+				fieldSeen[invitation.FieldCreatedAt] = struct{}{}
+			}
+		case "updatedAt":
+			if _, ok := fieldSeen[invitation.FieldUpdatedAt]; !ok {
+				selectedFields = append(selectedFields, invitation.FieldUpdatedAt)
+				fieldSeen[invitation.FieldUpdatedAt] = struct{}{}
+			}
+		default:
+			unknownSeen = true
 		}
+	}
+	if !unknownSeen {
+		i.Select(selectedFields...)
 	}
 	return nil
 }
@@ -388,31 +603,64 @@ func (ia *InvitationAcceptanceQuery) CollectFields(ctx context.Context, satisfie
 	return ia, nil
 }
 
-func (ia *InvitationAcceptanceQuery) collectField(ctx context.Context, op *graphql.OperationContext, field graphql.CollectedField, path []string, satisfies ...string) error {
+func (ia *InvitationAcceptanceQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
 	path = append([]string(nil), path...)
-	for _, field := range graphql.CollectFields(op, field.Selections, satisfies) {
+	var (
+		unknownSeen    bool
+		fieldSeen      = make(map[string]struct{}, len(invitationacceptance.Columns))
+		selectedFields = []string{invitationacceptance.FieldID}
+	)
+	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
 		switch field.Name {
 		case "user":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
-				query = &UserQuery{config: ia.config}
+				query = (&UserClient{config: ia.config}).Query()
 			)
-			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
 				return err
 			}
 			ia.withUser = query
+			if _, ok := fieldSeen[invitationacceptance.FieldUserID]; !ok {
+				selectedFields = append(selectedFields, invitationacceptance.FieldUserID)
+				fieldSeen[invitationacceptance.FieldUserID] = struct{}{}
+			}
 		case "invitation":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
-				query = &InvitationQuery{config: ia.config}
+				query = (&InvitationClient{config: ia.config}).Query()
 			)
-			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
 				return err
 			}
 			ia.withInvitation = query
+			if _, ok := fieldSeen[invitationacceptance.FieldInvitationID]; !ok {
+				selectedFields = append(selectedFields, invitationacceptance.FieldInvitationID)
+				fieldSeen[invitationacceptance.FieldInvitationID] = struct{}{}
+			}
+		case "userID":
+			if _, ok := fieldSeen[invitationacceptance.FieldUserID]; !ok {
+				selectedFields = append(selectedFields, invitationacceptance.FieldUserID)
+				fieldSeen[invitationacceptance.FieldUserID] = struct{}{}
+			}
+		case "invitationID":
+			if _, ok := fieldSeen[invitationacceptance.FieldInvitationID]; !ok {
+				selectedFields = append(selectedFields, invitationacceptance.FieldInvitationID)
+				fieldSeen[invitationacceptance.FieldInvitationID] = struct{}{}
+			}
+		case "createdAt":
+			if _, ok := fieldSeen[invitationacceptance.FieldCreatedAt]; !ok {
+				selectedFields = append(selectedFields, invitationacceptance.FieldCreatedAt)
+				fieldSeen[invitationacceptance.FieldCreatedAt] = struct{}{}
+			}
+		default:
+			unknownSeen = true
 		}
+	}
+	if !unknownSeen {
+		ia.Select(selectedFields...)
 	}
 	return nil
 }
@@ -455,31 +703,64 @@ func (id *InvitationDenialQuery) CollectFields(ctx context.Context, satisfies ..
 	return id, nil
 }
 
-func (id *InvitationDenialQuery) collectField(ctx context.Context, op *graphql.OperationContext, field graphql.CollectedField, path []string, satisfies ...string) error {
+func (id *InvitationDenialQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
 	path = append([]string(nil), path...)
-	for _, field := range graphql.CollectFields(op, field.Selections, satisfies) {
+	var (
+		unknownSeen    bool
+		fieldSeen      = make(map[string]struct{}, len(invitationdenial.Columns))
+		selectedFields = []string{invitationdenial.FieldID}
+	)
+	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
 		switch field.Name {
 		case "user":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
-				query = &UserQuery{config: id.config}
+				query = (&UserClient{config: id.config}).Query()
 			)
-			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
 				return err
 			}
 			id.withUser = query
+			if _, ok := fieldSeen[invitationdenial.FieldUserID]; !ok {
+				selectedFields = append(selectedFields, invitationdenial.FieldUserID)
+				fieldSeen[invitationdenial.FieldUserID] = struct{}{}
+			}
 		case "invitation":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
-				query = &InvitationQuery{config: id.config}
+				query = (&InvitationClient{config: id.config}).Query()
 			)
-			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
 				return err
 			}
 			id.withInvitation = query
+			if _, ok := fieldSeen[invitationdenial.FieldInvitationID]; !ok {
+				selectedFields = append(selectedFields, invitationdenial.FieldInvitationID)
+				fieldSeen[invitationdenial.FieldInvitationID] = struct{}{}
+			}
+		case "userID":
+			if _, ok := fieldSeen[invitationdenial.FieldUserID]; !ok {
+				selectedFields = append(selectedFields, invitationdenial.FieldUserID)
+				fieldSeen[invitationdenial.FieldUserID] = struct{}{}
+			}
+		case "invitationID":
+			if _, ok := fieldSeen[invitationdenial.FieldInvitationID]; !ok {
+				selectedFields = append(selectedFields, invitationdenial.FieldInvitationID)
+				fieldSeen[invitationdenial.FieldInvitationID] = struct{}{}
+			}
+		case "createdAt":
+			if _, ok := fieldSeen[invitationdenial.FieldCreatedAt]; !ok {
+				selectedFields = append(selectedFields, invitationdenial.FieldCreatedAt)
+				fieldSeen[invitationdenial.FieldCreatedAt] = struct{}{}
+			}
+		default:
+			unknownSeen = true
 		}
+	}
+	if !unknownSeen {
+		id.Select(selectedFields...)
 	}
 	return nil
 }
@@ -522,31 +803,64 @@ func (iu *InvitationUserQuery) CollectFields(ctx context.Context, satisfies ...s
 	return iu, nil
 }
 
-func (iu *InvitationUserQuery) collectField(ctx context.Context, op *graphql.OperationContext, field graphql.CollectedField, path []string, satisfies ...string) error {
+func (iu *InvitationUserQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
 	path = append([]string(nil), path...)
-	for _, field := range graphql.CollectFields(op, field.Selections, satisfies) {
+	var (
+		unknownSeen    bool
+		fieldSeen      = make(map[string]struct{}, len(invitationuser.Columns))
+		selectedFields = []string{invitationuser.FieldID}
+	)
+	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
 		switch field.Name {
 		case "invitation":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
-				query = &InvitationQuery{config: iu.config}
+				query = (&InvitationClient{config: iu.config}).Query()
 			)
-			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
 				return err
 			}
 			iu.withInvitation = query
+			if _, ok := fieldSeen[invitationuser.FieldInvitationID]; !ok {
+				selectedFields = append(selectedFields, invitationuser.FieldInvitationID)
+				fieldSeen[invitationuser.FieldInvitationID] = struct{}{}
+			}
 		case "user":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
-				query = &UserQuery{config: iu.config}
+				query = (&UserClient{config: iu.config}).Query()
 			)
-			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
 				return err
 			}
 			iu.withUser = query
+			if _, ok := fieldSeen[invitationuser.FieldUserID]; !ok {
+				selectedFields = append(selectedFields, invitationuser.FieldUserID)
+				fieldSeen[invitationuser.FieldUserID] = struct{}{}
+			}
+		case "invitationID":
+			if _, ok := fieldSeen[invitationuser.FieldInvitationID]; !ok {
+				selectedFields = append(selectedFields, invitationuser.FieldInvitationID)
+				fieldSeen[invitationuser.FieldInvitationID] = struct{}{}
+			}
+		case "userID":
+			if _, ok := fieldSeen[invitationuser.FieldUserID]; !ok {
+				selectedFields = append(selectedFields, invitationuser.FieldUserID)
+				fieldSeen[invitationuser.FieldUserID] = struct{}{}
+			}
+		case "createdAt":
+			if _, ok := fieldSeen[invitationuser.FieldCreatedAt]; !ok {
+				selectedFields = append(selectedFields, invitationuser.FieldCreatedAt)
+				fieldSeen[invitationuser.FieldCreatedAt] = struct{}{}
+			}
+		default:
+			unknownSeen = true
 		}
+	}
+	if !unknownSeen {
+		iu.Select(selectedFields...)
 	}
 	return nil
 }
@@ -589,21 +903,60 @@ func (pnt *PushNotificationTokenQuery) CollectFields(ctx context.Context, satisf
 	return pnt, nil
 }
 
-func (pnt *PushNotificationTokenQuery) collectField(ctx context.Context, op *graphql.OperationContext, field graphql.CollectedField, path []string, satisfies ...string) error {
+func (pnt *PushNotificationTokenQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
 	path = append([]string(nil), path...)
-	for _, field := range graphql.CollectFields(op, field.Selections, satisfies) {
+	var (
+		unknownSeen    bool
+		fieldSeen      = make(map[string]struct{}, len(pushnotificationtoken.Columns))
+		selectedFields = []string{pushnotificationtoken.FieldID}
+	)
+	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
 		switch field.Name {
 		case "user":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
-				query = &UserQuery{config: pnt.config}
+				query = (&UserClient{config: pnt.config}).Query()
 			)
-			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
 				return err
 			}
 			pnt.withUser = query
+			if _, ok := fieldSeen[pushnotificationtoken.FieldUserID]; !ok {
+				selectedFields = append(selectedFields, pushnotificationtoken.FieldUserID)
+				fieldSeen[pushnotificationtoken.FieldUserID] = struct{}{}
+			}
+		case "userID":
+			if _, ok := fieldSeen[pushnotificationtoken.FieldUserID]; !ok {
+				selectedFields = append(selectedFields, pushnotificationtoken.FieldUserID)
+				fieldSeen[pushnotificationtoken.FieldUserID] = struct{}{}
+			}
+		case "deviceID":
+			if _, ok := fieldSeen[pushnotificationtoken.FieldDeviceID]; !ok {
+				selectedFields = append(selectedFields, pushnotificationtoken.FieldDeviceID)
+				fieldSeen[pushnotificationtoken.FieldDeviceID] = struct{}{}
+			}
+		case "fcmToken":
+			if _, ok := fieldSeen[pushnotificationtoken.FieldFcmToken]; !ok {
+				selectedFields = append(selectedFields, pushnotificationtoken.FieldFcmToken)
+				fieldSeen[pushnotificationtoken.FieldFcmToken] = struct{}{}
+			}
+		case "createdAt":
+			if _, ok := fieldSeen[pushnotificationtoken.FieldCreatedAt]; !ok {
+				selectedFields = append(selectedFields, pushnotificationtoken.FieldCreatedAt)
+				fieldSeen[pushnotificationtoken.FieldCreatedAt] = struct{}{}
+			}
+		case "updatedAt":
+			if _, ok := fieldSeen[pushnotificationtoken.FieldUpdatedAt]; !ok {
+				selectedFields = append(selectedFields, pushnotificationtoken.FieldUpdatedAt)
+				fieldSeen[pushnotificationtoken.FieldUpdatedAt] = struct{}{}
+			}
+		default:
+			unknownSeen = true
 		}
+	}
+	if !unknownSeen {
+		pnt.Select(selectedFields...)
 	}
 	return nil
 }
@@ -646,27 +999,36 @@ func (u *UserQuery) CollectFields(ctx context.Context, satisfies ...string) (*Us
 	return u, nil
 }
 
-func (u *UserQuery) collectField(ctx context.Context, op *graphql.OperationContext, field graphql.CollectedField, path []string, satisfies ...string) error {
+func (u *UserQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
 	path = append([]string(nil), path...)
-	for _, field := range graphql.CollectFields(op, field.Selections, satisfies) {
+	var (
+		unknownSeen    bool
+		fieldSeen      = make(map[string]struct{}, len(user.Columns))
+		selectedFields = []string{user.FieldID}
+	)
+	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
 		switch field.Name {
 		case "account":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
-				query = &AccountQuery{config: u.config}
+				query = (&AccountClient{config: u.config}).Query()
 			)
-			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
 				return err
 			}
 			u.withAccount = query
+			if _, ok := fieldSeen[user.FieldAccountID]; !ok {
+				selectedFields = append(selectedFields, user.FieldAccountID)
+				fieldSeen[user.FieldAccountID] = struct{}{}
+			}
 		case "userProfile":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
-				query = &UserProfileQuery{config: u.config}
+				query = (&UserProfileClient{config: u.config}).Query()
 			)
-			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
 				return err
 			}
 			u.withUserProfile = query
@@ -674,9 +1036,9 @@ func (u *UserQuery) collectField(ctx context.Context, op *graphql.OperationConte
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
-				query = &UserLocationQuery{config: u.config}
+				query = (&UserLocationClient{config: u.config}).Query()
 			)
-			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
 				return err
 			}
 			u.withUserLocation = query
@@ -684,9 +1046,9 @@ func (u *UserQuery) collectField(ctx context.Context, op *graphql.OperationConte
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
-				query = &UserQuery{config: u.config}
+				query = (&UserClient{config: u.config}).Query()
 			)
-			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
 				return err
 			}
 			u.WithNamedFriendUsers(alias, func(wq *UserQuery) {
@@ -696,9 +1058,9 @@ func (u *UserQuery) collectField(ctx context.Context, op *graphql.OperationConte
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
-				query = &PushNotificationTokenQuery{config: u.config}
+				query = (&PushNotificationTokenClient{config: u.config}).Query()
 			)
-			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
 				return err
 			}
 			u.WithNamedPushNotificationTokens(alias, func(wq *PushNotificationTokenQuery) {
@@ -708,9 +1070,9 @@ func (u *UserQuery) collectField(ctx context.Context, op *graphql.OperationConte
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
-				query = &FriendGroupQuery{config: u.config}
+				query = (&FriendGroupClient{config: u.config}).Query()
 			)
-			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
 				return err
 			}
 			u.WithNamedFriendGroups(alias, func(wq *FriendGroupQuery) {
@@ -720,9 +1082,9 @@ func (u *UserQuery) collectField(ctx context.Context, op *graphql.OperationConte
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
-				query = &FriendGroupQuery{config: u.config}
+				query = (&FriendGroupClient{config: u.config}).Query()
 			)
-			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
 				return err
 			}
 			u.WithNamedBelongingFriendGroups(alias, func(wq *FriendGroupQuery) {
@@ -732,9 +1094,9 @@ func (u *UserQuery) collectField(ctx context.Context, op *graphql.OperationConte
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
-				query = &InvitationAcceptanceQuery{config: u.config}
+				query = (&InvitationAcceptanceClient{config: u.config}).Query()
 			)
-			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
 				return err
 			}
 			u.WithNamedInvitationAcceptances(alias, func(wq *InvitationAcceptanceQuery) {
@@ -744,9 +1106,9 @@ func (u *UserQuery) collectField(ctx context.Context, op *graphql.OperationConte
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
-				query = &InvitationDenialQuery{config: u.config}
+				query = (&InvitationDenialClient{config: u.config}).Query()
 			)
-			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
 				return err
 			}
 			u.WithNamedInvitationDenials(alias, func(wq *InvitationDenialQuery) {
@@ -756,9 +1118,9 @@ func (u *UserQuery) collectField(ctx context.Context, op *graphql.OperationConte
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
-				query = &FriendshipQuery{config: u.config}
+				query = (&FriendshipClient{config: u.config}).Query()
 			)
-			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
 				return err
 			}
 			u.WithNamedFriendships(alias, func(wq *FriendshipQuery) {
@@ -768,15 +1130,35 @@ func (u *UserQuery) collectField(ctx context.Context, op *graphql.OperationConte
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
-				query = &UserFriendGroupQuery{config: u.config}
+				query = (&UserFriendGroupClient{config: u.config}).Query()
 			)
-			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
 				return err
 			}
 			u.WithNamedUserFriendGroups(alias, func(wq *UserFriendGroupQuery) {
 				*wq = *query
 			})
+		case "accountID":
+			if _, ok := fieldSeen[user.FieldAccountID]; !ok {
+				selectedFields = append(selectedFields, user.FieldAccountID)
+				fieldSeen[user.FieldAccountID] = struct{}{}
+			}
+		case "status":
+			if _, ok := fieldSeen[user.FieldStatus]; !ok {
+				selectedFields = append(selectedFields, user.FieldStatus)
+				fieldSeen[user.FieldStatus] = struct{}{}
+			}
+		case "createdAt":
+			if _, ok := fieldSeen[user.FieldCreatedAt]; !ok {
+				selectedFields = append(selectedFields, user.FieldCreatedAt)
+				fieldSeen[user.FieldCreatedAt] = struct{}{}
+			}
+		default:
+			unknownSeen = true
 		}
+	}
+	if !unknownSeen {
+		u.Select(selectedFields...)
 	}
 	return nil
 }
@@ -819,31 +1201,64 @@ func (ub *UserBlockQuery) CollectFields(ctx context.Context, satisfies ...string
 	return ub, nil
 }
 
-func (ub *UserBlockQuery) collectField(ctx context.Context, op *graphql.OperationContext, field graphql.CollectedField, path []string, satisfies ...string) error {
+func (ub *UserBlockQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
 	path = append([]string(nil), path...)
-	for _, field := range graphql.CollectFields(op, field.Selections, satisfies) {
+	var (
+		unknownSeen    bool
+		fieldSeen      = make(map[string]struct{}, len(userblock.Columns))
+		selectedFields = []string{userblock.FieldID}
+	)
+	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
 		switch field.Name {
 		case "user":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
-				query = &UserQuery{config: ub.config}
+				query = (&UserClient{config: ub.config}).Query()
 			)
-			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
 				return err
 			}
 			ub.withUser = query
+			if _, ok := fieldSeen[userblock.FieldUserID]; !ok {
+				selectedFields = append(selectedFields, userblock.FieldUserID)
+				fieldSeen[userblock.FieldUserID] = struct{}{}
+			}
 		case "blockUser":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
-				query = &UserQuery{config: ub.config}
+				query = (&UserClient{config: ub.config}).Query()
 			)
-			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
 				return err
 			}
 			ub.withBlockUser = query
+			if _, ok := fieldSeen[userblock.FieldBlockUserID]; !ok {
+				selectedFields = append(selectedFields, userblock.FieldBlockUserID)
+				fieldSeen[userblock.FieldBlockUserID] = struct{}{}
+			}
+		case "userID":
+			if _, ok := fieldSeen[userblock.FieldUserID]; !ok {
+				selectedFields = append(selectedFields, userblock.FieldUserID)
+				fieldSeen[userblock.FieldUserID] = struct{}{}
+			}
+		case "blockUserID":
+			if _, ok := fieldSeen[userblock.FieldBlockUserID]; !ok {
+				selectedFields = append(selectedFields, userblock.FieldBlockUserID)
+				fieldSeen[userblock.FieldBlockUserID] = struct{}{}
+			}
+		case "createdAt":
+			if _, ok := fieldSeen[userblock.FieldCreatedAt]; !ok {
+				selectedFields = append(selectedFields, userblock.FieldCreatedAt)
+				fieldSeen[userblock.FieldCreatedAt] = struct{}{}
+			}
+		default:
+			unknownSeen = true
 		}
+	}
+	if !unknownSeen {
+		ub.Select(selectedFields...)
 	}
 	return nil
 }
@@ -886,31 +1301,64 @@ func (ufg *UserFriendGroupQuery) CollectFields(ctx context.Context, satisfies ..
 	return ufg, nil
 }
 
-func (ufg *UserFriendGroupQuery) collectField(ctx context.Context, op *graphql.OperationContext, field graphql.CollectedField, path []string, satisfies ...string) error {
+func (ufg *UserFriendGroupQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
 	path = append([]string(nil), path...)
-	for _, field := range graphql.CollectFields(op, field.Selections, satisfies) {
+	var (
+		unknownSeen    bool
+		fieldSeen      = make(map[string]struct{}, len(userfriendgroup.Columns))
+		selectedFields = []string{userfriendgroup.FieldID}
+	)
+	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
 		switch field.Name {
 		case "friendGroup":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
-				query = &FriendGroupQuery{config: ufg.config}
+				query = (&FriendGroupClient{config: ufg.config}).Query()
 			)
-			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
 				return err
 			}
 			ufg.withFriendGroup = query
+			if _, ok := fieldSeen[userfriendgroup.FieldFriendGroupID]; !ok {
+				selectedFields = append(selectedFields, userfriendgroup.FieldFriendGroupID)
+				fieldSeen[userfriendgroup.FieldFriendGroupID] = struct{}{}
+			}
 		case "user":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
-				query = &UserQuery{config: ufg.config}
+				query = (&UserClient{config: ufg.config}).Query()
 			)
-			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
 				return err
 			}
 			ufg.withUser = query
+			if _, ok := fieldSeen[userfriendgroup.FieldUserID]; !ok {
+				selectedFields = append(selectedFields, userfriendgroup.FieldUserID)
+				fieldSeen[userfriendgroup.FieldUserID] = struct{}{}
+			}
+		case "friendGroupID":
+			if _, ok := fieldSeen[userfriendgroup.FieldFriendGroupID]; !ok {
+				selectedFields = append(selectedFields, userfriendgroup.FieldFriendGroupID)
+				fieldSeen[userfriendgroup.FieldFriendGroupID] = struct{}{}
+			}
+		case "userID":
+			if _, ok := fieldSeen[userfriendgroup.FieldUserID]; !ok {
+				selectedFields = append(selectedFields, userfriendgroup.FieldUserID)
+				fieldSeen[userfriendgroup.FieldUserID] = struct{}{}
+			}
+		case "createdAt":
+			if _, ok := fieldSeen[userfriendgroup.FieldCreatedAt]; !ok {
+				selectedFields = append(selectedFields, userfriendgroup.FieldCreatedAt)
+				fieldSeen[userfriendgroup.FieldCreatedAt] = struct{}{}
+			}
+		default:
+			unknownSeen = true
 		}
+	}
+	if !unknownSeen {
+		ufg.Select(selectedFields...)
 	}
 	return nil
 }
@@ -953,21 +1401,50 @@ func (ul *UserLocationQuery) CollectFields(ctx context.Context, satisfies ...str
 	return ul, nil
 }
 
-func (ul *UserLocationQuery) collectField(ctx context.Context, op *graphql.OperationContext, field graphql.CollectedField, path []string, satisfies ...string) error {
+func (ul *UserLocationQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
 	path = append([]string(nil), path...)
-	for _, field := range graphql.CollectFields(op, field.Selections, satisfies) {
+	var (
+		unknownSeen    bool
+		fieldSeen      = make(map[string]struct{}, len(userlocation.Columns))
+		selectedFields = []string{userlocation.FieldID}
+	)
+	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
 		switch field.Name {
 		case "user":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
-				query = &UserQuery{config: ul.config}
+				query = (&UserClient{config: ul.config}).Query()
 			)
-			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
 				return err
 			}
 			ul.withUser = query
+			if _, ok := fieldSeen[userlocation.FieldUserID]; !ok {
+				selectedFields = append(selectedFields, userlocation.FieldUserID)
+				fieldSeen[userlocation.FieldUserID] = struct{}{}
+			}
+		case "userID":
+			if _, ok := fieldSeen[userlocation.FieldUserID]; !ok {
+				selectedFields = append(selectedFields, userlocation.FieldUserID)
+				fieldSeen[userlocation.FieldUserID] = struct{}{}
+			}
+		case "coordinate":
+			if _, ok := fieldSeen[userlocation.FieldCoordinate]; !ok {
+				selectedFields = append(selectedFields, userlocation.FieldCoordinate)
+				fieldSeen[userlocation.FieldCoordinate] = struct{}{}
+			}
+		case "updatedAt":
+			if _, ok := fieldSeen[userlocation.FieldUpdatedAt]; !ok {
+				selectedFields = append(selectedFields, userlocation.FieldUpdatedAt)
+				fieldSeen[userlocation.FieldUpdatedAt] = struct{}{}
+			}
+		default:
+			unknownSeen = true
 		}
+	}
+	if !unknownSeen {
+		ul.Select(selectedFields...)
 	}
 	return nil
 }
@@ -1010,21 +1487,50 @@ func (ulh *UserLocationHistoryQuery) CollectFields(ctx context.Context, satisfie
 	return ulh, nil
 }
 
-func (ulh *UserLocationHistoryQuery) collectField(ctx context.Context, op *graphql.OperationContext, field graphql.CollectedField, path []string, satisfies ...string) error {
+func (ulh *UserLocationHistoryQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
 	path = append([]string(nil), path...)
-	for _, field := range graphql.CollectFields(op, field.Selections, satisfies) {
+	var (
+		unknownSeen    bool
+		fieldSeen      = make(map[string]struct{}, len(userlocationhistory.Columns))
+		selectedFields = []string{userlocationhistory.FieldID}
+	)
+	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
 		switch field.Name {
 		case "user":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
-				query = &UserQuery{config: ulh.config}
+				query = (&UserClient{config: ulh.config}).Query()
 			)
-			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
 				return err
 			}
 			ulh.withUser = query
+			if _, ok := fieldSeen[userlocationhistory.FieldUserID]; !ok {
+				selectedFields = append(selectedFields, userlocationhistory.FieldUserID)
+				fieldSeen[userlocationhistory.FieldUserID] = struct{}{}
+			}
+		case "userID":
+			if _, ok := fieldSeen[userlocationhistory.FieldUserID]; !ok {
+				selectedFields = append(selectedFields, userlocationhistory.FieldUserID)
+				fieldSeen[userlocationhistory.FieldUserID] = struct{}{}
+			}
+		case "coordinate":
+			if _, ok := fieldSeen[userlocationhistory.FieldCoordinate]; !ok {
+				selectedFields = append(selectedFields, userlocationhistory.FieldCoordinate)
+				fieldSeen[userlocationhistory.FieldCoordinate] = struct{}{}
+			}
+		case "createdAt":
+			if _, ok := fieldSeen[userlocationhistory.FieldCreatedAt]; !ok {
+				selectedFields = append(selectedFields, userlocationhistory.FieldCreatedAt)
+				fieldSeen[userlocationhistory.FieldCreatedAt] = struct{}{}
+			}
+		default:
+			unknownSeen = true
 		}
+	}
+	if !unknownSeen {
+		ulh.Select(selectedFields...)
 	}
 	return nil
 }
@@ -1067,31 +1573,64 @@ func (um *UserMuteQuery) CollectFields(ctx context.Context, satisfies ...string)
 	return um, nil
 }
 
-func (um *UserMuteQuery) collectField(ctx context.Context, op *graphql.OperationContext, field graphql.CollectedField, path []string, satisfies ...string) error {
+func (um *UserMuteQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
 	path = append([]string(nil), path...)
-	for _, field := range graphql.CollectFields(op, field.Selections, satisfies) {
+	var (
+		unknownSeen    bool
+		fieldSeen      = make(map[string]struct{}, len(usermute.Columns))
+		selectedFields = []string{usermute.FieldID}
+	)
+	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
 		switch field.Name {
 		case "user":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
-				query = &UserQuery{config: um.config}
+				query = (&UserClient{config: um.config}).Query()
 			)
-			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
 				return err
 			}
 			um.withUser = query
+			if _, ok := fieldSeen[usermute.FieldUserID]; !ok {
+				selectedFields = append(selectedFields, usermute.FieldUserID)
+				fieldSeen[usermute.FieldUserID] = struct{}{}
+			}
 		case "muteUser":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
-				query = &UserQuery{config: um.config}
+				query = (&UserClient{config: um.config}).Query()
 			)
-			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
 				return err
 			}
 			um.withMuteUser = query
+			if _, ok := fieldSeen[usermute.FieldMuteUserID]; !ok {
+				selectedFields = append(selectedFields, usermute.FieldMuteUserID)
+				fieldSeen[usermute.FieldMuteUserID] = struct{}{}
+			}
+		case "userID":
+			if _, ok := fieldSeen[usermute.FieldUserID]; !ok {
+				selectedFields = append(selectedFields, usermute.FieldUserID)
+				fieldSeen[usermute.FieldUserID] = struct{}{}
+			}
+		case "muteUserID":
+			if _, ok := fieldSeen[usermute.FieldMuteUserID]; !ok {
+				selectedFields = append(selectedFields, usermute.FieldMuteUserID)
+				fieldSeen[usermute.FieldMuteUserID] = struct{}{}
+			}
+		case "createdAt":
+			if _, ok := fieldSeen[usermute.FieldCreatedAt]; !ok {
+				selectedFields = append(selectedFields, usermute.FieldCreatedAt)
+				fieldSeen[usermute.FieldCreatedAt] = struct{}{}
+			}
+		default:
+			unknownSeen = true
 		}
+	}
+	if !unknownSeen {
+		um.Select(selectedFields...)
 	}
 	return nil
 }
@@ -1134,21 +1673,65 @@ func (up *UserProfileQuery) CollectFields(ctx context.Context, satisfies ...stri
 	return up, nil
 }
 
-func (up *UserProfileQuery) collectField(ctx context.Context, op *graphql.OperationContext, field graphql.CollectedField, path []string, satisfies ...string) error {
+func (up *UserProfileQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
 	path = append([]string(nil), path...)
-	for _, field := range graphql.CollectFields(op, field.Selections, satisfies) {
+	var (
+		unknownSeen    bool
+		fieldSeen      = make(map[string]struct{}, len(userprofile.Columns))
+		selectedFields = []string{userprofile.FieldID}
+	)
+	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
 		switch field.Name {
 		case "user":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
-				query = &UserQuery{config: up.config}
+				query = (&UserClient{config: up.config}).Query()
 			)
-			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
 				return err
 			}
 			up.withUser = query
+			if _, ok := fieldSeen[userprofile.FieldUserID]; !ok {
+				selectedFields = append(selectedFields, userprofile.FieldUserID)
+				fieldSeen[userprofile.FieldUserID] = struct{}{}
+			}
+		case "userID":
+			if _, ok := fieldSeen[userprofile.FieldUserID]; !ok {
+				selectedFields = append(selectedFields, userprofile.FieldUserID)
+				fieldSeen[userprofile.FieldUserID] = struct{}{}
+			}
+		case "screenID":
+			if _, ok := fieldSeen[userprofile.FieldScreenID]; !ok {
+				selectedFields = append(selectedFields, userprofile.FieldScreenID)
+				fieldSeen[userprofile.FieldScreenID] = struct{}{}
+			}
+		case "nickname":
+			if _, ok := fieldSeen[userprofile.FieldNickname]; !ok {
+				selectedFields = append(selectedFields, userprofile.FieldNickname)
+				fieldSeen[userprofile.FieldNickname] = struct{}{}
+			}
+		case "avatarURL":
+			if _, ok := fieldSeen[userprofile.FieldAvatarURL]; !ok {
+				selectedFields = append(selectedFields, userprofile.FieldAvatarURL)
+				fieldSeen[userprofile.FieldAvatarURL] = struct{}{}
+			}
+		case "createdAt":
+			if _, ok := fieldSeen[userprofile.FieldCreatedAt]; !ok {
+				selectedFields = append(selectedFields, userprofile.FieldCreatedAt)
+				fieldSeen[userprofile.FieldCreatedAt] = struct{}{}
+			}
+		case "updatedAt":
+			if _, ok := fieldSeen[userprofile.FieldUpdatedAt]; !ok {
+				selectedFields = append(selectedFields, userprofile.FieldUpdatedAt)
+				fieldSeen[userprofile.FieldUpdatedAt] = struct{}{}
+			}
+		default:
+			unknownSeen = true
 		}
+	}
+	if !unknownSeen {
+		up.Select(selectedFields...)
 	}
 	return nil
 }

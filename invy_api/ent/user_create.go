@@ -341,13 +341,7 @@ func (uc *UserCreate) sqlSave(ctx context.Context) (*User, error) {
 func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	var (
 		_node = &User{config: uc.config}
-		_spec = &sqlgraph.CreateSpec{
-			Table: user.Table,
-			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
-				Column: user.FieldID,
-			},
-		}
+		_spec = sqlgraph.NewCreateSpec(user.Table, sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID))
 	)
 	_spec.OnConflict = uc.conflict
 	if id, ok := uc.mutation.ID(); ok {
@@ -370,10 +364,7 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Columns: []string{user.AccountColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeUUID,
-					Column: account.FieldID,
-				},
+				IDSpec: sqlgraph.NewFieldSpec(account.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -390,10 +381,7 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Columns: []string{user.UserProfileColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeUUID,
-					Column: userprofile.FieldID,
-				},
+				IDSpec: sqlgraph.NewFieldSpec(userprofile.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -409,10 +397,7 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Columns: []string{user.UserLocationColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeUUID,
-					Column: userlocation.FieldID,
-				},
+				IDSpec: sqlgraph.NewFieldSpec(userlocation.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -428,10 +413,7 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Columns: user.FriendUsersPrimaryKey,
 			Bidi:    true,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeUUID,
-					Column: user.FieldID,
-				},
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -454,10 +436,7 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Columns: []string{user.PushNotificationTokensColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeUUID,
-					Column: pushnotificationtoken.FieldID,
-				},
+				IDSpec: sqlgraph.NewFieldSpec(pushnotificationtoken.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -473,10 +452,7 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Columns: []string{user.FriendGroupsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeUUID,
-					Column: friendgroup.FieldID,
-				},
+				IDSpec: sqlgraph.NewFieldSpec(friendgroup.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -492,10 +468,7 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Columns: user.BelongingFriendGroupsPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeUUID,
-					Column: friendgroup.FieldID,
-				},
+				IDSpec: sqlgraph.NewFieldSpec(friendgroup.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -518,10 +491,7 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Columns: []string{user.InvitationAcceptancesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeUUID,
-					Column: invitationacceptance.FieldID,
-				},
+				IDSpec: sqlgraph.NewFieldSpec(invitationacceptance.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -537,10 +507,7 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Columns: []string{user.InvitationDenialsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeUUID,
-					Column: invitationdenial.FieldID,
-				},
+				IDSpec: sqlgraph.NewFieldSpec(invitationdenial.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -556,10 +523,7 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Columns: []string{user.FriendshipsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeUUID,
-					Column: friendship.FieldID,
-				},
+				IDSpec: sqlgraph.NewFieldSpec(friendship.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -575,10 +539,7 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Columns: []string{user.UserFriendGroupsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeUUID,
-					Column: userfriendgroup.FieldID,
-				},
+				IDSpec: sqlgraph.NewFieldSpec(userfriendgroup.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -781,8 +742,8 @@ func (ucb *UserCreateBulk) Save(ctx context.Context) ([]*User, error) {
 					return nil, err
 				}
 				builder.mutation = mutation
-				nodes[i], specs[i] = builder.createSpec()
 				var err error
+				nodes[i], specs[i] = builder.createSpec()
 				if i < len(mutators)-1 {
 					_, err = mutators[i+1].Mutate(root, ucb.builders[i+1].mutation)
 				} else {

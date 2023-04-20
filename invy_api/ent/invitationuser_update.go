@@ -74,16 +74,7 @@ func (iuu *InvitationUserUpdate) sqlSave(ctx context.Context) (n int, err error)
 	if err := iuu.check(); err != nil {
 		return n, err
 	}
-	_spec := &sqlgraph.UpdateSpec{
-		Node: &sqlgraph.NodeSpec{
-			Table:   invitationuser.Table,
-			Columns: invitationuser.Columns,
-			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
-				Column: invitationuser.FieldID,
-			},
-		},
-	}
+	_spec := sqlgraph.NewUpdateSpec(invitationuser.Table, invitationuser.Columns, sqlgraph.NewFieldSpec(invitationuser.FieldID, field.TypeUUID))
 	if ps := iuu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -114,6 +105,12 @@ type InvitationUserUpdateOne struct {
 // Mutation returns the InvitationUserMutation object of the builder.
 func (iuuo *InvitationUserUpdateOne) Mutation() *InvitationUserMutation {
 	return iuuo.mutation
+}
+
+// Where appends a list predicates to the InvitationUserUpdate builder.
+func (iuuo *InvitationUserUpdateOne) Where(ps ...predicate.InvitationUser) *InvitationUserUpdateOne {
+	iuuo.mutation.Where(ps...)
+	return iuuo
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
@@ -165,16 +162,7 @@ func (iuuo *InvitationUserUpdateOne) sqlSave(ctx context.Context) (_node *Invita
 	if err := iuuo.check(); err != nil {
 		return _node, err
 	}
-	_spec := &sqlgraph.UpdateSpec{
-		Node: &sqlgraph.NodeSpec{
-			Table:   invitationuser.Table,
-			Columns: invitationuser.Columns,
-			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
-				Column: invitationuser.FieldID,
-			},
-		},
-	}
+	_spec := sqlgraph.NewUpdateSpec(invitationuser.Table, invitationuser.Columns, sqlgraph.NewFieldSpec(invitationuser.FieldID, field.TypeUUID))
 	id, ok := iuuo.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "InvitationUser.id" for update`)}

@@ -166,13 +166,7 @@ func (ubc *UserBlockCreate) sqlSave(ctx context.Context) (*UserBlock, error) {
 func (ubc *UserBlockCreate) createSpec() (*UserBlock, *sqlgraph.CreateSpec) {
 	var (
 		_node = &UserBlock{config: ubc.config}
-		_spec = &sqlgraph.CreateSpec{
-			Table: userblock.Table,
-			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
-				Column: userblock.FieldID,
-			},
-		}
+		_spec = sqlgraph.NewCreateSpec(userblock.Table, sqlgraph.NewFieldSpec(userblock.FieldID, field.TypeUUID))
 	)
 	_spec.OnConflict = ubc.conflict
 	if id, ok := ubc.mutation.ID(); ok {
@@ -191,10 +185,7 @@ func (ubc *UserBlockCreate) createSpec() (*UserBlock, *sqlgraph.CreateSpec) {
 			Columns: []string{userblock.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeUUID,
-					Column: user.FieldID,
-				},
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -211,10 +202,7 @@ func (ubc *UserBlockCreate) createSpec() (*UserBlock, *sqlgraph.CreateSpec) {
 			Columns: []string{userblock.BlockUserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeUUID,
-					Column: user.FieldID,
-				},
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -395,8 +383,8 @@ func (ubcb *UserBlockCreateBulk) Save(ctx context.Context) ([]*UserBlock, error)
 					return nil, err
 				}
 				builder.mutation = mutation
-				nodes[i], specs[i] = builder.createSpec()
 				var err error
+				nodes[i], specs[i] = builder.createSpec()
 				if i < len(mutators)-1 {
 					_, err = mutators[i+1].Mutate(root, ubcb.builders[i+1].mutation)
 				} else {

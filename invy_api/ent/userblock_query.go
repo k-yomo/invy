@@ -19,11 +19,8 @@ import (
 // UserBlockQuery is the builder for querying UserBlock entities.
 type UserBlockQuery struct {
 	config
-	limit         *int
-	offset        *int
-	unique        *bool
-	order         []OrderFunc
-	fields        []string
+	ctx           *QueryContext
+	order         []userblock.OrderOption
 	inters        []Interceptor
 	predicates    []predicate.UserBlock
 	withUser      *UserQuery
@@ -43,25 +40,25 @@ func (ubq *UserBlockQuery) Where(ps ...predicate.UserBlock) *UserBlockQuery {
 
 // Limit the number of records to be returned by this query.
 func (ubq *UserBlockQuery) Limit(limit int) *UserBlockQuery {
-	ubq.limit = &limit
+	ubq.ctx.Limit = &limit
 	return ubq
 }
 
 // Offset to start from.
 func (ubq *UserBlockQuery) Offset(offset int) *UserBlockQuery {
-	ubq.offset = &offset
+	ubq.ctx.Offset = &offset
 	return ubq
 }
 
 // Unique configures the query builder to filter duplicate records on query.
 // By default, unique is set to true, and can be disabled using this method.
 func (ubq *UserBlockQuery) Unique(unique bool) *UserBlockQuery {
-	ubq.unique = &unique
+	ubq.ctx.Unique = &unique
 	return ubq
 }
 
 // Order specifies how the records should be ordered.
-func (ubq *UserBlockQuery) Order(o ...OrderFunc) *UserBlockQuery {
+func (ubq *UserBlockQuery) Order(o ...userblock.OrderOption) *UserBlockQuery {
 	ubq.order = append(ubq.order, o...)
 	return ubq
 }
@@ -113,7 +110,7 @@ func (ubq *UserBlockQuery) QueryBlockUser() *UserQuery {
 // First returns the first UserBlock entity from the query.
 // Returns a *NotFoundError when no UserBlock was found.
 func (ubq *UserBlockQuery) First(ctx context.Context) (*UserBlock, error) {
-	nodes, err := ubq.Limit(1).All(newQueryContext(ctx, TypeUserBlock, "First"))
+	nodes, err := ubq.Limit(1).All(setContextOp(ctx, ubq.ctx, "First"))
 	if err != nil {
 		return nil, err
 	}
@@ -136,7 +133,7 @@ func (ubq *UserBlockQuery) FirstX(ctx context.Context) *UserBlock {
 // Returns a *NotFoundError when no UserBlock ID was found.
 func (ubq *UserBlockQuery) FirstID(ctx context.Context) (id uuid.UUID, err error) {
 	var ids []uuid.UUID
-	if ids, err = ubq.Limit(1).IDs(newQueryContext(ctx, TypeUserBlock, "FirstID")); err != nil {
+	if ids, err = ubq.Limit(1).IDs(setContextOp(ctx, ubq.ctx, "FirstID")); err != nil {
 		return
 	}
 	if len(ids) == 0 {
@@ -159,7 +156,7 @@ func (ubq *UserBlockQuery) FirstIDX(ctx context.Context) uuid.UUID {
 // Returns a *NotSingularError when more than one UserBlock entity is found.
 // Returns a *NotFoundError when no UserBlock entities are found.
 func (ubq *UserBlockQuery) Only(ctx context.Context) (*UserBlock, error) {
-	nodes, err := ubq.Limit(2).All(newQueryContext(ctx, TypeUserBlock, "Only"))
+	nodes, err := ubq.Limit(2).All(setContextOp(ctx, ubq.ctx, "Only"))
 	if err != nil {
 		return nil, err
 	}
@@ -187,7 +184,7 @@ func (ubq *UserBlockQuery) OnlyX(ctx context.Context) *UserBlock {
 // Returns a *NotFoundError when no entities are found.
 func (ubq *UserBlockQuery) OnlyID(ctx context.Context) (id uuid.UUID, err error) {
 	var ids []uuid.UUID
-	if ids, err = ubq.Limit(2).IDs(newQueryContext(ctx, TypeUserBlock, "OnlyID")); err != nil {
+	if ids, err = ubq.Limit(2).IDs(setContextOp(ctx, ubq.ctx, "OnlyID")); err != nil {
 		return
 	}
 	switch len(ids) {
@@ -212,7 +209,7 @@ func (ubq *UserBlockQuery) OnlyIDX(ctx context.Context) uuid.UUID {
 
 // All executes the query and returns a list of UserBlocks.
 func (ubq *UserBlockQuery) All(ctx context.Context) ([]*UserBlock, error) {
-	ctx = newQueryContext(ctx, TypeUserBlock, "All")
+	ctx = setContextOp(ctx, ubq.ctx, "All")
 	if err := ubq.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
@@ -230,10 +227,12 @@ func (ubq *UserBlockQuery) AllX(ctx context.Context) []*UserBlock {
 }
 
 // IDs executes the query and returns a list of UserBlock IDs.
-func (ubq *UserBlockQuery) IDs(ctx context.Context) ([]uuid.UUID, error) {
-	var ids []uuid.UUID
-	ctx = newQueryContext(ctx, TypeUserBlock, "IDs")
-	if err := ubq.Select(userblock.FieldID).Scan(ctx, &ids); err != nil {
+func (ubq *UserBlockQuery) IDs(ctx context.Context) (ids []uuid.UUID, err error) {
+	if ubq.ctx.Unique == nil && ubq.path != nil {
+		ubq.Unique(true)
+	}
+	ctx = setContextOp(ctx, ubq.ctx, "IDs")
+	if err = ubq.Select(userblock.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
 	return ids, nil
@@ -250,7 +249,7 @@ func (ubq *UserBlockQuery) IDsX(ctx context.Context) []uuid.UUID {
 
 // Count returns the count of the given query.
 func (ubq *UserBlockQuery) Count(ctx context.Context) (int, error) {
-	ctx = newQueryContext(ctx, TypeUserBlock, "Count")
+	ctx = setContextOp(ctx, ubq.ctx, "Count")
 	if err := ubq.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
@@ -268,7 +267,7 @@ func (ubq *UserBlockQuery) CountX(ctx context.Context) int {
 
 // Exist returns true if the query has elements in the graph.
 func (ubq *UserBlockQuery) Exist(ctx context.Context) (bool, error) {
-	ctx = newQueryContext(ctx, TypeUserBlock, "Exist")
+	ctx = setContextOp(ctx, ubq.ctx, "Exist")
 	switch _, err := ubq.FirstID(ctx); {
 	case IsNotFound(err):
 		return false, nil
@@ -296,17 +295,15 @@ func (ubq *UserBlockQuery) Clone() *UserBlockQuery {
 	}
 	return &UserBlockQuery{
 		config:        ubq.config,
-		limit:         ubq.limit,
-		offset:        ubq.offset,
-		order:         append([]OrderFunc{}, ubq.order...),
+		ctx:           ubq.ctx.Clone(),
+		order:         append([]userblock.OrderOption{}, ubq.order...),
 		inters:        append([]Interceptor{}, ubq.inters...),
 		predicates:    append([]predicate.UserBlock{}, ubq.predicates...),
 		withUser:      ubq.withUser.Clone(),
 		withBlockUser: ubq.withBlockUser.Clone(),
 		// clone intermediate query.
-		sql:    ubq.sql.Clone(),
-		path:   ubq.path,
-		unique: ubq.unique,
+		sql:  ubq.sql.Clone(),
+		path: ubq.path,
 	}
 }
 
@@ -347,9 +344,9 @@ func (ubq *UserBlockQuery) WithBlockUser(opts ...func(*UserQuery)) *UserBlockQue
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (ubq *UserBlockQuery) GroupBy(field string, fields ...string) *UserBlockGroupBy {
-	ubq.fields = append([]string{field}, fields...)
+	ubq.ctx.Fields = append([]string{field}, fields...)
 	grbuild := &UserBlockGroupBy{build: ubq}
-	grbuild.flds = &ubq.fields
+	grbuild.flds = &ubq.ctx.Fields
 	grbuild.label = userblock.Label
 	grbuild.scan = grbuild.Scan
 	return grbuild
@@ -368,10 +365,10 @@ func (ubq *UserBlockQuery) GroupBy(field string, fields ...string) *UserBlockGro
 //		Select(userblock.FieldUserID).
 //		Scan(ctx, &v)
 func (ubq *UserBlockQuery) Select(fields ...string) *UserBlockSelect {
-	ubq.fields = append(ubq.fields, fields...)
+	ubq.ctx.Fields = append(ubq.ctx.Fields, fields...)
 	sbuild := &UserBlockSelect{UserBlockQuery: ubq}
 	sbuild.label = userblock.Label
-	sbuild.flds, sbuild.scan = &ubq.fields, sbuild.Scan
+	sbuild.flds, sbuild.scan = &ubq.ctx.Fields, sbuild.Scan
 	return sbuild
 }
 
@@ -391,7 +388,7 @@ func (ubq *UserBlockQuery) prepareQuery(ctx context.Context) error {
 			}
 		}
 	}
-	for _, f := range ubq.fields {
+	for _, f := range ubq.ctx.Fields {
 		if !userblock.ValidColumn(f) {
 			return &ValidationError{Name: f, err: fmt.Errorf("ent: invalid field %q for query", f)}
 		}
@@ -466,6 +463,9 @@ func (ubq *UserBlockQuery) loadUser(ctx context.Context, query *UserQuery, nodes
 		}
 		nodeids[fk] = append(nodeids[fk], nodes[i])
 	}
+	if len(ids) == 0 {
+		return nil
+	}
 	query.Where(user.IDIn(ids...))
 	neighbors, err := query.All(ctx)
 	if err != nil {
@@ -492,6 +492,9 @@ func (ubq *UserBlockQuery) loadBlockUser(ctx context.Context, query *UserQuery, 
 		}
 		nodeids[fk] = append(nodeids[fk], nodes[i])
 	}
+	if len(ids) == 0 {
+		return nil
+	}
 	query.Where(user.IDIn(ids...))
 	neighbors, err := query.All(ctx)
 	if err != nil {
@@ -514,36 +517,34 @@ func (ubq *UserBlockQuery) sqlCount(ctx context.Context) (int, error) {
 	if len(ubq.modifiers) > 0 {
 		_spec.Modifiers = ubq.modifiers
 	}
-	_spec.Node.Columns = ubq.fields
-	if len(ubq.fields) > 0 {
-		_spec.Unique = ubq.unique != nil && *ubq.unique
+	_spec.Node.Columns = ubq.ctx.Fields
+	if len(ubq.ctx.Fields) > 0 {
+		_spec.Unique = ubq.ctx.Unique != nil && *ubq.ctx.Unique
 	}
 	return sqlgraph.CountNodes(ctx, ubq.driver, _spec)
 }
 
 func (ubq *UserBlockQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := &sqlgraph.QuerySpec{
-		Node: &sqlgraph.NodeSpec{
-			Table:   userblock.Table,
-			Columns: userblock.Columns,
-			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
-				Column: userblock.FieldID,
-			},
-		},
-		From:   ubq.sql,
-		Unique: true,
-	}
-	if unique := ubq.unique; unique != nil {
+	_spec := sqlgraph.NewQuerySpec(userblock.Table, userblock.Columns, sqlgraph.NewFieldSpec(userblock.FieldID, field.TypeUUID))
+	_spec.From = ubq.sql
+	if unique := ubq.ctx.Unique; unique != nil {
 		_spec.Unique = *unique
+	} else if ubq.path != nil {
+		_spec.Unique = true
 	}
-	if fields := ubq.fields; len(fields) > 0 {
+	if fields := ubq.ctx.Fields; len(fields) > 0 {
 		_spec.Node.Columns = make([]string, 0, len(fields))
 		_spec.Node.Columns = append(_spec.Node.Columns, userblock.FieldID)
 		for i := range fields {
 			if fields[i] != userblock.FieldID {
 				_spec.Node.Columns = append(_spec.Node.Columns, fields[i])
 			}
+		}
+		if ubq.withUser != nil {
+			_spec.Node.AddColumnOnce(userblock.FieldUserID)
+		}
+		if ubq.withBlockUser != nil {
+			_spec.Node.AddColumnOnce(userblock.FieldBlockUserID)
 		}
 	}
 	if ps := ubq.predicates; len(ps) > 0 {
@@ -553,10 +554,10 @@ func (ubq *UserBlockQuery) querySpec() *sqlgraph.QuerySpec {
 			}
 		}
 	}
-	if limit := ubq.limit; limit != nil {
+	if limit := ubq.ctx.Limit; limit != nil {
 		_spec.Limit = *limit
 	}
-	if offset := ubq.offset; offset != nil {
+	if offset := ubq.ctx.Offset; offset != nil {
 		_spec.Offset = *offset
 	}
 	if ps := ubq.order; len(ps) > 0 {
@@ -572,7 +573,7 @@ func (ubq *UserBlockQuery) querySpec() *sqlgraph.QuerySpec {
 func (ubq *UserBlockQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	builder := sql.Dialect(ubq.driver.Dialect())
 	t1 := builder.Table(userblock.Table)
-	columns := ubq.fields
+	columns := ubq.ctx.Fields
 	if len(columns) == 0 {
 		columns = userblock.Columns
 	}
@@ -581,7 +582,7 @@ func (ubq *UserBlockQuery) sqlQuery(ctx context.Context) *sql.Selector {
 		selector = ubq.sql
 		selector.Select(selector.Columns(columns...)...)
 	}
-	if ubq.unique != nil && *ubq.unique {
+	if ubq.ctx.Unique != nil && *ubq.ctx.Unique {
 		selector.Distinct()
 	}
 	for _, p := range ubq.predicates {
@@ -590,12 +591,12 @@ func (ubq *UserBlockQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	for _, p := range ubq.order {
 		p(selector)
 	}
-	if offset := ubq.offset; offset != nil {
+	if offset := ubq.ctx.Offset; offset != nil {
 		// limit is mandatory for offset clause. We start
 		// with default value, and override it below if needed.
 		selector.Offset(*offset).Limit(math.MaxInt32)
 	}
-	if limit := ubq.limit; limit != nil {
+	if limit := ubq.ctx.Limit; limit != nil {
 		selector.Limit(*limit)
 	}
 	return selector
@@ -615,7 +616,7 @@ func (ubgb *UserBlockGroupBy) Aggregate(fns ...AggregateFunc) *UserBlockGroupBy 
 
 // Scan applies the selector query and scans the result into the given value.
 func (ubgb *UserBlockGroupBy) Scan(ctx context.Context, v any) error {
-	ctx = newQueryContext(ctx, TypeUserBlock, "GroupBy")
+	ctx = setContextOp(ctx, ubgb.build.ctx, "GroupBy")
 	if err := ubgb.build.prepareQuery(ctx); err != nil {
 		return err
 	}
@@ -663,7 +664,7 @@ func (ubs *UserBlockSelect) Aggregate(fns ...AggregateFunc) *UserBlockSelect {
 
 // Scan applies the selector query and scans the result into the given value.
 func (ubs *UserBlockSelect) Scan(ctx context.Context, v any) error {
-	ctx = newQueryContext(ctx, TypeUserBlock, "Select")
+	ctx = setContextOp(ctx, ubs.ctx, "Select")
 	if err := ubs.prepareQuery(ctx); err != nil {
 		return err
 	}

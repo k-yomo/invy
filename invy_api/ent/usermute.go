@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/google/uuid"
 	"github.com/k-yomo/invy/invy_api/ent/user"
@@ -26,7 +27,8 @@ type UserMute struct {
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the UserMuteQuery when eager-loading is set.
-	Edges UserMuteEdges `json:"edges"`
+	Edges        UserMuteEdges `json:"edges"`
+	selectValues sql.SelectValues
 }
 
 // UserMuteEdges holds the relations/edges for other nodes in the graph.
@@ -78,7 +80,7 @@ func (*UserMute) scanValues(columns []string) ([]any, error) {
 		case usermute.FieldID, usermute.FieldUserID, usermute.FieldMuteUserID:
 			values[i] = new(uuid.UUID)
 		default:
-			return nil, fmt.Errorf("unexpected column %q for type UserMute", columns[i])
+			values[i] = new(sql.UnknownType)
 		}
 	}
 	return values, nil
@@ -116,26 +118,34 @@ func (um *UserMute) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				um.CreatedAt = value.Time
 			}
+		default:
+			um.selectValues.Set(columns[i], values[i])
 		}
 	}
 	return nil
 }
 
+// Value returns the ent.Value that was dynamically selected and assigned to the UserMute.
+// This includes values selected through modifiers, order, etc.
+func (um *UserMute) Value(name string) (ent.Value, error) {
+	return um.selectValues.Get(name)
+}
+
 // QueryUser queries the "user" edge of the UserMute entity.
 func (um *UserMute) QueryUser() *UserQuery {
-	return (&UserMuteClient{config: um.config}).QueryUser(um)
+	return NewUserMuteClient(um.config).QueryUser(um)
 }
 
 // QueryMuteUser queries the "mute_user" edge of the UserMute entity.
 func (um *UserMute) QueryMuteUser() *UserQuery {
-	return (&UserMuteClient{config: um.config}).QueryMuteUser(um)
+	return NewUserMuteClient(um.config).QueryMuteUser(um)
 }
 
 // Update returns a builder for updating this UserMute.
 // Note that you need to call UserMute.Unwrap() before calling this method if this UserMute
 // was returned from a transaction, and the transaction was committed or rolled back.
 func (um *UserMute) Update() *UserMuteUpdateOne {
-	return (&UserMuteClient{config: um.config}).UpdateOne(um)
+	return NewUserMuteClient(um.config).UpdateOne(um)
 }
 
 // Unwrap unwraps the UserMute entity that was returned from a transaction after it was closed,
@@ -168,9 +178,3 @@ func (um *UserMute) String() string {
 
 // UserMutes is a parsable slice of UserMute.
 type UserMutes []*UserMute
-
-func (um UserMutes) config(cfg config) {
-	for _i := range um {
-		um[_i].config = cfg
-	}
-}

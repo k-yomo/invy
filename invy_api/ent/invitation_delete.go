@@ -40,15 +40,7 @@ func (id *InvitationDelete) ExecX(ctx context.Context) int {
 }
 
 func (id *InvitationDelete) sqlExec(ctx context.Context) (int, error) {
-	_spec := &sqlgraph.DeleteSpec{
-		Node: &sqlgraph.NodeSpec{
-			Table: invitation.Table,
-			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
-				Column: invitation.FieldID,
-			},
-		},
-	}
+	_spec := sqlgraph.NewDeleteSpec(invitation.Table, sqlgraph.NewFieldSpec(invitation.FieldID, field.TypeUUID))
 	if ps := id.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -69,6 +61,12 @@ type InvitationDeleteOne struct {
 	id *InvitationDelete
 }
 
+// Where appends a list predicates to the InvitationDelete builder.
+func (ido *InvitationDeleteOne) Where(ps ...predicate.Invitation) *InvitationDeleteOne {
+	ido.id.mutation.Where(ps...)
+	return ido
+}
+
 // Exec executes the deletion query.
 func (ido *InvitationDeleteOne) Exec(ctx context.Context) error {
 	n, err := ido.id.Exec(ctx)
@@ -84,5 +82,7 @@ func (ido *InvitationDeleteOne) Exec(ctx context.Context) error {
 
 // ExecX is like Exec, but panics if an error occurs.
 func (ido *InvitationDeleteOne) ExecX(ctx context.Context) {
-	ido.id.ExecX(ctx)
+	if err := ido.Exec(ctx); err != nil {
+		panic(err)
+	}
 }

@@ -8,7 +8,23 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"github.com/k-yomo/invy/invy_api/ent"
+	"github.com/k-yomo/invy/invy_api/ent/account"
+	"github.com/k-yomo/invy/invy_api/ent/friendgroup"
+	"github.com/k-yomo/invy/invy_api/ent/friendship"
+	"github.com/k-yomo/invy/invy_api/ent/friendshiprequest"
+	"github.com/k-yomo/invy/invy_api/ent/invitation"
+	"github.com/k-yomo/invy/invy_api/ent/invitationacceptance"
+	"github.com/k-yomo/invy/invy_api/ent/invitationdenial"
+	"github.com/k-yomo/invy/invy_api/ent/invitationuser"
 	"github.com/k-yomo/invy/invy_api/ent/predicate"
+	"github.com/k-yomo/invy/invy_api/ent/pushnotificationtoken"
+	"github.com/k-yomo/invy/invy_api/ent/user"
+	"github.com/k-yomo/invy/invy_api/ent/userblock"
+	"github.com/k-yomo/invy/invy_api/ent/userfriendgroup"
+	"github.com/k-yomo/invy/invy_api/ent/userlocation"
+	"github.com/k-yomo/invy/invy_api/ent/userlocationhistory"
+	"github.com/k-yomo/invy/invy_api/ent/usermute"
+	"github.com/k-yomo/invy/invy_api/ent/userprofile"
 )
 
 // The Query interface represents an operation that queries a graph.
@@ -24,7 +40,7 @@ type Query interface {
 	// Unique configures the query builder to filter duplicate records.
 	Unique(bool)
 	// Order specifies how the records should be ordered.
-	Order(...ent.OrderFunc)
+	Order(...func(*sql.Selector))
 	// WhereP appends storage-level predicates to the query builder. Using this method, users
 	// can use type-assertion to append predicates that do not depend on any generated package.
 	WhereP(...func(*sql.Selector))
@@ -503,74 +519,78 @@ func (f TraverseUserProfile) Traverse(ctx context.Context, q ent.Query) error {
 func NewQuery(q ent.Query) (Query, error) {
 	switch q := q.(type) {
 	case *ent.AccountQuery:
-		return &query[*ent.AccountQuery, predicate.Account]{typ: ent.TypeAccount, tq: q}, nil
+		return &query[*ent.AccountQuery, predicate.Account, account.OrderOption]{typ: ent.TypeAccount, tq: q}, nil
 	case *ent.FriendGroupQuery:
-		return &query[*ent.FriendGroupQuery, predicate.FriendGroup]{typ: ent.TypeFriendGroup, tq: q}, nil
+		return &query[*ent.FriendGroupQuery, predicate.FriendGroup, friendgroup.OrderOption]{typ: ent.TypeFriendGroup, tq: q}, nil
 	case *ent.FriendshipQuery:
-		return &query[*ent.FriendshipQuery, predicate.Friendship]{typ: ent.TypeFriendship, tq: q}, nil
+		return &query[*ent.FriendshipQuery, predicate.Friendship, friendship.OrderOption]{typ: ent.TypeFriendship, tq: q}, nil
 	case *ent.FriendshipRequestQuery:
-		return &query[*ent.FriendshipRequestQuery, predicate.FriendshipRequest]{typ: ent.TypeFriendshipRequest, tq: q}, nil
+		return &query[*ent.FriendshipRequestQuery, predicate.FriendshipRequest, friendshiprequest.OrderOption]{typ: ent.TypeFriendshipRequest, tq: q}, nil
 	case *ent.InvitationQuery:
-		return &query[*ent.InvitationQuery, predicate.Invitation]{typ: ent.TypeInvitation, tq: q}, nil
+		return &query[*ent.InvitationQuery, predicate.Invitation, invitation.OrderOption]{typ: ent.TypeInvitation, tq: q}, nil
 	case *ent.InvitationAcceptanceQuery:
-		return &query[*ent.InvitationAcceptanceQuery, predicate.InvitationAcceptance]{typ: ent.TypeInvitationAcceptance, tq: q}, nil
+		return &query[*ent.InvitationAcceptanceQuery, predicate.InvitationAcceptance, invitationacceptance.OrderOption]{typ: ent.TypeInvitationAcceptance, tq: q}, nil
 	case *ent.InvitationDenialQuery:
-		return &query[*ent.InvitationDenialQuery, predicate.InvitationDenial]{typ: ent.TypeInvitationDenial, tq: q}, nil
+		return &query[*ent.InvitationDenialQuery, predicate.InvitationDenial, invitationdenial.OrderOption]{typ: ent.TypeInvitationDenial, tq: q}, nil
 	case *ent.InvitationUserQuery:
-		return &query[*ent.InvitationUserQuery, predicate.InvitationUser]{typ: ent.TypeInvitationUser, tq: q}, nil
+		return &query[*ent.InvitationUserQuery, predicate.InvitationUser, invitationuser.OrderOption]{typ: ent.TypeInvitationUser, tq: q}, nil
 	case *ent.PushNotificationTokenQuery:
-		return &query[*ent.PushNotificationTokenQuery, predicate.PushNotificationToken]{typ: ent.TypePushNotificationToken, tq: q}, nil
+		return &query[*ent.PushNotificationTokenQuery, predicate.PushNotificationToken, pushnotificationtoken.OrderOption]{typ: ent.TypePushNotificationToken, tq: q}, nil
 	case *ent.UserQuery:
-		return &query[*ent.UserQuery, predicate.User]{typ: ent.TypeUser, tq: q}, nil
+		return &query[*ent.UserQuery, predicate.User, user.OrderOption]{typ: ent.TypeUser, tq: q}, nil
 	case *ent.UserBlockQuery:
-		return &query[*ent.UserBlockQuery, predicate.UserBlock]{typ: ent.TypeUserBlock, tq: q}, nil
+		return &query[*ent.UserBlockQuery, predicate.UserBlock, userblock.OrderOption]{typ: ent.TypeUserBlock, tq: q}, nil
 	case *ent.UserFriendGroupQuery:
-		return &query[*ent.UserFriendGroupQuery, predicate.UserFriendGroup]{typ: ent.TypeUserFriendGroup, tq: q}, nil
+		return &query[*ent.UserFriendGroupQuery, predicate.UserFriendGroup, userfriendgroup.OrderOption]{typ: ent.TypeUserFriendGroup, tq: q}, nil
 	case *ent.UserLocationQuery:
-		return &query[*ent.UserLocationQuery, predicate.UserLocation]{typ: ent.TypeUserLocation, tq: q}, nil
+		return &query[*ent.UserLocationQuery, predicate.UserLocation, userlocation.OrderOption]{typ: ent.TypeUserLocation, tq: q}, nil
 	case *ent.UserLocationHistoryQuery:
-		return &query[*ent.UserLocationHistoryQuery, predicate.UserLocationHistory]{typ: ent.TypeUserLocationHistory, tq: q}, nil
+		return &query[*ent.UserLocationHistoryQuery, predicate.UserLocationHistory, userlocationhistory.OrderOption]{typ: ent.TypeUserLocationHistory, tq: q}, nil
 	case *ent.UserMuteQuery:
-		return &query[*ent.UserMuteQuery, predicate.UserMute]{typ: ent.TypeUserMute, tq: q}, nil
+		return &query[*ent.UserMuteQuery, predicate.UserMute, usermute.OrderOption]{typ: ent.TypeUserMute, tq: q}, nil
 	case *ent.UserProfileQuery:
-		return &query[*ent.UserProfileQuery, predicate.UserProfile]{typ: ent.TypeUserProfile, tq: q}, nil
+		return &query[*ent.UserProfileQuery, predicate.UserProfile, userprofile.OrderOption]{typ: ent.TypeUserProfile, tq: q}, nil
 	default:
 		return nil, fmt.Errorf("unknown query type %T", q)
 	}
 }
 
-type query[T any, P ~func(*sql.Selector)] struct {
+type query[T any, P ~func(*sql.Selector), R ~func(*sql.Selector)] struct {
 	typ string
 	tq  interface {
 		Limit(int) T
 		Offset(int) T
 		Unique(bool) T
-		Order(...ent.OrderFunc) T
+		Order(...R) T
 		Where(...P) T
 	}
 }
 
-func (q query[T, P]) Type() string {
+func (q query[T, P, R]) Type() string {
 	return q.typ
 }
 
-func (q query[T, P]) Limit(limit int) {
+func (q query[T, P, R]) Limit(limit int) {
 	q.tq.Limit(limit)
 }
 
-func (q query[T, P]) Offset(offset int) {
+func (q query[T, P, R]) Offset(offset int) {
 	q.tq.Offset(offset)
 }
 
-func (q query[T, P]) Unique(unique bool) {
+func (q query[T, P, R]) Unique(unique bool) {
 	q.tq.Unique(unique)
 }
 
-func (q query[T, P]) Order(orders ...ent.OrderFunc) {
-	q.tq.Order(orders...)
+func (q query[T, P, R]) Order(orders ...func(*sql.Selector)) {
+	rs := make([]R, len(orders))
+	for i := range orders {
+		rs[i] = orders[i]
+	}
+	q.tq.Order(rs...)
 }
 
-func (q query[T, P]) WhereP(ps ...func(*sql.Selector)) {
+func (q query[T, P, R]) WhereP(ps ...func(*sql.Selector)) {
 	p := make([]P, len(ps))
 	for i := range ps {
 		p[i] = ps[i]

@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/google/uuid"
 	"github.com/k-yomo/invy/invy_api/ent/invitation"
@@ -27,7 +28,8 @@ type InvitationDenial struct {
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the InvitationDenialQuery when eager-loading is set.
-	Edges InvitationDenialEdges `json:"edges"`
+	Edges        InvitationDenialEdges `json:"edges"`
+	selectValues sql.SelectValues
 }
 
 // InvitationDenialEdges holds the relations/edges for other nodes in the graph.
@@ -79,7 +81,7 @@ func (*InvitationDenial) scanValues(columns []string) ([]any, error) {
 		case invitationdenial.FieldID, invitationdenial.FieldUserID, invitationdenial.FieldInvitationID:
 			values[i] = new(uuid.UUID)
 		default:
-			return nil, fmt.Errorf("unexpected column %q for type InvitationDenial", columns[i])
+			values[i] = new(sql.UnknownType)
 		}
 	}
 	return values, nil
@@ -117,26 +119,34 @@ func (id *InvitationDenial) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				id.CreatedAt = value.Time
 			}
+		default:
+			id.selectValues.Set(columns[i], values[i])
 		}
 	}
 	return nil
 }
 
+// Value returns the ent.Value that was dynamically selected and assigned to the InvitationDenial.
+// This includes values selected through modifiers, order, etc.
+func (id *InvitationDenial) Value(name string) (ent.Value, error) {
+	return id.selectValues.Get(name)
+}
+
 // QueryUser queries the "user" edge of the InvitationDenial entity.
 func (id *InvitationDenial) QueryUser() *UserQuery {
-	return (&InvitationDenialClient{config: id.config}).QueryUser(id)
+	return NewInvitationDenialClient(id.config).QueryUser(id)
 }
 
 // QueryInvitation queries the "invitation" edge of the InvitationDenial entity.
 func (id *InvitationDenial) QueryInvitation() *InvitationQuery {
-	return (&InvitationDenialClient{config: id.config}).QueryInvitation(id)
+	return NewInvitationDenialClient(id.config).QueryInvitation(id)
 }
 
 // Update returns a builder for updating this InvitationDenial.
 // Note that you need to call InvitationDenial.Unwrap() before calling this method if this InvitationDenial
 // was returned from a transaction, and the transaction was committed or rolled back.
 func (id *InvitationDenial) Update() *InvitationDenialUpdateOne {
-	return (&InvitationDenialClient{config: id.config}).UpdateOne(id)
+	return NewInvitationDenialClient(id.config).UpdateOne(id)
 }
 
 // Unwrap unwraps the InvitationDenial entity that was returned from a transaction after it was closed,
@@ -169,9 +179,3 @@ func (id *InvitationDenial) String() string {
 
 // InvitationDenials is a parsable slice of InvitationDenial.
 type InvitationDenials []*InvitationDenial
-
-func (id InvitationDenials) config(cfg config) {
-	for _i := range id {
-		id[_i].config = cfg
-	}
-}

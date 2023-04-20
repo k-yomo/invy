@@ -19,11 +19,8 @@ import (
 // PushNotificationTokenQuery is the builder for querying PushNotificationToken entities.
 type PushNotificationTokenQuery struct {
 	config
-	limit      *int
-	offset     *int
-	unique     *bool
-	order      []OrderFunc
-	fields     []string
+	ctx        *QueryContext
+	order      []pushnotificationtoken.OrderOption
 	inters     []Interceptor
 	predicates []predicate.PushNotificationToken
 	withUser   *UserQuery
@@ -42,25 +39,25 @@ func (pntq *PushNotificationTokenQuery) Where(ps ...predicate.PushNotificationTo
 
 // Limit the number of records to be returned by this query.
 func (pntq *PushNotificationTokenQuery) Limit(limit int) *PushNotificationTokenQuery {
-	pntq.limit = &limit
+	pntq.ctx.Limit = &limit
 	return pntq
 }
 
 // Offset to start from.
 func (pntq *PushNotificationTokenQuery) Offset(offset int) *PushNotificationTokenQuery {
-	pntq.offset = &offset
+	pntq.ctx.Offset = &offset
 	return pntq
 }
 
 // Unique configures the query builder to filter duplicate records on query.
 // By default, unique is set to true, and can be disabled using this method.
 func (pntq *PushNotificationTokenQuery) Unique(unique bool) *PushNotificationTokenQuery {
-	pntq.unique = &unique
+	pntq.ctx.Unique = &unique
 	return pntq
 }
 
 // Order specifies how the records should be ordered.
-func (pntq *PushNotificationTokenQuery) Order(o ...OrderFunc) *PushNotificationTokenQuery {
+func (pntq *PushNotificationTokenQuery) Order(o ...pushnotificationtoken.OrderOption) *PushNotificationTokenQuery {
 	pntq.order = append(pntq.order, o...)
 	return pntq
 }
@@ -90,7 +87,7 @@ func (pntq *PushNotificationTokenQuery) QueryUser() *UserQuery {
 // First returns the first PushNotificationToken entity from the query.
 // Returns a *NotFoundError when no PushNotificationToken was found.
 func (pntq *PushNotificationTokenQuery) First(ctx context.Context) (*PushNotificationToken, error) {
-	nodes, err := pntq.Limit(1).All(newQueryContext(ctx, TypePushNotificationToken, "First"))
+	nodes, err := pntq.Limit(1).All(setContextOp(ctx, pntq.ctx, "First"))
 	if err != nil {
 		return nil, err
 	}
@@ -113,7 +110,7 @@ func (pntq *PushNotificationTokenQuery) FirstX(ctx context.Context) *PushNotific
 // Returns a *NotFoundError when no PushNotificationToken ID was found.
 func (pntq *PushNotificationTokenQuery) FirstID(ctx context.Context) (id uuid.UUID, err error) {
 	var ids []uuid.UUID
-	if ids, err = pntq.Limit(1).IDs(newQueryContext(ctx, TypePushNotificationToken, "FirstID")); err != nil {
+	if ids, err = pntq.Limit(1).IDs(setContextOp(ctx, pntq.ctx, "FirstID")); err != nil {
 		return
 	}
 	if len(ids) == 0 {
@@ -136,7 +133,7 @@ func (pntq *PushNotificationTokenQuery) FirstIDX(ctx context.Context) uuid.UUID 
 // Returns a *NotSingularError when more than one PushNotificationToken entity is found.
 // Returns a *NotFoundError when no PushNotificationToken entities are found.
 func (pntq *PushNotificationTokenQuery) Only(ctx context.Context) (*PushNotificationToken, error) {
-	nodes, err := pntq.Limit(2).All(newQueryContext(ctx, TypePushNotificationToken, "Only"))
+	nodes, err := pntq.Limit(2).All(setContextOp(ctx, pntq.ctx, "Only"))
 	if err != nil {
 		return nil, err
 	}
@@ -164,7 +161,7 @@ func (pntq *PushNotificationTokenQuery) OnlyX(ctx context.Context) *PushNotifica
 // Returns a *NotFoundError when no entities are found.
 func (pntq *PushNotificationTokenQuery) OnlyID(ctx context.Context) (id uuid.UUID, err error) {
 	var ids []uuid.UUID
-	if ids, err = pntq.Limit(2).IDs(newQueryContext(ctx, TypePushNotificationToken, "OnlyID")); err != nil {
+	if ids, err = pntq.Limit(2).IDs(setContextOp(ctx, pntq.ctx, "OnlyID")); err != nil {
 		return
 	}
 	switch len(ids) {
@@ -189,7 +186,7 @@ func (pntq *PushNotificationTokenQuery) OnlyIDX(ctx context.Context) uuid.UUID {
 
 // All executes the query and returns a list of PushNotificationTokens.
 func (pntq *PushNotificationTokenQuery) All(ctx context.Context) ([]*PushNotificationToken, error) {
-	ctx = newQueryContext(ctx, TypePushNotificationToken, "All")
+	ctx = setContextOp(ctx, pntq.ctx, "All")
 	if err := pntq.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
@@ -207,10 +204,12 @@ func (pntq *PushNotificationTokenQuery) AllX(ctx context.Context) []*PushNotific
 }
 
 // IDs executes the query and returns a list of PushNotificationToken IDs.
-func (pntq *PushNotificationTokenQuery) IDs(ctx context.Context) ([]uuid.UUID, error) {
-	var ids []uuid.UUID
-	ctx = newQueryContext(ctx, TypePushNotificationToken, "IDs")
-	if err := pntq.Select(pushnotificationtoken.FieldID).Scan(ctx, &ids); err != nil {
+func (pntq *PushNotificationTokenQuery) IDs(ctx context.Context) (ids []uuid.UUID, err error) {
+	if pntq.ctx.Unique == nil && pntq.path != nil {
+		pntq.Unique(true)
+	}
+	ctx = setContextOp(ctx, pntq.ctx, "IDs")
+	if err = pntq.Select(pushnotificationtoken.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
 	return ids, nil
@@ -227,7 +226,7 @@ func (pntq *PushNotificationTokenQuery) IDsX(ctx context.Context) []uuid.UUID {
 
 // Count returns the count of the given query.
 func (pntq *PushNotificationTokenQuery) Count(ctx context.Context) (int, error) {
-	ctx = newQueryContext(ctx, TypePushNotificationToken, "Count")
+	ctx = setContextOp(ctx, pntq.ctx, "Count")
 	if err := pntq.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
@@ -245,7 +244,7 @@ func (pntq *PushNotificationTokenQuery) CountX(ctx context.Context) int {
 
 // Exist returns true if the query has elements in the graph.
 func (pntq *PushNotificationTokenQuery) Exist(ctx context.Context) (bool, error) {
-	ctx = newQueryContext(ctx, TypePushNotificationToken, "Exist")
+	ctx = setContextOp(ctx, pntq.ctx, "Exist")
 	switch _, err := pntq.FirstID(ctx); {
 	case IsNotFound(err):
 		return false, nil
@@ -273,16 +272,14 @@ func (pntq *PushNotificationTokenQuery) Clone() *PushNotificationTokenQuery {
 	}
 	return &PushNotificationTokenQuery{
 		config:     pntq.config,
-		limit:      pntq.limit,
-		offset:     pntq.offset,
-		order:      append([]OrderFunc{}, pntq.order...),
+		ctx:        pntq.ctx.Clone(),
+		order:      append([]pushnotificationtoken.OrderOption{}, pntq.order...),
 		inters:     append([]Interceptor{}, pntq.inters...),
 		predicates: append([]predicate.PushNotificationToken{}, pntq.predicates...),
 		withUser:   pntq.withUser.Clone(),
 		// clone intermediate query.
-		sql:    pntq.sql.Clone(),
-		path:   pntq.path,
-		unique: pntq.unique,
+		sql:  pntq.sql.Clone(),
+		path: pntq.path,
 	}
 }
 
@@ -312,9 +309,9 @@ func (pntq *PushNotificationTokenQuery) WithUser(opts ...func(*UserQuery)) *Push
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (pntq *PushNotificationTokenQuery) GroupBy(field string, fields ...string) *PushNotificationTokenGroupBy {
-	pntq.fields = append([]string{field}, fields...)
+	pntq.ctx.Fields = append([]string{field}, fields...)
 	grbuild := &PushNotificationTokenGroupBy{build: pntq}
-	grbuild.flds = &pntq.fields
+	grbuild.flds = &pntq.ctx.Fields
 	grbuild.label = pushnotificationtoken.Label
 	grbuild.scan = grbuild.Scan
 	return grbuild
@@ -333,10 +330,10 @@ func (pntq *PushNotificationTokenQuery) GroupBy(field string, fields ...string) 
 //		Select(pushnotificationtoken.FieldUserID).
 //		Scan(ctx, &v)
 func (pntq *PushNotificationTokenQuery) Select(fields ...string) *PushNotificationTokenSelect {
-	pntq.fields = append(pntq.fields, fields...)
+	pntq.ctx.Fields = append(pntq.ctx.Fields, fields...)
 	sbuild := &PushNotificationTokenSelect{PushNotificationTokenQuery: pntq}
 	sbuild.label = pushnotificationtoken.Label
-	sbuild.flds, sbuild.scan = &pntq.fields, sbuild.Scan
+	sbuild.flds, sbuild.scan = &pntq.ctx.Fields, sbuild.Scan
 	return sbuild
 }
 
@@ -356,7 +353,7 @@ func (pntq *PushNotificationTokenQuery) prepareQuery(ctx context.Context) error 
 			}
 		}
 	}
-	for _, f := range pntq.fields {
+	for _, f := range pntq.ctx.Fields {
 		if !pushnotificationtoken.ValidColumn(f) {
 			return &ValidationError{Name: f, err: fmt.Errorf("ent: invalid field %q for query", f)}
 		}
@@ -424,6 +421,9 @@ func (pntq *PushNotificationTokenQuery) loadUser(ctx context.Context, query *Use
 		}
 		nodeids[fk] = append(nodeids[fk], nodes[i])
 	}
+	if len(ids) == 0 {
+		return nil
+	}
 	query.Where(user.IDIn(ids...))
 	neighbors, err := query.All(ctx)
 	if err != nil {
@@ -446,36 +446,31 @@ func (pntq *PushNotificationTokenQuery) sqlCount(ctx context.Context) (int, erro
 	if len(pntq.modifiers) > 0 {
 		_spec.Modifiers = pntq.modifiers
 	}
-	_spec.Node.Columns = pntq.fields
-	if len(pntq.fields) > 0 {
-		_spec.Unique = pntq.unique != nil && *pntq.unique
+	_spec.Node.Columns = pntq.ctx.Fields
+	if len(pntq.ctx.Fields) > 0 {
+		_spec.Unique = pntq.ctx.Unique != nil && *pntq.ctx.Unique
 	}
 	return sqlgraph.CountNodes(ctx, pntq.driver, _spec)
 }
 
 func (pntq *PushNotificationTokenQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := &sqlgraph.QuerySpec{
-		Node: &sqlgraph.NodeSpec{
-			Table:   pushnotificationtoken.Table,
-			Columns: pushnotificationtoken.Columns,
-			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
-				Column: pushnotificationtoken.FieldID,
-			},
-		},
-		From:   pntq.sql,
-		Unique: true,
-	}
-	if unique := pntq.unique; unique != nil {
+	_spec := sqlgraph.NewQuerySpec(pushnotificationtoken.Table, pushnotificationtoken.Columns, sqlgraph.NewFieldSpec(pushnotificationtoken.FieldID, field.TypeUUID))
+	_spec.From = pntq.sql
+	if unique := pntq.ctx.Unique; unique != nil {
 		_spec.Unique = *unique
+	} else if pntq.path != nil {
+		_spec.Unique = true
 	}
-	if fields := pntq.fields; len(fields) > 0 {
+	if fields := pntq.ctx.Fields; len(fields) > 0 {
 		_spec.Node.Columns = make([]string, 0, len(fields))
 		_spec.Node.Columns = append(_spec.Node.Columns, pushnotificationtoken.FieldID)
 		for i := range fields {
 			if fields[i] != pushnotificationtoken.FieldID {
 				_spec.Node.Columns = append(_spec.Node.Columns, fields[i])
 			}
+		}
+		if pntq.withUser != nil {
+			_spec.Node.AddColumnOnce(pushnotificationtoken.FieldUserID)
 		}
 	}
 	if ps := pntq.predicates; len(ps) > 0 {
@@ -485,10 +480,10 @@ func (pntq *PushNotificationTokenQuery) querySpec() *sqlgraph.QuerySpec {
 			}
 		}
 	}
-	if limit := pntq.limit; limit != nil {
+	if limit := pntq.ctx.Limit; limit != nil {
 		_spec.Limit = *limit
 	}
-	if offset := pntq.offset; offset != nil {
+	if offset := pntq.ctx.Offset; offset != nil {
 		_spec.Offset = *offset
 	}
 	if ps := pntq.order; len(ps) > 0 {
@@ -504,7 +499,7 @@ func (pntq *PushNotificationTokenQuery) querySpec() *sqlgraph.QuerySpec {
 func (pntq *PushNotificationTokenQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	builder := sql.Dialect(pntq.driver.Dialect())
 	t1 := builder.Table(pushnotificationtoken.Table)
-	columns := pntq.fields
+	columns := pntq.ctx.Fields
 	if len(columns) == 0 {
 		columns = pushnotificationtoken.Columns
 	}
@@ -513,7 +508,7 @@ func (pntq *PushNotificationTokenQuery) sqlQuery(ctx context.Context) *sql.Selec
 		selector = pntq.sql
 		selector.Select(selector.Columns(columns...)...)
 	}
-	if pntq.unique != nil && *pntq.unique {
+	if pntq.ctx.Unique != nil && *pntq.ctx.Unique {
 		selector.Distinct()
 	}
 	for _, p := range pntq.predicates {
@@ -522,12 +517,12 @@ func (pntq *PushNotificationTokenQuery) sqlQuery(ctx context.Context) *sql.Selec
 	for _, p := range pntq.order {
 		p(selector)
 	}
-	if offset := pntq.offset; offset != nil {
+	if offset := pntq.ctx.Offset; offset != nil {
 		// limit is mandatory for offset clause. We start
 		// with default value, and override it below if needed.
 		selector.Offset(*offset).Limit(math.MaxInt32)
 	}
-	if limit := pntq.limit; limit != nil {
+	if limit := pntq.ctx.Limit; limit != nil {
 		selector.Limit(*limit)
 	}
 	return selector
@@ -547,7 +542,7 @@ func (pntgb *PushNotificationTokenGroupBy) Aggregate(fns ...AggregateFunc) *Push
 
 // Scan applies the selector query and scans the result into the given value.
 func (pntgb *PushNotificationTokenGroupBy) Scan(ctx context.Context, v any) error {
-	ctx = newQueryContext(ctx, TypePushNotificationToken, "GroupBy")
+	ctx = setContextOp(ctx, pntgb.build.ctx, "GroupBy")
 	if err := pntgb.build.prepareQuery(ctx); err != nil {
 		return err
 	}
@@ -595,7 +590,7 @@ func (pnts *PushNotificationTokenSelect) Aggregate(fns ...AggregateFunc) *PushNo
 
 // Scan applies the selector query and scans the result into the given value.
 func (pnts *PushNotificationTokenSelect) Scan(ctx context.Context, v any) error {
-	ctx = newQueryContext(ctx, TypePushNotificationToken, "Select")
+	ctx = setContextOp(ctx, pnts.ctx, "Select")
 	if err := pnts.prepareQuery(ctx); err != nil {
 		return err
 	}

@@ -5,6 +5,8 @@ package friendshiprequest
 import (
 	"time"
 
+	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/google/uuid"
 )
 
@@ -65,3 +67,54 @@ var (
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() uuid.UUID
 )
+
+// OrderOption defines the ordering options for the FriendshipRequest queries.
+type OrderOption func(*sql.Selector)
+
+// ByID orders the results by the id field.
+func ByID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldID, opts...).ToFunc()
+}
+
+// ByFromUserID orders the results by the from_user_id field.
+func ByFromUserID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldFromUserID, opts...).ToFunc()
+}
+
+// ByToUserID orders the results by the to_user_id field.
+func ByToUserID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldToUserID, opts...).ToFunc()
+}
+
+// ByCreatedAt orders the results by the created_at field.
+func ByCreatedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCreatedAt, opts...).ToFunc()
+}
+
+// ByFromUsersField orders the results by from_users field.
+func ByFromUsersField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newFromUsersStep(), sql.OrderByField(field, opts...))
+	}
+}
+
+// ByToUsersField orders the results by to_users field.
+func ByToUsersField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newToUsersStep(), sql.OrderByField(field, opts...))
+	}
+}
+func newFromUsersStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(FromUsersInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, false, FromUsersTable, FromUsersColumn),
+	)
+}
+func newToUsersStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(ToUsersInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, false, ToUsersTable, ToUsersColumn),
+	)
+}

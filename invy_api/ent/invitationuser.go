@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/google/uuid"
 	"github.com/k-yomo/invy/invy_api/ent/invitation"
@@ -27,7 +28,8 @@ type InvitationUser struct {
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the InvitationUserQuery when eager-loading is set.
-	Edges InvitationUserEdges `json:"edges"`
+	Edges        InvitationUserEdges `json:"edges"`
+	selectValues sql.SelectValues
 }
 
 // InvitationUserEdges holds the relations/edges for other nodes in the graph.
@@ -79,7 +81,7 @@ func (*InvitationUser) scanValues(columns []string) ([]any, error) {
 		case invitationuser.FieldID, invitationuser.FieldInvitationID, invitationuser.FieldUserID:
 			values[i] = new(uuid.UUID)
 		default:
-			return nil, fmt.Errorf("unexpected column %q for type InvitationUser", columns[i])
+			values[i] = new(sql.UnknownType)
 		}
 	}
 	return values, nil
@@ -117,26 +119,34 @@ func (iu *InvitationUser) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				iu.CreatedAt = value.Time
 			}
+		default:
+			iu.selectValues.Set(columns[i], values[i])
 		}
 	}
 	return nil
 }
 
+// Value returns the ent.Value that was dynamically selected and assigned to the InvitationUser.
+// This includes values selected through modifiers, order, etc.
+func (iu *InvitationUser) Value(name string) (ent.Value, error) {
+	return iu.selectValues.Get(name)
+}
+
 // QueryInvitation queries the "invitation" edge of the InvitationUser entity.
 func (iu *InvitationUser) QueryInvitation() *InvitationQuery {
-	return (&InvitationUserClient{config: iu.config}).QueryInvitation(iu)
+	return NewInvitationUserClient(iu.config).QueryInvitation(iu)
 }
 
 // QueryUser queries the "user" edge of the InvitationUser entity.
 func (iu *InvitationUser) QueryUser() *UserQuery {
-	return (&InvitationUserClient{config: iu.config}).QueryUser(iu)
+	return NewInvitationUserClient(iu.config).QueryUser(iu)
 }
 
 // Update returns a builder for updating this InvitationUser.
 // Note that you need to call InvitationUser.Unwrap() before calling this method if this InvitationUser
 // was returned from a transaction, and the transaction was committed or rolled back.
 func (iu *InvitationUser) Update() *InvitationUserUpdateOne {
-	return (&InvitationUserClient{config: iu.config}).UpdateOne(iu)
+	return NewInvitationUserClient(iu.config).UpdateOne(iu)
 }
 
 // Unwrap unwraps the InvitationUser entity that was returned from a transaction after it was closed,
@@ -169,9 +179,3 @@ func (iu *InvitationUser) String() string {
 
 // InvitationUsers is a parsable slice of InvitationUser.
 type InvitationUsers []*InvitationUser
-
-func (iu InvitationUsers) config(cfg config) {
-	for _i := range iu {
-		iu[_i].config = cfg
-	}
-}

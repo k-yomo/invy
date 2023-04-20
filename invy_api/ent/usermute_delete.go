@@ -40,15 +40,7 @@ func (umd *UserMuteDelete) ExecX(ctx context.Context) int {
 }
 
 func (umd *UserMuteDelete) sqlExec(ctx context.Context) (int, error) {
-	_spec := &sqlgraph.DeleteSpec{
-		Node: &sqlgraph.NodeSpec{
-			Table: usermute.Table,
-			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
-				Column: usermute.FieldID,
-			},
-		},
-	}
+	_spec := sqlgraph.NewDeleteSpec(usermute.Table, sqlgraph.NewFieldSpec(usermute.FieldID, field.TypeUUID))
 	if ps := umd.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -69,6 +61,12 @@ type UserMuteDeleteOne struct {
 	umd *UserMuteDelete
 }
 
+// Where appends a list predicates to the UserMuteDelete builder.
+func (umdo *UserMuteDeleteOne) Where(ps ...predicate.UserMute) *UserMuteDeleteOne {
+	umdo.umd.mutation.Where(ps...)
+	return umdo
+}
+
 // Exec executes the deletion query.
 func (umdo *UserMuteDeleteOne) Exec(ctx context.Context) error {
 	n, err := umdo.umd.Exec(ctx)
@@ -84,5 +82,7 @@ func (umdo *UserMuteDeleteOne) Exec(ctx context.Context) error {
 
 // ExecX is like Exec, but panics if an error occurs.
 func (umdo *UserMuteDeleteOne) ExecX(ctx context.Context) {
-	umdo.umd.ExecX(ctx)
+	if err := umdo.Exec(ctx); err != nil {
+		panic(err)
+	}
 }

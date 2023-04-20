@@ -8,6 +8,8 @@ import (
 	"strconv"
 	"time"
 
+	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/google/uuid"
 )
 
@@ -177,6 +179,239 @@ func StatusValidator(s Status) error {
 	default:
 		return fmt.Errorf("user: invalid enum value for status field: %q", s)
 	}
+}
+
+// OrderOption defines the ordering options for the User queries.
+type OrderOption func(*sql.Selector)
+
+// ByID orders the results by the id field.
+func ByID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldID, opts...).ToFunc()
+}
+
+// ByAccountID orders the results by the account_id field.
+func ByAccountID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldAccountID, opts...).ToFunc()
+}
+
+// ByStatus orders the results by the status field.
+func ByStatus(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldStatus, opts...).ToFunc()
+}
+
+// ByCreatedAt orders the results by the created_at field.
+func ByCreatedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCreatedAt, opts...).ToFunc()
+}
+
+// ByAccountField orders the results by account field.
+func ByAccountField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newAccountStep(), sql.OrderByField(field, opts...))
+	}
+}
+
+// ByUserProfileField orders the results by user_profile field.
+func ByUserProfileField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newUserProfileStep(), sql.OrderByField(field, opts...))
+	}
+}
+
+// ByUserLocationField orders the results by user_location field.
+func ByUserLocationField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newUserLocationStep(), sql.OrderByField(field, opts...))
+	}
+}
+
+// ByFriendUsersCount orders the results by friend_users count.
+func ByFriendUsersCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newFriendUsersStep(), opts...)
+	}
+}
+
+// ByFriendUsers orders the results by friend_users terms.
+func ByFriendUsers(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newFriendUsersStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByPushNotificationTokensCount orders the results by push_notification_tokens count.
+func ByPushNotificationTokensCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newPushNotificationTokensStep(), opts...)
+	}
+}
+
+// ByPushNotificationTokens orders the results by push_notification_tokens terms.
+func ByPushNotificationTokens(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newPushNotificationTokensStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByFriendGroupsCount orders the results by friend_groups count.
+func ByFriendGroupsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newFriendGroupsStep(), opts...)
+	}
+}
+
+// ByFriendGroups orders the results by friend_groups terms.
+func ByFriendGroups(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newFriendGroupsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByBelongingFriendGroupsCount orders the results by belonging_friend_groups count.
+func ByBelongingFriendGroupsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newBelongingFriendGroupsStep(), opts...)
+	}
+}
+
+// ByBelongingFriendGroups orders the results by belonging_friend_groups terms.
+func ByBelongingFriendGroups(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newBelongingFriendGroupsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByInvitationAcceptancesCount orders the results by invitation_acceptances count.
+func ByInvitationAcceptancesCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newInvitationAcceptancesStep(), opts...)
+	}
+}
+
+// ByInvitationAcceptances orders the results by invitation_acceptances terms.
+func ByInvitationAcceptances(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newInvitationAcceptancesStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByInvitationDenialsCount orders the results by invitation_denials count.
+func ByInvitationDenialsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newInvitationDenialsStep(), opts...)
+	}
+}
+
+// ByInvitationDenials orders the results by invitation_denials terms.
+func ByInvitationDenials(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newInvitationDenialsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByFriendshipsCount orders the results by friendships count.
+func ByFriendshipsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newFriendshipsStep(), opts...)
+	}
+}
+
+// ByFriendships orders the results by friendships terms.
+func ByFriendships(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newFriendshipsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByUserFriendGroupsCount orders the results by user_friend_groups count.
+func ByUserFriendGroupsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newUserFriendGroupsStep(), opts...)
+	}
+}
+
+// ByUserFriendGroups orders the results by user_friend_groups terms.
+func ByUserFriendGroups(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newUserFriendGroupsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+func newAccountStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(AccountInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, false, AccountTable, AccountColumn),
+	)
+}
+func newUserProfileStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(UserProfileInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2O, false, UserProfileTable, UserProfileColumn),
+	)
+}
+func newUserLocationStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(UserLocationInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2O, false, UserLocationTable, UserLocationColumn),
+	)
+}
+func newFriendUsersStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(Table, FieldID),
+		sqlgraph.Edge(sqlgraph.M2M, false, FriendUsersTable, FriendUsersPrimaryKey...),
+	)
+}
+func newPushNotificationTokensStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(PushNotificationTokensInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, true, PushNotificationTokensTable, PushNotificationTokensColumn),
+	)
+}
+func newFriendGroupsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(FriendGroupsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, true, FriendGroupsTable, FriendGroupsColumn),
+	)
+}
+func newBelongingFriendGroupsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(BelongingFriendGroupsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2M, true, BelongingFriendGroupsTable, BelongingFriendGroupsPrimaryKey...),
+	)
+}
+func newInvitationAcceptancesStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(InvitationAcceptancesInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, true, InvitationAcceptancesTable, InvitationAcceptancesColumn),
+	)
+}
+func newInvitationDenialsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(InvitationDenialsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, true, InvitationDenialsTable, InvitationDenialsColumn),
+	)
+}
+func newFriendshipsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(FriendshipsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, true, FriendshipsTable, FriendshipsColumn),
+	)
+}
+func newUserFriendGroupsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(UserFriendGroupsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, true, UserFriendGroupsTable, UserFriendGroupsColumn),
+	)
 }
 
 // MarshalGQL implements graphql.Marshaler interface.

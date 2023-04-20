@@ -167,13 +167,7 @@ func (iuc *InvitationUserCreate) sqlSave(ctx context.Context) (*InvitationUser, 
 func (iuc *InvitationUserCreate) createSpec() (*InvitationUser, *sqlgraph.CreateSpec) {
 	var (
 		_node = &InvitationUser{config: iuc.config}
-		_spec = &sqlgraph.CreateSpec{
-			Table: invitationuser.Table,
-			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
-				Column: invitationuser.FieldID,
-			},
-		}
+		_spec = sqlgraph.NewCreateSpec(invitationuser.Table, sqlgraph.NewFieldSpec(invitationuser.FieldID, field.TypeUUID))
 	)
 	_spec.OnConflict = iuc.conflict
 	if id, ok := iuc.mutation.ID(); ok {
@@ -192,10 +186,7 @@ func (iuc *InvitationUserCreate) createSpec() (*InvitationUser, *sqlgraph.Create
 			Columns: []string{invitationuser.InvitationColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeUUID,
-					Column: invitation.FieldID,
-				},
+				IDSpec: sqlgraph.NewFieldSpec(invitation.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -212,10 +203,7 @@ func (iuc *InvitationUserCreate) createSpec() (*InvitationUser, *sqlgraph.Create
 			Columns: []string{invitationuser.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeUUID,
-					Column: user.FieldID,
-				},
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -396,8 +384,8 @@ func (iucb *InvitationUserCreateBulk) Save(ctx context.Context) ([]*InvitationUs
 					return nil, err
 				}
 				builder.mutation = mutation
-				nodes[i], specs[i] = builder.createSpec()
 				var err error
+				nodes[i], specs[i] = builder.createSpec()
 				if i < len(mutators)-1 {
 					_, err = mutators[i+1].Mutate(root, iucb.builders[i+1].mutation)
 				} else {
