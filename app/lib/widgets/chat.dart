@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as chatUITypes;
 import 'package:flutter_chat_ui/flutter_chat_ui.dart' as chatUI;
@@ -55,6 +56,7 @@ class ChatState extends ConsumerState<Chat> {
   late LoggedInUser _loggedInUser;
   late GraphQLClient _graphqlClient;
   late Map<String, chatUITypes.User> _userMap;
+  late String _idToken;
 
   @override
   void initState() {
@@ -68,6 +70,12 @@ class ChatState extends ConsumerState<Chat> {
         imageUrl: user.avatarUrl,
       );
       return userMap;
+    });
+    Future(() async {
+      final token = await FirebaseAuth.instance.currentUser!.getIdToken();
+      setState(() {
+        _idToken = token;
+      });
     });
   }
 
@@ -335,6 +343,9 @@ class ChatState extends ConsumerState<Chat> {
       messages: _chatMessages,
       onAttachmentPressed: _onAttachmentPressed,
       isAttachmentUploading: _isAttachmentUploading,
+      imageHeaders: {
+        "Authorization": "Bearer $_idToken",
+      },
       onSendPressed: _onSendPressed,
       onEndReached: () async {
         setState(() {

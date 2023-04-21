@@ -6,7 +6,7 @@ part of 'router.dart';
 // GoRouterGenerator
 // **************************************************************************
 
-List<GoRoute> get $appRoutes => [
+List<RouteBase> get $appRoutes => [
       $mapRoute,
       $invitationRoute,
       $friendsRoute,
@@ -16,7 +16,7 @@ List<GoRoute> get $appRoutes => [
       $backgroundLocationRequestRoute,
     ];
 
-GoRoute get $mapRoute => GoRouteData.$route(
+RouteBase get $mapRoute => GoRouteData.$route(
       path: '/',
       factory: $MapRouteExtension._fromState,
     );
@@ -36,7 +36,7 @@ extension $MapRouteExtension on MapRoute {
       context.pushReplacement(location);
 }
 
-GoRoute get $invitationRoute => GoRouteData.$route(
+RouteBase get $invitationRoute => GoRouteData.$route(
       path: '/invitations',
       factory: $InvitationRouteExtension._fromState,
       routes: [
@@ -142,7 +142,7 @@ extension $InvitationDetailRouteExtension on InvitationDetailRoute {
       context.pushReplacement(location);
 }
 
-GoRoute get $friendsRoute => GoRouteData.$route(
+RouteBase get $friendsRoute => GoRouteData.$route(
       path: '/friends',
       factory: $FriendsRouteExtension._fromState,
       routes: [
@@ -248,7 +248,7 @@ extension $FriendQRCodeReaderRouteExtension on FriendQRCodeReaderRoute {
       context.pushReplacement(location);
 }
 
-GoRoute get $userProfileRoute => GoRouteData.$route(
+RouteBase get $userProfileRoute => GoRouteData.$route(
       path: '/users/:userId',
       factory: $UserProfileRouteExtension._fromState,
       routes: [
@@ -298,7 +298,7 @@ extension $UserFriendsRouteExtension on UserFriendsRoute {
       context.pushReplacement(location);
 }
 
-GoRoute get $myProfileRoute => GoRouteData.$route(
+RouteBase get $myProfileRoute => GoRouteData.$route(
       path: '/me',
       factory: $MyProfileRouteExtension._fromState,
       routes: [
@@ -380,7 +380,7 @@ extension $SettingsRouteExtension on SettingsRoute {
       context.pushReplacement(location);
 }
 
-GoRoute get $loginRoute => GoRouteData.$route(
+RouteBase get $loginRoute => GoRouteData.$route(
       path: '/login',
       factory: $LoginRouteExtension._fromState,
     );
@@ -405,7 +405,7 @@ extension $LoginRouteExtension on LoginRoute {
       context.pushReplacement(location);
 }
 
-GoRoute get $backgroundLocationRequestRoute => GoRouteData.$route(
+RouteBase get $backgroundLocationRequestRoute => GoRouteData.$route(
       path: '/permissions/background_location',
       factory: $BackgroundLocationRequestRouteExtension._fromState,
     );
