@@ -25,9 +25,18 @@ class FriendsScreen extends HookConsumerWidget {
           eagerlyFetchResults: true,
         )));
     final viewerStream = useStream(viewerQuery.stream);
+
+    if (viewerStream.connectionState == ConnectionState.waiting) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator.adaptive()));
+    }
+    if (isGraphqlResultError(viewerStream)) {
+      return APIQueryErrorMessage(
+          refetch: viewerQuery.refetch,
+          isNetworkError: viewerStream.hasError);
+    }
+
     final viewer = viewerStream.data?.parsedData?.viewer;
     final sortedFriends = viewer?.friends.edges ?? [];
-
     // TODO: Sort in backend would be better
     sortedFriends.sort((a, b) {
       return (a.node.distanceKm ?? double.nan)
@@ -44,11 +53,7 @@ class FriendsScreen extends HookConsumerWidget {
             Border(bottom: BorderSide(color: Colors.grey.shade200, width: 1)),
       ),
       backgroundColor: Colors.white,
-      body: (viewerStream.hasError || viewerStream.data?.hasException == true)
-          ? APIQueryErrorMessage(
-              refetch: viewerQuery.refetch,
-              isNetworkError: viewerStream.hasError)
-          : SingleChildScrollView(
+      body: SingleChildScrollView(
               child: Container(
                 margin: const EdgeInsets.symmetric(horizontal: 10),
                 child: Column(

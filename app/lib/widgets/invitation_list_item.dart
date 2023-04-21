@@ -1,7 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:invy/router.dart';
 import 'package:invy/widgets/invitation_detail_fragment.graphql.dart';
@@ -23,38 +21,18 @@ class InvitationListItem extends StatelessWidget {
   const InvitationListItem({
     super.key,
     required this.invitation,
-    this.currentLocation,
     this.accepted = false,
     this.onAccepted,
     this.onDenied,
   });
 
   final Fragment$invitationDetailFragment invitation;
-  final LatLng? currentLocation;
   final bool accepted;
   final ValueSetter<String>? onAccepted;
   final ValueSetter<String>? onDenied;
 
   @override
   Widget build(BuildContext context) {
-    String locationDistance = "";
-
-    if (currentLocation != null && invitation.coordinate != null) {
-      final distance = Geolocator.distanceBetween(
-        currentLocation!.latitude,
-        currentLocation!.longitude,
-        invitation.coordinate!.latitude,
-        invitation.coordinate!.longitude,
-      );
-      if (distance < 1000) {
-        locationDistance = "${distance.round()}m";
-      } else if (distance < 10000) {
-        locationDistance = "${((distance + 1000) / 1000).round()}km";
-      } else {
-        locationDistance = "${((distance + 10000) / 10000).round() * 10}km";
-      }
-    }
-
     return Container(
       decoration: BoxDecoration(
         color: Colors.grey.shade100,
@@ -105,12 +83,6 @@ class InvitationListItem extends StatelessWidget {
                                 ),
                               ],
                             ),
-                            locationDistance.isNotEmpty
-                                ? Text(
-                                    locationDistance,
-                                    style: const TextStyle(fontSize: 12),
-                                  )
-                                : const SizedBox(),
                           ],
                         ),
                       ),

@@ -169,7 +169,7 @@ class InvitationRoute extends GoRouteData {
   @override
   CustomTransitionPage<void> buildPage(
           BuildContext context, GoRouterState state) =>
-      NoTransitionPage(child: ScreenWrapper(child: InvitationScreen()));
+      const NoTransitionPage(child: ScreenWrapper(child: InvitationScreen()));
 }
 
 @TypedGoRoute<FriendsRoute>(
