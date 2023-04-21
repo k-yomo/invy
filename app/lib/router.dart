@@ -114,6 +114,8 @@ GoRouter router(RouterRef ref, {Uri? initialRoute}) => GoRouter(
                   backgroundColor: Colors.white,
                   selectedItemColor: Colors.black,
                   unselectedItemColor: Colors.grey.shade400,
+                  selectedFontSize: 12,
+                  unselectedFontSize: 12,
                   enableFeedback: true,
                 ));
           },
