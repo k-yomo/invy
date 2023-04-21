@@ -98,16 +98,6 @@ GoRouter router(RouterRef ref, {Uri? initialRoute}) => GoRouter(
               return 0;
             }
 
-            final screensWithBottomNavigation = [
-              "/",
-              "/invitations",
-              "/friends",
-              "/me",
-            ];
-            if (!screensWithBottomNavigation.contains(location)) {
-              return child;
-            }
-
             final currentIndex = calcIndex();
 
             return Scaffold(
