@@ -98,9 +98,6 @@ class FriendsScreen extends HookConsumerWidget {
                           onFriendPressed: (friendUserId) {
                             UserProfileRoute(
                               friendUserId,
-                              $extra: sortedFriends
-                                  .singleWhere((f) => f.node.id == friendUserId)
-                                  .node,
                             ).push(context);
                           },
                         ),

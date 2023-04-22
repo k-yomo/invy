@@ -5,11 +5,14 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:invy/router.dart';
 import 'package:invy/screens/friend/friendship_request_screen.graphql.dart';
 import 'package:invy/screens/user/user_friends_screen.graphql.dart';
+import 'package:invy/screens/user/user_profile_screen.graphql.dart';
 import 'package:invy/services/graphql_client.dart';
 import 'package:invy/state/auth.dart';
+import 'package:invy/util/logger.dart';
+import 'package:invy/util/toast.dart';
 import 'package:invy/widgets/app_bar_leading.dart';
-import 'package:invy/widgets/screen_wrapper.dart';
 import 'package:invy/widgets/friend_list_item.dart';
+import 'package:invy/widgets/screen_wrapper.dart';
 
 class UserFriendsRoute extends GoRouteData {
   const UserFriendsRoute(this.userId, {this.userNickname});
@@ -51,14 +54,29 @@ class UserFriendsScreen extends HookConsumerWidget {
     onPressedFriendRequest(String userId) async {
       final result = await graphqlClient
           .mutate$requestFriendship(Options$Mutation$requestFriendship(
-        variables: Variables$Mutation$requestFriendship(userId: userId),
-      ));
-      if (result.parsedData?.requestFriendship != null) {
-        isRequestingFriendshipMap.value = {
-          ...isRequestingFriendshipMap.value,
-          userId: true,
-        };
+              variables: Variables$Mutation$requestFriendship(userId: userId),
+              update: (cache, result) {
+                graphqlClient.writeFragment$userProfileScreenFragment(
+                  data: userFriendsEdges
+                      .where((e) => e.node.id == userId)
+                      .single
+                      .node
+                      .copyWith(isRequestingFriendship: true),
+                  idFields: {
+                    "__typename": fragmentDefinitionuserProfileScreenFragment
+                        .typeCondition.on.name.value,
+                    "id": userId,
+                  },
+                );
+              }));
+      if (result.hasException) {
+        logger.e(result.exception);
+        showToast("友達申請に失敗しました。時間を置いて再度お試しください。", ToastLevel.error);
+        return;
       }
+      showToast(
+          "${userFriendsEdges.where((e) => e.node.id == userId).single.node.nickname}に友達申請を送りました",
+          ToastLevel.info);
     }
 
     useEffect(() {
@@ -90,10 +108,7 @@ class UserFriendsScreen extends HookConsumerWidget {
                     children: [
                       InkWell(
                         onTap: () {
-                          UserProfileRoute(
-                            userId,
-                            $extra: e.node,
-                          ).push(context);
+                          UserProfileRoute(e.node.id).push(context);
                         },
                         child: FriendListItem(
                           key: Key(e.node.id),

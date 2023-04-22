@@ -262,19 +262,18 @@ RouteBase get $userProfileRoute => GoRouteData.$route(
 extension $UserProfileRouteExtension on UserProfileRoute {
   static UserProfileRoute _fromState(GoRouterState state) => UserProfileRoute(
         state.params['userId']!,
-        $extra: state.extra as dynamic,
       );
 
   String get location => GoRouteData.$location(
         '/users/${Uri.encodeComponent(userId)}',
       );
 
-  void go(BuildContext context) => context.go(location, extra: $extra);
+  void go(BuildContext context) => context.go(location);
 
-  void push(BuildContext context) => context.push(location, extra: $extra);
+  void push(BuildContext context) => context.push(location);
 
   void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location, extra: $extra);
+      context.pushReplacement(location);
 }
 
 extension $UserFriendsRouteExtension on UserFriendsRoute {
@@ -436,7 +435,7 @@ extension $BackgroundLocationRequestRouteExtension
 // RiverpodGenerator
 // **************************************************************************
 
-String _$routerHash() => r'f1759b059032d9101563b0902bfb0328771d6845';
+String _$routerHash() => r'263de9e38a9f76f1336bd4bc056aad162d600c60';
 
 /// Copied from Dart SDK
 class _SystemHash {

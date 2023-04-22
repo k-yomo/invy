@@ -14,4 +14,8 @@ fragment userProfileScreenFragment on User {
     isFriend
     isMuted
     isBlocked
+    fuzzyCoordinate {
+        latitude
+        longitude
+    }
 }

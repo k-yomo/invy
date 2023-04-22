@@ -94,7 +94,6 @@ class FriendGroupDetailScreen extends HookConsumerWidget {
                           height: MediaQuery.of(context).size.height * 0.9,
                           child: UserProfileScreen(
                             userId: user.id,
-                            user: user,
                           ));
                     },
                   );

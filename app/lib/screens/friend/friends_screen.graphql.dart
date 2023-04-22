@@ -1069,6 +1069,7 @@ class Query$friendScreenViewer$viewer$friends$edges$node
     required this.isRequestingFriendship,
     required this.isFriend,
     required this.isBlocked,
+    this.fuzzyCoordinate,
   });
 
   factory Query$friendScreenViewer$viewer$friends$edges$node.fromJson(
@@ -1083,6 +1084,7 @@ class Query$friendScreenViewer$viewer$friends$edges$node
     final l$isRequestingFriendship = json['isRequestingFriendship'];
     final l$isFriend = json['isFriend'];
     final l$isBlocked = json['isBlocked'];
+    final l$fuzzyCoordinate = json['fuzzyCoordinate'];
     return Query$friendScreenViewer$viewer$friends$edges$node(
       id: (l$id as String),
       nickname: (l$nickname as String),
@@ -1094,6 +1096,10 @@ class Query$friendScreenViewer$viewer$friends$edges$node
       isRequestingFriendship: (l$isRequestingFriendship as bool),
       isFriend: (l$isFriend as bool),
       isBlocked: (l$isBlocked as bool),
+      fuzzyCoordinate: l$fuzzyCoordinate == null
+          ? null
+          : Query$friendScreenViewer$viewer$friends$edges$node$fuzzyCoordinate
+              .fromJson((l$fuzzyCoordinate as Map<String, dynamic>)),
     );
   }
 
@@ -1117,6 +1123,9 @@ class Query$friendScreenViewer$viewer$friends$edges$node
 
   final bool isBlocked;
 
+  final Query$friendScreenViewer$viewer$friends$edges$node$fuzzyCoordinate?
+      fuzzyCoordinate;
+
   Map<String, dynamic> toJson() {
     final _resultData = <String, dynamic>{};
     final l$id = id;
@@ -1139,6 +1148,8 @@ class Query$friendScreenViewer$viewer$friends$edges$node
     _resultData['isFriend'] = l$isFriend;
     final l$isBlocked = isBlocked;
     _resultData['isBlocked'] = l$isBlocked;
+    final l$fuzzyCoordinate = fuzzyCoordinate;
+    _resultData['fuzzyCoordinate'] = l$fuzzyCoordinate?.toJson();
     return _resultData;
   }
 
@@ -1154,6 +1165,7 @@ class Query$friendScreenViewer$viewer$friends$edges$node
     final l$isRequestingFriendship = isRequestingFriendship;
     final l$isFriend = isFriend;
     final l$isBlocked = isBlocked;
+    final l$fuzzyCoordinate = fuzzyCoordinate;
     return Object.hashAll([
       l$id,
       l$nickname,
@@ -1165,6 +1177,7 @@ class Query$friendScreenViewer$viewer$friends$edges$node
       l$isRequestingFriendship,
       l$isFriend,
       l$isBlocked,
+      l$fuzzyCoordinate,
     ]);
   }
 
@@ -1227,6 +1240,11 @@ class Query$friendScreenViewer$viewer$friends$edges$node
     if (l$isBlocked != lOther$isBlocked) {
       return false;
     }
+    final l$fuzzyCoordinate = fuzzyCoordinate;
+    final lOther$fuzzyCoordinate = other.fuzzyCoordinate;
+    if (l$fuzzyCoordinate != lOther$fuzzyCoordinate) {
+      return false;
+    }
     return true;
   }
 }
@@ -1264,7 +1282,11 @@ abstract class CopyWith$Query$friendScreenViewer$viewer$friends$edges$node<
     bool? isRequestingFriendship,
     bool? isFriend,
     bool? isBlocked,
+    Query$friendScreenViewer$viewer$friends$edges$node$fuzzyCoordinate?
+        fuzzyCoordinate,
   });
+  CopyWith$Query$friendScreenViewer$viewer$friends$edges$node$fuzzyCoordinate<
+      TRes> get fuzzyCoordinate;
 }
 
 class _CopyWithImpl$Query$friendScreenViewer$viewer$friends$edges$node<TRes>
@@ -1292,6 +1314,7 @@ class _CopyWithImpl$Query$friendScreenViewer$viewer$friends$edges$node<TRes>
     Object? isRequestingFriendship = _undefined,
     Object? isFriend = _undefined,
     Object? isBlocked = _undefined,
+    Object? fuzzyCoordinate = _undefined,
   }) =>
       _then(Query$friendScreenViewer$viewer$friends$edges$node(
         id: id == _undefined || id == null ? _instance.id : (id as String),
@@ -1323,7 +1346,20 @@ class _CopyWithImpl$Query$friendScreenViewer$viewer$friends$edges$node<TRes>
         isBlocked: isBlocked == _undefined || isBlocked == null
             ? _instance.isBlocked
             : (isBlocked as bool),
+        fuzzyCoordinate: fuzzyCoordinate == _undefined
+            ? _instance.fuzzyCoordinate
+            : (fuzzyCoordinate
+                as Query$friendScreenViewer$viewer$friends$edges$node$fuzzyCoordinate?),
       ));
+  CopyWith$Query$friendScreenViewer$viewer$friends$edges$node$fuzzyCoordinate<
+      TRes> get fuzzyCoordinate {
+    final local$fuzzyCoordinate = _instance.fuzzyCoordinate;
+    return local$fuzzyCoordinate == null
+        ? CopyWith$Query$friendScreenViewer$viewer$friends$edges$node$fuzzyCoordinate
+            .stub(_then(_instance))
+        : CopyWith$Query$friendScreenViewer$viewer$friends$edges$node$fuzzyCoordinate(
+            local$fuzzyCoordinate, (e) => call(fuzzyCoordinate: e));
+  }
 }
 
 class _CopyWithStubImpl$Query$friendScreenViewer$viewer$friends$edges$node<TRes>
@@ -1345,6 +1381,176 @@ class _CopyWithStubImpl$Query$friendScreenViewer$viewer$friends$edges$node<TRes>
     bool? isRequestingFriendship,
     bool? isFriend,
     bool? isBlocked,
+    Query$friendScreenViewer$viewer$friends$edges$node$fuzzyCoordinate?
+        fuzzyCoordinate,
+  }) =>
+      _res;
+  CopyWith$Query$friendScreenViewer$viewer$friends$edges$node$fuzzyCoordinate<
+          TRes>
+      get fuzzyCoordinate =>
+          CopyWith$Query$friendScreenViewer$viewer$friends$edges$node$fuzzyCoordinate
+              .stub(_res);
+}
+
+class Query$friendScreenViewer$viewer$friends$edges$node$fuzzyCoordinate
+    implements Fragment$userProfileScreenFragment$fuzzyCoordinate {
+  Query$friendScreenViewer$viewer$friends$edges$node$fuzzyCoordinate({
+    required this.latitude,
+    required this.longitude,
+    this.$__typename = 'Coordinate',
+  });
+
+  factory Query$friendScreenViewer$viewer$friends$edges$node$fuzzyCoordinate.fromJson(
+      Map<String, dynamic> json) {
+    final l$latitude = json['latitude'];
+    final l$longitude = json['longitude'];
+    final l$$__typename = json['__typename'];
+    return Query$friendScreenViewer$viewer$friends$edges$node$fuzzyCoordinate(
+      latitude: (l$latitude as num).toDouble(),
+      longitude: (l$longitude as num).toDouble(),
+      $__typename: (l$$__typename as String),
+    );
+  }
+
+  final double latitude;
+
+  final double longitude;
+
+  final String $__typename;
+
+  Map<String, dynamic> toJson() {
+    final _resultData = <String, dynamic>{};
+    final l$latitude = latitude;
+    _resultData['latitude'] = l$latitude;
+    final l$longitude = longitude;
+    _resultData['longitude'] = l$longitude;
+    final l$$__typename = $__typename;
+    _resultData['__typename'] = l$$__typename;
+    return _resultData;
+  }
+
+  @override
+  int get hashCode {
+    final l$latitude = latitude;
+    final l$longitude = longitude;
+    final l$$__typename = $__typename;
+    return Object.hashAll([
+      l$latitude,
+      l$longitude,
+      l$$__typename,
+    ]);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    if (!(other
+            is Query$friendScreenViewer$viewer$friends$edges$node$fuzzyCoordinate) ||
+        runtimeType != other.runtimeType) {
+      return false;
+    }
+    final l$latitude = latitude;
+    final lOther$latitude = other.latitude;
+    if (l$latitude != lOther$latitude) {
+      return false;
+    }
+    final l$longitude = longitude;
+    final lOther$longitude = other.longitude;
+    if (l$longitude != lOther$longitude) {
+      return false;
+    }
+    final l$$__typename = $__typename;
+    final lOther$$__typename = other.$__typename;
+    if (l$$__typename != lOther$$__typename) {
+      return false;
+    }
+    return true;
+  }
+}
+
+extension UtilityExtension$Query$friendScreenViewer$viewer$friends$edges$node$fuzzyCoordinate
+    on Query$friendScreenViewer$viewer$friends$edges$node$fuzzyCoordinate {
+  CopyWith$Query$friendScreenViewer$viewer$friends$edges$node$fuzzyCoordinate<
+          Query$friendScreenViewer$viewer$friends$edges$node$fuzzyCoordinate>
+      get copyWith =>
+          CopyWith$Query$friendScreenViewer$viewer$friends$edges$node$fuzzyCoordinate(
+            this,
+            (i) => i,
+          );
+}
+
+abstract class CopyWith$Query$friendScreenViewer$viewer$friends$edges$node$fuzzyCoordinate<
+    TRes> {
+  factory CopyWith$Query$friendScreenViewer$viewer$friends$edges$node$fuzzyCoordinate(
+    Query$friendScreenViewer$viewer$friends$edges$node$fuzzyCoordinate instance,
+    TRes Function(
+            Query$friendScreenViewer$viewer$friends$edges$node$fuzzyCoordinate)
+        then,
+  ) = _CopyWithImpl$Query$friendScreenViewer$viewer$friends$edges$node$fuzzyCoordinate;
+
+  factory CopyWith$Query$friendScreenViewer$viewer$friends$edges$node$fuzzyCoordinate.stub(
+          TRes res) =
+      _CopyWithStubImpl$Query$friendScreenViewer$viewer$friends$edges$node$fuzzyCoordinate;
+
+  TRes call({
+    double? latitude,
+    double? longitude,
+    String? $__typename,
+  });
+}
+
+class _CopyWithImpl$Query$friendScreenViewer$viewer$friends$edges$node$fuzzyCoordinate<
+        TRes>
+    implements
+        CopyWith$Query$friendScreenViewer$viewer$friends$edges$node$fuzzyCoordinate<
+            TRes> {
+  _CopyWithImpl$Query$friendScreenViewer$viewer$friends$edges$node$fuzzyCoordinate(
+    this._instance,
+    this._then,
+  );
+
+  final Query$friendScreenViewer$viewer$friends$edges$node$fuzzyCoordinate
+      _instance;
+
+  final TRes Function(
+      Query$friendScreenViewer$viewer$friends$edges$node$fuzzyCoordinate) _then;
+
+  static const _undefined = <dynamic, dynamic>{};
+
+  TRes call({
+    Object? latitude = _undefined,
+    Object? longitude = _undefined,
+    Object? $__typename = _undefined,
+  }) =>
+      _then(Query$friendScreenViewer$viewer$friends$edges$node$fuzzyCoordinate(
+        latitude: latitude == _undefined || latitude == null
+            ? _instance.latitude
+            : (latitude as double),
+        longitude: longitude == _undefined || longitude == null
+            ? _instance.longitude
+            : (longitude as double),
+        $__typename: $__typename == _undefined || $__typename == null
+            ? _instance.$__typename
+            : ($__typename as String),
+      ));
+}
+
+class _CopyWithStubImpl$Query$friendScreenViewer$viewer$friends$edges$node$fuzzyCoordinate<
+        TRes>
+    implements
+        CopyWith$Query$friendScreenViewer$viewer$friends$edges$node$fuzzyCoordinate<
+            TRes> {
+  _CopyWithStubImpl$Query$friendScreenViewer$viewer$friends$edges$node$fuzzyCoordinate(
+      this._res);
+
+  TRes _res;
+
+  call({
+    double? latitude,
+    double? longitude,
+    String? $__typename,
   }) =>
       _res;
 }

@@ -8,20 +8,14 @@ import 'package:invy/util/device.dart';
 import 'package:invy/util/logger.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
+Map<String, String> idFieldsFrom(Map<String, Object> object) {
+  return { "__typename": object['__typename'] as String, "id": object['id'] as String };
+}
+
 bool isGraphqlResultError<TParsed>(AsyncSnapshot<QueryResult<TParsed>> result) {
   return result.hasError || result.data?.hasException == true;
 }
 
-String? uuidFromObject(Object object) {
-  if (object is Map<String, Object>) {
-    final String typeName = object['__typename'] as String;
-    final String? id = (object['id'] as String?)?.toString();
-    if (id != null) {
-      return <String>[typeName, id].join('/');
-    }
-  }
-  return null;
-}
 
 final graphqlClientProvider = Provider<GraphQLClient>((_) {
   throw Exception();

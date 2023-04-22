@@ -14,6 +14,7 @@ class Fragment$userProfileScreenFragment {
     required this.isFriend,
     required this.isMuted,
     required this.isBlocked,
+    this.fuzzyCoordinate,
     this.$__typename = 'User',
   });
 
@@ -27,6 +28,7 @@ class Fragment$userProfileScreenFragment {
     final l$isFriend = json['isFriend'];
     final l$isMuted = json['isMuted'];
     final l$isBlocked = json['isBlocked'];
+    final l$fuzzyCoordinate = json['fuzzyCoordinate'];
     final l$$__typename = json['__typename'];
     return Fragment$userProfileScreenFragment(
       id: (l$id as String),
@@ -37,6 +39,10 @@ class Fragment$userProfileScreenFragment {
       isFriend: (l$isFriend as bool),
       isMuted: (l$isMuted as bool),
       isBlocked: (l$isBlocked as bool),
+      fuzzyCoordinate: l$fuzzyCoordinate == null
+          ? null
+          : Fragment$userProfileScreenFragment$fuzzyCoordinate.fromJson(
+              (l$fuzzyCoordinate as Map<String, dynamic>)),
       $__typename: (l$$__typename as String),
     );
   }
@@ -56,6 +62,8 @@ class Fragment$userProfileScreenFragment {
   final bool isMuted;
 
   final bool isBlocked;
+
+  final Fragment$userProfileScreenFragment$fuzzyCoordinate? fuzzyCoordinate;
 
   final String $__typename;
 
@@ -77,6 +85,8 @@ class Fragment$userProfileScreenFragment {
     _resultData['isMuted'] = l$isMuted;
     final l$isBlocked = isBlocked;
     _resultData['isBlocked'] = l$isBlocked;
+    final l$fuzzyCoordinate = fuzzyCoordinate;
+    _resultData['fuzzyCoordinate'] = l$fuzzyCoordinate?.toJson();
     final l$$__typename = $__typename;
     _resultData['__typename'] = l$$__typename;
     return _resultData;
@@ -92,6 +102,7 @@ class Fragment$userProfileScreenFragment {
     final l$isFriend = isFriend;
     final l$isMuted = isMuted;
     final l$isBlocked = isBlocked;
+    final l$fuzzyCoordinate = fuzzyCoordinate;
     final l$$__typename = $__typename;
     return Object.hashAll([
       l$id,
@@ -102,6 +113,7 @@ class Fragment$userProfileScreenFragment {
       l$isFriend,
       l$isMuted,
       l$isBlocked,
+      l$fuzzyCoordinate,
       l$$__typename,
     ]);
   }
@@ -155,6 +167,11 @@ class Fragment$userProfileScreenFragment {
     if (l$isBlocked != lOther$isBlocked) {
       return false;
     }
+    final l$fuzzyCoordinate = fuzzyCoordinate;
+    final lOther$fuzzyCoordinate = other.fuzzyCoordinate;
+    if (l$fuzzyCoordinate != lOther$fuzzyCoordinate) {
+      return false;
+    }
     final l$$__typename = $__typename;
     final lOther$$__typename = other.$__typename;
     if (l$$__typename != lOther$$__typename) {
@@ -192,8 +209,11 @@ abstract class CopyWith$Fragment$userProfileScreenFragment<TRes> {
     bool? isFriend,
     bool? isMuted,
     bool? isBlocked,
+    Fragment$userProfileScreenFragment$fuzzyCoordinate? fuzzyCoordinate,
     String? $__typename,
   });
+  CopyWith$Fragment$userProfileScreenFragment$fuzzyCoordinate<TRes>
+      get fuzzyCoordinate;
 }
 
 class _CopyWithImpl$Fragment$userProfileScreenFragment<TRes>
@@ -218,6 +238,7 @@ class _CopyWithImpl$Fragment$userProfileScreenFragment<TRes>
     Object? isFriend = _undefined,
     Object? isMuted = _undefined,
     Object? isBlocked = _undefined,
+    Object? fuzzyCoordinate = _undefined,
     Object? $__typename = _undefined,
   }) =>
       _then(Fragment$userProfileScreenFragment(
@@ -244,10 +265,23 @@ class _CopyWithImpl$Fragment$userProfileScreenFragment<TRes>
         isBlocked: isBlocked == _undefined || isBlocked == null
             ? _instance.isBlocked
             : (isBlocked as bool),
+        fuzzyCoordinate: fuzzyCoordinate == _undefined
+            ? _instance.fuzzyCoordinate
+            : (fuzzyCoordinate
+                as Fragment$userProfileScreenFragment$fuzzyCoordinate?),
         $__typename: $__typename == _undefined || $__typename == null
             ? _instance.$__typename
             : ($__typename as String),
       ));
+  CopyWith$Fragment$userProfileScreenFragment$fuzzyCoordinate<TRes>
+      get fuzzyCoordinate {
+    final local$fuzzyCoordinate = _instance.fuzzyCoordinate;
+    return local$fuzzyCoordinate == null
+        ? CopyWith$Fragment$userProfileScreenFragment$fuzzyCoordinate.stub(
+            _then(_instance))
+        : CopyWith$Fragment$userProfileScreenFragment$fuzzyCoordinate(
+            local$fuzzyCoordinate, (e) => call(fuzzyCoordinate: e));
+  }
 }
 
 class _CopyWithStubImpl$Fragment$userProfileScreenFragment<TRes>
@@ -265,9 +299,14 @@ class _CopyWithStubImpl$Fragment$userProfileScreenFragment<TRes>
     bool? isFriend,
     bool? isMuted,
     bool? isBlocked,
+    Fragment$userProfileScreenFragment$fuzzyCoordinate? fuzzyCoordinate,
     String? $__typename,
   }) =>
       _res;
+  CopyWith$Fragment$userProfileScreenFragment$fuzzyCoordinate<TRes>
+      get fuzzyCoordinate =>
+          CopyWith$Fragment$userProfileScreenFragment$fuzzyCoordinate.stub(
+              _res);
 }
 
 const fragmentDefinitionuserProfileScreenFragment = FragmentDefinitionNode(
@@ -336,6 +375,35 @@ const fragmentDefinitionuserProfileScreenFragment = FragmentDefinitionNode(
       selectionSet: null,
     ),
     FieldNode(
+      name: NameNode(value: 'fuzzyCoordinate'),
+      alias: null,
+      arguments: [],
+      directives: [],
+      selectionSet: SelectionSetNode(selections: [
+        FieldNode(
+          name: NameNode(value: 'latitude'),
+          alias: null,
+          arguments: [],
+          directives: [],
+          selectionSet: null,
+        ),
+        FieldNode(
+          name: NameNode(value: 'longitude'),
+          alias: null,
+          arguments: [],
+          directives: [],
+          selectionSet: null,
+        ),
+        FieldNode(
+          name: NameNode(value: '__typename'),
+          alias: null,
+          arguments: [],
+          directives: [],
+          selectionSet: null,
+        ),
+      ]),
+    ),
+    FieldNode(
       name: NameNode(value: '__typename'),
       alias: null,
       arguments: [],
@@ -385,6 +453,159 @@ extension ClientExtension$Fragment$userProfileScreenFragment
         ? null
         : Fragment$userProfileScreenFragment.fromJson(result);
   }
+}
+
+class Fragment$userProfileScreenFragment$fuzzyCoordinate {
+  Fragment$userProfileScreenFragment$fuzzyCoordinate({
+    required this.latitude,
+    required this.longitude,
+    this.$__typename = 'Coordinate',
+  });
+
+  factory Fragment$userProfileScreenFragment$fuzzyCoordinate.fromJson(
+      Map<String, dynamic> json) {
+    final l$latitude = json['latitude'];
+    final l$longitude = json['longitude'];
+    final l$$__typename = json['__typename'];
+    return Fragment$userProfileScreenFragment$fuzzyCoordinate(
+      latitude: (l$latitude as num).toDouble(),
+      longitude: (l$longitude as num).toDouble(),
+      $__typename: (l$$__typename as String),
+    );
+  }
+
+  final double latitude;
+
+  final double longitude;
+
+  final String $__typename;
+
+  Map<String, dynamic> toJson() {
+    final _resultData = <String, dynamic>{};
+    final l$latitude = latitude;
+    _resultData['latitude'] = l$latitude;
+    final l$longitude = longitude;
+    _resultData['longitude'] = l$longitude;
+    final l$$__typename = $__typename;
+    _resultData['__typename'] = l$$__typename;
+    return _resultData;
+  }
+
+  @override
+  int get hashCode {
+    final l$latitude = latitude;
+    final l$longitude = longitude;
+    final l$$__typename = $__typename;
+    return Object.hashAll([
+      l$latitude,
+      l$longitude,
+      l$$__typename,
+    ]);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    if (!(other is Fragment$userProfileScreenFragment$fuzzyCoordinate) ||
+        runtimeType != other.runtimeType) {
+      return false;
+    }
+    final l$latitude = latitude;
+    final lOther$latitude = other.latitude;
+    if (l$latitude != lOther$latitude) {
+      return false;
+    }
+    final l$longitude = longitude;
+    final lOther$longitude = other.longitude;
+    if (l$longitude != lOther$longitude) {
+      return false;
+    }
+    final l$$__typename = $__typename;
+    final lOther$$__typename = other.$__typename;
+    if (l$$__typename != lOther$$__typename) {
+      return false;
+    }
+    return true;
+  }
+}
+
+extension UtilityExtension$Fragment$userProfileScreenFragment$fuzzyCoordinate
+    on Fragment$userProfileScreenFragment$fuzzyCoordinate {
+  CopyWith$Fragment$userProfileScreenFragment$fuzzyCoordinate<
+          Fragment$userProfileScreenFragment$fuzzyCoordinate>
+      get copyWith =>
+          CopyWith$Fragment$userProfileScreenFragment$fuzzyCoordinate(
+            this,
+            (i) => i,
+          );
+}
+
+abstract class CopyWith$Fragment$userProfileScreenFragment$fuzzyCoordinate<
+    TRes> {
+  factory CopyWith$Fragment$userProfileScreenFragment$fuzzyCoordinate(
+    Fragment$userProfileScreenFragment$fuzzyCoordinate instance,
+    TRes Function(Fragment$userProfileScreenFragment$fuzzyCoordinate) then,
+  ) = _CopyWithImpl$Fragment$userProfileScreenFragment$fuzzyCoordinate;
+
+  factory CopyWith$Fragment$userProfileScreenFragment$fuzzyCoordinate.stub(
+          TRes res) =
+      _CopyWithStubImpl$Fragment$userProfileScreenFragment$fuzzyCoordinate;
+
+  TRes call({
+    double? latitude,
+    double? longitude,
+    String? $__typename,
+  });
+}
+
+class _CopyWithImpl$Fragment$userProfileScreenFragment$fuzzyCoordinate<TRes>
+    implements
+        CopyWith$Fragment$userProfileScreenFragment$fuzzyCoordinate<TRes> {
+  _CopyWithImpl$Fragment$userProfileScreenFragment$fuzzyCoordinate(
+    this._instance,
+    this._then,
+  );
+
+  final Fragment$userProfileScreenFragment$fuzzyCoordinate _instance;
+
+  final TRes Function(Fragment$userProfileScreenFragment$fuzzyCoordinate) _then;
+
+  static const _undefined = <dynamic, dynamic>{};
+
+  TRes call({
+    Object? latitude = _undefined,
+    Object? longitude = _undefined,
+    Object? $__typename = _undefined,
+  }) =>
+      _then(Fragment$userProfileScreenFragment$fuzzyCoordinate(
+        latitude: latitude == _undefined || latitude == null
+            ? _instance.latitude
+            : (latitude as double),
+        longitude: longitude == _undefined || longitude == null
+            ? _instance.longitude
+            : (longitude as double),
+        $__typename: $__typename == _undefined || $__typename == null
+            ? _instance.$__typename
+            : ($__typename as String),
+      ));
+}
+
+class _CopyWithStubImpl$Fragment$userProfileScreenFragment$fuzzyCoordinate<TRes>
+    implements
+        CopyWith$Fragment$userProfileScreenFragment$fuzzyCoordinate<TRes> {
+  _CopyWithStubImpl$Fragment$userProfileScreenFragment$fuzzyCoordinate(
+      this._res);
+
+  TRes _res;
+
+  call({
+    double? latitude,
+    double? longitude,
+    String? $__typename,
+  }) =>
+      _res;
 }
 
 class Variables$Query$userProfileScreenUser {

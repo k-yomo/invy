@@ -16,7 +16,9 @@ import 'package:invy/screens/user/user_friends_screen.dart';
 import 'package:invy/screens/user/user_profile_screen.graphql.dart';
 import 'package:invy/state/auth.dart';
 import 'package:invy/state/invitation.dart';
+import 'package:invy/util/logger.dart';
 import 'package:invy/util/toast.dart';
+import 'package:invy/widgets/api_query_error_message.dart';
 import 'package:invy/widgets/app_bar_leading.dart';
 import 'package:invy/widgets/friend_list_item_fragment.graphql.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -26,40 +28,39 @@ import '../../../graphql/user_mute.graphql.dart';
 import '../../../services/graphql_client.dart';
 
 class UserProfileScreen extends HookConsumerWidget {
-  const UserProfileScreen({super.key, required this.userId, this.user});
+  const UserProfileScreen({super.key, required this.userId});
 
   final String userId;
-  final Fragment$userProfileScreenFragment? user;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final loggedInUser = ref.read(loggedInUserProvider);
     final graphqlClient = ref.read(graphqlClientProvider);
-    final fetchUser = useMemoized(() async {
-      if (this.user != null) {
-        return this.user!;
-      }
-      final resp = await graphqlClient
-          .query$userProfileScreenUser(Options$Query$userProfileScreenUser(
-              variables: Variables$Query$userProfileScreenUser(
-        userId: userId,
-      )));
-      if (resp.hasException) {
-        throw resp.exception.toString();
-      }
-      return resp.parsedData!.user;
-    });
-    final snapshot = useFuture(fetchUser);
+    final userQuery = useMemoized(() =>
+        graphqlClient.watchQuery$userProfileScreenUser(
+            WatchOptions$Query$userProfileScreenUser(
+          variables: Variables$Query$userProfileScreenUser(userId: userId),
+          eagerlyFetchResults: true,
+        )));
+    final userQueryStream = useStream(userQuery.stream);
 
-    if (!snapshot.hasData) {
+    if (userQueryStream.connectionState == ConnectionState.waiting) {
+      return const Scaffold(
+          body: Center(child: CircularProgressIndicator.adaptive()));
+    }
+    if (isGraphqlResultError(userQueryStream)) {
+      return APIQueryErrorMessage(
+          refetch: userQuery.refetch, isNetworkError: userQueryStream.hasError);
+    }
+
+    if (userQueryStream.data?.parsedData?.user == null) {
       return const SizedBox();
     }
 
-    final user = snapshot.data!;
+    final user = userQueryStream.data!.parsedData!.user;
     final isUserLoggedInUser = user.id == loggedInUser?.id;
     final isMuted = useState(user.isMuted);
     final isBlocked = useState(user.isBlocked);
-    final isRequestingFriendship = useState(user.isRequestingFriendship);
 
     onPressedMute() async {
       if (isMuted.value) {
@@ -104,11 +105,23 @@ class UserProfileScreen extends HookConsumerWidget {
     onPressedFriendRequest() async {
       final result = await graphqlClient
           .mutate$requestFriendship(Options$Mutation$requestFriendship(
-        variables: Variables$Mutation$requestFriendship(userId: user.id),
-      ));
-      if (result.parsedData?.requestFriendship != null) {
-        isRequestingFriendship.value = true;
+              variables: Variables$Mutation$requestFriendship(userId: user.id),
+              update: (cache, result) {
+                graphqlClient.writeFragment$userProfileScreenFragment(
+                  data: user.copyWith(isRequestingFriendship: true),
+                  idFields: {
+                    "__typename": fragmentDefinitionuserProfileScreenFragment
+                        .typeCondition.on.name.value,
+                    "id": user.id,
+                  },
+                );
+              }));
+      if (result.hasException) {
+        logger.e(result.exception);
+        showToast("友達申請に失敗しました。時間を置いて再度お試しください。", ToastLevel.error);
+        return;
       }
+      showToast("${user.nickname}に友達申請を送りました", ToastLevel.info);
     }
 
     onPressedInvitation() async {
@@ -245,7 +258,7 @@ class UserProfileScreen extends HookConsumerWidget {
                         margin: const EdgeInsets.symmetric(
                             vertical: 10, horizontal: 60),
                         child: TextButton(
-                          onPressed: isRequestingFriendship.value
+                          onPressed: user.isRequestingFriendship
                               ? null
                               : onPressedFriendRequest,
                           style: TextButton.styleFrom(
@@ -257,7 +270,7 @@ class UserProfileScreen extends HookConsumerWidget {
                             disabledForegroundColor: Colors.white,
                           ),
                           child: Text(
-                            isRequestingFriendship.value ? '友達申請済み' : '友達申請する',
+                            user.isRequestingFriendship ? '友達申請済み' : '友達申請する',
                             style: const TextStyle(
                                 fontSize: 16, fontWeight: FontWeight.bold),
                           ),

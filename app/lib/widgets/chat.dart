@@ -16,6 +16,7 @@ import 'package:invy/graphql/schema.graphql.dart';
 import 'package:invy/router.dart';
 import 'package:invy/services/graphql_client.dart';
 import 'package:invy/state/auth.dart';
+import 'package:invy/util/logger.dart';
 import 'package:invy/util/toast.dart';
 import 'package:invy/widgets/chat.graphql.dart';
 import 'package:invy/widgets/invitation_detail_fragment.graphql.dart';
@@ -56,7 +57,7 @@ class ChatState extends ConsumerState<Chat> {
   late LoggedInUser _loggedInUser;
   late GraphQLClient _graphqlClient;
   late Map<String, chatUITypes.User> _userMap;
-  late String _idToken;
+  String? _idToken;
 
   @override
   void initState() {
@@ -103,7 +104,7 @@ class ChatState extends ConsumerState<Chat> {
       ),
     )));
     if (result.hasException) {
-      print(result.exception);
+      logger.e(result.exception);
       showToast("メッセージの送信に失敗しました", ToastLevel.error);
       return;
     }
@@ -169,7 +170,7 @@ class ChatState extends ConsumerState<Chat> {
       });
 
       if (result.hasException) {
-        print(result.exception);
+        logger.e(result.exception);
         showToast("画像の送信に失敗しました", ToastLevel.error);
         continue;
       }
@@ -248,7 +249,7 @@ class ChatState extends ConsumerState<Chat> {
             _userMap[userId] = user.copyWith(lastSeen: lastReadAt);
           });
         } else {
-          // Fetch hewly added user
+          // Fetch newly added user
           _graphqlClient
               .query$getUserForChat(Options$Query$getUserForChat(
                   variables: Variables$Query$getUserForChat(id: userId)))

@@ -931,6 +931,7 @@ class Query$userFriendsScreenUserFriends$userFriends$edges$node
     required this.isFriend,
     required this.isMuted,
     required this.isBlocked,
+    this.fuzzyCoordinate,
     this.$__typename = 'User',
     this.distanceKm,
   });
@@ -945,6 +946,7 @@ class Query$userFriendsScreenUserFriends$userFriends$edges$node
     final l$isFriend = json['isFriend'];
     final l$isMuted = json['isMuted'];
     final l$isBlocked = json['isBlocked'];
+    final l$fuzzyCoordinate = json['fuzzyCoordinate'];
     final l$$__typename = json['__typename'];
     final l$distanceKm = json['distanceKm'];
     return Query$userFriendsScreenUserFriends$userFriends$edges$node(
@@ -956,6 +958,10 @@ class Query$userFriendsScreenUserFriends$userFriends$edges$node
       isFriend: (l$isFriend as bool),
       isMuted: (l$isMuted as bool),
       isBlocked: (l$isBlocked as bool),
+      fuzzyCoordinate: l$fuzzyCoordinate == null
+          ? null
+          : Query$userFriendsScreenUserFriends$userFriends$edges$node$fuzzyCoordinate
+              .fromJson((l$fuzzyCoordinate as Map<String, dynamic>)),
       $__typename: (l$$__typename as String),
       distanceKm: (l$distanceKm as int?),
     );
@@ -976,6 +982,9 @@ class Query$userFriendsScreenUserFriends$userFriends$edges$node
   final bool isMuted;
 
   final bool isBlocked;
+
+  final Query$userFriendsScreenUserFriends$userFriends$edges$node$fuzzyCoordinate?
+      fuzzyCoordinate;
 
   final String $__typename;
 
@@ -999,6 +1008,8 @@ class Query$userFriendsScreenUserFriends$userFriends$edges$node
     _resultData['isMuted'] = l$isMuted;
     final l$isBlocked = isBlocked;
     _resultData['isBlocked'] = l$isBlocked;
+    final l$fuzzyCoordinate = fuzzyCoordinate;
+    _resultData['fuzzyCoordinate'] = l$fuzzyCoordinate?.toJson();
     final l$$__typename = $__typename;
     _resultData['__typename'] = l$$__typename;
     final l$distanceKm = distanceKm;
@@ -1016,6 +1027,7 @@ class Query$userFriendsScreenUserFriends$userFriends$edges$node
     final l$isFriend = isFriend;
     final l$isMuted = isMuted;
     final l$isBlocked = isBlocked;
+    final l$fuzzyCoordinate = fuzzyCoordinate;
     final l$$__typename = $__typename;
     final l$distanceKm = distanceKm;
     return Object.hashAll([
@@ -1027,6 +1039,7 @@ class Query$userFriendsScreenUserFriends$userFriends$edges$node
       l$isFriend,
       l$isMuted,
       l$isBlocked,
+      l$fuzzyCoordinate,
       l$$__typename,
       l$distanceKm,
     ]);
@@ -1081,6 +1094,11 @@ class Query$userFriendsScreenUserFriends$userFriends$edges$node
     if (l$isBlocked != lOther$isBlocked) {
       return false;
     }
+    final l$fuzzyCoordinate = fuzzyCoordinate;
+    final lOther$fuzzyCoordinate = other.fuzzyCoordinate;
+    if (l$fuzzyCoordinate != lOther$fuzzyCoordinate) {
+      return false;
+    }
     final l$$__typename = $__typename;
     final lOther$$__typename = other.$__typename;
     if (l$$__typename != lOther$$__typename) {
@@ -1127,9 +1145,13 @@ abstract class CopyWith$Query$userFriendsScreenUserFriends$userFriends$edges$nod
     bool? isFriend,
     bool? isMuted,
     bool? isBlocked,
+    Query$userFriendsScreenUserFriends$userFriends$edges$node$fuzzyCoordinate?
+        fuzzyCoordinate,
     String? $__typename,
     int? distanceKm,
   });
+  CopyWith$Query$userFriendsScreenUserFriends$userFriends$edges$node$fuzzyCoordinate<
+      TRes> get fuzzyCoordinate;
 }
 
 class _CopyWithImpl$Query$userFriendsScreenUserFriends$userFriends$edges$node<
@@ -1158,6 +1180,7 @@ class _CopyWithImpl$Query$userFriendsScreenUserFriends$userFriends$edges$node<
     Object? isFriend = _undefined,
     Object? isMuted = _undefined,
     Object? isBlocked = _undefined,
+    Object? fuzzyCoordinate = _undefined,
     Object? $__typename = _undefined,
     Object? distanceKm = _undefined,
   }) =>
@@ -1185,6 +1208,10 @@ class _CopyWithImpl$Query$userFriendsScreenUserFriends$userFriends$edges$node<
         isBlocked: isBlocked == _undefined || isBlocked == null
             ? _instance.isBlocked
             : (isBlocked as bool),
+        fuzzyCoordinate: fuzzyCoordinate == _undefined
+            ? _instance.fuzzyCoordinate
+            : (fuzzyCoordinate
+                as Query$userFriendsScreenUserFriends$userFriends$edges$node$fuzzyCoordinate?),
         $__typename: $__typename == _undefined || $__typename == null
             ? _instance.$__typename
             : ($__typename as String),
@@ -1192,6 +1219,15 @@ class _CopyWithImpl$Query$userFriendsScreenUserFriends$userFriends$edges$node<
             ? _instance.distanceKm
             : (distanceKm as int?),
       ));
+  CopyWith$Query$userFriendsScreenUserFriends$userFriends$edges$node$fuzzyCoordinate<
+      TRes> get fuzzyCoordinate {
+    final local$fuzzyCoordinate = _instance.fuzzyCoordinate;
+    return local$fuzzyCoordinate == null
+        ? CopyWith$Query$userFriendsScreenUserFriends$userFriends$edges$node$fuzzyCoordinate
+            .stub(_then(_instance))
+        : CopyWith$Query$userFriendsScreenUserFriends$userFriends$edges$node$fuzzyCoordinate(
+            local$fuzzyCoordinate, (e) => call(fuzzyCoordinate: e));
+  }
 }
 
 class _CopyWithStubImpl$Query$userFriendsScreenUserFriends$userFriends$edges$node<
@@ -1213,8 +1249,181 @@ class _CopyWithStubImpl$Query$userFriendsScreenUserFriends$userFriends$edges$nod
     bool? isFriend,
     bool? isMuted,
     bool? isBlocked,
+    Query$userFriendsScreenUserFriends$userFriends$edges$node$fuzzyCoordinate?
+        fuzzyCoordinate,
     String? $__typename,
     int? distanceKm,
+  }) =>
+      _res;
+  CopyWith$Query$userFriendsScreenUserFriends$userFriends$edges$node$fuzzyCoordinate<
+          TRes>
+      get fuzzyCoordinate =>
+          CopyWith$Query$userFriendsScreenUserFriends$userFriends$edges$node$fuzzyCoordinate
+              .stub(_res);
+}
+
+class Query$userFriendsScreenUserFriends$userFriends$edges$node$fuzzyCoordinate
+    implements Fragment$userProfileScreenFragment$fuzzyCoordinate {
+  Query$userFriendsScreenUserFriends$userFriends$edges$node$fuzzyCoordinate({
+    required this.latitude,
+    required this.longitude,
+    this.$__typename = 'Coordinate',
+  });
+
+  factory Query$userFriendsScreenUserFriends$userFriends$edges$node$fuzzyCoordinate.fromJson(
+      Map<String, dynamic> json) {
+    final l$latitude = json['latitude'];
+    final l$longitude = json['longitude'];
+    final l$$__typename = json['__typename'];
+    return Query$userFriendsScreenUserFriends$userFriends$edges$node$fuzzyCoordinate(
+      latitude: (l$latitude as num).toDouble(),
+      longitude: (l$longitude as num).toDouble(),
+      $__typename: (l$$__typename as String),
+    );
+  }
+
+  final double latitude;
+
+  final double longitude;
+
+  final String $__typename;
+
+  Map<String, dynamic> toJson() {
+    final _resultData = <String, dynamic>{};
+    final l$latitude = latitude;
+    _resultData['latitude'] = l$latitude;
+    final l$longitude = longitude;
+    _resultData['longitude'] = l$longitude;
+    final l$$__typename = $__typename;
+    _resultData['__typename'] = l$$__typename;
+    return _resultData;
+  }
+
+  @override
+  int get hashCode {
+    final l$latitude = latitude;
+    final l$longitude = longitude;
+    final l$$__typename = $__typename;
+    return Object.hashAll([
+      l$latitude,
+      l$longitude,
+      l$$__typename,
+    ]);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    if (!(other
+            is Query$userFriendsScreenUserFriends$userFriends$edges$node$fuzzyCoordinate) ||
+        runtimeType != other.runtimeType) {
+      return false;
+    }
+    final l$latitude = latitude;
+    final lOther$latitude = other.latitude;
+    if (l$latitude != lOther$latitude) {
+      return false;
+    }
+    final l$longitude = longitude;
+    final lOther$longitude = other.longitude;
+    if (l$longitude != lOther$longitude) {
+      return false;
+    }
+    final l$$__typename = $__typename;
+    final lOther$$__typename = other.$__typename;
+    if (l$$__typename != lOther$$__typename) {
+      return false;
+    }
+    return true;
+  }
+}
+
+extension UtilityExtension$Query$userFriendsScreenUserFriends$userFriends$edges$node$fuzzyCoordinate
+    on Query$userFriendsScreenUserFriends$userFriends$edges$node$fuzzyCoordinate {
+  CopyWith$Query$userFriendsScreenUserFriends$userFriends$edges$node$fuzzyCoordinate<
+          Query$userFriendsScreenUserFriends$userFriends$edges$node$fuzzyCoordinate>
+      get copyWith =>
+          CopyWith$Query$userFriendsScreenUserFriends$userFriends$edges$node$fuzzyCoordinate(
+            this,
+            (i) => i,
+          );
+}
+
+abstract class CopyWith$Query$userFriendsScreenUserFriends$userFriends$edges$node$fuzzyCoordinate<
+    TRes> {
+  factory CopyWith$Query$userFriendsScreenUserFriends$userFriends$edges$node$fuzzyCoordinate(
+    Query$userFriendsScreenUserFriends$userFriends$edges$node$fuzzyCoordinate
+        instance,
+    TRes Function(
+            Query$userFriendsScreenUserFriends$userFriends$edges$node$fuzzyCoordinate)
+        then,
+  ) = _CopyWithImpl$Query$userFriendsScreenUserFriends$userFriends$edges$node$fuzzyCoordinate;
+
+  factory CopyWith$Query$userFriendsScreenUserFriends$userFriends$edges$node$fuzzyCoordinate.stub(
+          TRes res) =
+      _CopyWithStubImpl$Query$userFriendsScreenUserFriends$userFriends$edges$node$fuzzyCoordinate;
+
+  TRes call({
+    double? latitude,
+    double? longitude,
+    String? $__typename,
+  });
+}
+
+class _CopyWithImpl$Query$userFriendsScreenUserFriends$userFriends$edges$node$fuzzyCoordinate<
+        TRes>
+    implements
+        CopyWith$Query$userFriendsScreenUserFriends$userFriends$edges$node$fuzzyCoordinate<
+            TRes> {
+  _CopyWithImpl$Query$userFriendsScreenUserFriends$userFriends$edges$node$fuzzyCoordinate(
+    this._instance,
+    this._then,
+  );
+
+  final Query$userFriendsScreenUserFriends$userFriends$edges$node$fuzzyCoordinate
+      _instance;
+
+  final TRes Function(
+          Query$userFriendsScreenUserFriends$userFriends$edges$node$fuzzyCoordinate)
+      _then;
+
+  static const _undefined = <dynamic, dynamic>{};
+
+  TRes call({
+    Object? latitude = _undefined,
+    Object? longitude = _undefined,
+    Object? $__typename = _undefined,
+  }) =>
+      _then(
+          Query$userFriendsScreenUserFriends$userFriends$edges$node$fuzzyCoordinate(
+        latitude: latitude == _undefined || latitude == null
+            ? _instance.latitude
+            : (latitude as double),
+        longitude: longitude == _undefined || longitude == null
+            ? _instance.longitude
+            : (longitude as double),
+        $__typename: $__typename == _undefined || $__typename == null
+            ? _instance.$__typename
+            : ($__typename as String),
+      ));
+}
+
+class _CopyWithStubImpl$Query$userFriendsScreenUserFriends$userFriends$edges$node$fuzzyCoordinate<
+        TRes>
+    implements
+        CopyWith$Query$userFriendsScreenUserFriends$userFriends$edges$node$fuzzyCoordinate<
+            TRes> {
+  _CopyWithStubImpl$Query$userFriendsScreenUserFriends$userFriends$edges$node$fuzzyCoordinate(
+      this._res);
+
+  TRes _res;
+
+  call({
+    double? latitude,
+    double? longitude,
+    String? $__typename,
   }) =>
       _res;
 }
