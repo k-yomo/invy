@@ -289,7 +289,7 @@ class UserProfileScreen extends HookConsumerWidget {
                                     .state =
                                 LatLng(user.fuzzyCoordinate!.latitude,
                                     user.fuzzyCoordinate!.longitude);
-                            const MapRoute().push(context);
+                            const MapRoute().go(context);
                           },
                           style: TextButton.styleFrom(
                             minimumSize: const Size.fromHeight(0),
