@@ -12,7 +12,7 @@ String _convertToDisplayTime(DateTime time) {
   final localTime = time.toLocal();
   final now = DateTime.now().toLocal();
   if (localTime.day == now.day) {
-    return DateFormat('H時m分').format(localTime);
+    return DateFormat('今日 H時m分').format(localTime);
   }
   return '${DateFormat(dateFormat).format(localTime)}(${DateFormat.E('ja').format(localTime)}) ${DateFormat(timeFormat).format(localTime)}';
 }
