@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:invy/constants/urls.dart';
 import 'package:invy/router.dart';
@@ -16,6 +17,7 @@ import 'package:invy/screens/user/user_friends_screen.dart';
 import 'package:invy/screens/user/user_profile_screen.graphql.dart';
 import 'package:invy/state/auth.dart';
 import 'package:invy/state/invitation.dart';
+import 'package:invy/state/location.dart';
 import 'package:invy/util/logger.dart';
 import 'package:invy/util/toast.dart';
 import 'package:invy/widgets/api_query_error_message.dart';
@@ -252,11 +254,10 @@ class UserProfileScreen extends HookConsumerWidget {
                         : const SizedBox(),
                   ],
                 ),
-                const Gap(2),
                 !user.isFriend && !isUserLoggedInUser
                     ? Container(
                         margin: const EdgeInsets.symmetric(
-                            vertical: 10, horizontal: 60),
+                            vertical: 30, horizontal: 60),
                         child: TextButton(
                           onPressed: user.isRequestingFriendship
                               ? null
@@ -277,10 +278,48 @@ class UserProfileScreen extends HookConsumerWidget {
                         ),
                       )
                     : const SizedBox(),
+                const Gap(15),
+                user.isFriend && user.fuzzyCoordinate != null
+                    ? Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 60),
+                        child: TextButton(
+                          onPressed: () {
+                            ref
+                                    .read(currentPinLocationProvider.notifier)
+                                    .state =
+                                LatLng(user.fuzzyCoordinate!.latitude,
+                                    user.fuzzyCoordinate!.longitude);
+                            const MapRoute().push(context);
+                          },
+                          style: TextButton.styleFrom(
+                            minimumSize: const Size.fromHeight(0),
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 5, horizontal: 5),
+                            shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.zero,
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.fmd_good,
+                                  size: 20, color: Colors.grey.shade700),
+                              const Gap(3),
+                              Text("〜${user.distanceKm}km",
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.grey.shade700,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      )
+                    : const Gap(15),
                 user.isFriend
                     ? Container(
                         margin: const EdgeInsets.symmetric(
-                            vertical: 30, horizontal: 60),
+                            vertical: 15, horizontal: 60),
                         child: TextButton(
                           onPressed: onPressedInvitation,
                           style: TextButton.styleFrom(

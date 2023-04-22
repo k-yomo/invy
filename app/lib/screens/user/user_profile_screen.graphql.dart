@@ -14,6 +14,7 @@ class Fragment$userProfileScreenFragment {
     required this.isFriend,
     required this.isMuted,
     required this.isBlocked,
+    this.distanceKm,
     this.fuzzyCoordinate,
     this.$__typename = 'User',
   });
@@ -28,6 +29,7 @@ class Fragment$userProfileScreenFragment {
     final l$isFriend = json['isFriend'];
     final l$isMuted = json['isMuted'];
     final l$isBlocked = json['isBlocked'];
+    final l$distanceKm = json['distanceKm'];
     final l$fuzzyCoordinate = json['fuzzyCoordinate'];
     final l$$__typename = json['__typename'];
     return Fragment$userProfileScreenFragment(
@@ -39,6 +41,7 @@ class Fragment$userProfileScreenFragment {
       isFriend: (l$isFriend as bool),
       isMuted: (l$isMuted as bool),
       isBlocked: (l$isBlocked as bool),
+      distanceKm: (l$distanceKm as int?),
       fuzzyCoordinate: l$fuzzyCoordinate == null
           ? null
           : Fragment$userProfileScreenFragment$fuzzyCoordinate.fromJson(
@@ -63,6 +66,8 @@ class Fragment$userProfileScreenFragment {
 
   final bool isBlocked;
 
+  final int? distanceKm;
+
   final Fragment$userProfileScreenFragment$fuzzyCoordinate? fuzzyCoordinate;
 
   final String $__typename;
@@ -85,6 +90,8 @@ class Fragment$userProfileScreenFragment {
     _resultData['isMuted'] = l$isMuted;
     final l$isBlocked = isBlocked;
     _resultData['isBlocked'] = l$isBlocked;
+    final l$distanceKm = distanceKm;
+    _resultData['distanceKm'] = l$distanceKm;
     final l$fuzzyCoordinate = fuzzyCoordinate;
     _resultData['fuzzyCoordinate'] = l$fuzzyCoordinate?.toJson();
     final l$$__typename = $__typename;
@@ -102,6 +109,7 @@ class Fragment$userProfileScreenFragment {
     final l$isFriend = isFriend;
     final l$isMuted = isMuted;
     final l$isBlocked = isBlocked;
+    final l$distanceKm = distanceKm;
     final l$fuzzyCoordinate = fuzzyCoordinate;
     final l$$__typename = $__typename;
     return Object.hashAll([
@@ -113,6 +121,7 @@ class Fragment$userProfileScreenFragment {
       l$isFriend,
       l$isMuted,
       l$isBlocked,
+      l$distanceKm,
       l$fuzzyCoordinate,
       l$$__typename,
     ]);
@@ -167,6 +176,11 @@ class Fragment$userProfileScreenFragment {
     if (l$isBlocked != lOther$isBlocked) {
       return false;
     }
+    final l$distanceKm = distanceKm;
+    final lOther$distanceKm = other.distanceKm;
+    if (l$distanceKm != lOther$distanceKm) {
+      return false;
+    }
     final l$fuzzyCoordinate = fuzzyCoordinate;
     final lOther$fuzzyCoordinate = other.fuzzyCoordinate;
     if (l$fuzzyCoordinate != lOther$fuzzyCoordinate) {
@@ -209,6 +223,7 @@ abstract class CopyWith$Fragment$userProfileScreenFragment<TRes> {
     bool? isFriend,
     bool? isMuted,
     bool? isBlocked,
+    int? distanceKm,
     Fragment$userProfileScreenFragment$fuzzyCoordinate? fuzzyCoordinate,
     String? $__typename,
   });
@@ -238,6 +253,7 @@ class _CopyWithImpl$Fragment$userProfileScreenFragment<TRes>
     Object? isFriend = _undefined,
     Object? isMuted = _undefined,
     Object? isBlocked = _undefined,
+    Object? distanceKm = _undefined,
     Object? fuzzyCoordinate = _undefined,
     Object? $__typename = _undefined,
   }) =>
@@ -265,6 +281,9 @@ class _CopyWithImpl$Fragment$userProfileScreenFragment<TRes>
         isBlocked: isBlocked == _undefined || isBlocked == null
             ? _instance.isBlocked
             : (isBlocked as bool),
+        distanceKm: distanceKm == _undefined
+            ? _instance.distanceKm
+            : (distanceKm as int?),
         fuzzyCoordinate: fuzzyCoordinate == _undefined
             ? _instance.fuzzyCoordinate
             : (fuzzyCoordinate
@@ -299,6 +318,7 @@ class _CopyWithStubImpl$Fragment$userProfileScreenFragment<TRes>
     bool? isFriend,
     bool? isMuted,
     bool? isBlocked,
+    int? distanceKm,
     Fragment$userProfileScreenFragment$fuzzyCoordinate? fuzzyCoordinate,
     String? $__typename,
   }) =>
@@ -369,6 +389,13 @@ const fragmentDefinitionuserProfileScreenFragment = FragmentDefinitionNode(
     ),
     FieldNode(
       name: NameNode(value: 'isBlocked'),
+      alias: null,
+      arguments: [],
+      directives: [],
+      selectionSet: null,
+    ),
+    FieldNode(
+      name: NameNode(value: 'distanceKm'),
       alias: null,
       arguments: [],
       directives: [],

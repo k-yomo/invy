@@ -931,9 +931,9 @@ class Query$userFriendsScreenUserFriends$userFriends$edges$node
     required this.isFriend,
     required this.isMuted,
     required this.isBlocked,
+    this.distanceKm,
     this.fuzzyCoordinate,
     this.$__typename = 'User',
-    this.distanceKm,
   });
 
   factory Query$userFriendsScreenUserFriends$userFriends$edges$node.fromJson(
@@ -946,9 +946,9 @@ class Query$userFriendsScreenUserFriends$userFriends$edges$node
     final l$isFriend = json['isFriend'];
     final l$isMuted = json['isMuted'];
     final l$isBlocked = json['isBlocked'];
+    final l$distanceKm = json['distanceKm'];
     final l$fuzzyCoordinate = json['fuzzyCoordinate'];
     final l$$__typename = json['__typename'];
-    final l$distanceKm = json['distanceKm'];
     return Query$userFriendsScreenUserFriends$userFriends$edges$node(
       id: (l$id as String),
       screenId: (l$screenId as String),
@@ -958,12 +958,12 @@ class Query$userFriendsScreenUserFriends$userFriends$edges$node
       isFriend: (l$isFriend as bool),
       isMuted: (l$isMuted as bool),
       isBlocked: (l$isBlocked as bool),
+      distanceKm: (l$distanceKm as int?),
       fuzzyCoordinate: l$fuzzyCoordinate == null
           ? null
           : Query$userFriendsScreenUserFriends$userFriends$edges$node$fuzzyCoordinate
               .fromJson((l$fuzzyCoordinate as Map<String, dynamic>)),
       $__typename: (l$$__typename as String),
-      distanceKm: (l$distanceKm as int?),
     );
   }
 
@@ -983,12 +983,12 @@ class Query$userFriendsScreenUserFriends$userFriends$edges$node
 
   final bool isBlocked;
 
+  final int? distanceKm;
+
   final Query$userFriendsScreenUserFriends$userFriends$edges$node$fuzzyCoordinate?
       fuzzyCoordinate;
 
   final String $__typename;
-
-  final int? distanceKm;
 
   Map<String, dynamic> toJson() {
     final _resultData = <String, dynamic>{};
@@ -1008,12 +1008,12 @@ class Query$userFriendsScreenUserFriends$userFriends$edges$node
     _resultData['isMuted'] = l$isMuted;
     final l$isBlocked = isBlocked;
     _resultData['isBlocked'] = l$isBlocked;
+    final l$distanceKm = distanceKm;
+    _resultData['distanceKm'] = l$distanceKm;
     final l$fuzzyCoordinate = fuzzyCoordinate;
     _resultData['fuzzyCoordinate'] = l$fuzzyCoordinate?.toJson();
     final l$$__typename = $__typename;
     _resultData['__typename'] = l$$__typename;
-    final l$distanceKm = distanceKm;
-    _resultData['distanceKm'] = l$distanceKm;
     return _resultData;
   }
 
@@ -1027,9 +1027,9 @@ class Query$userFriendsScreenUserFriends$userFriends$edges$node
     final l$isFriend = isFriend;
     final l$isMuted = isMuted;
     final l$isBlocked = isBlocked;
+    final l$distanceKm = distanceKm;
     final l$fuzzyCoordinate = fuzzyCoordinate;
     final l$$__typename = $__typename;
-    final l$distanceKm = distanceKm;
     return Object.hashAll([
       l$id,
       l$screenId,
@@ -1039,9 +1039,9 @@ class Query$userFriendsScreenUserFriends$userFriends$edges$node
       l$isFriend,
       l$isMuted,
       l$isBlocked,
+      l$distanceKm,
       l$fuzzyCoordinate,
       l$$__typename,
-      l$distanceKm,
     ]);
   }
 
@@ -1094,6 +1094,11 @@ class Query$userFriendsScreenUserFriends$userFriends$edges$node
     if (l$isBlocked != lOther$isBlocked) {
       return false;
     }
+    final l$distanceKm = distanceKm;
+    final lOther$distanceKm = other.distanceKm;
+    if (l$distanceKm != lOther$distanceKm) {
+      return false;
+    }
     final l$fuzzyCoordinate = fuzzyCoordinate;
     final lOther$fuzzyCoordinate = other.fuzzyCoordinate;
     if (l$fuzzyCoordinate != lOther$fuzzyCoordinate) {
@@ -1102,11 +1107,6 @@ class Query$userFriendsScreenUserFriends$userFriends$edges$node
     final l$$__typename = $__typename;
     final lOther$$__typename = other.$__typename;
     if (l$$__typename != lOther$$__typename) {
-      return false;
-    }
-    final l$distanceKm = distanceKm;
-    final lOther$distanceKm = other.distanceKm;
-    if (l$distanceKm != lOther$distanceKm) {
       return false;
     }
     return true;
@@ -1145,10 +1145,10 @@ abstract class CopyWith$Query$userFriendsScreenUserFriends$userFriends$edges$nod
     bool? isFriend,
     bool? isMuted,
     bool? isBlocked,
+    int? distanceKm,
     Query$userFriendsScreenUserFriends$userFriends$edges$node$fuzzyCoordinate?
         fuzzyCoordinate,
     String? $__typename,
-    int? distanceKm,
   });
   CopyWith$Query$userFriendsScreenUserFriends$userFriends$edges$node$fuzzyCoordinate<
       TRes> get fuzzyCoordinate;
@@ -1180,9 +1180,9 @@ class _CopyWithImpl$Query$userFriendsScreenUserFriends$userFriends$edges$node<
     Object? isFriend = _undefined,
     Object? isMuted = _undefined,
     Object? isBlocked = _undefined,
+    Object? distanceKm = _undefined,
     Object? fuzzyCoordinate = _undefined,
     Object? $__typename = _undefined,
-    Object? distanceKm = _undefined,
   }) =>
       _then(Query$userFriendsScreenUserFriends$userFriends$edges$node(
         id: id == _undefined || id == null ? _instance.id : (id as String),
@@ -1208,6 +1208,9 @@ class _CopyWithImpl$Query$userFriendsScreenUserFriends$userFriends$edges$node<
         isBlocked: isBlocked == _undefined || isBlocked == null
             ? _instance.isBlocked
             : (isBlocked as bool),
+        distanceKm: distanceKm == _undefined
+            ? _instance.distanceKm
+            : (distanceKm as int?),
         fuzzyCoordinate: fuzzyCoordinate == _undefined
             ? _instance.fuzzyCoordinate
             : (fuzzyCoordinate
@@ -1215,9 +1218,6 @@ class _CopyWithImpl$Query$userFriendsScreenUserFriends$userFriends$edges$node<
         $__typename: $__typename == _undefined || $__typename == null
             ? _instance.$__typename
             : ($__typename as String),
-        distanceKm: distanceKm == _undefined
-            ? _instance.distanceKm
-            : (distanceKm as int?),
       ));
   CopyWith$Query$userFriendsScreenUserFriends$userFriends$edges$node$fuzzyCoordinate<
       TRes> get fuzzyCoordinate {
@@ -1249,10 +1249,10 @@ class _CopyWithStubImpl$Query$userFriendsScreenUserFriends$userFriends$edges$nod
     bool? isFriend,
     bool? isMuted,
     bool? isBlocked,
+    int? distanceKm,
     Query$userFriendsScreenUserFriends$userFriends$edges$node$fuzzyCoordinate?
         fuzzyCoordinate,
     String? $__typename,
-    int? distanceKm,
   }) =>
       _res;
   CopyWith$Query$userFriendsScreenUserFriends$userFriends$edges$node$fuzzyCoordinate<
