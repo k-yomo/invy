@@ -168,6 +168,7 @@ type ComplexityRoot struct {
 		ChatRoomID    func(childComplexity int) int
 		Comment       func(childComplexity int) int
 		Coordinate    func(childComplexity int) int
+		DeniedUsers   func(childComplexity int) int
 		ExpiresAt     func(childComplexity int) int
 		ID            func(childComplexity int) int
 		IsAccepted    func(childComplexity int) int
@@ -349,6 +350,7 @@ type InvitationResolver interface {
 
 	ChatRoom(ctx context.Context, obj *gqlmodel.Invitation) (*gqlmodel.ChatRoom, error)
 	AcceptedUsers(ctx context.Context, obj *gqlmodel.Invitation) ([]*gqlmodel.User, error)
+	DeniedUsers(ctx context.Context, obj *gqlmodel.Invitation) ([]*gqlmodel.User, error)
 	IsAccepted(ctx context.Context, obj *gqlmodel.Invitation) (bool, error)
 }
 type MutationResolver interface {
@@ -747,6 +749,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Invitation.Coordinate(childComplexity), true
+
+	case "Invitation.deniedUsers":
+		if e.complexity.Invitation.DeniedUsers == nil {
+			break
+		}
+
+		return e.complexity.Invitation.DeniedUsers(childComplexity), true
 
 	case "Invitation.expiresAt":
 		if e.complexity.Invitation.ExpiresAt == nil {
@@ -1832,6 +1841,7 @@ type Invitation implements Node {
     chatRoom: ChatRoom @goField(forceResolver: true)
 
     acceptedUsers: [User!]! @goField(forceResolver: true)
+    deniedUsers: [User!]! @goField(forceResolver: true)
     isAccepted: Boolean! @goField(forceResolver: true)
 }
 
@@ -2933,6 +2943,8 @@ func (ec *executionContext) fieldContext_AcceptInvitationPayload_invitation(ctx 
 				return ec.fieldContext_Invitation_chatRoom(ctx, field)
 			case "acceptedUsers":
 				return ec.fieldContext_Invitation_acceptedUsers(ctx, field)
+			case "deniedUsers":
+				return ec.fieldContext_Invitation_deniedUsers(ctx, field)
 			case "isAccepted":
 				return ec.fieldContext_Invitation_isAccepted(ctx, field)
 			}
@@ -3005,6 +3017,8 @@ func (ec *executionContext) fieldContext_ActivateInvitationPayload_invitation(ct
 				return ec.fieldContext_Invitation_chatRoom(ctx, field)
 			case "acceptedUsers":
 				return ec.fieldContext_Invitation_acceptedUsers(ctx, field)
+			case "deniedUsers":
+				return ec.fieldContext_Invitation_deniedUsers(ctx, field)
 			case "isAccepted":
 				return ec.fieldContext_Invitation_isAccepted(ctx, field)
 			}
@@ -3787,6 +3801,8 @@ func (ec *executionContext) fieldContext_CloseInvitationPayload_invitation(ctx c
 				return ec.fieldContext_Invitation_chatRoom(ctx, field)
 			case "acceptedUsers":
 				return ec.fieldContext_Invitation_acceptedUsers(ctx, field)
+			case "deniedUsers":
+				return ec.fieldContext_Invitation_deniedUsers(ctx, field)
 			case "isAccepted":
 				return ec.fieldContext_Invitation_isAccepted(ctx, field)
 			}
@@ -4251,6 +4267,8 @@ func (ec *executionContext) fieldContext_DenyInvitationPayload_invitation(ctx co
 				return ec.fieldContext_Invitation_chatRoom(ctx, field)
 			case "acceptedUsers":
 				return ec.fieldContext_Invitation_acceptedUsers(ctx, field)
+			case "deniedUsers":
+				return ec.fieldContext_Invitation_deniedUsers(ctx, field)
 			case "isAccepted":
 				return ec.fieldContext_Invitation_isAccepted(ctx, field)
 			}
@@ -5399,6 +5417,72 @@ func (ec *executionContext) _Invitation_acceptedUsers(ctx context.Context, field
 }
 
 func (ec *executionContext) fieldContext_Invitation_acceptedUsers(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Invitation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_User_id(ctx, field)
+			case "screenId":
+				return ec.fieldContext_User_screenId(ctx, field)
+			case "nickname":
+				return ec.fieldContext_User_nickname(ctx, field)
+			case "avatarUrl":
+				return ec.fieldContext_User_avatarUrl(ctx, field)
+			case "isMuted":
+				return ec.fieldContext_User_isMuted(ctx, field)
+			case "isBlocked":
+				return ec.fieldContext_User_isBlocked(ctx, field)
+			case "isFriend":
+				return ec.fieldContext_User_isFriend(ctx, field)
+			case "fuzzyCoordinate":
+				return ec.fieldContext_User_fuzzyCoordinate(ctx, field)
+			case "distanceKm":
+				return ec.fieldContext_User_distanceKm(ctx, field)
+			case "isRequestingFriendship":
+				return ec.fieldContext_User_isRequestingFriendship(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Invitation_deniedUsers(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Invitation) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Invitation_deniedUsers(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Invitation().DeniedUsers(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*gqlmodel.User)
+	fc.Result = res
+	return ec.marshalNUser2ᚕᚖgithubᚗcomᚋkᚑyomoᚋinvyᚋinvy_apiᚋgraphᚋgqlmodelᚐUserᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Invitation_deniedUsers(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Invitation",
 		Field:      field,
@@ -8102,6 +8186,8 @@ func (ec *executionContext) fieldContext_Query_invitation(ctx context.Context, f
 				return ec.fieldContext_Invitation_chatRoom(ctx, field)
 			case "acceptedUsers":
 				return ec.fieldContext_Invitation_acceptedUsers(ctx, field)
+			case "deniedUsers":
+				return ec.fieldContext_Invitation_deniedUsers(ctx, field)
 			case "isAccepted":
 				return ec.fieldContext_Invitation_isAccepted(ctx, field)
 			}
@@ -8929,6 +9015,8 @@ func (ec *executionContext) fieldContext_SendInvitationPayload_invitation(ctx co
 				return ec.fieldContext_Invitation_chatRoom(ctx, field)
 			case "acceptedUsers":
 				return ec.fieldContext_Invitation_acceptedUsers(ctx, field)
+			case "deniedUsers":
+				return ec.fieldContext_Invitation_deniedUsers(ctx, field)
 			case "isAccepted":
 				return ec.fieldContext_Invitation_isAccepted(ctx, field)
 			}
@@ -10876,6 +10964,8 @@ func (ec *executionContext) fieldContext_Viewer_sentInvitations(ctx context.Cont
 				return ec.fieldContext_Invitation_chatRoom(ctx, field)
 			case "acceptedUsers":
 				return ec.fieldContext_Invitation_acceptedUsers(ctx, field)
+			case "deniedUsers":
+				return ec.fieldContext_Invitation_deniedUsers(ctx, field)
 			case "isAccepted":
 				return ec.fieldContext_Invitation_isAccepted(ctx, field)
 			}
@@ -10948,6 +11038,8 @@ func (ec *executionContext) fieldContext_Viewer_pendingInvitations(ctx context.C
 				return ec.fieldContext_Invitation_chatRoom(ctx, field)
 			case "acceptedUsers":
 				return ec.fieldContext_Invitation_acceptedUsers(ctx, field)
+			case "deniedUsers":
+				return ec.fieldContext_Invitation_deniedUsers(ctx, field)
 			case "isAccepted":
 				return ec.fieldContext_Invitation_isAccepted(ctx, field)
 			}
@@ -11020,6 +11112,8 @@ func (ec *executionContext) fieldContext_Viewer_acceptedInvitations(ctx context.
 				return ec.fieldContext_Invitation_chatRoom(ctx, field)
 			case "acceptedUsers":
 				return ec.fieldContext_Invitation_acceptedUsers(ctx, field)
+			case "deniedUsers":
+				return ec.fieldContext_Invitation_deniedUsers(ctx, field)
 			case "isAccepted":
 				return ec.fieldContext_Invitation_isAccepted(ctx, field)
 			}
@@ -14339,6 +14433,26 @@ func (ec *executionContext) _Invitation(ctx context.Context, sel ast.SelectionSe
 					}
 				}()
 				res = ec._Invitation_acceptedUsers(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return innerFunc(ctx)
+
+			})
+		case "deniedUsers":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Invitation_deniedUsers(ctx, field, obj)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}

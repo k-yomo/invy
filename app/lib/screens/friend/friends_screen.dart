@@ -27,12 +27,12 @@ class FriendsScreen extends HookConsumerWidget {
     final viewerStream = useStream(viewerQuery.stream);
 
     if (viewerStream.connectionState == ConnectionState.waiting) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator.adaptive()));
+      return const Scaffold(
+          body: Center(child: CircularProgressIndicator.adaptive()));
     }
     if (isGraphqlResultError(viewerStream)) {
       return APIQueryErrorMessage(
-          refetch: viewerQuery.refetch,
-          isNetworkError: viewerStream.hasError);
+          refetch: viewerQuery.refetch, isNetworkError: viewerStream.hasError);
     }
 
     final viewer = viewerStream.data?.parsedData?.viewer;
@@ -54,59 +54,59 @@ class FriendsScreen extends HookConsumerWidget {
       ),
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
-              child: Container(
-                margin: const EdgeInsets.symmetric(horizontal: 10),
-                child: Column(
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SubTitle(text: "グループ"),
-                        InkWell(
-                          onTap: () {
-                            const FriendGroupCreateRoute().go(context);
-                          },
-                          child: const _AddFriendGroup(),
-                        ),
-                        FriendGroupList(
-                            friendGroups: viewer?.friendGroups.toList() ?? [])
-                      ],
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SubTitle(text: "友建"),
-                        InkWell(
-                          onTap: () {
-                            const FriendshipRequestRoute().push(context);
-                          },
-                          child: const _AddFriend(),
-                        ),
-                        PendingFriendshipRequestList(
-                          pendingFriendshipRequests:
-                              viewer?.pendingFriendshipRequests ?? [],
-                          onClick: (String requestId) async {
-                            final result = await viewerQuery.refetch();
-                            if (result?.hasException ?? true) {
-                              return;
-                            }
-                          },
-                        ),
-                        FriendList(
-                          disableScroll: true,
-                          friends: sortedFriends.map((f) => f.node).toList(),
-                          onFriendPressed: (friendUserId) {
-                            UserProfileRoute(
-                              friendUserId,
-                            ).push(context);
-                          },
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+        child: Container(
+          margin: const EdgeInsets.symmetric(horizontal: 10),
+          child: Column(
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SubTitle(text: "グループ"),
+                  InkWell(
+                    onTap: () {
+                      const FriendGroupCreateRoute().go(context);
+                    },
+                    child: const _AddFriendGroup(),
+                  ),
+                  FriendGroupList(
+                      friendGroups: viewer?.friendGroups.toList() ?? [])
+                ],
               ),
-            ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SubTitle(text: "友建"),
+                  InkWell(
+                    onTap: () {
+                      const FriendshipRequestRoute().push(context);
+                    },
+                    child: const _AddFriend(),
+                  ),
+                  PendingFriendshipRequestList(
+                    pendingFriendshipRequests:
+                        viewer?.pendingFriendshipRequests ?? [],
+                    onClick: (String requestId) async {
+                      final result = await viewerQuery.refetch();
+                      if (result?.hasException ?? true) {
+                        return;
+                      }
+                    },
+                  ),
+                  FriendList(
+                    disableScroll: true,
+                    friends: sortedFriends.map((f) => f.node).toList(),
+                    onFriendPressed: (friendUserId) {
+                      UserProfileRoute(
+                        friendUserId,
+                      ).push(context);
+                    },
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

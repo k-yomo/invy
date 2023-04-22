@@ -197,6 +197,7 @@ type Invitation implements Node {
   chatRoomId: UUID
   chatRoom: ChatRoom
   acceptedUsers: [User!]!
+  deniedUsers: [User!]!
   isAccepted: Boolean!
 }
 

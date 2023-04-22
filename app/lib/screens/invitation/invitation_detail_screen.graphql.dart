@@ -293,6 +293,7 @@ const documentNodeQueryinvitationDetail = DocumentNode(definitions: [
   ),
   fragmentDefinitioninvitationDetailFragment,
   fragmentDefinitioninvitationDetailAcceptedUserFragment,
+  fragmentDefinitioninvitationDetailDeniedUserFragment,
 ]);
 Query$invitationDetail _parserFn$Query$invitationDetail(
         Map<String, dynamic> data) =>
@@ -463,6 +464,7 @@ class Query$invitationDetail$invitation
     this.chatRoomId,
     required this.user,
     required this.acceptedUsers,
+    required this.deniedUsers,
     this.$__typename = 'Invitation',
     required this.isAccepted,
   });
@@ -479,6 +481,7 @@ class Query$invitationDetail$invitation
     final l$chatRoomId = json['chatRoomId'];
     final l$user = json['user'];
     final l$acceptedUsers = json['acceptedUsers'];
+    final l$deniedUsers = json['deniedUsers'];
     final l$$__typename = json['__typename'];
     final l$isAccepted = json['isAccepted'];
     return Query$invitationDetail$invitation(
@@ -493,10 +496,14 @@ class Query$invitationDetail$invitation
       startsAt: DateTime.parse((l$startsAt as String)),
       expiresAt: DateTime.parse((l$expiresAt as String)),
       chatRoomId: (l$chatRoomId as String?),
-      user: Fragment$invitationDetailAcceptedUserFragment.fromJson(
+      user: Query$invitationDetail$invitation$user.fromJson(
           (l$user as Map<String, dynamic>)),
       acceptedUsers: (l$acceptedUsers as List<dynamic>)
           .map((e) => Fragment$invitationDetailAcceptedUserFragment.fromJson(
+              (e as Map<String, dynamic>)))
+          .toList(),
+      deniedUsers: (l$deniedUsers as List<dynamic>)
+          .map((e) => Fragment$invitationDetailDeniedUserFragment.fromJson(
               (e as Map<String, dynamic>)))
           .toList(),
       $__typename: (l$$__typename as String),
@@ -520,9 +527,11 @@ class Query$invitationDetail$invitation
 
   final String? chatRoomId;
 
-  final Fragment$invitationDetailAcceptedUserFragment user;
+  final Query$invitationDetail$invitation$user user;
 
   final List<Fragment$invitationDetailAcceptedUserFragment> acceptedUsers;
+
+  final List<Fragment$invitationDetailDeniedUserFragment> deniedUsers;
 
   final String $__typename;
 
@@ -551,6 +560,8 @@ class Query$invitationDetail$invitation
     final l$acceptedUsers = acceptedUsers;
     _resultData['acceptedUsers'] =
         l$acceptedUsers.map((e) => e.toJson()).toList();
+    final l$deniedUsers = deniedUsers;
+    _resultData['deniedUsers'] = l$deniedUsers.map((e) => e.toJson()).toList();
     final l$$__typename = $__typename;
     _resultData['__typename'] = l$$__typename;
     final l$isAccepted = isAccepted;
@@ -570,6 +581,7 @@ class Query$invitationDetail$invitation
     final l$chatRoomId = chatRoomId;
     final l$user = user;
     final l$acceptedUsers = acceptedUsers;
+    final l$deniedUsers = deniedUsers;
     final l$$__typename = $__typename;
     final l$isAccepted = isAccepted;
     return Object.hashAll([
@@ -583,6 +595,7 @@ class Query$invitationDetail$invitation
       l$chatRoomId,
       l$user,
       Object.hashAll(l$acceptedUsers.map((v) => v)),
+      Object.hashAll(l$deniedUsers.map((v) => v)),
       l$$__typename,
       l$isAccepted,
     ]);
@@ -654,6 +667,18 @@ class Query$invitationDetail$invitation
         return false;
       }
     }
+    final l$deniedUsers = deniedUsers;
+    final lOther$deniedUsers = other.deniedUsers;
+    if (l$deniedUsers.length != lOther$deniedUsers.length) {
+      return false;
+    }
+    for (int i = 0; i < l$deniedUsers.length; i++) {
+      final l$deniedUsers$entry = l$deniedUsers[i];
+      final lOther$deniedUsers$entry = lOther$deniedUsers[i];
+      if (l$deniedUsers$entry != lOther$deniedUsers$entry) {
+        return false;
+      }
+    }
     final l$$__typename = $__typename;
     final lOther$$__typename = other.$__typename;
     if (l$$__typename != lOther$$__typename) {
@@ -695,18 +720,25 @@ abstract class CopyWith$Query$invitationDetail$invitation<TRes> {
     DateTime? startsAt,
     DateTime? expiresAt,
     String? chatRoomId,
-    Fragment$invitationDetailAcceptedUserFragment? user,
+    Query$invitationDetail$invitation$user? user,
     List<Fragment$invitationDetailAcceptedUserFragment>? acceptedUsers,
+    List<Fragment$invitationDetailDeniedUserFragment>? deniedUsers,
     String? $__typename,
     bool? isAccepted,
   });
   CopyWith$Query$invitationDetail$invitation$coordinate<TRes> get coordinate;
-  CopyWith$Fragment$invitationDetailAcceptedUserFragment<TRes> get user;
+  CopyWith$Query$invitationDetail$invitation$user<TRes> get user;
   TRes acceptedUsers(
       Iterable<Fragment$invitationDetailAcceptedUserFragment> Function(
               Iterable<
                   CopyWith$Fragment$invitationDetailAcceptedUserFragment<
                       Fragment$invitationDetailAcceptedUserFragment>>)
+          _fn);
+  TRes deniedUsers(
+      Iterable<Fragment$invitationDetailDeniedUserFragment> Function(
+              Iterable<
+                  CopyWith$Fragment$invitationDetailDeniedUserFragment<
+                      Fragment$invitationDetailDeniedUserFragment>>)
           _fn);
 }
 
@@ -734,6 +766,7 @@ class _CopyWithImpl$Query$invitationDetail$invitation<TRes>
     Object? chatRoomId = _undefined,
     Object? user = _undefined,
     Object? acceptedUsers = _undefined,
+    Object? deniedUsers = _undefined,
     Object? $__typename = _undefined,
     Object? isAccepted = _undefined,
   }) =>
@@ -762,11 +795,15 @@ class _CopyWithImpl$Query$invitationDetail$invitation<TRes>
             : (chatRoomId as String?),
         user: user == _undefined || user == null
             ? _instance.user
-            : (user as Fragment$invitationDetailAcceptedUserFragment),
+            : (user as Query$invitationDetail$invitation$user),
         acceptedUsers: acceptedUsers == _undefined || acceptedUsers == null
             ? _instance.acceptedUsers
             : (acceptedUsers
                 as List<Fragment$invitationDetailAcceptedUserFragment>),
+        deniedUsers: deniedUsers == _undefined || deniedUsers == null
+            ? _instance.deniedUsers
+            : (deniedUsers
+                as List<Fragment$invitationDetailDeniedUserFragment>),
         $__typename: $__typename == _undefined || $__typename == null
             ? _instance.$__typename
             : ($__typename as String),
@@ -783,9 +820,9 @@ class _CopyWithImpl$Query$invitationDetail$invitation<TRes>
             local$coordinate, (e) => call(coordinate: e));
   }
 
-  CopyWith$Fragment$invitationDetailAcceptedUserFragment<TRes> get user {
+  CopyWith$Query$invitationDetail$invitation$user<TRes> get user {
     final local$user = _instance.user;
-    return CopyWith$Fragment$invitationDetailAcceptedUserFragment(
+    return CopyWith$Query$invitationDetail$invitation$user(
         local$user, (e) => call(user: e));
   }
 
@@ -798,6 +835,18 @@ class _CopyWithImpl$Query$invitationDetail$invitation<TRes>
       call(
           acceptedUsers: _fn(_instance.acceptedUsers.map(
               (e) => CopyWith$Fragment$invitationDetailAcceptedUserFragment(
+                    e,
+                    (i) => i,
+                  ))).toList());
+  TRes deniedUsers(
+          Iterable<Fragment$invitationDetailDeniedUserFragment> Function(
+                  Iterable<
+                      CopyWith$Fragment$invitationDetailDeniedUserFragment<
+                          Fragment$invitationDetailDeniedUserFragment>>)
+              _fn) =>
+      call(
+          deniedUsers: _fn(_instance.deniedUsers
+              .map((e) => CopyWith$Fragment$invitationDetailDeniedUserFragment(
                     e,
                     (i) => i,
                   ))).toList());
@@ -818,17 +867,19 @@ class _CopyWithStubImpl$Query$invitationDetail$invitation<TRes>
     DateTime? startsAt,
     DateTime? expiresAt,
     String? chatRoomId,
-    Fragment$invitationDetailAcceptedUserFragment? user,
+    Query$invitationDetail$invitation$user? user,
     List<Fragment$invitationDetailAcceptedUserFragment>? acceptedUsers,
+    List<Fragment$invitationDetailDeniedUserFragment>? deniedUsers,
     String? $__typename,
     bool? isAccepted,
   }) =>
       _res;
   CopyWith$Query$invitationDetail$invitation$coordinate<TRes> get coordinate =>
       CopyWith$Query$invitationDetail$invitation$coordinate.stub(_res);
-  CopyWith$Fragment$invitationDetailAcceptedUserFragment<TRes> get user =>
-      CopyWith$Fragment$invitationDetailAcceptedUserFragment.stub(_res);
+  CopyWith$Query$invitationDetail$invitation$user<TRes> get user =>
+      CopyWith$Query$invitationDetail$invitation$user.stub(_res);
   acceptedUsers(_fn) => _res;
+  deniedUsers(_fn) => _res;
 }
 
 class Query$invitationDetail$invitation$coordinate
@@ -975,6 +1026,194 @@ class _CopyWithStubImpl$Query$invitationDetail$invitation$coordinate<TRes>
     double? latitude,
     double? longitude,
     String? $__typename,
+  }) =>
+      _res;
+}
+
+class Query$invitationDetail$invitation$user
+    implements
+        Fragment$invitationDetailFragment$user,
+        Fragment$invitationDetailAcceptedUserFragment {
+  Query$invitationDetail$invitation$user({
+    required this.id,
+    required this.nickname,
+    required this.avatarUrl,
+    this.$__typename = 'User',
+    this.distanceKm,
+  });
+
+  factory Query$invitationDetail$invitation$user.fromJson(
+      Map<String, dynamic> json) {
+    final l$id = json['id'];
+    final l$nickname = json['nickname'];
+    final l$avatarUrl = json['avatarUrl'];
+    final l$$__typename = json['__typename'];
+    final l$distanceKm = json['distanceKm'];
+    return Query$invitationDetail$invitation$user(
+      id: (l$id as String),
+      nickname: (l$nickname as String),
+      avatarUrl: (l$avatarUrl as String),
+      $__typename: (l$$__typename as String),
+      distanceKm: (l$distanceKm as int?),
+    );
+  }
+
+  final String id;
+
+  final String nickname;
+
+  final String avatarUrl;
+
+  final String $__typename;
+
+  final int? distanceKm;
+
+  Map<String, dynamic> toJson() {
+    final _resultData = <String, dynamic>{};
+    final l$id = id;
+    _resultData['id'] = l$id;
+    final l$nickname = nickname;
+    _resultData['nickname'] = l$nickname;
+    final l$avatarUrl = avatarUrl;
+    _resultData['avatarUrl'] = l$avatarUrl;
+    final l$$__typename = $__typename;
+    _resultData['__typename'] = l$$__typename;
+    final l$distanceKm = distanceKm;
+    _resultData['distanceKm'] = l$distanceKm;
+    return _resultData;
+  }
+
+  @override
+  int get hashCode {
+    final l$id = id;
+    final l$nickname = nickname;
+    final l$avatarUrl = avatarUrl;
+    final l$$__typename = $__typename;
+    final l$distanceKm = distanceKm;
+    return Object.hashAll([
+      l$id,
+      l$nickname,
+      l$avatarUrl,
+      l$$__typename,
+      l$distanceKm,
+    ]);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    if (!(other is Query$invitationDetail$invitation$user) ||
+        runtimeType != other.runtimeType) {
+      return false;
+    }
+    final l$id = id;
+    final lOther$id = other.id;
+    if (l$id != lOther$id) {
+      return false;
+    }
+    final l$nickname = nickname;
+    final lOther$nickname = other.nickname;
+    if (l$nickname != lOther$nickname) {
+      return false;
+    }
+    final l$avatarUrl = avatarUrl;
+    final lOther$avatarUrl = other.avatarUrl;
+    if (l$avatarUrl != lOther$avatarUrl) {
+      return false;
+    }
+    final l$$__typename = $__typename;
+    final lOther$$__typename = other.$__typename;
+    if (l$$__typename != lOther$$__typename) {
+      return false;
+    }
+    final l$distanceKm = distanceKm;
+    final lOther$distanceKm = other.distanceKm;
+    if (l$distanceKm != lOther$distanceKm) {
+      return false;
+    }
+    return true;
+  }
+}
+
+extension UtilityExtension$Query$invitationDetail$invitation$user
+    on Query$invitationDetail$invitation$user {
+  CopyWith$Query$invitationDetail$invitation$user<
+          Query$invitationDetail$invitation$user>
+      get copyWith => CopyWith$Query$invitationDetail$invitation$user(
+            this,
+            (i) => i,
+          );
+}
+
+abstract class CopyWith$Query$invitationDetail$invitation$user<TRes> {
+  factory CopyWith$Query$invitationDetail$invitation$user(
+    Query$invitationDetail$invitation$user instance,
+    TRes Function(Query$invitationDetail$invitation$user) then,
+  ) = _CopyWithImpl$Query$invitationDetail$invitation$user;
+
+  factory CopyWith$Query$invitationDetail$invitation$user.stub(TRes res) =
+      _CopyWithStubImpl$Query$invitationDetail$invitation$user;
+
+  TRes call({
+    String? id,
+    String? nickname,
+    String? avatarUrl,
+    String? $__typename,
+    int? distanceKm,
+  });
+}
+
+class _CopyWithImpl$Query$invitationDetail$invitation$user<TRes>
+    implements CopyWith$Query$invitationDetail$invitation$user<TRes> {
+  _CopyWithImpl$Query$invitationDetail$invitation$user(
+    this._instance,
+    this._then,
+  );
+
+  final Query$invitationDetail$invitation$user _instance;
+
+  final TRes Function(Query$invitationDetail$invitation$user) _then;
+
+  static const _undefined = <dynamic, dynamic>{};
+
+  TRes call({
+    Object? id = _undefined,
+    Object? nickname = _undefined,
+    Object? avatarUrl = _undefined,
+    Object? $__typename = _undefined,
+    Object? distanceKm = _undefined,
+  }) =>
+      _then(Query$invitationDetail$invitation$user(
+        id: id == _undefined || id == null ? _instance.id : (id as String),
+        nickname: nickname == _undefined || nickname == null
+            ? _instance.nickname
+            : (nickname as String),
+        avatarUrl: avatarUrl == _undefined || avatarUrl == null
+            ? _instance.avatarUrl
+            : (avatarUrl as String),
+        $__typename: $__typename == _undefined || $__typename == null
+            ? _instance.$__typename
+            : ($__typename as String),
+        distanceKm: distanceKm == _undefined
+            ? _instance.distanceKm
+            : (distanceKm as int?),
+      ));
+}
+
+class _CopyWithStubImpl$Query$invitationDetail$invitation$user<TRes>
+    implements CopyWith$Query$invitationDetail$invitation$user<TRes> {
+  _CopyWithStubImpl$Query$invitationDetail$invitation$user(this._res);
+
+  TRes _res;
+
+  call({
+    String? id,
+    String? nickname,
+    String? avatarUrl,
+    String? $__typename,
+    int? distanceKm,
   }) =>
       _res;
 }

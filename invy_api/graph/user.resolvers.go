@@ -266,6 +266,11 @@ func (r *userResolver) FuzzyCoordinate(ctx context.Context, obj *gqlmodel.User) 
 // DistanceKm is the resolver for the distanceKm field.
 func (r *userResolver) DistanceKm(ctx context.Context, obj *gqlmodel.User) (*int, error) {
 	authUserID := auth.GetCurrentUserID(ctx)
+	if obj.ID == authUserID {
+		// Obviously the distance between the user and himself is 0.
+		authUserDistance := 0
+		return &authUserDistance, nil
+	}
 	authUserLocation, err := r.DB.UserLocation.Query().
 		Where(
 			userlocation.UserID(authUserID),

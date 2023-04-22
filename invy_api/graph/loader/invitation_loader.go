@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/k-yomo/invy/invy_api/ent/invitationdenial"
+
 	"github.com/google/uuid"
 	"github.com/graph-gophers/dataloader/v7"
 	"github.com/k-yomo/invy/invy_api/ent"
@@ -27,6 +29,28 @@ func NewInvitationAcceptedUserProfilesLoader(db *ent.Client) func(context.Contex
 		invitationIDProfileMap := map[uuid.UUID]ent.UserProfiles{}
 		for _, ia := range invitationAcceptances {
 			invitationIDProfileMap[ia.InvitationID] = append(invitationIDProfileMap[ia.InvitationID], ia.Edges.User.Edges.UserProfile)
+		}
+		return convertToResults[uuid.UUID, ent.UserProfiles](invitationIDs, invitationIDProfileMap)
+	}
+}
+
+func NewInvitationDeniedUserProfilesLoader(db *ent.Client) func(context.Context, []uuid.UUID) []*dataloader.Result[ent.UserProfiles] {
+	return func(ctx context.Context, invitationIDs []uuid.UUID) []*dataloader.Result[ent.UserProfiles] {
+		if len(invitationIDs) == 0 {
+			return nil
+		}
+		invitationDenials, err := db.InvitationDenial.Query().
+			Where(invitationdenial.InvitationIDIn(invitationIDs...)).
+			WithUser(func(userQuery *ent.UserQuery) {
+				userQuery.WithUserProfile()
+			}).
+			All(ctx)
+		if err != nil {
+			return convertToErrorResults[ent.UserProfiles](fmt.Errorf("load denied user: %w", err), len(invitationIDs))
+		}
+		invitationIDProfileMap := map[uuid.UUID]ent.UserProfiles{}
+		for _, id := range invitationDenials {
+			invitationIDProfileMap[id.InvitationID] = append(invitationIDProfileMap[id.InvitationID], id.Edges.User.Edges.UserProfile)
 		}
 		return convertToResults[uuid.UUID, ent.UserProfiles](invitationIDs, invitationIDProfileMap)
 	}

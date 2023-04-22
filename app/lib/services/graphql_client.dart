@@ -9,13 +9,15 @@ import 'package:invy/util/logger.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 Map<String, String> idFieldsFrom(Map<String, Object> object) {
-  return { "__typename": object['__typename'] as String, "id": object['id'] as String };
+  return {
+    "__typename": object['__typename'] as String,
+    "id": object['id'] as String
+  };
 }
 
 bool isGraphqlResultError<TParsed>(AsyncSnapshot<QueryResult<TParsed>> result) {
   return result.hasError || result.data?.hasException == true;
 }
-
 
 final graphqlClientProvider = Provider<GraphQLClient>((_) {
   throw Exception();

@@ -14,6 +14,7 @@ type Loaders struct {
 	UserMute                       *dataloader.Loader[UserMuteKey, *ent.UserMute]
 	UserBlock                      *dataloader.Loader[UserBlockKey, *ent.UserBlock]
 	InvitationAcceptedUserProfiles *dataloader.Loader[uuid.UUID, ent.UserProfiles]
+	InvitationDeniedUserProfiles   *dataloader.Loader[uuid.UUID, ent.UserProfiles]
 	FriendGeoPoint                 *dataloader.Loader[uuid.UUID, *pgutil.GeoPoint]
 }
 
@@ -41,6 +42,10 @@ func NewLoaders(db *ent.Client) *Loaders {
 		),
 		InvitationAcceptedUserProfiles: dataloader.NewBatchedLoader(
 			NewInvitationAcceptedUserProfilesLoader(db),
+			dataloader.WithCache[uuid.UUID, ent.UserProfiles](&dataloader.NoCache[uuid.UUID, ent.UserProfiles]{}),
+		),
+		InvitationDeniedUserProfiles: dataloader.NewBatchedLoader(
+			NewInvitationDeniedUserProfilesLoader(db),
 			dataloader.WithCache[uuid.UUID, ent.UserProfiles](&dataloader.NoCache[uuid.UUID, ent.UserProfiles]{}),
 		),
 		FriendGeoPoint: dataloader.NewBatchedLoader(

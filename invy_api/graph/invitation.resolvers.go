@@ -58,6 +58,18 @@ func (r *invitationResolver) AcceptedUsers(ctx context.Context, obj *gqlmodel.In
 	return convutil.ConvertToList(dbAcceptedUserProfiles, conv.ConvertFromDBUserProfile), nil
 }
 
+// DeniedUsers is the resolver for the deniedUsers field.
+func (r *invitationResolver) DeniedUsers(ctx context.Context, obj *gqlmodel.Invitation) ([]*gqlmodel.User, error) {
+	dbDeniedUserProfiles, err := loader.Get(ctx).InvitationDeniedUserProfiles.Load(ctx, obj.ID)()
+	if cerrors.Is(err, loader.ErrNotFound) {
+		return nil, nil
+	}
+	if err != nil {
+		return nil, cerrors.Wrap(err, "load invitation denied user profiles")
+	}
+	return convutil.ConvertToList(dbDeniedUserProfiles, conv.ConvertFromDBUserProfile), nil
+}
+
 // IsAccepted is the resolver for the isAccepted field.
 func (r *invitationResolver) IsAccepted(ctx context.Context, obj *gqlmodel.Invitation) (bool, error) {
 	authUserID := auth.GetCurrentUserID(ctx)

@@ -32,6 +32,7 @@ type Invitation implements Node {
     chatRoom: ChatRoom @goField(forceResolver: true)
 
     acceptedUsers: [User!]! @goField(forceResolver: true)
+    deniedUsers: [User!]! @goField(forceResolver: true)
     isAccepted: Boolean! @goField(forceResolver: true)
 }
 

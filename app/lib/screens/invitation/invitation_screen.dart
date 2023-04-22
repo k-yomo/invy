@@ -22,43 +22,41 @@ class InvitationScreen extends HookConsumerWidget {
     final viewerQuery = useMemoized(() =>
         graphqlClient.watchQuery$invitationScreenViewer(
             WatchOptions$Query$invitationScreenViewer(
-              eagerlyFetchResults: true,
-            )));
+          eagerlyFetchResults: true,
+        )));
     viewerQuery.startPolling(const Duration(seconds: 30));
     final viewerStream = useStream(viewerQuery.stream);
 
     if (viewerStream.connectionState == ConnectionState.waiting) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator.adaptive()));
+      return const Scaffold(
+          body: Center(child: CircularProgressIndicator.adaptive()));
     }
     if (isGraphqlResultError(viewerStream)) {
       return APIQueryErrorMessage(
-          refetch: viewerQuery.refetch,
-          isNetworkError: viewerStream.hasError,
+        refetch: viewerQuery.refetch,
+        isNetworkError: viewerStream.hasError,
       );
     }
 
     final viewer = viewerStream.data?.parsedData?.viewer;
     if (viewer == null) {
-      return Scaffold(
-          body: SingleChildScrollView(child: Container()));
+      return Scaffold(body: SingleChildScrollView(child: Container()));
     }
     final answeredInvitations = [
       ...viewer.sentInvitations,
       ...viewer.acceptedInvitations
     ];
-    answeredInvitations
-        .sort((a, b) => a.startsAt.compareTo(b.startsAt));
+    answeredInvitations.sort((a, b) => a.startsAt.compareTo(b.startsAt));
     badgeCounter.setBadgeCount(viewer.pendingInvitations.length);
 
-    final noInvitations = viewer.pendingInvitations.isEmpty &&
-        answeredInvitations.isEmpty;
+    final noInvitations =
+        viewer.pendingInvitations.isEmpty && answeredInvitations.isEmpty;
 
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
         child: Container(
-          margin:
-          const EdgeInsets.only(left: 10, right: 10, bottom: 10),
+          margin: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -72,66 +70,58 @@ class InvitationScreen extends HookConsumerWidget {
                         children: viewer.pendingInvitations.isEmpty
                             ? []
                             : [
-                          const SubTitle(text: "届いているおさそい"),
-                          const Gap(10),
-                          Container(
-                            margin: const EdgeInsets.symmetric(
-                                horizontal: 5),
-                            child: Column(
-                              children: [
-                                ...viewer.pendingInvitations
-                                    .map((invitation) =>
-                                (Container(
+                                const SubTitle(text: "届いているおさそい"),
+                                const Gap(10),
+                                Container(
                                   margin:
-                                  const EdgeInsets
-                                      .symmetric(
-                                      vertical: 5),
-                                  child:
-                                  InvitationListItem(
-                                    invitation:
-                                    invitation,
-                                    onAccepted:
-                                        (invitationId) async {
-                                      final result =
-                                      await graphqlClient
-                                          .mutate$acceptInvitation(
-                                          Options$Mutation$acceptInvitation(
-                                            variables: Variables$Mutation$acceptInvitation(
-                                                invitationId:
-                                                invitationId),
-                                          ));
-                                      if (result
-                                          .parsedData
-                                          ?.acceptInvitation !=
-                                          null) {
-                                        viewerQuery
-                                            .refetch();
-                                      }
-                                    },
-                                    onDenied:
-                                        (invitationId) async {
-                                      final result =
-                                      await graphqlClient
-                                          .mutate$denyInvitation(
-                                          Options$Mutation$denyInvitation(
-                                            variables: Variables$Mutation$denyInvitation(
-                                                invitationId:
-                                                invitationId),
-                                          ));
-                                      if (result
-                                          .parsedData
-                                          ?.denyInvitation !=
-                                          null) {
-                                        viewerQuery
-                                            .refetch();
-                                      }
-                                    },
+                                      const EdgeInsets.symmetric(horizontal: 5),
+                                  child: Column(
+                                    children: [
+                                      ...viewer.pendingInvitations
+                                          .map((invitation) => (Container(
+                                                margin:
+                                                    const EdgeInsets.symmetric(
+                                                        vertical: 5),
+                                                child: InvitationListItem(
+                                                  invitation: invitation,
+                                                  onAccepted:
+                                                      (invitationId) async {
+                                                    final result = await graphqlClient
+                                                        .mutate$acceptInvitation(
+                                                            Options$Mutation$acceptInvitation(
+                                                      variables:
+                                                          Variables$Mutation$acceptInvitation(
+                                                              invitationId:
+                                                                  invitationId),
+                                                    ));
+                                                    if (result.parsedData
+                                                            ?.acceptInvitation !=
+                                                        null) {
+                                                      viewerQuery.refetch();
+                                                    }
+                                                  },
+                                                  onDenied:
+                                                      (invitationId) async {
+                                                    final result = await graphqlClient
+                                                        .mutate$denyInvitation(
+                                                            Options$Mutation$denyInvitation(
+                                                      variables:
+                                                          Variables$Mutation$denyInvitation(
+                                                              invitationId:
+                                                                  invitationId),
+                                                    ));
+                                                    if (result.parsedData
+                                                            ?.denyInvitation !=
+                                                        null) {
+                                                      viewerQuery.refetch();
+                                                    }
+                                                  },
+                                                ),
+                                              )))
+                                    ],
                                   ),
-                                )))
+                                ),
                               ],
-                            ),
-                          ),
-                        ],
                       ),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -140,53 +130,43 @@ class InvitationScreen extends HookConsumerWidget {
                           const SubTitle(text: "おさそい待ち"),
                           const Gap(10),
                           Container(
-                              margin: const EdgeInsets.symmetric(
-                                  horizontal: 5),
-                              child: viewer.sentInvitations
-                                  .isNotEmpty ||
-                                  viewer.acceptedInvitations
-                                      .isNotEmpty
+                              margin: const EdgeInsets.symmetric(horizontal: 5),
+                              child: viewer.sentInvitations.isNotEmpty ||
+                                      viewer.acceptedInvitations.isNotEmpty
                                   ? Column(
-                                children: answeredInvitations
-                                    .map((invitation) =>
-                                (Container(
-                                  margin:
-                                  const EdgeInsets
-                                      .symmetric(
-                                      vertical: 5),
-                                  child:
-                                  InvitationListItem(
-                                    invitation:
-                                    invitation,
-                                    accepted: true,
-                                  ),
-                                )))
-                                    .toList(),
-                              )
+                                      children: answeredInvitations
+                                          .map((invitation) => (Container(
+                                                margin:
+                                                    const EdgeInsets.symmetric(
+                                                        vertical: 5),
+                                                child: InvitationListItem(
+                                                  invitation: invitation,
+                                                  accepted: true,
+                                                ),
+                                              )))
+                                          .toList(),
+                                    )
                                   : const SizedBox())
                         ],
                       ),
                       noInvitations
                           ? Center(
-                        child: Container(
-                          margin: const EdgeInsets.symmetric(
-                              vertical: 30),
-                          child: Column(
-                            mainAxisAlignment:
-                            MainAxisAlignment.center,
-                            children: [
-                              Image.asset(
-                                  'assets/images/cat.png'),
-                              const Gap(15),
-                              const Text("おさそいはありません",
-                                  style: TextStyle(
-                                      fontWeight:
-                                      FontWeight.bold)),
-                              const Gap(15),
-                            ],
-                          ),
-                        ),
-                      )
+                              child: Container(
+                                margin:
+                                    const EdgeInsets.symmetric(vertical: 30),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Image.asset('assets/images/cat.png'),
+                                    const Gap(15),
+                                    const Text("おさそいはありません",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold)),
+                                    const Gap(15),
+                                  ],
+                                ),
+                              ),
+                            )
                           : const SizedBox(),
                     ],
                   ),
@@ -205,8 +185,7 @@ class InvitationScreen extends HookConsumerWidget {
                       color: Colors.grey.withOpacity(0.2),
                       spreadRadius: 5,
                       blurRadius: 5,
-                      offset: const Offset(
-                          0, 3), // changes position of shadow
+                      offset: const Offset(0, 3), // changes position of shadow
                     ),
                   ],
                 ),
@@ -218,16 +197,14 @@ class InvitationScreen extends HookConsumerWidget {
                       },
                       style: TextButton.styleFrom(
                         minimumSize: const Size.fromHeight(0),
-                        padding:
-                        const EdgeInsets.symmetric(vertical: 12),
+                        padding: const EdgeInsets.symmetric(vertical: 12),
                         backgroundColor: Colors.black,
                         foregroundColor: Colors.white,
                       ),
                       child: const Text(
                         'おさそいを待つ',
                         style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold),
+                            fontSize: 16, fontWeight: FontWeight.bold),
                       ),
                     ),
                   ],

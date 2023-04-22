@@ -13,13 +13,23 @@ fragment invitationDetailFragment on Invitation {
     chatRoomId
     user {
         ...invitationDetailAcceptedUserFragment
+        distanceKm
     }
     acceptedUsers {
         ...invitationDetailAcceptedUserFragment
     }
+    deniedUsers {
+        ...invitationDetailDeniedUserFragment
+    }
 }
 
 fragment invitationDetailAcceptedUserFragment on User {
+    id
+    nickname
+    avatarUrl
+}
+
+fragment invitationDetailDeniedUserFragment on User {
     id
     nickname
     avatarUrl

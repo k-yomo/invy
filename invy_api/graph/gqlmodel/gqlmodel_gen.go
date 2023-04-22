@@ -168,6 +168,7 @@ type Invitation struct {
 	ChatRoomID    *uuid.UUID       `json:"chatRoomId,omitempty"`
 	ChatRoom      *ChatRoom        `json:"chatRoom,omitempty"`
 	AcceptedUsers []*User          `json:"acceptedUsers"`
+	DeniedUsers   []*User          `json:"deniedUsers"`
 	IsAccepted    bool             `json:"isAccepted"`
 }
 

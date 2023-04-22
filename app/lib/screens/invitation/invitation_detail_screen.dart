@@ -154,6 +154,12 @@ class InvitationDetailScreen extends HookConsumerWidget {
                                   label: "開催地を表示",
                                 ));
                               }
+                              if (invitation.deniedUsers.isNotEmpty) {
+                                actions.add(const SheetAction(
+                                  key: 'showDeniedUsers',
+                                  label: "参加不可能なユーザー",
+                                ));
+                              }
                               if (isInvitationSentByLoggedInUser) {
                                 final isActive = invitationStatus.value ==
                                     Enum$InvitationStatus.ACTIVE;
@@ -327,7 +333,7 @@ class InvitationDetailScreen extends HookConsumerWidget {
                                       children: [
                                         const Icon(Icons.fmd_good, size: 20),
                                         Text(
-                                          invitation.location,
+                                          invitation.location.isNotEmpty ? invitation.location : (invitation.user.distanceKm != null ? "${invitation.user.distanceKm! > 0 ? "〜" : ""}${invitation.user.distanceKm}km" : ""),
                                           style: const TextStyle(fontSize: 12),
                                           overflow: TextOverflow.ellipsis,
                                         ),
