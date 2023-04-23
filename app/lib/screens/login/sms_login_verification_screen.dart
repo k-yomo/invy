@@ -11,6 +11,7 @@ import 'package:invy/screens/login/sign_up_screen.dart';
 import 'package:invy/services/graphql_client.dart';
 import 'package:invy/state/auth.dart';
 import 'package:invy/state/post_login_redict.dart';
+import 'package:invy/util/logger.dart';
 import 'package:invy/util/toast.dart';
 import 'package:invy/widgets/sub_title.dart';
 import 'package:pinput/pinput.dart';
@@ -71,8 +72,8 @@ class SMSLoginVerificationScreen extends HookConsumerWidget {
       ));
       // TODO: if not found, then make signUp mutation.
       if (viewerQueryResult.hasException) {
-        // TODO: logging and show error
-        print(viewerQueryResult.exception);
+        logger.e(viewerQueryResult.exception);
+        showServerErrorToast();
         return;
       }
       final user = viewerQueryResult.parsedData!.viewer;

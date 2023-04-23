@@ -11,6 +11,7 @@ import 'package:invy/router.dart';
 import 'package:invy/screens/invitation/invitation_detail_screen.graphql.dart';
 import 'package:invy/services/graphql_client.dart';
 import 'package:invy/state/auth.dart';
+import 'package:invy/util/logger.dart';
 import 'package:invy/util/toast.dart';
 import 'package:invy/widgets/chat.dart';
 import 'package:invy/widgets/screen_wrapper.dart';
@@ -266,7 +267,8 @@ class InvitationDetailScreen extends HookConsumerWidget {
                                                   Variables$Mutation$closeInvitation(
                                                       id: invitation.id)));
                                   if (result.hasException) {
-                                    // TODO: error handling
+                                    logger.e(result.exception);
+                                    showServerErrorToast();
                                     return;
                                   }
                                   invitationStatus.value =
@@ -281,7 +283,8 @@ class InvitationDetailScreen extends HookConsumerWidget {
                                                   Variables$Mutation$activateInvitation(
                                                       id: invitation.id)));
                                   if (result.hasException) {
-                                    // TODO: error handling
+                                    logger.e(result.exception);
+                                    showServerErrorToast();
                                     return;
                                   }
                                   invitationStatus.value =
@@ -307,7 +310,8 @@ class InvitationDetailScreen extends HookConsumerWidget {
                                                   Variables$Mutation$deleteInvitation(
                                                       id: invitation.id)));
                                   if (result.hasException) {
-                                    // TODO: error handling
+                                    logger.e(result.exception);
+                                    showServerErrorToast();
                                     return;
                                   }
                                   const MapRoute().go(context);

@@ -120,7 +120,7 @@ class UserProfileScreen extends HookConsumerWidget {
               }));
       if (result.hasException) {
         logger.e(result.exception);
-        showToast("友達申請に失敗しました。時間を置いて再度お試しください。", ToastLevel.error);
+        showServerErrorToast();
         return;
       }
       showToast("${user.nickname}に友達申請を送りました", ToastLevel.info);

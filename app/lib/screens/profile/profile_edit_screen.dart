@@ -12,6 +12,7 @@ import 'package:invy/graphql/schema.graphql.dart';
 import 'package:invy/screens/profile/profile_edit_screen.graphql.dart';
 import 'package:invy/services/graphql_client.dart';
 import 'package:invy/state/auth.dart';
+import 'package:invy/util/logger.dart';
 import 'package:invy/util/permission.dart';
 import 'package:invy/util/toast.dart';
 import 'package:invy/widgets/nickname_edit_form.dart';
@@ -68,8 +69,8 @@ class ProfileEditScreen extends HookConsumerWidget {
       avatarUpdateLoading.value = false;
 
       if (result.hasException) {
-        print(result.exception);
-        // TODO: show error;
+        logger.e(result.exception);
+        showServerErrorToast();
         return;
       }
       ref.read(loggedInUserProvider.notifier).state = user.copyWith(
@@ -86,8 +87,8 @@ class ProfileEditScreen extends HookConsumerWidget {
               variables:
                   Variables$Mutation$updateNickname(nickname: nickname)));
       if (result.hasException) {
-        print(result.exception);
-        showToast("ニックネームの更新に失敗しました。時間を置いて再度お試しください。", ToastLevel.error);
+        logger.e(result.exception);
+        showServerErrorToast();
         return false;
       }
       ref.read(loggedInUserProvider.notifier).update((state) {
@@ -114,7 +115,8 @@ class ProfileEditScreen extends HookConsumerWidget {
             return false;
           }
         }
-        showToast("ユーザーIDの更新に失敗しました。時間を置いて再度お試しください。", ToastLevel.error);
+        logger.e(result.exception);
+        showServerErrorToast();
         return false;
       }
       ref.read(loggedInUserProvider.notifier).update((state) {

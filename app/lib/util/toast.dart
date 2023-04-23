@@ -3,6 +3,10 @@ import 'package:fluttertoast/fluttertoast.dart';
 
 enum ToastLevel { info, success, warning, error }
 
+showServerErrorToast() {
+  showToast("予期せぬエラーが発生しました。時間を置いて再度お試しください。", ToastLevel.error);
+}
+
 showToast(String msg, ToastLevel level) {
   Color backgroundColor;
   Toast toastLength = Toast.LENGTH_SHORT;
@@ -22,7 +26,7 @@ showToast(String msg, ToastLevel level) {
       toastLength = Toast.LENGTH_LONG;
       break;
   }
-  // TODO: Use custom toast to for better design
+  // TODO: Use custom toast for better design
   Fluttertoast.showToast(
     msg: msg,
     gravity: ToastGravity.TOP,

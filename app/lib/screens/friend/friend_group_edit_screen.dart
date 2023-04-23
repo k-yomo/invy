@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:graphql/client.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:invy/util/logger.dart';
+import 'package:invy/util/toast.dart';
 import 'package:invy/widgets/friend_selection_list.dart';
 import 'package:invy/graphql/schema.graphql.dart';
 
@@ -45,8 +47,8 @@ class FriendGroupEditScreen extends HookConsumerWidget {
         ),
       );
       if (result.hasException) {
-        // TODO: show error
-        print(result.exception);
+        logger.e(result.exception);
+        showServerErrorToast();
         return;
       }
       Navigator.of(context).pop();

@@ -8,6 +8,7 @@ import 'package:invy/graphql/version.graphql.dart';
 import 'package:invy/services/graphql_client.dart';
 import 'package:invy/state/device.dart';
 import 'package:invy/state/version.dart';
+import 'package:invy/util/logger.dart';
 import 'package:invy/widgets/require_version_up_dialog.dart';
 import 'package:version/version.dart';
 
@@ -52,7 +53,8 @@ class ScreenWrapper extends HookConsumerWidget {
     FirebaseDynamicLinks.instance.onLink.listen((dynamicLinkData) {
       GoRouter.of(context).push(dynamicLinkData.link.path);
     }).onError((error) {
-      // TODO: Error handling
+      logger.e(error);
+      // TODO: Report to sentry
     });
     return child;
   }

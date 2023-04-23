@@ -14,6 +14,7 @@ import 'package:invy/screens/login/sign_up_screen.graphql.dart';
 import 'package:invy/services/graphql_client.dart';
 import 'package:invy/state/auth.dart';
 import 'package:invy/util/file.dart';
+import 'package:invy/util/logger.dart';
 import 'package:invy/util/permission.dart';
 import 'package:invy/util/toast.dart';
 import 'package:invy/widgets/app_bar_leading.dart';
@@ -56,7 +57,8 @@ class SignUpScreen extends HookConsumerWidget {
       isLoading.value = false;
 
       if (res.hasException) {
-        showToast("プロフィールの登録に失敗しました。時間を置いて再度お試しください。", ToastLevel.error);
+        logger.e(res.exception);
+        showServerErrorToast();
         return;
       }
       // Refresh id token to get new token containing user id in claims.

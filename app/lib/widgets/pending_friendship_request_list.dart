@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:invy/util/logger.dart';
+import 'package:invy/util/toast.dart';
 import 'package:invy/widgets/pending_friendship_request_list_fragment.graphql.dart';
 import 'package:invy/screens/friend/friends_screen.graphql.dart';
 
@@ -29,7 +31,8 @@ class PendingFriendshipRequestList extends HookConsumerWidget {
         ),
       );
       if (result.hasException) {
-        // TODO: show error;
+        logger.e(result.exception);
+        showServerErrorToast();
         return;
       }
       onClick(requestId);
@@ -43,8 +46,8 @@ class PendingFriendshipRequestList extends HookConsumerWidget {
         ),
       );
       if (result.hasException) {
-        // TODO: show error;
-        print(result.exception);
+        logger.e(result.exception);
+        showToast("承認に失敗しました。時間を置いて再度お試しください。", ToastLevel.error);
         return;
       }
       onClick(requestId);

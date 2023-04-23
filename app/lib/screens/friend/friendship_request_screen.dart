@@ -8,6 +8,8 @@ import 'package:invy/router.dart';
 import 'package:invy/screens/friend/friend_qr_code_reader_screen.dart';
 import 'package:invy/screens/friend/friendship_request_screen.graphql.dart';
 import 'package:invy/services/graphql_client.dart';
+import 'package:invy/util/logger.dart';
+import 'package:invy/util/toast.dart';
 import 'package:invy/widgets/screen_wrapper.dart';
 
 import '../../widgets/app_bar_leading.dart';
@@ -123,7 +125,8 @@ class _FriendSearchResult extends HookConsumerWidget {
           Options$Mutation$requestFriendship(
               variables: Variables$Mutation$requestFriendship(userId: userId)));
       if (result.hasException) {
-        // TODO: show error
+        logger.e(result.exception);
+        showServerErrorToast();
         return;
       }
       foundUser.value = foundUser.value!.copyWith(isRequestingFriendship: true);
