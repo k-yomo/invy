@@ -282,7 +282,7 @@ class UserProfileScreen extends HookConsumerWidget {
                 user.isFriend && user.fuzzyCoordinate != null
                     ? Container(
                         margin: const EdgeInsets.symmetric(horizontal: 60),
-                        child: TextButton(
+                        child: OutlinedButton(
                           onPressed: () {
                             ref
                                     .read(currentPinLocationProvider.notifier)
@@ -291,13 +291,9 @@ class UserProfileScreen extends HookConsumerWidget {
                                     user.fuzzyCoordinate!.longitude);
                             const MapRoute().go(context);
                           },
-                          style: TextButton.styleFrom(
+                          style: OutlinedButton.styleFrom(
                             minimumSize: const Size.fromHeight(0),
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 5, horizontal: 5),
-                            shape: const RoundedRectangleBorder(
-                              borderRadius: BorderRadius.zero,
-                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 12),
                           ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
