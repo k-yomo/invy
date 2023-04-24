@@ -20,9 +20,7 @@ query friendGroupCreateScreenViewer {
 mutation createFriendGroup($input: CreateFriendGroupInput!) {
     createFriendGroup(input: $input) {
         friendGroup {
-            id
-            name
-            totalCount
+            ...friendGroupListItemFragment
         }
     }
 }

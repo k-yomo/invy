@@ -1,4 +1,5 @@
 import '../../graphql/schema.graphql.dart';
+import '../../widgets/friend_group_fragment.graphql.dart';
 import '../../widgets/friend_list_item_fragment.graphql.dart';
 import 'dart:async';
 import 'package:flutter/widgets.dart' as widgets;
@@ -1691,26 +1692,9 @@ const documentNodeMutationupdateFriendGroup = DocumentNode(definitions: [
             arguments: [],
             directives: [],
             selectionSet: SelectionSetNode(selections: [
-              FieldNode(
-                name: NameNode(value: 'id'),
-                alias: null,
-                arguments: [],
+              FragmentSpreadNode(
+                name: NameNode(value: 'friendGroupListItemFragment'),
                 directives: [],
-                selectionSet: null,
-              ),
-              FieldNode(
-                name: NameNode(value: 'name'),
-                alias: null,
-                arguments: [],
-                directives: [],
-                selectionSet: null,
-              ),
-              FieldNode(
-                name: NameNode(value: 'totalCount'),
-                alias: null,
-                arguments: [],
-                directives: [],
-                selectionSet: null,
               ),
               FieldNode(
                 name: NameNode(value: 'friendUsers'),
@@ -1758,6 +1742,7 @@ const documentNodeMutationupdateFriendGroup = DocumentNode(definitions: [
       ),
     ]),
   ),
+  fragmentDefinitionfriendGroupListItemFragment,
   fragmentDefinitionfriendListItemFragment,
 ]);
 Mutation$updateFriendGroup _parserFn$Mutation$updateFriendGroup(
@@ -2118,13 +2103,14 @@ class _CopyWithStubImpl$Mutation$updateFriendGroup$updateFriendGroup<TRes>
               .stub(_res);
 }
 
-class Mutation$updateFriendGroup$updateFriendGroup$friendGroup {
+class Mutation$updateFriendGroup$updateFriendGroup$friendGroup
+    implements Fragment$friendGroupListItemFragment {
   Mutation$updateFriendGroup$updateFriendGroup$friendGroup({
     required this.id,
     required this.name,
     required this.totalCount,
-    required this.friendUsers,
     this.$__typename = 'FriendGroup',
+    required this.friendUsers,
   });
 
   factory Mutation$updateFriendGroup$updateFriendGroup$friendGroup.fromJson(
@@ -2132,17 +2118,17 @@ class Mutation$updateFriendGroup$updateFriendGroup$friendGroup {
     final l$id = json['id'];
     final l$name = json['name'];
     final l$totalCount = json['totalCount'];
-    final l$friendUsers = json['friendUsers'];
     final l$$__typename = json['__typename'];
+    final l$friendUsers = json['friendUsers'];
     return Mutation$updateFriendGroup$updateFriendGroup$friendGroup(
       id: (l$id as String),
       name: (l$name as String),
       totalCount: (l$totalCount as int),
+      $__typename: (l$$__typename as String),
       friendUsers: (l$friendUsers as List<dynamic>)
           .map((e) => Fragment$friendListItemFragment.fromJson(
               (e as Map<String, dynamic>)))
           .toList(),
-      $__typename: (l$$__typename as String),
     );
   }
 
@@ -2152,9 +2138,9 @@ class Mutation$updateFriendGroup$updateFriendGroup$friendGroup {
 
   final int totalCount;
 
-  final List<Fragment$friendListItemFragment> friendUsers;
-
   final String $__typename;
+
+  final List<Fragment$friendListItemFragment> friendUsers;
 
   Map<String, dynamic> toJson() {
     final _resultData = <String, dynamic>{};
@@ -2164,10 +2150,10 @@ class Mutation$updateFriendGroup$updateFriendGroup$friendGroup {
     _resultData['name'] = l$name;
     final l$totalCount = totalCount;
     _resultData['totalCount'] = l$totalCount;
-    final l$friendUsers = friendUsers;
-    _resultData['friendUsers'] = l$friendUsers.map((e) => e.toJson()).toList();
     final l$$__typename = $__typename;
     _resultData['__typename'] = l$$__typename;
+    final l$friendUsers = friendUsers;
+    _resultData['friendUsers'] = l$friendUsers.map((e) => e.toJson()).toList();
     return _resultData;
   }
 
@@ -2176,14 +2162,14 @@ class Mutation$updateFriendGroup$updateFriendGroup$friendGroup {
     final l$id = id;
     final l$name = name;
     final l$totalCount = totalCount;
-    final l$friendUsers = friendUsers;
     final l$$__typename = $__typename;
+    final l$friendUsers = friendUsers;
     return Object.hashAll([
       l$id,
       l$name,
       l$totalCount,
-      Object.hashAll(l$friendUsers.map((v) => v)),
       l$$__typename,
+      Object.hashAll(l$friendUsers.map((v) => v)),
     ]);
   }
 
@@ -2211,6 +2197,11 @@ class Mutation$updateFriendGroup$updateFriendGroup$friendGroup {
     if (l$totalCount != lOther$totalCount) {
       return false;
     }
+    final l$$__typename = $__typename;
+    final lOther$$__typename = other.$__typename;
+    if (l$$__typename != lOther$$__typename) {
+      return false;
+    }
     final l$friendUsers = friendUsers;
     final lOther$friendUsers = other.friendUsers;
     if (l$friendUsers.length != lOther$friendUsers.length) {
@@ -2222,11 +2213,6 @@ class Mutation$updateFriendGroup$updateFriendGroup$friendGroup {
       if (l$friendUsers$entry != lOther$friendUsers$entry) {
         return false;
       }
-    }
-    final l$$__typename = $__typename;
-    final lOther$$__typename = other.$__typename;
-    if (l$$__typename != lOther$$__typename) {
-      return false;
     }
     return true;
   }
@@ -2259,8 +2245,8 @@ abstract class CopyWith$Mutation$updateFriendGroup$updateFriendGroup$friendGroup
     String? id,
     String? name,
     int? totalCount,
-    List<Fragment$friendListItemFragment>? friendUsers,
     String? $__typename,
+    List<Fragment$friendListItemFragment>? friendUsers,
   });
   TRes friendUsers(
       Iterable<Fragment$friendListItemFragment> Function(
@@ -2291,8 +2277,8 @@ class _CopyWithImpl$Mutation$updateFriendGroup$updateFriendGroup$friendGroup<
     Object? id = _undefined,
     Object? name = _undefined,
     Object? totalCount = _undefined,
-    Object? friendUsers = _undefined,
     Object? $__typename = _undefined,
+    Object? friendUsers = _undefined,
   }) =>
       _then(Mutation$updateFriendGroup$updateFriendGroup$friendGroup(
         id: id == _undefined || id == null ? _instance.id : (id as String),
@@ -2302,12 +2288,12 @@ class _CopyWithImpl$Mutation$updateFriendGroup$updateFriendGroup$friendGroup<
         totalCount: totalCount == _undefined || totalCount == null
             ? _instance.totalCount
             : (totalCount as int),
-        friendUsers: friendUsers == _undefined || friendUsers == null
-            ? _instance.friendUsers
-            : (friendUsers as List<Fragment$friendListItemFragment>),
         $__typename: $__typename == _undefined || $__typename == null
             ? _instance.$__typename
             : ($__typename as String),
+        friendUsers: friendUsers == _undefined || friendUsers == null
+            ? _instance.friendUsers
+            : (friendUsers as List<Fragment$friendListItemFragment>),
       ));
   TRes friendUsers(
           Iterable<Fragment$friendListItemFragment> Function(
@@ -2337,8 +2323,8 @@ class _CopyWithStubImpl$Mutation$updateFriendGroup$updateFriendGroup$friendGroup
     String? id,
     String? name,
     int? totalCount,
-    List<Fragment$friendListItemFragment>? friendUsers,
     String? $__typename,
+    List<Fragment$friendListItemFragment>? friendUsers,
   }) =>
       _res;
   friendUsers(_fn) => _res;

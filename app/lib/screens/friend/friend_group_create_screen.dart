@@ -3,6 +3,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:graphql/client.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:invy/screens/friend/friends_screen.graphql.dart';
 import 'package:invy/util/logger.dart';
 import 'package:invy/util/toast.dart';
 import 'package:invy/widgets/screen_wrapper.dart';
@@ -38,14 +39,32 @@ class FriendGroupCreateScreen extends HookConsumerWidget {
       }
       final result = await graphqlClient.mutate$createFriendGroup(
         Options$Mutation$createFriendGroup(
-          variables: Variables$Mutation$createFriendGroup(
-            input: Input$CreateFriendGroupInput(
-              name: groupName.value,
-              friendUserIds:
-                  selectedFriends.value.map((friend) => friend.id).toList(),
+            variables: Variables$Mutation$createFriendGroup(
+              input: Input$CreateFriendGroupInput(
+                name: groupName.value,
+                friendUserIds:
+                    selectedFriends.value.map((friend) => friend.id).toList(),
+              ),
             ),
-          ),
-        ),
+            update: (cache, result) {
+              if (result?.parsedData?.createFriendGroup == null) {
+                return;
+              }
+              final friendScreenViewer =
+                  graphqlClient.readQuery$friendsScreenViewer();
+              if (friendScreenViewer == null) {
+                return;
+              }
+              graphqlClient.writeQuery$friendsScreenViewer(
+                data: friendScreenViewer.copyWith(
+                    viewer: friendScreenViewer.viewer.copyWith(
+                  friendGroups: [
+                    ...friendScreenViewer.viewer.friendGroups,
+                    result!.parsedData!.createFriendGroup.friendGroup,
+                  ],
+                )),
+              );
+            }),
       );
       if (result.hasException) {
         logger.e(result.exception);

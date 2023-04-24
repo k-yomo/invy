@@ -8,23 +8,23 @@ import 'package:gql/ast.dart';
 import 'package:graphql/client.dart' as graphql;
 import 'package:graphql_flutter/graphql_flutter.dart' as graphql_flutter;
 
-class Query$friendScreenViewer {
-  Query$friendScreenViewer({
+class Query$friendsScreenViewer {
+  Query$friendsScreenViewer({
     required this.viewer,
     this.$__typename = 'Query',
   });
 
-  factory Query$friendScreenViewer.fromJson(Map<String, dynamic> json) {
+  factory Query$friendsScreenViewer.fromJson(Map<String, dynamic> json) {
     final l$viewer = json['viewer'];
     final l$$__typename = json['__typename'];
-    return Query$friendScreenViewer(
-      viewer: Query$friendScreenViewer$viewer.fromJson(
+    return Query$friendsScreenViewer(
+      viewer: Query$friendsScreenViewer$viewer.fromJson(
           (l$viewer as Map<String, dynamic>)),
       $__typename: (l$$__typename as String),
     );
   }
 
-  final Query$friendScreenViewer$viewer viewer;
+  final Query$friendsScreenViewer$viewer viewer;
 
   final String $__typename;
 
@@ -52,7 +52,7 @@ class Query$friendScreenViewer {
     if (identical(this, other)) {
       return true;
     }
-    if (!(other is Query$friendScreenViewer) ||
+    if (!(other is Query$friendsScreenViewer) ||
         runtimeType != other.runtimeType) {
       return false;
     }
@@ -70,41 +70,41 @@ class Query$friendScreenViewer {
   }
 }
 
-extension UtilityExtension$Query$friendScreenViewer
-    on Query$friendScreenViewer {
-  CopyWith$Query$friendScreenViewer<Query$friendScreenViewer> get copyWith =>
-      CopyWith$Query$friendScreenViewer(
+extension UtilityExtension$Query$friendsScreenViewer
+    on Query$friendsScreenViewer {
+  CopyWith$Query$friendsScreenViewer<Query$friendsScreenViewer> get copyWith =>
+      CopyWith$Query$friendsScreenViewer(
         this,
         (i) => i,
       );
 }
 
-abstract class CopyWith$Query$friendScreenViewer<TRes> {
-  factory CopyWith$Query$friendScreenViewer(
-    Query$friendScreenViewer instance,
-    TRes Function(Query$friendScreenViewer) then,
-  ) = _CopyWithImpl$Query$friendScreenViewer;
+abstract class CopyWith$Query$friendsScreenViewer<TRes> {
+  factory CopyWith$Query$friendsScreenViewer(
+    Query$friendsScreenViewer instance,
+    TRes Function(Query$friendsScreenViewer) then,
+  ) = _CopyWithImpl$Query$friendsScreenViewer;
 
-  factory CopyWith$Query$friendScreenViewer.stub(TRes res) =
-      _CopyWithStubImpl$Query$friendScreenViewer;
+  factory CopyWith$Query$friendsScreenViewer.stub(TRes res) =
+      _CopyWithStubImpl$Query$friendsScreenViewer;
 
   TRes call({
-    Query$friendScreenViewer$viewer? viewer,
+    Query$friendsScreenViewer$viewer? viewer,
     String? $__typename,
   });
-  CopyWith$Query$friendScreenViewer$viewer<TRes> get viewer;
+  CopyWith$Query$friendsScreenViewer$viewer<TRes> get viewer;
 }
 
-class _CopyWithImpl$Query$friendScreenViewer<TRes>
-    implements CopyWith$Query$friendScreenViewer<TRes> {
-  _CopyWithImpl$Query$friendScreenViewer(
+class _CopyWithImpl$Query$friendsScreenViewer<TRes>
+    implements CopyWith$Query$friendsScreenViewer<TRes> {
+  _CopyWithImpl$Query$friendsScreenViewer(
     this._instance,
     this._then,
   );
 
-  final Query$friendScreenViewer _instance;
+  final Query$friendsScreenViewer _instance;
 
-  final TRes Function(Query$friendScreenViewer) _then;
+  final TRes Function(Query$friendsScreenViewer) _then;
 
   static const _undefined = <dynamic, dynamic>{};
 
@@ -112,40 +112,40 @@ class _CopyWithImpl$Query$friendScreenViewer<TRes>
     Object? viewer = _undefined,
     Object? $__typename = _undefined,
   }) =>
-      _then(Query$friendScreenViewer(
+      _then(Query$friendsScreenViewer(
         viewer: viewer == _undefined || viewer == null
             ? _instance.viewer
-            : (viewer as Query$friendScreenViewer$viewer),
+            : (viewer as Query$friendsScreenViewer$viewer),
         $__typename: $__typename == _undefined || $__typename == null
             ? _instance.$__typename
             : ($__typename as String),
       ));
-  CopyWith$Query$friendScreenViewer$viewer<TRes> get viewer {
+  CopyWith$Query$friendsScreenViewer$viewer<TRes> get viewer {
     final local$viewer = _instance.viewer;
-    return CopyWith$Query$friendScreenViewer$viewer(
+    return CopyWith$Query$friendsScreenViewer$viewer(
         local$viewer, (e) => call(viewer: e));
   }
 }
 
-class _CopyWithStubImpl$Query$friendScreenViewer<TRes>
-    implements CopyWith$Query$friendScreenViewer<TRes> {
-  _CopyWithStubImpl$Query$friendScreenViewer(this._res);
+class _CopyWithStubImpl$Query$friendsScreenViewer<TRes>
+    implements CopyWith$Query$friendsScreenViewer<TRes> {
+  _CopyWithStubImpl$Query$friendsScreenViewer(this._res);
 
   TRes _res;
 
   call({
-    Query$friendScreenViewer$viewer? viewer,
+    Query$friendsScreenViewer$viewer? viewer,
     String? $__typename,
   }) =>
       _res;
-  CopyWith$Query$friendScreenViewer$viewer<TRes> get viewer =>
-      CopyWith$Query$friendScreenViewer$viewer.stub(_res);
+  CopyWith$Query$friendsScreenViewer$viewer<TRes> get viewer =>
+      CopyWith$Query$friendsScreenViewer$viewer.stub(_res);
 }
 
-const documentNodeQueryfriendScreenViewer = DocumentNode(definitions: [
+const documentNodeQueryfriendsScreenViewer = DocumentNode(definitions: [
   OperationDefinitionNode(
     type: OperationType.query,
-    name: NameNode(value: 'friendScreenViewer'),
+    name: NameNode(value: 'friendsScreenViewer'),
     variableDefinitions: [],
     directives: [],
     selectionSet: SelectionSetNode(selections: [
@@ -324,26 +324,26 @@ const documentNodeQueryfriendScreenViewer = DocumentNode(definitions: [
   fragmentDefinitionuserProfileScreenFragment,
   fragmentDefinitionpendingFriendRequestItemFragment,
 ]);
-Query$friendScreenViewer _parserFn$Query$friendScreenViewer(
+Query$friendsScreenViewer _parserFn$Query$friendsScreenViewer(
         Map<String, dynamic> data) =>
-    Query$friendScreenViewer.fromJson(data);
-typedef OnQueryComplete$Query$friendScreenViewer = FutureOr<void> Function(
+    Query$friendsScreenViewer.fromJson(data);
+typedef OnQueryComplete$Query$friendsScreenViewer = FutureOr<void> Function(
   Map<String, dynamic>?,
-  Query$friendScreenViewer?,
+  Query$friendsScreenViewer?,
 );
 
-class Options$Query$friendScreenViewer
-    extends graphql.QueryOptions<Query$friendScreenViewer> {
-  Options$Query$friendScreenViewer({
+class Options$Query$friendsScreenViewer
+    extends graphql.QueryOptions<Query$friendsScreenViewer> {
+  Options$Query$friendsScreenViewer({
     String? operationName,
     graphql.FetchPolicy? fetchPolicy,
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
     Object? optimisticResult,
-    Query$friendScreenViewer? typedOptimisticResult,
+    Query$friendsScreenViewer? typedOptimisticResult,
     Duration? pollInterval,
     graphql.Context? context,
-    OnQueryComplete$Query$friendScreenViewer? onComplete,
+    OnQueryComplete$Query$friendsScreenViewer? onComplete,
     graphql.OnQueryError? onError,
   })  : onCompleteWithParsed = onComplete,
         super(
@@ -360,14 +360,14 @@ class Options$Query$friendScreenViewer
                     data,
                     data == null
                         ? null
-                        : _parserFn$Query$friendScreenViewer(data),
+                        : _parserFn$Query$friendsScreenViewer(data),
                   ),
           onError: onError,
-          document: documentNodeQueryfriendScreenViewer,
-          parserFn: _parserFn$Query$friendScreenViewer,
+          document: documentNodeQueryfriendsScreenViewer,
+          parserFn: _parserFn$Query$friendsScreenViewer,
         );
 
-  final OnQueryComplete$Query$friendScreenViewer? onCompleteWithParsed;
+  final OnQueryComplete$Query$friendsScreenViewer? onCompleteWithParsed;
 
   @override
   List<Object?> get properties => [
@@ -378,15 +378,15 @@ class Options$Query$friendScreenViewer
       ];
 }
 
-class WatchOptions$Query$friendScreenViewer
-    extends graphql.WatchQueryOptions<Query$friendScreenViewer> {
-  WatchOptions$Query$friendScreenViewer({
+class WatchOptions$Query$friendsScreenViewer
+    extends graphql.WatchQueryOptions<Query$friendsScreenViewer> {
+  WatchOptions$Query$friendsScreenViewer({
     String? operationName,
     graphql.FetchPolicy? fetchPolicy,
     graphql.ErrorPolicy? errorPolicy,
     graphql.CacheRereadPolicy? cacheRereadPolicy,
     Object? optimisticResult,
-    Query$friendScreenViewer? typedOptimisticResult,
+    Query$friendsScreenViewer? typedOptimisticResult,
     graphql.Context? context,
     Duration? pollInterval,
     bool? eagerlyFetchResults,
@@ -399,81 +399,82 @@ class WatchOptions$Query$friendScreenViewer
           cacheRereadPolicy: cacheRereadPolicy,
           optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
           context: context,
-          document: documentNodeQueryfriendScreenViewer,
+          document: documentNodeQueryfriendsScreenViewer,
           pollInterval: pollInterval,
           eagerlyFetchResults: eagerlyFetchResults,
           carryForwardDataOnException: carryForwardDataOnException,
           fetchResults: fetchResults,
-          parserFn: _parserFn$Query$friendScreenViewer,
+          parserFn: _parserFn$Query$friendsScreenViewer,
         );
 }
 
-class FetchMoreOptions$Query$friendScreenViewer
+class FetchMoreOptions$Query$friendsScreenViewer
     extends graphql.FetchMoreOptions {
-  FetchMoreOptions$Query$friendScreenViewer(
+  FetchMoreOptions$Query$friendsScreenViewer(
       {required graphql.UpdateQuery updateQuery})
       : super(
           updateQuery: updateQuery,
-          document: documentNodeQueryfriendScreenViewer,
+          document: documentNodeQueryfriendsScreenViewer,
         );
 }
 
-extension ClientExtension$Query$friendScreenViewer on graphql.GraphQLClient {
-  Future<graphql.QueryResult<Query$friendScreenViewer>>
-      query$friendScreenViewer(
-              [Options$Query$friendScreenViewer? options]) async =>
-          await this.query(options ?? Options$Query$friendScreenViewer());
-  graphql.ObservableQuery<Query$friendScreenViewer>
-      watchQuery$friendScreenViewer(
-              [WatchOptions$Query$friendScreenViewer? options]) =>
-          this.watchQuery(options ?? WatchOptions$Query$friendScreenViewer());
-  void writeQuery$friendScreenViewer({
-    required Query$friendScreenViewer data,
+extension ClientExtension$Query$friendsScreenViewer on graphql.GraphQLClient {
+  Future<graphql.QueryResult<Query$friendsScreenViewer>>
+      query$friendsScreenViewer(
+              [Options$Query$friendsScreenViewer? options]) async =>
+          await this.query(options ?? Options$Query$friendsScreenViewer());
+  graphql.ObservableQuery<Query$friendsScreenViewer>
+      watchQuery$friendsScreenViewer(
+              [WatchOptions$Query$friendsScreenViewer? options]) =>
+          this.watchQuery(options ?? WatchOptions$Query$friendsScreenViewer());
+  void writeQuery$friendsScreenViewer({
+    required Query$friendsScreenViewer data,
     bool broadcast = true,
   }) =>
       this.writeQuery(
         graphql.Request(
             operation: graphql.Operation(
-                document: documentNodeQueryfriendScreenViewer)),
+                document: documentNodeQueryfriendsScreenViewer)),
         data: data.toJson(),
         broadcast: broadcast,
       );
-  Query$friendScreenViewer? readQuery$friendScreenViewer(
+  Query$friendsScreenViewer? readQuery$friendsScreenViewer(
       {bool optimistic = true}) {
     final result = this.readQuery(
       graphql.Request(
-          operation:
-              graphql.Operation(document: documentNodeQueryfriendScreenViewer)),
+          operation: graphql.Operation(
+              document: documentNodeQueryfriendsScreenViewer)),
       optimistic: optimistic,
     );
-    return result == null ? null : Query$friendScreenViewer.fromJson(result);
+    return result == null ? null : Query$friendsScreenViewer.fromJson(result);
   }
 }
 
-graphql_flutter.QueryHookResult<Query$friendScreenViewer>
-    useQuery$friendScreenViewer([Options$Query$friendScreenViewer? options]) =>
-        graphql_flutter.useQuery(options ?? Options$Query$friendScreenViewer());
-graphql.ObservableQuery<Query$friendScreenViewer>
-    useWatchQuery$friendScreenViewer(
-            [WatchOptions$Query$friendScreenViewer? options]) =>
+graphql_flutter
+    .QueryHookResult<Query$friendsScreenViewer> useQuery$friendsScreenViewer(
+        [Options$Query$friendsScreenViewer? options]) =>
+    graphql_flutter.useQuery(options ?? Options$Query$friendsScreenViewer());
+graphql.ObservableQuery<Query$friendsScreenViewer>
+    useWatchQuery$friendsScreenViewer(
+            [WatchOptions$Query$friendsScreenViewer? options]) =>
         graphql_flutter
-            .useWatchQuery(options ?? WatchOptions$Query$friendScreenViewer());
+            .useWatchQuery(options ?? WatchOptions$Query$friendsScreenViewer());
 
-class Query$friendScreenViewer$Widget
-    extends graphql_flutter.Query<Query$friendScreenViewer> {
-  Query$friendScreenViewer$Widget({
+class Query$friendsScreenViewer$Widget
+    extends graphql_flutter.Query<Query$friendsScreenViewer> {
+  Query$friendsScreenViewer$Widget({
     widgets.Key? key,
-    Options$Query$friendScreenViewer? options,
-    required graphql_flutter.QueryBuilder<Query$friendScreenViewer> builder,
+    Options$Query$friendsScreenViewer? options,
+    required graphql_flutter.QueryBuilder<Query$friendsScreenViewer> builder,
   }) : super(
           key: key,
-          options: options ?? Options$Query$friendScreenViewer(),
+          options: options ?? Options$Query$friendsScreenViewer(),
           builder: builder,
         );
 }
 
-class Query$friendScreenViewer$viewer {
-  Query$friendScreenViewer$viewer({
+class Query$friendsScreenViewer$viewer {
+  Query$friendsScreenViewer$viewer({
     required this.id,
     required this.friendGroups,
     required this.friends,
@@ -481,19 +482,19 @@ class Query$friendScreenViewer$viewer {
     this.$__typename = 'Viewer',
   });
 
-  factory Query$friendScreenViewer$viewer.fromJson(Map<String, dynamic> json) {
+  factory Query$friendsScreenViewer$viewer.fromJson(Map<String, dynamic> json) {
     final l$id = json['id'];
     final l$friendGroups = json['friendGroups'];
     final l$friends = json['friends'];
     final l$pendingFriendshipRequests = json['pendingFriendshipRequests'];
     final l$$__typename = json['__typename'];
-    return Query$friendScreenViewer$viewer(
+    return Query$friendsScreenViewer$viewer(
       id: (l$id as String),
       friendGroups: (l$friendGroups as List<dynamic>)
           .map((e) => Fragment$friendGroupListItemFragment.fromJson(
               (e as Map<String, dynamic>)))
           .toList(),
-      friends: Query$friendScreenViewer$viewer$friends.fromJson(
+      friends: Query$friendsScreenViewer$viewer$friends.fromJson(
           (l$friends as Map<String, dynamic>)),
       pendingFriendshipRequests: (l$pendingFriendshipRequests as List<dynamic>)
           .map((e) => Fragment$pendingFriendRequestItemFragment.fromJson(
@@ -507,7 +508,7 @@ class Query$friendScreenViewer$viewer {
 
   final List<Fragment$friendGroupListItemFragment> friendGroups;
 
-  final Query$friendScreenViewer$viewer$friends friends;
+  final Query$friendsScreenViewer$viewer$friends friends;
 
   final List<Fragment$pendingFriendRequestItemFragment>
       pendingFriendshipRequests;
@@ -552,7 +553,7 @@ class Query$friendScreenViewer$viewer {
     if (identical(this, other)) {
       return true;
     }
-    if (!(other is Query$friendScreenViewer$viewer) ||
+    if (!(other is Query$friendsScreenViewer$viewer) ||
         runtimeType != other.runtimeType) {
       return false;
     }
@@ -602,28 +603,28 @@ class Query$friendScreenViewer$viewer {
   }
 }
 
-extension UtilityExtension$Query$friendScreenViewer$viewer
-    on Query$friendScreenViewer$viewer {
-  CopyWith$Query$friendScreenViewer$viewer<Query$friendScreenViewer$viewer>
-      get copyWith => CopyWith$Query$friendScreenViewer$viewer(
+extension UtilityExtension$Query$friendsScreenViewer$viewer
+    on Query$friendsScreenViewer$viewer {
+  CopyWith$Query$friendsScreenViewer$viewer<Query$friendsScreenViewer$viewer>
+      get copyWith => CopyWith$Query$friendsScreenViewer$viewer(
             this,
             (i) => i,
           );
 }
 
-abstract class CopyWith$Query$friendScreenViewer$viewer<TRes> {
-  factory CopyWith$Query$friendScreenViewer$viewer(
-    Query$friendScreenViewer$viewer instance,
-    TRes Function(Query$friendScreenViewer$viewer) then,
-  ) = _CopyWithImpl$Query$friendScreenViewer$viewer;
+abstract class CopyWith$Query$friendsScreenViewer$viewer<TRes> {
+  factory CopyWith$Query$friendsScreenViewer$viewer(
+    Query$friendsScreenViewer$viewer instance,
+    TRes Function(Query$friendsScreenViewer$viewer) then,
+  ) = _CopyWithImpl$Query$friendsScreenViewer$viewer;
 
-  factory CopyWith$Query$friendScreenViewer$viewer.stub(TRes res) =
-      _CopyWithStubImpl$Query$friendScreenViewer$viewer;
+  factory CopyWith$Query$friendsScreenViewer$viewer.stub(TRes res) =
+      _CopyWithStubImpl$Query$friendsScreenViewer$viewer;
 
   TRes call({
     String? id,
     List<Fragment$friendGroupListItemFragment>? friendGroups,
-    Query$friendScreenViewer$viewer$friends? friends,
+    Query$friendsScreenViewer$viewer$friends? friends,
     List<Fragment$pendingFriendRequestItemFragment>? pendingFriendshipRequests,
     String? $__typename,
   });
@@ -633,7 +634,7 @@ abstract class CopyWith$Query$friendScreenViewer$viewer<TRes> {
                   CopyWith$Fragment$friendGroupListItemFragment<
                       Fragment$friendGroupListItemFragment>>)
           _fn);
-  CopyWith$Query$friendScreenViewer$viewer$friends<TRes> get friends;
+  CopyWith$Query$friendsScreenViewer$viewer$friends<TRes> get friends;
   TRes pendingFriendshipRequests(
       Iterable<Fragment$pendingFriendRequestItemFragment> Function(
               Iterable<
@@ -642,16 +643,16 @@ abstract class CopyWith$Query$friendScreenViewer$viewer<TRes> {
           _fn);
 }
 
-class _CopyWithImpl$Query$friendScreenViewer$viewer<TRes>
-    implements CopyWith$Query$friendScreenViewer$viewer<TRes> {
-  _CopyWithImpl$Query$friendScreenViewer$viewer(
+class _CopyWithImpl$Query$friendsScreenViewer$viewer<TRes>
+    implements CopyWith$Query$friendsScreenViewer$viewer<TRes> {
+  _CopyWithImpl$Query$friendsScreenViewer$viewer(
     this._instance,
     this._then,
   );
 
-  final Query$friendScreenViewer$viewer _instance;
+  final Query$friendsScreenViewer$viewer _instance;
 
-  final TRes Function(Query$friendScreenViewer$viewer) _then;
+  final TRes Function(Query$friendsScreenViewer$viewer) _then;
 
   static const _undefined = <dynamic, dynamic>{};
 
@@ -662,14 +663,14 @@ class _CopyWithImpl$Query$friendScreenViewer$viewer<TRes>
     Object? pendingFriendshipRequests = _undefined,
     Object? $__typename = _undefined,
   }) =>
-      _then(Query$friendScreenViewer$viewer(
+      _then(Query$friendsScreenViewer$viewer(
         id: id == _undefined || id == null ? _instance.id : (id as String),
         friendGroups: friendGroups == _undefined || friendGroups == null
             ? _instance.friendGroups
             : (friendGroups as List<Fragment$friendGroupListItemFragment>),
         friends: friends == _undefined || friends == null
             ? _instance.friends
-            : (friends as Query$friendScreenViewer$viewer$friends),
+            : (friends as Query$friendsScreenViewer$viewer$friends),
         pendingFriendshipRequests: pendingFriendshipRequests == _undefined ||
                 pendingFriendshipRequests == null
             ? _instance.pendingFriendshipRequests
@@ -691,9 +692,9 @@ class _CopyWithImpl$Query$friendScreenViewer$viewer<TRes>
                     e,
                     (i) => i,
                   ))).toList());
-  CopyWith$Query$friendScreenViewer$viewer$friends<TRes> get friends {
+  CopyWith$Query$friendsScreenViewer$viewer$friends<TRes> get friends {
     final local$friends = _instance.friends;
-    return CopyWith$Query$friendScreenViewer$viewer$friends(
+    return CopyWith$Query$friendsScreenViewer$viewer$friends(
         local$friends, (e) => call(friends: e));
   }
 
@@ -711,52 +712,52 @@ class _CopyWithImpl$Query$friendScreenViewer$viewer<TRes>
                   ))).toList());
 }
 
-class _CopyWithStubImpl$Query$friendScreenViewer$viewer<TRes>
-    implements CopyWith$Query$friendScreenViewer$viewer<TRes> {
-  _CopyWithStubImpl$Query$friendScreenViewer$viewer(this._res);
+class _CopyWithStubImpl$Query$friendsScreenViewer$viewer<TRes>
+    implements CopyWith$Query$friendsScreenViewer$viewer<TRes> {
+  _CopyWithStubImpl$Query$friendsScreenViewer$viewer(this._res);
 
   TRes _res;
 
   call({
     String? id,
     List<Fragment$friendGroupListItemFragment>? friendGroups,
-    Query$friendScreenViewer$viewer$friends? friends,
+    Query$friendsScreenViewer$viewer$friends? friends,
     List<Fragment$pendingFriendRequestItemFragment>? pendingFriendshipRequests,
     String? $__typename,
   }) =>
       _res;
   friendGroups(_fn) => _res;
-  CopyWith$Query$friendScreenViewer$viewer$friends<TRes> get friends =>
-      CopyWith$Query$friendScreenViewer$viewer$friends.stub(_res);
+  CopyWith$Query$friendsScreenViewer$viewer$friends<TRes> get friends =>
+      CopyWith$Query$friendsScreenViewer$viewer$friends.stub(_res);
   pendingFriendshipRequests(_fn) => _res;
 }
 
-class Query$friendScreenViewer$viewer$friends {
-  Query$friendScreenViewer$viewer$friends({
+class Query$friendsScreenViewer$viewer$friends {
+  Query$friendsScreenViewer$viewer$friends({
     required this.edges,
     required this.pageInfo,
     this.$__typename = 'UserConnection',
   });
 
-  factory Query$friendScreenViewer$viewer$friends.fromJson(
+  factory Query$friendsScreenViewer$viewer$friends.fromJson(
       Map<String, dynamic> json) {
     final l$edges = json['edges'];
     final l$pageInfo = json['pageInfo'];
     final l$$__typename = json['__typename'];
-    return Query$friendScreenViewer$viewer$friends(
+    return Query$friendsScreenViewer$viewer$friends(
       edges: (l$edges as List<dynamic>)
-          .map((e) => Query$friendScreenViewer$viewer$friends$edges.fromJson(
+          .map((e) => Query$friendsScreenViewer$viewer$friends$edges.fromJson(
               (e as Map<String, dynamic>)))
           .toList(),
-      pageInfo: Query$friendScreenViewer$viewer$friends$pageInfo.fromJson(
+      pageInfo: Query$friendsScreenViewer$viewer$friends$pageInfo.fromJson(
           (l$pageInfo as Map<String, dynamic>)),
       $__typename: (l$$__typename as String),
     );
   }
 
-  final List<Query$friendScreenViewer$viewer$friends$edges> edges;
+  final List<Query$friendsScreenViewer$viewer$friends$edges> edges;
 
-  final Query$friendScreenViewer$viewer$friends$pageInfo pageInfo;
+  final Query$friendsScreenViewer$viewer$friends$pageInfo pageInfo;
 
   final String $__typename;
 
@@ -788,7 +789,7 @@ class Query$friendScreenViewer$viewer$friends {
     if (identical(this, other)) {
       return true;
     }
-    if (!(other is Query$friendScreenViewer$viewer$friends) ||
+    if (!(other is Query$friendsScreenViewer$viewer$friends) ||
         runtimeType != other.runtimeType) {
       return false;
     }
@@ -818,49 +819,49 @@ class Query$friendScreenViewer$viewer$friends {
   }
 }
 
-extension UtilityExtension$Query$friendScreenViewer$viewer$friends
-    on Query$friendScreenViewer$viewer$friends {
-  CopyWith$Query$friendScreenViewer$viewer$friends<
-          Query$friendScreenViewer$viewer$friends>
-      get copyWith => CopyWith$Query$friendScreenViewer$viewer$friends(
+extension UtilityExtension$Query$friendsScreenViewer$viewer$friends
+    on Query$friendsScreenViewer$viewer$friends {
+  CopyWith$Query$friendsScreenViewer$viewer$friends<
+          Query$friendsScreenViewer$viewer$friends>
+      get copyWith => CopyWith$Query$friendsScreenViewer$viewer$friends(
             this,
             (i) => i,
           );
 }
 
-abstract class CopyWith$Query$friendScreenViewer$viewer$friends<TRes> {
-  factory CopyWith$Query$friendScreenViewer$viewer$friends(
-    Query$friendScreenViewer$viewer$friends instance,
-    TRes Function(Query$friendScreenViewer$viewer$friends) then,
-  ) = _CopyWithImpl$Query$friendScreenViewer$viewer$friends;
+abstract class CopyWith$Query$friendsScreenViewer$viewer$friends<TRes> {
+  factory CopyWith$Query$friendsScreenViewer$viewer$friends(
+    Query$friendsScreenViewer$viewer$friends instance,
+    TRes Function(Query$friendsScreenViewer$viewer$friends) then,
+  ) = _CopyWithImpl$Query$friendsScreenViewer$viewer$friends;
 
-  factory CopyWith$Query$friendScreenViewer$viewer$friends.stub(TRes res) =
-      _CopyWithStubImpl$Query$friendScreenViewer$viewer$friends;
+  factory CopyWith$Query$friendsScreenViewer$viewer$friends.stub(TRes res) =
+      _CopyWithStubImpl$Query$friendsScreenViewer$viewer$friends;
 
   TRes call({
-    List<Query$friendScreenViewer$viewer$friends$edges>? edges,
-    Query$friendScreenViewer$viewer$friends$pageInfo? pageInfo,
+    List<Query$friendsScreenViewer$viewer$friends$edges>? edges,
+    Query$friendsScreenViewer$viewer$friends$pageInfo? pageInfo,
     String? $__typename,
   });
   TRes edges(
-      Iterable<Query$friendScreenViewer$viewer$friends$edges> Function(
+      Iterable<Query$friendsScreenViewer$viewer$friends$edges> Function(
               Iterable<
-                  CopyWith$Query$friendScreenViewer$viewer$friends$edges<
-                      Query$friendScreenViewer$viewer$friends$edges>>)
+                  CopyWith$Query$friendsScreenViewer$viewer$friends$edges<
+                      Query$friendsScreenViewer$viewer$friends$edges>>)
           _fn);
-  CopyWith$Query$friendScreenViewer$viewer$friends$pageInfo<TRes> get pageInfo;
+  CopyWith$Query$friendsScreenViewer$viewer$friends$pageInfo<TRes> get pageInfo;
 }
 
-class _CopyWithImpl$Query$friendScreenViewer$viewer$friends<TRes>
-    implements CopyWith$Query$friendScreenViewer$viewer$friends<TRes> {
-  _CopyWithImpl$Query$friendScreenViewer$viewer$friends(
+class _CopyWithImpl$Query$friendsScreenViewer$viewer$friends<TRes>
+    implements CopyWith$Query$friendsScreenViewer$viewer$friends<TRes> {
+  _CopyWithImpl$Query$friendsScreenViewer$viewer$friends(
     this._instance,
     this._then,
   );
 
-  final Query$friendScreenViewer$viewer$friends _instance;
+  final Query$friendsScreenViewer$viewer$friends _instance;
 
-  final TRes Function(Query$friendScreenViewer$viewer$friends) _then;
+  final TRes Function(Query$friendsScreenViewer$viewer$friends) _then;
 
   static const _undefined = <dynamic, dynamic>{};
 
@@ -869,72 +870,73 @@ class _CopyWithImpl$Query$friendScreenViewer$viewer$friends<TRes>
     Object? pageInfo = _undefined,
     Object? $__typename = _undefined,
   }) =>
-      _then(Query$friendScreenViewer$viewer$friends(
+      _then(Query$friendsScreenViewer$viewer$friends(
         edges: edges == _undefined || edges == null
             ? _instance.edges
-            : (edges as List<Query$friendScreenViewer$viewer$friends$edges>),
+            : (edges as List<Query$friendsScreenViewer$viewer$friends$edges>),
         pageInfo: pageInfo == _undefined || pageInfo == null
             ? _instance.pageInfo
-            : (pageInfo as Query$friendScreenViewer$viewer$friends$pageInfo),
+            : (pageInfo as Query$friendsScreenViewer$viewer$friends$pageInfo),
         $__typename: $__typename == _undefined || $__typename == null
             ? _instance.$__typename
             : ($__typename as String),
       ));
   TRes edges(
-          Iterable<Query$friendScreenViewer$viewer$friends$edges> Function(
+          Iterable<Query$friendsScreenViewer$viewer$friends$edges> Function(
                   Iterable<
-                      CopyWith$Query$friendScreenViewer$viewer$friends$edges<
-                          Query$friendScreenViewer$viewer$friends$edges>>)
+                      CopyWith$Query$friendsScreenViewer$viewer$friends$edges<
+                          Query$friendsScreenViewer$viewer$friends$edges>>)
               _fn) =>
       call(
           edges: _fn(_instance.edges.map(
-              (e) => CopyWith$Query$friendScreenViewer$viewer$friends$edges(
+              (e) => CopyWith$Query$friendsScreenViewer$viewer$friends$edges(
                     e,
                     (i) => i,
                   ))).toList());
-  CopyWith$Query$friendScreenViewer$viewer$friends$pageInfo<TRes> get pageInfo {
+  CopyWith$Query$friendsScreenViewer$viewer$friends$pageInfo<TRes>
+      get pageInfo {
     final local$pageInfo = _instance.pageInfo;
-    return CopyWith$Query$friendScreenViewer$viewer$friends$pageInfo(
+    return CopyWith$Query$friendsScreenViewer$viewer$friends$pageInfo(
         local$pageInfo, (e) => call(pageInfo: e));
   }
 }
 
-class _CopyWithStubImpl$Query$friendScreenViewer$viewer$friends<TRes>
-    implements CopyWith$Query$friendScreenViewer$viewer$friends<TRes> {
-  _CopyWithStubImpl$Query$friendScreenViewer$viewer$friends(this._res);
+class _CopyWithStubImpl$Query$friendsScreenViewer$viewer$friends<TRes>
+    implements CopyWith$Query$friendsScreenViewer$viewer$friends<TRes> {
+  _CopyWithStubImpl$Query$friendsScreenViewer$viewer$friends(this._res);
 
   TRes _res;
 
   call({
-    List<Query$friendScreenViewer$viewer$friends$edges>? edges,
-    Query$friendScreenViewer$viewer$friends$pageInfo? pageInfo,
+    List<Query$friendsScreenViewer$viewer$friends$edges>? edges,
+    Query$friendsScreenViewer$viewer$friends$pageInfo? pageInfo,
     String? $__typename,
   }) =>
       _res;
   edges(_fn) => _res;
-  CopyWith$Query$friendScreenViewer$viewer$friends$pageInfo<TRes>
+  CopyWith$Query$friendsScreenViewer$viewer$friends$pageInfo<TRes>
       get pageInfo =>
-          CopyWith$Query$friendScreenViewer$viewer$friends$pageInfo.stub(_res);
+          CopyWith$Query$friendsScreenViewer$viewer$friends$pageInfo.stub(_res);
 }
 
-class Query$friendScreenViewer$viewer$friends$edges {
-  Query$friendScreenViewer$viewer$friends$edges({
+class Query$friendsScreenViewer$viewer$friends$edges {
+  Query$friendsScreenViewer$viewer$friends$edges({
     required this.node,
     this.$__typename = 'UserEdge',
   });
 
-  factory Query$friendScreenViewer$viewer$friends$edges.fromJson(
+  factory Query$friendsScreenViewer$viewer$friends$edges.fromJson(
       Map<String, dynamic> json) {
     final l$node = json['node'];
     final l$$__typename = json['__typename'];
-    return Query$friendScreenViewer$viewer$friends$edges(
-      node: Query$friendScreenViewer$viewer$friends$edges$node.fromJson(
+    return Query$friendsScreenViewer$viewer$friends$edges(
+      node: Query$friendsScreenViewer$viewer$friends$edges$node.fromJson(
           (l$node as Map<String, dynamic>)),
       $__typename: (l$$__typename as String),
     );
   }
 
-  final Query$friendScreenViewer$viewer$friends$edges$node node;
+  final Query$friendsScreenViewer$viewer$friends$edges$node node;
 
   final String $__typename;
 
@@ -962,7 +964,7 @@ class Query$friendScreenViewer$viewer$friends$edges {
     if (identical(this, other)) {
       return true;
     }
-    if (!(other is Query$friendScreenViewer$viewer$friends$edges) ||
+    if (!(other is Query$friendsScreenViewer$viewer$friends$edges) ||
         runtimeType != other.runtimeType) {
       return false;
     }
@@ -980,43 +982,43 @@ class Query$friendScreenViewer$viewer$friends$edges {
   }
 }
 
-extension UtilityExtension$Query$friendScreenViewer$viewer$friends$edges
-    on Query$friendScreenViewer$viewer$friends$edges {
-  CopyWith$Query$friendScreenViewer$viewer$friends$edges<
-          Query$friendScreenViewer$viewer$friends$edges>
-      get copyWith => CopyWith$Query$friendScreenViewer$viewer$friends$edges(
+extension UtilityExtension$Query$friendsScreenViewer$viewer$friends$edges
+    on Query$friendsScreenViewer$viewer$friends$edges {
+  CopyWith$Query$friendsScreenViewer$viewer$friends$edges<
+          Query$friendsScreenViewer$viewer$friends$edges>
+      get copyWith => CopyWith$Query$friendsScreenViewer$viewer$friends$edges(
             this,
             (i) => i,
           );
 }
 
-abstract class CopyWith$Query$friendScreenViewer$viewer$friends$edges<TRes> {
-  factory CopyWith$Query$friendScreenViewer$viewer$friends$edges(
-    Query$friendScreenViewer$viewer$friends$edges instance,
-    TRes Function(Query$friendScreenViewer$viewer$friends$edges) then,
-  ) = _CopyWithImpl$Query$friendScreenViewer$viewer$friends$edges;
+abstract class CopyWith$Query$friendsScreenViewer$viewer$friends$edges<TRes> {
+  factory CopyWith$Query$friendsScreenViewer$viewer$friends$edges(
+    Query$friendsScreenViewer$viewer$friends$edges instance,
+    TRes Function(Query$friendsScreenViewer$viewer$friends$edges) then,
+  ) = _CopyWithImpl$Query$friendsScreenViewer$viewer$friends$edges;
 
-  factory CopyWith$Query$friendScreenViewer$viewer$friends$edges.stub(
+  factory CopyWith$Query$friendsScreenViewer$viewer$friends$edges.stub(
           TRes res) =
-      _CopyWithStubImpl$Query$friendScreenViewer$viewer$friends$edges;
+      _CopyWithStubImpl$Query$friendsScreenViewer$viewer$friends$edges;
 
   TRes call({
-    Query$friendScreenViewer$viewer$friends$edges$node? node,
+    Query$friendsScreenViewer$viewer$friends$edges$node? node,
     String? $__typename,
   });
-  CopyWith$Query$friendScreenViewer$viewer$friends$edges$node<TRes> get node;
+  CopyWith$Query$friendsScreenViewer$viewer$friends$edges$node<TRes> get node;
 }
 
-class _CopyWithImpl$Query$friendScreenViewer$viewer$friends$edges<TRes>
-    implements CopyWith$Query$friendScreenViewer$viewer$friends$edges<TRes> {
-  _CopyWithImpl$Query$friendScreenViewer$viewer$friends$edges(
+class _CopyWithImpl$Query$friendsScreenViewer$viewer$friends$edges<TRes>
+    implements CopyWith$Query$friendsScreenViewer$viewer$friends$edges<TRes> {
+  _CopyWithImpl$Query$friendsScreenViewer$viewer$friends$edges(
     this._instance,
     this._then,
   );
 
-  final Query$friendScreenViewer$viewer$friends$edges _instance;
+  final Query$friendsScreenViewer$viewer$friends$edges _instance;
 
-  final TRes Function(Query$friendScreenViewer$viewer$friends$edges) _then;
+  final TRes Function(Query$friendsScreenViewer$viewer$friends$edges) _then;
 
   static const _undefined = <dynamic, dynamic>{};
 
@@ -1024,41 +1026,41 @@ class _CopyWithImpl$Query$friendScreenViewer$viewer$friends$edges<TRes>
     Object? node = _undefined,
     Object? $__typename = _undefined,
   }) =>
-      _then(Query$friendScreenViewer$viewer$friends$edges(
+      _then(Query$friendsScreenViewer$viewer$friends$edges(
         node: node == _undefined || node == null
             ? _instance.node
-            : (node as Query$friendScreenViewer$viewer$friends$edges$node),
+            : (node as Query$friendsScreenViewer$viewer$friends$edges$node),
         $__typename: $__typename == _undefined || $__typename == null
             ? _instance.$__typename
             : ($__typename as String),
       ));
-  CopyWith$Query$friendScreenViewer$viewer$friends$edges$node<TRes> get node {
+  CopyWith$Query$friendsScreenViewer$viewer$friends$edges$node<TRes> get node {
     final local$node = _instance.node;
-    return CopyWith$Query$friendScreenViewer$viewer$friends$edges$node(
+    return CopyWith$Query$friendsScreenViewer$viewer$friends$edges$node(
         local$node, (e) => call(node: e));
   }
 }
 
-class _CopyWithStubImpl$Query$friendScreenViewer$viewer$friends$edges<TRes>
-    implements CopyWith$Query$friendScreenViewer$viewer$friends$edges<TRes> {
-  _CopyWithStubImpl$Query$friendScreenViewer$viewer$friends$edges(this._res);
+class _CopyWithStubImpl$Query$friendsScreenViewer$viewer$friends$edges<TRes>
+    implements CopyWith$Query$friendsScreenViewer$viewer$friends$edges<TRes> {
+  _CopyWithStubImpl$Query$friendsScreenViewer$viewer$friends$edges(this._res);
 
   TRes _res;
 
   call({
-    Query$friendScreenViewer$viewer$friends$edges$node? node,
+    Query$friendsScreenViewer$viewer$friends$edges$node? node,
     String? $__typename,
   }) =>
       _res;
-  CopyWith$Query$friendScreenViewer$viewer$friends$edges$node<TRes> get node =>
-      CopyWith$Query$friendScreenViewer$viewer$friends$edges$node.stub(_res);
+  CopyWith$Query$friendsScreenViewer$viewer$friends$edges$node<TRes> get node =>
+      CopyWith$Query$friendsScreenViewer$viewer$friends$edges$node.stub(_res);
 }
 
-class Query$friendScreenViewer$viewer$friends$edges$node
+class Query$friendsScreenViewer$viewer$friends$edges$node
     implements
         Fragment$friendListItemFragment,
         Fragment$userProfileScreenFragment {
-  Query$friendScreenViewer$viewer$friends$edges$node({
+  Query$friendsScreenViewer$viewer$friends$edges$node({
     required this.id,
     required this.nickname,
     required this.avatarUrl,
@@ -1072,7 +1074,7 @@ class Query$friendScreenViewer$viewer$friends$edges$node
     this.fuzzyCoordinate,
   });
 
-  factory Query$friendScreenViewer$viewer$friends$edges$node.fromJson(
+  factory Query$friendsScreenViewer$viewer$friends$edges$node.fromJson(
       Map<String, dynamic> json) {
     final l$id = json['id'];
     final l$nickname = json['nickname'];
@@ -1085,7 +1087,7 @@ class Query$friendScreenViewer$viewer$friends$edges$node
     final l$isFriend = json['isFriend'];
     final l$isBlocked = json['isBlocked'];
     final l$fuzzyCoordinate = json['fuzzyCoordinate'];
-    return Query$friendScreenViewer$viewer$friends$edges$node(
+    return Query$friendsScreenViewer$viewer$friends$edges$node(
       id: (l$id as String),
       nickname: (l$nickname as String),
       avatarUrl: (l$avatarUrl as String),
@@ -1098,7 +1100,7 @@ class Query$friendScreenViewer$viewer$friends$edges$node
       isBlocked: (l$isBlocked as bool),
       fuzzyCoordinate: l$fuzzyCoordinate == null
           ? null
-          : Query$friendScreenViewer$viewer$friends$edges$node$fuzzyCoordinate
+          : Query$friendsScreenViewer$viewer$friends$edges$node$fuzzyCoordinate
               .fromJson((l$fuzzyCoordinate as Map<String, dynamic>)),
     );
   }
@@ -1123,7 +1125,7 @@ class Query$friendScreenViewer$viewer$friends$edges$node
 
   final bool isBlocked;
 
-  final Query$friendScreenViewer$viewer$friends$edges$node$fuzzyCoordinate?
+  final Query$friendsScreenViewer$viewer$friends$edges$node$fuzzyCoordinate?
       fuzzyCoordinate;
 
   Map<String, dynamic> toJson() {
@@ -1186,7 +1188,7 @@ class Query$friendScreenViewer$viewer$friends$edges$node
     if (identical(this, other)) {
       return true;
     }
-    if (!(other is Query$friendScreenViewer$viewer$friends$edges$node) ||
+    if (!(other is Query$friendsScreenViewer$viewer$friends$edges$node) ||
         runtimeType != other.runtimeType) {
       return false;
     }
@@ -1249,27 +1251,27 @@ class Query$friendScreenViewer$viewer$friends$edges$node
   }
 }
 
-extension UtilityExtension$Query$friendScreenViewer$viewer$friends$edges$node
-    on Query$friendScreenViewer$viewer$friends$edges$node {
-  CopyWith$Query$friendScreenViewer$viewer$friends$edges$node<
-          Query$friendScreenViewer$viewer$friends$edges$node>
+extension UtilityExtension$Query$friendsScreenViewer$viewer$friends$edges$node
+    on Query$friendsScreenViewer$viewer$friends$edges$node {
+  CopyWith$Query$friendsScreenViewer$viewer$friends$edges$node<
+          Query$friendsScreenViewer$viewer$friends$edges$node>
       get copyWith =>
-          CopyWith$Query$friendScreenViewer$viewer$friends$edges$node(
+          CopyWith$Query$friendsScreenViewer$viewer$friends$edges$node(
             this,
             (i) => i,
           );
 }
 
-abstract class CopyWith$Query$friendScreenViewer$viewer$friends$edges$node<
+abstract class CopyWith$Query$friendsScreenViewer$viewer$friends$edges$node<
     TRes> {
-  factory CopyWith$Query$friendScreenViewer$viewer$friends$edges$node(
-    Query$friendScreenViewer$viewer$friends$edges$node instance,
-    TRes Function(Query$friendScreenViewer$viewer$friends$edges$node) then,
-  ) = _CopyWithImpl$Query$friendScreenViewer$viewer$friends$edges$node;
+  factory CopyWith$Query$friendsScreenViewer$viewer$friends$edges$node(
+    Query$friendsScreenViewer$viewer$friends$edges$node instance,
+    TRes Function(Query$friendsScreenViewer$viewer$friends$edges$node) then,
+  ) = _CopyWithImpl$Query$friendsScreenViewer$viewer$friends$edges$node;
 
-  factory CopyWith$Query$friendScreenViewer$viewer$friends$edges$node.stub(
+  factory CopyWith$Query$friendsScreenViewer$viewer$friends$edges$node.stub(
           TRes res) =
-      _CopyWithStubImpl$Query$friendScreenViewer$viewer$friends$edges$node;
+      _CopyWithStubImpl$Query$friendsScreenViewer$viewer$friends$edges$node;
 
   TRes call({
     String? id,
@@ -1282,24 +1284,25 @@ abstract class CopyWith$Query$friendScreenViewer$viewer$friends$edges$node<
     bool? isRequestingFriendship,
     bool? isFriend,
     bool? isBlocked,
-    Query$friendScreenViewer$viewer$friends$edges$node$fuzzyCoordinate?
+    Query$friendsScreenViewer$viewer$friends$edges$node$fuzzyCoordinate?
         fuzzyCoordinate,
   });
-  CopyWith$Query$friendScreenViewer$viewer$friends$edges$node$fuzzyCoordinate<
+  CopyWith$Query$friendsScreenViewer$viewer$friends$edges$node$fuzzyCoordinate<
       TRes> get fuzzyCoordinate;
 }
 
-class _CopyWithImpl$Query$friendScreenViewer$viewer$friends$edges$node<TRes>
+class _CopyWithImpl$Query$friendsScreenViewer$viewer$friends$edges$node<TRes>
     implements
-        CopyWith$Query$friendScreenViewer$viewer$friends$edges$node<TRes> {
-  _CopyWithImpl$Query$friendScreenViewer$viewer$friends$edges$node(
+        CopyWith$Query$friendsScreenViewer$viewer$friends$edges$node<TRes> {
+  _CopyWithImpl$Query$friendsScreenViewer$viewer$friends$edges$node(
     this._instance,
     this._then,
   );
 
-  final Query$friendScreenViewer$viewer$friends$edges$node _instance;
+  final Query$friendsScreenViewer$viewer$friends$edges$node _instance;
 
-  final TRes Function(Query$friendScreenViewer$viewer$friends$edges$node) _then;
+  final TRes Function(Query$friendsScreenViewer$viewer$friends$edges$node)
+      _then;
 
   static const _undefined = <dynamic, dynamic>{};
 
@@ -1316,7 +1319,7 @@ class _CopyWithImpl$Query$friendScreenViewer$viewer$friends$edges$node<TRes>
     Object? isBlocked = _undefined,
     Object? fuzzyCoordinate = _undefined,
   }) =>
-      _then(Query$friendScreenViewer$viewer$friends$edges$node(
+      _then(Query$friendsScreenViewer$viewer$friends$edges$node(
         id: id == _undefined || id == null ? _instance.id : (id as String),
         nickname: nickname == _undefined || nickname == null
             ? _instance.nickname
@@ -1349,23 +1352,24 @@ class _CopyWithImpl$Query$friendScreenViewer$viewer$friends$edges$node<TRes>
         fuzzyCoordinate: fuzzyCoordinate == _undefined
             ? _instance.fuzzyCoordinate
             : (fuzzyCoordinate
-                as Query$friendScreenViewer$viewer$friends$edges$node$fuzzyCoordinate?),
+                as Query$friendsScreenViewer$viewer$friends$edges$node$fuzzyCoordinate?),
       ));
-  CopyWith$Query$friendScreenViewer$viewer$friends$edges$node$fuzzyCoordinate<
+  CopyWith$Query$friendsScreenViewer$viewer$friends$edges$node$fuzzyCoordinate<
       TRes> get fuzzyCoordinate {
     final local$fuzzyCoordinate = _instance.fuzzyCoordinate;
     return local$fuzzyCoordinate == null
-        ? CopyWith$Query$friendScreenViewer$viewer$friends$edges$node$fuzzyCoordinate
+        ? CopyWith$Query$friendsScreenViewer$viewer$friends$edges$node$fuzzyCoordinate
             .stub(_then(_instance))
-        : CopyWith$Query$friendScreenViewer$viewer$friends$edges$node$fuzzyCoordinate(
+        : CopyWith$Query$friendsScreenViewer$viewer$friends$edges$node$fuzzyCoordinate(
             local$fuzzyCoordinate, (e) => call(fuzzyCoordinate: e));
   }
 }
 
-class _CopyWithStubImpl$Query$friendScreenViewer$viewer$friends$edges$node<TRes>
+class _CopyWithStubImpl$Query$friendsScreenViewer$viewer$friends$edges$node<
+        TRes>
     implements
-        CopyWith$Query$friendScreenViewer$viewer$friends$edges$node<TRes> {
-  _CopyWithStubImpl$Query$friendScreenViewer$viewer$friends$edges$node(
+        CopyWith$Query$friendsScreenViewer$viewer$friends$edges$node<TRes> {
+  _CopyWithStubImpl$Query$friendsScreenViewer$viewer$friends$edges$node(
       this._res);
 
   TRes _res;
@@ -1381,31 +1385,31 @@ class _CopyWithStubImpl$Query$friendScreenViewer$viewer$friends$edges$node<TRes>
     bool? isRequestingFriendship,
     bool? isFriend,
     bool? isBlocked,
-    Query$friendScreenViewer$viewer$friends$edges$node$fuzzyCoordinate?
+    Query$friendsScreenViewer$viewer$friends$edges$node$fuzzyCoordinate?
         fuzzyCoordinate,
   }) =>
       _res;
-  CopyWith$Query$friendScreenViewer$viewer$friends$edges$node$fuzzyCoordinate<
+  CopyWith$Query$friendsScreenViewer$viewer$friends$edges$node$fuzzyCoordinate<
           TRes>
       get fuzzyCoordinate =>
-          CopyWith$Query$friendScreenViewer$viewer$friends$edges$node$fuzzyCoordinate
+          CopyWith$Query$friendsScreenViewer$viewer$friends$edges$node$fuzzyCoordinate
               .stub(_res);
 }
 
-class Query$friendScreenViewer$viewer$friends$edges$node$fuzzyCoordinate
+class Query$friendsScreenViewer$viewer$friends$edges$node$fuzzyCoordinate
     implements Fragment$userProfileScreenFragment$fuzzyCoordinate {
-  Query$friendScreenViewer$viewer$friends$edges$node$fuzzyCoordinate({
+  Query$friendsScreenViewer$viewer$friends$edges$node$fuzzyCoordinate({
     required this.latitude,
     required this.longitude,
     this.$__typename = 'Coordinate',
   });
 
-  factory Query$friendScreenViewer$viewer$friends$edges$node$fuzzyCoordinate.fromJson(
+  factory Query$friendsScreenViewer$viewer$friends$edges$node$fuzzyCoordinate.fromJson(
       Map<String, dynamic> json) {
     final l$latitude = json['latitude'];
     final l$longitude = json['longitude'];
     final l$$__typename = json['__typename'];
-    return Query$friendScreenViewer$viewer$friends$edges$node$fuzzyCoordinate(
+    return Query$friendsScreenViewer$viewer$friends$edges$node$fuzzyCoordinate(
       latitude: (l$latitude as num).toDouble(),
       longitude: (l$longitude as num).toDouble(),
       $__typename: (l$$__typename as String),
@@ -1447,7 +1451,7 @@ class Query$friendScreenViewer$viewer$friends$edges$node$fuzzyCoordinate
       return true;
     }
     if (!(other
-            is Query$friendScreenViewer$viewer$friends$edges$node$fuzzyCoordinate) ||
+            is Query$friendsScreenViewer$viewer$friends$edges$node$fuzzyCoordinate) ||
         runtimeType != other.runtimeType) {
       return false;
     }
@@ -1470,29 +1474,30 @@ class Query$friendScreenViewer$viewer$friends$edges$node$fuzzyCoordinate
   }
 }
 
-extension UtilityExtension$Query$friendScreenViewer$viewer$friends$edges$node$fuzzyCoordinate
-    on Query$friendScreenViewer$viewer$friends$edges$node$fuzzyCoordinate {
-  CopyWith$Query$friendScreenViewer$viewer$friends$edges$node$fuzzyCoordinate<
-          Query$friendScreenViewer$viewer$friends$edges$node$fuzzyCoordinate>
+extension UtilityExtension$Query$friendsScreenViewer$viewer$friends$edges$node$fuzzyCoordinate
+    on Query$friendsScreenViewer$viewer$friends$edges$node$fuzzyCoordinate {
+  CopyWith$Query$friendsScreenViewer$viewer$friends$edges$node$fuzzyCoordinate<
+          Query$friendsScreenViewer$viewer$friends$edges$node$fuzzyCoordinate>
       get copyWith =>
-          CopyWith$Query$friendScreenViewer$viewer$friends$edges$node$fuzzyCoordinate(
+          CopyWith$Query$friendsScreenViewer$viewer$friends$edges$node$fuzzyCoordinate(
             this,
             (i) => i,
           );
 }
 
-abstract class CopyWith$Query$friendScreenViewer$viewer$friends$edges$node$fuzzyCoordinate<
+abstract class CopyWith$Query$friendsScreenViewer$viewer$friends$edges$node$fuzzyCoordinate<
     TRes> {
-  factory CopyWith$Query$friendScreenViewer$viewer$friends$edges$node$fuzzyCoordinate(
-    Query$friendScreenViewer$viewer$friends$edges$node$fuzzyCoordinate instance,
+  factory CopyWith$Query$friendsScreenViewer$viewer$friends$edges$node$fuzzyCoordinate(
+    Query$friendsScreenViewer$viewer$friends$edges$node$fuzzyCoordinate
+        instance,
     TRes Function(
-            Query$friendScreenViewer$viewer$friends$edges$node$fuzzyCoordinate)
+            Query$friendsScreenViewer$viewer$friends$edges$node$fuzzyCoordinate)
         then,
-  ) = _CopyWithImpl$Query$friendScreenViewer$viewer$friends$edges$node$fuzzyCoordinate;
+  ) = _CopyWithImpl$Query$friendsScreenViewer$viewer$friends$edges$node$fuzzyCoordinate;
 
-  factory CopyWith$Query$friendScreenViewer$viewer$friends$edges$node$fuzzyCoordinate.stub(
+  factory CopyWith$Query$friendsScreenViewer$viewer$friends$edges$node$fuzzyCoordinate.stub(
           TRes res) =
-      _CopyWithStubImpl$Query$friendScreenViewer$viewer$friends$edges$node$fuzzyCoordinate;
+      _CopyWithStubImpl$Query$friendsScreenViewer$viewer$friends$edges$node$fuzzyCoordinate;
 
   TRes call({
     double? latitude,
@@ -1501,21 +1506,22 @@ abstract class CopyWith$Query$friendScreenViewer$viewer$friends$edges$node$fuzzy
   });
 }
 
-class _CopyWithImpl$Query$friendScreenViewer$viewer$friends$edges$node$fuzzyCoordinate<
+class _CopyWithImpl$Query$friendsScreenViewer$viewer$friends$edges$node$fuzzyCoordinate<
         TRes>
     implements
-        CopyWith$Query$friendScreenViewer$viewer$friends$edges$node$fuzzyCoordinate<
+        CopyWith$Query$friendsScreenViewer$viewer$friends$edges$node$fuzzyCoordinate<
             TRes> {
-  _CopyWithImpl$Query$friendScreenViewer$viewer$friends$edges$node$fuzzyCoordinate(
+  _CopyWithImpl$Query$friendsScreenViewer$viewer$friends$edges$node$fuzzyCoordinate(
     this._instance,
     this._then,
   );
 
-  final Query$friendScreenViewer$viewer$friends$edges$node$fuzzyCoordinate
+  final Query$friendsScreenViewer$viewer$friends$edges$node$fuzzyCoordinate
       _instance;
 
   final TRes Function(
-      Query$friendScreenViewer$viewer$friends$edges$node$fuzzyCoordinate) _then;
+          Query$friendsScreenViewer$viewer$friends$edges$node$fuzzyCoordinate)
+      _then;
 
   static const _undefined = <dynamic, dynamic>{};
 
@@ -1524,7 +1530,7 @@ class _CopyWithImpl$Query$friendScreenViewer$viewer$friends$edges$node$fuzzyCoor
     Object? longitude = _undefined,
     Object? $__typename = _undefined,
   }) =>
-      _then(Query$friendScreenViewer$viewer$friends$edges$node$fuzzyCoordinate(
+      _then(Query$friendsScreenViewer$viewer$friends$edges$node$fuzzyCoordinate(
         latitude: latitude == _undefined || latitude == null
             ? _instance.latitude
             : (latitude as double),
@@ -1537,12 +1543,12 @@ class _CopyWithImpl$Query$friendScreenViewer$viewer$friends$edges$node$fuzzyCoor
       ));
 }
 
-class _CopyWithStubImpl$Query$friendScreenViewer$viewer$friends$edges$node$fuzzyCoordinate<
+class _CopyWithStubImpl$Query$friendsScreenViewer$viewer$friends$edges$node$fuzzyCoordinate<
         TRes>
     implements
-        CopyWith$Query$friendScreenViewer$viewer$friends$edges$node$fuzzyCoordinate<
+        CopyWith$Query$friendsScreenViewer$viewer$friends$edges$node$fuzzyCoordinate<
             TRes> {
-  _CopyWithStubImpl$Query$friendScreenViewer$viewer$friends$edges$node$fuzzyCoordinate(
+  _CopyWithStubImpl$Query$friendsScreenViewer$viewer$friends$edges$node$fuzzyCoordinate(
       this._res);
 
   TRes _res;
@@ -1555,8 +1561,8 @@ class _CopyWithStubImpl$Query$friendScreenViewer$viewer$friends$edges$node$fuzzy
       _res;
 }
 
-class Query$friendScreenViewer$viewer$friends$pageInfo {
-  Query$friendScreenViewer$viewer$friends$pageInfo({
+class Query$friendsScreenViewer$viewer$friends$pageInfo {
+  Query$friendsScreenViewer$viewer$friends$pageInfo({
     this.startCursor,
     this.endCursor,
     required this.hasNextPage,
@@ -1564,14 +1570,14 @@ class Query$friendScreenViewer$viewer$friends$pageInfo {
     this.$__typename = 'PageInfo',
   });
 
-  factory Query$friendScreenViewer$viewer$friends$pageInfo.fromJson(
+  factory Query$friendsScreenViewer$viewer$friends$pageInfo.fromJson(
       Map<String, dynamic> json) {
     final l$startCursor = json['startCursor'];
     final l$endCursor = json['endCursor'];
     final l$hasNextPage = json['hasNextPage'];
     final l$hasPreviousPage = json['hasPreviousPage'];
     final l$$__typename = json['__typename'];
-    return Query$friendScreenViewer$viewer$friends$pageInfo(
+    return Query$friendsScreenViewer$viewer$friends$pageInfo(
       startCursor: (l$startCursor as String?),
       endCursor: (l$endCursor as String?),
       hasNextPage: (l$hasNextPage as bool),
@@ -1626,7 +1632,7 @@ class Query$friendScreenViewer$viewer$friends$pageInfo {
     if (identical(this, other)) {
       return true;
     }
-    if (!(other is Query$friendScreenViewer$viewer$friends$pageInfo) ||
+    if (!(other is Query$friendsScreenViewer$viewer$friends$pageInfo) ||
         runtimeType != other.runtimeType) {
       return false;
     }
@@ -1659,25 +1665,27 @@ class Query$friendScreenViewer$viewer$friends$pageInfo {
   }
 }
 
-extension UtilityExtension$Query$friendScreenViewer$viewer$friends$pageInfo
-    on Query$friendScreenViewer$viewer$friends$pageInfo {
-  CopyWith$Query$friendScreenViewer$viewer$friends$pageInfo<
-          Query$friendScreenViewer$viewer$friends$pageInfo>
-      get copyWith => CopyWith$Query$friendScreenViewer$viewer$friends$pageInfo(
+extension UtilityExtension$Query$friendsScreenViewer$viewer$friends$pageInfo
+    on Query$friendsScreenViewer$viewer$friends$pageInfo {
+  CopyWith$Query$friendsScreenViewer$viewer$friends$pageInfo<
+          Query$friendsScreenViewer$viewer$friends$pageInfo>
+      get copyWith =>
+          CopyWith$Query$friendsScreenViewer$viewer$friends$pageInfo(
             this,
             (i) => i,
           );
 }
 
-abstract class CopyWith$Query$friendScreenViewer$viewer$friends$pageInfo<TRes> {
-  factory CopyWith$Query$friendScreenViewer$viewer$friends$pageInfo(
-    Query$friendScreenViewer$viewer$friends$pageInfo instance,
-    TRes Function(Query$friendScreenViewer$viewer$friends$pageInfo) then,
-  ) = _CopyWithImpl$Query$friendScreenViewer$viewer$friends$pageInfo;
+abstract class CopyWith$Query$friendsScreenViewer$viewer$friends$pageInfo<
+    TRes> {
+  factory CopyWith$Query$friendsScreenViewer$viewer$friends$pageInfo(
+    Query$friendsScreenViewer$viewer$friends$pageInfo instance,
+    TRes Function(Query$friendsScreenViewer$viewer$friends$pageInfo) then,
+  ) = _CopyWithImpl$Query$friendsScreenViewer$viewer$friends$pageInfo;
 
-  factory CopyWith$Query$friendScreenViewer$viewer$friends$pageInfo.stub(
+  factory CopyWith$Query$friendsScreenViewer$viewer$friends$pageInfo.stub(
           TRes res) =
-      _CopyWithStubImpl$Query$friendScreenViewer$viewer$friends$pageInfo;
+      _CopyWithStubImpl$Query$friendsScreenViewer$viewer$friends$pageInfo;
 
   TRes call({
     String? startCursor,
@@ -1688,16 +1696,17 @@ abstract class CopyWith$Query$friendScreenViewer$viewer$friends$pageInfo<TRes> {
   });
 }
 
-class _CopyWithImpl$Query$friendScreenViewer$viewer$friends$pageInfo<TRes>
-    implements CopyWith$Query$friendScreenViewer$viewer$friends$pageInfo<TRes> {
-  _CopyWithImpl$Query$friendScreenViewer$viewer$friends$pageInfo(
+class _CopyWithImpl$Query$friendsScreenViewer$viewer$friends$pageInfo<TRes>
+    implements
+        CopyWith$Query$friendsScreenViewer$viewer$friends$pageInfo<TRes> {
+  _CopyWithImpl$Query$friendsScreenViewer$viewer$friends$pageInfo(
     this._instance,
     this._then,
   );
 
-  final Query$friendScreenViewer$viewer$friends$pageInfo _instance;
+  final Query$friendsScreenViewer$viewer$friends$pageInfo _instance;
 
-  final TRes Function(Query$friendScreenViewer$viewer$friends$pageInfo) _then;
+  final TRes Function(Query$friendsScreenViewer$viewer$friends$pageInfo) _then;
 
   static const _undefined = <dynamic, dynamic>{};
 
@@ -1708,7 +1717,7 @@ class _CopyWithImpl$Query$friendScreenViewer$viewer$friends$pageInfo<TRes>
     Object? hasPreviousPage = _undefined,
     Object? $__typename = _undefined,
   }) =>
-      _then(Query$friendScreenViewer$viewer$friends$pageInfo(
+      _then(Query$friendsScreenViewer$viewer$friends$pageInfo(
         startCursor: startCursor == _undefined
             ? _instance.startCursor
             : (startCursor as String?),
@@ -1728,9 +1737,11 @@ class _CopyWithImpl$Query$friendScreenViewer$viewer$friends$pageInfo<TRes>
       ));
 }
 
-class _CopyWithStubImpl$Query$friendScreenViewer$viewer$friends$pageInfo<TRes>
-    implements CopyWith$Query$friendScreenViewer$viewer$friends$pageInfo<TRes> {
-  _CopyWithStubImpl$Query$friendScreenViewer$viewer$friends$pageInfo(this._res);
+class _CopyWithStubImpl$Query$friendsScreenViewer$viewer$friends$pageInfo<TRes>
+    implements
+        CopyWith$Query$friendsScreenViewer$viewer$friends$pageInfo<TRes> {
+  _CopyWithStubImpl$Query$friendsScreenViewer$viewer$friends$pageInfo(
+      this._res);
 
   TRes _res;
 

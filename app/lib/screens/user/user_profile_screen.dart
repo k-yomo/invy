@@ -301,7 +301,8 @@ class UserProfileScreen extends HookConsumerWidget {
                               Icon(Icons.fmd_good,
                                   size: 20, color: Colors.grey.shade700),
                               const Gap(3),
-                              Text("〜${user.distanceKm}km",
+                              Text(
+                                "〜${user.distanceKm}km",
                                 style: TextStyle(
                                   fontSize: 12,
                                   color: Colors.grey.shade700,

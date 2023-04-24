@@ -2,14 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:graphql/client.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:invy/graphql/schema.graphql.dart';
 import 'package:invy/util/logger.dart';
 import 'package:invy/util/toast.dart';
+import 'package:invy/widgets/friend_group_fragment.graphql.dart';
 import 'package:invy/widgets/friend_selection_list.dart';
-import 'package:invy/graphql/schema.graphql.dart';
 
+import '../../services/graphql_client.dart';
 import '../../widgets/app_bar_leading.dart';
 import '../../widgets/friend_list_item_fragment.graphql.dart';
-import '../../services/graphql_client.dart';
 import '../friend/friend_group_edit_screen.graphql.dart';
 
 class FriendGroupEditScreen extends HookConsumerWidget {
@@ -36,15 +37,27 @@ class FriendGroupEditScreen extends HookConsumerWidget {
       }
       final result = await graphqlClient.mutate$updateFriendGroup(
         Options$Mutation$updateFriendGroup(
-          variables: Variables$Mutation$updateFriendGroup(
-            input: Input$UpdateFriendGroupInput(
-              id: friendGroup.id,
-              name: groupName.value,
-              friendUserIds:
-                  selectedFriends.value.map((friend) => friend.id).toList(),
+            variables: Variables$Mutation$updateFriendGroup(
+              input: Input$UpdateFriendGroupInput(
+                id: friendGroup.id,
+                name: groupName.value,
+                friendUserIds:
+                    selectedFriends.value.map((friend) => friend.id).toList(),
+              ),
             ),
-          ),
-        ),
+            update: (cache, result) {
+              if (result?.parsedData?.updateFriendGroup == null) {
+                return;
+              }
+              graphqlClient.writeFragment$friendGroupListItemFragment(
+                data: result!.parsedData!.updateFriendGroup.friendGroup,
+                idFields: {
+                  "__typename": fragmentDefinitionfriendGroupListItemFragment
+                      .typeCondition.on.name.value,
+                  "id": friendGroup.id,
+                },
+              );
+            }),
       );
       if (result.hasException) {
         logger.e(result.exception);
@@ -116,15 +129,17 @@ class FriendGroupEditScreen extends HookConsumerWidget {
                         groupName.value = text;
                       },
                     ),
-                    FriendSelectionList(
-                      friends:
-                          viewer?.friends.edges.map((f) => f.node).toList() ??
-                              [],
-                      selectedFriends: selectedFriends.value,
-                      onChange: (list) {
-                        selectedFriends.value = list;
-                        return;
-                      },
+                    Expanded(
+                      child: FriendSelectionList(
+                        friends:
+                            viewer?.friends.edges.map((f) => f.node).toList() ??
+                                [],
+                        selectedFriends: selectedFriends.value,
+                        onChange: (list) {
+                          selectedFriends.value = list;
+                          return;
+                        },
+                      ),
                     )
                   ],
                 ),

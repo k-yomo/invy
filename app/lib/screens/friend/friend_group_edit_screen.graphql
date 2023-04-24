@@ -28,9 +28,7 @@ query friendGroupEditScreenViewer {
 mutation updateFriendGroup($input: UpdateFriendGroupInput!) {
     updateFriendGroup(input: $input) {
         friendGroup {
-            id
-            name
-            totalCount
+            ...friendGroupListItemFragment
             friendUsers {
                 ...friendListItemFragment
             }

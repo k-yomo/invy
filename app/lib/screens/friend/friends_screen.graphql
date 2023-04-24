@@ -1,5 +1,5 @@
 
-query friendScreenViewer {
+query friendsScreenViewer {
     viewer {
         id
         friendGroups {

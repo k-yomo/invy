@@ -1,4 +1,5 @@
 import '../../graphql/schema.graphql.dart';
+import '../../widgets/friend_group_fragment.graphql.dart';
 import '../../widgets/friend_list_item_fragment.graphql.dart';
 import 'dart:async';
 import 'package:flutter/widgets.dart' as widgets;
@@ -1417,26 +1418,9 @@ const documentNodeMutationcreateFriendGroup = DocumentNode(definitions: [
             arguments: [],
             directives: [],
             selectionSet: SelectionSetNode(selections: [
-              FieldNode(
-                name: NameNode(value: 'id'),
-                alias: null,
-                arguments: [],
+              FragmentSpreadNode(
+                name: NameNode(value: 'friendGroupListItemFragment'),
                 directives: [],
-                selectionSet: null,
-              ),
-              FieldNode(
-                name: NameNode(value: 'name'),
-                alias: null,
-                arguments: [],
-                directives: [],
-                selectionSet: null,
-              ),
-              FieldNode(
-                name: NameNode(value: 'totalCount'),
-                alias: null,
-                arguments: [],
-                directives: [],
-                selectionSet: null,
               ),
               FieldNode(
                 name: NameNode(value: '__typename'),
@@ -1465,6 +1449,7 @@ const documentNodeMutationcreateFriendGroup = DocumentNode(definitions: [
       ),
     ]),
   ),
+  fragmentDefinitionfriendGroupListItemFragment,
 ]);
 Mutation$createFriendGroup _parserFn$Mutation$createFriendGroup(
         Map<String, dynamic> data) =>
@@ -1693,14 +1678,13 @@ class Mutation$createFriendGroup$createFriendGroup {
     final l$friendGroup = json['friendGroup'];
     final l$$__typename = json['__typename'];
     return Mutation$createFriendGroup$createFriendGroup(
-      friendGroup:
-          Mutation$createFriendGroup$createFriendGroup$friendGroup.fromJson(
-              (l$friendGroup as Map<String, dynamic>)),
+      friendGroup: Fragment$friendGroupListItemFragment.fromJson(
+          (l$friendGroup as Map<String, dynamic>)),
       $__typename: (l$$__typename as String),
     );
   }
 
-  final Mutation$createFriendGroup$createFriendGroup$friendGroup friendGroup;
+  final Fragment$friendGroupListItemFragment friendGroup;
 
   final String $__typename;
 
@@ -1766,11 +1750,10 @@ abstract class CopyWith$Mutation$createFriendGroup$createFriendGroup<TRes> {
       _CopyWithStubImpl$Mutation$createFriendGroup$createFriendGroup;
 
   TRes call({
-    Mutation$createFriendGroup$createFriendGroup$friendGroup? friendGroup,
+    Fragment$friendGroupListItemFragment? friendGroup,
     String? $__typename,
   });
-  CopyWith$Mutation$createFriendGroup$createFriendGroup$friendGroup<TRes>
-      get friendGroup;
+  CopyWith$Fragment$friendGroupListItemFragment<TRes> get friendGroup;
 }
 
 class _CopyWithImpl$Mutation$createFriendGroup$createFriendGroup<TRes>
@@ -1793,16 +1776,14 @@ class _CopyWithImpl$Mutation$createFriendGroup$createFriendGroup<TRes>
       _then(Mutation$createFriendGroup$createFriendGroup(
         friendGroup: friendGroup == _undefined || friendGroup == null
             ? _instance.friendGroup
-            : (friendGroup
-                as Mutation$createFriendGroup$createFriendGroup$friendGroup),
+            : (friendGroup as Fragment$friendGroupListItemFragment),
         $__typename: $__typename == _undefined || $__typename == null
             ? _instance.$__typename
             : ($__typename as String),
       ));
-  CopyWith$Mutation$createFriendGroup$createFriendGroup$friendGroup<TRes>
-      get friendGroup {
+  CopyWith$Fragment$friendGroupListItemFragment<TRes> get friendGroup {
     final local$friendGroup = _instance.friendGroup;
-    return CopyWith$Mutation$createFriendGroup$createFriendGroup$friendGroup(
+    return CopyWith$Fragment$friendGroupListItemFragment(
         local$friendGroup, (e) => call(friendGroup: e));
   }
 }
@@ -1814,189 +1795,10 @@ class _CopyWithStubImpl$Mutation$createFriendGroup$createFriendGroup<TRes>
   TRes _res;
 
   call({
-    Mutation$createFriendGroup$createFriendGroup$friendGroup? friendGroup,
+    Fragment$friendGroupListItemFragment? friendGroup,
     String? $__typename,
   }) =>
       _res;
-  CopyWith$Mutation$createFriendGroup$createFriendGroup$friendGroup<TRes>
-      get friendGroup =>
-          CopyWith$Mutation$createFriendGroup$createFriendGroup$friendGroup
-              .stub(_res);
-}
-
-class Mutation$createFriendGroup$createFriendGroup$friendGroup {
-  Mutation$createFriendGroup$createFriendGroup$friendGroup({
-    required this.id,
-    required this.name,
-    required this.totalCount,
-    this.$__typename = 'FriendGroup',
-  });
-
-  factory Mutation$createFriendGroup$createFriendGroup$friendGroup.fromJson(
-      Map<String, dynamic> json) {
-    final l$id = json['id'];
-    final l$name = json['name'];
-    final l$totalCount = json['totalCount'];
-    final l$$__typename = json['__typename'];
-    return Mutation$createFriendGroup$createFriendGroup$friendGroup(
-      id: (l$id as String),
-      name: (l$name as String),
-      totalCount: (l$totalCount as int),
-      $__typename: (l$$__typename as String),
-    );
-  }
-
-  final String id;
-
-  final String name;
-
-  final int totalCount;
-
-  final String $__typename;
-
-  Map<String, dynamic> toJson() {
-    final _resultData = <String, dynamic>{};
-    final l$id = id;
-    _resultData['id'] = l$id;
-    final l$name = name;
-    _resultData['name'] = l$name;
-    final l$totalCount = totalCount;
-    _resultData['totalCount'] = l$totalCount;
-    final l$$__typename = $__typename;
-    _resultData['__typename'] = l$$__typename;
-    return _resultData;
-  }
-
-  @override
-  int get hashCode {
-    final l$id = id;
-    final l$name = name;
-    final l$totalCount = totalCount;
-    final l$$__typename = $__typename;
-    return Object.hashAll([
-      l$id,
-      l$name,
-      l$totalCount,
-      l$$__typename,
-    ]);
-  }
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) {
-      return true;
-    }
-    if (!(other is Mutation$createFriendGroup$createFriendGroup$friendGroup) ||
-        runtimeType != other.runtimeType) {
-      return false;
-    }
-    final l$id = id;
-    final lOther$id = other.id;
-    if (l$id != lOther$id) {
-      return false;
-    }
-    final l$name = name;
-    final lOther$name = other.name;
-    if (l$name != lOther$name) {
-      return false;
-    }
-    final l$totalCount = totalCount;
-    final lOther$totalCount = other.totalCount;
-    if (l$totalCount != lOther$totalCount) {
-      return false;
-    }
-    final l$$__typename = $__typename;
-    final lOther$$__typename = other.$__typename;
-    if (l$$__typename != lOther$$__typename) {
-      return false;
-    }
-    return true;
-  }
-}
-
-extension UtilityExtension$Mutation$createFriendGroup$createFriendGroup$friendGroup
-    on Mutation$createFriendGroup$createFriendGroup$friendGroup {
-  CopyWith$Mutation$createFriendGroup$createFriendGroup$friendGroup<
-          Mutation$createFriendGroup$createFriendGroup$friendGroup>
-      get copyWith =>
-          CopyWith$Mutation$createFriendGroup$createFriendGroup$friendGroup(
-            this,
-            (i) => i,
-          );
-}
-
-abstract class CopyWith$Mutation$createFriendGroup$createFriendGroup$friendGroup<
-    TRes> {
-  factory CopyWith$Mutation$createFriendGroup$createFriendGroup$friendGroup(
-    Mutation$createFriendGroup$createFriendGroup$friendGroup instance,
-    TRes Function(Mutation$createFriendGroup$createFriendGroup$friendGroup)
-        then,
-  ) = _CopyWithImpl$Mutation$createFriendGroup$createFriendGroup$friendGroup;
-
-  factory CopyWith$Mutation$createFriendGroup$createFriendGroup$friendGroup.stub(
-          TRes res) =
-      _CopyWithStubImpl$Mutation$createFriendGroup$createFriendGroup$friendGroup;
-
-  TRes call({
-    String? id,
-    String? name,
-    int? totalCount,
-    String? $__typename,
-  });
-}
-
-class _CopyWithImpl$Mutation$createFriendGroup$createFriendGroup$friendGroup<
-        TRes>
-    implements
-        CopyWith$Mutation$createFriendGroup$createFriendGroup$friendGroup<
-            TRes> {
-  _CopyWithImpl$Mutation$createFriendGroup$createFriendGroup$friendGroup(
-    this._instance,
-    this._then,
-  );
-
-  final Mutation$createFriendGroup$createFriendGroup$friendGroup _instance;
-
-  final TRes Function(Mutation$createFriendGroup$createFriendGroup$friendGroup)
-      _then;
-
-  static const _undefined = <dynamic, dynamic>{};
-
-  TRes call({
-    Object? id = _undefined,
-    Object? name = _undefined,
-    Object? totalCount = _undefined,
-    Object? $__typename = _undefined,
-  }) =>
-      _then(Mutation$createFriendGroup$createFriendGroup$friendGroup(
-        id: id == _undefined || id == null ? _instance.id : (id as String),
-        name: name == _undefined || name == null
-            ? _instance.name
-            : (name as String),
-        totalCount: totalCount == _undefined || totalCount == null
-            ? _instance.totalCount
-            : (totalCount as int),
-        $__typename: $__typename == _undefined || $__typename == null
-            ? _instance.$__typename
-            : ($__typename as String),
-      ));
-}
-
-class _CopyWithStubImpl$Mutation$createFriendGroup$createFriendGroup$friendGroup<
-        TRes>
-    implements
-        CopyWith$Mutation$createFriendGroup$createFriendGroup$friendGroup<
-            TRes> {
-  _CopyWithStubImpl$Mutation$createFriendGroup$createFriendGroup$friendGroup(
-      this._res);
-
-  TRes _res;
-
-  call({
-    String? id,
-    String? name,
-    int? totalCount,
-    String? $__typename,
-  }) =>
-      _res;
+  CopyWith$Fragment$friendGroupListItemFragment<TRes> get friendGroup =>
+      CopyWith$Fragment$friendGroupListItemFragment.stub(_res);
 }

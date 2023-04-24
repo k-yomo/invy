@@ -17,7 +17,9 @@ class FriendSelectionList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return ListView(
+        scrollDirection: Axis.vertical,
+        shrinkWrap: true,
         children: friends.map((friend) {
       final isSelected = selectedFriends.map((f) => f.id).contains(friend.id);
       return Column(

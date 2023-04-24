@@ -77,7 +77,11 @@ class InvitationListItem extends StatelessWidget {
                               children: [
                                 const Icon(Icons.fmd_good, size: 20),
                                 Text(
-                                  invitation.location.isNotEmpty ? invitation.location : (invitation.user.distanceKm != null ? "${invitation.user.distanceKm! > 0 ? "〜" : ""}${invitation.user.distanceKm}km" : ""),
+                                  invitation.location.isNotEmpty
+                                      ? invitation.location
+                                      : (invitation.user.distanceKm != null
+                                          ? "${invitation.user.distanceKm! > 0 ? "〜" : ""}${invitation.user.distanceKm}km"
+                                          : ""),
                                   style: const TextStyle(fontSize: 12),
                                   overflow: TextOverflow.ellipsis,
                                 ),
