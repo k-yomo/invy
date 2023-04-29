@@ -63,6 +63,11 @@ connect-db: ## Connect to local db
 test-api: ## Run tests
 	gotestsum -- -v -race -coverprofile=coverage.out ./...
 
+.PHONY: test-api-cover
+test-api-cover: test-api ## Show test coverage
+	go tool cover -func=coverage.out
+	go tool cover -html=coverage.out
+
 .PHONY: lint-api
 lint-api: ## Run golang-ci-lint
 	golangci-lint run --timeout=3m ./...
