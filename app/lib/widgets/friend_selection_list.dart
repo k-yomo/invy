@@ -21,37 +21,39 @@ class FriendSelectionList extends StatelessWidget {
         scrollDirection: Axis.vertical,
         shrinkWrap: true,
         children: friends.map((friend) {
-      final isSelected = selectedFriends.map((f) => f.id).contains(friend.id);
-      return Column(
-        children: [
-          InkWell(
-            onTap: () {
-              var updatedSelectedFriends = [...selectedFriends];
-              if (isSelected) {
-                updatedSelectedFriends.removeWhere((f) => f.id == friend.id);
-              } else {
-                updatedSelectedFriends.add(friend);
-              }
-              onChange(updatedSelectedFriends);
-            },
-            child: FriendListItem(
-                key: Key(friend.id),
-                friend: friend,
-                rightWidget: Row(
-                  children: [
-                    friend.distanceKm != null
-                        ? Align(
-                            alignment: Alignment.centerRight,
-                            child: Text("~${friend.distanceKm}km"),
-                          )
-                        : const SizedBox(),
-                    isSelected ? const Icon(Icons.check) : const SizedBox(),
-                  ],
-                )),
-          ),
-          Divider(height: 0, thickness: 1, color: Colors.grey.shade200),
-        ],
-      );
-    }).toList());
+          final isSelected =
+              selectedFriends.map((f) => f.id).contains(friend.id);
+          return Column(
+            children: [
+              InkWell(
+                onTap: () {
+                  var updatedSelectedFriends = [...selectedFriends];
+                  if (isSelected) {
+                    updatedSelectedFriends
+                        .removeWhere((f) => f.id == friend.id);
+                  } else {
+                    updatedSelectedFriends.add(friend);
+                  }
+                  onChange(updatedSelectedFriends);
+                },
+                child: FriendListItem(
+                    key: Key(friend.id),
+                    friend: friend,
+                    rightWidget: Row(
+                      children: [
+                        friend.distanceKm != null
+                            ? Align(
+                                alignment: Alignment.centerRight,
+                                child: Text("~${friend.distanceKm}km"),
+                              )
+                            : const SizedBox(),
+                        isSelected ? const Icon(Icons.check) : const SizedBox(),
+                      ],
+                    )),
+              ),
+              Divider(height: 0, thickness: 1, color: Colors.grey.shade200),
+            ],
+          );
+        }).toList());
   }
 }

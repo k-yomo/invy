@@ -105,7 +105,7 @@ class FriendQRCodeReaderScreenState
                         child: Container(
                           margin: const EdgeInsets.symmetric(
                               vertical: 50, horizontal: 60),
-                          child: QrImage(
+                          child: QrImageView(
                             data: buildUserProfileLink(loggedInUser.id)
                                 .toString()
                                 .toString(),

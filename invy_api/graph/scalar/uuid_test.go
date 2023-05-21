@@ -3,9 +3,10 @@ package scalar
 import (
 	"bytes"
 	"fmt"
-	"github.com/google/uuid"
 	"reflect"
 	"testing"
+
+	"github.com/google/uuid"
 )
 
 func TestMarshalUUID(t *testing.T) {
