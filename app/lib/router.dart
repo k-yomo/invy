@@ -124,13 +124,14 @@ GoRouter router(RouterRef ref, {Uri? initialRoute}) => GoRouter(
     redirect: (BuildContext context, GoRouterState state) async {
       final isLoggedIn = ref.watch(isLoggedInProvider);
       if (!isLoggedIn) {
-        return LoginRoute(from: state.subloc).location;
+        return LoginRoute(from: state.matchedLocation).location;
       }
 
       final locationAlwaysPermissionStatus =
           await Permission.locationAlways.status;
       if (!locationAlwaysPermissionStatus.isGranted) {
-        return BackgroundLocationRequestRoute(from: state.subloc).location;
+        return BackgroundLocationRequestRoute(from: state.matchedLocation)
+            .location;
       }
       return null;
     });

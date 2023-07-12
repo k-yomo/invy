@@ -30,10 +30,12 @@ extension $MapRouteExtension on MapRoute {
 
   void go(BuildContext context) => context.go(location);
 
-  void push(BuildContext context) => context.push(location);
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
 }
 
 RouteBase get $invitationRoute => GoRouteData.$route(
@@ -69,10 +71,12 @@ extension $InvitationRouteExtension on InvitationRoute {
 
   void go(BuildContext context) => context.go(location);
 
-  void push(BuildContext context) => context.push(location);
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
 }
 
 extension $InvitationFormRouteExtension on InvitationFormRoute {
@@ -85,10 +89,12 @@ extension $InvitationFormRouteExtension on InvitationFormRoute {
 
   void go(BuildContext context) => context.go(location);
 
-  void push(BuildContext context) => context.push(location);
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
 }
 
 extension $InvitationLocationSelectRouteExtension
@@ -102,10 +108,12 @@ extension $InvitationLocationSelectRouteExtension
 
   void go(BuildContext context) => context.go(location);
 
-  void push(BuildContext context) => context.push(location);
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
 }
 
 extension $InvitationFriendSelectRouteExtension on InvitationFriendSelectRoute {
@@ -118,16 +126,18 @@ extension $InvitationFriendSelectRouteExtension on InvitationFriendSelectRoute {
 
   void go(BuildContext context) => context.go(location);
 
-  void push(BuildContext context) => context.push(location);
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
 }
 
 extension $InvitationDetailRouteExtension on InvitationDetailRoute {
   static InvitationDetailRoute _fromState(GoRouterState state) =>
       InvitationDetailRoute(
-        state.params['invitationId']!,
+        state.pathParameters['invitationId']!,
       );
 
   String get location => GoRouteData.$location(
@@ -136,10 +146,12 @@ extension $InvitationDetailRouteExtension on InvitationDetailRoute {
 
   void go(BuildContext context) => context.go(location);
 
-  void push(BuildContext context) => context.push(location);
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
 }
 
 RouteBase get $friendsRoute => GoRouteData.$route(
@@ -176,10 +188,12 @@ extension $FriendsRouteExtension on FriendsRoute {
 
   void go(BuildContext context) => context.go(location);
 
-  void push(BuildContext context) => context.push(location);
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
 }
 
 extension $FriendGroupCreateRouteExtension on FriendGroupCreateRoute {
@@ -192,16 +206,18 @@ extension $FriendGroupCreateRouteExtension on FriendGroupCreateRoute {
 
   void go(BuildContext context) => context.go(location);
 
-  void push(BuildContext context) => context.push(location);
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
 }
 
 extension $FriendGroupDetailRouteExtension on FriendGroupDetailRoute {
   static FriendGroupDetailRoute _fromState(GoRouterState state) =>
       FriendGroupDetailRoute(
-        state.params['friendGroupId']!,
+        state.pathParameters['friendGroupId']!,
       );
 
   String get location => GoRouteData.$location(
@@ -210,10 +226,12 @@ extension $FriendGroupDetailRouteExtension on FriendGroupDetailRoute {
 
   void go(BuildContext context) => context.go(location);
 
-  void push(BuildContext context) => context.push(location);
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
 }
 
 extension $FriendshipRequestRouteExtension on FriendshipRequestRoute {
@@ -226,10 +244,12 @@ extension $FriendshipRequestRouteExtension on FriendshipRequestRoute {
 
   void go(BuildContext context) => context.go(location);
 
-  void push(BuildContext context) => context.push(location);
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
 }
 
 extension $FriendQRCodeReaderRouteExtension on FriendQRCodeReaderRoute {
@@ -242,10 +262,12 @@ extension $FriendQRCodeReaderRouteExtension on FriendQRCodeReaderRoute {
 
   void go(BuildContext context) => context.go(location);
 
-  void push(BuildContext context) => context.push(location);
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
 }
 
 RouteBase get $userProfileRoute => GoRouteData.$route(
@@ -261,7 +283,7 @@ RouteBase get $userProfileRoute => GoRouteData.$route(
 
 extension $UserProfileRouteExtension on UserProfileRoute {
   static UserProfileRoute _fromState(GoRouterState state) => UserProfileRoute(
-        state.params['userId']!,
+        state.pathParameters['userId']!,
       );
 
   String get location => GoRouteData.$location(
@@ -270,16 +292,18 @@ extension $UserProfileRouteExtension on UserProfileRoute {
 
   void go(BuildContext context) => context.go(location);
 
-  void push(BuildContext context) => context.push(location);
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
 }
 
 extension $UserFriendsRouteExtension on UserFriendsRoute {
   static UserFriendsRoute _fromState(GoRouterState state) => UserFriendsRoute(
-        state.params['userId']!,
-        userNickname: state.queryParams['user-nickname'],
+        state.pathParameters['userId']!,
+        userNickname: state.queryParameters['user-nickname'],
       );
 
   String get location => GoRouteData.$location(
@@ -291,10 +315,12 @@ extension $UserFriendsRouteExtension on UserFriendsRoute {
 
   void go(BuildContext context) => context.go(location);
 
-  void push(BuildContext context) => context.push(location);
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
 }
 
 RouteBase get $myProfileRoute => GoRouteData.$route(
@@ -326,10 +352,12 @@ extension $MyProfileRouteExtension on MyProfileRoute {
 
   void go(BuildContext context) => context.go(location);
 
-  void push(BuildContext context) => context.push(location);
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
 }
 
 extension $ProfileEditRouteExtension on ProfileEditRoute {
@@ -342,10 +370,12 @@ extension $ProfileEditRouteExtension on ProfileEditRoute {
 
   void go(BuildContext context) => context.go(location);
 
-  void push(BuildContext context) => context.push(location);
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
 }
 
 extension $BlockedFriendsRouteExtension on BlockedFriendsRoute {
@@ -358,10 +388,12 @@ extension $BlockedFriendsRouteExtension on BlockedFriendsRoute {
 
   void go(BuildContext context) => context.go(location);
 
-  void push(BuildContext context) => context.push(location);
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
 }
 
 extension $SettingsRouteExtension on SettingsRoute {
@@ -373,10 +405,12 @@ extension $SettingsRouteExtension on SettingsRoute {
 
   void go(BuildContext context) => context.go(location);
 
-  void push(BuildContext context) => context.push(location);
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
 }
 
 RouteBase get $loginRoute => GoRouteData.$route(
@@ -386,7 +420,7 @@ RouteBase get $loginRoute => GoRouteData.$route(
 
 extension $LoginRouteExtension on LoginRoute {
   static LoginRoute _fromState(GoRouterState state) => LoginRoute(
-        from: state.queryParams['from'],
+        from: state.queryParameters['from'],
       );
 
   String get location => GoRouteData.$location(
@@ -398,10 +432,12 @@ extension $LoginRouteExtension on LoginRoute {
 
   void go(BuildContext context) => context.go(location);
 
-  void push(BuildContext context) => context.push(location);
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
 }
 
 RouteBase get $backgroundLocationRequestRoute => GoRouteData.$route(
@@ -413,7 +449,7 @@ extension $BackgroundLocationRequestRouteExtension
     on BackgroundLocationRequestRoute {
   static BackgroundLocationRequestRoute _fromState(GoRouterState state) =>
       BackgroundLocationRequestRoute(
-        from: state.queryParams['from'],
+        from: state.queryParameters['from'],
       );
 
   String get location => GoRouteData.$location(
@@ -425,17 +461,19 @@ extension $BackgroundLocationRequestRouteExtension
 
   void go(BuildContext context) => context.go(location);
 
-  void push(BuildContext context) => context.push(location);
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
 }
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$routerHash() => r'263de9e38a9f76f1336bd4bc056aad162d600c60';
+String _$routerHash() => r'fd89f53127a2758128d58660dd5846ca8dca97ce';
 
 /// Copied from Dart SDK
 class _SystemHash {

@@ -433,6 +433,57 @@ extension UtilityExtension$Fragment$ChatMessageTextFragment$body
             this,
             (i) => i,
           );
+  _T when<_T>({
+    required _T Function(
+            Fragment$ChatMessageTextFragment$body$$ChatMessageBodyText)
+        chatMessageBodyText,
+    required _T Function(
+            Fragment$ChatMessageTextFragment$body$$ChatMessageBodyImage)
+        chatMessageBodyImage,
+    required _T Function() orElse,
+  }) {
+    switch ($__typename) {
+      case "ChatMessageBodyText":
+        return chatMessageBodyText(
+            this as Fragment$ChatMessageTextFragment$body$$ChatMessageBodyText);
+
+      case "ChatMessageBodyImage":
+        return chatMessageBodyImage(this
+            as Fragment$ChatMessageTextFragment$body$$ChatMessageBodyImage);
+
+      default:
+        return orElse();
+    }
+  }
+
+  _T maybeWhen<_T>({
+    _T Function(Fragment$ChatMessageTextFragment$body$$ChatMessageBodyText)?
+        chatMessageBodyText,
+    _T Function(Fragment$ChatMessageTextFragment$body$$ChatMessageBodyImage)?
+        chatMessageBodyImage,
+    required _T Function() orElse,
+  }) {
+    switch ($__typename) {
+      case "ChatMessageBodyText":
+        if (chatMessageBodyText != null) {
+          return chatMessageBodyText(this
+              as Fragment$ChatMessageTextFragment$body$$ChatMessageBodyText);
+        } else {
+          return orElse();
+        }
+
+      case "ChatMessageBodyImage":
+        if (chatMessageBodyImage != null) {
+          return chatMessageBodyImage(this
+              as Fragment$ChatMessageTextFragment$body$$ChatMessageBodyImage);
+        } else {
+          return orElse();
+        }
+
+      default:
+        return orElse();
+    }
+  }
 }
 
 abstract class CopyWith$Fragment$ChatMessageTextFragment$body<TRes> {
@@ -1155,6 +1206,57 @@ extension UtilityExtension$Fragment$ChatMessageImageFragment$body
             this,
             (i) => i,
           );
+  _T when<_T>({
+    required _T Function(
+            Fragment$ChatMessageImageFragment$body$$ChatMessageBodyImage)
+        chatMessageBodyImage,
+    required _T Function(
+            Fragment$ChatMessageImageFragment$body$$ChatMessageBodyText)
+        chatMessageBodyText,
+    required _T Function() orElse,
+  }) {
+    switch ($__typename) {
+      case "ChatMessageBodyImage":
+        return chatMessageBodyImage(this
+            as Fragment$ChatMessageImageFragment$body$$ChatMessageBodyImage);
+
+      case "ChatMessageBodyText":
+        return chatMessageBodyText(this
+            as Fragment$ChatMessageImageFragment$body$$ChatMessageBodyText);
+
+      default:
+        return orElse();
+    }
+  }
+
+  _T maybeWhen<_T>({
+    _T Function(Fragment$ChatMessageImageFragment$body$$ChatMessageBodyImage)?
+        chatMessageBodyImage,
+    _T Function(Fragment$ChatMessageImageFragment$body$$ChatMessageBodyText)?
+        chatMessageBodyText,
+    required _T Function() orElse,
+  }) {
+    switch ($__typename) {
+      case "ChatMessageBodyImage":
+        if (chatMessageBodyImage != null) {
+          return chatMessageBodyImage(this
+              as Fragment$ChatMessageImageFragment$body$$ChatMessageBodyImage);
+        } else {
+          return orElse();
+        }
+
+      case "ChatMessageBodyText":
+        if (chatMessageBodyText != null) {
+          return chatMessageBodyText(this
+              as Fragment$ChatMessageImageFragment$body$$ChatMessageBodyText);
+        } else {
+          return orElse();
+        }
+
+      default:
+        return orElse();
+    }
+  }
 }
 
 abstract class CopyWith$Fragment$ChatMessageImageFragment$body<TRes> {
@@ -3875,6 +3977,59 @@ extension UtilityExtension$Mutation$sendChatMessageImage$sendChatMessageImage$ch
             this,
             (i) => i,
           );
+  _T when<_T>({
+    required _T Function(
+            Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body$$ChatMessageBodyImage)
+        chatMessageBodyImage,
+    required _T Function(
+            Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body$$ChatMessageBodyText)
+        chatMessageBodyText,
+    required _T Function() orElse,
+  }) {
+    switch ($__typename) {
+      case "ChatMessageBodyImage":
+        return chatMessageBodyImage(this
+            as Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body$$ChatMessageBodyImage);
+
+      case "ChatMessageBodyText":
+        return chatMessageBodyText(this
+            as Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body$$ChatMessageBodyText);
+
+      default:
+        return orElse();
+    }
+  }
+
+  _T maybeWhen<_T>({
+    _T Function(
+            Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body$$ChatMessageBodyImage)?
+        chatMessageBodyImage,
+    _T Function(
+            Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body$$ChatMessageBodyText)?
+        chatMessageBodyText,
+    required _T Function() orElse,
+  }) {
+    switch ($__typename) {
+      case "ChatMessageBodyImage":
+        if (chatMessageBodyImage != null) {
+          return chatMessageBodyImage(this
+              as Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body$$ChatMessageBodyImage);
+        } else {
+          return orElse();
+        }
+
+      case "ChatMessageBodyText":
+        if (chatMessageBodyText != null) {
+          return chatMessageBodyText(this
+              as Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body$$ChatMessageBodyText);
+        } else {
+          return orElse();
+        }
+
+      default:
+        return orElse();
+    }
+  }
 }
 
 abstract class CopyWith$Mutation$sendChatMessageImage$sendChatMessageImage$chatMessage$body<
