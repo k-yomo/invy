@@ -26,7 +26,7 @@ jobs:
     name: Dependencies
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Restore tools cache
         id: restore-tools-cache
@@ -65,7 +65,7 @@ jobs:
         options: --health-cmd pg_isready --health-interval 5s --health-timeout 5s --health-retries 5
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: actions/setup-go@v4
         with:
           go-version-file: 'go.mod'
@@ -86,7 +86,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: dependencies
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: actions/setup-go@v4
         with:
           go-version-file: 'go.mod'
@@ -109,7 +109,7 @@ jobs:
       - lint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Authenticate Google Cloud
         uses: google-github-actions/auth@v1
         with:
@@ -149,7 +149,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: invy-api-dev
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Authenticate Google Cloud
         uses: google-github-actions/auth@v1
         with:
@@ -172,7 +172,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: invy-api-prod
     steps:
-     - uses: actions/checkout@v3
+     - uses: actions/checkout@v4
      - name: Authenticate Google Cloud
        uses: google-github-actions/auth@v1
        with:
