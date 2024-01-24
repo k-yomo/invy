@@ -1,5 +1,7 @@
 # Invy
 
+![screen shots](https://github.com/k-yomo/invy/assets/24503508/a2a7c34f-4164-4000-b46d-562dce871877)
+
 ## Architecture
 - Infra
   - GCP 
