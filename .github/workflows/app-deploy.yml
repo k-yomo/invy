@@ -16,7 +16,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       # Deploy on codemagic can be triggered only by branch and can't use paths filter.
       # This workflow is a workaround to deploy app only when files under app directory change.
